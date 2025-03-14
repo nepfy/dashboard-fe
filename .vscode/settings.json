@@ -1,0 +1,7 @@
+{
+    "editor.fontSize": 10,
+    "editor.tabSize": 2,
+    "editor.minimap.enabled": false,
+    "go.lintOnSave": "file",
+    "terminal.integrated.defaultProfile.osx": "zsh"
+}
