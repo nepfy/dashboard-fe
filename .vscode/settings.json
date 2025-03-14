@@ -3,5 +3,6 @@
     "editor.tabSize": 2,
     "editor.minimap.enabled": false,
     "go.lintOnSave": "file",
-    "terminal.integrated.defaultProfile.osx": "zsh"
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
