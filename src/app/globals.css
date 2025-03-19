@@ -1,27 +1,108 @@
 @import "tailwindcss";
 
-:root {
-  --background: #FAFAFB;
-  --foreground: #1B1B24;
-}
-
 @theme inline {
+  --color-primary-light-100: #e8e2fd;
+  --color-primary-light-200: #b5a3fa;
+  --color-primary-light-300: #8263f7;
+  --color-primary-light-400: #6b46f5;
+  --color-primary-light-500: #5b32f4;
+  --color-primary-light-600: #3a0ce4;
+  --color-primary-light-700: #2909a2;
+  --color-primary-light-800: #18055f;
+
+  --color-primary-light-10: rgba(107, 70, 245, 0.1);
+  --color-primary-light-25: rgba(107, 70, 245, 0.25);
+  --color-primary-light-40: rgba(107, 70, 245, 0.4);
+  --color-primary-light-50: rgba(107, 70, 245, 0.5);
+
+  --color-secondary-light-100: #daf2af;
+  --color-secondary-light-200: #b5e45e;
+  --color-secondary-light-300: #9edb2b;
+  --color-secondary-light-400: #7bae1d;
+
+  --color-secondary-light-10: rgba(181, 228, 94, 0.1);
+
+  --color-white-neutral-light-100: #ffffff;
+  --color-white-neutral-light-200: #fafafb;
+  --color-white-neutral-light-300: #e0e3e9;
+  --color-white-neutral-light-400: #b6b6bc;
+  --color-white-neutral-light-500: #8b8895;
+  --color-white-neutral-light-600: #5a5b6b;
+  --color-white-neutral-light-700: #343440;
+  --color-white-neutral-light-800: #1c1a22;
+  --color-white-neutral-light-900: #19171f;
+  --color-white-neutral-light-1000: #1b1b24;
+
+  --color-dark-neutral-light-100: #c6c6d4;
+  --color-dark-neutral-light-200: #aaaabf;
+  --color-dark-neutral-light-300: #8d8daa;
+  --color-dark-neutral-light-400: #717195;
+  --color-dark-neutral-light-500: #5b5b79;
+  --color-dark-neutral-light-600: #46465d;
+  --color-dark-neutral-light-700: #303040;
+  --color-dark-neutral-light-800: #23232c;
+  --color-dark-neutral-light-900: #1b1b24;
+
+  --color-red-light-10: rgba(255, 45, 48, 0.1);
+  --color-red-light-25: rgba(255, 45, 48, 0.25);
+  --color-red-light-40: rgba(255, 45, 48, 0.4);
+  --color-red-light-50: rgba(255, 45, 48, 0.5);
+
+  --color-yellow-light-10: rgba(252, 189, 71, 0.1);
+  --color-yellow-light-25: rgba(252, 189, 71, 0.25);
+  --color-yellow-light-40: rgba(252, 189, 71, 0.4);
+  --color-yellow-light-50: rgba(252, 189, 71, 0.5);
+
+  --color-green-light-100: #84ebb4;
+  --color-green-light-200: #1fc16b;
+
+  --color-green-light-10: rgba(31, 193, 107, 0.1);
+  --color-green-light-25: rgba(31, 193, 107, 0.25);
+  --color-green-light-40: rgba(31, 193, 107, 0.4);
+  --color-green-light-50: rgba(31, 193, 107, 0.5);
+
+  --color-green-light-inner-button: rgba(196, 190, 221, 0.3);
+
+  --radius-2xs: 8px;
+  --radius-xs: 10px;
+  --radius-s: 12px;
+  --radius-m: 16px;
+  --radius-l: 20px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+  --radius-3xs: 4px;
+
+  --spacing-3xs: 2px;
+  --spacing-2xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-s: 12px;
+  --spacing-m: 16px;
+  --spacing-l: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 40px;
+  --spacing-4xl: 48px;
+  --spacing-5xl: 56px;
+  --spacing-6xl: 64px;
+  --spacing-7xl: 72px;
+  --spacing-8xl: 80px;
+  --spacing-9xl: 96px;
+  --spacing-10xl: 112px;
+
+  --stroke-m: 1px;
+  --stroke-l: 2px;
+  --stroke-xl: 3px;
+  --stroke-2xl: 4px;
+  --stroke-3xl: 5px;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-satoshi);
   --font-mono: var(--font-satoshi);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1B1B24;
-    --foreground: #FAFAFB;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-white-neutral-light-200);
 }
 
 .light-text {
@@ -34,4 +115,18 @@ body {
 
 .italic-text {
   font-style: italic;
+}
+
+.create-account {
+  backdrop-filter: blur(100px);
+  background: linear-gradient(
+      0deg,
+      var(--Colors-Primary-400, #6b46f5),
+      var(--Colors-Primary-400, #6b46f5)
+    ),
+    radial-gradient(
+      92.09% 85.42% at 86.3% 87.5%,
+      rgba(0, 0, 0, 0.23) 0%,
+      rgba(0, 0, 0, 0) 86.18%
+    );
 }

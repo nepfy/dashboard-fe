@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
-import localFont from 'next/font/local';
+import localFont from "next/font/local";
 import "./globals.css";
+
+import Navbar from "#/components/Navbar";
 
 const satoshi = localFont({
   src: [
     {
-      path: '../../public/fonts/satoshi-variable.woff2',
-      weight: '100 900',
-      style: 'normal',
+      path: "../../public/fonts/satoshi-variable.woff2",
+      weight: "100 900",
+      style: "normal",
     },
     {
-      path: '../../public/fonts/satoshi-variable-italic.woff2',
-      weight: '100 900',
-      style: 'italic',
+      path: "../../public/fonts/satoshi-variable-italic.woff2",
+      weight: "100 900",
+      style: "italic",
     },
   ],
-  variable: '--font-satoshi',
-})
+  variable: "--font-satoshi",
+});
 
 export const metadata: Metadata = {
   title: ".Nepfy",
@@ -30,9 +32,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${satoshi.variable} antialiased`}
-      >
+      <body className={`${satoshi.variable} antialiased`}>
+        <Navbar />
         {children}
       </body>
     </html>

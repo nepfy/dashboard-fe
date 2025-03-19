@@ -11,7 +11,7 @@ export default function Home() {
       </div>
 
       {/* Paragraph examples with different weights */}
-      <div className="space-y-4 max-w-2xl">
+      <div className="space-y-4 max-w-full">
         <p className="font-[100] text-lg">
           This is Satoshi at weight 100 - Ultra Light
         </p>
@@ -33,7 +33,7 @@ export default function Home() {
       </div>
 
       {/* Italic examples */}
-      <div className="space-y-4 max-w-2xl">
+      <div className="space-y-4 max-w-full">
         <p className="font-[300] italic text-lg">
           This is Satoshi Italic at weight 300
         </p>
@@ -46,14 +46,16 @@ export default function Home() {
       </div>
 
       {/* Mixed styles example */}
-      <div className="space-y-4 max-w-2xl">
+      <div className="space-y-4 max-w-full">
         <h2 className="text-2xl font-[700]">Mixed Styles Example</h2>
         <p className="font-[300]">
-          Light weight text with <span className="font-[700]">bold emphasis</span> and{' '}
+          Light weight text with{" "}
+          <span className="font-[700]">bold emphasis</span> and{" "}
           <span className="italic">italic text</span>
         </p>
         <p className="font-[500]">
-          Medium weight text with <span className="font-[900]">black emphasis</span> and{' '}
+          Medium weight text with{" "}
+          <span className="font-[900]">black emphasis</span> and{" "}
           <span className="italic">italic text</span>
         </p>
       </div>
