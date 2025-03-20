@@ -1,8 +1,4 @@
-import Link from "next/link";
-import GoogleLogo from "#/components/icons/GoogleLogo";
-import Ilustration from "#/components/icons/Ilustration";
 import Lock from "#/components/icons/Lock";
-import MailEnvelope from "#/components/icons/MailEnvelope";
 
 export default function Login() {
   return (
