@@ -117,6 +117,32 @@ body {
   font-style: italic;
 }
 
+.button-inner {
+  box-shadow: 4px -6px 12px 0px #f2f2f280 inset;
+}
+
+.button-inner-light {
+  box-shadow: 16px 0px 17px -5px #e3dbff3d inset;
+}
+
+.button-inner-inverse {
+  box-shadow: 16px 0px 17px -5px #e3dbff3d inset;
+}
+
+.gradient-border {
+  background: linear-gradient(
+      0deg,
+      var(--Colors-White-Neutral-200, #fafafb),
+      var(--Colors-White-Neutral-200, #fafafb)
+    ),
+    linear-gradient(
+      118.06deg,
+      rgba(253, 253, 253, 0) 67.41%,
+      #ac99f3 81.28%,
+      #815ffd 95.44%
+    );
+}
+
 .create-account {
   backdrop-filter: blur(100px);
   background: linear-gradient(
