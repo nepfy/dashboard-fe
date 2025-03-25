@@ -93,7 +93,7 @@ export default function Login() {
                     Lembrar-se da senha.
                   </label>
                 </div>
-                <Link href="/login-recovery">
+                <Link href="/recuperar-senha">
                   <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
                     Esqueceu a senha?
                   </p>

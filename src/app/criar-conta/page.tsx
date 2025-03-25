@@ -110,7 +110,7 @@ export default function CreateAccount() {
                   className="text-sm text-[var(--color-white-neutral-light-500)]"
                 >
                   Li e concordo com os{" "}
-                  <Link href="/terms-of-use">
+                  <Link href="/termos-de-uso">
                     <p className="text-[var(--color-primary-light-400)] hover:underline inline-block">
                       Termos de uso
                     </p>
