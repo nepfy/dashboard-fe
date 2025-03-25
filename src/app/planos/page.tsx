@@ -47,7 +47,7 @@ const plans = [
 export default function PlansPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center">
-      <section className="px-4 text-center">
+      <section className="mt-22 sm:mt-0 px-4 text-center">
         <h1 className="text-4xl text-[var(--color-white-neutral-light-800)] mb-4 font-medium">
           Escolha seu plano
         </h1>
@@ -57,7 +57,7 @@ export default function PlansPage() {
         </p>
       </section>
 
-      <section className="max-w-[1248px] px-4 py-12 w-full mx-auto">
+      <section className="sm:max-w-[1248px] px-4 py-12 w-full mx-auto">
         <div className="flex flex-row justify-around items-center w-full">
           <PlanAndFeatureCard plans={plans} />
         </div>
