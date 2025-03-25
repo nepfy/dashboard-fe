@@ -130,29 +130,27 @@ body {
 }
 
 .gradient-border {
-  background: linear-gradient(
-      0deg,
-      var(--Colors-White-Neutral-200, #fafafb),
-      var(--Colors-White-Neutral-200, #fafafb)
-    ),
-    linear-gradient(
-      118.06deg,
-      rgba(253, 253, 253, 0) 67.41%,
-      #ac99f3 81.28%,
-      #815ffd 95.44%
-    );
+  background: #fafafb;
+  border: 1px solid #e0e3e9;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
 }
 
-.create-account {
-  backdrop-filter: blur(100px);
+.gradient-border::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
   background: linear-gradient(
-      0deg,
-      var(--Colors-Primary-400, #6b46f5),
-      var(--Colors-Primary-400, #6b46f5)
-    ),
-    radial-gradient(
-      92.09% 85.42% at 86.3% 87.5%,
-      rgba(0, 0, 0, 0.23) 0%,
-      rgba(0, 0, 0, 0) 86.18%
-    );
+    118.06deg,
+    rgba(253, 253, 253, 0) 67.41%,
+    #ac99f3 81.28%,
+    #815ffd 95.44%
+  );
+  opacity: 0.8;
+  pointer-events: none;
 }

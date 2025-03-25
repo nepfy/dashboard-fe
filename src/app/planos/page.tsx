@@ -13,6 +13,7 @@ const plans = [
     credits: 15,
     price: "R$ 0,00",
     buttonTitle: "Começar agora",
+    isFreeTrial: true,
   },
   {
     id: 2,
@@ -26,7 +27,7 @@ const plans = [
     credits: 15,
     price: "R$ 75,00",
     buttonTitle: "Assinar agora",
-    isBtnCallToAction: true,
+    highlight: true,
   },
   {
     id: 3,
@@ -40,7 +41,6 @@ const plans = [
     credits: 25,
     price: "R$ 135,00",
     buttonTitle: "Assinar agora",
-    isBtnCallToAction: true,
   },
 ];
 

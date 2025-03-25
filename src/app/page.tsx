@@ -110,7 +110,7 @@ export default function Login() {
 
             <div className="text-center text-[var(--color-white-neutral-light-500)]">
               Você é novo aqui?{" "}
-              <Link href="/create-account">
+              <Link href="/criar-conta">
                 <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
                   Criar conta
                 </p>
