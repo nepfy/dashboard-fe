@@ -3,7 +3,7 @@ import "../styles/404.css";
 
 export default function Custom404() {
   return (
-    <div className="error-container">
+    <div className="error-container font-satoshi">
       <div className="error-content">
         <div className="error-wrapper">
           <div className="error-text-container">
