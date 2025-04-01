@@ -1,0 +1,40 @@
+import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+
+export const personUserTable = pgTable("personUser", {
+  id: uuid().notNull().primaryKey().defaultRandom(),
+  name: varchar({ length: 255 }),
+  lastName: varchar({ length: 255 }),
+  email: varchar({ length: 255 }).notNull().unique(),
+  emailVerified: timestamp({ mode: "date" }),
+  cpf: varchar({ length: 255 }),
+  phone: varchar({ length: 255 }),
+  password: varchar({ length: 255 }),
+  street: varchar({ length: 255 }),
+  number: varchar({ length: 255 }),
+  neighborhood: varchar({ length: 255 }),
+  state: varchar({ length: 255 }),
+  city: varchar({ length: 255 }),
+  cep: varchar({ length: 255 }),
+  createdAt: timestamp({ mode: "date" }).notNull(),
+  updatedAt: timestamp({ mode: "date" }).notNull(),
+  deletedAt: timestamp({ mode: "date" }),
+});
+
+export const companyUserTable = pgTable("companyUser", {
+  id: uuid().notNull().primaryKey().defaultRandom(),
+  name: varchar({ length: 255 }),
+  email: varchar({ length: 255 }).notNull().unique(),
+  emailVerified: timestamp({ mode: "date" }),
+  cnpj: varchar({ length: 255 }),
+  phone: varchar({ length: 255 }),
+  password: varchar({ length: 255 }),
+  street: varchar({ length: 255 }),
+  number: varchar({ length: 255 }),
+  neighborhood: varchar({ length: 255 }),
+  state: varchar({ length: 255 }),
+  city: varchar({ length: 255 }),
+  cep: varchar({ length: 255 }),
+  createdAt: timestamp({ mode: "date" }).notNull(),
+  updatedAt: timestamp({ mode: "date" }).notNull(),
+  deletedAt: timestamp({ mode: "date" }),
+});

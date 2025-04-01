@@ -8,7 +8,7 @@ export default function CreateAccount() {
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
       <div className="grid xl:grid-cols-2 w-full min-h-screen">
-        <div className="hidden xl:block bg-[var(--color-primary-light-400)] flex items-center justify-center">
+        <div className="hidden xl:block bg-[var(--color-primary-light-400)] sm:flex items-center justify-center">
           <div className="w-full h-full flex items-center justify-center p-8">
             <div className="w-full max-w-[80%]">
               <div className="w-full aspect-[622/714] relative">
