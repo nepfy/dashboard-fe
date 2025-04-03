@@ -1,10 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import GoogleLogo from "#/components/icons/GoogleLogo";
 import Ilustration from "#/components/icons/Ilustration";
 import Lock from "#/components/icons/Lock";
 import MailEnvelope from "#/components/icons/MailEnvelope";
+import { TextField, CheckboxInput } from "#/components/Inputs";
 
 export default function Login() {
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
       <div className="grid xl:grid-cols-2 w-full min-h-screen">
@@ -45,17 +52,14 @@ export default function Login() {
                   width="20"
                   height="20"
                 />
-                <label
-                  htmlFor="email"
-                  className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
+                <TextField
+                  label="Email"
+                  inputName="emailAddress"
                   id="email"
+                  type="email"
                   placeholder="Adicione seu email"
-                  className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                  onChange={(e) => setEmailAddress(e.target.value)}
+                  value={emailAddress}
                 />
               </div>
 
@@ -65,35 +69,22 @@ export default function Login() {
                   width="20"
                   height="20"
                 />
-                <label
-                  htmlFor="password"
-                  className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-                >
-                  Senha
-                </label>
-                <input
-                  type="password"
+                <TextField
+                  label="Senha"
+                  inputName="password"
                   id="password"
-                  placeholder="Crie uma senha"
-                  className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                  type="password"
+                  placeholder="Adicione sua senha"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                 />
               </div>
 
               <div className="flex justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="terms"
-                    className="w-4 h-4 rounded-[var(--radius-l)] border-[var(--color-white-neutral-light-300)] text-[var(--color-primary-light-400)] focus:ring-[var(--color-primary-light-400)]"
-                  />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm text-[var(--color-white-neutral-light-500)]"
-                  >
-                    Lembrar-se da senha.
-                  </label>
+                  <CheckboxInput label="Lembrar-se da senha" id="terms" />
                 </div>
-                <Link href="/recuperar-senha">
+                <Link href="/recuperar-conta">
                   <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
                     Esqueceu a senha?
                   </p>

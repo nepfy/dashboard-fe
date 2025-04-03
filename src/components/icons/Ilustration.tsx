@@ -116,8 +116,8 @@ const Ilustration = ({ className }: IlustrationProps) => (
         y2="394.865"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="white" />
-        <stop offset="1" stop-color="white" stop-opacity="0" />
+        <stop stopColor="white" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_1144_19551"
@@ -127,8 +127,8 @@ const Ilustration = ({ className }: IlustrationProps) => (
         y2="448.07"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="white" />
-        <stop offset="1" stop-color="white" stop-opacity="0" />
+        <stop stopColor="white" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_1144_19551"
@@ -138,8 +138,8 @@ const Ilustration = ({ className }: IlustrationProps) => (
         y2="313.107"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="white" stop-opacity="0" />
-        <stop offset="1" stop-color="white" />
+        <stop stopColor="white" stopOpacity="0" />
+        <stop offset="1" stopColor="white" />
       </linearGradient>
       <linearGradient
         id="paint3_linear_1144_19551"
@@ -149,8 +149,8 @@ const Ilustration = ({ className }: IlustrationProps) => (
         y2="348.897"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="white" stop-opacity="0" />
-        <stop offset="1" stop-color="white" />
+        <stop stopColor="white" stopOpacity="0" />
+        <stop offset="1" stopColor="white" />
       </linearGradient>
     </defs>
   </svg>

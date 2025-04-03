@@ -1,6 +1,11 @@
-import MailEnvelope from "#/components/icons/MailEnvelope";
+"use client";
 
-export default function Login() {
+import { useState } from "react";
+import MailEnvelope from "#/components/icons/MailEnvelope";
+import { TextField } from "#/components/Inputs";
+
+export default function AccountRecovery() {
+  const [emailAddress, setEmailAddress] = useState("");
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
       <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20">
@@ -22,17 +27,14 @@ export default function Login() {
                 width="20"
                 height="20"
               />
-              <label
-                htmlFor="email"
-                className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-              >
-                Insira seu email
-              </label>
-              <input
-                type="email"
+              <TextField
+                label="Insira seu email"
+                inputName="email"
                 id="email"
-                placeholder="kevy@mail.com"
-                className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                type="email"
+                placeholder="exemplo@seudominio.com"
+                onChange={(e) => setEmailAddress(e.target.value)}
+                value={emailAddress}
               />
             </div>
 

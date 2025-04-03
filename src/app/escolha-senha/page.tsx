@@ -1,6 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import Lock from "#/components/icons/Lock";
+import { TextField } from "#/components/Inputs";
 
 export default function Login() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
       <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20">
@@ -22,17 +29,14 @@ export default function Login() {
                 width="20"
                 height="20"
               />
-              <label
-                htmlFor="password"
-                className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-              >
-                Senha
-              </label>
-              <input
-                type="password"
+              <TextField
+                label="Senha"
+                inputName="password"
                 id="password"
+                type="password"
                 placeholder="Crie uma senha"
-                className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
               />
             </div>
 
@@ -42,17 +46,14 @@ export default function Login() {
                 width="20"
                 height="20"
               />
-              <label
-                htmlFor="password"
-                className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-              >
-                Confirmar senha
-              </label>
-              <input
+              <TextField
+                label="Confirmar senha"
+                inputName="confirmPassword"
+                id="confirmPassword"
                 type="password"
-                id="password"
                 placeholder="Repita a senha"
-                className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={confirmPassword}
               />
             </div>
 

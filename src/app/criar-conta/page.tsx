@@ -1,10 +1,42 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { useSignUp } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import GoogleLogo from "#/components/icons/GoogleLogo";
 import Ilustration from "#/components/icons/Ilustration";
 import Lock from "#/components/icons/Lock";
 import MailEnvelope from "#/components/icons/MailEnvelope";
+import { TextField, CheckboxInput } from "#/components/Inputs";
 
 export default function CreateAccount() {
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isLoaded) return;
+
+    try {
+      const signUpUser = await signUp.create({
+        emailAddress,
+        password,
+      });
+
+      if (signUpUser.status === "complete") {
+        setActive({ session: signUpUser.createdSessionId });
+        router.push("/onboarding");
+      }
+    } catch (err: unknown) {
+      console.error(JSON.stringify(err, null, 2));
+    }
+  };
+
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
       <div className="grid xl:grid-cols-2 w-full min-h-screen">
@@ -38,24 +70,21 @@ export default function CreateAccount() {
               </p>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-2 relative">
                 <MailEnvelope
                   className="absolute right-4 bottom-2"
                   width="20"
                   height="20"
                 />
-                <label
-                  htmlFor="email"
-                  className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
+                <TextField
+                  label="Email"
+                  inputName="emailAddress"
                   id="email"
+                  type="email"
                   placeholder="Adicione seu email"
-                  className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                  onChange={(e) => setEmailAddress(e.target.value)}
+                  value={emailAddress}
                 />
               </div>
 
@@ -65,17 +94,14 @@ export default function CreateAccount() {
                   width="20"
                   height="20"
                 />
-                <label
-                  htmlFor="password"
-                  className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-                >
-                  Senha
-                </label>
-                <input
-                  type="password"
+                <TextField
+                  label="Senha"
+                  inputName="password"
                   id="password"
+                  type="password"
                   placeholder="Crie uma senha"
-                  className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                 />
               </div>
 
@@ -85,38 +111,32 @@ export default function CreateAccount() {
                   width="20"
                   height="20"
                 />
-                <label
-                  htmlFor="confirmPassword"
-                  className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
-                >
-                  Confirme a senha
-                </label>
-                <input
-                  type="password"
+                <TextField
+                  label="Confirme a senha"
+                  inputName="confirmPassword"
                   id="confirmPassword"
+                  type="password"
                   placeholder="Confirme sua senha"
-                  className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  value={confirmPassword}
                 />
               </div>
 
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
+                <CheckboxInput
                   id="terms"
-                  className="w-4 h-4 rounded-[var(--radius-l)] border-[var(--color-white-neutral-light-300)] text-[var(--color-primary-light-400)] focus:ring-[var(--color-primary-light-400)]"
+                  label={
+                    <>
+                      Li e concordo com os{" "}
+                      <Link href="/termos-de-uso">
+                        <p className="text-[var(--color-primary-light-400)] hover:underline inline-block">
+                          Termos de uso
+                        </p>
+                      </Link>
+                      .
+                    </>
+                  }
                 />
-                <label
-                  htmlFor="terms"
-                  className="text-sm text-[var(--color-white-neutral-light-500)]"
-                >
-                  Li e concordo com os{" "}
-                  <Link href="/termos-de-uso">
-                    <p className="text-[var(--color-primary-light-400)] hover:underline inline-block">
-                      Termos de uso
-                    </p>
-                  </Link>
-                  .
-                </label>
               </div>
 
               <button
