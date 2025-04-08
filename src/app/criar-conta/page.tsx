@@ -1,36 +1,69 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
-import GoogleLogo from "#/components/icons/GoogleLogo";
-
-import Lock from "#/components/icons/Lock";
-import MailEnvelope from "#/components/icons/MailEnvelope";
-import { TextField, CheckboxInput } from "#/components/Inputs";
 import IntroSlider from "#/components/IntroSlider";
 import FormHeader from "#/app/onboarding/components/FormHeader";
+import {
+  evaluatePasswordStrength,
+  PasswordStrength,
+} from "#/app/criar-conta/helpers/evaluatePassword";
+import { validateEmail } from "./helpers/validateEmail";
+import SignUpForm from "#/app/criar-conta/components/SignUpForm";
+import VerificationForm from "#/app/criar-conta/components/VerificationForm";
 
 export default function CreateAccount() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const router = useRouter();
 
+  // Form state
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [pendingVerification, setPendingVerification] = useState(false);
-  const [code, setCode] = useState("");
-  const [error, setError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  // UI state
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
+    strength: "none",
+    score: 0,
+  });
 
-  const router = useRouter();
+  // Verification state
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [code, setCode] = useState("");
 
+  // Error handling
+  const [error, setError] = useState("");
+
+  // Evaluate password strength when password changes
+  useEffect(() => {
+    setPasswordStrength(evaluatePasswordStrength(password));
+  }, [password]);
+
+  // Form validation logic
+  const isFormValid = () => {
+    return (
+      emailAddress.trim() !== "" &&
+      validateEmail(emailAddress) &&
+      password.trim() !== "" &&
+      confirmPassword.trim() !== "" &&
+      password === confirmPassword &&
+      passwordStrength.strength !== "fraca" &&
+      termsAccepted
+    );
+  };
+
+  const isEmailValid =
+    emailAddress.trim() === "" || validateEmail(emailAddress);
+
+  // Form submission handlers
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isLoaded) return;
+    if (!isLoaded || !isFormValid()) return;
 
     try {
       const signUpUser = await signUp.create({
@@ -95,7 +128,7 @@ export default function CreateAccount() {
     }
   };
 
-  if (!isLoaded) <div> Loading </div>;
+  if (!isLoaded) return <div> Loading </div>;
 
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
@@ -111,151 +144,39 @@ export default function CreateAccount() {
               title="Criar conta"
               description="Entre para a Nepfy e revolucione a forma como você apresenta suas propostas!"
             />
+
             {!pendingVerification ? (
-              <>
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                  <div className="space-y-2 relative">
-                    <MailEnvelope
-                      className="absolute right-4 bottom-2"
-                      width="20"
-                      height="20"
-                    />
-                    <TextField
-                      label="Email"
-                      inputName="emailAddress"
-                      id="email"
-                      type="email"
-                      placeholder="Adicione seu email"
-                      onChange={(e) => setEmailAddress(e.target.value)}
-                      value={emailAddress}
-                    />
-                  </div>
-
-                  <div className="space-y-2 relative">
-                    <button
-                      type="button"
-                      className="absolute right-4 bottom-2"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <Eye width="20" height="20" />
-                      ) : (
-                        <EyeOff width="20" height="20" />
-                      )}
-                    </button>
-
-                    <TextField
-                      label="Senha"
-                      inputName="password"
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Crie uma senha"
-                      onChange={(e) => setPassword(e.target.value)}
-                      value={password}
-                    />
-                  </div>
-
-                  <div className="space-y-2 relative">
-                    <button
-                      type="button"
-                      className="absolute right-4 bottom-2"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                    >
-                      {showConfirmPassword ? (
-                        <Eye width="20" height="20" />
-                      ) : (
-                        <EyeOff width="20" height="20" />
-                      )}
-                    </button>
-                    <TextField
-                      label="Confirme a senha"
-                      inputName="confirmPassword"
-                      id="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirme sua senha"
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      value={confirmPassword}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <CheckboxInput
-                      id="terms"
-                      label={
-                        <>
-                          Li e concordo com os{" "}
-                          <Link href="/termos-de-uso">
-                            <p className="text-[var(--color-primary-light-400)] hover:underline inline-block">
-                              Termos de uso
-                            </p>
-                          </Link>
-                          .
-                        </>
-                      }
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors mt-4 h-[54px]"
-                  >
-                    Criar conta
-                  </button>
-                </form>
-
-                <div className="text-center text-[var(--color-white-neutral-light-500)]">
-                  Já possui uma conta?{" "}
-                  <Link href="/">
-                    <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
-                      Faça login
-                    </p>
-                  </Link>
-                </div>
-
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-[var(--color-white-neutral-light-300)]"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-[var(--color-white-neutral-light-200)] text-[var(--color-white-neutral-light-500)]">
-                      ou
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2"
-                >
-                  <GoogleLogo />
-                  Continuar com o Google
-                </button>
-              </>
+              <SignUpForm
+                emailAddress={emailAddress}
+                setEmailAddress={setEmailAddress}
+                password={password}
+                setPassword={setPassword}
+                confirmPassword={confirmPassword}
+                setConfirmPassword={setConfirmPassword}
+                passwordStrength={passwordStrength}
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+                showConfirmPassword={showConfirmPassword}
+                setShowConfirmPassword={setShowConfirmPassword}
+                termsAccepted={termsAccepted}
+                setTermsAccepted={setTermsAccepted}
+                onSubmit={handleSubmit}
+                isFormValid={isFormValid}
+                isEmailValid={isEmailValid}
+              />
             ) : (
-              <form className="space-y-6" onSubmit={handleVerification}>
-                <div className="space-y-2 relative">
-                  <Lock
-                    className="absolute right-4 bottom-2"
-                    width="20"
-                    height="20"
-                  />
-                  <TextField
-                    label="Code"
-                    inputName="code"
-                    id="code"
-                    type="text"
-                    placeholder="Adicione o código recebido por email"
-                    onChange={(e) => setCode(e.target.value)}
-                    value={code}
-                    required
-                  />
-                </div>
-              </form>
+              <VerificationForm
+                code={code}
+                setCode={setCode}
+                onSubmit={handleVerification}
+              />
             )}
 
-            {error && <div> Um alerta de Erro </div>}
+            {error && (
+              <div className="p-3 bg-red-100 text-red-700 rounded-md">
+                {error}
+              </div>
+            )}
           </div>
         </div>
       </div>
