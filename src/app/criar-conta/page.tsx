@@ -43,7 +43,6 @@ export default function CreateAccount() {
     setPasswordStrength(evaluatePasswordStrength(password));
   }, [password]);
 
-  // Form validation logic
   const isFormValid = () => {
     return (
       emailAddress.trim() !== "" &&
@@ -59,7 +58,6 @@ export default function CreateAccount() {
   const isEmailValid =
     emailAddress.trim() === "" || validateEmail(emailAddress);
 
-  // Form submission handlers
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -123,12 +121,17 @@ export default function CreateAccount() {
       ) {
         setError(err.errors[0].message);
       } else {
-        setError("An unexpected error occurred.");
+        setError("Um erro ocorreu, tente novamente mais tarde.");
       }
     }
   };
 
-  if (!isLoaded) return <div> Loading </div>;
+  if (!isLoaded)
+    return (
+      <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
+        Loading
+      </div>
+    );
 
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
@@ -173,7 +176,7 @@ export default function CreateAccount() {
             )}
 
             {error && (
-              <div className="p-3 bg-red-100 text-red-700 rounded-md">
+              <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
                 {error}
               </div>
             )}

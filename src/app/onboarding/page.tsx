@@ -19,16 +19,15 @@ export default function Onboarding() {
       const res = await completeOnboarding(formData);
 
       if (res?.message) {
-        // Reloads the user's data from the Clerk API
         await user?.reload();
-        router.push("/");
+        router.push("/dashboard");
       }
 
       if (res?.error) {
         setError(res.error);
       }
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      setError("Um erro ocorreu, por favor, tente mais tarde.");
       console.error(err);
     }
   };

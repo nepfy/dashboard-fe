@@ -11,16 +11,17 @@ const isPublicRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { userId, sessionClaims, redirectToSignIn } = await auth();
 
-  if (userId && isOnboardingRoute(req)) {
-    return NextResponse.next();
-  }
-
   if (!userId && !isPublicRoute(req))
     return redirectToSignIn({ returnBackUrl: req.url });
 
   if (userId && !sessionClaims?.metadata?.onboardingComplete) {
     const onboardingUrl = new URL("/onboarding", req.url);
     return NextResponse.redirect(onboardingUrl);
+  }
+
+  if (userId && sessionClaims?.metadata?.onboardingComplete) {
+    const dashboard = new URL("/dashboard", req.url);
+    return NextResponse.redirect(dashboard);
   }
 
   if (userId && !isPublicRoute(req)) return NextResponse.next();

@@ -152,8 +152,17 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
       </div>
 
       <button
+        disabled={!termsAccepted}
         type="button"
-        className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2"
+        className={`w-full py-3 px-4
+                  rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] 
+                  transition-colors flex items-center justify-center gap-2
+                  ${
+                    termsAccepted
+                      ? "bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] cursor-pointer hover:bg-[var(--color-white-neutral-light-200)] "
+                      : "bg-gray-400 cursor-not-allowed text-[var(--color-white-neutral-light-600)]"
+                  }
+                  `}
       >
         <GoogleLogo />
         Continuar com o Google

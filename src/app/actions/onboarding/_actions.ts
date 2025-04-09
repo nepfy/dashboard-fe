@@ -6,7 +6,7 @@ export const completeOnboarding = async (formData: FormData) => {
   const { userId } = await auth();
 
   if (!userId) {
-    return { message: "No Logged In User" };
+    return { message: "Usuário não logado" };
   }
 
   const client = await clerkClient();
@@ -21,6 +21,9 @@ export const completeOnboarding = async (formData: FormData) => {
     });
     return { message: res.publicMetadata };
   } catch (err) {
-    return { error: "There was an error updating the user metadata.", err };
+    return {
+      error: "Ocorreu um erro ao tentar atualizar as informações do usuário:",
+      err,
+    };
   }
 };
