@@ -28,6 +28,8 @@ const SelectionButton = ({
 }: SelectionButtonProps) => {
   const { formData, handleMultiSelect, handleSingleSelect } = useFormContext();
 
+  console.log("formData", formData);
+
   const optionValue = typeof option === "object" ? option.id : option;
   const optionLabel = typeof option === "object" ? option.label : option;
 

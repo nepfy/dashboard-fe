@@ -3,47 +3,28 @@
 import { useState } from "react";
 import Link from "next/link";
 import GoogleLogo from "#/components/icons/GoogleLogo";
-import Ilustration from "#/components/icons/Ilustration";
-import Lock from "#/components/icons/Lock";
+import PasswordInput from "#/components/Inputs/PasswordInput";
 import MailEnvelope from "#/components/icons/MailEnvelope";
 import { TextField, CheckboxInput } from "#/components/Inputs";
+import IntroSlider from "#/components/IntroSlider";
+import FormHeader from "#/app/onboarding/components/FormHeader";
 
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
       <div className="grid xl:grid-cols-2 w-full min-h-screen">
-        <div className="hidden xl:block bg-[var(--color-primary-light-400)] sm:flex items-center justify-center">
-          <div className="w-full h-full flex items-center justify-center p-8">
-            <div className="w-full max-w-[80%]">
-              <div className="w-full aspect-[622/714] relative">
-                <Ilustration className="w-full h-full" />
-                <div className="absolute sm:bottom-0 lg:bottom-2xl xl:bottom-9xl left-0 right-0 space-y-2">
-                  <h2 className="text-[32px] font-medium text-[var(--color-white-neutral-light-200)] text-center">
-                    Gere propostas
-                  </h2>
-                  <p className="text-[var(--color-primary-light-200)] text-center max-w-72 mx-auto">
-                    Prepare uma proposta visualmente cativante e bem
-                    estruturada.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <IntroSlider
+          title="Gere propostas"
+          description="Prepare uma proposta visualmente cativante e bem estruturada."
+        />
 
         <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20">
           <div className="w-full max-w-[480px] space-y-8">
-            <div className="space-y-2">
-              <h2 className="text-[32px] font-bold text-[var(--color-white-neutral-light-800)] text-center">
-                Entrar
-              </h2>
-              <p className="text-[var(--color-white-neutral-light-500)] text-center">
-                Acesse sua conta nepfy!
-              </p>
-            </div>
+            <FormHeader title="Entrar" description="Acesse sua conta Nepfy!" />
 
             <form className="space-y-6">
               <div className="space-y-2 relative">
@@ -64,19 +45,14 @@ export default function Login() {
               </div>
 
               <div className="space-y-2 relative">
-                <Lock
-                  className="absolute right-4 bottom-2"
-                  width="20"
-                  height="20"
-                />
-                <TextField
+                <PasswordInput
                   label="Senha"
-                  inputName="password"
                   id="password"
-                  type="password"
-                  placeholder="Adicione sua senha"
-                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Crie uma senha"
                   value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  showPassword={showPassword}
+                  toggleShowPassword={() => setShowPassword(!showPassword)}
                 />
               </div>
 

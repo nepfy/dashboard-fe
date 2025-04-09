@@ -11,12 +11,16 @@ interface MultiStepProps {
   steps: Step[];
   currentStep: number;
   onChange: (step: number) => void;
+  isLastOptionSelected?: boolean;
+  onComplete?: () => Promise<void>;
 }
 
 const MultiStep: React.FC<MultiStepProps> = ({
   steps,
   currentStep,
   onChange,
+  isLastOptionSelected,
+  onComplete,
 }) => {
   const { nextStep, prevStep } = useFormContext();
 
@@ -69,12 +73,21 @@ const MultiStep: React.FC<MultiStepProps> = ({
           </button>
         )}
 
-        {currentStep < steps.length && (
+        {!isLastOptionSelected && currentStep < steps.length && (
           <button
             onClick={nextStep}
             className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors h-[44px] hover:cursor-pointer"
           >
             Avançar
+          </button>
+        )}
+
+        {isLastOptionSelected && (
+          <button
+            onClick={onComplete}
+            className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors h-[44px] hover:cursor-pointer"
+          >
+            Finalizar cadastro
           </button>
         )}
       </div>
