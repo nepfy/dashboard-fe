@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { LoaderCircle } from "lucide-react";
 import { CheckboxInput } from "#/components/Inputs";
 import MailEnvelope from "#/components/icons/MailEnvelope";
 import { TextField } from "#/components/Inputs";
@@ -25,6 +26,7 @@ type SignUpFormProps = {
   onSubmit: (e: React.FormEvent) => Promise<void>;
   isFormValid: () => boolean;
   isEmailValid?: boolean;
+  isLoaded?: boolean;
 };
 
 const SignUpForm: React.FC<SignUpFormProps> = ({
@@ -44,6 +46,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   onSubmit,
   isFormValid,
   isEmailValid,
+  isLoaded,
 }) => {
   return (
     <>
@@ -135,7 +138,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         Já possui uma conta?{" "}
         <Link href="/">
           <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
-            Faça login
+            {!isLoaded ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              "Faça login"
+            )}
           </p>
         </Link>
       </div>

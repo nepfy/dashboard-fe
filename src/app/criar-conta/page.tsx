@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
 import IntroSlider from "#/components/IntroSlider";
 import FormHeader from "#/app/onboarding/components/FormHeader";
 import {
@@ -33,7 +34,7 @@ export default function CreateAccount() {
 
   // Verification state
   const [pendingVerification, setPendingVerification] = useState(false);
-  const [code, setCode] = useState("");
+  const [emailCode, setEmailCode] = useState("");
 
   // Error handling
   const [error, setError] = useState("");
@@ -64,7 +65,7 @@ export default function CreateAccount() {
     if (!isLoaded || !isFormValid()) return;
 
     try {
-      const signUpUser = await signUp.create({
+      await signUp.create({
         emailAddress,
         password,
       });
@@ -72,12 +73,8 @@ export default function CreateAccount() {
       await signUp.prepareEmailAddressVerification({
         strategy: "email_code",
       });
-      setPendingVerification(true);
 
-      if (signUpUser.status === "complete") {
-        setActive({ session: signUpUser.createdSessionId });
-        router.push("/onboarding");
-      }
+      setPendingVerification(true);
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
       if (
@@ -99,7 +96,7 @@ export default function CreateAccount() {
 
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code,
+        code: emailCode,
       });
 
       if (completeSignUp.status !== "complete") {
@@ -129,7 +126,7 @@ export default function CreateAccount() {
   if (!isLoaded)
     return (
       <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
-        Loading
+        <LoaderCircle className="animate-spin" />
       </div>
     );
 
@@ -166,12 +163,14 @@ export default function CreateAccount() {
                 onSubmit={handleSubmit}
                 isFormValid={isFormValid}
                 isEmailValid={isEmailValid}
+                isLoaded={isLoaded}
               />
             ) : (
               <VerificationForm
-                code={code}
-                setCode={setCode}
+                code={emailCode}
+                setCode={setEmailCode}
                 onSubmit={handleVerification}
+                isLoaded={isLoaded}
               />
             )}
 
