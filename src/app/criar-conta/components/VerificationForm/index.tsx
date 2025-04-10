@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import Lock from "#/components/icons/Lock";
 import { TextField } from "#/components/Inputs";
@@ -18,6 +19,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
   setError,
 }) => {
   const { signUp, setActive } = useSignUp();
+  const router = useRouter();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +39,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
         await setActive?.({
           session: completeSignUp.createdSessionId,
         });
+        router.push("/onboarding");
       }
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));

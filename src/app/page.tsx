@@ -1,6 +1,6 @@
 "use client";
 
-import { RedirectToSignUp, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
+import { RedirectToSignIn, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import Onboarding from "./onboarding/page";
 import Dashboard from "./dashboard/page";
 
@@ -14,7 +14,7 @@ export default function Home() {
         {onboardingCompleted ? <Dashboard /> : <Onboarding />}
       </SignedIn>
       <SignedOut>
-        <RedirectToSignUp />
+        <RedirectToSignIn />
       </SignedOut>
     </>
   );
