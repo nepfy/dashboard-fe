@@ -174,6 +174,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         <GoogleLogo />
         Continuar com o Google
       </button>
+      <div id="clerk-captcha" />
     </>
   );
 };

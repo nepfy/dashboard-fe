@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSignUp } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import IntroSlider from "#/components/IntroSlider";
 import FormHeader from "#/app/onboarding/components/FormHeader";
@@ -15,8 +14,7 @@ import SignUpForm from "#/app/criar-conta/components/SignUpForm";
 import VerificationForm from "#/app/criar-conta/components/VerificationForm";
 
 export default function CreateAccount() {
-  const { isLoaded, signUp, setActive } = useSignUp();
-  const router = useRouter();
+  const { isLoaded, signUp } = useSignUp();
 
   // Form state
   const [emailAddress, setEmailAddress] = useState("");
@@ -89,40 +87,6 @@ export default function CreateAccount() {
     }
   };
 
-  const handleVerification = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!isLoaded) return;
-
-    try {
-      const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code: emailCode,
-      });
-
-      if (completeSignUp.status !== "complete") {
-        console.error(JSON.stringify(completeSignUp, null, 2));
-      }
-
-      if (completeSignUp.status === "complete") {
-        await setActive({
-          session: completeSignUp.createdSessionId,
-        });
-        router.push("/onboarding");
-      }
-    } catch (err: unknown) {
-      console.error(JSON.stringify(err, null, 2));
-      if (
-        err instanceof Error &&
-        "errors" in err &&
-        Array.isArray(err.errors)
-      ) {
-        setError(err.errors[0].message);
-      } else {
-        setError("Um erro ocorreu, tente novamente mais tarde.");
-      }
-    }
-  };
-
   if (!isLoaded)
     return (
       <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
@@ -160,16 +124,16 @@ export default function CreateAccount() {
                 setShowConfirmPassword={setShowConfirmPassword}
                 termsAccepted={termsAccepted}
                 setTermsAccepted={setTermsAccepted}
-                onSubmit={handleSubmit}
                 isFormValid={isFormValid}
                 isEmailValid={isEmailValid}
+                onSubmit={handleSubmit}
                 isLoaded={isLoaded}
               />
             ) : (
               <VerificationForm
                 code={emailCode}
                 setCode={setEmailCode}
-                onSubmit={handleVerification}
+                setError={setError}
                 isLoaded={isLoaded}
               />
             )}
