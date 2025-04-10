@@ -27,6 +27,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         type="button"
         className="absolute right-4 bottom-2"
         onClick={toggleShowPassword}
+        tabIndex={-1}
       >
         {showPassword ? (
           <Eye width="20" height="20" />

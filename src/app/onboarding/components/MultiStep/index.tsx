@@ -26,7 +26,6 @@ const MultiStep: React.FC<MultiStepProps> = ({
 
   return (
     <div className="w-full flex flex-col justify-start h-[452px]">
-      {/* Step indicators */}
       <div className="flex items-center justify-start mb-8 space-x-4">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
