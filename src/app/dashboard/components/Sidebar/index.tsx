@@ -111,9 +111,9 @@ export default function Sidebar() {
               <li key={item.name}>
                 <Link
                   href={item.path}
-                  className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium  ${
+                  className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
                     isActive(item.path)
-                      ? "bg-white-neutral-light-100 e0"
+                      ? "bg-white-neutral-light-100 e0 cursor-default"
                       : "hover:bg-gray-100"
                   }`}
                 >
@@ -132,7 +132,7 @@ export default function Sidebar() {
                   href={item.path}
                   className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
                     isActive(item.path)
-                      ? "bg-white-neutral-light-100 font-medium e0"
+                      ? "bg-white-neutral-light-100 font-medium e0 cursor-default"
                       : "hover:bg-gray-100"
                   }`}
                 >

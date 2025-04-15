@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import MobileMenu from "../MobileMenu";
+import Notifications from "../Notifications";
 import NotificationIcon from "#/components/icons/NotificationIcon";
 import Logo from "#/components/icons/Logo";
 import MenuIcon from "#/components/icons/MenuIcon";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   return (
     <nav className="bg-white-neutral-light-200 border-b border-gray-200">
@@ -22,7 +24,10 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center">
-            <button className="p-2 text-gray-600 hover:text-gray-900 relative">
+            <button
+              className="p-2 text-gray-600 hover:text-gray-900 relative cursor-pointer"
+              onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+            >
               <span className="absolute top-1 right-1 bg-indigo-600 rounded-full w-4 h-4 text-xs text-white flex items-center justify-center">
                 2
               </span>
@@ -52,6 +57,13 @@ export default function Navbar() {
         <MobileMenu
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
+        />
+      )}
+
+      {isNotificationOpen && (
+        <Notifications
+          isNotificationOpen={isNotificationOpen}
+          setIsNotificationOpenAction={setIsNotificationOpen}
         />
       )}
     </nav>

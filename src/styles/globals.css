@@ -170,3 +170,8 @@ body {
   opacity: 0.8;
   pointer-events: none;
 }
+
+.bg-filter {
+  background: rgba(20, 20, 33, 0.4);
+  backdrop-filter: blur(10px);
+}
