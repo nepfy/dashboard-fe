@@ -66,6 +66,7 @@ export default function CreateAccount() {
       await signUp.create({
         emailAddress,
         password,
+        legalAccepted: termsAccepted,
       });
 
       await signUp.prepareEmailAddressVerification({

@@ -3,8 +3,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import localFont from "next/font/local";
 import "#/styles/globals.css";
 
-import Navbar from "#/components/Navbar";
-
 const satoshi = localFont({
   src: [
     {
@@ -34,10 +32,7 @@ export default function RootLayout({
   return (
     <ClerkProvider dynamic>
       <html lang="pt-BR">
-        <body className={`${satoshi.variable} antialiased`}>
-          <Navbar />
-          {children}
-        </body>
+        <body className={`${satoshi.variable} antialiased`}>{children}</body>
       </html>
     </ClerkProvider>
   );
