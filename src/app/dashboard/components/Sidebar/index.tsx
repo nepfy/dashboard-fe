@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
+
 import Logo from "#/components/icons/Logo";
 import GridIcon from "#/components/icons/GridIcon";
 import FileIcon from "#/components/icons/FileIcon";
@@ -14,6 +16,7 @@ import TutorialIcon from "#/components/icons/TutorialIcon";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { signOut } = useClerk();
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -91,18 +94,11 @@ export default function Sidebar() {
         />
       ),
     },
-    {
-      name: "Sair",
-      path: "/logout",
-      icon: (
-        <SignOutIcon
-          width="20"
-          height="20"
-          fill={isActive("/logout") ? "#6B46F5" : "#19171F"}
-        />
-      ),
-    },
   ];
+
+  const handleSignOut = () => {
+    console.log("here");
+  };
 
   return (
     <aside className="hidden lg:flex flex-col bg-white-neutral-light-200 border-r border-gray-200 h-screen">
@@ -149,6 +145,17 @@ export default function Sidebar() {
                 </Link>
               </li>
             ))}
+            <li>
+              <div
+                onClick={() => signOut({ redirectUrl: "/login" })}
+                className="flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium hover:bg-gray-100 cursor-pointer"
+              >
+                <span className="mr-2">
+                  <SignOutIcon width="20" height="20" fill="#19171F" />
+                </span>
+                Sair
+              </div>
+            </li>
             <li>
               <div className="gradient-border rounded-[var(--radius-m)] h-[144px] w-[236px] p-[3px] bg-white-neutral-light-100">
                 <div className="w-full h-full rounded-[var(--radius-s)] p-5 bg-[var(--color-white-neutral-light-200)] flex flex-col justify-between items-start">
