@@ -96,10 +96,6 @@ export default function Sidebar() {
     },
   ];
 
-  const handleSignOut = () => {
-    console.log("here");
-  };
-
   return (
     <aside className="hidden lg:flex flex-col bg-white-neutral-light-200 border-r border-gray-200 h-screen">
       <div className="p-4">
