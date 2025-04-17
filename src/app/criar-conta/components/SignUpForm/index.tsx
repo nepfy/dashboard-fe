@@ -1,10 +1,13 @@
 import React from "react";
 import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
+import { useSignUp } from "@clerk/nextjs";
+
 import { CheckboxInput } from "#/components/Inputs";
 import MailEnvelope from "#/components/icons/MailEnvelope";
 import { TextField } from "#/components/Inputs";
 import PasswordInput from "#/components/Inputs/PasswordInput";
+
 import RenderPasswordStrengthMeter from "#/app/criar-conta/components/RenderPassword";
 import GoogleLogo from "#/components/icons/GoogleLogo";
 import { PasswordStrength } from "#/helpers/evaluatePassword";
@@ -50,7 +53,41 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   isEmailValid,
   isLoaded,
   error,
+  setError,
 }) => {
+  const { signUp, isLoaded: clerkLoaded } = useSignUp();
+
+  const handleGoogleSignUp = async () => {
+    if (!termsAccepted) {
+      return;
+    }
+
+    try {
+      if (!clerkLoaded || !signUp) {
+        if (setError)
+          setError(
+            "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
+          );
+        return;
+      }
+
+      await signUp.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: "/onboarding",
+        legalAccepted: termsAccepted,
+      });
+    } catch (err) {
+      if (
+        err instanceof Error &&
+        "errors" in err &&
+        Array.isArray(err.errors)
+      ) {
+        setError?.("Ocorreu um erro ao conectar com Google. Tente novamente.");
+      }
+    }
+  };
+
   return (
     <>
       <form className="space-y-6" onSubmit={onSubmit}>
@@ -169,6 +206,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
       <button
         disabled={!termsAccepted}
         type="button"
+        onClick={handleGoogleSignUp}
         className={`w-full py-3 px-4
                   rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] 
                   transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4

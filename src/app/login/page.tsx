@@ -18,7 +18,7 @@ import PasswordInput from "#/components/Inputs/PasswordInput";
 import MailEnvelope from "#/components/icons/MailEnvelope";
 
 export default function Login() {
-  const { signIn, setActive } = useSignIn();
+  const { signIn, setActive, isLoaded: clerkLoaded } = useSignIn();
   const router = useRouter();
 
   const [emailAddress, setEmailAddress] = useState("");
@@ -60,6 +60,31 @@ export default function Login() {
         setError(
           "Email ou senha incorretos. Se você não tem uma conta, clique em 'Criar conta'."
         );
+      }
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      if (!clerkLoaded || !signIn) {
+        setError(
+          "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
+        );
+        return;
+      }
+
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: "/dashboard",
+      });
+    } catch (err) {
+      if (
+        err instanceof Error &&
+        "errors" in err &&
+        Array.isArray(err.errors)
+      ) {
+        setError("Ocorreu um erro ao conectar com Google. Tente novamente.");
       }
     }
   };
@@ -163,10 +188,11 @@ export default function Login() {
 
             <button
               type="button"
+              onClick={handleGoogleSignIn}
               className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4 h-[54px]"
             >
               <GoogleLogo />
-              Continuar com o Google
+              Fazer login com o Google
             </button>
           </div>
         </div>
