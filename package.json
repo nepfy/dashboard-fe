@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/localizations": "^3.13.11",
     "@clerk/nextjs": "^6.12.12",
     "@neondatabase/serverless": "^0.10.4",
     "dotenv": "^16.4.7",

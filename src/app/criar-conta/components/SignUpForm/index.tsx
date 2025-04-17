@@ -8,7 +8,7 @@ import MailEnvelope from "#/components/icons/MailEnvelope";
 import { TextField } from "#/components/Inputs";
 import PasswordInput from "#/components/Inputs/PasswordInput";
 
-import RenderPasswordStrengthMeter from "#/app/criar-conta/components/RenderPassword";
+import RenderPasswordStrengthMeter from "#/components/RenderPassword";
 import GoogleLogo from "#/components/icons/GoogleLogo";
 import { PasswordStrength } from "#/helpers/evaluatePassword";
 

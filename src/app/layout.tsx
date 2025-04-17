@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ptBR } from "@clerk/localizations";
 import localFont from "next/font/local";
 import "#/styles/globals.css";
 
@@ -21,7 +22,7 @@ const satoshi = localFont({
 
 export const metadata: Metadata = {
   title: ".Nepfy",
-  description: "Manage your proposals with ease.",
+  description: "Faça a gestão das suas propostas de forma simples e elegante.",
 };
 
 export default function RootLayout({
@@ -30,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider dynamic>
+    <ClerkProvider dynamic localization={ptBR}>
       <html lang="pt-BR">
         <body className={`${satoshi.variable} antialiased`}>{children}</body>
       </html>
