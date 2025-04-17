@@ -175,3 +175,17 @@ body {
   background: rgba(20, 20, 33, 0.4);
   backdrop-filter: blur(10px);
 }
+
+/* Controls the transition between Table View and Kanban View on Proposals page */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
