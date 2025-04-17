@@ -1,7 +1,15 @@
+import { useEffect } from "react";
+import { useFormContext } from "#/app/onboarding/helpers/FormContext";
 import StepHeader from "#/app/onboarding/components/StepHeader";
 import SelectionGrid from "#/app/onboarding/components/SelectionGrid";
 
 const JobTypeStep = () => {
+  const { formData, enableNextStepJobType } = useFormContext();
+
+  useEffect(() => {
+    enableNextStepJobType();
+  }, [formData.jobType, enableNextStepJobType]);
+
   const jobOptions = [
     {
       id: "agencia-de-marketing",

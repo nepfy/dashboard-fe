@@ -7,7 +7,7 @@ interface IntroSliderProps {
 
 export default function IntroSlider({ title, description }: IntroSliderProps) {
   return (
-    <div className="hidden xl:block bg-[var(--color-primary-light-400)] sm:flex items-center justify-center">
+    <div className="hidden bg-[var(--color-primary-light-400)] xl:flex items-center justify-center">
       <div className="w-full h-full flex items-center justify-center p-8">
         <div className="w-full max-w-[80%]">
           <div className="w-full aspect-[622/714] relative">

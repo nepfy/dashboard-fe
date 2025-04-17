@@ -1,5 +1,5 @@
 import React from "react";
-import { PasswordStrength } from "../../helpers/evaluatePassword";
+import { PasswordStrength } from "../../../../helpers/evaluatePassword";
 
 type RenderPasswordStrengthMeterProps = {
   password: string;

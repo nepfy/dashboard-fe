@@ -30,9 +30,9 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         tabIndex={-1}
       >
         {showPassword ? (
-          <Eye width="20" height="20" />
-        ) : (
           <EyeOff width="20" height="20" />
+        ) : (
+          <Eye width="20" height="20" />
         )}
       </button>
 

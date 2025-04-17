@@ -3,7 +3,11 @@ interface FormLayoutProps {
 }
 
 const FormLayout = ({ children }: FormLayoutProps) => {
-  return <div className="w-full max-w-[500px] space-y-8">{children}</div>;
+  return (
+    <div className="w-full max-w-[500px] space-y-8 h-full pt-[70px] sm:pt-0 sm:flex justify-center items-center">
+      {children}
+    </div>
+  );
 };
 
 export default FormLayout;

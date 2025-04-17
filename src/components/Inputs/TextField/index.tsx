@@ -4,6 +4,7 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 const TextField: React.FC<CustomInputProps> = (props) => {
@@ -17,6 +18,7 @@ const TextField: React.FC<CustomInputProps> = (props) => {
     error,
     onChange,
     onBlur,
+    disabled,
   } = props;
 
   return (
@@ -28,6 +30,7 @@ const TextField: React.FC<CustomInputProps> = (props) => {
         {label}
       </label>
       <input
+        disabled={disabled}
         type={type}
         id={id}
         name={inputName}

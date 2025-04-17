@@ -1,7 +1,15 @@
+import { useEffect } from "react";
+import { useFormContext } from "#/app/onboarding/helpers/FormContext";
 import StepHeader from "#/app/onboarding/components/StepHeader";
 import SelectionGridContext from "#/app/onboarding/components/SelectionGrid";
 
 const DiscoveryStep = () => {
+  const { formData, enableNextStepDiscoverySource } = useFormContext();
+
+  useEffect(() => {
+    enableNextStepDiscoverySource();
+  }, [formData.discoverySource, enableNextStepDiscoverySource]);
+
   const discoveryOptions = [
     {
       id: "fornecedor-de-tecnologia",

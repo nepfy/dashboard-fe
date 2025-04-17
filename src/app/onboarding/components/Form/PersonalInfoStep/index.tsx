@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useFormContext } from "#/app/onboarding/helpers/FormContext";
 import StepHeader from "#/app/onboarding/components/StepHeader";
 import { TextField } from "#/components/Inputs";
@@ -8,8 +8,22 @@ import {
 } from "#/app/onboarding/helpers/validateAndMaskCpf";
 
 const PersonalInfoStep = () => {
-  const { formData, formErrors, handleChange, setFieldError } =
-    useFormContext();
+  const {
+    formData,
+    formErrors,
+    handleChange,
+    setFieldError,
+    enableNextStepPersonalInfo,
+  } = useFormContext();
+
+  useEffect(() => {
+    enableNextStepPersonalInfo();
+  }, [
+    formData.fullName,
+    formData.cpf,
+    formData.phone,
+    enableNextStepPersonalInfo,
+  ]);
 
   const handleCPFChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;

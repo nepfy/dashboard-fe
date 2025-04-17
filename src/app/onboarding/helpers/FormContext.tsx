@@ -37,6 +37,12 @@ interface FormContextType {
   nextStep: () => void;
   prevStep: () => void;
   goToStep: (step: SetStateAction<number>) => void;
+  enableNextStep: boolean;
+  enableNextStepPersonalInfo: () => void;
+  enableNextStepJobType: () => void;
+  enableNextStepDiscoverySource: () => void;
+  enableNextStepUsedBefore: () => void;
+  resetEnableNextStep: () => void;
 }
 
 // Create the context with default values
@@ -58,6 +64,12 @@ const FormContext = createContext<FormContextType>({
   nextStep: () => {},
   prevStep: () => {},
   goToStep: () => {},
+  enableNextStep: false,
+  enableNextStepPersonalInfo: () => {},
+  enableNextStepJobType: () => {},
+  enableNextStepDiscoverySource: () => {},
+  enableNextStepUsedBefore: () => {},
+  resetEnableNextStep: () => {},
 });
 
 export const useFormContext = () => useContext(FormContext);
@@ -78,6 +90,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [enableNextStep, setEnableNextStep] = useState<boolean>(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | { name: string; value: string }
@@ -161,16 +174,50 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     }));
   };
 
+  const resetEnableNextStep = () => {
+    setEnableNextStep(false);
+  };
+
+  // Modify the nextStep and prevStep functions to reset enableNextStep
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
+    resetEnableNextStep();
   };
 
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1);
+    resetEnableNextStep();
   };
 
   const goToStep = (step: SetStateAction<number>) => {
     setCurrentStep(step);
+    resetEnableNextStep();
+  };
+
+  // Update the enableNextStep functions to validate form data
+  const enableNextStepPersonalInfo = () => {
+    const isValid =
+      formData.fullName.trim() !== "" &&
+      formData.cpf.trim() !== "" &&
+      formData.phone.trim() !== "" &&
+      !formErrors.cpf; // Check if there are no errors for CPF
+
+    setEnableNextStep(isValid);
+  };
+
+  const enableNextStepJobType = () => {
+    const isValid = formData.jobType.length > 0;
+    setEnableNextStep(isValid);
+  };
+
+  const enableNextStepDiscoverySource = () => {
+    const isValid = formData.discoverySource.length > 0;
+    setEnableNextStep(isValid);
+  };
+
+  const enableNextStepUsedBefore = () => {
+    const isValid = formData.usedBefore !== "";
+    setEnableNextStep(isValid);
   };
 
   const value: FormContextType = {
@@ -184,6 +231,12 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     nextStep,
     prevStep,
     goToStep,
+    enableNextStep,
+    enableNextStepPersonalInfo,
+    enableNextStepJobType,
+    enableNextStepDiscoverySource,
+    enableNextStepUsedBefore,
+    resetEnableNextStep,
   };
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;

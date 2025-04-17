@@ -1,5 +1,4 @@
-// MultiStep/index.tsx
-import React from "react";
+import { useEffect } from "react";
 import { useFormContext } from "#/app/onboarding/helpers/FormContext";
 
 interface Step {
@@ -22,7 +21,42 @@ const MultiStep: React.FC<MultiStepProps> = ({
   isLastOptionSelected,
   onComplete,
 }) => {
-  const { nextStep, prevStep } = useFormContext();
+  const {
+    nextStep,
+    prevStep,
+    enableNextStep,
+    enableNextStepPersonalInfo,
+    enableNextStepJobType,
+    enableNextStepDiscoverySource,
+    enableNextStepUsedBefore,
+    formData,
+  } = useFormContext();
+
+  useEffect(() => {
+    switch (currentStep) {
+      case 1:
+        enableNextStepPersonalInfo();
+        break;
+      case 2:
+        enableNextStepJobType();
+        break;
+      case 3:
+        enableNextStepDiscoverySource();
+        break;
+      case 4:
+        enableNextStepUsedBefore();
+        break;
+      default:
+        break;
+    }
+  }, [
+    currentStep,
+    formData,
+    enableNextStepPersonalInfo,
+    enableNextStepJobType,
+    enableNextStepDiscoverySource,
+    enableNextStepUsedBefore,
+  ]);
 
   return (
     <div className="w-full flex flex-col justify-start h-[452px]">
@@ -30,15 +64,19 @@ const MultiStep: React.FC<MultiStepProps> = ({
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
             <div
-              className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-medium cursor-pointer
-              ${
-                currentStep === index + 1
-                  ? "bg-indigo-500 text-white"
-                  : index + 1 < currentStep
-                  ? "bg-white text-gray-500 border border-gray-200"
-                  : "bg-white text-gray-500 border border-gray-200"
-              }`}
-              onClick={() => onChange(index + 1)}
+              className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold 
+                ${
+                  currentStep === index + 1
+                    ? "border border-primary-light-500 text-primary-light-500 bg-primary-light-25"
+                    : index + 1 < currentStep
+                    ? "bg-white text-white-neutral-light-900 cursor-pointer e0"
+                    : "bg-white-neutral-light-200 text-white-neutral-light-500 border border-white-neutral-light-400 opacity-50"
+                }`}
+              onClick={() => {
+                if (index + 1 <= currentStep) {
+                  onChange(index + 1);
+                }
+              }}
             >
               {index + 1}
             </div>
@@ -75,7 +113,12 @@ const MultiStep: React.FC<MultiStepProps> = ({
         {!isLastOptionSelected && currentStep < steps.length && (
           <button
             onClick={nextStep}
-            className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors h-[44px] hover:cursor-pointer"
+            disabled={!enableNextStep}
+            className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors text-center box-border ${
+              enableNextStep
+                ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] hover:cursor-pointer"
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
           >
             Avançar
           </button>
@@ -84,7 +127,7 @@ const MultiStep: React.FC<MultiStepProps> = ({
         {isLastOptionSelected && (
           <button
             onClick={onComplete}
-            className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors h-[44px] hover:cursor-pointer"
+            className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors hover:cursor-pointer"
           >
             Finalizar cadastro
           </button>

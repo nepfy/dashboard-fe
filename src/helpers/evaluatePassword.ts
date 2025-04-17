@@ -45,7 +45,7 @@ export const evaluatePasswordStrength = (
 
   // Determine strength level
   let strength: "none" | "fraca" | "moderada" | "forte" = "fraca";
-  if (score >= 4) strength = "forte";
+  if (score > 4) strength = "forte";
   else if (score >= 3) strength = "moderada";
 
   return { strength, score };

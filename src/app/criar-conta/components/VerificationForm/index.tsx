@@ -1,7 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
-import Lock from "#/components/icons/Lock";
 import { TextField } from "#/components/Inputs";
 import { useSignUp } from "@clerk/nextjs";
 
@@ -43,22 +42,13 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
       }
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
-      if (
-        err instanceof Error &&
-        "errors" in err &&
-        Array.isArray(err.errors)
-      ) {
-        setError?.(err.errors[0].message);
-      } else {
-        setError?.("Um erro ocorreu, tente novamente mais tarde.");
-      }
+      setError?.("Código incorreto.");
     }
   };
 
   return (
     <form className="space-y-6" onSubmit={onSubmit}>
-      <div className="space-y-2 relative">
-        <Lock className="absolute right-4 bottom-2" width="20" height="20" />
+      <div className="space-y-2">
         <TextField
           label="Código"
           inputName="code"
@@ -72,7 +62,14 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
       </div>
       <button
         type="submit"
-        className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors mt-4 h-[54px] cursor-pointer"
+        disabled={code.length !== 6}
+        className={`w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px]
+        ${
+          code.length !== 6
+            ? "bg-gray-400 cursor-not-allowed"
+            : "hover:bg-[var(--color-primary-light-500)] cursor-pointer"
+        }
+          `}
       >
         {!isLoaded ? <LoaderCircle className="animate-spin" /> : "Verificar"}
       </button>

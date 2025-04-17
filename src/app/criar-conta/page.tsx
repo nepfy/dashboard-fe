@@ -3,15 +3,20 @@
 import { useState, useEffect } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
+
+import Navbar from "#/components/Navbar";
+import Footer from "#/components/Footer";
 import IntroSlider from "#/components/IntroSlider";
 import FormHeader from "#/app/onboarding/components/FormHeader";
+
+import SignUpForm from "#/app/criar-conta/components/SignUpForm";
+import VerificationForm from "#/app/criar-conta/components/VerificationForm";
+
 import {
   evaluatePasswordStrength,
   PasswordStrength,
-} from "#/app/criar-conta/helpers/evaluatePassword";
-import { validateEmail } from "./helpers/validateEmail";
-import SignUpForm from "#/app/criar-conta/components/SignUpForm";
-import VerificationForm from "#/app/criar-conta/components/VerificationForm";
+} from "#/helpers/evaluatePassword";
+import { validateEmail } from "#/helpers/validateEmail";
 
 export default function CreateAccount() {
   const { isLoaded, signUp } = useSignUp();
@@ -75,15 +80,16 @@ export default function CreateAccount() {
 
       setPendingVerification(true);
     } catch (err: unknown) {
-      console.error(JSON.stringify(err, null, 2));
       if (
         err instanceof Error &&
         "errors" in err &&
         Array.isArray(err.errors)
       ) {
-        setError(err.errors[0].message);
+        if (err.errors[0].code === "form_password_pwned") {
+          setError("Senha comprometida. Por favor, escolha outra senha.");
+        }
       } else {
-        setError("An unexpected error occurred.");
+        setError("Um erro ocorreu. Por favor, tente novamente mais tarde");
       }
     }
   };
@@ -96,14 +102,15 @@ export default function CreateAccount() {
     );
 
   return (
-    <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
-      <div className="grid xl:grid-cols-2 w-full min-h-screen">
+    <div className="grid place-items-center pb-0 pt-0 h-screen">
+      <Navbar />
+      <div className="grid xl:grid-cols-2 w-full h-full relative">
         <IntroSlider
           title="Gere propostas"
           description="Prepare uma proposta visualmente cativante e bem estruturada."
         />
 
-        <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20">
+        <div className="flex items-center justify-center pt-[82px] sm:pt-0 px-8 sm:p-0 mb-6 sm:mb-0">
           <div className="w-full max-w-[480px] space-y-8">
             <FormHeader
               title="Criar conta"
@@ -129,6 +136,8 @@ export default function CreateAccount() {
                 isEmailValid={isEmailValid}
                 onSubmit={handleSubmit}
                 isLoaded={isLoaded}
+                setError={setError}
+                error={error}
               />
             ) : (
               <VerificationForm
@@ -138,14 +147,9 @@ export default function CreateAccount() {
                 isLoaded={isLoaded}
               />
             )}
-
-            {error && (
-              <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
-                {error}
-              </div>
-            )}
           </div>
         </div>
+        <Footer />
       </div>
     </div>
   );

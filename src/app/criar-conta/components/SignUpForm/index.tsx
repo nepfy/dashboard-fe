@@ -7,7 +7,7 @@ import { TextField } from "#/components/Inputs";
 import PasswordInput from "#/components/Inputs/PasswordInput";
 import RenderPasswordStrengthMeter from "#/app/criar-conta/components/RenderPassword";
 import GoogleLogo from "#/components/icons/GoogleLogo";
-import { PasswordStrength } from "#/app/criar-conta/helpers/evaluatePassword";
+import { PasswordStrength } from "#/helpers/evaluatePassword";
 
 type SignUpFormProps = {
   emailAddress: string;
@@ -27,6 +27,8 @@ type SignUpFormProps = {
   isFormValid: () => boolean;
   isEmailValid?: boolean;
   isLoaded?: boolean;
+  error?: string;
+  setError?: (message: string) => void;
 };
 
 const SignUpForm: React.FC<SignUpFormProps> = ({
@@ -47,6 +49,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   isFormValid,
   isEmailValid,
   isLoaded,
+  error,
 }) => {
   return (
     <>
@@ -66,12 +69,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
             onChange={(e) => setEmailAddress(e.target.value)}
             value={emailAddress}
           />
-          {emailAddress.trim() !== "" && !isEmailValid && (
-            <div className="text-red-500 text-sm mt-1">
-              Por favor, insira um email válido
-            </div>
-          )}
         </div>
+        {emailAddress.trim() !== "" && !isEmailValid && (
+          <div className="text-red-500 text-sm">
+            Por favor, insira um email válido
+          </div>
+        )}
 
         <PasswordInput
           label="Senha"
@@ -101,6 +104,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
             setShowConfirmPassword(!showConfirmPassword)
           }
         />
+        {error && (
+          <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
+            {error}
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <CheckboxInput
@@ -163,7 +171,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         type="button"
         className={`w-full py-3 px-4
                   rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] 
-                  transition-colors flex items-center justify-center gap-2
+                  transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4
                   ${
                     termsAccepted
                       ? "bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] cursor-pointer hover:bg-[var(--color-white-neutral-light-200)] "
