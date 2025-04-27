@@ -30,8 +30,13 @@ export default function Onboarding() {
         setError(res.error);
       }
     } catch (err) {
-      setError("Um erro ocorreu, por favor, tente mais tarde.");
-      console.error(err);
+      if (
+        err instanceof Error &&
+        "errors" in err &&
+        Array.isArray(err.errors)
+      ) {
+        setError("Um erro ocorreu, por favor, tente mais tarde.");
+      }
     }
   };
 
@@ -46,15 +51,14 @@ export default function Onboarding() {
           />
 
           <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20 mb-6 sm:mb-0">
-            <div className="w-full flex items-center justify-center space-y-8 h-full">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-                  {error}
-                </div>
-              )}
-              <MultiStepForm onComplete={handleOnboardingComplete} />
+            <div className="w-full flex flex-col items-center justify-center space-y-8 h-full">
+              <MultiStepForm
+                onComplete={handleOnboardingComplete}
+                error={error}
+              />
             </div>
           </div>
+
           <Footer />
         </div>
       </div>

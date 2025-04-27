@@ -6,7 +6,7 @@ import Header from "./components/Header";
 import TableView from "./components/TableView";
 import KanbanView from "./components/KanbanView";
 
-export default function Proposals() {
+export default function Projects() {
   const [tab, setTab] = useState("table");
 
   return (

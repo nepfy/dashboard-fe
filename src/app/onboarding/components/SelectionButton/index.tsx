@@ -1,7 +1,7 @@
 import { useFormContext } from "#/app/onboarding/helpers/FormContext";
 
 interface SelectionButtonProps {
-  option: string | { id: string; label: string };
+  option: string | { id: string; name: string };
   fieldName: string;
   isMultiSelect?: boolean;
   checkmark?: boolean;
@@ -29,7 +29,7 @@ const SelectionButton = ({
   const { formData, handleMultiSelect, handleSingleSelect } = useFormContext();
 
   const optionValue = typeof option === "object" ? option.id : option;
-  const optionLabel = typeof option === "object" ? option.label : option;
+  const optionLabel = typeof option === "object" ? option.name : option;
 
   const selectedValues = formData[fieldName as keyof formDataProps] as
     | string

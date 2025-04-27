@@ -1,4 +1,3 @@
-// FormContext.tsx
 import React, {
   createContext,
   useContext,
@@ -8,7 +7,6 @@ import React, {
   SetStateAction,
 } from "react";
 
-// Define types for form data
 export interface FormDataProps {
   fullName: string;
   cpf: string;
@@ -18,12 +16,10 @@ export interface FormDataProps {
   usedBefore: string;
 }
 
-// Define type for form errors
 interface FormErrors {
   [key: string]: string;
 }
 
-// Define the context type
 interface FormContextType {
   formData: FormDataProps;
   formErrors: FormErrors;
@@ -45,7 +41,6 @@ interface FormContextType {
   resetEnableNextStep: () => void;
 }
 
-// Create the context with default values
 const FormContext = createContext<FormContextType>({
   formData: {
     fullName: "",
@@ -95,7 +90,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | { name: string; value: string }
   ) => {
-    // Check if e is an event or a custom object
     if ("target" in e) {
       e.preventDefault();
       const { name, value } = e.target;
@@ -104,7 +98,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
         [name]: value,
       }));
 
-      // Clear error when field is changed
       if (formErrors[name]) {
         setFormErrors((prevErrors) => {
           const newErrors = { ...prevErrors };
@@ -113,14 +106,12 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
         });
       }
     } else {
-      // Handle the custom object format { name, value }
       const { name, value } = e;
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
 
-      // Clear error when field is changed
       if (formErrors[name]) {
         setFormErrors((prevErrors) => {
           const newErrors = { ...prevErrors };
@@ -141,7 +132,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
         : [...currentValues, value],
     }));
 
-    // Clear error when field is changed
     if (formErrors[name]) {
       setFormErrors((prevErrors) => {
         const newErrors = { ...prevErrors };
@@ -157,7 +147,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
       [name]: value,
     }));
 
-    // Clear error when field is changed
     if (formErrors[name]) {
       setFormErrors((prevErrors) => {
         const newErrors = { ...prevErrors };
@@ -178,7 +167,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     setEnableNextStep(false);
   };
 
-  // Modify the nextStep and prevStep functions to reset enableNextStep
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
     resetEnableNextStep();
@@ -194,13 +182,12 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     resetEnableNextStep();
   };
 
-  // Update the enableNextStep functions to validate form data
   const enableNextStepPersonalInfo = () => {
     const isValid =
       formData.fullName.trim() !== "" &&
       formData.cpf.trim() !== "" &&
       formData.phone.trim() !== "" &&
-      !formErrors.cpf; // Check if there are no errors for CPF
+      !formErrors.cpf;
 
     setEnableNextStep(isValid);
   };

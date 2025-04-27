@@ -11,7 +11,8 @@ import DiscoveryStep from "#/app/onboarding/components/Form/DiscoveryStep";
 import UsedBeforeStep from "#/app/onboarding/components/Form/UsedBeforeStep";
 
 interface MultiStepFormProps {
-  onComplete: (formData: FormData) => Promise<void>;
+  onComplete: (formData: FormData) => Promise<{ error?: string } | void>;
+  error?: string;
 }
 
 interface FormValidationErrors {
@@ -19,29 +20,26 @@ interface FormValidationErrors {
   message: string;
 }
 
-const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
+const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete, error }) => {
   const { currentStep, goToStep, formData, setFieldError } = useFormContext();
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
-  // Helper function to validate form data
+  const errorMessage = error || submissionError;
+
   const validateForm = (): FormValidationErrors => {
-    // Reset any previous submission error
     setSubmissionError(null);
 
-    // Check required fields
     const requiredFields: { [key: string]: string } = {
       fullName: "Nome completo",
       cpf: "CPF",
       phone: "Telefone",
     };
 
-    // Check array fields
     const requiredArrayFields: { [key: string]: string } = {
       jobType: "Tipo de Trabalho",
       discoverySource: "Fonte de Descoberta",
     };
 
-    // Check single-value fields
     for (const [field, label] of Object.entries(requiredFields)) {
       const value = formData[field as keyof FormDataProps];
       if (!value || (typeof value === "string" && value.trim() === "")) {
@@ -53,7 +51,6 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
       }
     }
 
-    // Check array fields
     for (const [field, label] of Object.entries(requiredArrayFields)) {
       const value = formData[field as keyof FormDataProps];
       if (!value || (Array.isArray(value) && value.length === 0)) {
@@ -65,7 +62,6 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
       }
     }
 
-    // Check usedBefore field
     if (!formData.usedBefore) {
       setFieldError("usedBefore", "Este campo é obrigatório");
       return {
@@ -75,7 +71,6 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
       };
     }
 
-    // Additional specific validation for CPF
     if (formData.cpf) {
       const cleanCPF = formData.cpf.replace(/\D/g, "");
       if (cleanCPF.length !== 11) {
@@ -91,7 +86,6 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
   };
 
   const handleSubmit = async () => {
-    // Validate form before submission
     const validationResult = validateForm();
 
     if (validationResult.hasErrors) {
@@ -99,7 +93,6 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
       return;
     }
 
-    // Proceed with form submission
     const submissionData = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
@@ -111,12 +104,17 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
     });
 
     try {
-      await onComplete(submissionData);
+      const result = await onComplete(submissionData);
+
+      if (result?.error) {
+        setSubmissionError(result.error);
+      }
     } catch (error) {
-      console.log("error", error);
-      setSubmissionError(
-        "Ocorreu um erro ao enviar o formulário. Por favor, tente novamente."
-      );
+      if (error instanceof Error) {
+        setSubmissionError(
+          "Ocorreu um erro ao enviar o formulário. Por favor, tente novamente."
+        );
+      }
     }
   };
 
@@ -143,12 +141,9 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete }) => {
 
   return (
     <FormLayout>
-      {submissionError && (
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-2xl"
-          role="alert"
-        >
-          <span className="block sm:inline">{submissionError}</span>
+      {errorMessage && (
+        <div className="border bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-md my-8">
+          {submissionError || error}
         </div>
       )}
       <MultiStep

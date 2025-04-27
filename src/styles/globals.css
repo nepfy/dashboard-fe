@@ -176,7 +176,7 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* Controls the transition between Table View and Kanban View on Proposals page */
+/* Controls the transition between Table View and Kanban View on Projects page */
 @keyframes fadeIn {
   from {
     opacity: 0;

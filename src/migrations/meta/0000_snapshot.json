@@ -1,9 +1,141 @@
 {
-  "id": "e0ed841c-99ca-4e32-8e88-8291f7c52351",
+  "id": "e4c95517-8617-4184-8ea7-3ad2a9fd5ae7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.onboarding_discovery": {
+      "name": "onboarding_discovery",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.onboarding_job_types": {
+      "name": "onboarding_job_types",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.onboarding_used_before": {
+      "name": "onboarding_used_before",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.plans": {
       "name": "plans",
       "schema": "",
@@ -25,8 +157,8 @@
             "cycle": false
           }
         },
-        "planName": {
-          "name": "planName",
+        "plan_name": {
+          "name": "plan_name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
@@ -40,8 +172,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.proposals": {
-      "name": "proposals",
+    "public.projects": {
+      "name": "projects",
       "schema": "",
       "columns": {
         "id": {
@@ -51,7 +183,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "proposals_id_seq",
+            "name": "projects_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -61,50 +193,87 @@
             "cycle": false
           }
         },
-        "projectName": {
-          "name": "projectName",
+        "project_name": {
+          "name": "project_name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
-        "clientName": {
-          "name": "clientName",
+        "client_name": {
+          "name": "client_name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
-        "clientAddress": {
-          "name": "clientAddress",
+        "street": {
+          "name": "street",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "proposalSentDate": {
-          "name": "proposalSentDate",
+        "number": {
+          "name": "number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "neighborhood": {
+          "name": "neighborhood",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cep": {
+          "name": "cep",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "project_sent_date": {
+          "name": "project_sent_date",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         },
-        "proposalStatus": {
-          "name": "proposalStatus",
+        "project_status": {
+          "name": "project_status",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "varchar(255)",
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "varchar(255)",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
-        "archivedAt": {
-          "name": "archivedAt",
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "archived_at": {
+          "name": "archived_at",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
@@ -118,8 +287,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.companyUser": {
-      "name": "companyUser",
+    "public.company_user": {
+      "name": "company_user",
       "schema": "",
       "columns": {
         "id": {
@@ -140,12 +309,6 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
-        },
-        "emailVerified": {
-          "name": "emailVerified",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
         },
         "cnpj": {
           "name": "cnpj",
@@ -159,12 +322,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "password": {
-          "name": "password",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "street": {
           "name": "street",
           "type": "varchar(255)",
@@ -201,21 +358,40 @@
           "primaryKey": false,
           "notNull": false
         },
-        "createdAt": {
-          "name": "createdAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
-        "deletedAt": {
-          "name": "deletedAt",
+        "deleted_at": {
+          "name": "deleted_at",
           "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_job_type": {
+          "name": "user_job_type",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_discovery": {
+          "name": "user_discovery",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_used_before": {
+          "name": "user_used_before",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -224,8 +400,8 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "companyUser_email_unique": {
-          "name": "companyUser_email_unique",
+        "company_user_email_unique": {
+          "name": "company_user_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
@@ -236,8 +412,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.personUser": {
-      "name": "personUser",
+    "public.person_user": {
+      "name": "person_user",
       "schema": "",
       "columns": {
         "id": {
@@ -247,14 +423,14 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "name": {
-          "name": "name",
+        "first_name": {
+          "name": "first_name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
-        "lastName": {
-          "name": "lastName",
+        "last_name": {
+          "name": "last_name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
@@ -264,12 +440,6 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
-        },
-        "emailVerified": {
-          "name": "emailVerified",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
         },
         "cpf": {
           "name": "cpf",
@@ -283,12 +453,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "password": {
-          "name": "password",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "street": {
           "name": "street",
           "type": "varchar(255)",
@@ -325,21 +489,40 @@
           "primaryKey": false,
           "notNull": false
         },
-        "createdAt": {
-          "name": "createdAt",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
-        "deletedAt": {
-          "name": "deletedAt",
+        "deleted_at": {
+          "name": "deleted_at",
           "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_job_type": {
+          "name": "user_job_type",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_discovery": {
+          "name": "user_discovery",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_used_before": {
+          "name": "user_used_before",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -348,8 +531,8 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "personUser_email_unique": {
-          "name": "personUser_email_unique",
+        "person_user_email_unique": {
+          "name": "person_user_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"

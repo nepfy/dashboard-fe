@@ -1,40 +1,65 @@
-import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, integer } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { timestamps, address } from "#/lib/db/schema/helpers/columns.helpers";
+import {
+  jobTypesTable,
+  discoverySourcesTable,
+  usedBeforeSourceTable,
+} from "./onboarding";
 
-export const personUserTable = pgTable("personUser", {
+export const personUserTable = pgTable("person_user", {
   id: uuid().notNull().primaryKey().defaultRandom(),
-  name: varchar({ length: 255 }),
-  lastName: varchar({ length: 255 }),
+  firstName: varchar("first_name", { length: 255 }),
+  lastName: varchar("last_name", { length: 255 }),
   email: varchar({ length: 255 }).notNull().unique(),
-  emailVerified: timestamp({ mode: "date" }),
   cpf: varchar({ length: 255 }),
   phone: varchar({ length: 255 }),
-  password: varchar({ length: 255 }),
-  street: varchar({ length: 255 }),
-  number: varchar({ length: 255 }),
-  neighborhood: varchar({ length: 255 }),
-  state: varchar({ length: 255 }),
-  city: varchar({ length: 255 }),
-  cep: varchar({ length: 255 }),
-  createdAt: timestamp({ mode: "date" }).notNull(),
-  updatedAt: timestamp({ mode: "date" }).notNull(),
-  deletedAt: timestamp({ mode: "date" }),
+  ...address,
+  ...timestamps,
+  userJobType: integer("user_job_type"),
+  userDiscovery: integer("user_discovery"),
+  userUsedBefore: integer("user_used_before"),
 });
 
-export const companyUserTable = pgTable("companyUser", {
+export const companyUserTable = pgTable("company_user", {
   id: uuid().notNull().primaryKey().defaultRandom(),
   name: varchar({ length: 255 }),
   email: varchar({ length: 255 }).notNull().unique(),
-  emailVerified: timestamp({ mode: "date" }),
   cnpj: varchar({ length: 255 }),
   phone: varchar({ length: 255 }),
-  password: varchar({ length: 255 }),
-  street: varchar({ length: 255 }),
-  number: varchar({ length: 255 }),
-  neighborhood: varchar({ length: 255 }),
-  state: varchar({ length: 255 }),
-  city: varchar({ length: 255 }),
-  cep: varchar({ length: 255 }),
-  createdAt: timestamp({ mode: "date" }).notNull(),
-  updatedAt: timestamp({ mode: "date" }).notNull(),
-  deletedAt: timestamp({ mode: "date" }),
+  ...address,
+  ...timestamps,
+  userJobType: integer("user_job_type"),
+  userDiscovery: integer("user_discovery"),
+  userUsedBefore: integer("user_used_before"),
 });
+
+export const personUserRelations = relations(personUserTable, ({ one }) => ({
+  jobType: one(jobTypesTable, {
+    fields: [personUserTable.userJobType],
+    references: [jobTypesTable.id],
+  }),
+  discoverySource: one(discoverySourcesTable, {
+    fields: [personUserTable.userDiscovery],
+    references: [discoverySourcesTable.id],
+  }),
+  usedBeforeSource: one(usedBeforeSourceTable, {
+    fields: [personUserTable.userUsedBefore],
+    references: [usedBeforeSourceTable.id],
+  }),
+}));
+
+export const companyUserRelations = relations(companyUserTable, ({ one }) => ({
+  jobType: one(jobTypesTable, {
+    fields: [companyUserTable.userJobType],
+    references: [jobTypesTable.id],
+  }),
+  discoverySource: one(discoverySourcesTable, {
+    fields: [companyUserTable.userDiscovery],
+    references: [discoverySourcesTable.id],
+  }),
+  usedBeforeSource: one(usedBeforeSourceTable, {
+    fields: [companyUserTable.userUsedBefore],
+    references: [usedBeforeSourceTable.id],
+  }),
+}));

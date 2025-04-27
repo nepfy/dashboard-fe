@@ -3,7 +3,7 @@ import SelectionButton from "#/app/onboarding/components/SelectionButton";
 import OtherOption from "#/app/onboarding/components/OtherOption";
 
 interface SelectionGridProps {
-  options: (string | { id: string; label: string })[];
+  options: (string | { id: string; name: string })[];
   fieldName: string;
   isMultiSelect?: boolean;
   checkmark?: boolean;

@@ -105,8 +105,6 @@ export default function AccountRecovery() {
         if (result.status === "complete") {
           setActive({ session: result.createdSessionId });
           setError("");
-        } else {
-          console.log(result);
         }
       })
       .catch((err) => {

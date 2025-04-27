@@ -1,49 +1,48 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+
+import FormLoader from "#/components/FormLoader";
+import ErrorMessage from "#/components/ErrorMessage";
+
 import { useFormContext } from "#/app/onboarding/helpers/FormContext";
 import StepHeader from "#/app/onboarding/components/StepHeader";
 import SelectionGridContext from "#/app/onboarding/components/SelectionGrid";
 
 const DiscoveryStep = () => {
   const { formData, enableNextStepDiscoverySource } = useFormContext();
+  const [discover, setDiscover] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     enableNextStepDiscoverySource();
   }, [formData.discoverySource, enableNextStepDiscoverySource]);
 
-  const discoveryOptions = [
-    {
-      id: "fornecedor-de-tecnologia",
-      label: "Fornecedor de tecnologia",
-    },
-    {
-      id: "noticias",
-      label: "Notícias",
-    },
-    {
-      id: "anuncios",
-      label: "Anúncios",
-    },
-    {
-      id: "eventos",
-      label: "Eventos",
-    },
-    {
-      id: "instagram",
-      label: "Instagram",
-    },
-    {
-      id: "outras-redes-sociais",
-      label: "Outras redes sociais",
-    },
-    {
-      id: "X",
-      label: "X (Antigo Twitter)",
-    },
-    {
-      id: "outro",
-      label: "Outro...",
-    },
-  ];
+  useEffect(() => {
+    const fetchDiscover = async () => {
+      try {
+        const response = await fetch("/api/onboarding/discover-step");
+        const result = await response.json();
+
+        if (result.success) {
+          setDiscover(result.data);
+        } else {
+          setError(result.error);
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(`Erro ao carregar lista. ${err.message}`);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDiscover();
+  }, []);
+
+  if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
   return (
     <div>
@@ -52,11 +51,15 @@ const DiscoveryStep = () => {
         description="Escolha as alternativas que se aplicam a você."
       />
 
-      <SelectionGridContext
-        options={discoveryOptions}
-        fieldName="discoverySource"
-        isMultiSelect={true}
-      />
+      {isLoading ? (
+        <FormLoader />
+      ) : (
+        <SelectionGridContext
+          options={discover}
+          fieldName="discoverySource"
+          isMultiSelect={true}
+        />
+      )}
     </div>
   );
 };
