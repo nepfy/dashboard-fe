@@ -28,17 +28,14 @@ const PersonalInfoStep = () => {
   const handleCPFChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
-    // Allow only numeric input, then apply mask
     const maskedValue = maskCPF(value);
 
-    // Create a synthetic event object compatible with the handleChange function
     handleChange({ name: "cpf", value: maskedValue });
   };
 
   const validateCPFOnBlur = () => {
     const cleanCPF = formData.cpf.replace(/\D/g, "");
 
-    // Only validate if there's input
     if (cleanCPF.length > 0) {
       if (cleanCPF.length !== 11) {
         setFieldError("cpf", "CPF deve conter 11 dígitos");

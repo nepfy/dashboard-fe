@@ -30,11 +30,7 @@ export default function Onboarding() {
         setError(res.error);
       }
     } catch (err) {
-      if (
-        err instanceof Error &&
-        "errors" in err &&
-        Array.isArray(err.errors)
-      ) {
+      if (err instanceof Error) {
         setError("Um erro ocorreu, por favor, tente mais tarde.");
       }
     }

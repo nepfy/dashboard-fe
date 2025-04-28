@@ -1,6 +1,7 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { saveUserData } from "./_save-user-data";
 
 export const completeOnboarding = async (formData: FormData) => {
   const { userId } = await auth();
@@ -12,6 +13,12 @@ export const completeOnboarding = async (formData: FormData) => {
   const client = await clerkClient();
 
   try {
+    const dbResult = await saveUserData(formData);
+
+    if (!dbResult.success) {
+      return { error: dbResult.error };
+    }
+
     const res = await client.users.updateUser(userId, {
       publicMetadata: {
         onboardingComplete: true,
@@ -22,8 +29,7 @@ export const completeOnboarding = async (formData: FormData) => {
     return { message: res.publicMetadata };
   } catch (err) {
     return {
-      error: "Ocorreu um erro ao tentar atualizar as informações do usuário:",
-      err,
+      error: `Ocorreu um erro ao tentar salvar as informações: ${err}`,
     };
   }
 };

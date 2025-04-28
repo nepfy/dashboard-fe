@@ -1,14 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
+
 import Link from "next/link";
 import MobileMenu from "../MobileMenu";
 import Notifications from "../Notifications";
+
 import NotificationIcon from "#/components/icons/NotificationIcon";
 import Logo from "#/components/icons/Logo";
 import MenuIcon from "#/components/icons/MenuIcon";
 
 export default function Navbar() {
+  const { user } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
@@ -37,7 +42,20 @@ export default function Navbar() {
             <div className="hidden lg:block ml-3 relative">
               <div>
                 <button className="flex items-center text-sm rounded-full focus:outline-none">
-                  <div className="h-8 w-8 rounded-full bg-gray-300"></div>
+                  <div className="h-8 w-8 rounded-full bg-gray-300">
+                    {user?.imageUrl ? (
+                      <Image
+                        src={user.imageUrl}
+                        width={32}
+                        height={32}
+                        alt="User profile"
+                        className="rounded-full"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    ) : null}
+                  </div>
                 </button>
               </div>
             </div>
