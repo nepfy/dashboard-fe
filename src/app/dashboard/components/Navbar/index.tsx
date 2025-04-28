@@ -48,7 +48,7 @@ export default function Navbar() {
                         src={user.imageUrl}
                         width={32}
                         height={32}
-                        alt="User profile"
+                        alt="Foto de perfil do usuário"
                         className="rounded-full"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";

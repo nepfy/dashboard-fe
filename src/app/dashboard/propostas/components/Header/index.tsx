@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import DashboardPageHeader from "#/components/DashboardPageHeader";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Archive from "#/components/icons/Archive";
 import ColumnIcon from "#/components/icons/ColumnIcon";
@@ -12,11 +13,7 @@ export default function Header({
   setTab: (tab: string) => void;
 }) {
   return (
-    <header className="w-full p-7 border-b border-white-neutral-light-300">
-      <h3 className="mb-4 text-2xl font-medium text-white-neutral-light-900">
-        Propostas
-      </h3>
-
+    <DashboardPageHeader title="Propostas">
       <div className="flex flex-wrap items-start">
         <div className="flex flex-row flex-wrap w-full gap-1 items-start sm:items-center">
           <Link href="/gerador-de-propostas">
@@ -78,6 +75,6 @@ export default function Header({
           </div>
         </div>
       </div>
-    </header>
+    </DashboardPageHeader>
   );
 }
