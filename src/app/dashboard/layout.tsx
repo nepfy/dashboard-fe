@@ -13,7 +13,7 @@ export default function DashboardLayout({
 
         <div className="flex flex-col h-screen overflow-scroll">
           <Navbar />
-          <main className="flex-1 pt-6xl">{children}</main>
+          <main className="flex-1">{children}</main>
         </div>
       </div>
     </div>

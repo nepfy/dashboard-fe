@@ -18,7 +18,7 @@ export default function Navbar() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   return (
-    <nav className="bg-white-neutral-light-200 border-b border-gray-200 fixed top-0 w-full z-20">
+    <nav className="bg-white-neutral-light-200 border-b border-gray-200">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
