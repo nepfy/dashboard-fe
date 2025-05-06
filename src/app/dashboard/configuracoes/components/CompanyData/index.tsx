@@ -1,69 +1,36 @@
 "use client";
 
-import Image from "next/image";
-import { useUser } from "@clerk/nextjs";
-
-import UploadIcon from "#/components/icons/UploadIcon";
 import { TextField } from "#/components/Inputs";
 
-export default function PersonalData() {
-  const { user } = useUser();
+export default function CompanyData() {
   return (
     <div className="max-w-[595px] bg-white-neutral-light-100 border border-white-neutral-light-300 rounded-[12px] p-6 mb-[64px] sm:mb-[100px]">
-      <p className="text-white-neutral-light-900 font-medium leading-[18px] mb-3 sm:mb-0">
-        Dados Pessoais
+      <p className="text-white-neutral-light-900 font-medium leading-[18px] mb-3">
+        Dados Empresariais
       </p>
 
       <form onSubmit={() => console.log("form")}>
-        <div className="sm:pt-6 sm:pb-2 flex items-center justify-start flex-wrap">
-          <div className="h-[88px] w-[88px] rounded-full m-3 sm:m-0 sm:mr-6">
-            {user?.imageUrl ? (
-              <Image
-                src={user?.imageUrl}
-                width={88}
-                height={88}
-                alt="Foto de perfil usuário"
-                className="rounded-full"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            ) : (
-              <div className="h-[88px] w-[88px] bg-gray-300 rounded-full"></div>
-            )}
-          </div>
-          <div className="flex items-center justify-center py-3 sm:py-0">
-            <button className="border border-white-neutral-light-300 button-inner bg-white-neutral-light-100 rounded-xs w-[36px] h-[36px] flex items-center justify-center mr-2">
-              <UploadIcon fill="#1C1A22" width="14" height="14" />
-            </button>
-            <p className="text-white-neutral-light-900 font-medium">
-              {" "}
-              Upload de Imagem{" "}
-            </p>
-          </div>
-        </div>
-
         <div className="pb-2">
           <TextField
-            label="Nome Completo"
-            inputName="fullname"
-            id="fullname"
+            label="Razão social"
+            inputName="companyName"
+            id="companyName"
             type="text"
-            placeholder="Nome Completo"
-            onChange={() => console.log("Nome Completo")}
-            value="Nome Completo"
+            placeholder="Razão Social"
+            onChange={() => console.log("Razão Social")}
+            value="Razão social"
           />
         </div>
 
         <div className="py-2">
           <TextField
-            label="CPF"
-            inputName="cpf"
-            id="cpf"
+            label="CNPJ"
+            inputName="cnpj"
+            id="cnpj"
             type="text"
-            placeholder="CPF"
-            onChange={() => console.log("CPF")}
-            value="CPF"
+            placeholder="CNPJ"
+            onChange={() => console.log("CNPJ")}
+            value="CNPJ"
           />
         </div>
 
