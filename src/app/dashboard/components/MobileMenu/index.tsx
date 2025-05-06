@@ -13,10 +13,8 @@ import SignOutIcon from "#/components/icons/SignOutIcon";
 import CloseIcon from "#/components/icons/CloseIcon";
 
 export default function MobileMenu({
-  isMobileMenuOpen,
   setIsMobileMenuOpen,
 }: {
-  isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
 }) {
   const pathname = usePathname();
@@ -116,7 +114,7 @@ export default function MobileMenu({
             <button
               type="button"
               className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               <CloseIcon width="20" height="20" />
             </button>
@@ -129,6 +127,7 @@ export default function MobileMenu({
                   <li key={item.name}>
                     <Link
                       href={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium  ${
                         isActive(item.path)
                           ? "bg-white-neutral-light-100 e0"

@@ -72,10 +72,7 @@ export default function Navbar() {
       </div>
 
       {isMobileMenuOpen && (
-        <MobileMenu
-          isMobileMenuOpen={isMobileMenuOpen}
-          setIsMobileMenuOpen={setIsMobileMenuOpen}
-        />
+        <MobileMenu setIsMobileMenuOpen={setIsMobileMenuOpen} />
       )}
 
       {isNotificationOpen && (
