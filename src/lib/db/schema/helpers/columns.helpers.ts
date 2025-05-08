@@ -13,4 +13,5 @@ export const address = {
   state: varchar({ length: 255 }),
   city: varchar({ length: 255 }),
   cep: varchar({ length: 255 }),
+  additionalAddress: varchar("additional_address", { length: 255 }),
 };
