@@ -32,7 +32,7 @@ export interface UserAccount {
   additionalAddress?: string;
   created_at?: string;
   updated_at?: string;
-  companyUser?: CompanyUserAccount;
+  companyData?: CompanyUserAccount;
 }
 
 export interface UserState {

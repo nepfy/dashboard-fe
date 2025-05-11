@@ -50,18 +50,18 @@ export const useCompanyForm = (isEditing: boolean) => {
    * Sets both current form values and original values for comparison
    */
   useEffect(() => {
-    if (userData?.companyUser) {
+    if (userData?.companyData) {
       const newValues = {
-        companyName: userData.companyUser.name || "",
-        cnpj: userData.companyUser.cnpj || "",
-        phone: userData.companyUser.phone || "",
-        cep: userData.companyUser.cep || "",
-        street: userData.companyUser.street || "",
-        neighborhood: userData.companyUser.neighborhood || "",
-        state: userData.companyUser.state || "",
-        city: userData.companyUser.city || "",
-        number: userData.companyUser.number || "",
-        additionalAddress: userData.companyUser.additionalAddress || "",
+        companyName: userData.companyData.name || "",
+        cnpj: userData.companyData.cnpj || "",
+        phone: userData.companyData.phone || "",
+        cep: userData.companyData.cep || "",
+        street: userData.companyData.street || "",
+        neighborhood: userData.companyData.neighborhood || "",
+        state: userData.companyData.state || "",
+        city: userData.companyData.city || "",
+        number: userData.companyData.number || "",
+        additionalAddress: userData.companyData.additionalAddress || "",
       };
 
       setFormValues(newValues);
@@ -92,9 +92,12 @@ export const useCompanyForm = (isEditing: boolean) => {
    *
    * @param e - Input change event
    */
-  const handleChange = () => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
     const newValues = {
       ...formValues,
+      [name]: value,
     };
 
     setFormValues(newValues);
@@ -139,7 +142,7 @@ export const useCompanyForm = (isEditing: boolean) => {
     try {
       // Send updated user data to server
       await updateUserData({
-        companyUser: {
+        companyData: {
           name: formValues.companyName,
           cnpj: formValues.cnpj,
           phone: formValues.phone,
