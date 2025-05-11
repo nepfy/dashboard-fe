@@ -22,6 +22,27 @@
       "when": 1746670687977,
       "tag": "0002_smart_ezekiel",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1746993276033,
+      "tag": "0003_empty_sleeper",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1746993991530,
+      "tag": "0004_certain_sebastian_shaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1746995362556,
+      "tag": "0005_light_turbo",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon, neonConfig } from "@neondatabase/serverless";
+import * as schema from "./schema";
 import ws from "ws";
 
 neonConfig.webSocketConstructor = ws;
@@ -10,4 +11,4 @@ if (!process.env.DATABASE_URL) {
 }
 
 const sql = neon(process.env.DATABASE_URL);
-export const db = drizzle({ client: sql, casing: "snake_case" });
+export const db = drizzle({ client: sql, casing: "snake_case", schema });

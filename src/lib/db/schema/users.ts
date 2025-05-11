@@ -23,8 +23,11 @@ export const personUserTable = pgTable("person_user", {
 
 export const companyUserTable = pgTable("company_user", {
   id: uuid().notNull().primaryKey().defaultRandom(),
+  personId: uuid("person_id")
+    .notNull()
+    .references(() => personUserTable.id)
+    .unique(),
   name: varchar({ length: 255 }),
-  email: varchar({ length: 255 }).notNull().unique(),
   cnpj: varchar({ length: 255 }),
   phone: varchar({ length: 255 }),
   ...address,
@@ -35,6 +38,10 @@ export const companyUserTable = pgTable("company_user", {
 });
 
 export const personUserRelations = relations(personUserTable, ({ one }) => ({
+  companyUser: one(companyUserTable, {
+    fields: [personUserTable.id],
+    references: [companyUserTable.personId],
+  }),
   jobType: one(jobTypesTable, {
     fields: [personUserTable.userJobType],
     references: [jobTypesTable.id],
@@ -50,6 +57,10 @@ export const personUserRelations = relations(personUserTable, ({ one }) => ({
 }));
 
 export const companyUserRelations = relations(companyUserTable, ({ one }) => ({
+  personUser: one(personUserTable, {
+    fields: [companyUserTable.personId],
+    references: [personUserTable.id],
+  }),
   jobType: one(jobTypesTable, {
     fields: [companyUserTable.userJobType],
     references: [jobTypesTable.id],

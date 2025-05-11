@@ -5,6 +5,7 @@ import {
   timestamp,
   unique,
   uuid,
+  foreignKey,
 } from "drizzle-orm/pg-core";
 
 export const onboardingUsedBefore = pgTable("onboarding_used_before", {
@@ -106,7 +107,6 @@ export const companyUser = pgTable(
   {
     id: uuid().defaultRandom().primaryKey().notNull(),
     name: varchar({ length: 255 }),
-    email: varchar({ length: 255 }).notNull(),
     cnpj: varchar({ length: 255 }),
     phone: varchar({ length: 255 }),
     street: varchar({ length: 255 }),
@@ -124,6 +124,13 @@ export const companyUser = pgTable(
     userDiscovery: integer("user_discovery"),
     userUsedBefore: integer("user_used_before"),
     additionalAddress: varchar("additional_address", { length: 255 }),
+    personId: uuid("person_id").notNull(),
   },
-  (table) => [unique("company_user_email_unique").on(table.email)]
+  (table) => [
+    foreignKey({
+      columns: [table.personId],
+      foreignColumns: [personUser.id],
+      name: "company_user_person_id_person_user_id_fk",
+    }),
+  ]
 );
