@@ -10,14 +10,14 @@ export interface CompanyDataRef {
 }
 
 export interface CompanyFormValues {
-  companyName: string;
-  cnpj: string;
-  phone: string;
-  cep: string;
-  street: string;
-  neighborhood: string;
-  state: string;
-  number: string;
-  city: string;
-  additionalAddress: string;
+  companyName?: string;
+  cnpj?: string;
+  phone?: string;
+  cep?: string;
+  street?: string;
+  neighborhood?: string;
+  state?: string;
+  number?: string;
+  city?: string;
+  additionalAddress?: string; // Complemento
 }
