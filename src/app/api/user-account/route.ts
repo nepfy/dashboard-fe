@@ -46,7 +46,7 @@ export async function GET() {
 
     const userData = {
       ...personData[0],
-      companyUser: companyData.length > 0 ? companyData[0] : null,
+      companyData: companyData.length > 0 ? companyData[0] : null,
     };
 
     return NextResponse.json({ success: true, data: userData });

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
+import { useUserStore } from "#/store/userStore";
 
 import Logo from "#/components/icons/Logo";
 import GridIcon from "#/components/icons/GridIcon";
@@ -17,9 +18,15 @@ import TutorialIcon from "#/components/icons/TutorialIcon";
 export default function Sidebar() {
   const pathname = usePathname();
   const { signOut } = useClerk();
+  const logout = useUserStore((state) => state.logout);
 
   const isActive = (path: string) => {
     return pathname === path;
+  };
+
+  const handleSignOut = async () => {
+    logout(); // Clear user data from store and localStorage
+    await signOut({ redirectUrl: "/login" });
   };
 
   const date = new Date();
@@ -143,7 +150,7 @@ export default function Sidebar() {
             ))}
             <li>
               <div
-                onClick={() => signOut({ redirectUrl: "/login" })}
+                onClick={handleSignOut}
                 className="flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium hover:bg-gray-100 cursor-pointer"
               >
                 <span className="mr-2">

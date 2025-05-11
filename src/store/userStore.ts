@@ -1,6 +1,46 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { UserAccount, UserState } from "#/types/userAccount";
+
+const STORAGE_KEY = "user-storage";
+const LAST_ACTIVITY_KEY = "last-activity-timestamp";
+const EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+const isStorageExpired = () => {
+  const lastActivity = localStorage.getItem(LAST_ACTIVITY_KEY);
+  if (!lastActivity) return false;
+
+  const lastActivityTime = parseInt(lastActivity, 10);
+  const currentTime = Date.now();
+
+  return currentTime - lastActivityTime > EXPIRY_TIME;
+};
+
+const updateLastActivity = () => {
+  localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+};
+
+const customStorage = {
+  getItem: (name: string) => {
+    if (isStorageExpired()) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(LAST_ACTIVITY_KEY);
+      return null;
+    }
+
+    updateLastActivity(); // Update timestamp on access
+    const value = localStorage.getItem(name);
+    return value ? JSON.parse(value) : null;
+  },
+  setItem: (name: string, value: unknown) => {
+    updateLastActivity(); // Update timestamp on write
+    localStorage.setItem(name, JSON.stringify(value));
+  },
+  removeItem: (name: string) => {
+    localStorage.removeItem(name);
+    localStorage.removeItem(LAST_ACTIVITY_KEY);
+  },
+};
 
 async function fetchUserDataFromServer() {
   try {
@@ -49,6 +89,7 @@ export const useUserStore = create<UserState>()(
 
           if (result.success) {
             set({ userData: result.data, isLoading: false });
+            updateLastActivity(); // Update timestamp after successful fetch
           } else {
             set({ error: result.error, isLoading: false });
           }
@@ -62,6 +103,8 @@ export const useUserStore = create<UserState>()(
 
       clearUserData: () => {
         set({ userData: null, error: null });
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(LAST_ACTIVITY_KEY);
       },
 
       updateUserData: async (data: Partial<UserAccount>) => {
@@ -71,9 +114,12 @@ export const useUserStore = create<UserState>()(
 
           if (result.success) {
             set((state: UserState) => ({
-              userData: state.userData ? { ...state.userData, ...data } : null,
+              userData: state.userData
+                ? { ...state.userData, ...result.data }
+                : null,
               isLoading: false,
             }));
+            updateLastActivity(); // Update timestamp after successful update
           } else {
             set({ error: result.error, isLoading: false });
           }
@@ -84,9 +130,17 @@ export const useUserStore = create<UserState>()(
           });
         }
       },
+
+      // Add a logout function to clear storage
+      logout: () => {
+        set({ userData: null, error: null });
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(LAST_ACTIVITY_KEY);
+      },
     }),
     {
-      name: "user-storage",
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => customStorage),
       partialize: (state: UserState) => ({ userData: state.userData }),
     }
   )

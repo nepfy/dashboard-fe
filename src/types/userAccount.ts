@@ -43,4 +43,5 @@ export interface UserState {
   fetchUserData: () => Promise<void>;
   clearUserData: () => void;
   updateUserData: (data: Partial<UserAccount>) => Promise<void>;
+  logout: () => void;
 }
