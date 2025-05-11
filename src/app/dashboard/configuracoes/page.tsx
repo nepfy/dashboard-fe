@@ -14,6 +14,7 @@ export default function Configurations() {
   const [activeTab, setActiveTab] = useState("Dados pessoais");
   const [isEditing, setIsEditing] = useState(false);
   const [formChanged, setFormChanged] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
 
   const personalDataRef = useRef<{
     handleSubmit: () => Promise<void>;
@@ -40,6 +41,7 @@ export default function Configurations() {
       } else if (activeTab === "Dados empresariais" && companyDataRef.current) {
         await companyDataRef.current.handleSubmit();
       }
+      setSuccessMessage(true);
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving data:", error);
@@ -59,12 +61,12 @@ export default function Configurations() {
     if (isEditing) {
       handleCancel();
     }
+    setSuccessMessage(false);
     setActiveTab(tab);
   };
 
   useEffect(() => {
     if (isEditing) {
-      // Check for changes every 200ms when in edit mode
       const interval = setInterval(() => {
         let currentHasChanges = false;
 
@@ -77,7 +79,6 @@ export default function Configurations() {
           currentHasChanges = companyDataRef.current.hasChanges;
         }
 
-        // Force a re-render if the change state is different
         setFormChanged(currentHasChanges);
       }, 200);
 
@@ -96,7 +97,11 @@ export default function Configurations() {
       {activeTab === "Dados pessoais" && (
         <>
           <div className="p-7">
-            <PersonalData ref={personalDataRef} isEditing={isEditing} />
+            <PersonalData
+              successMessage={successMessage}
+              ref={personalDataRef}
+              isEditing={isEditing}
+            />
           </div>
           <EditSaveBottomBar
             isEditing={isEditing}

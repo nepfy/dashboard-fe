@@ -1,5 +1,6 @@
 export interface PersonalDataProps {
   isEditing: boolean;
+  successMessage?: boolean;
 }
 
 export interface PersonalDataRef {

@@ -11,7 +11,7 @@ async function fetchUserDataFromServer() {
       },
     });
 
-    return await response.json();
+    return response.json();
   } catch (error) {
     console.error("Error fetching user data:", error);
     throw error;
@@ -28,7 +28,7 @@ async function updateUserDataOnServer(data: Partial<UserAccount>) {
       body: JSON.stringify(data),
     });
 
-    return await response.json();
+    return response.json();
   } catch (error) {
     console.error("Error updating user data:", error);
     throw error;

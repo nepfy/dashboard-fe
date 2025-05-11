@@ -6,11 +6,13 @@ import { PersonalDataProps, PersonalDataRef } from "./types";
 import { usePersonalForm } from "./hooks/usePersonalForm";
 import { ImageUpload } from "./_components/ImageUpload";
 import { FormFields } from "./_components/FormFields";
+import ErrorMessage from "#/components/ErrorMessage";
+import SuccessMessage from "#/components/SuccessMessage";
 
 const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
   (props, ref) => {
-    const { isEditing } = props;
-    const { isLoading } = useUserAccount();
+    const { successMessage, isEditing } = props;
+    const { isLoading, error } = useUserAccount();
 
     const {
       formValues,
@@ -33,6 +35,17 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
         <p className="text-white-neutral-light-900 font-medium leading-[18px] mb-3 sm:mb-0">
           Dados Pessoais
         </p>
+
+        {successMessage && (
+          <div className="mt-3">
+            <SuccessMessage message="Dados atualizados com sucesso" />
+          </div>
+        )}
+        {error && (
+          <div className="mt-3">
+            <ErrorMessage error={error} />
+          </div>
+        )}
 
         <form>
           <ImageUpload

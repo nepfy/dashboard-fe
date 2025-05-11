@@ -24,19 +24,30 @@ export async function GET() {
         { status: 404 }
       );
     }
-    const userData = await db.query.personUserTable.findFirst({
-      where: eq(personUserTable.email, emailAddress),
-      with: {
-        companyUser: true,
-      },
-    });
 
-    if (!userData) {
+    const personData = await db
+      .select()
+      .from(personUserTable)
+      .where(eq(personUserTable.email, emailAddress))
+      .limit(1);
+
+    if (personData.length === 0) {
       return NextResponse.json(
         { success: false, error: "User not found in database" },
         { status: 404 }
       );
     }
+
+    const companyData = await db
+      .select()
+      .from(companyUserTable)
+      .where(eq(companyUserTable.personId, personData[0].id))
+      .limit(1);
+
+    const userData = {
+      ...personData[0],
+      companyUser: companyData.length > 0 ? companyData[0] : null,
+    };
 
     return NextResponse.json({ success: true, data: userData });
   } catch (error) {
@@ -71,57 +82,58 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { companyData, ...personData } = body;
 
-    const result = await db.transaction(async (tx) => {
-      const updatedUser = await tx
-        .update(personUserTable)
-        .set({
-          ...personData,
-          updated_at: new Date(),
-        })
-        .where(eq(personUserTable.email, emailAddress))
-        .returning();
+    const updatedUser = await db
+      .update(personUserTable)
+      .set({
+        ...personData,
+        updated_at: new Date(),
+      })
+      .where(eq(personUserTable.email, emailAddress))
+      .returning();
 
-      if (updatedUser.length === 0) {
-        throw new Error("Failed to update user");
-      }
+    if (updatedUser.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Failed to update user" },
+        { status: 500 }
+      );
+    }
 
-      if (companyData) {
-        const existingCompany = await tx
-          .select()
-          .from(companyUserTable)
-          .where(eq(companyUserTable.personId, updatedUser[0].id))
-          .limit(1);
+    if (companyData) {
+      const existingCompany = await db
+        .select()
+        .from(companyUserTable)
+        .where(eq(companyUserTable.personId, updatedUser[0].id))
+        .limit(1);
 
-        if (existingCompany.length > 0) {
-          await tx
-            .update(companyUserTable)
-            .set({
-              ...companyData,
-              updated_at: new Date(),
-            })
-            .where(eq(companyUserTable.id, existingCompany[0].id));
-        } else {
-          await tx.insert(companyUserTable).values({
+      if (existingCompany.length > 0) {
+        await db
+          .update(companyUserTable)
+          .set({
             ...companyData,
-            personId: updatedUser[0].id,
-            created_at: new Date(),
             updated_at: new Date(),
-          });
-        }
+          })
+          .where(eq(companyUserTable.id, existingCompany[0].id));
+      } else {
+        // Create new company
+        await db.insert(companyUserTable).values({
+          ...companyData,
+          personId: updatedUser[0].id,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
       }
+    }
 
-      const updatedUserWithCompany = await tx.query.personUserTable.findFirst({
-        where: eq(personUserTable.id, updatedUser[0].id),
-        with: {
-          companyUser: true,
-          jobType: true,
-          discoverySource: true,
-          usedBeforeSource: true,
-        },
-      });
+    const updatedCompany = await db
+      .select()
+      .from(companyUserTable)
+      .where(eq(companyUserTable.personId, updatedUser[0].id))
+      .limit(1);
 
-      return updatedUserWithCompany;
-    });
+    const result = {
+      ...updatedUser[0],
+      companyUser: updatedCompany.length > 0 ? updatedCompany[0] : null,
+    };
 
     return NextResponse.json({ success: true, data: result });
   } catch (error) {
