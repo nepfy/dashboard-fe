@@ -1,9 +1,27 @@
+export interface CompanyUserAccount {
+  id?: string;
+  personId?: string;
+  name?: string; // Company Name
+  cnpj?: string;
+  phone?: string;
+  street?: string;
+  number?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  cep?: string;
+  additionalAddress?: string; //Complemento
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
+}
+
 export interface UserAccount {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
-  cpf: string;
+  cpf?: string;
   phone: string;
   street?: string;
   number?: string;
@@ -14,6 +32,7 @@ export interface UserAccount {
   additionalAddress?: string;
   created_at?: string;
   updated_at?: string;
+  companyUser?: CompanyUserAccount;
 }
 
 export interface UserState {

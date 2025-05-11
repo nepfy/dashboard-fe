@@ -116,7 +116,11 @@ export default function Configurations() {
       {activeTab === "Dados empresariais" && (
         <>
           <div className="p-7">
-            <CompanyData />
+            <CompanyData
+              successMessage={successMessage}
+              ref={companyDataRef}
+              isEditing={isEditing}
+            />
           </div>
           <EditSaveBottomBar
             isEditing={isEditing}

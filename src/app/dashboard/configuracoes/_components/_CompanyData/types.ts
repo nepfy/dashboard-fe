@@ -1,19 +1,17 @@
-export interface PersonalDataProps {
+export interface CompanyDataProps {
   isEditing: boolean;
   successMessage?: boolean;
 }
 
-export interface PersonalDataRef {
+export interface CompanyDataRef {
   handleSubmit: () => Promise<void>;
   handleCancel: () => void;
   hasChanges: boolean;
 }
 
-export interface PersonalFormValues {
-  fullName: string;
-  firstName: string;
-  lastName: string;
-  cpf: string;
+export interface CompanyFormValues {
+  companyName: string;
+  cnpj: string;
   phone: string;
   cep: string;
   street: string;

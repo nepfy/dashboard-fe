@@ -1,12 +1,12 @@
 // FormFields.tsx
 import { TextField, CepInput } from "#/components/Inputs";
-import { PersonalFormValues } from "../types";
+import { CompanyFormValues } from "../types";
 import { useCepSearch } from "#/app/dashboard/configuracoes/_hooks/useCEPSearch";
 
 interface FormFieldsProps {
-  formValues: PersonalFormValues;
+  formValues: CompanyFormValues;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  updateFormValues: (values: Partial<PersonalFormValues>) => void;
+  updateFormValues: (values: Partial<CompanyFormValues>) => void;
   isEditing: boolean;
   isLoading: boolean;
 }
@@ -45,26 +45,26 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     <>
       <div className="pb-2">
         <TextField
-          label="Nome Completo"
-          inputName="fullName"
-          id="fullName"
+          label="Razão Social"
+          inputName="companyName"
+          id="companyName"
           type="text"
-          placeholder="Nome Completo"
+          placeholder="Razão Social"
           onChange={handleChange}
-          value={formValues.fullName}
+          value={formValues.companyName}
           disabled={!isEditing || isLoading}
         />
       </div>
 
       <div className="py-2">
         <TextField
-          label="CPF"
-          inputName="cpf"
-          id="cpf"
+          label="CNPJ"
+          inputName="cnpj"
+          id="cnpj"
           type="text"
-          placeholder="CPF"
+          placeholder="CNPJ"
           onChange={handleChange}
-          value={formValues.cpf}
+          value={formValues.cnpj}
           disabled={!isEditing || isLoading}
         />
       </div>

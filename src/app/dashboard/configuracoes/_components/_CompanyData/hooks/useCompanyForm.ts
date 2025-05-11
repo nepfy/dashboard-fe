@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUserAccount } from "#/hooks/useUserAccount";
-import { PersonalFormValues } from "../types";
+import { CompanyFormValues } from "../types";
 
 /**
  * Custom hook to manage personal data form state and logic
@@ -9,23 +9,19 @@ import { PersonalFormValues } from "../types";
  * - State management for form values and tracking changes
  * - Data synchronization with backend user data
  * - Form submission and cancellation logic
- * - Image preview handling
  * - Address search by CEP
  *
  * @param isEditing - Boolean indicating if the form is in edit mode
  * @returns Form state and handler functions
  */
-export const usePersonalForm = (isEditing: boolean) => {
+export const useCompanyForm = (isEditing: boolean) => {
   const { userData, updateUserData } = useUserAccount();
 
   const [hasChanges, setHasChanges] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const [formValues, setFormValues] = useState<PersonalFormValues>({
-    fullName: "",
-    firstName: "",
-    lastName: "",
-    cpf: "",
+  const [formValues, setFormValues] = useState<CompanyFormValues>({
+    companyName: "",
+    cnpj: "",
     phone: "",
     cep: "",
     street: "",
@@ -36,11 +32,9 @@ export const usePersonalForm = (isEditing: boolean) => {
     additionalAddress: "",
   });
 
-  const [originalValues, setOriginalValues] = useState<PersonalFormValues>({
-    fullName: "",
-    firstName: "",
-    lastName: "",
-    cpf: "",
+  const [originalValues, setOriginalValues] = useState<CompanyFormValues>({
+    companyName: "",
+    cnpj: "",
     phone: "",
     cep: "",
     street: "",
@@ -56,24 +50,18 @@ export const usePersonalForm = (isEditing: boolean) => {
    * Sets both current form values and original values for comparison
    */
   useEffect(() => {
-    if (userData) {
-      const fullName = `${userData.firstName || ""} ${
-        userData.lastName || ""
-      }`.trim();
-
+    if (userData?.companyUser) {
       const newValues = {
-        fullName,
-        firstName: userData.firstName || "",
-        lastName: userData.lastName || "",
-        cpf: userData.cpf || "",
-        phone: userData.phone || "",
-        cep: userData.cep || "",
-        street: userData.street || "",
-        neighborhood: userData.neighborhood || "",
-        state: userData.state || "",
-        city: userData.city || "",
-        number: userData.number || "",
-        additionalAddress: userData.additionalAddress || "",
+        companyName: userData.companyUser.name || "",
+        cnpj: userData.companyUser.cnpj || "",
+        phone: userData.companyUser.phone || "",
+        cep: userData.companyUser.cep || "",
+        street: userData.companyUser.street || "",
+        neighborhood: userData.companyUser.neighborhood || "",
+        state: userData.companyUser.state || "",
+        city: userData.companyUser.city || "",
+        number: userData.companyUser.number || "",
+        additionalAddress: userData.companyUser.additionalAddress || "",
       };
 
       setFormValues(newValues);
@@ -89,14 +77,14 @@ export const usePersonalForm = (isEditing: boolean) => {
     if (isEditing) {
       const hasFormChanges = Object.keys(formValues).some(
         (key) =>
-          formValues[key as keyof PersonalFormValues] !==
-          originalValues[key as keyof PersonalFormValues]
+          formValues[key as keyof CompanyFormValues] !==
+          originalValues[key as keyof CompanyFormValues]
       );
 
-      // Consider either form field changes or image changes
-      setHasChanges(hasFormChanges || imagePreview !== null);
+      // Consider either form field changes
+      setHasChanges(hasFormChanges);
     }
-  }, [formValues, imagePreview, isEditing, originalValues]);
+  }, [formValues, isEditing, originalValues]);
 
   /**
    * Handle input field changes
@@ -104,30 +92,13 @@ export const usePersonalForm = (isEditing: boolean) => {
    *
    * @param e - Input change event
    */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = () => {
+    const newValues = {
+      ...formValues,
+    };
 
-    if (name === "fullName") {
-      // Split full name into first and last name
-      const nameParts = value.split(" ");
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
-
-      const newValues = {
-        ...formValues,
-        fullName: value,
-        firstName,
-        lastName,
-      };
-
-      setFormValues(newValues);
-      updateHasChanges(newValues);
-    } else {
-      // Handle regular field changes
-      const newValues = { ...formValues, [name]: value };
-      setFormValues(newValues);
-      updateHasChanges(newValues);
-    }
+    setFormValues(newValues);
+    updateHasChanges(newValues);
   };
 
   /**
@@ -136,7 +107,7 @@ export const usePersonalForm = (isEditing: boolean) => {
    *
    * @param values - Partial form values to update
    */
-  const updateFormValues = (values: Partial<PersonalFormValues>) => {
+  const updateFormValues = (values: Partial<CompanyFormValues>) => {
     const newValues = { ...formValues, ...values };
     setFormValues(newValues);
     updateHasChanges(newValues);
@@ -148,19 +119,19 @@ export const usePersonalForm = (isEditing: boolean) => {
    *
    * @param newValues - The updated form values to compare against originals
    */
-  const updateHasChanges = (newValues: PersonalFormValues) => {
+  const updateHasChanges = (newValues: CompanyFormValues) => {
     const hasFormChanges = Object.keys(newValues).some(
       (key) =>
-        newValues[key as keyof PersonalFormValues] !==
-        originalValues[key as keyof PersonalFormValues]
+        newValues[key as keyof CompanyFormValues] !==
+        originalValues[key as keyof CompanyFormValues]
     );
-    setHasChanges(hasFormChanges || imagePreview !== null);
+    setHasChanges(hasFormChanges);
   };
 
   /**
    * Submit form changes to the server
    * Updates original values to match current values after successful save
-   * Resets hasChanges state and image preview
+   * Resets hasChanges state
    *
    * @returns Promise that resolves on success or rejects on error
    */
@@ -168,22 +139,22 @@ export const usePersonalForm = (isEditing: boolean) => {
     try {
       // Send updated user data to server
       await updateUserData({
-        firstName: formValues.firstName,
-        lastName: formValues.lastName,
-        cpf: formValues.cpf,
-        phone: formValues.phone,
-        cep: formValues.cep,
-        street: formValues.street,
-        neighborhood: formValues.neighborhood,
-        state: formValues.state,
-        city: formValues.city,
-        number: formValues.number,
-        additionalAddress: formValues.additionalAddress,
+        companyUser: {
+          name: formValues.companyName,
+          cnpj: formValues.cnpj,
+          phone: formValues.phone,
+          cep: formValues.cep,
+          street: formValues.street,
+          neighborhood: formValues.neighborhood,
+          state: formValues.state,
+          city: formValues.city,
+          number: formValues.number,
+          additionalAddress: formValues.additionalAddress,
+        },
       });
 
       // After successful save, update original values and reset states
       setOriginalValues({ ...formValues });
-      setImagePreview(null);
       setHasChanges(false);
 
       return Promise.resolve();
@@ -196,19 +167,16 @@ export const usePersonalForm = (isEditing: boolean) => {
   /**
    * Cancel all form changes
    * Resets form values to original values from server
-   * Clears image preview and hasChanges state
+   * Clears hasChanges state
    */
   const handleCancel = (): void => {
     setFormValues({ ...originalValues });
-    setImagePreview(null);
     setHasChanges(false);
   };
 
   return {
     formValues, // Current form field values
     hasChanges, // Whether form has unsaved changes (controls save button)
-    imagePreview, // Preview of selected profile image
-    setImagePreview, // Function to update image preview
     handleChange, // Handler for form input changes
     updateFormValues, // Function to update multiple form fields at once
     handleSubmit, // Function to save changes to server

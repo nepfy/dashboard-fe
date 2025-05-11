@@ -20,6 +20,7 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
       imagePreview,
       setImagePreview,
       handleChange,
+      updateFormValues,
       handleSubmit,
       handleCancel,
     } = usePersonalForm(isEditing);
@@ -58,6 +59,7 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
           <FormFields
             formValues={formValues}
             handleChange={handleChange}
+            updateFormValues={updateFormValues}
             isEditing={isEditing}
             isLoading={isLoading}
           />
