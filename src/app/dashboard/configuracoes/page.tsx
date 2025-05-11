@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import EditSaveBottomBar from "#/components/EditSaveBottomBar";
-import Header from "./components/Header";
-import PersonalData from "./components/PersonalData";
-import CompanyData from "./components/CompanyData";
-import ChangePassword from "./components/ChangePassword";
+import Header from "./_components/_Header";
+import PersonalData from "./_components/_PersonalData";
+import CompanyData from "./_components/_CompanyData";
+import ChangePassword from "./_components/_ChangePassword";
 import { useUserAccount } from "#/hooks/useUserAccount";
 
 export default function Configurations() {
