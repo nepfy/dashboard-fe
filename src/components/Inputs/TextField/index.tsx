@@ -38,7 +38,11 @@ const TextField: React.FC<CustomInputProps> = (props) => {
         value={value}
         onChange={onChange}
         onBlur={onBlur}
-        className="w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)]"
+        className={`w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] 
+        border border-white-neutral-light-300 bg-white-neutral-light-100
+        placeholder:text-[var(--color-white-neutral-light-400)] 
+        focus:outline-none focus:border-[var(--color-primary-light-400)]
+        ${disabled ? "opacity-50" : "text-white-neutral-light-800"}`}
       />
       {error && (
         <div className="text-red-700 rounded-md mt-2 text-sm font-medium">

@@ -21,6 +21,7 @@ interface PersonalDataProps {
 interface PersonalDataRef {
   handleSubmit: () => Promise<void>;
   handleCancel: () => void;
+  hasChanges: boolean;
 }
 
 const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
@@ -28,12 +29,28 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
     const { isEditing } = props;
     const { user, isLoaded: userLoaded } = useUser();
     const { userData, isLoading, updateUserData } = useUserAccount();
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [hasChanges, setHasChanges] = useState(false);
 
     const [formValues, setFormValues] = useState({
-      fullName: "", // Add a fullName field to hold the combined name
+      fullName: "",
+      firstName: "",
+      lastName: "",
+      cpf: "",
+      phone: "",
+      cep: "",
+      street: "",
+      neighborhood: "",
+      state: "",
+      number: "",
+      additionalAddress: "",
+    });
+
+    const [originalValues, setOriginalValues] = useState({
+      fullName: "",
       firstName: "",
       lastName: "",
       cpf: "",
@@ -48,12 +65,11 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
 
     useEffect(() => {
       if (userData) {
-        // When loading data, combine firstName and lastName into fullName
         const fullName = `${userData.firstName || ""} ${
           userData.lastName || ""
         }`.trim();
 
-        setFormValues({
+        const newValues = {
           fullName: fullName,
           firstName: userData.firstName || "",
           lastName: userData.lastName || "",
@@ -65,58 +81,84 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
           state: userData.state || "",
           number: userData.number || "",
           additionalAddress: userData.additionalAddress || "",
-        });
+        };
+
+        setFormValues(newValues);
+        setOriginalValues(newValues);
       }
     }, [userData]);
 
-    // Handle form input changes
+    useEffect(() => {
+      if (isEditing) {
+        const hasFormChanges = Object.keys(formValues).some(
+          (key) =>
+            formValues[key as keyof typeof formValues] !==
+            originalValues[key as keyof typeof originalValues]
+        );
+
+        setHasChanges(hasFormChanges || imagePreview !== null);
+      }
+    }, [formValues, imagePreview, isEditing, originalValues]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
       if (name === "fullName") {
-        // When fullName changes, split it into firstName and lastName
         const nameParts = value.split(" ");
         const firstName = nameParts[0] || "";
         const lastName =
           nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
-        setFormValues((prev) => ({
-          ...prev,
-          fullName: value, // Store the complete input as fullName
+        const newValues = {
+          ...formValues,
+          fullName: value,
           firstName: firstName,
           lastName: lastName,
-        }));
+        };
+
+        setFormValues(newValues);
+
+        const hasFormChanges = Object.keys(newValues).some(
+          (key) =>
+            newValues[key as keyof typeof newValues] !==
+            originalValues[key as keyof typeof originalValues]
+        );
+        setHasChanges(hasFormChanges || imagePreview !== null);
       } else {
-        // Handle other fields normally
-        setFormValues((prev) => ({ ...prev, [name]: value }));
+        const newValues = { ...formValues, [name]: value };
+        setFormValues(newValues);
+
+        const hasFormChanges = Object.keys(newValues).some(
+          (key) =>
+            newValues[key as keyof typeof newValues] !==
+            originalValues[key as keyof typeof originalValues]
+        );
+        setHasChanges(hasFormChanges || imagePreview !== null);
       }
     };
 
-    // Handle image upload button click
     const handleUploadClick = () => {
       if (!isEditing || isLoading || uploading) return;
       fileInputRef.current?.click();
     };
 
-    // Handle file selection
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file || !user) return;
 
       try {
-        // Create a preview of the image
         const reader = new FileReader();
         reader.onload = (event) => {
           setImagePreview(event.target?.result as string);
+          // Update hasChanges immediately when image preview is set
+          setHasChanges(true);
         };
         reader.readAsDataURL(file);
 
-        // Upload the image to Clerk
         setUploading(true);
         await user.setProfileImage({ file });
         setUploading(false);
 
-        // Clear the input value to ensure the change event fires if the same file is selected again
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
@@ -127,12 +169,9 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
       }
     };
 
-    // Handle form submission
     const handleSubmit = async (): Promise<void> => {
       try {
-        // Use the already split firstName and lastName from state
         await updateUserData({
-          // Explicitly include firstName and lastName, omit fullName
           firstName: formValues.firstName,
           lastName: formValues.lastName,
           cpf: formValues.cpf,
@@ -144,6 +183,11 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
           number: formValues.number,
           additionalAddress: formValues.additionalAddress,
         });
+
+        setOriginalValues({ ...formValues });
+        setImagePreview(null);
+        setHasChanges(false);
+
         return Promise.resolve();
       } catch (error) {
         console.error("Error updating user data:", error);
@@ -151,36 +195,18 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
       }
     };
 
-    // Handle cancel button click
     const handleCancel = (): void => {
-      // Reset form values to original user data
       if (userData) {
-        const fullName = `${userData.firstName || ""} ${
-          userData.lastName || ""
-        }`.trim();
-
-        setFormValues({
-          fullName: fullName,
-          firstName: userData.firstName || "",
-          lastName: userData.lastName || "",
-          cpf: userData.cpf || "",
-          phone: userData.phone || "",
-          cep: userData.cep || "",
-          street: userData.street || "",
-          neighborhood: userData.neighborhood || "",
-          state: userData.state || "",
-          number: userData.number || "",
-          additionalAddress: userData.additionalAddress || "",
-        });
+        setFormValues({ ...originalValues });
       }
-      // Clear image preview if it exists
       setImagePreview(null);
+      setHasChanges(false);
     };
 
-    // Expose methods to parent component
     useImperativeHandle(ref, () => ({
       handleSubmit,
       handleCancel,
+      hasChanges,
     }));
 
     return (
@@ -240,7 +266,13 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <p className="text-white-neutral-light-900 font-medium">
+              <p
+                className={`font-medium ${
+                  !isEditing || isLoading || uploading || !userLoaded
+                    ? "opacity-50"
+                    : "text-white-neutral-light-900"
+                }`}
+              >
                 Upload de Imagem
               </p>
             </div>

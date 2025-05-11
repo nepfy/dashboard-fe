@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import EditSaveBottomBar from "#/components/EditSaveBottomBar";
 import Header from "./components/Header";
 import PersonalData from "./components/PersonalData";
@@ -9,18 +9,22 @@ import ChangePassword from "./components/ChangePassword";
 import { useUserAccount } from "#/hooks/useUserAccount";
 
 export default function Configurations() {
+  const { isLoading } = useUserAccount();
+
   const [activeTab, setActiveTab] = useState("Dados pessoais");
   const [isEditing, setIsEditing] = useState(false);
-  const { isLoading } = useUserAccount();
+  const [formChanged, setFormChanged] = useState(false);
 
   const personalDataRef = useRef<{
     handleSubmit: () => Promise<void>;
     handleCancel: () => void;
+    hasChanges: boolean;
   }>(null);
 
   const companyDataRef = useRef<{
     handleSubmit: () => Promise<void>;
     handleCancel: () => void;
+    hasChanges: boolean;
   }>(null);
 
   const tabs = ["Dados pessoais", "Dados empresariais", "Segurança"];
@@ -36,11 +40,9 @@ export default function Configurations() {
       } else if (activeTab === "Dados empresariais" && companyDataRef.current) {
         await companyDataRef.current.handleSubmit();
       }
-      // If we get here, it means the submit was successful
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving data:", error);
-      // Keep edit mode active if there was an error
     }
   };
 
@@ -53,13 +55,35 @@ export default function Configurations() {
     setIsEditing(false);
   };
 
-  // When changing tabs, exit edit mode
   const handleTabChange = (tab: string) => {
     if (isEditing) {
       handleCancel();
     }
     setActiveTab(tab);
   };
+
+  useEffect(() => {
+    if (isEditing) {
+      // Check for changes every 200ms when in edit mode
+      const interval = setInterval(() => {
+        let currentHasChanges = false;
+
+        if (activeTab === "Dados pessoais" && personalDataRef.current) {
+          currentHasChanges = personalDataRef.current.hasChanges;
+        } else if (
+          activeTab === "Dados empresariais" &&
+          companyDataRef.current
+        ) {
+          currentHasChanges = companyDataRef.current.hasChanges;
+        }
+
+        // Force a re-render if the change state is different
+        setFormChanged(currentHasChanges);
+      }, 200);
+
+      return () => clearInterval(interval);
+    }
+  }, [isEditing, activeTab]);
 
   return (
     <main className="relative w-full">
@@ -80,6 +104,7 @@ export default function Configurations() {
             onSave={handleSave}
             onCancel={handleCancel}
             isLoading={isLoading}
+            hasChanges={activeTab === "Dados pessoais" ? formChanged : false}
           />
         </>
       )}
@@ -94,6 +119,9 @@ export default function Configurations() {
             onSave={handleSave}
             onCancel={handleCancel}
             isLoading={isLoading}
+            hasChanges={
+              activeTab === "Dados empresariais" ? formChanged : false
+            }
           />
         </>
       )}
