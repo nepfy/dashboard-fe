@@ -2,6 +2,7 @@
 import { TextField, CepInput } from "#/components/Inputs";
 import { PersonalFormValues } from "../types";
 import { useCepSearch } from "#/app/dashboard/configuracoes/_hooks/useCEPSearch";
+import { validateCPF, maskCPF } from "#/helpers";
 
 interface FormFieldsProps {
   formValues: PersonalFormValues;
@@ -41,6 +42,55 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     }
   };
 
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const maskedValue = maskCPF(value);
+
+    updateFormValues({ [name]: maskedValue });
+  };
+
+  const validateCPFOnBlur = () => {
+    if (formValues.cpf) {
+      const cleanCPF = formValues.cpf.replace(/\D/g, "");
+
+      if (cleanCPF.length > 0 && !validateCPF(cleanCPF)) {
+        // You can add error handling here if needed
+        console.warn("CPF inválido");
+      }
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const numericValue = value.replace(/\D/g, "");
+    let formattedValue = "";
+
+    if (numericValue.length === 0) {
+      formattedValue = "";
+    } else if (numericValue.length <= 2) {
+      formattedValue = `(${numericValue}`;
+    } else if (numericValue.length <= 3) {
+      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(2)}`;
+    } else if (numericValue.length <= 7) {
+      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
+        2,
+        3
+      )} ${numericValue.slice(3)}`;
+    } else if (numericValue.length <= 11) {
+      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
+        2,
+        3
+      )} ${numericValue.slice(3, 7)}-${numericValue.slice(7)}`;
+    } else {
+      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
+        2,
+        3
+      )} ${numericValue.slice(3, 7)}-${numericValue.slice(7, 11)}`;
+    }
+
+    updateFormValues({ [name]: formattedValue });
+  };
+
   return (
     <>
       <div className="pb-2">
@@ -63,7 +113,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           id="cpf"
           type="text"
           placeholder="CPF"
-          onChange={handleChange}
+          onChange={handleCpfChange}
+          onBlur={validateCPFOnBlur}
           value={formValues.cpf}
           disabled={!isEditing || isLoading}
         />
@@ -76,7 +127,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           id="phone"
           type="text"
           placeholder="Telefone"
-          onChange={handleChange}
+          onChange={handlePhoneChange}
           value={formValues.phone}
           disabled={!isEditing || isLoading}
         />

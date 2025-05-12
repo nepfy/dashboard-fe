@@ -12,10 +12,7 @@ import FormHeader from "#/app/onboarding/components/FormHeader";
 import SignUpForm from "#/app/criar-conta/components/SignUpForm";
 import VerificationForm from "#/app/criar-conta/components/VerificationForm";
 
-import {
-  evaluatePasswordStrength,
-  PasswordStrength,
-} from "#/helpers/evaluatePassword";
+import { evaluatePasswordStrength, PasswordStrength } from "#/helpers";
 import { validateEmail } from "#/helpers/validateEmail";
 
 export default function CreateAccount() {

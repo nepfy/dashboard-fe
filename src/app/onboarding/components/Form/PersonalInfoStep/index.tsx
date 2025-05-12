@@ -2,10 +2,7 @@ import { ChangeEvent, useEffect } from "react";
 import { useFormContext } from "#/app/onboarding/helpers/FormContext";
 import StepHeader from "#/app/onboarding/components/StepHeader";
 import { TextField } from "#/components/Inputs";
-import {
-  validateCPF,
-  maskCPF,
-} from "#/app/onboarding/helpers/validateAndMaskCpf";
+import { validateCPF, maskCPF, maskPhone } from "#/helpers";
 
 const PersonalInfoStep = () => {
   const {
@@ -49,31 +46,7 @@ const PersonalInfoStep = () => {
 
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const numericValue = value.replace(/\D/g, "");
-    let formattedValue = "";
-
-    if (numericValue.length === 0) {
-      formattedValue = "";
-    } else if (numericValue.length <= 2) {
-      formattedValue = `(${numericValue}`;
-    } else if (numericValue.length <= 3) {
-      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(2)}`;
-    } else if (numericValue.length <= 7) {
-      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
-        2,
-        3
-      )} ${numericValue.slice(3)}`;
-    } else if (numericValue.length <= 11) {
-      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
-        2,
-        3
-      )} ${numericValue.slice(3, 7)}-${numericValue.slice(7)}`;
-    } else {
-      formattedValue = `(${numericValue.slice(0, 2)}) ${numericValue.slice(
-        2,
-        3
-      )} ${numericValue.slice(3, 7)}-${numericValue.slice(7, 11)}`;
-    }
+    const formattedValue = maskPhone(value);
 
     handleChange({ name: "phone", value: formattedValue });
   };

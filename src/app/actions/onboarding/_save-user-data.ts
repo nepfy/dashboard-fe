@@ -18,8 +18,8 @@ export async function saveUserData(formData: FormData) {
     const userEmail = user?.emailAddresses[0]?.emailAddress || "";
 
     const fullName = formData.get("fullName") as string;
-    const cpf = formData.get("cpf") as string;
-    const phone = formData.get("phone") as string;
+    const cpf = (formData.get("cpf") as string).replace(/\D/g, "");
+    const phone = (formData.get("phone") as string).replace(/\D/g, "");
     const jobTypeStr = formData.get("jobType") as string;
     const discoverySourceStr = formData.get("discoverySource") as string;
     const usedBeforeStr = formData.get("usedBefore") as string;

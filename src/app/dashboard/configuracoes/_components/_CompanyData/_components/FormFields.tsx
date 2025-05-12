@@ -2,6 +2,7 @@
 import { TextField, CepInput } from "#/components/Inputs";
 import { CompanyFormValues } from "../types";
 import { useCepSearch } from "#/app/dashboard/configuracoes/_hooks/useCEPSearch";
+import { maskPhone, maskCNPJ } from "#/helpers";
 
 interface FormFieldsProps {
   formValues: CompanyFormValues;
@@ -41,6 +42,20 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     }
   };
 
+  const handleCnpjChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const maskedValue = maskCNPJ(value);
+
+    updateFormValues({ [name]: maskedValue });
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const maskedValue = maskPhone(value);
+
+    updateFormValues({ [name]: maskedValue });
+  };
+
   return (
     <>
       <div className="pb-2">
@@ -63,7 +78,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           id="cnpj"
           type="text"
           placeholder="CNPJ"
-          onChange={handleChange}
+          onChange={handleCnpjChange}
           value={formValues.cnpj}
           disabled={!isEditing || isLoading}
         />
@@ -76,7 +91,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           id="phone"
           type="text"
           placeholder="Telefone"
-          onChange={handleChange}
+          onChange={handlePhoneChange}
           value={formValues.phone}
           disabled={!isEditing || isLoading}
         />

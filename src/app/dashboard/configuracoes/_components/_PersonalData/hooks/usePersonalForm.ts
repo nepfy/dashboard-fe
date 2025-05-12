@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useUserAccount } from "#/hooks/useUserAccount";
 import { PersonalFormValues } from "../types";
+import { maskCPF } from "#/helpers/validateAndMaskCpf";
+import { maskPhone } from "#/helpers";
 
 /**
  * Custom hook to manage personal data form state and logic
@@ -61,12 +63,15 @@ export const usePersonalForm = (isEditing: boolean) => {
         userData.lastName || ""
       }`.trim();
 
+      const formattedCpf = userData.cpf ? maskCPF(userData.cpf) : "";
+      const formattedPhone = userData.phone ? maskPhone(userData.phone) : "";
+
       const newValues = {
         fullName,
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
-        cpf: userData.cpf || "",
-        phone: userData.phone || "",
+        cpf: formattedCpf,
+        phone: formattedPhone,
         cep: userData.cep || "",
         street: userData.street || "",
         neighborhood: userData.neighborhood || "",
@@ -168,12 +173,17 @@ export const usePersonalForm = (isEditing: boolean) => {
    */
   const handleSubmit = async (): Promise<void> => {
     try {
+      const cleanCpf = formValues.cpf ? formValues.cpf.replace(/\D/g, "") : "";
+      const cleanPhone = formValues.phone
+        ? formValues.phone.replace(/\D/g, "")
+        : "";
+
       // Send updated user data to server
       await updateUserData({
         firstName: formValues.firstName,
         lastName: formValues.lastName,
-        cpf: formValues.cpf,
-        phone: formValues.phone,
+        cpf: cleanCpf,
+        phone: cleanPhone,
         cep: formValues.cep,
         street: formValues.street,
         neighborhood: formValues.neighborhood,

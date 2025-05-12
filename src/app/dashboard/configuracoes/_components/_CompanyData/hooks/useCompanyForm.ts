@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUserAccount } from "#/hooks/useUserAccount";
 import { CompanyFormValues } from "../types";
+import { maskPhone, maskCNPJ } from "#/helpers";
 
 /**
  * Custom hook to manage personal data form state and logic
@@ -51,10 +52,17 @@ export const useCompanyForm = (isEditing: boolean) => {
    */
   useEffect(() => {
     if (userData?.companyData) {
+      const formattedCnpj = userData.companyData.cnpj
+        ? maskCNPJ(userData.companyData.cnpj)
+        : "";
+      const formattedPhone = userData.companyData.phone
+        ? maskPhone(userData.companyData.phone)
+        : "";
+
       const newValues = {
         companyName: userData.companyData.name || "",
-        cnpj: userData.companyData.cnpj || "",
-        phone: userData.companyData.phone || "",
+        cnpj: formattedCnpj, // Use the masked CNPJ
+        phone: formattedPhone, // Use the masked phone
         cep: userData.companyData.cep || "",
         street: userData.companyData.street || "",
         neighborhood: userData.companyData.neighborhood || "",
@@ -140,12 +148,18 @@ export const useCompanyForm = (isEditing: boolean) => {
    */
   const handleSubmit = async (): Promise<void> => {
     try {
-      // Send updated user data to server
+      const cleanCnpj = formValues.cnpj
+        ? formValues.cnpj.replace(/\D/g, "")
+        : "";
+      const cleanPhone = formValues.phone
+        ? formValues.phone.replace(/\D/g, "")
+        : "";
+
       await updateUserData({
         companyData: {
           name: formValues.companyName,
-          cnpj: formValues.cnpj,
-          phone: formValues.phone,
+          cnpj: cleanCnpj, // Send the clean CNPJ
+          phone: cleanPhone, // Send the clean phone
           cep: formValues.cep,
           street: formValues.street,
           neighborhood: formValues.neighborhood,

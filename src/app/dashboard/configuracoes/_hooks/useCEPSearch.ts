@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  fetchAddressByCep,
-  formatCep,
-  validateCep,
-} from "#/helpers/cepService";
+import { fetchAddressByCep, formatCep, validateCep } from "#/helpers";
 
 /**
  * Custom hook to handle CEP search functionality
