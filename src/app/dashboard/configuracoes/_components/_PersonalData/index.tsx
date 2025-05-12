@@ -23,6 +23,7 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
       updateFormValues,
       handleSubmit,
       handleCancel,
+      setHasChanges,
     } = usePersonalForm(isEditing);
 
     useImperativeHandle(ref, () => ({
@@ -54,6 +55,7 @@ const PersonalData = forwardRef<PersonalDataRef, PersonalDataProps>(
             isLoading={isLoading}
             imagePreview={imagePreview}
             onImageChange={setImagePreview}
+            setHasChanges={setHasChanges}
           />
 
           <FormFields

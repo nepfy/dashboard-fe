@@ -93,8 +93,10 @@ export const usePersonalForm = (isEditing: boolean) => {
           originalValues[key as keyof PersonalFormValues]
       );
 
-      // Consider either form field changes or image changes
-      setHasChanges(hasFormChanges || imagePreview !== null);
+      // setHasChanges gets called from ImageUpload, so avoid overriding that
+      if (!imagePreview) {
+        setHasChanges(hasFormChanges);
+      }
     }
   }, [formValues, imagePreview, isEditing, originalValues]);
 
@@ -213,5 +215,6 @@ export const usePersonalForm = (isEditing: boolean) => {
     updateFormValues, // Function to update multiple form fields at once
     handleSubmit, // Function to save changes to server
     handleCancel, // Function to discard changes
+    setHasChanges, // Function to track image changes
   };
 };
