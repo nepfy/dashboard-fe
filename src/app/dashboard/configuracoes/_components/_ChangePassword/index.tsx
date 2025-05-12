@@ -79,17 +79,17 @@ export default function ChangePassword() {
             />
           </div>
         </div>
-        <div className="flex items-center justify-start mt-4 mb-5">
+        <div className="flex items-center justify-start flex-wrap mt-4 mb-5">
           <button
             type="submit"
-            className="h-[44px] text-white rounded-[var(--radius-s)] font-medium transition-colors cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] button-inner-inverse mr-2 px-5"
+            className="h-[44px] text-white rounded-[var(--radius-s)] font-medium transition-colors cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] button-inner-inverse px-5 m-2 sm:m-0 sm:mr-2"
           >
             Salvar alterações
           </button>
 
           <button
             type="submit"
-            className="w-[95px] h-[44px] border border-white-neutral-light-300 button-inner bg-white-neutral-light-100 rounded-xs flex items-center justify-center"
+            className="w-[95px] h-[44px] border border-white-neutral-light-300 button-inner bg-white-neutral-light-100 rounded-xs flex items-center justify-center m-2 sm:m-0"
           >
             Cancelar
           </button>
