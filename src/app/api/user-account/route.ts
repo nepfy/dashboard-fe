@@ -132,7 +132,7 @@ export async function PUT(request: Request) {
 
     const result = {
       ...updatedUser[0],
-      companyUser: updatedCompany.length > 0 ? updatedCompany[0] : null,
+      companyData: updatedCompany.length > 0 ? updatedCompany[0] : null,
     };
 
     return NextResponse.json({ success: true, data: result });

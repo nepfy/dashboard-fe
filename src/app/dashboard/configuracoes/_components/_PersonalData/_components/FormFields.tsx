@@ -116,7 +116,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
           onChange={handleCpfChange}
           onBlur={validateCPFOnBlur}
           value={formValues.cpf}
-          disabled={!isEditing || isLoading}
+          disabled={true}
         />
       </div>
 
