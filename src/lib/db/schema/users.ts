@@ -11,6 +11,7 @@ export const personUserTable = pgTable("person_user", {
   id: uuid().notNull().primaryKey().defaultRandom(),
   firstName: varchar("first_name", { length: 255 }),
   lastName: varchar("last_name", { length: 255 }),
+  userName: varchar("user_name", { length: 255 }).unique(),
   email: varchar({ length: 255 }).notNull().unique(),
   cpf: varchar({ length: 255 }),
   phone: varchar({ length: 255 }),

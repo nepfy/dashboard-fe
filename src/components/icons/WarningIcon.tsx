@@ -1,6 +1,6 @@
 import IconProps from "./types";
 
-const TutorialIcon = ({
+const WarningIcon = ({
   width = "24",
   height = "24",
   fill = "#FFFFFF",
@@ -21,4 +21,4 @@ const TutorialIcon = ({
   </svg>
 );
 
-export default TutorialIcon;
+export default WarningIcon;

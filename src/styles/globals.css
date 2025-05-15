@@ -52,6 +52,8 @@
   --color-yellow-light-25: rgba(252, 189, 71, 0.25);
   --color-yellow-light-40: rgba(252, 189, 71, 0.4);
   --color-yellow-light-50: rgba(252, 189, 71, 0.5);
+  --color-yellow-light-100: #fcbd47;
+  --color-yellow-light-200: #f29f04;
 
   --color-green-light-100: #84ebb4;
   --color-green-light-200: #1fc16b;
@@ -188,4 +190,8 @@ body {
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.warning-bg {
+  background: linear-gradient(67.87deg, #ffd079 14.45%, #f29f04 97.26%);
 }

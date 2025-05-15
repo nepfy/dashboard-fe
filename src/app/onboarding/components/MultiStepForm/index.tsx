@@ -9,6 +9,7 @@ import PersonalInfoStep from "#/app/onboarding/components/Form/PersonalInfoStep"
 import JobTypeStep from "#/app/onboarding/components/Form/JobTypeStep";
 import DiscoveryStep from "#/app/onboarding/components/Form/DiscoveryStep";
 import UsedBeforeStep from "#/app/onboarding/components/Form/UsedBeforeStep";
+import UserNameStep from "../Form/UserNameStep";
 
 interface MultiStepFormProps {
   onComplete: (formData: FormData) => Promise<{ error?: string } | void>;
@@ -135,9 +136,13 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete, error }) => {
       name: "Experiência Prévia",
       content: <UsedBeforeStep />,
     },
+    {
+      name: "Nome de Usuário",
+      content: <UserNameStep />,
+    },
   ];
 
-  const isLastOptionSelected = !!formData.usedBefore;
+  const isLastOptionSelected = !!formData.userName;
 
   return (
     <FormLayout>

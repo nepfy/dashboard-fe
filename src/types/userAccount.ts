@@ -20,6 +20,7 @@ export interface UserAccount {
   id: string;
   firstName?: string;
   lastName?: string;
+  userName?: string;
   email: string;
   cpf?: string;
   phone: string;

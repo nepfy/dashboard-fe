@@ -13,6 +13,7 @@ export interface PersonalFormValues {
   fullName: string;
   firstName: string;
   lastName: string;
+  userName?: string;
   cpf: string;
   phone: string;
   cep: string;

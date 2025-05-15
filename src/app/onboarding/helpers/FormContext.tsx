@@ -9,6 +9,7 @@ import React, {
 
 export interface FormDataProps {
   fullName: string;
+  userName: string;
   cpf: string;
   phone: string;
   jobType: string[];
@@ -39,11 +40,13 @@ interface FormContextType {
   enableNextStepDiscoverySource: () => void;
   enableNextStepUsedBefore: () => void;
   resetEnableNextStep: () => void;
+  enableNextStepUserName: () => void;
 }
 
 const FormContext = createContext<FormContextType>({
   formData: {
     fullName: "",
+    userName: "",
     cpf: "",
     phone: "",
     jobType: [],
@@ -65,6 +68,7 @@ const FormContext = createContext<FormContextType>({
   enableNextStepDiscoverySource: () => {},
   enableNextStepUsedBefore: () => {},
   resetEnableNextStep: () => {},
+  enableNextStepUserName: () => {},
 });
 
 export const useFormContext = () => useContext(FormContext);
@@ -76,6 +80,7 @@ interface FormProviderProps {
 export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   const [formData, setFormData] = useState<FormDataProps>({
     fullName: "",
+    userName: "",
     cpf: "",
     phone: "",
     jobType: [],
@@ -207,6 +212,18 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     setEnableNextStep(isValid);
   };
 
+  const enableNextStepUserName = () => {
+    // Username must be between 3 and 10 characters, and can only contain letters and numbers
+    const isValid =
+      formData.userName.trim() !== "" &&
+      formData.userName.length >= 3 &&
+      formData.userName.length <= 10 &&
+      /^[a-zA-Z0-9]+$/.test(formData.userName) &&
+      !formErrors.userName;
+
+    setEnableNextStep(isValid);
+  };
+
   const value: FormContextType = {
     formData,
     formErrors,
@@ -224,6 +241,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     enableNextStepDiscoverySource,
     enableNextStepUsedBefore,
     resetEnableNextStep,
+    enableNextStepUserName,
   };
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;

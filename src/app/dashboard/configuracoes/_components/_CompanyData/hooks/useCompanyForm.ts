@@ -4,7 +4,7 @@ import { CompanyFormValues } from "../types";
 import { maskPhone, maskCNPJ } from "#/helpers";
 
 /**
- * Custom hook to manage personal data form state and logic
+ * Custom hook to manage company data form state and logic
  *
  * This hook encapsulates all form-related functionality for the personal data form, including:
  * - State management for form values and tracking changes

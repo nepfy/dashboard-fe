@@ -1,97 +1,71 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useUserAccount } from "#/hooks/useUserAccount";
+import Modal from "#/components/Modal";
 import { TextField } from "#/components/Inputs";
-import PasswordInput from "#/components/Inputs/PasswordInput";
-import RenderPasswordStrengthMeter from "#/components/RenderPassword";
 import WarningIcon from "#/components/icons/WarningIcon";
 
-import {
-  evaluatePasswordStrength,
-  PasswordStrength,
-} from "#/helpers/evaluatePassword";
-
 export default function ChangePassword() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
-    strength: "none",
-    score: 0,
-  });
+  const { userData } = useUserAccount();
   const [error, setError] = useState("");
+  const [usernameModal, setUsernameModal] = useState(false);
+  const [emailModal, setEmailModal] = useState(false);
 
   useEffect(() => {
-    setPasswordStrength(evaluatePasswordStrength(password));
     setError("");
-  }, [password]);
+  }, []);
 
   return (
     <div className="max-w-[595px] bg-white-neutral-light-100 border border-white-neutral-light-300 rounded-[12px] p-6 mb-[64px] sm:mb-[100px]">
-      <p className="text-white-neutral-light-900 font-medium leading-[18px] mb-3">
+      <p className="text-white-neutral-light-900 font-medium leading-[18px] mb-5">
         Segurança da conta
       </p>
 
       <form onSubmit={() => console.log("form")}>
+        <div className="pb-4">
+          <TextField
+            label="Nome de usuário"
+            inputName="username"
+            id="username"
+            type="text"
+            placeholder=""
+            onClick={() => setUsernameModal(!usernameModal)}
+            value={userData?.userName}
+            disabled
+            info
+          />
+        </div>
+
         <div className="pb-2">
           <TextField
             label="Email"
             inputName="emailAddress"
             id="email"
             type="email"
-            placeholder="Digite o email cadastrado"
-            onChange={() => console.log("email")}
+            placeholder="Seu email"
+            onClick={() => setEmailModal(!emailModal)}
+            value={userData?.email}
+            disabled
+            info
           />
         </div>
 
-        <div className="py-2 flex flex-col sm:flex-row justify-center items-center">
-          <div className="py-2 w-full sm:w-1/2 sm:pr-2">
-            <PasswordInput
-              label="Senha"
-              id="password"
-              placeholder="Crie uma senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              showPassword={showPassword}
-              toggleShowPassword={() => setShowPassword(!showPassword)}
-            />
-
-            <div className="w-[112px]">
-              <RenderPasswordStrengthMeter
-                password={password}
-                passwordStrength={passwordStrength}
-              />
-            </div>
-          </div>
-          <div className="py-2 w-full sm:w-1/2">
-            <PasswordInput
-              label="Confirme a senha"
-              id="confirmPassword"
-              placeholder="Confirme sua senha"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              showPassword={showConfirmPassword}
-              toggleShowPassword={() =>
-                setShowConfirmPassword(!showConfirmPassword)
-              }
-            />
-          </div>
-        </div>
-        <div className="flex items-center justify-start flex-wrap mt-4 mb-5">
+        <div className="flex flex-col sm:flex-row justify-center items-end">
+          <TextField
+            label="Senha"
+            inputName="password"
+            id="password"
+            type="text"
+            onChange={() => console.log("password")}
+            value="••••••••"
+          />
           <button
             type="submit"
-            className="h-[44px] text-white rounded-[var(--radius-s)] font-medium transition-colors cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] button-inner-inverse px-5 m-2 sm:m-0 sm:mr-2"
+            className="w-full sm:w-[72px] h-[50px] border border-white-neutral-light-300 button-inner bg-white-neutral-light-100 rounded-xs ml-2 px-4 mb-2"
           >
-            Salvar alterações
-          </button>
-
-          <button
-            type="submit"
-            className="w-[95px] h-[44px] border border-white-neutral-light-300 button-inner bg-white-neutral-light-100 rounded-xs flex items-center justify-center m-2 sm:m-0"
-          >
-            Cancelar
+            Editar
           </button>
         </div>
         {error && (
@@ -100,6 +74,60 @@ export default function ChangePassword() {
           </div>
         )}
       </form>
+      {usernameModal && (
+        <Modal
+          isOpen={usernameModal}
+          onClose={() => setUsernameModal(false)}
+          title="Nome de usuário"
+        >
+          <div className="p-6">
+            <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
+              Seu nome de usuário é o seu identificador por aqui
+            </p>
+            <p className="text-white-neutral-light-500 text-sm ">
+              Ele será usado para criar um link exclusivo para cada proposta que
+              você enviar, como:
+            </p>
+            <p className="text-primary-light-500 text-sm mb-3">
+              usuario-cliente.nepfy.com.
+            </p>
+            <p className="text-white-neutral-light-500 text-sm">
+              Esse é o nome de usuário que você escolheu no momento do cadastro.
+            </p>
+            <p className="font-bold text-white-neutral-light-500 text-sm mb-3">
+              Ele é único e não pode ser alterado depois.
+            </p>
+          </div>
+          <div className="flex justify-end items-center w-full">
+            <Image
+              src="/images/browserbar.png"
+              alt="Imagem de um navegador com o link do cliente"
+              width={372}
+              height={32}
+            />
+          </div>
+        </Modal>
+      )}
+      {emailModal && (
+        <Modal
+          isOpen={emailModal}
+          onClose={() => setEmailModal(false)}
+          title="Email de usuário"
+        >
+          <div className="p-6">
+            <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
+              É através do seu email que você vai se autenticar na plataforma
+            </p>
+            <p className="text-white-neutral-light-500 text-sm mb-3">
+              Ele é usado para validar o seu acesso e também para enviar as
+              notificações importantes sobre sua conta.
+            </p>
+            <p className="font-bold text-white-neutral-light-500 text-sm mb-3">
+              Seu email é único e também não pode ser alterado.
+            </p>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

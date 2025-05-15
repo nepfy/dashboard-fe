@@ -43,6 +43,13 @@
       "when": 1746995362556,
       "tag": "0005_light_turbo",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1747275088222,
+      "tag": "0006_brave_the_hood",
+      "breakpoints": true
     }
   ]
 }

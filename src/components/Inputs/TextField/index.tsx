@@ -1,10 +1,16 @@
+import QuestionIcon from "#/components/icons/QuestionIcon";
+
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string | React.ReactNode;
   inputName?: string;
   error?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
   disabled?: boolean;
+  info?: boolean;
+  maxLength?: number;
+  showCharCount?: boolean;
 }
 
 const TextField: React.FC<CustomInputProps> = (props) => {
@@ -18,17 +24,31 @@ const TextField: React.FC<CustomInputProps> = (props) => {
     error,
     onChange,
     onBlur,
+    onClick,
     disabled,
+    info,
+    maxLength,
+    showCharCount = false,
   } = props;
+
+  const currentLength = typeof value === "string" ? value.length : 0;
+  const remainingChars = maxLength ? maxLength - currentLength : 0;
+  const isLowChars = remainingChars <= 2 && maxLength !== undefined;
 
   return (
     <div className="block w-full">
       <label
         htmlFor={inputName}
-        className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
+        className="text-[var(--color-white-neutral-light-700)] text-sm font-medium flex items-center justify-between"
       >
         {label}
+        {info && (
+          <div onClick={onClick}>
+            <QuestionIcon className="cursor-pointer" fill="#8B8895" />
+          </div>
+        )}
       </label>
+
       <input
         disabled={disabled}
         type={type}
@@ -38,17 +58,36 @@ const TextField: React.FC<CustomInputProps> = (props) => {
         value={value}
         onChange={onChange}
         onBlur={onBlur}
+        maxLength={maxLength}
         className={`w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] 
-        border border-white-neutral-light-300 bg-white-neutral-light-100
-        placeholder:text-[var(--color-white-neutral-light-400)] 
-        focus:outline-none focus:border-[var(--color-primary-light-400)]
-        ${disabled ? "opacity-50" : "text-white-neutral-light-800"}`}
+                    border bg-white-neutral-light-100
+                  placeholder:text-[var(--color-white-neutral-light-400)] 
+                    focus:outline-none
+        ${disabled ? "opacity-50" : "text-white-neutral-light-800"}
+        ${
+          error
+            ? "border-red-700"
+            : "focus:border-[var(--color-primary-light-400)] border-white-neutral-light-300"
+        }
+        
+        `}
       />
-      {error && (
-        <div className="text-red-700 rounded-md mt-2 text-sm font-medium">
-          {error}
-        </div>
-      )}
+      <div className="mt-2 flex items-center justify-between">
+        {error && (
+          <div className="text-red-700 rounded-md text-sm font-medium">
+            {error}
+          </div>
+        )}
+        {showCharCount && maxLength && (
+          <div
+            className={`text-xs ml-auto ${
+              isLowChars ? "text-red-500" : "text-white-neutral-light-500"
+            }`}
+          >
+            {remainingChars} / {maxLength}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

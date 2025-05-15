@@ -1,7 +1,7 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 import { db } from "#/lib/db";
 import { personUserTable } from "#/lib/db/schema/users";
@@ -18,6 +18,7 @@ export async function saveUserData(formData: FormData) {
     const userEmail = user?.emailAddresses[0]?.emailAddress || "";
 
     const fullName = formData.get("fullName") as string;
+    const userName = formData.get("userName") as string;
     const cpf = (formData.get("cpf") as string).replace(/\D/g, "");
     const phone = (formData.get("phone") as string).replace(/\D/g, "");
     const jobTypeStr = formData.get("jobType") as string;
@@ -36,11 +37,19 @@ export async function saveUserData(formData: FormData) {
     const existingUser = await db
       .select()
       .from(personUserTable)
-      .where(eq(personUserTable.cpf, cpf))
+      .where(
+        or(eq(personUserTable.cpf, cpf), eq(personUserTable.userName, userName))
+      )
       .limit(1);
 
     if (existingUser.length > 0) {
-      throw new Error("CPF já cadastrado");
+      if (existingUser[0].cpf === cpf) {
+        throw new Error("CPF já cadastrado");
+      }
+      if (existingUser[0].userName === userName) {
+        throw new Error("Nome de usuário já está em uso");
+      }
+      throw new Error("Dados já cadastrados");
     }
 
     const insertResult = await db
@@ -48,6 +57,7 @@ export async function saveUserData(formData: FormData) {
       .values({
         firstName: truncate(firstName),
         lastName: truncate(lastName),
+        userName: truncate(userName),
         cpf: truncate(cpf),
         phone: truncate(phone),
         email: truncate(userEmail),
