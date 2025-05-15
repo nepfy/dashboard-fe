@@ -11,6 +11,7 @@ interface ModalProps {
   showCloseButton?: boolean;
   width?: string;
   closeOnClickOutside?: boolean;
+  footer?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -20,6 +21,7 @@ const Modal: React.FC<ModalProps> = ({
   children,
   showCloseButton = true,
   closeOnClickOutside = true,
+  footer = true,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -95,14 +97,16 @@ const Modal: React.FC<ModalProps> = ({
         )}
 
         <div>{children}</div>
-        <div className="border-t border-white-neutral-light-300 p-6">
-          <button
-            onClick={onClose}
-            className="w-[93px] h-[44px] text-center text-white rounded-[var(--radius-xs)] font-medium transition-colors cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] button-inner-inverse"
-          >
-            Entendi
-          </button>
-        </div>
+        {footer && (
+          <div className="border-t border-white-neutral-light-300 p-6">
+            <button
+              onClick={onClose}
+              className="w-[93px] h-[44px] text-center text-white rounded-[var(--radius-xs)] font-medium transition-colors cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] button-inner-inverse"
+            >
+              Entendi
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
