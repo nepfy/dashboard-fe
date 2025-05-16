@@ -71,8 +71,8 @@ const PersonalInfoStep = () => {
         />
       </div>
 
-      <div className="flex space-x-4 mb-4">
-        <div className="w-1/2">
+      <div className="flex flex-wrap sm:flex-nowrap sm:space-x-4 mb-4">
+        <div className="w-full mb-4 sm:mb-0 sm:w-1/2">
           <TextField
             id="cpf"
             inputName="cpf"
@@ -87,7 +87,7 @@ const PersonalInfoStep = () => {
           />
         </div>
 
-        <div className="w-1/2">
+        <div className="w-full sm:w-1/2">
           <TextField
             id="phone"
             inputName="phone"

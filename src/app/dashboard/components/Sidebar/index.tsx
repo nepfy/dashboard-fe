@@ -175,7 +175,7 @@ export default function Sidebar() {
             </li>
           </ul>
           <p className="text-white-neutral-light-400 mt-6">
-            &copy; {date.getFullYear()}. Nepfy.
+            &copy; {date.getFullYear()} Nepfy
           </p>
         </nav>
       </div>

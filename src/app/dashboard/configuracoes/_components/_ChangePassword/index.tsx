@@ -87,10 +87,11 @@ export default function ChangePassword() {
             <p className="text-white-neutral-light-500 text-sm ">
               Ele será usado para criar um link exclusivo para cada proposta que
               você enviar, como:
+              <span className="text-primary-light-500 text-sm mb-3">
+                usuario-cliente.nepfy.com.
+              </span>
             </p>
-            <p className="text-primary-light-500 text-sm mb-3">
-              usuario-cliente.nepfy.com.
-            </p>
+
             <p className="text-white-neutral-light-500 text-sm">
               Esse é o nome de usuário que você escolheu no momento do cadastro.
             </p>
@@ -100,7 +101,7 @@ export default function ChangePassword() {
           </div>
           <div className="flex justify-end items-center w-full">
             <Image
-              src="/images/browserbar.png"
+              src="/images/browserbar.jpg"
               alt="Imagem de um navegador com o link do cliente"
               width={372}
               height={32}

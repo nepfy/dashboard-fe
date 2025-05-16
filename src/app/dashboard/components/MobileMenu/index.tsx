@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
+import { useUserStore } from "#/store/userStore";
 import Logo from "#/components/icons/Logo";
 import GridIcon from "#/components/icons/GridIcon";
 import FileIcon from "#/components/icons/FileIcon";
@@ -13,14 +15,21 @@ import SignOutIcon from "#/components/icons/SignOutIcon";
 import CloseIcon from "#/components/icons/CloseIcon";
 
 export default function MobileMenu({
-  setIsMobileMenuOpen,
+  setIsMobileMenuOpenAction,
 }: {
-  setIsMobileMenuOpen: (isOpen: boolean) => void;
+  setIsMobileMenuOpenAction: (isOpen: boolean) => void;
 }) {
   const pathname = usePathname();
+  const { signOut } = useClerk();
+  const logout = useUserStore((state) => state.logout);
 
   const isActive = (path: string) => {
     return pathname === path;
+  };
+
+  const handleSignOut = async () => {
+    logout(); // Clear user data from store and localStorage
+    await signOut({ redirectUrl: "/login" });
   };
 
   const menuItems = [
@@ -90,17 +99,6 @@ export default function MobileMenu({
         />
       ),
     },
-    {
-      name: "Sair",
-      path: "/logout",
-      icon: (
-        <SignOutIcon
-          width="20"
-          height="20"
-          fill={isActive("/logout") ? "#6B46F5" : "#19171F"}
-        />
-      ),
-    },
   ];
 
   return (
@@ -114,7 +112,7 @@ export default function MobileMenu({
             <button
               type="button"
               className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => setIsMobileMenuOpenAction(false)}
             >
               <CloseIcon width="20" height="20" />
             </button>
@@ -127,7 +125,7 @@ export default function MobileMenu({
                   <li key={item.name}>
                     <Link
                       href={item.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={() => setIsMobileMenuOpenAction(false)}
                       className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium  ${
                         isActive(item.path)
                           ? "bg-white-neutral-light-100 e0"
@@ -138,6 +136,18 @@ export default function MobileMenu({
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <div
+                    onClick={handleSignOut}
+                    className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium hover:bg-gray-100 cursor-pointer`}
+                  >
+                    <span className="mr-2">
+                      {" "}
+                      <SignOutIcon width="20" height="20" fill="#19171F" />
+                    </span>{" "}
+                    Sair
+                  </div>
+                </li>
               </ul>
             </nav>
           </div>

@@ -41,7 +41,7 @@ export default function Header({ activeTab, setActiveTab, tabs }: HeaderProps) {
     arrows: false,
     swipeToSlide: true,
     touchThreshold: 10,
-    centerMode: true,
+    centerMode: false,
     variableWidth: true,
     afterChange: handleAfterChange,
     initialSlide: activeIndex >= 0 ? activeIndex : 0,

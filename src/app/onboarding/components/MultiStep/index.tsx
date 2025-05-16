@@ -59,8 +59,8 @@ const MultiStep: React.FC<MultiStepProps> = ({
   ]);
 
   return (
-    <div className="w-full flex flex-col justify-start h-[452px]">
-      <div className="flex items-center justify-start mb-8 space-x-4">
+    <div className="w-full flex flex-col justify-start sm:h-[452px]">
+      <div className="flex items-center justify-start mb-8 space-x-2 sm:space-x-4 box-border">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
             <div
@@ -90,7 +90,7 @@ const MultiStep: React.FC<MultiStepProps> = ({
         {currentStep > 1 && (
           <button
             onClick={prevStep}
-            className="flex items-center px-4 py-2 text-white-neutral-light-900 bg-white border border-white-neutral-light-300 rounded-xs mr-2 h-[44px] font-medium hover:cursor-pointer"
+            className="h-[44px] px-4 flex items-center text-white-neutral-light-900 bg-white border border-white-neutral-light-300 rounded-xs mr-2 font-medium hover:cursor-pointer"
           >
             <svg
               className="w-[16px] h-[16px] mr-2"
@@ -110,24 +110,29 @@ const MultiStep: React.FC<MultiStepProps> = ({
           </button>
         )}
 
-        {!isLastOptionSelected && currentStep < steps.length && (
+        {!isLastOptionSelected && currentStep < steps.length ? (
           <button
             onClick={nextStep}
             disabled={!enableNextStep}
-            className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors text-center box-border ${
+            className={` w-full text-white rounded-[var(--radius-s)] font-medium transition-colors text-center border h-[43px] ${
               enableNextStep
-                ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] hover:cursor-pointer"
+                ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] hover:cursor-pointer button-inner-inverse"
                 : "bg-gray-300 cursor-not-allowed"
             }`}
           >
             Avançar
           </button>
-        )}
-
-        {isLastOptionSelected && (
+        ) : (
           <button
             onClick={onComplete}
-            className="w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium hover:bg-[var(--color-primary-light-500)] transition-colors hover:cursor-pointer"
+            disabled={!isLastOptionSelected}
+            className={`w-full text-white rounded-[var(--radius-s)] font-medium transition-colors text-center border h-[43px]
+            ${
+              isLastOptionSelected
+                ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] transition-colors hover:cursor-pointer"
+                : " bg-gray-300 cursor-not-allowed"
+            }
+              `}
           >
             Finalizar cadastro
           </button>

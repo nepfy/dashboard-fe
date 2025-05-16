@@ -17,6 +17,8 @@ export default function Onboarding() {
   const router = useRouter();
   const [error, setError] = useState("");
 
+  const date = new Date();
+
   const handleOnboardingComplete = async (formData: FormData) => {
     try {
       const res = await completeOnboarding(formData);
@@ -38,7 +40,7 @@ export default function Onboarding() {
 
   return (
     <FormProvider>
-      <div className="grid place-items-center pb-0 pt-0 h-screen min-h-[740px]">
+      <div className="grid place-items-center pb-2 sm:pb-0 pt-0 h-screen min-h-[740px]">
         <Navbar />
         <div className="grid xl:grid-cols-2 w-full h-full relative">
           <IntroSlider
@@ -46,16 +48,22 @@ export default function Onboarding() {
             description="Prepare uma proposta visualmente cativante e bem estruturada."
           />
 
-          <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20 mb-6 sm:mb-0">
-            <div className="w-full flex flex-col items-center justify-center space-y-8 h-full">
+          <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20 mb-6 sm:mb-0 box-border">
+            <div className="w-full flex flex-col items-center justify-center space-y-8 h-full box-border">
               <MultiStepForm
                 onComplete={handleOnboardingComplete}
                 error={error}
               />
             </div>
           </div>
-
+        </div>
+        <div className="hidden lg:block absolute z-40 bottom-5 left-5 right-0">
           <Footer />
+        </div>
+        <div className="text-white-neutral-light-400 xl:text-primary-light-200 flex items-center sm:items-end w-full h-[80px] sm:h-full box-border lg:hidden">
+          <span className="px-8 sm:py-6">
+            &copy; {date.getFullYear()} Nepfy
+          </span>
         </div>
       </div>
     </FormProvider>

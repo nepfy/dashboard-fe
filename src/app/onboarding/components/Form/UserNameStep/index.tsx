@@ -69,11 +69,11 @@ export default function UserNameStep() {
         />
       </div>
 
-      <div className="border border-yellow-light-200 bg-yellow-light-10 w-full h-[88px] rounded-[12px] p-4 flex items-center justify-between mt-8">
-        <div className="rounded-full warning-bg p-2 w-[48px] h-[48px] flex items-center justify-center">
+      <div className="border border-yellow-light-200 bg-yellow-light-10 w-full h-auto sm:h-[88px] rounded-[12px] py-2 px-3 sm:py-[20px] sm:px-[24px] flex items-center justify-between mt-8">
+        <div className="rounded-full warning-bg p-3 sm:p-2 w-[48px] h-[48px] flex items-center justify-center">
           <WarningIcon width="24" height="24" />
         </div>
-        <p className="max-w-[404px]">
+        <p className="max-w-[404px] p-2 sm:p-2">
           <span className="text-white-neutral-light-800 font-bold">
             Atenção:
           </span>{" "}
@@ -97,20 +97,21 @@ export default function UserNameStep() {
             <p className="text-white-neutral-light-500 text-sm ">
               Ele será usado para criar um link exclusivo para cada proposta que
               você enviar, como:
-            </p>
-            <p className="text-primary-light-500 text-sm mb-3">
-              usuario-cliente.nepfy.com.
+              <span className="text-primary-light-500 text-sm mb-3">
+                usuario-cliente.nepfy.com.
+              </span>
             </p>
             <p className="text-white-neutral-light-500 text-sm">
-              Esse é o nome de usuário que você escolheu no momento do cadastro.
+              Para funcionar direitinho, siga essas orientações:
             </p>
             <p className="font-bold text-white-neutral-light-500 text-sm mb-3">
-              Ele é único e não pode ser alterado depois.
+              Escolha um nome curto (até 25 caracteres). Use apenas letras
+              minúsculas. Evite espaços, números ou caracteres especiais.
             </p>
           </div>
           <div className="flex justify-end items-center w-full">
             <Image
-              src="/images/browserbar.png"
+              src="/images/browserbar.jpg"
               alt="Imagem de um navegador com o link do cliente"
               width={372}
               height={32}
