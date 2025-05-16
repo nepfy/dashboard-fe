@@ -107,7 +107,7 @@ export default function CreateAccount() {
           description="Prepare uma proposta visualmente cativante e bem estruturada."
         />
 
-        <div className="flex items-center justify-center pt-[82px] sm:pt-0 px-8 sm:p-0 mb-6 sm:mb-0">
+        <div className="flex items-center justify-center pt-[106px] lg:pt-0 px-8 sm:p-0 mb-6 sm:mb-0">
           <div className="w-full max-w-[480px] space-y-8">
             <FormHeader
               title="Criar conta"

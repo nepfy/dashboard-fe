@@ -62,7 +62,7 @@ export default function UserNameStep() {
           placeholder="Digite seu nome de usuário"
           type="text"
           error={formErrors.userName}
-          maxLength={25}
+          maxLength={10}
           showCharCount
           required
           info
@@ -94,19 +94,25 @@ export default function UserNameStep() {
             <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
               Seu nome de usuário é o seu identificador por aqui
             </p>
-            <p className="text-white-neutral-light-500 text-sm ">
+            <p className="text-white-neutral-light-500 text-sm mb-3">
               Ele será usado para criar um link exclusivo para cada proposta que
-              você enviar, como:
-              <span className="text-primary-light-500 text-sm mb-3">
+              você enviar, como:{" "}
+              <span className="text-primary-light-500 text-sm">
                 usuario-cliente.nepfy.com.
               </span>
             </p>
-            <p className="text-white-neutral-light-500 text-sm">
+            <p className="text-white-neutral-light-500 text-sm mb-3">
               Para funcionar direitinho, siga essas orientações:
             </p>
-            <p className="font-bold text-white-neutral-light-500 text-sm mb-3">
-              Escolha um nome curto (até 25 caracteres). Use apenas letras
-              minúsculas. Evite espaços, números ou caracteres especiais.
+            <p className="text-white-neutral-light-500 text-sm">
+              &#8226; Escolha um nome curto (até 25 caracteres).
+            </p>
+            <p className="text-white-neutral-light-500 text-sm">
+              &#8226; Use apenas letras
+            </p>
+            <p className="text-white-neutral-light-500 text-sm mb-3">
+              &#8226; minúsculas. Evite espaços, números ou caracteres
+              especiais.
             </p>
           </div>
           <div className="flex justify-end items-center w-full">

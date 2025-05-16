@@ -90,7 +90,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 
   return (
     <>
-      <form className="space-y-6" onSubmit={onSubmit}>
+      <form className="space-y-6 overflow-x-scroll" onSubmit={onSubmit}>
         <div className="space-y-2 relative">
           <MailEnvelope
             className="absolute right-4 bottom-[14px]"
