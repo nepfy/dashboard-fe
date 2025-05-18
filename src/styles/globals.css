@@ -195,3 +195,13 @@ body {
 .warning-bg {
   background: linear-gradient(67.87deg, #ffd079 14.45%, #f29f04 97.26%);
 }
+
+.lootie-bg {
+  background: radial-gradient(
+      92.09% 85.42% at 86.3% 87.5%,
+      rgba(0, 0, 0, 0.23) 0%,
+      rgba(0, 0, 0, 0) 86.18%
+    ),
+    linear-gradient(0deg, rgba(107, 70, 245, 1), rgba(107, 70, 245, 1));
+  backdrop-filter: blur(100px);
+}
