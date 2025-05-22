@@ -50,7 +50,7 @@ export default function TableBulkEdit() {
 
   return (
     <div
-      className={`bg-white-neutral-light-100 e0 py-3 sm:py-0 px-4 rounded-b-[10px] w-full min-h-[78px] transition-all duration-400 ease-in-out flex items-center justify-start sm:justify-center gap-2 flex-wrap sm:flex-nowrap ${
+      className={`bg-white-neutral-light-100 e0 py-3 sm:py-0 px-4 rounded-[10px] w-full min-h-[78px] transition-all duration-400 ease-in-out flex items-center justify-start sm:justify-center gap-2 flex-wrap mb-2 sm:flex-nowrap ${
         isVisible ? "opacity-100 " : "opacity-0 "
       }`}
     >

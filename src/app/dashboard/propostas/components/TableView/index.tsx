@@ -1,5 +1,10 @@
+import { useState } from "react";
+
 import ProjectsTable from "#/app/dashboard/propostas/components/ProjectsTable";
 import { TableRow } from "#/app/dashboard/propostas/components/ProjectsTable/types";
+
+import Pagination from "#/components/Pagination";
+import PageCounter from "#/components/PageCounter";
 
 const data: TableRow[] = [
   {
@@ -53,10 +58,22 @@ const data: TableRow[] = [
 ];
 
 export default function TableView() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 5;
+
   return (
-    <div className="w-full animate-fadeIn">
-      <div className="bg-white-neutral-light-100 rounded-2xs border border-white-neutral-light-300">
+    <div className="w-full animate-fadeIn p-3">
+      <div className="rounded-2xs border border-white-neutral-light-300">
         <ProjectsTable data={data} />
+
+        <div className="p-3 border-t border-t-white-neutral-light-300 flex items-center justify-between bg-white-neutral-light-100 rounded-2xs">
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+          <PageCounter currentPage={currentPage} totalPages={totalPages} />
+        </div>
       </div>
     </div>
   );

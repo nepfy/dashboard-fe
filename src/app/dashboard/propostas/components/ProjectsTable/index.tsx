@@ -41,7 +41,7 @@ const ProjectsTable: React.FC<TableProps> = ({ data = [], onRowSelect }) => {
     <div className="w-full">
       {showBulkEdit && <TableBulkEdit />}
 
-      <div className="w-full overflow-x-scroll">
+      <div className="w-full overflow-x-scroll bg-white-neutral-light-100 rounded-2xs">
         <div className="p-4">
           <table className="w-full p-3 box-border">
             <thead className="bg-white-neutral-light-200 rounded-2xs">
@@ -139,8 +139,7 @@ const ProjectsTable: React.FC<TableProps> = ({ data = [], onRowSelect }) => {
                       {getStatusBadge(row.status)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
-                      {" "}
-                      ...{" "}
+                      ...
                     </td>
                   </tr>
                 ))

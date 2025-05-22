@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 
 import ProjectsTable from "#/app/dashboard/propostas/components/ProjectsTable";
@@ -5,6 +6,8 @@ import { TableRow } from "#/app/dashboard/propostas/components/ProjectsTable/typ
 
 import FileIcon from "#/components/icons/FileIcon";
 import PlusIcon from "#/components/icons/PlusIcon";
+import Pagination from "#/components/Pagination";
+import PageCounter from "#/components/PageCounter";
 
 const data: TableRow[] = [
   {
@@ -58,6 +61,9 @@ const data: TableRow[] = [
 ];
 
 export default function ProjectsView() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 5;
+
   return (
     <div className="bg-white-neutral-light-100 rounded-2xs border border-white-neutral-light-300 my-4">
       <div className="border-b border-white-neutral-light-300 p-6 flex items-center justify-between flex-wrap gap-4">
@@ -97,6 +103,15 @@ export default function ProjectsView() {
       </div>
 
       <ProjectsTable data={data} />
+
+      <div className="p-6 border-t border-t-white-neutral-light-300 flex items-center justify-between">
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+        <PageCounter currentPage={currentPage} totalPages={totalPages} />
+      </div>
     </div>
   );
 }
