@@ -1,7 +1,7 @@
 import Lottie from "lottie-react";
 import criarProposta from "#/lotties/criar-proposta.json";
-import criarCalculadora from "#/lotties/criar-calculadora.json";
-import criarContrato from "#/lotties/criar-contrato.json";
+// import criarCalculadora from "#/lotties/criar-calculadora.json";
+// import criarContrato from "#/lotties/criar-contrato.json";
 
 interface IntroSliderProps {
   title?: string;
