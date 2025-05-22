@@ -17,10 +17,10 @@ export default function Header({
       <div className="flex flex-wrap items-start">
         <div className="flex flex-row flex-wrap w-full gap-1 items-start sm:items-center">
           <Link href="/gerador-de-propostas">
-            <button className="flex items-center justify-center w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
+            <div className="flex items-center justify-center w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
               <PlusIcon fill="#FFFFFF" />
               Criar proposta
-            </button>
+            </div>
           </Link>
 
           <button className="flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer sm:w-52 border-white-neutral-light-300 bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner">

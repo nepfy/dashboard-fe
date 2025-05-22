@@ -50,6 +50,20 @@
       "when": 1747275088222,
       "tag": "0006_brave_the_hood",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1747761635671,
+      "tag": "0007_amusing_doctor_doom",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1747761945207,
+      "tag": "0008_silent_white_queen",
+      "breakpoints": true
     }
   ]
 }

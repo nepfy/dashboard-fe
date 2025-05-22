@@ -1,26 +1,24 @@
 import Lottie from "lottie-react";
 import criarProposta from "#/lotties/criar-proposta.json";
-// import criarCalculadora from "#/lotties/criar-calculadora.json";
-// import criarContrato from "#/lotties/criar-contrato.json";
+import criarCalculadora from "#/lotties/criar-calculadora.json";
+import criarContrato from "#/lotties/criar-contrato.json";
 
 interface IntroSliderProps {
   title?: string;
   description?: string;
 }
 
+// const styles = {
+//   border: "1px solid #000",
+// };
+
 export default function IntroSlider({ title, description }: IntroSliderProps) {
   return (
-    <div className="hidden xl:flex flex-col items-center justify-center lootie-bg relative h-full w-full max-w-[1038px]">
-      <div className="w-full h-full absolute inset-0">
+    <div className="hidden xl:flex flex-col items-center justify-center lootie-bg relative h-full w-full">
+      <div className="w-full h-full flex items-center justify-center">
+        <Lottie animationData={criarProposta} className="w-full" />
+        {/* 
         <Lottie
-          animationData={criarProposta}
-          className="w-full h-full"
-          rendererSettings={{
-            preserveAspectRatio: "xMidYMid slice",
-          }}
-        />
-
-        {/* <Lottie
           animationData={criarCalculadora}
           className="w-full h-2/3"
           rendererSettings={{
