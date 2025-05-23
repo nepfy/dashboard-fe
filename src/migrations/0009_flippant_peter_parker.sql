@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "project_valid_until" timestamp NOT NULL;

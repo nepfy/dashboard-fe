@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 
+import {
+  formatVisualizationDate,
+  formatValidityDate,
+} from "#/helpers/formatDateAndTime";
 import CalendarIcon from "#/components/icons/CalendarIcon";
 
 import TableBulkEdit from "./TableBulkEdit";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 
-const ProjectsTable: React.FC<TableProps> = ({ data = [], onRowSelect }) => {
+const ProjectsTable: React.FC<TableProps> = ({ data, onRowSelect }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
 
@@ -20,7 +24,7 @@ const ProjectsTable: React.FC<TableProps> = ({ data = [], onRowSelect }) => {
     setSelectedRows(newSelected);
     onRowSelect?.(Array.from(newSelected));
 
-    setSelectAll(newSelected.size === data.length);
+    setSelectAll(newSelected.size === data?.length);
   };
 
   const handleSelectAll = () => {
@@ -28,7 +32,9 @@ const ProjectsTable: React.FC<TableProps> = ({ data = [], onRowSelect }) => {
       setSelectedRows(new Set());
       onRowSelect?.([]);
     } else {
-      const allIds = data.map((row) => row.id);
+      const allIds = (data ?? [])
+        .map((row) => row.id)
+        .filter((id): id is string => id !== undefined);
       setSelectedRows(new Set(allIds));
       onRowSelect?.(allIds);
     }
@@ -91,8 +97,8 @@ const ProjectsTable: React.FC<TableProps> = ({ data = [], onRowSelect }) => {
               </tr>
             </thead>
             <tbody className="bg-white-neutral-light-100">
-              {data.length > 0 ? (
-                data.map((row) => (
+              {(data ?? []).length > 0 ? (
+                data!.map((row) => (
                   <tr
                     key={row.id}
                     className={`py-4 ${
@@ -110,33 +116,34 @@ const ProjectsTable: React.FC<TableProps> = ({ data = [], onRowSelect }) => {
                       />
                       <span
                         className="truncate md:whitespace-nowrap max-w-[100px] sm:max-w-none"
-                        title={row.cliente}
+                        title={row.clientName}
                       >
-                        {row.cliente}
+                        {row.clientName}
                       </span>
                     </td>
                     <td className="px-3 py-4 text-sm text-white-neutral-light-900">
                       <span
                         className="truncate md:whitespace-nowrap max-w-[120px] sm:max-w-none block"
-                        title={row.projeto}
+                        title={row.projectName}
                       >
-                        {row.projeto}
+                        {row.projectName}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 flex items-center justify-start gap-2">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 flex items-center justify-start gap-1">
                       <CalendarIcon width="16" height="16" />
-                      {row.visualizado}
+                      {formatVisualizationDate(row.projectVisualizationDate) ??
+                        "Não visualizado"}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
                       <CalendarIcon
                         width="16"
                         height="16"
-                        className="inline mr-4"
+                        className="inline mr-1"
                       />
-                      {row.validade}
+                      {formatValidityDate(row.projectValidUntil)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
-                      {getStatusBadge(row.status)}
+                      {getStatusBadge(row.projectStatus)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
                       ...

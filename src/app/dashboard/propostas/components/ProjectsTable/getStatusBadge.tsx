@@ -1,6 +1,6 @@
-import { TableRow } from "./types";
+import { ProjectsDataProps } from "./types";
 
-export const getStatusBadge = (status: TableRow["status"]) => {
+export const getStatusBadge = (status: ProjectsDataProps["projectStatus"]) => {
   switch (status) {
     case "active":
       return (

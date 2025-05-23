@@ -1,0 +1,1 @@
+ALTER TABLE "projects" DROP CONSTRAINT "projects_person_id_unique";

@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 // Type definitions
 interface SelectOption {
   value: string;
-  label: string;
+  label: string | React.ReactNode;
 }
 
 interface SelectInputProps {

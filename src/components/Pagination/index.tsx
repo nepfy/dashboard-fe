@@ -66,20 +66,19 @@ const Pagination = ({
 
       {/* Mobile view - only show current page */}
       <button
-        className="sm:hidden w-10 h-10 flex items-center justify-center rounded-2xl text-lg font-medium bg-gray-100 text-white-neutral-light-900"
+        className="sm:hidden w-10 h-10 flex items-center justify-center rounded-2xs text-lg font-medium bg-gray-100 text-white-neutral-light-900"
         aria-current="page"
         aria-label={`Página ${currentPage}`}
       >
         {currentPage}
       </button>
 
-      {/* Desktop view - show multiple pages */}
       <div className="hidden sm:flex items-center gap-2">
         {getPageNumbers().map((number) => (
           <button
             key={number}
             onClick={() => handlePageChange(number)}
-            className={`w-10 h-10 flex items-center justify-center rounded-2xl text-lg font-normal transition-colors text-white-neutral-light-900 ${
+            className={`w-10 h-10 flex items-center justify-center rounded-2xs text-lg font-normal transition-colors text-white-neutral-light-900 cursor-pointer ${
               currentPage === number
                 ? "bg-gray-100 font-medium"
                 : "hover:bg-gray-50"

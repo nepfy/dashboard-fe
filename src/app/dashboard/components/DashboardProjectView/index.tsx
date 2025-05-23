@@ -10,13 +10,14 @@ import FileIcon from "#/components/icons/FileIcon";
 import ProjectsView from "./components/ProjectView";
 
 import { useUserAccount } from "#/hooks/useUserAccount";
+import { TableProps } from "#/app/dashboard/propostas/components/ProjectsTable/types";
 
 const BUTTON_CLASS = `p-3 h-[44px] w-[180px] 
 font-medium cursor-pointer rounded-[var(--radius-s)]
 flex items-center justify-center gap-1
 bg-white-neutral-light-100 border border-white-neutral-light-300`;
 
-export default function DashboardProjectView() {
+export default function DashboardProjectView({ data }: TableProps) {
   const { userData } = useUserAccount();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -136,7 +137,7 @@ export default function DashboardProjectView() {
         </div>
       )}
 
-      <ProjectsView />
+      <ProjectsView data={data} />
     </div>
   );
 }

@@ -48,8 +48,8 @@ export default function Dashboard() {
 
   return (
     <div className="p-7">
-      {!projectsData.length ? (
-        <DashboardProjectView />
+      {projectsData?.length ? (
+        <DashboardProjectView data={projectsData} />
       ) : (
         <DashboardStartProjectView />
       )}

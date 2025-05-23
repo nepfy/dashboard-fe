@@ -4,6 +4,8 @@ import SelectInput from "#/components/Inputs/SelectInput";
 import Archive from "#/components/icons/Archive";
 import CopyIcon from "#/components/icons/CopyIcon";
 
+import { getStatusBadge } from "./getStatusBadge";
+
 const BASE_STYLE = `
 px-4 py-2 w-[120px] h-[48px] 
 flex items-center justify-center gap-1 
@@ -16,27 +18,27 @@ border border-white-neutral-light-300 button-inner
 const options = [
   {
     value: "enviada",
-    label: "Enviada",
+    label: getStatusBadge("active"),
   },
   {
     value: "aprovada",
-    label: "Aprovada",
+    label: getStatusBadge("approved"),
   },
   {
     value: "negociacao",
-    label: "Em negociação",
+    label: getStatusBadge("negotiation"),
   },
   {
     value: "rascunho",
-    label: "Rascunho",
+    label: getStatusBadge("draft"),
   },
   {
     value: "expirada",
-    label: "Expirada",
+    label: getStatusBadge("expired"),
   },
   {
     value: "rejeitada",
-    label: "Rejeitada",
+    label: getStatusBadge("rejected"),
   },
 ];
 

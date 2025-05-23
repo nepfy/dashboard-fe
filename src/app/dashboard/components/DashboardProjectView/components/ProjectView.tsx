@@ -2,65 +2,14 @@ import { useState } from "react";
 import Link from "next/link";
 
 import ProjectsTable from "#/app/dashboard/propostas/components/ProjectsTable";
-import { TableRow } from "#/app/dashboard/propostas/components/ProjectsTable/types";
+import { TableProps } from "#/app/dashboard/propostas/components/ProjectsTable/types";
 
 import FileIcon from "#/components/icons/FileIcon";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Pagination from "#/components/Pagination";
 import PageCounter from "#/components/PageCounter";
 
-const data: TableRow[] = [
-  {
-    id: "1",
-    cliente: "Empresa ABC com nome muito grande",
-    projeto: "Website Redesign",
-    visualizado: "10/05/2025",
-    validade: "20/06/2025",
-    status: "active",
-  },
-  {
-    id: "2",
-    cliente: "Indústrias XYZ",
-    projeto: "Mobile App",
-    visualizado: "05/05/2025",
-    validade: "15/05/2025",
-    status: "approved",
-  },
-  {
-    id: "3",
-    cliente: "Serviços 123",
-    projeto: "E-commerce",
-    visualizado: "01/05/2025",
-    validade: "01/05/2025",
-    status: "negotiation",
-  },
-  {
-    id: "4",
-    cliente: "Tech Solutions",
-    projeto: "CRM Integration",
-    visualizado: "15/04/2025",
-    validade: "30/04/2025",
-    status: "draft",
-  },
-  {
-    id: "5",
-    cliente: "Tech Solutions 2",
-    projeto: "Analytics Integration",
-    visualizado: "15/04/2025",
-    validade: "30/04/2025",
-    status: "expired",
-  },
-  {
-    id: "6",
-    cliente: "Tech Solutions 3",
-    projeto: "Media Integration",
-    visualizado: "15/04/2025",
-    validade: "30/04/2025",
-    status: "rejected",
-  },
-];
-
-export default function ProjectsView() {
+export default function ProjectsView({ data }: TableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 5;
 

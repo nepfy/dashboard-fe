@@ -25,16 +25,14 @@ export const onboardingDiscovery = pgTable("onboarding_discovery", {
 });
 
 export const plans = pgTable("plans", {
-  id: integer()
-    .primaryKey()
-    .generatedAlwaysAsIdentity({
-      name: "plans_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 2147483647,
-      cache: 1,
-    }),
+  id: integer().primaryKey().generatedAlwaysAsIdentity({
+    name: "plans_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    maxValue: 2147483647,
+    cache: 1,
+  }),
   planName: varchar("plan_name", { length: 255 }).notNull(),
 });
 
@@ -70,37 +68,13 @@ export const personUser = pgTable(
     userDiscovery: integer("user_discovery"),
     userUsedBefore: integer("user_used_before"),
     additionalAddress: varchar("additional_address", { length: 255 }),
+    userName: varchar("user_name", { length: 255 }),
   },
-  (table) => [unique("person_user_email_unique").on(table.email)]
+  (table) => [
+    unique("person_user_email_unique").on(table.email),
+    unique("person_user_user_name_unique").on(table.userName),
+  ]
 );
-
-export const projects = pgTable("projects", {
-  id: integer()
-    .primaryKey()
-    .generatedAlwaysAsIdentity({
-      name: "projects_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 2147483647,
-      cache: 1,
-    }),
-  projectName: varchar("project_name", { length: 255 }).notNull(),
-  clientName: varchar("client_name", { length: 255 }).notNull(),
-  street: varchar({ length: 255 }),
-  number: varchar({ length: 255 }),
-  neighborhood: varchar({ length: 255 }),
-  state: varchar({ length: 255 }),
-  city: varchar({ length: 255 }),
-  cep: varchar({ length: 255 }),
-  projectSentDate: timestamp("project_sent_date", { mode: "string" }).notNull(),
-  projectStatus: varchar("project_status", { length: 255 }).notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" }),
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { mode: "string" }),
-  archivedAt: varchar("archived_at", { length: 255 }),
-  additionalAddress: varchar("additional_address", { length: 255 }),
-});
 
 export const companyUser = pgTable(
   "company_user",
@@ -132,5 +106,43 @@ export const companyUser = pgTable(
       foreignColumns: [personUser.id],
       name: "company_user_person_id_person_user_id_fk",
     }),
+    unique("company_user_person_id_unique").on(table.personId),
+  ]
+);
+
+export const projects = pgTable(
+  "projects",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    personId: uuid("person_id").notNull(),
+    projectName: varchar("project_name", { length: 255 }).notNull(),
+    clientName: varchar("client_name", { length: 255 }).notNull(),
+    street: varchar({ length: 255 }),
+    number: varchar({ length: 255 }),
+    neighborhood: varchar({ length: 255 }),
+    state: varchar({ length: 255 }),
+    city: varchar({ length: 255 }),
+    cep: varchar({ length: 255 }),
+    additionalAddress: varchar("additional_address", { length: 255 }),
+    projectSentDate: timestamp("project_sent_date", {
+      mode: "string",
+    }).notNull(),
+    projectValidUntil: timestamp("project_valid_until", {
+      mode: "string",
+    }).notNull(),
+    projectStatus: varchar("project_status", { length: 255 }).notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" }),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp("deleted_at", { mode: "string" }),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.personId],
+      foreignColumns: [personUser.id],
+      name: "projects_person_id_person_user_id_fk",
+    }),
+    unique("projects_person_id_unique").on(table.personId),
   ]
 );

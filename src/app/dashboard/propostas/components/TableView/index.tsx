@@ -1,70 +1,58 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ProjectsTable from "#/app/dashboard/propostas/components/ProjectsTable";
-import { TableRow } from "#/app/dashboard/propostas/components/ProjectsTable/types";
 
+import ErrorMessage from "#/components/ErrorMessage";
 import Pagination from "#/components/Pagination";
 import PageCounter from "#/components/PageCounter";
-
-const data: TableRow[] = [
-  {
-    id: "1",
-    cliente: "Empresa ABC",
-    projeto: "Website Redesign",
-    visualizado: "10/05/2025",
-    validade: "20/06/2025",
-    status: "active",
-  },
-  {
-    id: "2",
-    cliente: "Indústrias XYZ",
-    projeto: "Mobile App",
-    visualizado: "05/05/2025",
-    validade: "15/05/2025",
-    status: "approved",
-  },
-  {
-    id: "3",
-    cliente: "Serviços 123",
-    projeto: "E-commerce",
-    visualizado: "01/05/2025",
-    validade: "01/05/2025",
-    status: "negotiation",
-  },
-  {
-    id: "4",
-    cliente: "Tech Solutions",
-    projeto: "CRM Integration",
-    visualizado: "15/04/2025",
-    validade: "30/04/2025",
-    status: "draft",
-  },
-  {
-    id: "5",
-    cliente: "Tech Solutions",
-    projeto: "CRM Integration",
-    visualizado: "15/04/2025",
-    validade: "30/04/2025",
-    status: "expired",
-  },
-  {
-    id: "6",
-    cliente: "Tech Solutions",
-    projeto: "CRM Integration",
-    visualizado: "15/04/2025",
-    validade: "30/04/2025",
-    status: "rejected",
-  },
-];
 
 export default function TableView() {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 5;
 
+  const [projectsData, setProjectsData] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobTypes = async () => {
+      try {
+        const response = await fetch("/api/projects");
+        const result = await response.json();
+
+        if (result.success) {
+          setProjectsData(result.data);
+        } else {
+          setError(result.error);
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(`Erro ao carregar lista. ${err.message}`);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobTypes();
+  }, []);
+
+  if (error) {
+    return <ErrorMessage error={error} />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="p-7">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full animate-fadeIn p-3">
       <div className="rounded-2xs border border-white-neutral-light-300">
-        <ProjectsTable data={data} />
+        <ProjectsTable data={projectsData} />
 
         <div className="p-3 border-t border-t-white-neutral-light-300 flex items-center justify-between bg-white-neutral-light-100 rounded-2xs">
           <Pagination
