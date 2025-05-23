@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 import {
   formatVisualizationDate,
@@ -10,7 +11,11 @@ import TableBulkEdit from "./TableBulkEdit";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 
-const ProjectsTable: React.FC<TableProps> = ({ data, onRowSelect }) => {
+const ProjectsTable: React.FC<TableProps> = ({
+  data,
+  onRowSelect,
+  isLoading,
+}) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
 
@@ -42,6 +47,16 @@ const ProjectsTable: React.FC<TableProps> = ({ data, onRowSelect }) => {
   };
 
   const showBulkEdit = selectedRows.size || selectAll;
+
+  if (isLoading) {
+    return (
+      <div className="w-full p-7 bg-white-neutral-light-100">
+        <div className="flex items-center justify-center h-64">
+          <LoaderCircle className="animate-spin text-primary-light-400" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

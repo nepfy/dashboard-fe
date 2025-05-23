@@ -57,7 +57,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="w-12 h-12 flex items-center justify-center text-2xl disabled:opacity-40"
+          className="w-12 h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
           aria-label="Página anterior"
         >
           <ChevronLeft size={24} />
@@ -95,7 +95,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="w-12 h-12 flex items-center justify-center text-2xl disabled:opacity-40"
+          className="w-12 h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
           aria-label="Próxima página"
         >
           <ChevronRight size={24} />

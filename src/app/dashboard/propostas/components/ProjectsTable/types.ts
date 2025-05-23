@@ -28,4 +28,5 @@ export interface ProjectsDataProps {
 export interface TableProps {
   data?: ProjectsDataProps[];
   onRowSelect?: (selectedIds: string[]) => void;
+  isLoading?: boolean;
 }

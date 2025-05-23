@@ -1,17 +1,23 @@
-import { useState } from "react";
+"use client";
+
 import Link from "next/link";
 
 import ProjectsTable from "#/app/dashboard/propostas/components/ProjectsTable";
-import { TableProps } from "#/app/dashboard/propostas/components/ProjectsTable/types";
+import ErrorMessage from "#/components/ErrorMessage";
 
 import FileIcon from "#/components/icons/FileIcon";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Pagination from "#/components/Pagination";
 import PageCounter from "#/components/PageCounter";
+import { useProjects } from "#/hooks/useProjects";
 
-export default function ProjectsView({ data }: TableProps) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
+export default function ProjectsView() {
+  const { projectsData, pagination, isLoading, error, setCurrentPage } =
+    useProjects(1, 10);
+
+  if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
   return (
     <div className="bg-white-neutral-light-100 rounded-2xs border border-white-neutral-light-300 my-4">
@@ -31,7 +37,7 @@ export default function ProjectsView({ data }: TableProps) {
                 )`,
             }}
           >
-            132
+            {pagination?.totalCount || 0}
           </span>
         </p>
 
@@ -51,16 +57,21 @@ export default function ProjectsView({ data }: TableProps) {
         </div>
       </div>
 
-      <ProjectsTable data={data} />
+      <ProjectsTable isLoading={isLoading} data={projectsData} />
 
-      <div className="p-6 border-t border-t-white-neutral-light-300 flex items-center justify-between">
-        <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-        />
-        <PageCounter currentPage={currentPage} totalPages={totalPages} />
-      </div>
+      {pagination && pagination.totalPages > 1 && (
+        <div className="p-6 border-t border-t-white-neutral-light-300 flex items-center justify-between">
+          <Pagination
+            totalPages={pagination.totalPages}
+            currentPage={pagination.currentPage}
+            onPageChange={setCurrentPage}
+          />
+          <PageCounter
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+          />
+        </div>
+      )}
     </div>
   );
 }

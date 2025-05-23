@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, count } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const user = await currentUser();
 
@@ -18,6 +18,11 @@ export async function GET() {
 
     const emailAddress = user?.emailAddresses[0]?.emailAddress;
 
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const offset = (page - 1) * limit;
+
     const personResult = await db
       .select({
         id: personUserTable.id,
@@ -25,15 +30,41 @@ export async function GET() {
       .from(personUserTable)
       .where(eq(personUserTable.email, emailAddress));
 
+    if (!personResult[0]?.id) {
+      return NextResponse.json(
+        { success: false, error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    const totalCountResult = await db
+      .select({ count: count() })
+      .from(projectsTable)
+      .where(eq(projectsTable.personId, personResult[0].id));
+
+    const totalCount = totalCountResult[0]?.count || 0;
+    const totalPages = Math.ceil(totalCount / limit);
+
     const projects = await db
       .select()
       .from(projectsTable)
-      .where(eq(projectsTable.personId, personResult[0]?.id))
-      .orderBy(desc(projectsTable.created_at));
-    if (projects.length === 0) {
-      return NextResponse.json({ success: true, data: [] }, { status: 200 });
-    }
-    return NextResponse.json({ success: true, data: projects });
+      .where(eq(projectsTable.personId, personResult[0].id))
+      .orderBy(desc(projectsTable.created_at))
+      .limit(limit)
+      .offset(offset);
+
+    return NextResponse.json({
+      success: true,
+      data: projects,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount,
+        limit,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { success: false, error: `${error}` },
