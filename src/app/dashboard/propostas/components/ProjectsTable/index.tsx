@@ -15,6 +15,7 @@ const ProjectsTable: React.FC<TableProps> = ({
   data,
   onRowSelect,
   isLoading,
+  isInitialLoading,
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -48,7 +49,7 @@ const ProjectsTable: React.FC<TableProps> = ({
 
   const showBulkEdit = selectedRows.size || selectAll;
 
-  if (isLoading) {
+  if (isLoading || isInitialLoading) {
     return (
       <div className="w-full p-7 bg-white-neutral-light-100">
         <div className="flex items-center justify-center h-64">

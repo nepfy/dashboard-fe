@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ALTER COLUMN "project_sent_date" DROP NOT NULL;

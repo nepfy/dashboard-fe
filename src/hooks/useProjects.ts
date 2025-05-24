@@ -10,10 +10,17 @@ interface PaginationInfo {
   hasPreviousPage: boolean;
 }
 
+interface ProjectStatistics {
+  sentProjectsCount: number;
+  approvedProjectsCount: number;
+}
+
 interface UseProjectsReturn {
   projectsData: ProjectsDataProps[];
   pagination: PaginationInfo | null;
-  isLoading: boolean;
+  statistics: ProjectStatistics | null;
+  isInitialLoading: boolean; // For first render
+  isPaginationLoading: boolean; // For pagination changes
   error: string | null;
   currentPage: number;
   setCurrentPage: (page: number) => void;
@@ -26,15 +33,24 @@ export const useProjects = (
 ): UseProjectsReturn => {
   const [projectsData, setProjectsData] = useState<ProjectsDataProps[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+  const [statistics, setStatistics] = useState<ProjectStatistics | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isPaginationLoading, setIsPaginationLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPage);
+  const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
   const fetchProjects = useCallback(
     async (page: number) => {
       try {
-        setIsLoading(true);
         setError(null);
+
+        // Set appropriate loading state
+        if (!hasInitiallyLoaded) {
+          setIsInitialLoading(true);
+        } else {
+          setIsPaginationLoading(true);
+        }
 
         const response = await fetch(
           `/api/projects?page=${page}&limit=${limit}`
@@ -42,12 +58,15 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
+          console.log("result", result.data);
           setProjectsData(result.data);
           setPagination(result.pagination);
+          setStatistics(result.statistics);
         } else {
           setError(result.error);
           setProjectsData([]);
           setPagination(null);
+          setStatistics(null);
         }
       } catch (err) {
         if (err instanceof Error) {
@@ -57,11 +76,15 @@ export const useProjects = (
         }
         setProjectsData([]);
         setPagination(null);
+        setStatistics(null);
       } finally {
-        setIsLoading(false);
+        // Clear both loading states
+        setIsInitialLoading(false);
+        setIsPaginationLoading(false);
+        setHasInitiallyLoaded(true);
       }
     },
-    [limit]
+    [limit, hasInitiallyLoaded]
   );
 
   const handlePageChange = useCallback((page: number) => {
@@ -79,7 +102,9 @@ export const useProjects = (
   return {
     projectsData,
     pagination,
-    isLoading,
+    statistics,
+    isInitialLoading,
+    isPaginationLoading,
     error,
     currentPage,
     setCurrentPage: handlePageChange,

@@ -10,13 +10,44 @@ import FileIcon from "#/components/icons/FileIcon";
 import ProjectsView from "./components/ProjectView";
 
 import { useUserAccount } from "#/hooks/useUserAccount";
+import { ProjectsDataProps } from "#/app/dashboard/propostas/components/ProjectsTable/types";
+
+interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+interface DashboardProjectViewProps {
+  projectsData: ProjectsDataProps[];
+  pagination: PaginationInfo;
+  onPageChange: (page: number) => void;
+  error: string | null;
+  isInitialLoading: boolean;
+  isPaginationLoading: boolean;
+  statistics: {
+    sentProjectsCount: number;
+    approvedProjectsCount: number;
+  } | null;
+}
 
 const BUTTON_CLASS = `p-3 h-[44px] w-[180px] 
 font-medium cursor-pointer rounded-[var(--radius-s)]
 flex items-center justify-center gap-1
 bg-white-neutral-light-100 border border-white-neutral-light-300`;
 
-export default function DashboardProjectView() {
+export default function DashboardProjectView({
+  projectsData,
+  pagination,
+  onPageChange,
+  error,
+  isInitialLoading,
+  isPaginationLoading,
+  statistics,
+}: DashboardProjectViewProps) {
   const { userData } = useUserAccount();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -47,11 +78,13 @@ export default function DashboardProjectView() {
     count,
     value,
     icon,
+    isLoading = false,
   }: {
     title: string;
     count: number;
     value: string;
     icon: React.ReactNode;
+    isLoading?: boolean;
   }) => (
     <div className="bg-white-neutral-light-100 rounded-2xs p-6 h-[170px] border border-white-neutral-light-300 flex flex-col justify-between">
       <div className="flex items-center justify-between">
@@ -64,12 +97,21 @@ export default function DashboardProjectView() {
       </div>
 
       <div>
-        <p className="text-white-neutral-light-900 text-2xl font-medium">
-          {count}
-        </p>
-        <p className="text-white-neutral-light-400 text-sm">
-          Previsto: {value}
-        </p>
+        {isLoading ? (
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded w-24"></div>
+          </div>
+        ) : (
+          <>
+            <p className="text-white-neutral-light-900 text-2xl font-medium">
+              {count}
+            </p>
+            <p className="text-white-neutral-light-400 text-sm">
+              Previsto: {value}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -102,18 +144,20 @@ export default function DashboardProjectView() {
             <div className="pr-4">
               <ProposalCard
                 title="Propostas enviadas"
-                count={25}
-                value="R$ 2.500,00"
+                count={statistics?.sentProjectsCount || 0}
+                value="Não calculado"
                 icon={<ArrowUpRight size={20} />}
+                isLoading={isInitialLoading}
               />
             </div>
 
             <div className="pr-4">
               <ProposalCard
                 title="Propostas aprovadas"
-                count={25}
-                value="R$ 2.500,00"
+                count={statistics?.approvedProjectsCount || 0}
+                value="Não calculado"
                 icon={<CircleCheck size={20} />}
+                isLoading={isInitialLoading}
               />
             </div>
           </Slider>
@@ -122,21 +166,29 @@ export default function DashboardProjectView() {
         <div className="grid grid-cols-2 gap-4 mt-4">
           <ProposalCard
             title="Propostas enviadas"
-            count={25}
-            value="R$ 2.500,00"
+            count={statistics?.sentProjectsCount || 0}
+            value="Não calculado"
             icon={<ArrowUpRight size={20} />}
+            isLoading={isInitialLoading}
           />
 
           <ProposalCard
             title="Propostas aprovadas"
-            count={25}
-            value="R$ 2.500,00"
+            count={statistics?.approvedProjectsCount || 0}
+            value="Não calculado"
             icon={<CircleCheck size={20} />}
+            isLoading={isInitialLoading}
           />
         </div>
       )}
 
-      <ProjectsView />
+      <ProjectsView
+        projectsData={projectsData}
+        pagination={pagination}
+        onPageChangeAction={onPageChange}
+        error={error}
+        isPaginationLoading={isPaginationLoading} // Pass pagination loading
+      />
     </div>
   );
 }

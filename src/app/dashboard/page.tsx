@@ -1,38 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { useProjects } from "#/hooks/useProjects";
 
 import DashboardStartProjectView from "#/app/dashboard/components/DashboardStartProjectView";
 import DashboardProjectView from "#/app/dashboard/components/DashboardProjectView";
 
 export default function Dashboard() {
-  const [hasProjects, setHasProjects] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    projectsData,
+    statistics,
+    pagination,
+    isInitialLoading,
+    isPaginationLoading,
+    error,
+    setCurrentPage,
+  } = useProjects(1, 10);
 
-  useEffect(() => {
-    const checkIfUserHasProjects = async () => {
-      try {
-        const response = await fetch("/api/projects?page=1&limit=1");
-        const result = await response.json();
-
-        if (result.success) {
-          setHasProjects(result.data.length > 0);
-        } else {
-          setHasProjects(false);
-        }
-      } catch (error) {
-        console.error("Error checking projects:", error);
-        setHasProjects(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkIfUserHasProjects();
-  }, []);
-
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <div className="p-7">
         <div className="flex items-center justify-center h-64">
@@ -44,7 +29,19 @@ export default function Dashboard() {
 
   return (
     <div className="p-7">
-      {hasProjects ? <DashboardProjectView /> : <DashboardStartProjectView />}
+      {projectsData?.length && pagination ? (
+        <DashboardProjectView
+          projectsData={projectsData}
+          pagination={pagination}
+          onPageChange={setCurrentPage}
+          error={error}
+          isInitialLoading={isInitialLoading}
+          isPaginationLoading={isPaginationLoading}
+          statistics={statistics}
+        />
+      ) : (
+        <DashboardStartProjectView />
+      )}
     </div>
   );
 }

@@ -11,7 +11,7 @@ export const projectsTable = pgTable("projects", {
   projectName: varchar("project_name", { length: 255 }).notNull(),
   clientName: varchar("client_name", { length: 255 }).notNull(),
   ...address,
-  projectSentDate: timestamp("project_sent_date", { mode: "date" }).notNull(),
+  projectSentDate: timestamp("project_sent_date", { mode: "date" }),
   projectValidUntil: timestamp("project_valid_until", {
     mode: "date",
   }).notNull(),

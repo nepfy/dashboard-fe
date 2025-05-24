@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { LoaderCircle } from "lucide-react";
 import ProjectsTable from "#/app/dashboard/propostas/components/ProjectsTable";
 import ErrorMessage from "#/components/ErrorMessage";
 
@@ -9,12 +10,33 @@ import FileIcon from "#/components/icons/FileIcon";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Pagination from "#/components/Pagination";
 import PageCounter from "#/components/PageCounter";
-import { useProjects } from "#/hooks/useProjects";
 
-export default function ProjectsView() {
-  const { projectsData, pagination, isLoading, error, setCurrentPage } =
-    useProjects(1, 10);
+import { ProjectsDataProps } from "#/app/dashboard/propostas/components/ProjectsTable/types";
 
+interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+interface ProjectViewProps {
+  projectsData: ProjectsDataProps[];
+  pagination: PaginationInfo;
+  onPageChangeAction: (page: number) => void;
+  error: string | null;
+  isPaginationLoading: boolean;
+}
+
+export default function ProjectsView({
+  projectsData,
+  pagination,
+  onPageChangeAction,
+  error,
+  isPaginationLoading,
+}: ProjectViewProps) {
   if (error) {
     return <ErrorMessage error={error} />;
   }
@@ -57,14 +79,22 @@ export default function ProjectsView() {
         </div>
       </div>
 
-      <ProjectsTable isLoading={isLoading} data={projectsData} />
+      {/* Show loading overlay for table when paginating */}
+      <div className="relative">
+        {isPaginationLoading && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-2xs">
+            <LoaderCircle className="animate-spin text-primary-light-400" />
+          </div>
+        )}
+        <ProjectsTable data={projectsData} />
+      </div>
 
       {pagination && pagination.totalPages > 1 && (
         <div className="p-6 border-t border-t-white-neutral-light-300 flex items-center justify-between">
           <Pagination
             totalPages={pagination.totalPages}
             currentPage={pagination.currentPage}
-            onPageChange={setCurrentPage}
+            onPageChange={onPageChangeAction}
           />
           <PageCounter
             currentPage={pagination.currentPage}

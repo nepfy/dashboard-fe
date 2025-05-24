@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
-import { eq, desc, count } from "drizzle-orm";
+import { eq, desc, count, isNotNull, and } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
@@ -37,12 +37,36 @@ export async function GET(request: Request) {
       );
     }
 
+    const userId = personResult[0].id;
+
     const totalCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
       .where(eq(projectsTable.personId, personResult[0].id));
 
+    const sentProjectsCountResult = await db
+      .select({ count: count() })
+      .from(projectsTable)
+      .where(
+        and(
+          eq(projectsTable.personId, userId),
+          isNotNull(projectsTable.projectSentDate)
+        )
+      );
+
+    const approvedProjectsCountResult = await db
+      .select({ count: count() })
+      .from(projectsTable)
+      .where(
+        and(
+          eq(projectsTable.personId, userId),
+          eq(projectsTable.projectStatus, "approved")
+        )
+      );
+
     const totalCount = totalCountResult[0]?.count || 0;
+    const sentProjectsCount = sentProjectsCountResult[0]?.count || 0;
+    const approvedProjectsCount = approvedProjectsCountResult[0]?.count || 0;
     const totalPages = Math.ceil(totalCount / limit);
 
     const projects = await db
@@ -63,6 +87,10 @@ export async function GET(request: Request) {
         limit,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
+      },
+      statistics: {
+        sentProjectsCount,
+        approvedProjectsCount,
       },
     });
   } catch (error) {
