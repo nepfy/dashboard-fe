@@ -58,7 +58,6 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
-          console.log("result", result.data);
           setProjectsData(result.data);
           setPagination(result.pagination);
           setStatistics(result.statistics);
