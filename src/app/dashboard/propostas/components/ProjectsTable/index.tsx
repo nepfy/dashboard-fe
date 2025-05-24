@@ -11,11 +11,18 @@ import TableBulkEdit from "./TableBulkEdit";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 
-const ProjectsTable: React.FC<TableProps> = ({
+interface EnhancedTableProps extends TableProps {
+  onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  isUpdating?: boolean;
+}
+
+const ProjectsTable: React.FC<EnhancedTableProps> = ({
   data,
   onRowSelect,
   isLoading,
   isInitialLoading,
+  onBulkStatusUpdate,
+  isUpdating = false,
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -47,6 +54,28 @@ const ProjectsTable: React.FC<TableProps> = ({
     setSelectAll(!selectAll);
   };
 
+  const handleBulkStatusUpdate = async (status: string) => {
+    const selectedIds = Array.from(selectedRows);
+    if (selectedIds.length > 0 && onBulkStatusUpdate) {
+      try {
+        await onBulkStatusUpdate(selectedIds, status);
+        // Clear selection after successful update
+        setSelectedRows(new Set());
+        setSelectAll(false);
+        onRowSelect?.([]);
+      } catch (error) {
+        console.error("Failed to update projects:", error);
+        // Keep selection on error so user can retry
+      }
+    }
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedRows(new Set());
+    setSelectAll(false);
+    onRowSelect?.([]);
+  };
+
   const showBulkEdit = selectedRows.size || selectAll;
 
   if (isLoading || isInitialLoading) {
@@ -61,7 +90,14 @@ const ProjectsTable: React.FC<TableProps> = ({
 
   return (
     <div className="w-full">
-      {showBulkEdit && <TableBulkEdit />}
+      {showBulkEdit && (
+        <TableBulkEdit
+          selectedCount={selectedRows.size}
+          onStatusUpdate={handleBulkStatusUpdate}
+          onDeselectAll={handleDeselectAll}
+          isUpdating={isUpdating}
+        />
+      )}
 
       <div className="w-full overflow-x-scroll bg-white-neutral-light-100 rounded-2xs">
         <div className="p-4">

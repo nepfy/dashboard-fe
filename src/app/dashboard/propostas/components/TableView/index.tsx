@@ -11,14 +11,43 @@ export default function TableView() {
     pagination,
     isPaginationLoading,
     isInitialLoading,
+    isUpdating,
     error,
     setCurrentPage,
+    updateMultipleProjectsStatus,
   } = useProjects(1, 10);
+
+  const handleBulkStatusUpdate = async (
+    projectIds: string[],
+    status: string
+  ) => {
+    try {
+      const result = await updateMultipleProjectsStatus(
+        projectIds,
+        status as
+          | "active"
+          | "approved"
+          | "negotiation"
+          | "rejected"
+          | "draft"
+          | "expired"
+      );
+
+      if (result.success) {
+        console.log(`Successfully updated ${result.updatedCount} projects`);
+      } else {
+        throw new Error(result.error || "Failed to update projects");
+      }
+    } catch (error) {
+      console.error("Bulk update failed:", error);
+      throw error;
+    }
+  };
 
   if (error) {
     return (
       <div className="p-3">
-        <ErrorMessage error={error} />{" "}
+        <ErrorMessage error={error} />
       </div>
     );
   }
@@ -29,7 +58,9 @@ export default function TableView() {
         <ProjectsTable
           isLoading={isPaginationLoading}
           isInitialLoading={isInitialLoading}
+          isUpdating={isUpdating}
           data={projectsData}
+          onBulkStatusUpdate={handleBulkStatusUpdate}
         />
 
         {pagination && pagination.totalPages > 1 && (

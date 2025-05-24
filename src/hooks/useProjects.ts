@@ -15,16 +15,48 @@ interface ProjectStatistics {
   approvedProjectsCount: number;
 }
 
+type ProjectStatus =
+  | "active"
+  | "approved"
+  | "negotiation"
+  | "rejected"
+  | "draft"
+  | "expired";
+
+interface UpdateProjectResponse {
+  success: boolean;
+  message: string;
+  data?: ProjectsDataProps;
+  error?: string;
+}
+
+interface UpdateMultipleProjectsResponse {
+  success: boolean;
+  message: string;
+  data?: ProjectsDataProps[];
+  updatedCount?: number;
+  error?: string;
+}
+
 interface UseProjectsReturn {
   projectsData: ProjectsDataProps[];
   pagination: PaginationInfo | null;
   statistics: ProjectStatistics | null;
-  isInitialLoading: boolean; // For first render
-  isPaginationLoading: boolean; // For pagination changes
+  isInitialLoading: boolean;
+  isPaginationLoading: boolean;
+  isUpdating: boolean;
   error: string | null;
   currentPage: number;
   setCurrentPage: (page: number) => void;
   refetch: () => void;
+  updateProjectStatus: (
+    projectId: string,
+    status: ProjectStatus
+  ) => Promise<UpdateProjectResponse>;
+  updateMultipleProjectsStatus: (
+    projectIds: string[],
+    status: ProjectStatus
+  ) => Promise<UpdateMultipleProjectsResponse>;
 }
 
 export const useProjects = (
@@ -37,6 +69,7 @@ export const useProjects = (
   const [error, setError] = useState<string | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isPaginationLoading, setIsPaginationLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
@@ -45,7 +78,6 @@ export const useProjects = (
       try {
         setError(null);
 
-        // Set appropriate loading state
         if (!hasInitiallyLoaded) {
           setIsInitialLoading(true);
         } else {
@@ -77,7 +109,6 @@ export const useProjects = (
         setPagination(null);
         setStatistics(null);
       } finally {
-        // Clear both loading states
         setIsInitialLoading(false);
         setIsPaginationLoading(false);
         setHasInitiallyLoaded(true);
@@ -94,6 +125,162 @@ export const useProjects = (
     fetchProjects(currentPage);
   }, [fetchProjects, currentPage]);
 
+  const updateProjectStatus = useCallback(
+    async (
+      projectId: string,
+      status: ProjectStatus
+    ): Promise<UpdateProjectResponse> => {
+      try {
+        setIsUpdating(true);
+        setError(null);
+
+        const response = await fetch("/api/projects", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            projectId,
+            status,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          setProjectsData((prevData) =>
+            prevData.map((project) =>
+              project.id === projectId
+                ? {
+                    ...project,
+                    projectStatus: status,
+                    updated_at: new Date().toISOString(),
+                  }
+                : project
+            )
+          );
+
+          if (status === "approved") {
+            setStatistics((prevStats) =>
+              prevStats
+                ? {
+                    ...prevStats,
+                    approvedProjectsCount: prevStats.approvedProjectsCount + 1,
+                  }
+                : null
+            );
+          }
+
+          return {
+            success: true,
+            message: result.message,
+            data: result.data,
+          };
+        } else {
+          setError(result.error);
+          return {
+            success: false,
+            message: result.error,
+            error: result.error,
+          };
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Erro desconhecido ao atualizar projeto";
+        setError(errorMessage);
+        return {
+          success: false,
+          message: errorMessage,
+          error: errorMessage,
+        };
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    []
+  );
+
+  const updateMultipleProjectsStatus = useCallback(
+    async (
+      projectIds: string[],
+      status: ProjectStatus
+    ): Promise<UpdateMultipleProjectsResponse> => {
+      try {
+        setIsUpdating(true);
+        setError(null);
+
+        const response = await fetch("/api/projects", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            projectIds,
+            status,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          setProjectsData((prevData) =>
+            prevData.map((project) =>
+              projectIds.includes(project.id)
+                ? {
+                    ...project,
+                    projectStatus: status,
+                    updated_at: new Date().toISOString(),
+                  }
+                : project
+            )
+          );
+
+          if (status === "approved") {
+            setStatistics((prevStats) =>
+              prevStats
+                ? {
+                    ...prevStats,
+                    approvedProjectsCount:
+                      prevStats.approvedProjectsCount + projectIds.length,
+                  }
+                : null
+            );
+          }
+
+          return {
+            success: true,
+            message: result.message,
+            data: result.data,
+            updatedCount: result.updatedCount,
+          };
+        } else {
+          setError(result.error);
+          return {
+            success: false,
+            message: result.error,
+            error: result.error,
+          };
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Erro desconhecido ao atualizar projetos";
+        setError(errorMessage);
+        return {
+          success: false,
+          message: errorMessage,
+          error: errorMessage,
+        };
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     fetchProjects(currentPage);
   }, [fetchProjects, currentPage]);
@@ -104,9 +291,12 @@ export const useProjects = (
     statistics,
     isInitialLoading,
     isPaginationLoading,
+    isUpdating,
     error,
     currentPage,
     setCurrentPage: handlePageChange,
     refetch,
+    updateProjectStatus,
+    updateMultipleProjectsStatus,
   };
 };

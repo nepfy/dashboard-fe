@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
-import { eq, desc, count, isNotNull, and } from "drizzle-orm";
+import { eq, desc, count, isNotNull, and, inArray } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
+
+const VALID_STATUSES = [
+  "active",
+  "approved",
+  "negotiation",
+  "rejected",
+  "draft",
+  "expired",
+] as const;
 
 export async function GET(request: Request) {
   try {
@@ -96,6 +105,226 @@ export async function GET(request: Request) {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: `${error}` },
+      { status: 500 }
+    );
+  }
+}
+
+async function getUserIdFromEmail(
+  emailAddress: string
+): Promise<string | null> {
+  const personResult = await db
+    .select({ id: personUserTable.id })
+    .from(personUserTable)
+    .where(eq(personUserTable.email, emailAddress));
+
+  return personResult[0]?.id || null;
+}
+
+async function validateProjectOwnership(
+  projectIds: string[],
+  userId: string
+): Promise<boolean> {
+  const ownedProjects = await db
+    .select({ id: projectsTable.id })
+    .from(projectsTable)
+    .where(
+      and(
+        inArray(projectsTable.id, projectIds),
+        eq(projectsTable.personId, userId)
+      )
+    );
+
+  return ownedProjects.length === projectIds.length;
+}
+
+export async function PUT(request: Request) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const emailAddress = user?.emailAddresses[0]?.emailAddress;
+    if (!emailAddress) {
+      return NextResponse.json(
+        { success: false, error: "Email não encontrado" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const { projectId, status } = body;
+
+    if (!projectId || !status) {
+      return NextResponse.json(
+        { success: false, error: "ID do projeto e status são obrigatórios" },
+        { status: 400 }
+      );
+    }
+
+    if (!VALID_STATUSES.includes(status)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Status inválido. Valores aceitos: ${VALID_STATUSES.join(
+            ", "
+          )}`,
+        },
+        { status: 400 }
+      );
+    }
+
+    const userId = await getUserIdFromEmail(emailAddress);
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    const isOwner = await validateProjectOwnership([projectId], userId);
+    if (!isOwner) {
+      return NextResponse.json(
+        { success: false, error: "Projeto não encontrado ou acesso negado" },
+        { status: 404 }
+      );
+    }
+
+    const updatedProject = await db
+      .update(projectsTable)
+      .set({
+        projectStatus: status,
+        updated_at: new Date(),
+      })
+      .where(
+        and(eq(projectsTable.id, projectId), eq(projectsTable.personId, userId))
+      )
+      .returning();
+
+    if (updatedProject.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Falha ao atualizar o projeto" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Status do projeto atualizado com sucesso",
+      data: updatedProject[0],
+    });
+  } catch (error) {
+    console.error("Error updating project:", error);
+    return NextResponse.json(
+      { success: false, error: `Erro interno do servidor: ${error}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const emailAddress = user?.emailAddresses[0]?.emailAddress;
+    if (!emailAddress) {
+      return NextResponse.json(
+        { success: false, error: "Email não encontrado" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const { projectIds, status } = body;
+
+    if (!projectIds || !Array.isArray(projectIds) || projectIds.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Lista de IDs dos projetos é obrigatória" },
+        { status: 400 }
+      );
+    }
+
+    if (!status) {
+      return NextResponse.json(
+        { success: false, error: "Status é obrigatório" },
+        { status: 400 }
+      );
+    }
+
+    if (!VALID_STATUSES.includes(status)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Status inválido. Valores aceitos: ${VALID_STATUSES.join(
+            ", "
+          )}`,
+        },
+        { status: 400 }
+      );
+    }
+
+    const userId = await getUserIdFromEmail(emailAddress);
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    const isOwner = await validateProjectOwnership(projectIds, userId);
+    if (!isOwner) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Um ou mais projetos não foram encontrados ou acesso negado",
+        },
+        { status: 404 }
+      );
+    }
+
+    const updatedProjects = await db
+      .update(projectsTable)
+      .set({
+        projectStatus: status,
+        updated_at: new Date(),
+      })
+      .where(
+        and(
+          inArray(projectsTable.id, projectIds),
+          eq(projectsTable.personId, userId)
+        )
+      )
+      .returning();
+
+    if (updatedProjects.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Falha ao atualizar os projetos" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `${updatedProjects.length} projeto(s) atualizado(s) com sucesso`,
+      data: updatedProjects,
+      updatedCount: updatedProjects.length,
+    });
+  } catch (error) {
+    console.error("Error updating projects:", error);
+    return NextResponse.json(
+      { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }
     );
   }
