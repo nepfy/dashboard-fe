@@ -52,12 +52,12 @@ const Pagination = ({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-center gap-0 sm:gap-2">
       {showArrows && (
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="w-12 h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
+          className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
           aria-label="Página anterior"
         >
           <ChevronLeft size={24} />
@@ -95,7 +95,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="w-12 h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
+          className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
           aria-label="Próxima página"
         >
           <ChevronRight size={24} />

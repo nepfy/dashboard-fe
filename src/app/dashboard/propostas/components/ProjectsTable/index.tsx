@@ -8,6 +8,7 @@ import {
 import CalendarIcon from "#/components/icons/CalendarIcon";
 
 import TableBulkEdit from "./TableBulkEdit";
+import RowEditMenu from "./RowEditMenu";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 
@@ -30,6 +31,8 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
+  // Change: Track which specific row has menu open
+  const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
 
   const handleRowSelect = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -77,13 +80,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     if (selectedIds.length > 0 && onBulkDuplicate) {
       try {
         await onBulkDuplicate(selectedIds);
-        // Clear selection after successful duplicate
         setSelectedRows(new Set());
         setSelectAll(false);
         onRowSelect?.([]);
       } catch (error) {
         console.error("Failed to duplicate projects:", error);
-        // Keep selection on error so user can retry
       }
     }
   };
@@ -94,8 +95,18 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     onRowSelect?.([]);
   };
 
-  const isOperationInProgress = isUpdating || isDuplicating;
+  // Change: Handle menu toggle for specific row
+  const handleMenuToggle = (rowId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent event bubbling
+    setOpenMenuRowId(openMenuRowId === rowId ? null : rowId);
+  };
 
+  // Change: Handle menu close
+  const handleMenuClose = () => {
+    setOpenMenuRowId(null);
+  };
+
+  const isOperationInProgress = isUpdating || isDuplicating;
   const showBulkEdit = selectedRows.size > 0;
 
   if (isLoading || isInitialLoading) {
@@ -122,9 +133,9 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         />
       )}
 
-      <div className="w-full overflow-x-scroll bg-white-neutral-light-100 rounded-2xs">
+      <div className="w-full overflow-x-scroll overflow-visible bg-white-neutral-light-100 rounded-2xs">
         <div className="p-4">
-          <table className="w-full p-3 box-border">
+          <table className="w-full p-3 box-border relative">
             <thead className="bg-white-neutral-light-200 rounded-2xs">
               <tr>
                 <th
@@ -221,8 +232,20 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
                       {getStatusBadge(row.projectStatus)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
-                      ...
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 relative">
+                      <button
+                        onClick={(e) => handleMenuToggle(row.id, e)}
+                        className="cursor-pointer hover:bg-gray-100 p-1 rounded"
+                        disabled={isOperationInProgress}
+                      >
+                        ...
+                      </button>
+                      {/* Change: Only show menu for the specific row */}
+                      <RowEditMenu
+                        isOpen={openMenuRowId === row.id}
+                        onClose={handleMenuClose}
+                        projectId={row.id}
+                      />
                     </td>
                   </tr>
                 ))

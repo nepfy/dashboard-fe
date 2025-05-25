@@ -104,7 +104,7 @@ export default function ProjectsView({
       </div>
 
       {pagination && pagination.totalPages > 1 && (
-        <div className="p-6 border-t border-t-white-neutral-light-300 flex items-center justify-between">
+        <div className="p-5 sm:p-6 border-t border-t-white-neutral-light-300 flex items-center justify-between gap-2">
           <Pagination
             totalPages={pagination.totalPages}
             currentPage={pagination.currentPage}
