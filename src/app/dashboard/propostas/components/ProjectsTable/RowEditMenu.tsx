@@ -406,6 +406,7 @@ export default function RowEditMenu({
               height: "auto",
             }}
             alt="image decorativa"
+            priority
           />
         </div>
 
@@ -482,6 +483,7 @@ export default function RowEditMenu({
               height: "auto",
             }}
             alt="image decorativa"
+            priority
           />
         </div>
 

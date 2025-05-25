@@ -6,7 +6,8 @@ import type { Settings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import FileIcon from "#/components/icons/FileIcon";
+import Sparkle from "#/components/icons/Sparkle";
+import Stars from "#/components/icons/Stars";
 import ProjectsView from "./components/ProjectView";
 
 import { useUserAccount } from "#/hooks/useUserAccount";
@@ -133,17 +134,20 @@ export default function DashboardProjectView({
         Visão geral do seu pipeline de venda
       </p>
 
-      <div className="my-4 rounded-2xs lootie-bg w-full h-[300px] p-6 flex flex-col justify-between gap-4">
+      <div className="my-4 rounded-2xs bg-primary-light-300 w-full h-[220px] p-6 flex flex-col justify-between gap-4 relative">
         <p className="text-white-neutral-light-100 text-2xl font-medium max-w-[390px]">
-          Gere uma proposta completa e visualmente impactante
+          Gere uma proposta <br /> completa e visualmente
+          <br /> impactante
         </p>
 
         <div className="w-full flex items-center justify-start gap-2 flex-wrap">
           <Link href="/gerador-de-propostas" className={BUTTON_CLASS}>
-            <FileIcon width="24" height="24" />
+            <Sparkle width="18" height="18" fill="#1C1A22" />
             Criar Propostas
           </Link>
         </div>
+
+        <Stars className="absolute top-0 right-0" />
       </div>
 
       {isMobile ? (

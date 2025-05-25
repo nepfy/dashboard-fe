@@ -6,6 +6,8 @@ import "slick-carousel/slick/slick-theme.css";
 
 import { useUserAccount } from "#/hooks/useUserAccount";
 
+import { Waves, WavesMobile } from "#/components/icons/Waves";
+import Sparkle from "#/components/icons/Sparkle";
 import ContractIcon from "#/components/icons/ContractIcon";
 import FileIcon from "#/components/icons/FileIcon";
 import CalculatorIcon from "#/components/icons/CalculatorIcon";
@@ -51,7 +53,6 @@ const tutorialsList = [
 export default function DashboardStartProjectView() {
   const { userData } = useUserAccount();
 
-  // Slider settings
   const sliderSettings: Settings = {
     dots: false,
     infinite: true,
@@ -86,38 +87,51 @@ export default function DashboardStartProjectView() {
 
   return (
     <div>
-      <h2 className="text-white-neutral-light-800 text-2xl font-medium">
+      <h2 className="text-white-neutral-light-800 text-2xl font-medium px-7 pt-4">
         Pronto para criar propostas incríveis, {`${userData?.firstName}`}? 🚀
       </h2>
 
-      <div className="my-4 rounded-2xs lootie-bg w-full h-[400px] sm:h-[300px] p-6 flex flex-col justify-between gap-4">
-        <p className="text-white-neutral-light-100 text-2xl font-medium max-w-[390px]">
-          Inicie sua jornada, crie propostas, defina preços e feche contratos
-          com facilidade.
-        </p>
+      <div className="px-7">
+        <div className="my-4 rounded-2xs lootie-bg w-full h-[400px] sm:h-[300px] p-6 flex flex-col justify-between gap-4 relative">
+          <p className="text-white-neutral-light-100 text-2xl font-medium max-w-[390px]">
+            Inicie sua jornada, crie propostas, defina preços e feche contratos
+            com facilidade.
+          </p>
 
-        <div className="w-full flex items-center justify-end gap-2 flex-wrap">
-          <Link href="/gerador-de-contratos" className={BUTTON_CLASS}>
-            <ContractIcon width="24" height="24" />
-            Gerar Contratos
-          </Link>
-          <Link href="/gerador-de-propostas" className={BUTTON_CLASS}>
-            <FileIcon width="24" height="24" />
-            Criar Propostas
-          </Link>
-          <Link href="/dashboard/calculadora" className={BUTTON_CLASS}>
-            <CalculatorIcon width="24" height="24" />
-            Calcular Projeto
-          </Link>
+          <div className="flex justify-between items-center">
+            <div className="bg-primary-light-500 h-[42px] w-[42px] rounded-[10px] hidden sm:flex items-center justify-center">
+              <Sparkle width="24" height="24" fill="#ffffff" />
+            </div>
+            <div className="w-full flex items-center justify-end gap-2 flex-wrap">
+              <Link href="/gerador-de-contratos" className={BUTTON_CLASS}>
+                <ContractIcon width="24" height="24" />
+                Gerar Contratos
+              </Link>
+              <Link href="/gerador-de-propostas" className={BUTTON_CLASS}>
+                <FileIcon width="24" height="24" />
+                Criar Propostas
+              </Link>
+              <Link href="/dashboard/calculadora" className={BUTTON_CLASS}>
+                <CalculatorIcon width="24" height="24" />
+                Calcular Projeto
+              </Link>
+            </div>
+          </div>
+          <div className="block sm:hidden absolute top-0 left-0 w-full">
+            <WavesMobile />
+          </div>
+          <div className="hidden sm:block absolute top-0 right-0">
+            <Waves />
+          </div>
         </div>
       </div>
 
-      <div>
-        <p className="text-white-neutral-light-900 text-lg font-semibold mb-5">
+      <div className="pb-4">
+        <p className="text-white-neutral-light-900 text-lg font-semibold mb-5 px-7">
           Tutoriais
         </p>
 
-        <div className="slider-container relative w-full">
+        <div className="slider-container relative w-full px-0 sm:px-6">
           <Slider {...sliderSettings}>
             {tutorialsList.map((tutorial) => (
               <div key={tutorial.id} className="px-2">
@@ -131,7 +145,7 @@ export default function DashboardStartProjectView() {
               </div>
             ))}
           </Slider>
-          <div className="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none bg-gradient-to-l from-white-neutral-light-200 to-transparent" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none bg-gradient-to-l from-white-neutral-light-100 to-transparent opacity-50" />
         </div>
       </div>
     </div>

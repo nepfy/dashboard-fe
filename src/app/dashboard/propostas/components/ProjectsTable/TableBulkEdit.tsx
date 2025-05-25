@@ -317,6 +317,7 @@ export default function TableBulkEdit({
               height: "auto",
             }}
             alt="image decorativa"
+            priority
           />
         </div>
 
@@ -380,6 +381,7 @@ export default function TableBulkEdit({
               height: "auto",
             }}
             alt="image decorativa"
+            priority
           />
         </div>
 

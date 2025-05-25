@@ -102,21 +102,23 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-7">
+    <div>
       {projectsData?.length && pagination ? (
-        <DashboardProjectView
-          projectsData={projectsData}
-          pagination={pagination}
-          onPageChange={setCurrentPage}
-          error={error}
-          isInitialLoading={isInitialLoading}
-          isPaginationLoading={isPaginationLoading}
-          isDuplicating={isDuplicating}
-          statistics={statistics}
-          onBulkStatusUpdate={handleBulkStatusUpdate}
-          onStatusUpdate={handleStatusUpdate}
-          onBulkDuplicate={handleBulkDuplicate}
-        />
+        <div className="p-7">
+          <DashboardProjectView
+            projectsData={projectsData}
+            pagination={pagination}
+            onPageChange={setCurrentPage}
+            error={error}
+            isInitialLoading={isInitialLoading}
+            isPaginationLoading={isPaginationLoading}
+            isDuplicating={isDuplicating}
+            statistics={statistics}
+            onBulkStatusUpdate={handleBulkStatusUpdate}
+            onStatusUpdate={handleStatusUpdate}
+            onBulkDuplicate={handleBulkDuplicate}
+          />
+        </div>
       ) : (
         <DashboardStartProjectView />
       )}
