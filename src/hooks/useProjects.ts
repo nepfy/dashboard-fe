@@ -13,6 +13,7 @@ interface PaginationInfo {
 interface ProjectStatistics {
   sentProjectsCount: number;
   approvedProjectsCount: number;
+  archivedProjectsCount?: number; // Add archived count to statistics
 }
 
 // Valid project statuses - should match your API
@@ -48,18 +49,32 @@ interface DuplicateProjectsResponse {
   error?: string;
 }
 
+interface ArchivedProjectsResponse {
+  success: boolean;
+  data: ProjectsDataProps[];
+  pagination: PaginationInfo;
+  error?: string;
+}
+
 interface UseProjectsReturn {
   projectsData: ProjectsDataProps[];
+  archivedProjectsData: ProjectsDataProps[]; // New state for archived projects
   pagination: PaginationInfo | null;
+  archivedPagination: PaginationInfo | null; // New pagination for archived projects
   statistics: ProjectStatistics | null;
   isInitialLoading: boolean;
   isPaginationLoading: boolean;
   isUpdating: boolean;
-  isDuplicating: boolean; // New loading state for duplicating
+  isDuplicating: boolean;
+  isLoadingArchived: boolean; // New loading state for archived projects
   error: string | null;
+  archivedError: string | null; // New error state for archived projects
   currentPage: number;
+  archivedCurrentPage: number; // New current page for archived projects
   setCurrentPage: (page: number) => void;
+  setArchivedCurrentPage: (page: number) => void; // New setter for archived page
   refetch: () => void;
+  refetchArchived: () => void; // New refetch function for archived projects
   updateProjectStatus: (
     projectId: string,
     status: ProjectStatus
@@ -70,13 +85,15 @@ interface UseProjectsReturn {
   ) => Promise<UpdateMultipleProjectsResponse>;
   duplicateProjects: (
     projectIds: string[]
-  ) => Promise<DuplicateProjectsResponse>; // New duplicate function
+  ) => Promise<DuplicateProjectsResponse>;
+  fetchArchivedProjects: (page?: number) => Promise<ArchivedProjectsResponse>; // New function to fetch archived projects
 }
 
 export const useProjects = (
   initialPage: number = 1,
   limit: number = 10
 ): UseProjectsReturn => {
+  // Existing state
   const [projectsData, setProjectsData] = useState<ProjectsDataProps[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [statistics, setStatistics] = useState<ProjectStatistics | null>(null);
@@ -87,6 +104,16 @@ export const useProjects = (
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
+
+  // New state for archived projects
+  const [archivedProjectsData, setArchivedProjectsData] = useState<
+    ProjectsDataProps[]
+  >([]);
+  const [archivedPagination, setArchivedPagination] =
+    useState<PaginationInfo | null>(null);
+  const [archivedError, setArchivedError] = useState<string | null>(null);
+  const [isLoadingArchived, setIsLoadingArchived] = useState(false);
+  const [archivedCurrentPage, setArchivedCurrentPage] = useState(1);
 
   const fetchProjects = useCallback(
     async (page: number) => {
@@ -132,13 +159,93 @@ export const useProjects = (
     [limit, hasInitiallyLoaded]
   );
 
+  // New function to fetch archived projects
+  const fetchArchivedProjects = useCallback(
+    async (
+      page: number = archivedCurrentPage
+    ): Promise<ArchivedProjectsResponse> => {
+      try {
+        setIsLoadingArchived(true);
+        setArchivedError(null);
+
+        const response = await fetch(
+          `/api/projects/archived?page=${page}&limit=${limit}`
+        );
+        const result = await response.json();
+
+        if (result.success) {
+          setArchivedProjectsData(result.data);
+          setArchivedPagination(result.pagination);
+
+          return {
+            success: true,
+            data: result.data,
+            pagination: result.pagination,
+          };
+        } else {
+          setArchivedError(result.error);
+          setArchivedProjectsData([]);
+          setArchivedPagination(null);
+
+          return {
+            success: false,
+            data: [],
+            pagination: {
+              currentPage: page,
+              totalPages: 0,
+              totalCount: 0,
+              limit,
+              hasNextPage: false,
+              hasPreviousPage: false,
+            },
+            error: result.error,
+          };
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? `Erro ao carregar projetos arquivados. ${err.message}`
+            : "Erro desconhecido ao carregar projetos arquivados";
+
+        setArchivedError(errorMessage);
+        setArchivedProjectsData([]);
+        setArchivedPagination(null);
+
+        return {
+          success: false,
+          data: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalCount: 0,
+            limit,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          error: errorMessage,
+        };
+      } finally {
+        setIsLoadingArchived(false);
+      }
+    },
+    [archivedCurrentPage, limit]
+  );
+
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
+  }, []);
+
+  const handleArchivedPageChange = useCallback((page: number) => {
+    setArchivedCurrentPage(page);
   }, []);
 
   const refetch = useCallback(() => {
     fetchProjects(currentPage);
   }, [fetchProjects, currentPage]);
+
+  const refetchArchived = useCallback(() => {
+    fetchArchivedProjects(archivedCurrentPage);
+  }, [fetchArchivedProjects, archivedCurrentPage]);
 
   // Update single project status
   const updateProjectStatus = useCallback(
@@ -164,29 +271,48 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
-          // Optimistically update the local state
-          setProjectsData((prevData) =>
-            prevData.map((project) =>
-              project.id === projectId
-                ? {
-                    ...project,
-                    projectStatus: status,
-                    updated_at: new Date().toISOString(),
-                  }
-                : project
-            )
-          );
+          // If project is being archived, remove it from active projects
+          if (status === "archived") {
+            setProjectsData((prevData) =>
+              prevData.filter((project) => project.id !== projectId)
+            );
 
-          // Update statistics if the status change affects them
-          if (status === "approved") {
+            // Update statistics
             setStatistics((prevStats) =>
               prevStats
                 ? {
                     ...prevStats,
-                    approvedProjectsCount: prevStats.approvedProjectsCount + 1,
+                    archivedProjectsCount:
+                      (prevStats.archivedProjectsCount || 0) + 1,
                   }
                 : null
             );
+          } else {
+            // Optimistically update the local state for non-archived status changes
+            setProjectsData((prevData) =>
+              prevData.map((project) =>
+                project.id === projectId
+                  ? {
+                      ...project,
+                      projectStatus: status,
+                      updated_at: new Date().toISOString(),
+                    }
+                  : project
+              )
+            );
+
+            // Update statistics if the status change affects them
+            if (status === "approved") {
+              setStatistics((prevStats) =>
+                prevStats
+                  ? {
+                      ...prevStats,
+                      approvedProjectsCount:
+                        prevStats.approvedProjectsCount + 1,
+                    }
+                  : null
+              );
+            }
           }
 
           return {
@@ -244,30 +370,49 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
-          // Optimistically update the local state
-          setProjectsData((prevData) =>
-            prevData.map((project) =>
-              projectIds.includes(project.id)
-                ? {
-                    ...project,
-                    projectStatus: status,
-                    updated_at: new Date().toISOString(),
-                  }
-                : project
-            )
-          );
+          // If projects are being archived, remove them from active projects
+          if (status === "archived") {
+            setProjectsData((prevData) =>
+              prevData.filter((project) => !projectIds.includes(project.id))
+            );
 
-          // Update statistics if the status change affects them
-          if (status === "approved") {
+            // Update statistics
             setStatistics((prevStats) =>
               prevStats
                 ? {
                     ...prevStats,
-                    approvedProjectsCount:
-                      prevStats.approvedProjectsCount + projectIds.length,
+                    archivedProjectsCount:
+                      (prevStats.archivedProjectsCount || 0) +
+                      projectIds.length,
                   }
                 : null
             );
+          } else {
+            // Optimistically update the local state for non-archived status changes
+            setProjectsData((prevData) =>
+              prevData.map((project) =>
+                projectIds.includes(project.id)
+                  ? {
+                      ...project,
+                      projectStatus: status,
+                      updated_at: new Date().toISOString(),
+                    }
+                  : project
+              )
+            );
+
+            // Update statistics if the status change affects them
+            if (status === "approved") {
+              setStatistics((prevStats) =>
+                prevStats
+                  ? {
+                      ...prevStats,
+                      approvedProjectsCount:
+                        prevStats.approvedProjectsCount + projectIds.length,
+                    }
+                  : null
+              );
+            }
           }
 
           return {
@@ -359,23 +504,37 @@ export const useProjects = (
   );
 
   useEffect(() => {
+    if (archivedCurrentPage > 1) {
+      fetchArchivedProjects(archivedCurrentPage);
+    }
+  }, [archivedCurrentPage, fetchArchivedProjects]);
+
+  useEffect(() => {
     fetchProjects(currentPage);
   }, [fetchProjects, currentPage]);
 
   return {
     projectsData,
+    archivedProjectsData,
     pagination,
+    archivedPagination,
     statistics,
     isInitialLoading,
     isPaginationLoading,
     isUpdating,
     isDuplicating,
+    isLoadingArchived,
     error,
+    archivedError,
     currentPage,
+    archivedCurrentPage,
     setCurrentPage: handlePageChange,
+    setArchivedCurrentPage: handleArchivedPageChange,
     refetch,
+    refetchArchived,
     updateProjectStatus,
     updateMultipleProjectsStatus,
     duplicateProjects,
+    fetchArchivedProjects,
   };
 };

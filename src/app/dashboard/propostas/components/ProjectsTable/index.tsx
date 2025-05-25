@@ -17,6 +17,7 @@ interface EnhancedTableProps extends TableProps {
   isDuplicating?: boolean;
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
+  viewMode?: "active" | "archived";
 }
 
 const ProjectsTable: React.FC<EnhancedTableProps> = ({
@@ -28,6 +29,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   isDuplicating = false,
   onBulkStatusUpdate,
   onBulkDuplicate,
+  viewMode = "active",
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -111,7 +113,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
 
   if (isLoading || isInitialLoading) {
     return (
-      <div className="w-full p-7 bg-white-neutral-light-100">
+      <div className="w-full p-7 bg-white-neutral-light-100 rounded-2xs">
         <div className="flex items-center justify-center h-64">
           <LoaderCircle className="animate-spin text-primary-light-400" />
         </div>
@@ -130,6 +132,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           onDeselectAll={handleDeselectAll}
           isUpdating={isUpdating}
           isDuplicating={isDuplicating}
+          viewMode={viewMode}
         />
       )}
 

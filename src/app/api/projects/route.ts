@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
-import { eq, desc, count, isNotNull, and, inArray } from "drizzle-orm";
+import { eq, desc, count, isNotNull, and, inArray, ne } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
@@ -49,21 +49,30 @@ export async function GET(request: Request) {
 
     const userId = personResult[0].id;
 
+    // Count total projects (excluding archived)
     const totalCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
-      .where(eq(projectsTable.personId, personResult[0].id));
+      .where(
+        and(
+          eq(projectsTable.personId, userId),
+          ne(projectsTable.projectStatus, "archived") // Exclude archived projects
+        )
+      );
 
+    // Count sent projects (excluding archived)
     const sentProjectsCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
       .where(
         and(
           eq(projectsTable.personId, userId),
-          isNotNull(projectsTable.projectSentDate)
+          isNotNull(projectsTable.projectSentDate),
+          ne(projectsTable.projectStatus, "archived") // Exclude archived projects
         )
       );
 
+    // Count approved projects (excluding archived)
     const approvedProjectsCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
@@ -74,15 +83,33 @@ export async function GET(request: Request) {
         )
       );
 
+    // Count archived projects
+    const archivedProjectsCountResult = await db
+      .select({ count: count() })
+      .from(projectsTable)
+      .where(
+        and(
+          eq(projectsTable.personId, userId),
+          eq(projectsTable.projectStatus, "archived")
+        )
+      );
+
     const totalCount = totalCountResult[0]?.count || 0;
     const sentProjectsCount = sentProjectsCountResult[0]?.count || 0;
     const approvedProjectsCount = approvedProjectsCountResult[0]?.count || 0;
+    const archivedProjectsCount = archivedProjectsCountResult[0]?.count || 0;
     const totalPages = Math.ceil(totalCount / limit);
 
+    // Fetch projects (excluding archived)
     const projects = await db
       .select()
       .from(projectsTable)
-      .where(eq(projectsTable.personId, personResult[0].id))
+      .where(
+        and(
+          eq(projectsTable.personId, userId),
+          ne(projectsTable.projectStatus, "archived") // Exclude archived projects
+        )
+      )
       .orderBy(desc(projectsTable.created_at))
       .limit(limit)
       .offset(offset);
@@ -101,6 +128,7 @@ export async function GET(request: Request) {
       statistics: {
         sentProjectsCount,
         approvedProjectsCount,
+        archivedProjectsCount, // Add archived count to statistics
       },
     });
   } catch (error) {
@@ -401,7 +429,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create duplicated projects
     const duplicatedProjects = originalProjects.map((project) => ({
       personId: project.personId,
       projectName: `${project.projectName} - Cópia`,
@@ -421,7 +448,6 @@ export async function POST(request: Request) {
       updated_at: new Date(),
     }));
 
-    // Insert duplicated projects
     const insertedProjects = await db
       .insert(projectsTable)
       .values(duplicatedProjects)

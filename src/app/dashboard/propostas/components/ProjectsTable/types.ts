@@ -1,3 +1,4 @@
+// Update your ProjectsTable types.ts file
 export interface ProjectsDataProps {
   additionalAddress?: string;
   cep?: string;
@@ -29,6 +30,11 @@ export interface ProjectsDataProps {
 export interface TableProps {
   data?: ProjectsDataProps[];
   onRowSelect?: (selectedIds: string[]) => void;
+  onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
   isLoading?: boolean;
   isInitialLoading?: boolean;
+  isUpdating?: boolean;
+  isDuplicating?: boolean;
+  viewMode?: "active" | "archived";
 }

@@ -33,9 +33,12 @@ const statusMapping = {
   expirada: "expired",
   rejeitada: "rejected",
   arquivada: "archived",
+  // Add mappings for archived view restore options
+  ativa: "active",
 } as const;
 
-const options = [
+// Options for active projects
+const activeOptions = [
   {
     value: "enviada",
     label: getStatusBadge("active"),
@@ -66,6 +69,18 @@ const options = [
   },
 ];
 
+// Options for archived projects (restoration options)
+const archivedOptions = [
+  {
+    value: "ativa",
+    label: getStatusBadge("active"),
+  },
+  {
+    value: "rascunho",
+    label: getStatusBadge("draft"),
+  },
+];
+
 interface TableBulkEditProps {
   selectedCount?: number;
   selectedProjectIds?: string[];
@@ -74,6 +89,7 @@ interface TableBulkEditProps {
   onDeselectAll: () => void;
   isUpdating?: boolean;
   isDuplicating?: boolean;
+  viewMode?: "active" | "archived"; // Add viewMode prop
 }
 
 export default function TableBulkEdit({
@@ -84,6 +100,7 @@ export default function TableBulkEdit({
   onDeselectAll,
   isUpdating = false,
   isDuplicating = false,
+  viewMode = "active", // Default to active
 }: TableBulkEditProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
@@ -96,9 +113,33 @@ export default function TableBulkEdit({
     return () => clearTimeout(timer);
   }, []);
 
+  // Reset selected status when viewMode changes
+  useEffect(() => {
+    setSelectedStatus("");
+  }, [viewMode]);
+
+  // Get options based on view mode
+  const getOptions = () => {
+    return viewMode === "archived" ? archivedOptions : activeOptions;
+  };
+
+  // Get placeholder text based on view mode
+  const getPlaceholderText = () => {
+    return viewMode === "archived" ? "Restaurar para..." : "Atualizar status";
+  };
+
+  // Get button text based on view mode
+  const getUpdateButtonText = () => {
+    if (isUpdating) {
+      return viewMode === "archived" ? "Restaurando..." : "Atualizando...";
+    }
+    return viewMode === "archived" ? "Restaurar" : "Atualizar";
+  };
+
   const handleStatusUpdate = async () => {
     if (!selectedStatus) {
-      alert("Por favor, selecione um status para atualizar.");
+      const actionText = viewMode === "archived" ? "restaurar" : "atualizar";
+      alert(`Por favor, selecione um status para ${actionText}.`);
       return;
     }
 
@@ -110,7 +151,8 @@ export default function TableBulkEdit({
       setSelectedStatus("");
     } catch (error) {
       console.error("Failed to update status:", error);
-      alert("Erro ao atualizar status. Tente novamente.");
+      const actionText = viewMode === "archived" ? "restaurar" : "atualizar";
+      alert(`Erro ao ${actionText} status. Tente novamente.`);
     }
   };
 
@@ -172,8 +214,8 @@ export default function TableBulkEdit({
     >
       <SelectInput
         className="h-[49px]"
-        options={options}
-        placeholder="Atualizar status"
+        options={getOptions()}
+        placeholder={getPlaceholderText()}
         value={selectedStatus}
         onChange={setSelectedStatus}
       />
@@ -190,34 +232,37 @@ export default function TableBulkEdit({
         {isUpdating ? (
           <div className="flex items-center gap-2">
             <LoaderCircle className="w-4 h-4 animate-spin" />
-            Atualizando...
+            {getUpdateButtonText()}
           </div>
         ) : (
-          "Atualizar"
+          getUpdateButtonText()
         )}
       </button>
 
-      <button
-        onClick={handleArchive}
-        className={`px-4 py-2 w-[120px] h-[48px] flex items-center justify-center gap-1 text-sm font-medium rounded-[var(--radius-s)] transition-colors border border-white-neutral-light-300 ${
-          isOperationInProgress
-            ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100 opacity-50"
-            : "text-white-neutral-light-900 cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner"
-        }`}
-        disabled={isOperationInProgress}
-      >
-        {isArchiving ? (
-          <>
-            <LoaderCircle className="w-4 h-4 animate-spin" />
-            Arquivando...
-          </>
-        ) : (
-          <>
-            <Archive width="16px" height="16px" />
-            Arquivar
-          </>
-        )}
-      </button>
+      {/* Only show Archive button in active view */}
+      {viewMode === "active" && (
+        <button
+          onClick={handleArchive}
+          className={`px-4 py-2 w-[120px] h-[48px] flex items-center justify-center gap-1 text-sm font-medium rounded-[var(--radius-s)] transition-colors border border-white-neutral-light-300 ${
+            isOperationInProgress
+              ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100 opacity-50"
+              : "text-white-neutral-light-900 cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner"
+          }`}
+          disabled={isOperationInProgress}
+        >
+          {isArchiving ? (
+            <>
+              <LoaderCircle className="w-4 h-4 animate-spin" />
+              Arquivando...
+            </>
+          ) : (
+            <>
+              <Archive width="16px" height="16px" />
+              Arquivar
+            </>
+          )}
+        </button>
+      )}
 
       <button
         onClick={handleDuplicate}

@@ -3,36 +3,65 @@ import Link from "next/link";
 import DashboardPageHeader from "#/components/DashboardPageHeader";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Archive from "#/components/icons/Archive";
-import FiltersIcon from "#/components/icons/FiltersIcon";
 import ColumnIcon from "#/components/icons/ColumnIcon";
+
+interface HeaderProps {
+  tab: string;
+  setTab: (tab: string) => void;
+  viewMode: "active" | "archived";
+  setViewMode: (mode: "active" | "archived") => void;
+}
 
 export default function Header({
   tab,
   setTab,
-}: {
-  tab: string;
-  setTab: (tab: string) => void;
-}) {
+  viewMode,
+  setViewMode,
+}: HeaderProps) {
+  const handleArchiveToggle = () => {
+    setViewMode(viewMode === "active" ? "archived" : "active");
+  };
+
+  const getArchiveButtonText = () => {
+    return viewMode === "active"
+      ? "Propostas arquivadas"
+      : "Voltar às propostas";
+  };
+
+  const getArchiveButtonIcon = () => {
+    return viewMode === "active" ? (
+      <Archive width="20px" height="20px" />
+    ) : (
+      <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+      </svg>
+    );
+  };
+
   return (
-    <DashboardPageHeader title="Propostas">
+    <DashboardPageHeader
+      title={viewMode === "active" ? "Propostas" : "Propostas Arquivadas"}
+    >
       <div className="flex flex-wrap items-start">
         <div className="flex flex-row flex-wrap w-full gap-1 items-start sm:items-center">
-          <Link href="/gerador-de-propostas">
-            <div className="flex items-center justify-center w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
-              <PlusIcon fill="#FFFFFF" />
-              Criar proposta
-            </div>
-          </Link>
+          {viewMode === "active" && (
+            <Link href="/gerador-de-propostas">
+              <div className="flex items-center justify-center w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
+                <PlusIcon fill="#FFFFFF" />
+                Criar proposta
+              </div>
+            </Link>
+          )}
 
-          <button className="hidden sm:flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer sm:w-52 border-white-neutral-light-300 bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner">
-            <Archive width="20px" height="20px" />
-            <span className="hidden sm:block">Propostas arquivadas</span>
+          <button
+            onClick={handleArchiveToggle}
+            className="hidden sm:flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer sm:w-52 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
+          >
+            {getArchiveButtonIcon()}
+            <span className="hidden sm:block">{getArchiveButtonText()}</span>
           </button>
 
           <div className="hidden sm:flex flex-wrap justify-end items-center grow gap-2">
-            <button className="flex items-center justify-center w-11 h-[46px] text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner">
-              <FiltersIcon width="20px" height="20px" />
-            </button>
             <div className="flex items-center justify-center w-[86px] h-[46px] border border-white-neutral-light-300 rounded-2xl">
               <button
                 onClick={() => setTab("table")}
@@ -77,13 +106,14 @@ export default function Header({
               </button>
             </div>
           </div>
+
           <div className="flex sm:hidden items-center justify-between w-full mt-2">
             <div className="flex items-center justify-center gap-1">
-              <button className="flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner">
-                <Archive width="20px" height="20px" />
-              </button>
-              <button className="flex items-center justify-center w-11 h-[46px] text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner">
-                <FiltersIcon width="20px" height="20px" />
+              <button
+                onClick={handleArchiveToggle}
+                className="flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
+              >
+                {getArchiveButtonIcon()}
               </button>
             </div>
 
