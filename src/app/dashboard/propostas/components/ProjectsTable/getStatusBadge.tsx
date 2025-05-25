@@ -114,6 +114,26 @@ export const getStatusBadge = (status: ProjectsDataProps["projectStatus"]) => {
           <span className="text-md text-white-neutral-light-900">Expirada</span>
         </span>
       );
+    case "archived":
+      return (
+        <span className="flex items-center justify-start gap-2">
+          <div
+            className="w-[12px] h-[12px] rounded-3xs border border-white-neutral-light-800 bg-white-neutral-light-600"
+            style={{
+              backgroundImage: `repeating-linear-gradient(
+                  45deg,
+                  rgba(255,255,255,0.3) 0px,
+                  rgba(255,255,255,0.3) 1px,
+                  transparent 1px,
+                  transparent 3px
+                )`,
+            }}
+          />
+          <span className="text-md text-white-neutral-light-900">
+            Arquivada
+          </span>
+        </span>
+      );
     default:
       return (
         <span className="flex items-center justify-start gap-2">

@@ -12,6 +12,7 @@ const VALID_STATUSES = [
   "rejected",
   "draft",
   "expired",
+  "archived",
 ] as const;
 
 export async function GET(request: Request) {
@@ -323,6 +324,124 @@ export async function PATCH(request: Request) {
     });
   } catch (error) {
     console.error("Error updating projects:", error);
+    return NextResponse.json(
+      { success: false, error: `Erro interno do servidor: ${error}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const emailAddress = user?.emailAddresses[0]?.emailAddress;
+    if (!emailAddress) {
+      return NextResponse.json(
+        { success: false, error: "Email não encontrado" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const { projectIds } = body;
+
+    if (!projectIds || !Array.isArray(projectIds) || projectIds.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Lista de IDs dos projetos é obrigatória para duplicação",
+        },
+        { status: 400 }
+      );
+    }
+
+    const userId = await getUserIdFromEmail(emailAddress);
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    // Validate project ownership
+    const isOwner = await validateProjectOwnership(projectIds, userId);
+    if (!isOwner) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Um ou mais projetos não foram encontrados ou acesso negado",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Get the original projects to duplicate
+    const originalProjects = await db
+      .select()
+      .from(projectsTable)
+      .where(
+        and(
+          inArray(projectsTable.id, projectIds),
+          eq(projectsTable.personId, userId)
+        )
+      );
+
+    if (originalProjects.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Nenhum projeto encontrado para duplicar" },
+        { status: 404 }
+      );
+    }
+
+    // Create duplicated projects
+    const duplicatedProjects = originalProjects.map((project) => ({
+      personId: project.personId,
+      projectName: `${project.projectName} - Cópia`,
+      clientName: project.clientName,
+      street: project.street,
+      number: project.number,
+      neighborhood: project.neighborhood,
+      city: project.city,
+      state: project.state,
+      cep: project.cep,
+      additionalAddress: project.additionalAddress,
+      projectSentDate: null,
+      projectValidUntil: project.projectValidUntil,
+      projectStatus: "draft",
+      projectVisualizationDate: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+    }));
+
+    // Insert duplicated projects
+    const insertedProjects = await db
+      .insert(projectsTable)
+      .values(duplicatedProjects)
+      .returning();
+
+    if (insertedProjects.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Falha ao duplicar os projetos" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `${insertedProjects.length} projeto(s) duplicado(s) com sucesso`,
+      data: insertedProjects,
+      duplicatedCount: insertedProjects.length,
+    });
+  } catch (error) {
+    console.error("Error duplicating projects:", error);
     return NextResponse.json(
       { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }

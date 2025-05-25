@@ -15,13 +15,15 @@ interface ProjectStatistics {
   approvedProjectsCount: number;
 }
 
+// Valid project statuses - should match your API
 type ProjectStatus =
   | "active"
   | "approved"
   | "negotiation"
   | "rejected"
   | "draft"
-  | "expired";
+  | "expired"
+  | "archived";
 
 interface UpdateProjectResponse {
   success: boolean;
@@ -38,6 +40,14 @@ interface UpdateMultipleProjectsResponse {
   error?: string;
 }
 
+interface DuplicateProjectsResponse {
+  success: boolean;
+  message: string;
+  data?: ProjectsDataProps[];
+  duplicatedCount?: number;
+  error?: string;
+}
+
 interface UseProjectsReturn {
   projectsData: ProjectsDataProps[];
   pagination: PaginationInfo | null;
@@ -45,6 +55,7 @@ interface UseProjectsReturn {
   isInitialLoading: boolean;
   isPaginationLoading: boolean;
   isUpdating: boolean;
+  isDuplicating: boolean; // New loading state for duplicating
   error: string | null;
   currentPage: number;
   setCurrentPage: (page: number) => void;
@@ -57,6 +68,9 @@ interface UseProjectsReturn {
     projectIds: string[],
     status: ProjectStatus
   ) => Promise<UpdateMultipleProjectsResponse>;
+  duplicateProjects: (
+    projectIds: string[]
+  ) => Promise<DuplicateProjectsResponse>; // New duplicate function
 }
 
 export const useProjects = (
@@ -70,6 +84,7 @@ export const useProjects = (
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isPaginationLoading, setIsPaginationLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
@@ -125,6 +140,7 @@ export const useProjects = (
     fetchProjects(currentPage);
   }, [fetchProjects, currentPage]);
 
+  // Update single project status
   const updateProjectStatus = useCallback(
     async (
       projectId: string,
@@ -148,6 +164,7 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
+          // Optimistically update the local state
           setProjectsData((prevData) =>
             prevData.map((project) =>
               project.id === projectId
@@ -160,6 +177,7 @@ export const useProjects = (
             )
           );
 
+          // Update statistics if the status change affects them
           if (status === "approved") {
             setStatistics((prevStats) =>
               prevStats
@@ -202,6 +220,7 @@ export const useProjects = (
     []
   );
 
+  // Update multiple projects status
   const updateMultipleProjectsStatus = useCallback(
     async (
       projectIds: string[],
@@ -225,6 +244,7 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
+          // Optimistically update the local state
           setProjectsData((prevData) =>
             prevData.map((project) =>
               projectIds.includes(project.id)
@@ -237,6 +257,7 @@ export const useProjects = (
             )
           );
 
+          // Update statistics if the status change affects them
           if (status === "approved") {
             setStatistics((prevStats) =>
               prevStats
@@ -281,6 +302,62 @@ export const useProjects = (
     []
   );
 
+  // Duplicate projects
+  const duplicateProjects = useCallback(
+    async (projectIds: string[]): Promise<DuplicateProjectsResponse> => {
+      try {
+        setIsDuplicating(true);
+        setError(null);
+
+        const response = await fetch("/api/projects", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            projectIds,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Refetch data to show the new duplicated projects
+          // Since duplicates are added to the database, we need to refresh to see them
+          await fetchProjects(currentPage);
+
+          return {
+            success: true,
+            message: result.message,
+            data: result.data,
+            duplicatedCount: result.duplicatedCount,
+          };
+        } else {
+          setError(result.error);
+          return {
+            success: false,
+            message: result.error,
+            error: result.error,
+          };
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Erro desconhecido ao duplicar projetos";
+        setError(errorMessage);
+        return {
+          success: false,
+          message: errorMessage,
+          error: errorMessage,
+        };
+      } finally {
+        setIsDuplicating(false);
+      }
+    },
+    [fetchProjects, currentPage]
+  );
+
   useEffect(() => {
     fetchProjects(currentPage);
   }, [fetchProjects, currentPage]);
@@ -292,11 +369,13 @@ export const useProjects = (
     isInitialLoading,
     isPaginationLoading,
     isUpdating,
+    isDuplicating,
     error,
     currentPage,
     setCurrentPage: handlePageChange,
     refetch,
     updateProjectStatus,
     updateMultipleProjectsStatus,
+    duplicateProjects,
   };
 };

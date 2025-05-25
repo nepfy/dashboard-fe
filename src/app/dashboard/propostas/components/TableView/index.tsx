@@ -12,9 +12,11 @@ export default function TableView() {
     isPaginationLoading,
     isInitialLoading,
     isUpdating,
+    isDuplicating,
     error,
     setCurrentPage,
     updateMultipleProjectsStatus,
+    duplicateProjects,
   } = useProjects(1, 10);
 
   const handleBulkStatusUpdate = async (
@@ -31,6 +33,7 @@ export default function TableView() {
           | "rejected"
           | "draft"
           | "expired"
+          | "archived"
       );
 
       if (result.success) {
@@ -40,6 +43,23 @@ export default function TableView() {
       }
     } catch (error) {
       console.error("Bulk update failed:", error);
+      throw error;
+    }
+  };
+
+  const handleBulkDuplicate = async (projectIds: string[]) => {
+    try {
+      const result = await duplicateProjects(projectIds);
+
+      if (result.success) {
+        console.log(
+          `Successfully duplicated ${result.duplicatedCount} projects`
+        );
+      } else {
+        throw new Error(result.error || "Failed to duplicate projects");
+      }
+    } catch (error) {
+      console.error("Bulk duplicate failed:", error);
       throw error;
     }
   };
@@ -59,8 +79,10 @@ export default function TableView() {
           isLoading={isPaginationLoading}
           isInitialLoading={isInitialLoading}
           isUpdating={isUpdating}
+          isDuplicating={isDuplicating}
           data={projectsData}
           onBulkStatusUpdate={handleBulkStatusUpdate}
+          onBulkDuplicate={handleBulkDuplicate}
         />
 
         {pagination && pagination.totalPages > 1 && (

@@ -17,7 +17,8 @@ export interface ProjectsDataProps {
     | "negotiation"
     | "rejected"
     | "draft"
-    | "expired";
+    | "expired"
+    | "archived";
   projectValidUntil?: string;
   projectVisualizationDate?: string;
   state?: string;

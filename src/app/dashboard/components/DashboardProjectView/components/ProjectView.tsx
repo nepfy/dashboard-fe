@@ -28,6 +28,9 @@ interface ProjectViewProps {
   onPageChangeAction: (page: number) => void;
   error: string | null;
   isPaginationLoading: boolean;
+  isDuplicating?: boolean;
+  onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
 }
 
 export default function ProjectsView({
@@ -36,9 +39,16 @@ export default function ProjectsView({
   onPageChangeAction,
   error,
   isPaginationLoading,
+  isDuplicating,
+  onBulkStatusUpdate,
+  onBulkDuplicate,
 }: ProjectViewProps) {
   if (error) {
-    return <ErrorMessage error={error} />;
+    return (
+      <div className="my-4">
+        <ErrorMessage error={error} />{" "}
+      </div>
+    );
   }
 
   return (
@@ -79,14 +89,18 @@ export default function ProjectsView({
         </div>
       </div>
 
-      {/* Show loading overlay for table when paginating */}
       <div className="relative">
         {isPaginationLoading && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-2xs">
             <LoaderCircle className="animate-spin text-primary-light-400" />
           </div>
         )}
-        <ProjectsTable data={projectsData} />
+        <ProjectsTable
+          data={projectsData}
+          onBulkStatusUpdate={onBulkStatusUpdate}
+          isDuplicating={isDuplicating}
+          onBulkDuplicate={onBulkDuplicate}
+        />
       </div>
 
       {pagination && pagination.totalPages > 1 && (

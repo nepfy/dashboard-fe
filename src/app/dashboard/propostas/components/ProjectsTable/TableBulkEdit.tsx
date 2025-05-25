@@ -32,6 +32,7 @@ const statusMapping = {
   rascunho: "draft",
   expirada: "expired",
   rejeitada: "rejected",
+  arquivada: "archived",
 } as const;
 
 const options = [
@@ -59,23 +60,34 @@ const options = [
     value: "rejeitada",
     label: getStatusBadge("rejected"),
   },
+  {
+    value: "arquivada",
+    label: getStatusBadge("archived"),
+  },
 ];
 
 interface TableBulkEditProps {
   selectedCount?: number;
+  selectedProjectIds?: string[];
   onStatusUpdate: (status: string) => Promise<void>;
+  onDuplicateProjects: (projectIds: string[]) => Promise<void>;
   onDeselectAll: () => void;
   isUpdating?: boolean;
+  isDuplicating?: boolean;
 }
 
 export default function TableBulkEdit({
   selectedCount,
+  selectedProjectIds = [],
   onStatusUpdate,
+  onDuplicateProjects,
   onDeselectAll,
   isUpdating = false,
+  isDuplicating = false,
 }: TableBulkEditProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [isArchiving, setIsArchiving] = useState(false);
 
   console.log("Selecionados:", selectedCount);
 
@@ -102,10 +114,55 @@ export default function TableBulkEdit({
     }
   };
 
+  const handleArchive = async () => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Tem certeza que deseja arquivar ${selectedCount} item${
+        selectedCount !== 1 ? "s" : ""
+      }? Esta ação pode ser revertida posteriormente.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setIsArchiving(true);
+      await onStatusUpdate("archived");
+
+      // Reset selection after successful archive
+      setSelectedStatus("");
+    } catch (error) {
+      console.error("Failed to archive projects:", error);
+      alert("Erro ao arquivar projetos. Tente novamente.");
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const handleDuplicate = async () => {
+    const confirmed = window.confirm(
+      `Tem certeza que deseja duplicar ${selectedCount} projeto${
+        selectedCount !== 1 ? "s" : ""
+      }? ${
+        selectedCount === 1 ? "Uma cópia será criada" : "Cópias serão criadas"
+      } como rascunho${selectedCount !== 1 ? "s" : ""}.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await onDuplicateProjects(selectedProjectIds);
+    } catch (error) {
+      console.error("Failed to duplicate projects:", error);
+      alert("Erro ao duplicar projetos. Tente novamente.");
+    }
+  };
+
   const handleDeselectAll = () => {
     onDeselectAll();
     setSelectedStatus("");
   };
+
+  const isOperationInProgress = isUpdating || isArchiving;
 
   return (
     <div
@@ -141,35 +198,63 @@ export default function TableBulkEdit({
       </button>
 
       <button
-        className={isUpdating ? DISABLED_STYLE : BASE_STYLE}
-        disabled={isUpdating}
+        onClick={handleArchive}
+        className={`px-4 py-2 w-[120px] h-[48px] flex items-center justify-center gap-1 text-sm font-medium rounded-[var(--radius-s)] transition-colors border border-white-neutral-light-300 ${
+          isOperationInProgress
+            ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100 opacity-50"
+            : "text-white-neutral-light-900 cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner"
+        }`}
+        disabled={isOperationInProgress}
       >
-        <Archive width="16px" height="16px" />
-        Arquivar
+        {isArchiving ? (
+          <>
+            <LoaderCircle className="w-4 h-4 animate-spin" />
+            Arquivando...
+          </>
+        ) : (
+          <>
+            <Archive width="16px" height="16px" />
+            Arquivar
+          </>
+        )}
       </button>
 
       <button
-        className={isUpdating ? DISABLED_STYLE : BASE_STYLE}
-        disabled={isUpdating}
+        onClick={handleDuplicate}
+        className={`px-4 py-2 w-[120px] h-[48px] flex items-center justify-center gap-1 text-sm font-medium rounded-[var(--radius-s)] transition-colors border border-white-neutral-light-300 ${
+          isOperationInProgress
+            ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100 opacity-50"
+            : "text-white-neutral-light-900 cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner"
+        }`}
+        disabled={isOperationInProgress}
       >
-        <CopyIcon width="16px" height="16px" />
-        Duplicar
+        {isDuplicating ? (
+          <>
+            <LoaderCircle className="w-4 h-4 animate-spin" />
+            Duplicando...
+          </>
+        ) : (
+          <>
+            <CopyIcon width="16px" height="16px" />
+            Duplicar
+          </>
+        )}
       </button>
 
       <button
         onClick={handleDeselectAll}
-        className={isUpdating ? DISABLED_STYLE : BASE_STYLE}
-        disabled={isUpdating}
+        className={isOperationInProgress ? DISABLED_STYLE : BASE_STYLE}
+        disabled={isOperationInProgress}
       >
         Deselecionar
       </button>
 
-      <div className="ml-auto hidden sm:block">
+      {/* <div className="ml-auto hidden sm:block">
         <span className="text-sm text-white-neutral-light-600">
           {selectedCount} item{selectedCount !== 1 ? "s" : ""} selecionado
           {selectedCount !== 1 ? "s" : ""}
         </span>
-      </div>
+      </div> */}
     </div>
   );
 }

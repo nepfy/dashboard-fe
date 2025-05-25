@@ -13,9 +13,57 @@ export default function Dashboard() {
     pagination,
     isInitialLoading,
     isPaginationLoading,
+    isDuplicating,
     error,
     setCurrentPage,
+    updateMultipleProjectsStatus,
+    duplicateProjects,
   } = useProjects(1, 10);
+
+  const handleBulkStatusUpdate = async (
+    projectIds: string[],
+    status: string
+  ) => {
+    try {
+      const result = await updateMultipleProjectsStatus(
+        projectIds,
+        status as
+          | "active"
+          | "approved"
+          | "negotiation"
+          | "rejected"
+          | "draft"
+          | "expired"
+          | "archived"
+      );
+
+      if (result.success) {
+        console.log(`Successfully updated ${result.updatedCount} projects`);
+      } else {
+        throw new Error(result.error || "Failed to update projects");
+      }
+    } catch (error) {
+      console.error("Bulk update failed:", error);
+      throw error;
+    }
+  };
+
+  const handleBulkDuplicate = async (projectIds: string[]) => {
+    try {
+      const result = await duplicateProjects(projectIds);
+
+      if (result.success) {
+        console.log(
+          `Successfully duplicated ${result.duplicatedCount} projects`
+        );
+      } else {
+        throw new Error(result.error || "Failed to duplicate projects");
+      }
+    } catch (error) {
+      console.error("Bulk duplicate failed:", error);
+      throw error;
+    }
+  };
 
   if (isInitialLoading) {
     return (
@@ -37,7 +85,10 @@ export default function Dashboard() {
           error={error}
           isInitialLoading={isInitialLoading}
           isPaginationLoading={isPaginationLoading}
+          isDuplicating={isDuplicating}
           statistics={statistics}
+          onBulkStatusUpdate={handleBulkStatusUpdate}
+          onBulkDuplicate={handleBulkDuplicate}
         />
       ) : (
         <DashboardStartProjectView />

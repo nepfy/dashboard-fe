@@ -28,10 +28,13 @@ interface DashboardProjectViewProps {
   error: string | null;
   isInitialLoading: boolean;
   isPaginationLoading: boolean;
+  isDuplicating?: boolean;
   statistics: {
     sentProjectsCount: number;
     approvedProjectsCount: number;
   } | null;
+  onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
 }
 
 const BUTTON_CLASS = `p-3 h-[44px] w-[180px] 
@@ -46,7 +49,10 @@ export default function DashboardProjectView({
   error,
   isInitialLoading,
   isPaginationLoading,
+  isDuplicating = false,
   statistics,
+  onBulkStatusUpdate,
+  onBulkDuplicate,
 }: DashboardProjectViewProps) {
   const { userData } = useUserAccount();
   const [isMobile, setIsMobile] = useState(false);
@@ -187,7 +193,10 @@ export default function DashboardProjectView({
         pagination={pagination}
         onPageChangeAction={onPageChange}
         error={error}
-        isPaginationLoading={isPaginationLoading} // Pass pagination loading
+        isPaginationLoading={isPaginationLoading}
+        isDuplicating={isDuplicating}
+        onBulkStatusUpdate={onBulkStatusUpdate}
+        onBulkDuplicate={onBulkDuplicate}
       />
     </div>
   );

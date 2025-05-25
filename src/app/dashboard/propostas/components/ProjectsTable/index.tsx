@@ -12,8 +12,10 @@ import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 
 interface EnhancedTableProps extends TableProps {
-  onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
   isUpdating?: boolean;
+  isDuplicating?: boolean;
+  onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
 }
 
 const ProjectsTable: React.FC<EnhancedTableProps> = ({
@@ -21,8 +23,10 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   onRowSelect,
   isLoading,
   isInitialLoading,
-  onBulkStatusUpdate,
   isUpdating = false,
+  isDuplicating = false,
+  onBulkStatusUpdate,
+  onBulkDuplicate,
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -59,12 +63,26 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     if (selectedIds.length > 0 && onBulkStatusUpdate) {
       try {
         await onBulkStatusUpdate(selectedIds, status);
-        // Clear selection after successful update
         setSelectedRows(new Set());
         setSelectAll(false);
         onRowSelect?.([]);
       } catch (error) {
         console.error("Failed to update projects:", error);
+      }
+    }
+  };
+
+  const handleBulkDuplicate = async () => {
+    const selectedIds = Array.from(selectedRows);
+    if (selectedIds.length > 0 && onBulkDuplicate) {
+      try {
+        await onBulkDuplicate(selectedIds);
+        // Clear selection after successful duplicate
+        setSelectedRows(new Set());
+        setSelectAll(false);
+        onRowSelect?.([]);
+      } catch (error) {
+        console.error("Failed to duplicate projects:", error);
         // Keep selection on error so user can retry
       }
     }
@@ -76,7 +94,9 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     onRowSelect?.([]);
   };
 
-  const showBulkEdit = selectedRows.size || selectAll;
+  const isOperationInProgress = isUpdating || isDuplicating;
+
+  const showBulkEdit = selectedRows.size > 0;
 
   if (isLoading || isInitialLoading) {
     return (
@@ -93,9 +113,12 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
       {showBulkEdit && (
         <TableBulkEdit
           selectedCount={selectedRows.size}
+          selectedProjectIds={Array.from(selectedRows)}
           onStatusUpdate={handleBulkStatusUpdate}
+          onDuplicateProjects={handleBulkDuplicate}
           onDeselectAll={handleDeselectAll}
           isUpdating={isUpdating}
+          isDuplicating={isDuplicating}
         />
       )}
 
@@ -157,7 +180,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
-                    }`}
+                    } ${isOperationInProgress ? "opacity-50" : ""}`}
                   >
                     <td className="py-4 pl-4 pr-3 text-sm text-white-neutral-light-900 flex items-center">
                       <input
@@ -165,6 +188,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         className="h-4 w-4 rounded-xl border border-white-neutral-light-300 text-blue-600 focus:ring-blue-500 mr-2 flex-shrink-0"
                         checked={selectedRows.has(row.id)}
                         onChange={() => handleRowSelect(row.id)}
+                        disabled={isOperationInProgress}
                       />
                       <span
                         className="truncate md:whitespace-nowrap max-w-[100px] sm:max-w-none"
