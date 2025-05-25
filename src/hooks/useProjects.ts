@@ -58,23 +58,23 @@ interface ArchivedProjectsResponse {
 
 interface UseProjectsReturn {
   projectsData: ProjectsDataProps[];
-  archivedProjectsData: ProjectsDataProps[]; // New state for archived projects
+  archivedProjectsData: ProjectsDataProps[];
   pagination: PaginationInfo | null;
-  archivedPagination: PaginationInfo | null; // New pagination for archived projects
+  archivedPagination: PaginationInfo | null;
   statistics: ProjectStatistics | null;
   isInitialLoading: boolean;
   isPaginationLoading: boolean;
   isUpdating: boolean;
   isDuplicating: boolean;
-  isLoadingArchived: boolean; // New loading state for archived projects
+  isLoadingArchived: boolean;
   error: string | null;
-  archivedError: string | null; // New error state for archived projects
+  archivedError: string | null;
   currentPage: number;
-  archivedCurrentPage: number; // New current page for archived projects
+  archivedCurrentPage: number;
   setCurrentPage: (page: number) => void;
-  setArchivedCurrentPage: (page: number) => void; // New setter for archived page
+  setArchivedCurrentPage: (page: number) => void;
   refetch: () => void;
-  refetchArchived: () => void; // New refetch function for archived projects
+  refetchArchived: () => void;
   updateProjectStatus: (
     projectId: string,
     status: ProjectStatus
@@ -86,14 +86,13 @@ interface UseProjectsReturn {
   duplicateProjects: (
     projectIds: string[]
   ) => Promise<DuplicateProjectsResponse>;
-  fetchArchivedProjects: (page?: number) => Promise<ArchivedProjectsResponse>; // New function to fetch archived projects
+  fetchArchivedProjects: (page?: number) => Promise<ArchivedProjectsResponse>;
 }
 
 export const useProjects = (
   initialPage: number = 1,
   limit: number = 10
 ): UseProjectsReturn => {
-  // Existing state
   const [projectsData, setProjectsData] = useState<ProjectsDataProps[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [statistics, setStatistics] = useState<ProjectStatistics | null>(null);
@@ -105,7 +104,6 @@ export const useProjects = (
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
-  // New state for archived projects
   const [archivedProjectsData, setArchivedProjectsData] = useState<
     ProjectsDataProps[]
   >([]);
@@ -159,7 +157,6 @@ export const useProjects = (
     [limit, hasInitiallyLoaded]
   );
 
-  // New function to fetch archived projects
   const fetchArchivedProjects = useCallback(
     async (
       page: number = archivedCurrentPage
@@ -247,7 +244,6 @@ export const useProjects = (
     fetchArchivedProjects(archivedCurrentPage);
   }, [fetchArchivedProjects, archivedCurrentPage]);
 
-  // Update single project status
   const updateProjectStatus = useCallback(
     async (
       projectId: string,
@@ -271,13 +267,11 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
-          // If project is being archived, remove it from active projects
           if (status === "archived") {
             setProjectsData((prevData) =>
               prevData.filter((project) => project.id !== projectId)
             );
 
-            // Update statistics
             setStatistics((prevStats) =>
               prevStats
                 ? {
@@ -288,7 +282,6 @@ export const useProjects = (
                 : null
             );
           } else {
-            // Optimistically update the local state for non-archived status changes
             setProjectsData((prevData) =>
               prevData.map((project) =>
                 project.id === projectId
@@ -301,7 +294,6 @@ export const useProjects = (
               )
             );
 
-            // Update statistics if the status change affects them
             if (status === "approved") {
               setStatistics((prevStats) =>
                 prevStats
@@ -346,7 +338,6 @@ export const useProjects = (
     []
   );
 
-  // Update multiple projects status
   const updateMultipleProjectsStatus = useCallback(
     async (
       projectIds: string[],
@@ -370,7 +361,6 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
-          // If projects are being archived, remove them from active projects
           if (status === "archived") {
             setProjectsData((prevData) =>
               prevData.filter((project) => !projectIds.includes(project.id))
@@ -388,7 +378,6 @@ export const useProjects = (
                 : null
             );
           } else {
-            // Optimistically update the local state for non-archived status changes
             setProjectsData((prevData) =>
               prevData.map((project) =>
                 projectIds.includes(project.id)
@@ -401,7 +390,6 @@ export const useProjects = (
               )
             );
 
-            // Update statistics if the status change affects them
             if (status === "approved") {
               setStatistics((prevStats) =>
                 prevStats
@@ -447,7 +435,6 @@ export const useProjects = (
     []
   );
 
-  // Duplicate projects
   const duplicateProjects = useCallback(
     async (projectIds: string[]): Promise<DuplicateProjectsResponse> => {
       try {
@@ -467,8 +454,6 @@ export const useProjects = (
         const result = await response.json();
 
         if (result.success) {
-          // Refetch data to show the new duplicated projects
-          // Since duplicates are added to the database, we need to refresh to see them
           await fetchProjects(currentPage);
 
           return {

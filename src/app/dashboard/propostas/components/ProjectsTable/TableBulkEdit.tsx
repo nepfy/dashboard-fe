@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { LoaderCircle } from "lucide-react";
 
 import SelectInput from "#/components/Inputs/SelectInput";
 import Archive from "#/components/icons/Archive";
 import CopyIcon from "#/components/icons/CopyIcon";
+import Modal from "#/components/Modal";
 
 import { getStatusBadge } from "./getStatusBadge";
 
@@ -89,7 +91,7 @@ interface TableBulkEditProps {
   onDeselectAll: () => void;
   isUpdating?: boolean;
   isDuplicating?: boolean;
-  viewMode?: "active" | "archived"; // Add viewMode prop
+  viewMode?: "active" | "archived";
 }
 
 export default function TableBulkEdit({
@@ -100,11 +102,13 @@ export default function TableBulkEdit({
   onDeselectAll,
   isUpdating = false,
   isDuplicating = false,
-  viewMode = "active", // Default to active
+  viewMode = "active",
 }: TableBulkEditProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [isArchiving, setIsArchiving] = useState(false);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
   console.log("Selecionados:", selectedCount);
 
@@ -156,22 +160,16 @@ export default function TableBulkEdit({
     }
   };
 
-  const handleArchive = async () => {
-    // Show confirmation dialog
-    const confirmed = window.confirm(
-      `Tem certeza que deseja arquivar ${selectedCount} item${
-        selectedCount !== 1 ? "s" : ""
-      }? Esta ação pode ser revertida posteriormente.`
-    );
+  const handleArchiveClick = () => {
+    setShowArchiveModal(true);
+  };
 
-    if (!confirmed) return;
-
+  const handleArchiveConfirm = async () => {
     try {
       setIsArchiving(true);
       await onStatusUpdate("archived");
-
-      // Reset selection after successful archive
       setSelectedStatus("");
+      setShowArchiveModal(false);
     } catch (error) {
       console.error("Failed to archive projects:", error);
       alert("Erro ao arquivar projetos. Tente novamente.");
@@ -180,23 +178,26 @@ export default function TableBulkEdit({
     }
   };
 
-  const handleDuplicate = async () => {
-    const confirmed = window.confirm(
-      `Tem certeza que deseja duplicar ${selectedCount} projeto${
-        selectedCount !== 1 ? "s" : ""
-      }? ${
-        selectedCount === 1 ? "Uma cópia será criada" : "Cópias serão criadas"
-      } como rascunho${selectedCount !== 1 ? "s" : ""}.`
-    );
+  const handleArchiveCancel = () => {
+    setShowArchiveModal(false);
+  };
 
-    if (!confirmed) return;
+  const handleDuplicateClick = () => {
+    setShowDuplicateModal(true);
+  };
 
+  const handleDuplicateConfirm = async () => {
     try {
       await onDuplicateProjects(selectedProjectIds);
+      setShowDuplicateModal(false);
     } catch (error) {
       console.error("Failed to duplicate projects:", error);
       alert("Erro ao duplicar projetos. Tente novamente.");
     }
+  };
+
+  const handleDuplicateCancel = () => {
+    setShowDuplicateModal(false);
   };
 
   const handleDeselectAll = () => {
@@ -207,99 +208,220 @@ export default function TableBulkEdit({
   const isOperationInProgress = isUpdating || isArchiving;
 
   return (
-    <div
-      className={`bg-white-neutral-light-100 e0 py-3 sm:py-0 px-4 rounded-[10px] w-full min-h-[78px] transition-all duration-400 ease-in-out flex items-center justify-start sm:justify-center gap-2 flex-wrap mb-2 sm:flex-nowrap ${
-        isVisible ? "opacity-100 " : "opacity-0 "
-      }`}
-    >
-      <SelectInput
-        className="h-[49px]"
-        options={getOptions()}
-        placeholder={getPlaceholderText()}
-        value={selectedStatus}
-        onChange={setSelectedStatus}
-      />
-
-      <button
-        onClick={handleStatusUpdate}
-        disabled={isUpdating || !selectedStatus}
-        className={`px-4 py-2 h-[48px] text-sm font-medium text-white rounded-[var(--radius-s)] transition-colors border border-primary-light-25 ${
-          isUpdating || !selectedStatus
-            ? "bg-gray-400 cursor-not-allowed opacity-50"
-            : "bg-primary-light-400 hover:bg-primary-light-500 cursor-pointer button-inner-inverse"
+    <>
+      <div
+        className={`bg-white-neutral-light-100 e0 py-3 sm:py-0 px-4 rounded-[10px] w-full min-h-[78px] transition-all duration-400 ease-in-out flex items-center justify-start sm:justify-center gap-2 flex-wrap mb-2 sm:flex-nowrap ${
+          isVisible ? "opacity-100 " : "opacity-0 "
         }`}
       >
-        {isUpdating ? (
-          <div className="flex items-center gap-2">
-            <LoaderCircle className="w-4 h-4 animate-spin" />
-            {getUpdateButtonText()}
-          </div>
-        ) : (
-          getUpdateButtonText()
-        )}
-      </button>
+        <SelectInput
+          className="h-[49px]"
+          options={getOptions()}
+          placeholder={getPlaceholderText()}
+          value={selectedStatus}
+          onChange={setSelectedStatus}
+        />
 
-      {/* Only show Archive button in active view */}
-      {viewMode === "active" && (
         <button
-          onClick={handleArchive}
+          onClick={handleStatusUpdate}
+          disabled={isUpdating || !selectedStatus}
+          className={`px-4 py-2 h-[48px] text-sm font-medium text-white rounded-[var(--radius-s)] transition-colors border border-primary-light-25 ${
+            isUpdating || !selectedStatus
+              ? "bg-gray-400 cursor-not-allowed opacity-50"
+              : "bg-primary-light-400 hover:bg-primary-light-500 cursor-pointer button-inner-inverse"
+          }`}
+        >
+          {isUpdating ? (
+            <div className="flex items-center gap-2">
+              <LoaderCircle className="w-4 h-4 animate-spin" />
+              {getUpdateButtonText()}
+            </div>
+          ) : (
+            getUpdateButtonText()
+          )}
+        </button>
+
+        {/* Only show Archive button in active view */}
+        {viewMode === "active" && (
+          <button
+            onClick={handleArchiveClick}
+            className={`px-4 py-2 w-[120px] h-[48px] flex items-center justify-center gap-1 text-sm font-medium rounded-[var(--radius-s)] transition-colors border border-white-neutral-light-300 ${
+              isOperationInProgress
+                ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100"
+                : "text-white-neutral-light-900 cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner"
+            }`}
+            disabled={isOperationInProgress}
+          >
+            {isArchiving ? (
+              <>
+                <LoaderCircle className="w-4 h-4 animate-spin" />
+                Arquivando...
+              </>
+            ) : (
+              <>
+                <Archive width="16px" height="16px" />
+                Arquivar
+              </>
+            )}
+          </button>
+        )}
+
+        <button
+          onClick={handleDuplicateClick}
           className={`px-4 py-2 w-[120px] h-[48px] flex items-center justify-center gap-1 text-sm font-medium rounded-[var(--radius-s)] transition-colors border border-white-neutral-light-300 ${
             isOperationInProgress
-              ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100 opacity-50"
+              ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100"
               : "text-white-neutral-light-900 cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner"
           }`}
           disabled={isOperationInProgress}
         >
-          {isArchiving ? (
+          {isDuplicating ? (
             <>
               <LoaderCircle className="w-4 h-4 animate-spin" />
-              Arquivando...
+              Duplicando...
             </>
           ) : (
             <>
-              <Archive width="16px" height="16px" />
-              Arquivar
+              <CopyIcon width="16px" height="16px" />
+              Duplicar
             </>
           )}
         </button>
-      )}
 
-      <button
-        onClick={handleDuplicate}
-        className={`px-4 py-2 w-[120px] h-[48px] flex items-center justify-center gap-1 text-sm font-medium rounded-[var(--radius-s)] transition-colors border border-white-neutral-light-300 ${
-          isOperationInProgress
-            ? "text-white-neutral-light-500 cursor-not-allowed bg-white-neutral-light-100 opacity-50"
-            : "text-white-neutral-light-900 cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 button-inner"
-        }`}
-        disabled={isOperationInProgress}
+        <button
+          onClick={handleDeselectAll}
+          className={isOperationInProgress ? DISABLED_STYLE : BASE_STYLE}
+          disabled={isOperationInProgress}
+        >
+          Deselecionar
+        </button>
+      </div>
+
+      <Modal
+        isOpen={showArchiveModal}
+        onClose={handleArchiveCancel}
+        title="Confirmar Arquivamento"
+        footer={false}
+        closeOnClickOutside={!isArchiving}
+        showCloseButton={!isArchiving}
+        width="340px"
       >
-        {isDuplicating ? (
-          <>
-            <LoaderCircle className="w-4 h-4 animate-spin" />
-            Duplicando...
-          </>
-        ) : (
-          <>
-            <CopyIcon width="16px" height="16px" />
-            Duplicar
-          </>
-        )}
-      </button>
+        <div className="w-full p-3">
+          <Image
+            src="/images/archive-banner.jpg"
+            width={800}
+            height={400}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
+            alt="image decorativa"
+          />
+        </div>
 
-      <button
-        onClick={handleDeselectAll}
-        className={isOperationInProgress ? DISABLED_STYLE : BASE_STYLE}
-        disabled={isOperationInProgress}
+        <p className="text-white-neutral-light-500 text-sm px-6 py-3 sm:p-6">
+          Ao arquivar, o item será movido para a área de itens arquivados e não
+          ficará mais visível na lista principal.
+        </p>
+
+        <div className="flex justify-start space-x-3 p-5 border-t border-t-white-neutral-light-300">
+          <button
+            type="button"
+            onClick={handleArchiveConfirm}
+            disabled={isArchiving}
+            className={`px-4 py-2 text-sm font-medium text-white rounded-xs ${
+              isArchiving
+                ? "bg-white-neutral-light-300 cursor-not-allowed"
+                : "bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
+            }`}
+          >
+            {isArchiving ? (
+              <div className="flex items-center">
+                <LoaderCircle className="w-4 h-4 animate-spin mr-2" />
+                Arquivando...
+              </div>
+            ) : (
+              "Arquivar"
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={handleArchiveCancel}
+            disabled={isArchiving}
+            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
+              isArchiving
+                ? "text-gray-400 border-gray-200 cursor-not-allowed"
+                : "text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer"
+            }`}
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={showDuplicateModal}
+        onClose={handleDuplicateCancel}
+        title="Confirmar Duplicação"
+        footer={false}
+        closeOnClickOutside={!isDuplicating}
+        showCloseButton={!isDuplicating}
+        width="340px"
       >
-        Deselecionar
-      </button>
+        <div className="w-full p-3">
+          <Image
+            src="/images/duplicate-banner.jpg"
+            width={800}
+            height={400}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
+            alt="image decorativa"
+          />
+        </div>
 
-      {/* <div className="ml-auto hidden sm:block">
-        <span className="text-sm text-white-neutral-light-600">
-          {selectedCount} item{selectedCount !== 1 ? "s" : ""} selecionado
-          {selectedCount !== 1 ? "s" : ""}
-        </span>
-      </div> */}
-    </div>
+        <p className="text-white-neutral-light-500 text-sm px-6 py-3 sm:p-6">
+          Tem certeza que deseja duplicar este item? Uma cópia será criada
+          imediatamente.
+        </p>
+
+        <div className="flex justify-start space-x-3 p-5 border-t border-t-white-neutral-light-300">
+          <button
+            type="button"
+            onClick={handleDuplicateConfirm}
+            disabled={isDuplicating}
+            className={`px-4 py-2 text-sm font-medium text-white rounded-xs ${
+              isDuplicating
+                ? "bg-white-neutral-light-300 cursor-not-allowed"
+                : "bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
+            }`}
+          >
+            {isDuplicating ? (
+              <div className="flex items-center">
+                <LoaderCircle className="w-4 h-4 animate-spin mr-2" />
+                Duplicando...
+              </div>
+            ) : (
+              "Duplicar"
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={handleDuplicateCancel}
+            disabled={isDuplicating}
+            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
+              isDuplicating
+                ? "text-gray-400 border-gray-200 cursor-not-allowed"
+                : "text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer"
+            }`}
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
+    </>
   );
 }

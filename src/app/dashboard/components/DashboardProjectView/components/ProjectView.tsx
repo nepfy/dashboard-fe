@@ -30,6 +30,7 @@ interface ProjectViewProps {
   isPaginationLoading: boolean;
   isDuplicating?: boolean;
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
 }
 
@@ -41,6 +42,7 @@ export default function ProjectsView({
   isPaginationLoading,
   isDuplicating,
   onBulkStatusUpdate,
+  onStatusUpdate,
   onBulkDuplicate,
 }: ProjectViewProps) {
   if (error) {
@@ -98,6 +100,7 @@ export default function ProjectsView({
         <ProjectsTable
           data={projectsData}
           onBulkStatusUpdate={onBulkStatusUpdate}
+          onStatusUpdate={onStatusUpdate}
           isDuplicating={isDuplicating}
           onBulkDuplicate={onBulkDuplicate}
         />

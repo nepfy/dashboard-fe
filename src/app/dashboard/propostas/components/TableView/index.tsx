@@ -25,12 +25,12 @@ export default function TableView({ viewMode }: TableViewProps) {
     archivedError,
     setCurrentPage,
     setArchivedCurrentPage,
+    updateProjectStatus,
     updateMultipleProjectsStatus,
     duplicateProjects,
     fetchArchivedProjects,
   } = useProjects(1, 10);
 
-  // Fetch archived projects when switching to archived view
   useEffect(() => {
     if (viewMode === "archived" && archivedProjectsData.length === 0) {
       fetchArchivedProjects(1);
@@ -65,6 +65,31 @@ export default function TableView({ viewMode }: TableViewProps) {
     }
   };
 
+  const handleStatusUpdate = async (projectId: string, status: string) => {
+    try {
+      const result = await updateProjectStatus(
+        projectId,
+        status as
+          | "active"
+          | "approved"
+          | "negotiation"
+          | "rejected"
+          | "draft"
+          | "expired"
+          | "archived"
+      );
+
+      if (result.success) {
+        console.log(`Successfully updated ${result.data} projects`);
+      } else {
+        throw new Error(result.error || "Failed to update projects");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+      throw error;
+    }
+  };
+
   const handleBulkDuplicate = async (projectIds: string[]) => {
     try {
       const result = await duplicateProjects(projectIds);
@@ -82,7 +107,6 @@ export default function TableView({ viewMode }: TableViewProps) {
     }
   };
 
-  // Determine which data to show based on view mode
   const currentData =
     viewMode === "archived" ? archivedProjectsData : projectsData;
   const currentPagination =
@@ -113,6 +137,7 @@ export default function TableView({ viewMode }: TableViewProps) {
           isDuplicating={isDuplicating}
           data={currentData}
           onBulkStatusUpdate={handleBulkStatusUpdate}
+          onStatusUpdate={handleStatusUpdate}
           onBulkDuplicate={handleBulkDuplicate}
           viewMode={viewMode}
         />

@@ -16,6 +16,7 @@ interface EnhancedTableProps extends TableProps {
   isUpdating?: boolean;
   isDuplicating?: boolean;
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
   viewMode?: "active" | "archived";
 }
@@ -28,12 +29,12 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   isUpdating = false,
   isDuplicating = false,
   onBulkStatusUpdate,
+  onStatusUpdate,
   onBulkDuplicate,
   viewMode = "active",
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
-  // Change: Track which specific row has menu open
   const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
 
   const handleRowSelect = (id: string) => {
@@ -86,7 +87,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         setSelectAll(false);
         onRowSelect?.([]);
       } catch (error) {
-        console.error("Failed to duplicate projects:", error);
+        console.error("Falha ao duplicar proposta:", error);
       }
     }
   };
@@ -97,15 +98,47 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     onRowSelect?.([]);
   };
 
-  // Change: Handle menu toggle for specific row
   const handleMenuToggle = (rowId: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent event bubbling
+    event.stopPropagation();
     setOpenMenuRowId(openMenuRowId === rowId ? null : rowId);
   };
 
-  // Change: Handle menu close
   const handleMenuClose = () => {
     setOpenMenuRowId(null);
+  };
+
+  const handleRowStatusUpdate = async (projectId: string, status: string) => {
+    if (onStatusUpdate) {
+      try {
+        await onStatusUpdate(projectId, status);
+        setOpenMenuRowId(null);
+      } catch (error) {
+        console.error("Falha ao atualizar proposta:", error);
+      }
+    }
+  };
+
+  const handleRowDuplicate = async (projectId: string) => {
+    if (onBulkDuplicate) {
+      try {
+        await onBulkDuplicate([projectId]);
+        setOpenMenuRowId(null);
+      } catch (error) {
+        console.error("Falha ao duplicar proposta:", error);
+      }
+    }
+  };
+
+  const handleRowArchive = async (projectId: string) => {
+    if (onStatusUpdate) {
+      try {
+        const newStatus = viewMode === "archived" ? "draft" : "archived";
+        await onStatusUpdate(projectId, newStatus);
+        setOpenMenuRowId(null);
+      } catch (error) {
+        console.error("Falha ao arquivar/desarquivar proposta:", error);
+      }
+    }
   };
 
   const isOperationInProgress = isUpdating || isDuplicating;
@@ -194,7 +227,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
-                    } ${isOperationInProgress ? "opacity-50" : ""}`}
+                    }`}
                   >
                     <td className="py-4 pl-4 pr-3 text-sm text-white-neutral-light-900 flex items-center">
                       <input
@@ -243,11 +276,16 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                       >
                         ...
                       </button>
-                      {/* Change: Only show menu for the specific row */}
                       <RowEditMenu
                         isOpen={openMenuRowId === row.id}
                         onClose={handleMenuClose}
                         projectId={row.id}
+                        currentStatus={row.projectStatus}
+                        viewMode={viewMode}
+                        onStatusUpdate={handleRowStatusUpdate}
+                        onDuplicate={handleRowDuplicate}
+                        onArchive={handleRowArchive}
+                        isUpdating={isUpdating}
                       />
                     </td>
                   </tr>

@@ -17,6 +17,7 @@ export default function Dashboard() {
     error,
     setCurrentPage,
     updateMultipleProjectsStatus,
+    updateProjectStatus,
     duplicateProjects,
   } = useProjects(1, 10);
 
@@ -44,6 +45,31 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error("Bulk update failed:", error);
+      throw error;
+    }
+  };
+
+  const handleStatusUpdate = async (projectId: string, status: string) => {
+    try {
+      const result = await updateProjectStatus(
+        projectId,
+        status as
+          | "active"
+          | "approved"
+          | "negotiation"
+          | "rejected"
+          | "draft"
+          | "expired"
+          | "archived"
+      );
+
+      if (result.success) {
+        console.log(`Successfully updated ${result.data} projects`);
+      } else {
+        throw new Error(result.error || "Failed to update projects");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
       throw error;
     }
   };
@@ -88,6 +114,7 @@ export default function Dashboard() {
           isDuplicating={isDuplicating}
           statistics={statistics}
           onBulkStatusUpdate={handleBulkStatusUpdate}
+          onStatusUpdate={handleStatusUpdate}
           onBulkDuplicate={handleBulkDuplicate}
         />
       ) : (

@@ -34,6 +34,7 @@ interface DashboardProjectViewProps {
     approvedProjectsCount: number;
   } | null;
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
+  onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
 }
 
@@ -52,6 +53,7 @@ export default function DashboardProjectView({
   isDuplicating = false,
   statistics,
   onBulkStatusUpdate,
+  onStatusUpdate,
   onBulkDuplicate,
 }: DashboardProjectViewProps) {
   const { userData } = useUserAccount();
@@ -196,6 +198,7 @@ export default function DashboardProjectView({
         isPaginationLoading={isPaginationLoading}
         isDuplicating={isDuplicating}
         onBulkStatusUpdate={onBulkStatusUpdate}
+        onStatusUpdate={onStatusUpdate}
         onBulkDuplicate={onBulkDuplicate}
       />
     </div>

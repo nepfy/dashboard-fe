@@ -20,6 +20,7 @@ const Modal: React.FC<ModalProps> = ({
   title,
   children,
   showCloseButton = true,
+  width,
   closeOnClickOutside = true,
   footer = true,
 }) => {
@@ -63,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-filter backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-filter backdrop-blur-sm"
       onClick={handleBackdropClick}
       aria-modal="true"
       role="dialog"
@@ -71,7 +72,10 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className={`bg-white-neutral-light-100 rounded-[var(--radius-m)] shadow-lg w-[320px] sm:w-[520px] max-h-[90vh] overflow-auto`}
+        className={`bg-white-neutral-light-100 rounded-[var(--radius-m)] shadow-lg max-h-[90vh] overflow-auto ${
+          !width ? "w-[320px] sm:w-[520px]" : ""
+        }`}
+        style={{ width: width || undefined }}
         onClick={(e) => e.stopPropagation()}
       >
         {(title || showCloseButton) && (
