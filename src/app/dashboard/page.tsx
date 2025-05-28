@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle } from "lucide-react";
-import { useProjects } from "#/hooks/useProjects";
+import { useProjects } from "#/hooks/useProjectGenerator/useProjects";
 
 import DashboardStartProjectView from "#/app/dashboard/components/DashboardStartProjectView";
 import DashboardProjectView from "#/app/dashboard/components/DashboardProjectView";

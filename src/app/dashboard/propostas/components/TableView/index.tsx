@@ -4,7 +4,7 @@ import ProjectsTable from "#/app/dashboard/propostas/components/ProjectsTable";
 import ErrorMessage from "#/components/ErrorMessage";
 import Pagination from "#/components/Pagination";
 import PageCounter from "#/components/PageCounter";
-import { useProjects } from "#/hooks/useProjects";
+import { useProjects } from "#/hooks/useProjectGenerator/useProjects";
 
 interface TableViewProps {
   viewMode: "active" | "archived";

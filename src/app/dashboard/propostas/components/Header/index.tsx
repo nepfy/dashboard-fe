@@ -3,7 +3,7 @@ import Link from "next/link";
 import DashboardPageHeader from "#/components/DashboardPageHeader";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Archive from "#/components/icons/Archive";
-import ColumnIcon from "#/components/icons/ColumnIcon";
+// import ColumnIcon from "#/components/icons/ColumnIcon";
 
 interface HeaderProps {
   tab: string;
@@ -13,8 +13,8 @@ interface HeaderProps {
 }
 
 export default function Header({
-  tab,
-  setTab,
+  // tab,
+  // setTab,
   viewMode,
   setViewMode,
 }: HeaderProps) {
@@ -45,8 +45,8 @@ export default function Header({
       <div className="flex flex-wrap items-start">
         <div className="flex flex-row flex-wrap w-full gap-1 items-start sm:items-center">
           {viewMode === "active" && (
-            <Link href="/gerador-de-propostas">
-              <div className="flex items-center justify-center w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
+            <Link href="/gerador-de-propostas" className="w-full sm:w-40">
+              <div className="flex items-center justify-center w-full sm:w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
                 <PlusIcon fill="#FFFFFF" />
                 Criar proposta
               </div>
@@ -61,7 +61,7 @@ export default function Header({
             <span className="hidden sm:block">{getArchiveButtonText()}</span>
           </button>
 
-          <div className="hidden sm:flex flex-wrap justify-end items-center grow gap-2">
+          {/* <div className="hidden sm:flex flex-wrap justify-end items-center grow gap-2">
             <div className="flex items-center justify-center w-[86px] h-[46px] border border-white-neutral-light-300 rounded-2xl">
               <button
                 onClick={() => setTab("table")}
@@ -105,19 +105,27 @@ export default function Header({
                 />
               </button>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex sm:hidden items-center justify-between w-full mt-2">
-            <div className="flex items-center justify-center gap-1">
-              <button
+            <div className="flex items-center justify-center w-full">
+              {/* <button
                 onClick={handleArchiveToggle}
                 className="flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
               >
                 {getArchiveButtonIcon()}
+              </button> */}
+
+              <button
+                onClick={handleArchiveToggle}
+                className="flex items-center justify-center w-full h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
+              >
+                {getArchiveButtonIcon()}
+                <span className="block">{getArchiveButtonText()}</span>
               </button>
             </div>
 
-            <div className="flex items-center justify-center w-[86px] h-[46px] border border-white-neutral-light-300 rounded-2xl">
+            {/* <div className="flex items-center justify-center w-[86px] h-[46px] border border-white-neutral-light-300 rounded-2xl">
               <button
                 onClick={() => setTab("table")}
                 className={`flex items-center justify-center 
@@ -159,7 +167,7 @@ export default function Header({
                   fill={tab === "kanban" ? "#5B32F4" : "#23232C"}
                 />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
