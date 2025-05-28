@@ -100,14 +100,18 @@ export default function TemplateSelection({
             {item.colorsList.map((color) => (
               <div
                 key={color}
-                className={`h-[24px] w-[24px] rounded-2xs cursor-pointer border-2 ${
+                className={`h-[24px] w-[24px] rounded-2xs cursor-pointer border-1 p-0.5 flex items-center justify-center box-border ${
                   selectedColors[item.title] === color
-                    ? "border-white-neutral-light-800"
+                    ? "border-primary-light-400"
                     : "border-transparent"
                 }`}
-                style={{ backgroundColor: color }}
                 onClick={() => handleColorSelect(item.title, color)}
-              />
+              >
+                <div
+                  className="h-[20px] w-[24px] rounded-[6px]"
+                  style={{ backgroundColor: color }}
+                />
+              </div>
             ))}
           </div>
         </div>

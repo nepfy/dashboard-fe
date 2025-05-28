@@ -8,6 +8,8 @@ export default function ProjectGenerator({
 }: {
   children: React.ReactNode;
 }) {
+  const date = new Date();
+
   return (
     <div className="bg-white-neutral-light-200 h-screen flex flex-col">
       <nav className="p-7 border-b border-b-white-neutral-light-300 flex items-center justify-between">
@@ -39,6 +41,12 @@ export default function ProjectGenerator({
       </nav>
 
       <main className="flex-1 p-7">{children}</main>
+
+      <footer className="w-full p-7">
+        <p className="text-white-neutral-light-400 mt-6">
+          &copy; {date.getFullYear()} Nepfy
+        </p>
+      </footer>
     </div>
   );
 }

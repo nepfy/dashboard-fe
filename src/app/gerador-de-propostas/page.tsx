@@ -1,8 +1,8 @@
-// Updated gerador-de-propostas/page.tsx
 "use client";
 
 import { useProjectGenerator } from "#/hooks/useProjectGenerator/useProjectGenerator";
 import TemplateSelection from "./components/TemplateSelection";
+import IntroStep from "./components/IntroStep";
 import { TemplateType } from "#/types/project";
 
 const templates = [
@@ -99,6 +99,7 @@ export default function ProjectGenerator() {
           </h3>
           <p>Form data: {JSON.stringify(formData, null, 2)}</p>
         </div>
+        <IntroStep />
       </div>
     </div>
   );
