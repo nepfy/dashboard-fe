@@ -1,5 +1,9 @@
-import React from "react";
+import MultiStepForm from "../components/MultiStepForm";
 
-export default function Prime() {
-  return <div>Prime</div>;
+export default function Flash() {
+  return (
+    <div className="h-full">
+      <MultiStepForm />
+    </div>
+  );
 }

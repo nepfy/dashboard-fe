@@ -1,5 +1,9 @@
-import React from "react";
+import MultiStepForm from "../components/MultiStepForm";
 
-export default function Essencial() {
-  return <div>Essencial</div>;
+export default function Flash() {
+  return (
+    <div className="h-full">
+      <MultiStepForm />
+    </div>
+  );
 }

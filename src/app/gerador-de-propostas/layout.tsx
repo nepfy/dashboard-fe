@@ -11,7 +11,7 @@ export default function ProjectGenerator({
   const date = new Date();
 
   return (
-    <div className="bg-white-neutral-light-200 h-screen flex flex-col">
+    <div className="bg-white-neutral-light-200 h-screen flex flex-col relative">
       <nav className="p-7 border-b border-b-white-neutral-light-300 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Logo fill="#1C1A22" />
@@ -40,10 +40,10 @@ export default function ProjectGenerator({
         </Link>
       </nav>
 
-      <main className="flex-1 p-7">{children}</main>
+      <main className="flex-1">{children}</main>
 
-      <footer className="w-full p-7">
-        <p className="text-white-neutral-light-400 mt-6">
+      <footer className="absolute bottom-3 left-6 z-10">
+        <p className="text-white-neutral-light-400">
           &copy; {date.getFullYear()} Nepfy
         </p>
       </footer>
