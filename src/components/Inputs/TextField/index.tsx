@@ -3,6 +3,7 @@ import QuestionIcon from "#/components/icons/QuestionIcon";
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string | React.ReactNode;
   inputName?: string;
+  infoText?: string;
   error?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -10,6 +11,7 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   disabled?: boolean;
   info?: boolean;
   maxLength?: number;
+  minLength?: number;
   showCharCount?: boolean;
 }
 
@@ -21,6 +23,7 @@ const TextField: React.FC<CustomInputProps> = (props) => {
     type,
     placeholder,
     value,
+    infoText,
     error,
     onChange,
     onBlur,
@@ -28,12 +31,13 @@ const TextField: React.FC<CustomInputProps> = (props) => {
     disabled,
     info,
     maxLength,
+    minLength,
     showCharCount = false,
   } = props;
 
   const currentLength = typeof value === "string" ? value.length : 0;
-  const remainingChars = maxLength ? maxLength - currentLength : 0;
-  const isLowChars = remainingChars <= 2 && maxLength !== undefined;
+  // Fixed: Show used characters instead of remaining
+  const isNearLimit = maxLength ? currentLength >= maxLength - 2 : false;
 
   return (
     <div className="block w-full">
@@ -73,6 +77,9 @@ const TextField: React.FC<CustomInputProps> = (props) => {
         `}
       />
       <div className="mt-2 flex items-center justify-between">
+        {infoText && (
+          <div className="text-gray-500 rounded-md text-xs">{infoText}</div>
+        )}
         {error && (
           <div className="text-red-700 rounded-md text-sm font-medium">
             {error}
@@ -81,10 +88,11 @@ const TextField: React.FC<CustomInputProps> = (props) => {
         {showCharCount && maxLength && (
           <div
             className={`text-xs ml-auto ${
-              isLowChars ? "text-red-500" : "text-white-neutral-light-500"
+              isNearLimit ? "text-red-500" : "text-white-neutral-light-500"
             }`}
           >
-            {remainingChars} / {maxLength}
+            {currentLength} / {maxLength}{" "}
+            <span> {minLength && `(mín. ${minLength} caracteres)`} </span>
           </div>
         )}
       </div>

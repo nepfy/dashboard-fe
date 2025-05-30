@@ -31,11 +31,10 @@ export default function ImportDataModal({
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("/api/projects?limit=50"); // Get more projects for selection
+      const response = await fetch("/api/projects?limit=50");
       const result = await response.json();
 
       if (result.success) {
-        // Map to the format we need
         const projects = result.data.map((project: Project) => ({
           id: project.id,
           projectName:
@@ -88,16 +87,13 @@ export default function ImportDataModal({
       setIsImporting(true);
       setError(null);
 
-      // Find the selected project
       const project = projectsList.find((p) => p.id === selectedProject);
       if (!project) {
         throw new Error("Projeto não encontrado");
       }
 
-      // Fetch full project data
       const projectData = await fetchProjectData(selectedProject);
 
-      // Call the import callback with the project data
       onImportProject?.(projectData);
       onClose?.();
     } catch (err) {

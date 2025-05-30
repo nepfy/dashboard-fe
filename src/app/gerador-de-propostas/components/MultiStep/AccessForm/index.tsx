@@ -5,31 +5,30 @@ import { ArrowLeft } from "lucide-react";
 import TitleDescription from "../../TitleDescription";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
-export default function AboutYourProcessForm() {
-  const { prevStep, nextStep, formData } = useProjectGenerator();
+export default function AccessForm() {
+  const { prevStep, formData } = useProjectGenerator();
 
   const handleBack = () => {
     prevStep();
   };
 
-  const handleNext = () => {
-    nextStep();
+  const handleFinish = () => {
+    console.log("finalizar");
   };
 
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
         <TitleDescription
-          title="Etapas do processo:"
-          description="Explique como o trabalho será desenvolvido"
+          title="Acesso:"
+          description="Personalize e proteja sua proposta com segurança"
         />
 
         <div className="mt-6 space-y-4">
           <div>
-            {formData.step7?.processSubtitle}
-            {formData.step7?.processSteps?.map((member, index) => (
-              <div key={index}>{member.description}</div>
-            ))}
+            {formData.step16?.pageUrl}
+            {formData.step16?.pagePassword}
+            {formData.step16?.projectValidUntil?.toString()}
           </div>
         </div>
       </div>
@@ -45,9 +44,9 @@ export default function AboutYourProcessForm() {
         <button
           type="button"
           className="w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] bg-primary-light-500 button-inner-inverse border-white-neutral-light-300 cursor-pointer text-white-neutral-light-100"
-          onClick={handleNext}
+          onClick={handleFinish}
         >
-          Avançar
+          Finalizar
         </button>
       </div>
     </div>

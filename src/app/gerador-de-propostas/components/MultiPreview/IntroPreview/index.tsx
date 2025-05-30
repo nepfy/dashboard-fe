@@ -8,7 +8,7 @@ export default function IntroPreview() {
         backdropFilter: "blur(105.34431457519531px)",
       }}
     >
-      <button className="absolute bottom-8 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer">
+      <button className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer">
         <ExpandIcon width="16" height="16" />
       </button>
     </div>

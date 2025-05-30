@@ -173,6 +173,7 @@ export interface Project {
 
 export interface Step1Data {
   mainColor?: string;
+  projectName?: string;
   companyName?: string;
   companyEmail?: string;
   ctaButtonTitle?: string;
@@ -182,6 +183,8 @@ export interface Step1Data {
 }
 
 export interface Step2Data {
+  hideSection?: boolean;
+  hideSubtitles?: boolean;
   aboutUsTitle?: string;
   aboutUsSubtitle1?: string;
   aboutUsSubtitle2?: string;

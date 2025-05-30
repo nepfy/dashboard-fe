@@ -1,10 +1,10 @@
-// src/hooks/useProjectGenerator/useProjectGenerator.ts
-import { useState } from "react";
-import { ProposalFormData, TemplateType } from "#/types/project";
+// src/contexts/ProjectGeneratorContext.tsx
+"use client";
 
-import { Project } from "#/types/project";
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { ProposalFormData, TemplateType, Project } from "#/types/project";
 
-interface UseProjectGeneratorReturn {
+interface ProjectGeneratorContextType {
   formData: ProposalFormData;
   currentStep: number;
   templateType: TemplateType | null;
@@ -17,8 +17,12 @@ interface UseProjectGeneratorReturn {
   prevStep: () => void;
   goToStep: (step: number) => void;
   resetForm: () => void;
-  importProjectData: (projectData: Project) => void; // New method
+  importProjectData: (projectData: Project) => void;
 }
+
+const ProjectGeneratorContext = createContext<
+  ProjectGeneratorContextType | undefined
+>(undefined);
 
 const initialFormData: ProposalFormData = {
   step1: {},
@@ -39,17 +43,30 @@ const initialFormData: ProposalFormData = {
   step16: {},
 };
 
-export function useProjectGenerator(): UseProjectGeneratorReturn {
+export function ProjectGeneratorProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [formData, setFormData] = useState<ProposalFormData>(initialFormData);
-  const [currentStep, setCurrentStep] = useState(0); // 0 for template selection
+  const [currentStep, setCurrentStep] = useState(0);
   const [templateType, setTemplateTypeState] = useState<TemplateType | null>(
     null
   );
+
+  console.log("Context - currentStep:", currentStep);
+  console.log("Context - mainColor:", formData.step1?.mainColor);
 
   const updateFormData = <T extends keyof ProposalFormData>(
     step: T,
     data: ProposalFormData[T]
   ) => {
+    console.log(
+      "Context - Updating form data for step:",
+      step,
+      "with data:",
+      data
+    );
     setFormData((prev) => ({
       ...prev,
       [step]: { ...prev[step], ...data },
@@ -57,35 +74,50 @@ export function useProjectGenerator(): UseProjectGeneratorReturn {
   };
 
   const setTemplateType = (template: TemplateType) => {
+    console.log("Context - Setting template type:", template);
     setTemplateTypeState(template);
-    setCurrentStep(1); // Move to first step after template selection
+    setCurrentStep(1); // Move to step 1 after template selection
   };
 
   const nextStep = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, 16));
+    console.log("Context - nextStep called, current:", currentStep);
+    setCurrentStep((prev) => {
+      const newStep = Math.min(prev + 1, 16);
+      console.log("Context - Moving from step", prev, "to step", newStep);
+      return newStep;
+    });
   };
 
   const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
+    console.log("Context - prevStep called, current:", currentStep);
+    setCurrentStep((prev) => {
+      const newStep = Math.max(prev - 1, 0);
+      console.log("Context - Moving from step", prev, "to step", newStep);
+      return newStep;
+    });
   };
 
   const goToStep = (step: number) => {
-    setCurrentStep(Math.max(0, Math.min(step, 16)));
+    console.log("Context - goToStep called with step:", step);
+    const newStep = Math.max(0, Math.min(step, 16));
+    console.log("Context - Going to step:", newStep);
+    setCurrentStep(newStep);
   };
 
   const resetForm = () => {
+    console.log("Context - Resetting form");
     setFormData(initialFormData);
     setCurrentStep(0);
     setTemplateTypeState(null);
   };
 
   const importProjectData = (projectData: Project) => {
-    // Helper function to safely map project data to form steps
+    console.log("Context - Importing project data:", projectData);
+
     const safeUpdate = <T extends keyof ProposalFormData>(
       step: T,
       data: ProposalFormData[T]
     ) => {
-      // Only update if data contains valid values
       const hasValidData = Object.values(data || {}).some(
         (value) => value !== null && value !== undefined && value !== ""
       );
@@ -113,7 +145,6 @@ export function useProjectGenerator(): UseProjectGeneratorReturn {
         : undefined,
     });
 
-    // Step 2 - About us
     safeUpdate("step2", {
       aboutUsTitle: projectData.aboutUsTitle,
       aboutUsSubtitle1: projectData.aboutUsSubtitle1,
@@ -170,7 +201,7 @@ export function useProjectGenerator(): UseProjectGeneratorReturn {
     });
   };
 
-  return {
+  const value = {
     formData,
     currentStep,
     templateType,
@@ -182,4 +213,20 @@ export function useProjectGenerator(): UseProjectGeneratorReturn {
     resetForm,
     importProjectData,
   };
+
+  return (
+    <ProjectGeneratorContext.Provider value={value}>
+      {children}
+    </ProjectGeneratorContext.Provider>
+  );
+}
+
+export function useProjectGenerator() {
+  const context = useContext(ProjectGeneratorContext);
+  if (context === undefined) {
+    throw new Error(
+      "useProjectGenerator must be used within a ProjectGeneratorProvider"
+    );
+  }
+  return context;
 }

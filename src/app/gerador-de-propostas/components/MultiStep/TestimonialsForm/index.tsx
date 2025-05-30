@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import TitleDescription from "../../TitleDescription";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
-export default function AboutYourProcessForm() {
+export default function TestimonialsForm() {
   const { prevStep, nextStep, formData } = useProjectGenerator();
 
   const handleBack = () => {
@@ -20,15 +20,14 @@ export default function AboutYourProcessForm() {
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
         <TitleDescription
-          title="Etapas do processo:"
-          description="Explique como o trabalho será desenvolvido"
+          title="Depoimentos:"
+          description="Mostre o que dizem sobre você"
         />
 
         <div className="mt-6 space-y-4">
           <div>
-            {formData.step7?.processSubtitle}
-            {formData.step7?.processSteps?.map((member, index) => (
-              <div key={index}>{member.description}</div>
+            {formData.step9?.testimonials?.map((member, index) => (
+              <div key={index}>{member.name}</div>
             ))}
           </div>
         </div>

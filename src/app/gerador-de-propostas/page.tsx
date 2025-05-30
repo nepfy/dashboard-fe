@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useProjectGenerator } from "#/hooks/useProjectGenerator/useProjectGenerator";
+import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplateSelection from "./components/TemplateSelection";
 
 import { TemplateType } from "#/types/project";
@@ -49,8 +49,7 @@ const templates = [
 export default function ProjectGenerator() {
   const router = useRouter();
 
-  const { currentStep, updateFormData, setTemplateType } =
-    useProjectGenerator();
+  const { updateFormData, setTemplateType } = useProjectGenerator();
 
   const handleTemplateSelect = (template: TemplateType, color: string) => {
     setTemplateType(template);
@@ -62,17 +61,15 @@ export default function ProjectGenerator() {
     router.push(`/gerador-de-propostas/${templateRoute}`);
   };
 
-  if (currentStep === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-2 h-full">
-        <h2 className="text-white-neutral-light-800 text-[21px] font-medium mb-4">
-          Escolha o modelo da sua proposta
-        </h2>
-        <TemplateSelection
-          templates={templates}
-          onSelectTemplate={handleTemplateSelect}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 h-full">
+      <h2 className="text-white-neutral-light-800 text-[21px] font-medium mb-4">
+        Escolha o modelo da sua proposta
+      </h2>
+      <TemplateSelection
+        templates={templates}
+        onSelectTemplate={handleTemplateSelect}
+      />
+    </div>
+  );
 }
