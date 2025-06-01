@@ -1,10 +1,10 @@
 // src/types/projects.ts
 
 // Template types
-export type TemplateType = "flash" | "prime" | "essencial";
+export type TemplateType = "flash" | "prime" | "essencial" | null;
 
 export interface TeamMember {
-  id?: string;
+  id: string;
   name: string;
   role: string;
   photo?: string;
@@ -12,20 +12,20 @@ export interface TeamMember {
 }
 
 export interface Expertise {
-  id?: string;
-  icon?: string;
+  id: string;
+  icon?: string | React.ReactElement;
   title: string;
   description?: string;
   sortOrder?: number;
 }
 
 export interface Result {
-  id?: string;
+  id: string;
   photo?: string;
   client?: string;
   subtitle?: string;
-  investment?: number;
-  roi?: number;
+  investment?: string;
+  roi?: string;
   sortOrder?: number;
 }
 
@@ -191,59 +191,72 @@ export interface Step2Data {
 }
 
 export interface Step3Data {
+  hideSection?: boolean;
   ourTeamSubtitle?: string;
   teamMembers?: TeamMember[];
 }
 
 export interface Step4Data {
+  hideSection?: boolean;
   expertiseSubtitle?: string;
   expertise?: Expertise[];
 }
 
 export interface Step5Data {
+  hideSection?: boolean;
   resultsSubtitle?: string;
   results?: Result[];
 }
 
 export interface Step6Data {
+  hideSection?: boolean;
   clients?: Client[];
 }
 
 export interface Step7Data {
+  hideSection?: boolean;
   processSubtitle?: string;
   processSteps?: ProcessStep[];
 }
 
 export interface Step8Data {
+  hideSection?: boolean;
   ctaBackgroundImage?: string;
 }
 
 export interface Step9Data {
+  hideSection?: boolean;
   testimonials?: Testimonial[];
 }
 
 export interface Step10Data {
+  hideSection?: boolean;
   investmentTitle?: string;
 }
 
 export interface Step11Data {
+  hideSection?: boolean;
   includedServices?: Service[];
 }
 
 export interface Step12Data {
+  hideSection?: boolean;
   plans?: Plan[];
 }
 
 export interface Step13Data {
+  hideSection?: boolean;
   termsTitle?: string;
   termsConditions?: TermsCondition[];
 }
 
 export interface Step14Data {
+  hideSection?: boolean;
   faq?: FAQ[];
 }
 
 export interface Step15Data {
+  hideSection?: boolean;
   endMessageTitle?: string;
   endMessageDescription?: string;
 }

@@ -1,35 +1,135 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Eye } from "lucide-react";
+
+import { TextAreaField } from "#/components/Inputs";
+import ExpertiseAccordion from "./ExpertiseAccordion";
 
 import TitleDescription from "../../TitleDescription";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
+import { Expertise } from "#/types/project";
 
 export default function AboutYourExpertiseForm() {
-  const { prevStep, nextStep, formData } = useProjectGenerator();
+  const { prevStep, nextStep, updateFormData, formData } =
+    useProjectGenerator();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFormData("step4", {
+      ...formData?.step4,
+      hideSection: e.target.checked,
+    });
+  };
+
+  const handleExpertiseChange = (expertise: Expertise[]) => {
+    updateFormData("step4", {
+      ...formData?.step4,
+      expertise: expertise,
+    });
+  };
 
   const handleBack = () => {
     prevStep();
   };
 
   const handleNext = () => {
+    setErrors({});
+
+    const expertiseSubtitle = formData?.step4?.expertiseSubtitle || "";
+    const hideSection = formData?.step4?.hideSection || false;
+    const expertiseList = formData?.step4?.expertise || [];
+    const newErrors: { [key: string]: string } = {};
+
+    if (!hideSection) {
+      if (expertiseSubtitle.length < 90) {
+        newErrors.expertiseSubtitle =
+          "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
+      }
+
+      if (expertiseList.length === 0) {
+        newErrors.expertiseList = "Ao menos 1 especialização é requerida";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     nextStep();
   };
+
+  const handleFieldChange =
+    (fieldName: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      updateFormData("step4", {
+        ...formData?.step4,
+        [fieldName]: e.target.value,
+      });
+
+      if (errors[fieldName]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fieldName];
+          return newErrors;
+        });
+      }
+    };
 
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
+        <button
+          type="button"
+          onClick={() => {}}
+          className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        >
+          <Eye width="18" height="18" /> Pré-visualizar essa seção
+        </button>
+
         <TitleDescription
           title="Suas especializações:"
           description="Destaque o que você faz de melhor"
         />
 
-        <div className="mt-6 space-y-4">
+        <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
+          <input
+            type="checkbox"
+            checked={formData?.step4?.hideSection || false}
+            onChange={handleHideSectionChange}
+            className="border border-white-neutral-light-300 checkbox-custom"
+          />
+          Ocultar seção
+        </label>
+
+        <div className="py-6 space-y-6">
           <div>
-            {formData.step4?.expertiseSubtitle}
-            {formData.step4?.expertise?.map((member, index) => (
-              <div key={index}>{member.description}</div>
-            ))}
+            <TextAreaField
+              label="Subtítulo"
+              id="expertiseSubtitle"
+              textareaName="expertiseSubtitle"
+              placeholder="Descreva suas especialidades"
+              value={formData?.step4?.expertiseSubtitle || ""}
+              onChange={handleFieldChange("expertiseSubtitle")}
+              maxLength={120}
+              minLength={90}
+              rows={2}
+              showCharCount
+              error={errors.expertiseSubtitle}
+            />
+          </div>
+
+          <div>
+            <ExpertiseAccordion
+              expertise={formData?.step4?.expertise || []}
+              onExpertiseChange={handleExpertiseChange}
+            />
+            {errors.expertiseList && (
+              <div className="text-red-700 rounded-md text-sm font-medium mt-3">
+                {errors.expertiseList}
+              </div>
+            )}
           </div>
         </div>
       </div>

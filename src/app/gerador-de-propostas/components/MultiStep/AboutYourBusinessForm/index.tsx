@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
 import { useState } from "react";
 
 import { TextAreaField } from "#/components/Inputs";
@@ -63,7 +63,6 @@ export default function AboutYourBusinessForm() {
         [fieldName]: e.target.value,
       });
 
-      // Clear error for this field when user starts typing
       if (errors[fieldName]) {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -92,6 +91,13 @@ export default function AboutYourBusinessForm() {
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
+        <button
+          type="button"
+          onClick={() => {}}
+          className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        >
+          <Eye width="18" height="18" /> Pré-visualizar essa seção
+        </button>
         <TitleDescription
           title="Sobre seu negócio:"
           description="Conte mais sobre sua empresa e o que vocês fazem"

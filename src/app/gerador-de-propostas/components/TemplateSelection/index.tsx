@@ -79,7 +79,7 @@ export default function TemplateSelection({
   };
 
   const TemplateCard = ({ item }: { item: (typeof templates)[0] }) => (
-    <div className="px-0 sm:px-4 shadow-lg">
+    <div className="px-4 shadow-lg">
       <div className="h-[500px] w-[340px] max-w-full mx-auto border border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100">
         <div className="px-7 py-4">
           <h4 className="font-medium text-white-neutral-light-800 text-[18px]">
@@ -199,7 +199,7 @@ export default function TemplateSelection({
       </div>
 
       {/* Mobile View - React Slick Slider */}
-      <div className="lg:hidden">
+      <div className="mb-8 lg:hidden">
         <Slider ref={sliderRef} {...sliderSettings}>
           {templates.map((item) => (
             <TemplateCard key={item.title} item={item} />

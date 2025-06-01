@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import MultiStepForm from "./components/MultiStepForm";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplateSelection from "./components/TemplateSelection";
 
@@ -47,29 +47,33 @@ const templates = [
 ];
 
 export default function ProjectGenerator() {
-  const router = useRouter();
-
-  const { updateFormData, setTemplateType } = useProjectGenerator();
+  const { updateFormData, setTemplateType, templateType } =
+    useProjectGenerator();
 
   const handleTemplateSelect = (template: TemplateType, color: string) => {
     setTemplateType(template);
     updateFormData("step1", {
       mainColor: color,
     });
-
-    const templateRoute = template.toLowerCase();
-    router.push(`/gerador-de-propostas/${templateRoute}`);
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 h-full">
-      <h2 className="text-white-neutral-light-800 text-[21px] font-medium mb-4">
-        Escolha o modelo da sua proposta
-      </h2>
-      <TemplateSelection
-        templates={templates}
-        onSelectTemplate={handleTemplateSelect}
-      />
+      {templateType ? (
+        <div className="w-full h-full">
+          <MultiStepForm />
+        </div>
+      ) : (
+        <>
+          <h2 className="text-white-neutral-light-800 text-[21px] font-medium mb-4 p-7">
+            Escolha o modelo da sua proposta
+          </h2>
+          <TemplateSelection
+            templates={templates}
+            onSelectTemplate={handleTemplateSelect}
+          />
+        </>
+      )}
     </div>
   );
 }

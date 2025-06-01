@@ -118,7 +118,6 @@ export default function ImportDataModal({
       showCloseButton={!isImporting}
     >
       {!showProjectSelection ? (
-        // Initial view with options
         <>
           <div className="p-6">
             <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
@@ -176,7 +175,6 @@ export default function ImportDataModal({
           </div>
         </>
       ) : (
-        // Project selection view
         <>
           <div className="p-6">
             <p className="text-white-neutral-light-500 font-bold text-sm mb-3">

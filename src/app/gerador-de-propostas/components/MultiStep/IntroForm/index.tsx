@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ArrowLeft, Eye } from "lucide-react";
 
 import { TextField } from "#/components/Inputs";
 
@@ -14,8 +13,8 @@ import { Project } from "#/types/project";
 
 export default function IntroStep() {
   const [showImportModal, setShowImportModal] = useState(true);
-  const router = useRouter();
-  const { updateFormData, nextStep, formData } = useProjectGenerator();
+  const { updateFormData, nextStep, formData, setTemplateType, templateType } =
+    useProjectGenerator();
 
   const handleImportProject = (projectData: Project) => {
     updateFormData("step1", {
@@ -39,7 +38,7 @@ export default function IntroStep() {
   };
 
   const handleBack = () => {
-    router.push("/gerador-de-propostas");
+    setTemplateType(null);
   };
 
   const handleNext = () => {
@@ -54,10 +53,17 @@ export default function IntroStep() {
       });
     };
 
-  if (!showImportModal) {
+  if (!showImportModal && templateType) {
     return (
       <div className="h-full flex flex-col justify-between">
         <div className="p-7">
+          <button
+            type="button"
+            onClick={() => {}}
+            className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+          >
+            <Eye width="18" height="18" /> Pré-visualizar essa seção
+          </button>
           <TitleDescription
             title="Introdução:"
             description="Comece com uma apresentação impactante"

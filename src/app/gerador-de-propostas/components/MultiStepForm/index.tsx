@@ -24,8 +24,6 @@ import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 export default function MultiStepForm() {
   const { currentStep } = useProjectGenerator();
 
-  console.log("currentStep", currentStep);
-
   if (currentStep === 1) {
     return (
       <div className="flex items-center justify-center h-full">
