@@ -102,9 +102,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
+    <div className="h-full">
       {projectsData?.length && pagination ? (
-        <div className="p-7">
+        <div className="p-7 h-full">
           <DashboardProjectView
             projectsData={projectsData}
             pagination={pagination}

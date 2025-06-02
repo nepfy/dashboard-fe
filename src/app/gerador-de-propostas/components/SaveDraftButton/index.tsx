@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-// src/app/gerador-de-propostas/components/SaveDraftButton/index.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -18,20 +17,19 @@ export default function SaveDraftButton({
   showText = true,
   variant = "secondary",
 }: SaveDraftButtonProps) {
-  const { formData, templateType } = useProjectGenerator();
+  const { formData, templateType, currentStep } = useProjectGenerator();
   const { saveDraft, isSaving, lastSaved, getLastSavedText } = useSaveDraft();
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
     "idle"
   );
   const [statusMessage, setStatusMessage] = useState("");
 
-  // Auto-save every 5 minutes
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
       if (!isSaving && formData) {
         handleSaveDraft(true);
       }
-    }, 5 * 60 * 1000); // 5 minutes
+    }, 5 * 60 * 1000);
 
     return () => clearInterval(autoSaveInterval);
   }, [formData, isSaving]);
@@ -97,11 +95,13 @@ export default function SaveDraftButton({
 
     switch (saveStatus) {
       case "success":
-        return <Check size={16} className="text-green-600" />;
+        return <Check size={16} className="hidden sm:block text-green-600" />;
       case "error":
-        return <AlertCircle size={16} className="text-red-600" />;
+        return (
+          <AlertCircle size={16} className="hidden sm:block text-red-600" />
+        );
       default:
-        return <Save size={16} />;
+        return <Save className="hidden sm:block" size={16} />;
     }
   };
 
@@ -113,26 +113,29 @@ export default function SaveDraftButton({
   };
 
   return (
-    <div className={`relative ${className}`}>
-      <button
-        type="button"
-        onClick={() => handleSaveDraft(false)}
-        disabled={isSaving}
-        className={`${getButtonClass()} ${
-          isSaving ? "opacity-75 cursor-not-allowed" : ""
-        }`}
-        title="Salvar progresso como rascunho"
-      >
-        {getIcon()}
-        {showText && <span className="text-sm">{getButtonText()}</span>}
-      </button>
+    <>
+      {currentStep !== 0 && (
+        <div className={`relative ${className}`}>
+          <button
+            type="button"
+            onClick={() => handleSaveDraft(false)}
+            disabled={isSaving}
+            className={`${getButtonClass()} ${
+              isSaving ? "opacity-75 cursor-not-allowed" : ""
+            }`}
+            title="Salvar progresso como rascunho"
+          >
+            {getIcon()}
+            {showText && <span className="text-sm">{getButtonText()}</span>}
+          </button>
 
-      {/* Status message and last saved info */}
-      {(statusMessage || lastSaved) && (
-        <div className="absolute top-full left-0 mt-1 text-xs text-white-neutral-light-500 whitespace-nowrap">
-          {statusMessage || getLastSavedText()}
+          {(statusMessage || lastSaved) && (
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 text-xs text-white-neutral-light-500 whitespace-nowrap">
+              {statusMessage || getLastSavedText()}
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 }

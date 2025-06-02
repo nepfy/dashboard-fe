@@ -155,7 +155,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       {showBulkEdit && (
         <TableBulkEdit
           selectedCount={selectedRows.size}
@@ -169,9 +169,9 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         />
       )}
 
-      <div className="w-full overflow-x-scroll overflow-visible bg-white-neutral-light-100 rounded-2xs">
+      <div className="w-full overflow-x-scroll overflow-visible bg-white-neutral-light-100 rounded-2xs h-fit">
         <div className="p-4">
-          <table className="w-full p-3 box-border relative">
+          <table className="w-full h-full p-3 box-border relative">
             <thead className="bg-white-neutral-light-200 rounded-2xs">
               <tr>
                 <th

@@ -91,7 +91,7 @@ export default function ProjectsView({
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative h-full">
         {isPaginationLoading && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-2xs">
             <LoaderCircle className="animate-spin text-primary-light-400" />

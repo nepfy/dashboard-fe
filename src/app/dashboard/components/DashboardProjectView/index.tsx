@@ -126,7 +126,7 @@ export default function DashboardProjectView({
   );
 
   return (
-    <div>
+    <div className="h-full">
       <h2 className="text-white-neutral-light-800 text-2xl font-medium">
         Olá, {`${userData?.firstName}`}!
       </h2>

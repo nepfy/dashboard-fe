@@ -65,7 +65,7 @@ export default function AboutYourTeamForm() {
           "O campo 'Subtítulo' deve ter pelo menos 30 caracteres";
       }
 
-      if (teamMembers.length > 0) {
+      if (teamMembers.length === 0) {
         newErrors.teamMembers = "Ao menos 1 integrante é requerido";
       }
     }

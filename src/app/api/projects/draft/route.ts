@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Não autorizado" },
+        { success: false, error: "Unauthorized" },
         { status: 401 }
       );
     }
@@ -59,7 +59,9 @@ export async function POST(request: Request) {
       ctaButtonTitle: formData.step1?.ctaButtonTitle,
       pageTitle: formData.step1?.pageTitle,
       pageSubtitle: formData.step1?.pageSubtitle,
-      services: formData.step1?.services?.join(","),
+      services: Array.isArray(formData.step1?.services)
+        ? formData.step1.services.join(",")
+        : formData.step1?.services,
 
       aboutUsTitle: formData.step2?.aboutUsTitle,
       aboutUsSubtitle1: formData.step2?.aboutUsSubtitle1,
@@ -86,7 +88,7 @@ export async function POST(request: Request) {
       pagePassword: formData.step16?.pagePassword,
       projectValidUntil: formData.step16?.projectValidUntil
         ? new Date(formData.step16.projectValidUntil)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 
       projectStatus: "draft",
       isProposalGenerated: false,
