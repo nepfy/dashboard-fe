@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 
 import { TextField, TextAreaField } from "#/components/Inputs";
+import Modal from "#/components/Modal";
 
 import { Expertise } from "#/types/project";
 import DiamondIcon from "./iconsList/DiamondIcon";
@@ -60,6 +61,10 @@ export default function ExpertiseAccordion({
   const [openExpertise, setOpenExpertise] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [expertiseToRemove, setExpertiseToRemove] = useState<string | null>(
+    null
+  );
 
   const addExpertise = () => {
     const newExpertise: Expertise = {
@@ -89,6 +94,24 @@ export default function ExpertiseAccordion({
     if (openExpertise === expertiseId) {
       setOpenExpertise(null);
     }
+  };
+
+  const handleRemoveClick = (expertiseId: string) => {
+    setExpertiseToRemove(expertiseId);
+    setShowRemoveModal(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (expertiseToRemove) {
+      removeExpertise(expertiseToRemove);
+    }
+    setShowRemoveModal(false);
+    setExpertiseToRemove(null);
+  };
+
+  const handleCancelRemove = () => {
+    setShowRemoveModal(false);
+    setExpertiseToRemove(null);
   };
 
   const updateExpertise = (
@@ -175,50 +198,52 @@ export default function ExpertiseAccordion({
               : ""
           }`}
         >
-          <div
-            className={`flex items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-              draggedIndex === index ? "cursor-grabbing" : ""
-            }`}
-            onClick={(e) => {
-              e.preventDefault();
-              if (draggedIndex === null) {
-                toggleExpertise(item.id);
-              }
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                  title="Arraste para reordenar"
-                >
-                  ⋮⋮
+          <div className="flex justify-center gap-4 w-full">
+            <div
+              className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                draggedIndex === index ? "cursor-grabbing" : ""
+              }`}
+              onClick={(e) => {
+                e.preventDefault();
+                if (draggedIndex === null) {
+                  toggleExpertise(item.id);
+                }
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
+                    title="Arraste para reordenar"
+                  >
+                    ⋮⋮
+                  </div>
+                  <span className="text-sm font-medium text-white-neutral-light-900">
+                    Especialização {index + 1}
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-white-neutral-light-900">
-                  Especialização {index + 1}
-                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <ChevronDown
+                  size={20}
+                  className={`transition-transform duration-200 ${
+                    openExpertise === item.id ? "rotate-180" : ""
+                  }`}
+                />
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeExpertise(item.id);
-                }}
-                className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
-                title="Remover especialização"
-              >
-                <Trash2 size={16} />
-              </button>
-              <ChevronDown
-                size={20}
-                className={`transition-transform duration-200 ${
-                  openExpertise === item.id ? "rotate-180" : ""
-                }`}
-              />
-            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveClick(item.id);
+              }}
+              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
+              title="Remover especialização"
+            >
+              <Trash2 size={16} />
+            </button>
           </div>
 
           {openExpertise === item.id && (
@@ -313,6 +338,34 @@ export default function ExpertiseAccordion({
         <Plus size={16} />
         Adicionar especialização
       </button>
+
+      <Modal
+        isOpen={showRemoveModal}
+        onClose={handleCancelRemove}
+        title="Tem certeza de que deseja excluir este item?"
+        footer={false}
+      >
+        <p className="text-white-neutral-light-500 text-sm mb-6 p-6">
+          Essa ação não poderá ser desfeita.
+        </p>
+
+        <div className="flex items-center gap-3 border-t border-white-neutral-light-300 p-6">
+          <button
+            type="button"
+            onClick={handleConfirmRemove}
+            className="px-4 py-2 text-sm font-medium bg-primary-light-500 button-inner-inverse border rounded-[12px] text-white-neutral-light-100 border-white-neutral-light-300 hover:bg-primary-light-600 cursor-pointer"
+          >
+            Remover
+          </button>
+          <button
+            type="button"
+            onClick={handleCancelRemove}
+            className="px-4 py-2 text-sm font-medium border rounded-[12px] text-gray-700 border-white-neutral-light-300 hover:bg-gray-50 cursor-pointer button-inner"
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -6,10 +6,11 @@ import { useState } from "react";
 import { TextAreaField } from "#/components/Inputs";
 
 import TitleDescription from "../../TitleDescription";
+import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
 export default function AboutYourBusinessForm() {
-  const { prevStep, nextStep, updateFormData, formData } =
+  const { prevStep, nextStep, updateFormData, formData, currentStep } =
     useProjectGenerator();
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -91,6 +92,9 @@ export default function AboutYourBusinessForm() {
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
+        <div className="mb-6">
+          <StepProgressIndicator currentStep={currentStep} />
+        </div>
         <button
           type="button"
           onClick={() => {}}

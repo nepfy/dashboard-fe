@@ -3,6 +3,7 @@ import { ChevronDown, Plus, Trash2 } from "lucide-react";
 
 import PictureIcon from "#/components/icons/PictureIcon";
 import { TextField } from "#/components/Inputs";
+import Modal from "#/components/Modal";
 
 import { Result } from "#/types/project";
 
@@ -18,6 +19,8 @@ export default function ResultsAccordion({
   const [openResult, setOpenResult] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [resultToRemove, setResultToRemove] = useState<string | null>(null);
 
   const addResult = () => {
     const newResult: Result = {
@@ -46,6 +49,24 @@ export default function ResultsAccordion({
     if (openResult === resultId) {
       setOpenResult(null);
     }
+  };
+
+  const handleRemoveClick = (resultId: string) => {
+    setResultToRemove(resultId);
+    setShowRemoveModal(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (resultToRemove) {
+      removeResult(resultToRemove);
+    }
+    setShowRemoveModal(false);
+    setResultToRemove(null);
+  };
+
+  const handleCancelRemove = () => {
+    setShowRemoveModal(false);
+    setResultToRemove(null);
   };
 
   const updateResult = (
@@ -168,50 +189,52 @@ export default function ResultsAccordion({
           }`}
         >
           {/* Accordion Header */}
-          <div
-            className={`flex items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-              draggedIndex === index ? "cursor-grabbing" : ""
-            }`}
-            onClick={(e) => {
-              e.preventDefault();
-              if (draggedIndex === null) {
-                toggleResult(result.id);
-              }
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                  title="Arraste para reordenar"
-                >
-                  ⋮⋮
+          <div className="flex justify-center gap-4 w-full">
+            <div
+              className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                draggedIndex === index ? "cursor-grabbing" : ""
+              }`}
+              onClick={(e) => {
+                e.preventDefault();
+                if (draggedIndex === null) {
+                  toggleResult(result.id);
+                }
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
+                    title="Arraste para reordenar"
+                  >
+                    ⋮⋮
+                  </div>
+                  <span className="text-sm font-medium text-white-neutral-light-900">
+                    Resultado {index + 1}
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-white-neutral-light-900">
-                  Resultado {index + 1}
-                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <ChevronDown
+                  size={20}
+                  className={`transition-transform duration-200 ${
+                    openResult === result.id ? "rotate-180" : ""
+                  }`}
+                />
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeResult(result.id);
-                }}
-                className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
-                title="Remover resultado"
-              >
-                <Trash2 size={16} />
-              </button>
-              <ChevronDown
-                size={20}
-                className={`transition-transform duration-200 ${
-                  openResult === result.id ? "rotate-180" : ""
-                }`}
-              />
-            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveClick(result.id);
+              }}
+              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
+              title="Remover cliente"
+            >
+              <Trash2 size={16} />
+            </button>
           </div>
 
           {openResult === result.id && (
@@ -250,7 +273,7 @@ export default function ResultsAccordion({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <TextField
-                  label="Cliente"
+                  label="Nome"
                   inputName={`client-${result.id}`}
                   id={`client-${result.id}`}
                   type="text"
@@ -346,6 +369,34 @@ export default function ResultsAccordion({
         <Plus size={16} />
         Adicionar Resultado
       </button>
+
+      <Modal
+        isOpen={showRemoveModal}
+        onClose={handleCancelRemove}
+        title="Tem certeza de que deseja excluir este item?"
+        footer={false}
+      >
+        <p className="text-white-neutral-light-500 text-sm mb-6 p-6">
+          Essa ação não poderá ser desfeita.
+        </p>
+
+        <div className="flex items-center gap-3 border-t border-white-neutral-light-300 p-6">
+          <button
+            type="button"
+            onClick={handleConfirmRemove}
+            className="px-4 py-2 text-sm font-medium bg-primary-light-500 button-inner-inverse border rounded-[12px] text-white-neutral-light-100 border-white-neutral-light-300 hover:bg-primary-light-600 cursor-pointer"
+          >
+            Remover
+          </button>
+          <button
+            type="button"
+            onClick={handleCancelRemove}
+            className="px-4 py-2 text-sm font-medium border rounded-[12px] text-gray-700 border-white-neutral-light-300 hover:bg-gray-50 cursor-pointer button-inner"
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -7,14 +7,21 @@ import { TextField } from "#/components/Inputs";
 
 import ImportDataModal from "../../ImportData";
 import TitleDescription from "../../TitleDescription";
+import StepProgressIndicator from "../../StepProgressIndicator";
 
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { Project } from "#/types/project";
 
 export default function IntroStep() {
   const [showImportModal, setShowImportModal] = useState(true);
-  const { updateFormData, nextStep, formData, setTemplateType, templateType } =
-    useProjectGenerator();
+  const {
+    updateFormData,
+    nextStep,
+    formData,
+    setTemplateType,
+    templateType,
+    currentStep,
+  } = useProjectGenerator();
 
   const handleImportProject = (projectData: Project) => {
     updateFormData("step1", {
@@ -57,6 +64,9 @@ export default function IntroStep() {
     return (
       <div className="h-full flex flex-col justify-between">
         <div className="p-7">
+          <div className="mb-6">
+            <StepProgressIndicator currentStep={currentStep} />
+          </div>
           <button
             type="button"
             onClick={() => {}}

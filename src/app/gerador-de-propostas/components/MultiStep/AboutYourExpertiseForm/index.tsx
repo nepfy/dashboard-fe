@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
 import { TextAreaField } from "#/components/Inputs";
+import StepProgressIndicator from "../../StepProgressIndicator";
 import ExpertiseAccordion from "./ExpertiseAccordion";
 
 import TitleDescription from "../../TitleDescription";
@@ -11,7 +12,7 @@ import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { Expertise } from "#/types/project";
 
 export default function AboutYourExpertiseForm() {
-  const { prevStep, nextStep, updateFormData, formData } =
+  const { prevStep, nextStep, updateFormData, formData, currentStep } =
     useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -80,6 +81,9 @@ export default function AboutYourExpertiseForm() {
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
+        <div className="mb-6">
+          <StepProgressIndicator currentStep={currentStep} />
+        </div>
         <button
           type="button"
           onClick={() => {}}

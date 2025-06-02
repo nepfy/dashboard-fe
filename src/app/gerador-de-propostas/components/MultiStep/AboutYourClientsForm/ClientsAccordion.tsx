@@ -5,91 +5,88 @@ import PictureIcon from "#/components/icons/PictureIcon";
 import { TextField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
 
-import { TeamMember } from "#/types/project";
+import { Client } from "#/types/project";
 
-interface TeamMemberAccordionProps {
-  teamMembers: TeamMember[];
-  onTeamMembersChange: (members: TeamMember[]) => void;
+interface ClientsAccordionProps {
+  clients: Client[];
+  onClientsChange: (clients: Client[]) => void;
 }
 
-export default function TeamMemberAccordion({
-  teamMembers,
-  onTeamMembersChange,
-}: TeamMemberAccordionProps) {
-  const [openMember, setOpenMember] = useState<string | null>(null);
+export default function ClientsAccordion({
+  clients,
+  onClientsChange,
+}: ClientsAccordionProps) {
+  const [openClient, setOpenClient] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
-  const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
+  const [clientToRemove, setClientToRemove] = useState<string | null>(null);
 
-  const addTeamMember = () => {
-    const newMember: TeamMember = {
-      id: `member-${Date.now()}`,
+  const addClient = () => {
+    const newClient: Client = {
+      id: `client-${Date.now()}`,
       name: "",
-      role: "",
-      sortOrder: teamMembers.length,
+      sortOrder: clients.length,
     };
 
-    const updatedMembers = [...teamMembers, newMember];
-    onTeamMembersChange(updatedMembers);
-    setOpenMember(newMember.id);
+    const updatedClients = [...clients, newClient];
+    onClientsChange(updatedClients);
+    setOpenClient(newClient.id);
   };
 
-  const removeMember = (memberId: string) => {
-    const updatedMembers = teamMembers.filter(
-      (member) => member.id !== memberId
-    );
+  const removeClient = (clientId: string) => {
+    const updatedClients = clients.filter((client) => client.id !== clientId);
     // Update sort orders after removal
-    const reorderedMembers = updatedMembers.map((member, index) => ({
-      ...member,
+    const reorderedClients = updatedClients.map((client, index) => ({
+      ...client,
       sortOrder: index,
     }));
-    onTeamMembersChange(reorderedMembers);
+    onClientsChange(reorderedClients);
 
-    if (openMember === memberId) {
-      setOpenMember(null);
+    if (openClient === clientId) {
+      setOpenClient(null);
     }
   };
 
-  const handleRemoveClick = (memberId: string) => {
-    setMemberToRemove(memberId);
+  const handleRemoveClick = (clientId: string) => {
+    setClientToRemove(clientId);
     setShowRemoveModal(true);
   };
 
   const handleConfirmRemove = () => {
-    if (memberToRemove) {
-      removeMember(memberToRemove);
+    if (clientToRemove) {
+      removeClient(clientToRemove);
     }
     setShowRemoveModal(false);
-    setMemberToRemove(null);
+    setClientToRemove(null);
   };
 
   const handleCancelRemove = () => {
     setShowRemoveModal(false);
-    setMemberToRemove(null);
+    setClientToRemove(null);
   };
 
-  const updateMember = (
-    memberId: string,
-    field: keyof TeamMember,
+  const updateClient = (
+    clientId: string,
+    field: keyof Client,
     value: string
   ) => {
-    const updatedMembers = teamMembers.map((member) =>
-      member.id === memberId ? { ...member, [field]: value } : member
+    const updatedClients = clients.map((client) =>
+      client.id === clientId ? { ...client, [field]: value } : client
     );
-    onTeamMembersChange(updatedMembers);
+    onClientsChange(updatedClients);
   };
 
-  const toggleMember = (memberId: string) => {
-    setOpenMember(openMember === memberId ? null : memberId);
+  const toggleClient = (clientId: string) => {
+    setOpenClient(openClient === clientId ? null : clientId);
   };
 
-  const handleFileChange = (memberId: string, file: File | null) => {
+  const handleFileChange = (clientId: string, file: File | null) => {
     if (file) {
       // For demo purposes, we'll use a placeholder URL
       // In production, you'd upload the file and get a URL
       const imageUrl = URL.createObjectURL(file);
-      updateMember(memberId, "photo", imageUrl);
+      updateClient(clientId, "logo", imageUrl);
     }
   };
 
@@ -119,21 +116,21 @@ export default function TeamMemberAccordion({
       return;
     }
 
-    const reorderedMembers = [...teamMembers];
-    const draggedMember = reorderedMembers[draggedIndex];
+    const reorderedClients = [...clients];
+    const draggedClient = reorderedClients[draggedIndex];
 
     // Remove the dragged item
-    reorderedMembers.splice(draggedIndex, 1);
+    reorderedClients.splice(draggedIndex, 1);
     // Insert it at the new position
-    reorderedMembers.splice(dropIndex, 0, draggedMember);
+    reorderedClients.splice(dropIndex, 0, draggedClient);
 
     // Update sort orders
-    const updatedMembers = reorderedMembers.map((member, index) => ({
-      ...member,
+    const updatedClients = reorderedClients.map((client, index) => ({
+      ...client,
       sortOrder: index,
     }));
 
-    onTeamMembersChange(updatedMembers);
+    onClientsChange(updatedClients);
     setDraggedIndex(null);
     setDragOverIndex(null);
   };
@@ -145,9 +142,9 @@ export default function TeamMemberAccordion({
 
   return (
     <div className="space-y-2">
-      {teamMembers.map((member, index) => (
+      {clients.map((client, index) => (
         <div
-          key={member.id}
+          key={client.id}
           draggable
           onDragStart={(e) => handleDragStart(e, index)}
           onDragOver={(e) => handleDragOver(e, index)}
@@ -171,7 +168,7 @@ export default function TeamMemberAccordion({
               onClick={(e) => {
                 e.preventDefault();
                 if (draggedIndex === null) {
-                  toggleMember(member.id);
+                  toggleClient(client.id);
                 }
               }}
             >
@@ -184,7 +181,7 @@ export default function TeamMemberAccordion({
                     ⋮⋮
                   </div>
                   <span className="text-sm font-medium text-white-neutral-light-900">
-                    Integrante {index + 1}
+                    Cliente {index + 1}
                   </span>
                 </div>
               </div>
@@ -193,7 +190,7 @@ export default function TeamMemberAccordion({
                 <ChevronDown
                   size={20}
                   className={`transition-transform duration-200 ${
-                    openMember === member.id ? "rotate-180" : ""
+                    openClient === client.id ? "rotate-180" : ""
                   }`}
                 />
               </div>
@@ -202,7 +199,7 @@ export default function TeamMemberAccordion({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                handleRemoveClick(member.id);
+                handleRemoveClick(client.id);
               }}
               className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
               title="Remover cliente"
@@ -211,11 +208,13 @@ export default function TeamMemberAccordion({
             </button>
           </div>
 
-          {openMember === member.id && (
+          {/* Accordion Content */}
+          {openClient === client.id && (
             <div className="pb-4 space-y-4">
+              {/* Logo Upload */}
               <div>
                 <label className="block text-sm font-medium text-white-neutral-light-700 mb-2">
-                  Foto
+                  Logo
                 </label>
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div className="w-full sm:w-[160px]">
@@ -223,20 +222,20 @@ export default function TeamMemberAccordion({
                       type="file"
                       accept="image/*"
                       onChange={(e) =>
-                        handleFileChange(member.id, e.target.files?.[0] || null)
+                        handleFileChange(client.id, e.target.files?.[0] || null)
                       }
                       className="hidden"
-                      id={`photo-${member.id}`}
+                      id={`photo-${client.id}`}
                     />
                     <label
-                      htmlFor={`photo-${member.id}`}
+                      htmlFor={`photo-${client.id}`}
                       className="w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border bg-white-neutral-light-100 border-white-neutral-light-300 rounded-2xs cursor-pointer hover:bg-white-neutral-light-200 transition-colors button-inner"
                     >
                       <PictureIcon width="16" height="16" /> Alterar imagem
                     </label>
                   </div>
                   <div className="text-xs text-white-neutral-light-500">
-                    {member?.photo}
+                    {client?.logo}
                   </div>
                 </div>
                 <div className="text-xs text-white-neutral-light-400 mt-3">
@@ -245,32 +244,16 @@ export default function TeamMemberAccordion({
                 </div>
               </div>
 
-              {/* Name Field */}
               <div>
                 <TextField
-                  label="Nome"
-                  inputName={`name-${member.id}`}
-                  id={`name-${member.id}`}
+                  label="Nome do cliente"
+                  inputName={`name-${client.id}`}
+                  id={`name-${client.id}`}
                   type="text"
-                  placeholder="Nome do integrante"
-                  value={member.name}
+                  placeholder="Insira o nome do cliente"
+                  value={client.name}
                   onChange={(e) =>
-                    updateMember(member.id, "name", e.target.value)
-                  }
-                />
-              </div>
-
-              {/* Role Field */}
-              <div>
-                <TextField
-                  label="Cargo"
-                  inputName={`role-${member.id}`}
-                  id={`role-${member.id}`}
-                  type="text"
-                  placeholder="Cargo do integrante"
-                  value={member.role}
-                  onChange={(e) =>
-                    updateMember(member.id, "role", e.target.value)
+                    updateClient(client.id, "name", e.target.value)
                   }
                 />
               </div>
@@ -281,11 +264,11 @@ export default function TeamMemberAccordion({
 
       <button
         type="button"
-        onClick={addTeamMember}
-        className="w-full p-4 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        onClick={addClient}
+        className="w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
       >
         <Plus size={16} />
-        Adicionar Integrante
+        Adicionar Cliente
       </button>
 
       <Modal

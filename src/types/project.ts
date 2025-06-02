@@ -30,14 +30,14 @@ export interface Result {
 }
 
 export interface Client {
-  id?: string;
+  id: string;
   logo?: string;
   name: string;
   sortOrder?: number;
 }
 
 export interface ProcessStep {
-  id?: string;
+  id: string;
   stepCounter: number;
   stepName: string;
   description?: string;
@@ -45,11 +45,12 @@ export interface ProcessStep {
 }
 
 export interface Testimonial {
-  id?: string;
+  id: string;
   testimonial: string;
   name: string;
   role?: string;
   photo?: string;
+  hidePhoto?: boolean;
   sortOrder?: number;
 }
 
