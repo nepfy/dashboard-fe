@@ -8,6 +8,7 @@ import { TextField } from "#/components/Inputs";
 import ImportDataModal from "../../ImportData";
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
+import SaveDraftButton from "../../SaveDraftButton";
 
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { Project } from "#/types/project";
@@ -166,6 +167,9 @@ export default function IntroStep() {
           >
             <ArrowLeft size={16} /> Voltar
           </button>
+
+          <SaveDraftButton className="mr-2" />
+
           <button
             type="button"
             className="w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] bg-primary-light-500 button-inner-inverse border-white-neutral-light-300 cursor-pointer text-white-neutral-light-100"

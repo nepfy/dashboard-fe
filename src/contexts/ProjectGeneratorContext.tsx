@@ -3,11 +3,13 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ProposalFormData, TemplateType, Project } from "#/types/project";
+import { useSaveDraft } from "#/hooks/useProjectGenerator/useSaveDraft";
 
 interface ProjectGeneratorContextType {
   formData: ProposalFormData;
   currentStep: number;
   templateType: TemplateType | null;
+  currentProjectId: string | null;
   updateFormData: <T extends keyof ProposalFormData>(
     step: T,
     data: ProposalFormData[T]
@@ -18,6 +20,11 @@ interface ProjectGeneratorContextType {
   goToStep: (step: number) => void;
   resetForm: () => void;
   importProjectData: (projectData: Project) => void;
+  // Draft functionality
+  saveDraft: () => Promise<void>;
+  isSavingDraft: boolean;
+  lastSaved: Date | null;
+  getLastSavedText: () => string;
 }
 
 const ProjectGeneratorContext = createContext<
@@ -53,6 +60,15 @@ export function ProjectGeneratorProvider({
   const [templateType, setTemplateTypeState] = useState<TemplateType | null>(
     null
   );
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+
+  const {
+    saveDraft: saveDraftHook,
+    isSaving: isSavingDraft,
+    lastSaved,
+    getLastSavedText,
+    currentProjectId: hookProjectId,
+  } = useSaveDraft();
 
   console.log("Context - currentStep:", currentStep);
   console.log("Context - mainColor:", formData.step1?.mainColor);
@@ -109,10 +125,16 @@ export function ProjectGeneratorProvider({
     setFormData(initialFormData);
     setCurrentStep(0);
     setTemplateTypeState(null);
+    setCurrentProjectId(null);
   };
 
   const importProjectData = (projectData: Project) => {
     console.log("Context - Importing project data:", projectData);
+
+    // Set the current project ID
+    if (projectData.id) {
+      setCurrentProjectId(projectData.id);
+    }
 
     const safeUpdate = <T extends keyof ProposalFormData>(
       step: T,
@@ -201,10 +223,20 @@ export function ProjectGeneratorProvider({
     });
   };
 
+  // Draft functionality
+  const saveDraft = async () => {
+    await saveDraftHook(
+      formData,
+      templateType,
+      currentProjectId || hookProjectId
+    );
+  };
+
   const value = {
     formData,
     currentStep,
     templateType,
+    currentProjectId: currentProjectId || hookProjectId,
     updateFormData,
     setTemplateType,
     nextStep,
@@ -212,6 +244,11 @@ export function ProjectGeneratorProvider({
     goToStep,
     resetForm,
     importProjectData,
+    // Draft functionality
+    saveDraft,
+    isSavingDraft,
+    lastSaved,
+    getLastSavedText,
   };
 
   return (

@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/pages/404.tsx",
-    "src/pages/500.tsx"
+    "src/pages/500.tsx",
+    "src/app/gerador-de-propostas/components/SaveDraftButton"
   ],
   "exclude": ["node_modules"]
 }
