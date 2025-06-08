@@ -4,6 +4,7 @@ import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import PictureIcon from "#/components/icons/PictureIcon";
 import { TextField, TextAreaField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
+import { useImageUpload } from "#/hooks/useImageUpload";
 
 import { Testimonial } from "#/types/project";
 
@@ -23,6 +24,11 @@ export default function TestimonialsAccordion({
   const [testimonialToRemove, setTestimonialToRemove] = useState<string | null>(
     null
   );
+  const [uploadingTestimonials, setUploadingTestimonials] = useState<
+    Set<string>
+  >(new Set());
+
+  const { uploadImage, uploadError, clearError } = useImageUpload();
 
   const addTestimonial = () => {
     const newTestimonial: Testimonial = {
@@ -94,13 +100,42 @@ export default function TestimonialsAccordion({
     );
   };
 
-  const handleFileChange = (testimonialId: string, file: File | null) => {
-    if (file) {
-      // For demo purposes, we'll use a placeholder URL
-      // In production, you'd upload the file and get a URL
-      const imageUrl = URL.createObjectURL(file);
-      updateTestimonial(testimonialId, "photo", imageUrl);
+  const handleFileChange = async (testimonialId: string, file: File | null) => {
+    if (!file) return;
+
+    try {
+      // Clear any previous errors
+      clearError();
+
+      // Add testimonial to uploading set
+      setUploadingTestimonials((prev) => new Set(prev).add(testimonialId));
+
+      // Upload the image
+      const result = await uploadImage(file);
+
+      if (result.success && result.data) {
+        // Update the testimonial with the uploaded image URL
+        updateTestimonial(testimonialId, "photo", result.data.url);
+      } else {
+        console.error("Upload failed:", result.error);
+        // You might want to show a toast notification here
+        alert(result.error || "Erro ao fazer upload da imagem");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Erro ao fazer upload da imagem");
+    } finally {
+      // Remove testimonial from uploading set
+      setUploadingTestimonials((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(testimonialId);
+        return newSet;
+      });
     }
+  };
+
+  const isUploadingForTestimonial = (testimonialId: string) => {
+    return uploadingTestimonials.has(testimonialId);
   };
 
   const handleHidePhotoToggle = (testimonialId: string) => {
@@ -309,24 +344,45 @@ export default function TestimonialsAccordion({
                         }
                         className="hidden"
                         id={`photo-${testimonial.id}`}
+                        disabled={isUploadingForTestimonial(testimonial.id)}
                       />
                       <label
                         htmlFor={`photo-${testimonial.id}`}
-                        className="w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border bg-white-neutral-light-100 border-white-neutral-light-300 rounded-2xs cursor-pointer hover:bg-white-neutral-light-200 transition-colors button-inner"
+                        className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                          isUploadingForTestimonial(testimonial.id)
+                            ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
+                            : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
+                        }`}
                       >
-                        <PictureIcon width="16" height="16" /> Alterar imagem
+                        {isUploadingForTestimonial(testimonial.id) ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <PictureIcon width="16" height="16" />
+                            Alterar imagem
+                          </>
+                        )}
                       </label>
                     </div>
                     <div className="text-xs text-white-neutral-light-500">
                       {testimonial?.photo
-                        ? testimonial?.photo
+                        ? "Imagem carregada"
                         : "Nenhuma foto selecionada"}
                     </div>
                   </div>
                   <div className="text-xs text-white-neutral-light-400 mt-3">
-                    Tipo de arquivo: .jpg ou .png. Tamanho: 400×400px e peso
-                    entre 30 KB e 100 KB
+                    Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
                   </div>
+
+                  {/* Show upload error if exists */}
+                  {uploadError && isUploadingForTestimonial(testimonial.id) && (
+                    <div className="text-xs text-red-500 mt-2">
+                      {uploadError}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

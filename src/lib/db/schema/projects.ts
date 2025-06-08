@@ -57,6 +57,8 @@ export const projectsTable = pgTable("projects", {
 
   investmentTitle: varchar("investment_title", { length: 255 }),
 
+  deliveryServices: text("delivery_services"),
+
   termsTitle: varchar("terms_title", { length: 255 }),
 
   endMessageTitle: varchar("end_message_title", { length: 255 }),

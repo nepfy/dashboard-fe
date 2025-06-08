@@ -1,34 +1,98 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Eye } from "lucide-react";
 
 import TitleDescription from "../../TitleDescription";
+import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
+import { Plan } from "#/types/project";
+
+import PlansAccordion from "./PlansAccordion";
 
 export default function PlansForm() {
-  const { prevStep, nextStep, formData } = useProjectGenerator();
+  const { prevStep, nextStep, updateFormData, formData, currentStep } =
+    useProjectGenerator();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFormData("step12", {
+      ...formData?.step12,
+      hideSection: e.target.checked,
+    });
+  };
+
+  const handlePlansChange = (plans: Plan[]) => {
+    updateFormData("step12", {
+      ...formData?.step12,
+      plans: plans,
+    });
+  };
 
   const handleBack = () => {
     prevStep();
   };
 
   const handleNext = () => {
+    setErrors({});
+
+    const hideSection = formData?.step12?.hideSection || false;
+    const plansList = formData?.step12?.plans || [];
+    const newErrors: { [key: string]: string } = {};
+
+    if (!hideSection) {
+      if (plansList.length === 0) {
+        newErrors.plans = "Ao menos 1 plano é requerido";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     nextStep();
   };
 
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
+        <div className="mb-6">
+          <StepProgressIndicator currentStep={currentStep} />
+        </div>
+        <button
+          type="button"
+          onClick={() => {}}
+          className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        >
+          <Eye width="18" height="18" /> Pré-visualizar essa seção
+        </button>
         <TitleDescription
           title="Planos e valores:"
           description="Ofereça opções para diferentes perfis de cliente"
         />
 
-        <div className="mt-6 space-y-4">
-          <div>
-            {formData.step12?.plans?.map((member, index) => (
-              <div key={index}>{member.description}</div>
-            ))}
+        <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
+          <input
+            type="checkbox"
+            checked={formData?.step12?.hideSection || false}
+            onChange={handleHideSectionChange}
+            className="border border-white-neutral-light-300 checkbox-custom"
+          />
+          Ocultar seção
+        </label>
+
+        <div className="py-6">
+          <div className="pt-4">
+            <PlansAccordion
+              plansList={formData?.step12?.plans || []}
+              onFormChange={handlePlansChange}
+            />
+            {errors.plans && (
+              <p className="text-red-700 rounded-md text-sm font-medium mt-3">
+                {errors.plans}
+              </p>
+            )}
           </div>
         </div>
       </div>

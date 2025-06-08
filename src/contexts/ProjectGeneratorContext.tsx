@@ -207,6 +207,11 @@ export function ProjectGeneratorProvider({
       investmentTitle: projectData.investmentTitle,
     });
 
+    safeUpdate("step11", {
+      includedServices: projectData.includedServices,
+      deliveryServices: projectData.deliveryServices,
+    });
+
     // Step 13 - Terms
     safeUpdate("step13", {
       termsTitle: projectData.termsTitle,

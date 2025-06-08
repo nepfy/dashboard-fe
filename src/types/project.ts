@@ -152,6 +152,7 @@ export interface Project {
   investmentTitle?: string;
 
   includedServices?: Service[];
+  deliveryServices?: string[];
 
   plans?: Plan[];
 
@@ -225,6 +226,7 @@ export interface Step7Data {
 export interface Step8Data {
   hideSection?: boolean;
   ctaBackgroundImage?: string;
+  ctaBackgroundImageName?: string;
 }
 
 export interface Step9Data {
@@ -240,6 +242,7 @@ export interface Step10Data {
 export interface Step11Data {
   hideSection?: boolean;
   includedServices?: Service[];
+  deliveryServices?: string[];
 }
 
 export interface Step12Data {

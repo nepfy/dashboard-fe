@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { eq, and } from "drizzle-orm";
-import { projectsTable } from "#/lib/db/schema/projects";
+import { projectsTable, projectServicesTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
 export async function POST(request: Request) {
@@ -79,6 +79,11 @@ export async function POST(request: Request) {
 
       investmentTitle: formData.step10?.investmentTitle,
 
+      // Handle deliveryServices - convert array to comma-separated string
+      deliveryServices: Array.isArray(formData.step11?.deliveryServices)
+        ? formData.step11.deliveryServices.join(",")
+        : formData.step11?.deliveryServices,
+
       termsTitle: formData.step13?.termsTitle,
 
       endMessageTitle: formData.step15?.endMessageTitle,
@@ -144,6 +149,39 @@ export async function POST(request: Request) {
         { success: false, error: "Falha ao salvar rascunho" },
         { status: 500 }
       );
+    }
+
+    const finalProjectId = savedProject[0].id;
+
+    // Handle includedServices - save to projectServicesTable
+    if (
+      formData.step11?.includedServices &&
+      Array.isArray(formData.step11.includedServices)
+    ) {
+      // Delete existing services for this project
+      await db
+        .delete(projectServicesTable)
+        .where(eq(projectServicesTable.projectId, finalProjectId));
+
+      // Insert new services
+      interface IncludedService {
+        title?: string;
+        description?: string;
+        sortOrder?: number;
+      }
+
+      if (formData.step11.includedServices.length > 0) {
+        const servicesToInsert = formData.step11.includedServices.map(
+          (service: IncludedService, index: number) => ({
+            projectId: finalProjectId,
+            title: service.title || "",
+            description: service.description || "",
+            sortOrder: service.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectServicesTable).values(servicesToInsert);
+      }
     }
 
     return NextResponse.json({

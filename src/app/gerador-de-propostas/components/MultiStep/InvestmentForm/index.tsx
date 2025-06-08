@@ -1,35 +1,117 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
+import { useState } from "react";
+
+import { TextAreaField } from "#/components/Inputs";
 
 import TitleDescription from "../../TitleDescription";
+import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
 export default function InvestmentForm() {
-  const { prevStep, nextStep, formData } = useProjectGenerator();
+  const { prevStep, nextStep, updateFormData, formData, currentStep } =
+    useProjectGenerator();
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleBack = () => {
     prevStep();
   };
 
   const handleNext = () => {
+    setErrors({});
+
+    const investmentTitle = formData?.step10?.investmentTitle || "";
+    const hideSection = formData?.step10?.hideSection || false;
+    const newErrors: { [key: string]: string } = {};
+
+    if (!hideSection) {
+      if (investmentTitle.length < 50) {
+        newErrors.aboutUsTitle =
+          "O campo 'Título' deve ter pelo menos 50 caracteres";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     nextStep();
+  };
+
+  const handleFieldChange =
+    (fieldName: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      updateFormData("step10", {
+        ...formData?.step10,
+        [fieldName]: e.target.value,
+      });
+
+      if (errors[fieldName]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fieldName];
+          return newErrors;
+        });
+      }
+    };
+
+  const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFormData("step10", {
+      ...formData?.step10,
+      hideSection: e.target.checked,
+    });
   };
 
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
+        <div className="mb-6">
+          <StepProgressIndicator currentStep={currentStep} />
+        </div>
+        <button
+          type="button"
+          onClick={() => {}}
+          className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        >
+          <Eye width="18" height="18" /> Pré-visualizar essa seção
+        </button>
         <TitleDescription
           title="Investimento:"
           description="Apresente as entregas, planos e valores"
         />
 
-        <div className="mt-6 space-y-4">
-          <div>{formData.step10?.investmentTitle}</div>
+        <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
+          <input
+            type="checkbox"
+            checked={formData?.step10?.hideSection || false}
+            onChange={handleHideSectionChange}
+            className="border border-white-neutral-light-300 checkbox-custom"
+          />
+          Ocultar seção
+        </label>
+
+        <div className="py-6">
+          <div className="py-2">
+            <TextAreaField
+              label="Título"
+              id="investmentTitle"
+              textareaName="investmentTitle"
+              placeholder="Fale sobre você ou sua empresa"
+              value={formData?.step10?.investmentTitle || ""}
+              onChange={handleFieldChange("investmentTitle")}
+              maxLength={90}
+              minLength={50}
+              showCharCount
+              error={errors.investmentTitle}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[90px] xl:h-[100px] flex gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
