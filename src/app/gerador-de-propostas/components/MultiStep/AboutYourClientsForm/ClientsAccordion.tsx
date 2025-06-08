@@ -4,6 +4,7 @@ import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import PictureIcon from "#/components/icons/PictureIcon";
 import { TextField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
+import { useImageUpload } from "#/hooks/useImageUpload";
 
 import { Client } from "#/types/project";
 
@@ -21,6 +22,11 @@ export default function ClientsAccordion({
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [clientToRemove, setClientToRemove] = useState<string | null>(null);
+  const [uploadingClients, setUploadingClients] = useState<Set<string>>(
+    new Set()
+  );
+
+  const { uploadImage, uploadError, clearError } = useImageUpload();
 
   const addClient = () => {
     const newClient: Client = {
@@ -81,13 +87,42 @@ export default function ClientsAccordion({
     setOpenClient(openClient === clientId ? null : clientId);
   };
 
-  const handleFileChange = (clientId: string, file: File | null) => {
-    if (file) {
-      // For demo purposes, we'll use a placeholder URL
-      // In production, you'd upload the file and get a URL
-      const imageUrl = URL.createObjectURL(file);
-      updateClient(clientId, "logo", imageUrl);
+  const handleFileChange = async (clientId: string, file: File | null) => {
+    if (!file) return;
+
+    try {
+      // Clear any previous errors
+      clearError();
+
+      // Add client to uploading set
+      setUploadingClients((prev) => new Set(prev).add(clientId));
+
+      // Upload the image
+      const result = await uploadImage(file);
+
+      if (result.success && result.data) {
+        // Update the client with the uploaded image URL
+        updateClient(clientId, "logo", result.data.url);
+      } else {
+        console.error("Upload failed:", result.error);
+        // You might want to show a toast notification here
+        alert(result.error || "Erro ao fazer upload da imagem");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Erro ao fazer upload da imagem");
+    } finally {
+      // Remove client from uploading set
+      setUploadingClients((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(clientId);
+        return newSet;
+      });
     }
+  };
+
+  const isUploadingForClient = (clientId: string) => {
+    return uploadingClients.has(clientId);
   };
 
   // Drag and Drop handlers
@@ -216,6 +251,7 @@ export default function ClientsAccordion({
                 <label className="block text-sm font-medium text-white-neutral-light-700 mb-2">
                   Logo
                 </label>
+
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div className="w-full sm:w-[160px]">
                     <input
@@ -226,22 +262,45 @@ export default function ClientsAccordion({
                       }
                       className="hidden"
                       id={`photo-${client.id}`}
+                      disabled={isUploadingForClient(client.id)}
                     />
                     <label
                       htmlFor={`photo-${client.id}`}
-                      className="w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border bg-white-neutral-light-100 border-white-neutral-light-300 rounded-2xs cursor-pointer hover:bg-white-neutral-light-200 transition-colors button-inner"
+                      className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                        isUploadingForClient(client.id)
+                          ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
+                          : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
+                      }`}
                     >
-                      <PictureIcon width="16" height="16" /> Alterar imagem
+                      {isUploadingForClient(client.id) ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <PictureIcon width="16" height="16" />
+                          Alterar imagem
+                        </>
+                      )}
                     </label>
                   </div>
                   <div className="text-xs text-white-neutral-light-500">
-                    {client?.logo}
+                    {client.logo
+                      ? "Logo carregado"
+                      : "Nenhuma logo selecionada"}
                   </div>
                 </div>
+
                 <div className="text-xs text-white-neutral-light-400 mt-3">
-                  Tipo de arquivo: .jpg ou .png. Tamanho: 679×735px e peso entre
-                  30 KB e 50 KB
+                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho recomendado:
+                  100×100px. Tamanho máximo: 5MB
                 </div>
+
+                {/* Show upload error if exists */}
+                {uploadError && isUploadingForClient(client.id) && (
+                  <div className="text-xs text-red-500 mt-2">{uploadError}</div>
+                )}
               </div>
 
               <div>

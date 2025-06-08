@@ -61,7 +61,7 @@ export default function AboutYourTeamForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (processSubtitle.length < 70) {
+      if (processSubtitle.length < 30) {
         newErrors.ourTeamSubtitle =
           "O campo 'Subtítulo' deve ter pelo menos 70 caracteres";
       }

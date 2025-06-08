@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import Modal from "#/components/Modal";
+import { TextField } from "#/components/Inputs";
 import { Project } from "#/types/project";
+import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
 interface ProjectProps {
   id: string;
@@ -19,8 +21,22 @@ export default function ImportDataModal({
   onCreateNew,
   onClose,
 }: ImportDataModalProps) {
+  const { updateFormData } = useProjectGenerator();
+
+  // Step management
+  const [currentStep, setCurrentStep] = useState<
+    "initial" | "import-choice" | "project-selection"
+  >("initial");
+
+  // Initial form data
+  const [clientName, setClientName] = useState("");
+  const [projectName, setProjectName] = useState("");
+  const [initialFormErrors, setInitialFormErrors] = useState<{
+    [key: string]: string;
+  }>({});
+
+  // Import functionality state
   const [selectedProject, setSelectedProject] = useState("");
-  const [showProjectSelection, setShowProjectSelection] = useState(false);
   const [projectsList, setProjectsList] = useState<ProjectProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -70,12 +86,40 @@ export default function ImportDataModal({
     }
   };
 
+  // Handle initial form submission
+  const handleInitialFormSubmit = () => {
+    const errors: { [key: string]: string } = {};
+
+    if (!clientName.trim()) {
+      errors.clientName = "Nome do cliente é obrigatório";
+    }
+
+    if (!projectName.trim()) {
+      errors.projectName = "Nome do projeto é obrigatório";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setInitialFormErrors(errors);
+      return;
+    }
+
+    // Save the client and project names to form data
+    updateFormData("step1", {
+      clientName: clientName.trim(),
+      projectName: projectName.trim(),
+    });
+
+    setInitialFormErrors({});
+    setCurrentStep("import-choice");
+  };
+
   const handleImportDataClick = async () => {
-    setShowProjectSelection(true);
+    setCurrentStep("project-selection");
     await fetchProjects();
   };
 
   const handleCreateNewClick = () => {
+    // The form data has already been saved in handleInitialFormSubmit
     onCreateNew?.();
     onClose?.();
   };
@@ -94,7 +138,20 @@ export default function ImportDataModal({
 
       const projectData = await fetchProjectData(selectedProject);
 
-      onImportProject?.(projectData);
+      // Update the imported project data with the initial form data
+      const updatedProjectData = {
+        ...projectData,
+        clientName: clientName.trim(),
+        projectName: projectName.trim(),
+      };
+
+      // Also update the form data with imported project info
+      updateFormData("step1", {
+        clientName: clientName.trim(),
+        projectName: projectName.trim(),
+      });
+
+      onImportProject?.(updatedProjectData);
       onClose?.();
     } catch (err) {
       console.error("Error importing project:", err);
@@ -108,6 +165,17 @@ export default function ImportDataModal({
     setSelectedProject(projectId);
   };
 
+  const handleBack = () => {
+    if (currentStep === "project-selection") {
+      setCurrentStep("import-choice");
+      setSelectedProject("");
+      setProjectsList([]);
+      setError(null);
+    } else if (currentStep === "import-choice") {
+      setCurrentStep("initial");
+    }
+  };
+
   return (
     <Modal
       isOpen={true}
@@ -117,11 +185,79 @@ export default function ImportDataModal({
       closeOnClickOutside={!isImporting}
       showCloseButton={!isImporting}
     >
-      {!showProjectSelection ? (
+      {/* Initial Step - Client and Project Name */}
+      {currentStep === "initial" && (
+        <>
+          <div className="p-6">
+            <p className="text-white-neutral-light-500 font-bold text-sm mb-4">
+              Vamos começar criando seu novo projeto.
+            </p>
+            <p className="text-white-neutral-light-500 text-sm mb-6">
+              Primeiro, preencha as informações básicas do seu projeto:
+            </p>
+
+            <div className="space-y-4">
+              <TextField
+                label="Nome do Cliente"
+                inputName="clientName"
+                id="clientName"
+                type="text"
+                placeholder="Digite o nome do cliente"
+                value={clientName}
+                onChange={(e) => {
+                  setClientName(e.target.value);
+                  if (initialFormErrors.clientName) {
+                    setInitialFormErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.clientName;
+                      return newErrors;
+                    });
+                  }
+                }}
+                error={initialFormErrors.clientName}
+              />
+
+              <TextField
+                label="Nome do Projeto"
+                inputName="projectName"
+                id="projectName"
+                type="text"
+                placeholder="Digite o nome do projeto"
+                value={projectName}
+                onChange={(e) => {
+                  setProjectName(e.target.value);
+                  if (initialFormErrors.projectName) {
+                    setInitialFormErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.projectName;
+                      return newErrors;
+                    });
+                  }
+                }}
+                error={initialFormErrors.projectName}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-start p-6 border-t border-t-white-neutral-light-300">
+            <button
+              type="button"
+              onClick={handleInitialFormSubmit}
+              className="w-full sm:w-[140px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
+            >
+              Continuar
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Import Choice Step */}
+      {currentStep === "import-choice" && (
         <>
           <div className="p-6">
             <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
-              Você está prestes a criar um novo projeto.
+              Perfeito! Agora vamos configurar seu projeto &quot;{projectName}
+              &quot;.
             </p>
             <p className="text-white-neutral-light-500 text-sm mb-3">
               Para facilitar, é possível importar informações de um projeto já
@@ -160,6 +296,13 @@ export default function ImportDataModal({
           <div className="flex justify-start flex-wrap sm:flex-nowrap p-6 border-t border-t-white-neutral-light-300 gap-2">
             <button
               type="button"
+              onClick={handleBack}
+              className="w-full sm:w-[100px] h-[38px] px-4 py-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer button-inner"
+            >
+              Voltar
+            </button>
+            <button
+              type="button"
               onClick={handleImportDataClick}
               className="w-full sm:w-[140px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
             >
@@ -174,7 +317,10 @@ export default function ImportDataModal({
             </button>
           </div>
         </>
-      ) : (
+      )}
+
+      {/* Project Selection Step */}
+      {currentStep === "project-selection" && (
         <>
           <div className="p-6">
             <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
@@ -236,6 +382,18 @@ export default function ImportDataModal({
           <div className="flex justify-start flex-wrap sm:flex-nowrap p-6 bg-white-neutral-light-100 border-t border-t-white-neutral-light-300 gap-2">
             <button
               type="button"
+              onClick={handleBack}
+              disabled={isImporting}
+              className={`w-full sm:w-[100px] h-[38px] px-4 py-2 text-sm font-medium border rounded-xs border-white-neutral-light-300 cursor-pointer button-inner ${
+                isImporting
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-gray-700 hover:bg-white-neutral-light-300"
+              }`}
+            >
+              Voltar
+            </button>
+            <button
+              type="button"
               onClick={handleImportClick}
               disabled={!selectedProject || isImporting}
               className={`w-full sm:w-[140px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs cursor-pointer button-inner-inverse ${
@@ -252,19 +410,6 @@ export default function ImportDataModal({
               ) : (
                 "Importar"
               )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowProjectSelection(false)}
-              disabled={isImporting}
-              className={`w-full sm:w-[100px] h-[38px] px-4 py-2 text-sm font-medium border rounded-xs border-white-neutral-light-300 cursor-pointer button-inner ${
-                isImporting
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-700 hover:bg-white-neutral-light-300"
-              }`}
-            >
-              Voltar
             </button>
           </div>
         </>

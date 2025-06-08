@@ -31,9 +31,9 @@ export const projectsTable = pgTable("projects", {
     mode: "date",
   }),
 
-  templateType: varchar("template_type", { length: 50 }), // 'flash', 'prime', 'essencial'
+  templateType: varchar("template_type", { length: 50 }),
 
-  mainColor: varchar("main_color", { length: 7 }), // hex color #ffffff
+  mainColor: varchar("main_color", { length: 7 }),
   companyName: varchar("company_name", { length: 255 }),
   companyEmail: varchar("company_email", { length: 255 }),
   ctaButtonTitle: varchar("cta_button_title", { length: 100 }),

@@ -12,10 +12,10 @@ const templates = [
     description:
       "Design vibrante e energético, ideal para quem quer se destacar.",
     colorsList: [
+      "#4F21A1",
       "#BE8406",
       "#9B3218",
       "#05722C",
-      "#4F21A1",
       "#182E9B",
       "#212121",
     ],
@@ -24,12 +24,12 @@ const templates = [
     title: "Prime",
     description: "Design sofisticado, perfeito para ambientes corporativos.",
     colorsList: [
+      "#010101",
       "#E9E9E9",
       "#F0E5E0",
       "#223630",
       "#621D1E",
       "#08306C",
-      "#010101",
     ],
   },
   {
@@ -44,6 +44,19 @@ const templates = [
       "#0A3EF4",
     ],
   },
+  {
+    title: "Grid",
+    description:
+      "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
+    colorsList: [
+      "#2C2C2C",
+      "#146EF4",
+      "#78838E",
+      "#294D41",
+      "#5E4D35",
+      "#7C4257",
+    ],
+  },
 ];
 
 export default function ProjectGenerator() {
@@ -53,6 +66,7 @@ export default function ProjectGenerator() {
   const handleTemplateSelect = (template: TemplateType, color: string) => {
     setTemplateType(template);
     updateFormData("step1", {
+      templateType: template,
       mainColor: color,
     });
   };
@@ -65,7 +79,7 @@ export default function ProjectGenerator() {
         </div>
       ) : (
         <>
-          <h2 className="text-white-neutral-light-800 text-[21px] font-medium mb-4 p-7">
+          <h2 className="text-white-neutral-light-800 text-[21px] text-center lg:text-left font-medium py-4 lg:pb-0 lg:pt-8">
             Escolha o modelo da sua proposta
           </h2>
           <TemplateSelection

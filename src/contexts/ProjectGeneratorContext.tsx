@@ -156,7 +156,10 @@ export function ProjectGeneratorProvider({
 
     // Step 1 - Basic company info
     safeUpdate("step1", {
+      templateType: projectData?.templateType,
       mainColor: projectData.mainColor,
+      clientName: projectData.clientName,
+      projectName: projectData.projectName,
       companyName: projectData.companyName,
       companyEmail: projectData.companyEmail,
       ctaButtonTitle: projectData.ctaButtonTitle,

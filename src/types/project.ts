@@ -173,7 +173,9 @@ export interface Project {
 }
 
 export interface Step1Data {
+  templateType?: TemplateType;
   mainColor?: string;
+  clientName?: string;
   projectName?: string;
   companyName?: string;
   companyEmail?: string;

@@ -4,6 +4,7 @@ import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import PictureIcon from "#/components/icons/PictureIcon";
 import { TextField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
+import { useImageUpload } from "#/hooks/useImageUpload";
 
 import { Result } from "#/types/project";
 
@@ -21,6 +22,11 @@ export default function ResultsAccordion({
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [resultToRemove, setResultToRemove] = useState<string | null>(null);
+  const [uploadingResults, setUploadingResults] = useState<Set<string>>(
+    new Set()
+  );
+
+  const { uploadImage, uploadError, clearError } = useImageUpload();
 
   const addResult = () => {
     const newResult: Result = {
@@ -84,13 +90,42 @@ export default function ResultsAccordion({
     setOpenResult(openResult === resultId ? null : resultId);
   };
 
-  const handleFileChange = (resultId: string, file: File | null) => {
-    if (file) {
-      // For demo purposes, we'll use a placeholder URL
-      // In production, you'd upload the file and get a URL
-      const imageUrl = URL.createObjectURL(file);
-      updateResult(resultId, "photo", imageUrl);
+  const handleFileChange = async (resultId: string, file: File | null) => {
+    if (!file) return;
+
+    try {
+      // Clear any previous errors
+      clearError();
+
+      // Add result to uploading set
+      setUploadingResults((prev) => new Set(prev).add(resultId));
+
+      // Upload the image
+      const result = await uploadImage(file);
+
+      if (result.success && result.data) {
+        // Update the result with the uploaded image URL
+        updateResult(resultId, "photo", result.data.url);
+      } else {
+        console.error("Upload failed:", result.error);
+        // You might want to show a toast notification here
+        alert(result.error || "Erro ao fazer upload da imagem");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Erro ao fazer upload da imagem");
+    } finally {
+      // Remove result from uploading set
+      setUploadingResults((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(resultId);
+        return newSet;
+      });
     }
+  };
+
+  const isUploadingForResult = (resultId: string) => {
+    return uploadingResults.has(resultId);
   };
 
   // Currency mask function
@@ -231,7 +266,7 @@ export default function ResultsAccordion({
                 handleRemoveClick(result.id);
               }}
               className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover cliente"
+              title="Remover resultado"
             >
               <Trash2 size={16} />
             </button>
@@ -243,6 +278,7 @@ export default function ResultsAccordion({
                 <label className="block text-sm font-medium text-white-neutral-light-700 mb-2">
                   Foto
                 </label>
+
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div className="w-full sm:w-[160px]">
                     <input
@@ -253,22 +289,44 @@ export default function ResultsAccordion({
                       }
                       className="hidden"
                       id={`photo-${result.id}`}
+                      disabled={isUploadingForResult(result.id)}
                     />
                     <label
                       htmlFor={`photo-${result.id}`}
-                      className="w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border bg-white-neutral-light-100 border-white-neutral-light-300 rounded-2xs cursor-pointer hover:bg-white-neutral-light-200 transition-colors button-inner"
+                      className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                        isUploadingForResult(result.id)
+                          ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
+                          : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
+                      }`}
                     >
-                      <PictureIcon width="16" height="16" /> Alterar imagem
+                      {isUploadingForResult(result.id) ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <PictureIcon width="16" height="16" />
+                          Alterar imagem
+                        </>
+                      )}
                     </label>
                   </div>
                   <div className="text-xs text-white-neutral-light-500">
-                    {result?.photo}
+                    {result.photo
+                      ? "Imagem carregada"
+                      : "Nenhuma imagem selecionada"}
                   </div>
                 </div>
+
                 <div className="text-xs text-white-neutral-light-400 mt-3">
-                  Tipo de arquivo: .jpg ou .png. Tamanho: 679×735px e peso entre
-                  30 KB e 50 KB
+                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
                 </div>
+
+                {/* Show upload error if exists */}
+                {uploadError && isUploadingForResult(result.id) && (
+                  <div className="text-xs text-red-500 mt-2">{uploadError}</div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

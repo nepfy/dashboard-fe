@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
 import { TextField } from "#/components/Inputs";
+import TagInput from "#/components/Inputs/TagInput"; // Import the new component
 
 import ImportDataModal from "../../ImportData";
 import TitleDescription from "../../TitleDescription";
@@ -59,6 +60,14 @@ export default function IntroStep() {
         [fieldName]: e.target.value,
       });
     };
+
+  // Handle services change for the tag input
+  const handleServicesChange = (services: string[]) => {
+    updateFormData("step1", {
+      ...formData?.step1,
+      services: services,
+    });
+  };
 
   if (!showImportModal && templateType) {
     return (
@@ -132,15 +141,13 @@ export default function IntroStep() {
             </div>
 
             <div className="pb-6">
-              <TextField
+              {/* Replace the old TextField with the new ServicesTagInput */}
+              <TagInput
                 label="Serviços"
-                id="services"
-                inputName="services"
-                type="text"
-                placeholder="Serviços prestados"
-                infoText="Separe os serviços por ponto e vírgula (;)"
-                value={formData?.step1?.services || ""}
-                onChange={handleFieldChange("services")}
+                placeholder="Digite um serviço e pressione ; ou Tab"
+                value={formData?.step1?.services || []}
+                onChange={handleServicesChange}
+                infoText="Separe os serviços por ponto e vírgula (;) ou Tab. Use as setas para navegar e Delete para remover."
               />
             </div>
 

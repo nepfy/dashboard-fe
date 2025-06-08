@@ -4,6 +4,7 @@ import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import PictureIcon from "#/components/icons/PictureIcon";
 import { TextField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
+import { useImageUpload } from "#/hooks/useImageUpload";
 
 import { TeamMember } from "#/types/project";
 
@@ -21,6 +22,11 @@ export default function TeamMemberAccordion({
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
+  const [uploadingMembers, setUploadingMembers] = useState<Set<string>>(
+    new Set()
+  );
+
+  const { uploadImage, uploadError, clearError } = useImageUpload();
 
   const addTeamMember = () => {
     const newMember: TeamMember = {
@@ -84,13 +90,42 @@ export default function TeamMemberAccordion({
     setOpenMember(openMember === memberId ? null : memberId);
   };
 
-  const handleFileChange = (memberId: string, file: File | null) => {
-    if (file) {
-      // For demo purposes, we'll use a placeholder URL
-      // In production, you'd upload the file and get a URL
-      const imageUrl = URL.createObjectURL(file);
-      updateMember(memberId, "photo", imageUrl);
+  const handleFileChange = async (memberId: string, file: File | null) => {
+    if (!file) return;
+
+    try {
+      // Clear any previous errors
+      clearError();
+
+      // Add member to uploading set
+      setUploadingMembers((prev) => new Set(prev).add(memberId));
+
+      // Upload the image
+      const result = await uploadImage(file);
+
+      if (result.success && result.data) {
+        // Update the member with the uploaded image URL
+        updateMember(memberId, "photo", result.data.url);
+      } else {
+        console.error("Upload failed:", result.error);
+        // You might want to show a toast notification here
+        alert(result.error || "Erro ao fazer upload da imagem");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Erro ao fazer upload da imagem");
+    } finally {
+      // Remove member from uploading set
+      setUploadingMembers((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(memberId);
+        return newSet;
+      });
     }
+  };
+
+  const isUploadingForMember = (memberId: string) => {
+    return uploadingMembers.has(memberId);
   };
 
   // Drag and Drop handlers
@@ -205,7 +240,7 @@ export default function TeamMemberAccordion({
                 handleRemoveClick(member.id);
               }}
               className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover cliente"
+              title="Remover integrante"
             >
               <Trash2 size={16} />
             </button>
@@ -217,6 +252,7 @@ export default function TeamMemberAccordion({
                 <label className="block text-sm font-medium text-white-neutral-light-700 mb-2">
                   Foto
                 </label>
+
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div className="w-full sm:w-[160px]">
                     <input
@@ -227,22 +263,44 @@ export default function TeamMemberAccordion({
                       }
                       className="hidden"
                       id={`photo-${member.id}`}
+                      disabled={isUploadingForMember(member.id)}
                     />
                     <label
                       htmlFor={`photo-${member.id}`}
-                      className="w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border bg-white-neutral-light-100 border-white-neutral-light-300 rounded-2xs cursor-pointer hover:bg-white-neutral-light-200 transition-colors button-inner"
+                      className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                        isUploadingForMember(member.id)
+                          ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
+                          : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
+                      }`}
                     >
-                      <PictureIcon width="16" height="16" /> Alterar imagem
+                      {isUploadingForMember(member.id) ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <PictureIcon width="16" height="16" />
+                          Alterar imagem
+                        </>
+                      )}
                     </label>
                   </div>
                   <div className="text-xs text-white-neutral-light-500">
-                    {member?.photo}
+                    {member.photo
+                      ? "Imagem carregada"
+                      : "Nenhuma imagem selecionada"}
                   </div>
                 </div>
+
                 <div className="text-xs text-white-neutral-light-400 mt-3">
-                  Tipo de arquivo: .jpg ou .png. Tamanho: 679×735px e peso entre
-                  30 KB e 50 KB
+                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
                 </div>
+
+                {/* Show upload error if exists */}
+                {uploadError && isUploadingForMember(member.id) && (
+                  <div className="text-xs text-red-500 mt-2">{uploadError}</div>
+                )}
               </div>
 
               {/* Name Field */}
