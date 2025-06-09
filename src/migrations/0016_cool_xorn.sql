@@ -1,0 +1,1 @@
+ALTER TABLE "project_terms_conditions" ADD COLUMN "title" text NOT NULL;

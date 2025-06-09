@@ -81,6 +81,7 @@ export interface Plan {
 
 export interface TermsCondition {
   id?: string;
+  title?: string;
   description: string;
   sortOrder?: number;
 }
@@ -156,7 +157,6 @@ export interface Project {
 
   plans?: Plan[];
 
-  termsTitle?: string;
   termsConditions?: TermsCondition[];
 
   faq?: FAQ[];
@@ -252,7 +252,6 @@ export interface Step12Data {
 
 export interface Step13Data {
   hideSection?: boolean;
-  termsTitle?: string;
   termsConditions?: TermsCondition[];
 }
 

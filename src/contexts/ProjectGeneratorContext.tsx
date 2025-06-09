@@ -214,7 +214,7 @@ export function ProjectGeneratorProvider({
 
     // Step 13 - Terms
     safeUpdate("step13", {
-      termsTitle: projectData.termsTitle,
+      termsConditions: projectData?.termsConditions,
     });
 
     // Step 15 - End message

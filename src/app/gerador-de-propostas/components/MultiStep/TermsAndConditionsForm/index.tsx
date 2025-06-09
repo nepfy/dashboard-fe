@@ -1,35 +1,98 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Eye } from "lucide-react";
 
 import TitleDescription from "../../TitleDescription";
+import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
+import { TermsCondition } from "#/types/project";
+
+import TermsAndConditionsAccordion from "./TermsAndConditionsAccordion";
 
 export default function TermsAndConditionsForm() {
-  const { prevStep, nextStep, formData } = useProjectGenerator();
+  const { prevStep, nextStep, updateFormData, formData, currentStep } =
+    useProjectGenerator();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFormData("step13", {
+      ...formData?.step13,
+      hideSection: e.target.checked,
+    });
+  };
+
+  const handleTermsConditionsChange = (termsConditions: TermsCondition[]) => {
+    updateFormData("step13", {
+      ...formData?.step13,
+      termsConditions: termsConditions,
+    });
+  };
 
   const handleBack = () => {
     prevStep();
   };
 
   const handleNext = () => {
+    setErrors({});
+
+    const hideSection = formData?.step13?.hideSection || false;
+    const termsConditionsList = formData?.step13?.termsConditions || [];
+    const newErrors: { [key: string]: string } = {};
+
+    if (!hideSection) {
+      if (termsConditionsList.length === 0) {
+        newErrors.termsConditions = "Ao menos 1 item é requerido";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     nextStep();
   };
 
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
+        <div className="mb-6">
+          <StepProgressIndicator currentStep={currentStep} />
+        </div>
+        <button
+          type="button"
+          onClick={() => {}}
+          className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        >
+          <Eye width="18" height="18" /> Pré-visualizar essa seção
+        </button>
         <TitleDescription
           title="Termos e condições:"
           description="Alinhe expectativas e responsabilidades"
         />
 
-        <div className="mt-6 space-y-4">
-          <div>
-            {formData.step13?.termsTitle}
-            {formData.step13?.termsConditions?.map((member, index) => (
-              <div key={index}>{member.description}</div>
-            ))}
+        <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
+          <input
+            type="checkbox"
+            checked={formData?.step13?.hideSection || false}
+            onChange={handleHideSectionChange}
+            className="border border-white-neutral-light-300 checkbox-custom"
+          />
+          Ocultar seção
+        </label>
+
+        <div className="py-6">
+          <div className="pt-4">
+            <TermsAndConditionsAccordion
+              termsConditionsList={formData?.step13?.termsConditions || []}
+              onFormChange={handleTermsConditionsChange}
+            />
+            {errors.termsConditions && (
+              <p className="text-red-700 rounded-md text-sm font-medium mt-3">
+                {errors.termsConditions}
+              </p>
+            )}
           </div>
         </div>
       </div>

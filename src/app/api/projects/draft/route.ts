@@ -84,7 +84,7 @@ export async function POST(request: Request) {
         ? formData.step11.deliveryServices.join(",")
         : formData.step11?.deliveryServices,
 
-      termsTitle: formData.step13?.termsTitle,
+      termsTitle: formData.step13?.termsConditions,
 
       endMessageTitle: formData.step15?.endMessageTitle,
       endMessageDescription: formData.step15?.endMessageDescription,

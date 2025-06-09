@@ -59,8 +59,6 @@ export const projectsTable = pgTable("projects", {
 
   deliveryServices: text("delivery_services"),
 
-  termsTitle: varchar("terms_title", { length: 255 }),
-
   endMessageTitle: varchar("end_message_title", { length: 255 }),
   endMessageDescription: text("end_message_description"),
 
@@ -198,6 +196,7 @@ export const projectTermsConditionsTable = pgTable("project_terms_conditions", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
   description: text("description").notNull(),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
