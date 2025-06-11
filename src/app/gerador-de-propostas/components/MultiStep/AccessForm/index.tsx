@@ -70,8 +70,11 @@ export default function AccessForm() {
       // Primeiro salva o projeto com os dados finais
       await finishProject();
 
-      // Redireciona para o dashboard
-      router.push("/dashboard");
+      // Redireciona para o dashboard com parâmetro de sucesso
+      const projectName = formData?.step1?.projectName || "Nova Proposta";
+      router.push(
+        `/dashboard?success=true&project=${encodeURIComponent(projectName)}`
+      );
     } catch (error) {
       console.error("Erro ao finalizar projeto:", error);
       setErrors({

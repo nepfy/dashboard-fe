@@ -1,12 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useProjects } from "#/hooks/useProjectGenerator/useProjects";
 
 import DashboardStartProjectView from "#/app/dashboard/components/DashboardStartProjectView";
 import DashboardProjectView from "#/app/dashboard/components/DashboardProjectView";
+import SuccessModal from "#/app/dashboard/components/SuccessModal";
 
 export default function Dashboard() {
+  const searchParams = useSearchParams();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [projectName, setProjectName] = useState("");
+
   const {
     projectsData,
     statistics,
@@ -20,6 +27,26 @@ export default function Dashboard() {
     updateProjectStatus,
     duplicateProjects,
   } = useProjects(1, 10);
+
+  // Check for success parameter when component mounts
+  useEffect(() => {
+    const success = searchParams?.get("success");
+    const project = searchParams?.get("project");
+
+    if (success === "true") {
+      setProjectName(project ? decodeURIComponent(project) : "Nova Proposta");
+      setShowSuccessModal(true);
+
+      // Clean up URL parameters
+      const newUrl = window.location.pathname;
+      window.history.replaceState(null, "", newUrl);
+    }
+  }, [searchParams]);
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    setProjectName("");
+  };
 
   const handleBulkStatusUpdate = async (
     projectIds: string[],
@@ -102,9 +129,16 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="h-full">
+    <div>
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onCloseAction={handleCloseSuccessModal}
+        projectName={projectName}
+      />
+
       {projectsData?.length && pagination ? (
-        <div className="p-7 h-full">
+        <div className="p-7">
           <DashboardProjectView
             projectsData={projectsData}
             pagination={pagination}
