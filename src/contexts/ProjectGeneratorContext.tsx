@@ -221,13 +221,13 @@ export function ProjectGeneratorProvider({
     safeUpdate("step15", {
       endMessageTitle: projectData.endMessageTitle,
       endMessageDescription: projectData.endMessageDescription,
+      projectValidUntil: projectData.projectValidUntil,
     });
 
     // Step 16 - Project settings
     safeUpdate("step16", {
       pageUrl: projectData.projectUrl,
       pagePassword: projectData.pagePassword,
-      projectValidUntil: projectData.projectValidUntil,
     });
   };
 

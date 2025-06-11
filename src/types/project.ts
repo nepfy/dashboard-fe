@@ -264,12 +264,12 @@ export interface Step15Data {
   hideSection?: boolean;
   endMessageTitle?: string;
   endMessageDescription?: string;
+  projectValidUntil?: Date | string;
 }
 
 export interface Step16Data {
   pageUrl?: string;
   pagePassword?: string;
-  projectValidUntil?: Date | string;
 }
 
 export interface ProposalFormData {

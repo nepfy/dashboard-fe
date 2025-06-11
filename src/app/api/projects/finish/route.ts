@@ -1,9 +1,8 @@
-// src/app/api/projects/draft/route.ts
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { eq, and } from "drizzle-orm";
-import { projectsTable, projectServicesTable } from "#/lib/db/schema/projects";
+import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
 export async function POST(request: Request) {
@@ -12,7 +11,7 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized" },
+        { success: false, error: "Não autorizado" },
         { status: 401 }
       );
     }
@@ -45,12 +44,23 @@ export async function POST(request: Request) {
 
     const userId = personResult[0].id;
 
+    // Validate required fields for finishing
+    if (!formData?.step16?.pageUrl || !formData?.step16?.pagePassword) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "URL e senha são obrigatórios para finalizar",
+        },
+        { status: 400 }
+      );
+    }
+
     // Convert form data to database format
     const projectData = {
       personId: userId,
       projectName:
         formData.step1?.projectName ||
-        `Rascunho ${new Date().toLocaleDateString()}`,
+        `Proposta ${new Date().toLocaleDateString()}`,
       clientName: formData.step1?.clientName || "Cliente não informado",
       templateType: templateType || "flash",
       mainColor: formData.step1?.mainColor,
@@ -59,9 +69,7 @@ export async function POST(request: Request) {
       ctaButtonTitle: formData.step1?.ctaButtonTitle,
       pageTitle: formData.step1?.pageTitle,
       pageSubtitle: formData.step1?.pageSubtitle,
-      services: Array.isArray(formData.step1?.services)
-        ? formData.step1.services.join(",")
-        : formData.step1?.services,
+      services: formData.step1?.services?.join(","),
 
       aboutUsTitle: formData.step2?.aboutUsTitle,
       aboutUsSubtitle1: formData.step2?.aboutUsSubtitle1,
@@ -79,32 +87,27 @@ export async function POST(request: Request) {
 
       investmentTitle: formData.step10?.investmentTitle,
 
-      // Handle deliveryServices - convert array to comma-separated string
-      deliveryServices: Array.isArray(formData.step11?.deliveryServices)
-        ? formData.step11.deliveryServices.join(",")
-        : formData.step11?.deliveryServices,
-
-      termsTitle: formData.step13?.termsConditions,
+      termsTitle: formData.step13?.termsTitle,
 
       endMessageTitle: formData.step15?.endMessageTitle,
       endMessageDescription: formData.step15?.endMessageDescription,
-      projectValidUntil: formData.step15?.projectValidUntil
-        ? new Date(formData.step16.projectValidUntil)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 
       projectUrl: formData.step16?.pageUrl,
       pagePassword: formData.step16?.pagePassword,
+      projectValidUntil: formData.step16?.projectValidUntil
+        ? new Date(formData.step16.projectValidUntil)
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
 
-      projectStatus: "draft",
-      isProposalGenerated: false,
-      created_at: new Date(),
+      // Set as active and proposal generated when finishing
+      projectStatus: "active",
+      isProposalGenerated: true,
       updated_at: new Date(),
     };
 
     let savedProject;
 
     if (projectId) {
-      // Update existing draft
+      // Update existing project
       const existingProject = await db
         .select()
         .from(projectsTable)
@@ -137,60 +140,30 @@ export async function POST(request: Request) {
         )
         .returning();
     } else {
-      // Create new draft
+      // Create new project
       savedProject = await db
         .insert(projectsTable)
-        .values(projectData)
+        .values({
+          ...projectData,
+          created_at: new Date(),
+        })
         .returning();
     }
 
     if (savedProject.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Falha ao salvar rascunho" },
+        { success: false, error: "Falha ao finalizar projeto" },
         { status: 500 }
       );
     }
 
-    const finalProjectId = savedProject[0].id;
-
-    // Handle includedServices - save to projectServicesTable
-    if (
-      formData.step11?.includedServices &&
-      Array.isArray(formData.step11.includedServices)
-    ) {
-      // Delete existing services for this project
-      await db
-        .delete(projectServicesTable)
-        .where(eq(projectServicesTable.projectId, finalProjectId));
-
-      // Insert new services
-      interface IncludedService {
-        title?: string;
-        description?: string;
-        sortOrder?: number;
-      }
-
-      if (formData.step11.includedServices.length > 0) {
-        const servicesToInsert = formData.step11.includedServices.map(
-          (service: IncludedService, index: number) => ({
-            projectId: finalProjectId,
-            title: service.title || "",
-            description: service.description || "",
-            sortOrder: service.sortOrder || index,
-          })
-        );
-
-        await db.insert(projectServicesTable).values(servicesToInsert);
-      }
-    }
-
     return NextResponse.json({
       success: true,
-      message: "Rascunho salvo com sucesso",
+      message: "Projeto finalizado com sucesso",
       data: savedProject[0],
     });
   } catch (error) {
-    console.error("Error saving draft:", error);
+    console.error("Error finishing project:", error);
     return NextResponse.json(
       { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }
