@@ -9,11 +9,13 @@ import { ProcessStep } from "#/types/project";
 interface ProcessAccordionProps {
   processList: ProcessStep[];
   onFormChange: (processSteps: ProcessStep[]) => void;
+  disabled?: boolean;
 }
 
 export default function ProcessAccordion({
   processList,
   onFormChange,
+  disabled = false,
 }: ProcessAccordionProps) {
   const [openProcess, setOpenProcess] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -22,6 +24,8 @@ export default function ProcessAccordion({
   const [processToRemove, setProcessToRemove] = useState<string | null>(null);
 
   const addProcess = () => {
+    if (disabled) return;
+
     const newProcess: ProcessStep = {
       id: `process-${Date.now()}`,
       stepCounter: processList.length + 1,
@@ -36,6 +40,8 @@ export default function ProcessAccordion({
   };
 
   const removeProcess = (processId: string) => {
+    if (disabled) return;
+
     const updatedProcess = processList.filter(
       (process) => process.id !== processId
     );
@@ -53,6 +59,7 @@ export default function ProcessAccordion({
   };
 
   const handleRemoveClick = (processId: string) => {
+    if (disabled) return;
     setProcessToRemove(processId);
     setShowRemoveModal(true);
   };
@@ -75,6 +82,8 @@ export default function ProcessAccordion({
     field: keyof ProcessStep,
     value: string | number
   ) => {
+    if (disabled) return;
+
     const updatedProcess = processList.map((process) =>
       process.id === processId ? { ...process, [field]: value } : process
     );
@@ -82,27 +91,35 @@ export default function ProcessAccordion({
   };
 
   const toggleProcess = (processId: string) => {
+    if (disabled) return;
     setOpenProcess(openProcess === processId ? null : processId);
   };
 
   // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", "");
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
+    if (disabled) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDragOverIndex(index);
   };
 
   const handleDragLeave = () => {
+    if (disabled) return;
     setDragOverIndex(null);
   };
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    if (disabled) return;
     e.preventDefault();
 
     if (draggedIndex === null || draggedIndex === dropIndex) {
@@ -141,38 +158,48 @@ export default function ProcessAccordion({
       {processList.map((process, index) => (
         <div
           key={process.id}
-          draggable
-          onDragStart={(e) => handleDragStart(e, index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragEnd={handleDragEnd}
           className={`transition-all duration-200 ${
             draggedIndex === index ? "opacity-50 scale-95" : ""
           } ${
             dragOverIndex === index && draggedIndex !== index
               ? "border-2 border-primary-light-400 border-dashed"
               : ""
-          }`}
+          } ${disabled ? "opacity-60" : ""}`}
         >
           {/* Accordion Header */}
-          <div className="flex justify-center gap-4 w-full">
+          <div
+            className="flex justify-center gap-4 w-full"
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, index)}
+          >
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-                draggedIndex === index ? "cursor-grabbing" : ""
+              className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                disabled
+                  ? "cursor-not-allowed"
+                  : "hover:bg-white-neutral-light-400"
               }`}
               onClick={(e) => {
                 e.preventDefault();
-                if (draggedIndex === null) {
+                if (!disabled && draggedIndex === null) {
                   toggleProcess(process.id);
                 }
               }}
             >
-              <div className="flex items-center gap-3">
+              <div
+                className="flex items-center gap-3"
+                draggable={!disabled}
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragEnd={handleDragEnd}
+              >
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                    title="Arraste para reordenar"
+                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                      disabled
+                        ? "cursor-not-allowed"
+                        : "cursor-grab active:cursor-grabbing"
+                    }`}
+                    title={disabled ? "Desabilitado" : "Arraste para reordenar"}
                   >
                     ⋮⋮
                   </div>
@@ -197,8 +224,13 @@ export default function ProcessAccordion({
                 e.stopPropagation();
                 handleRemoveClick(process.id);
               }}
-              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover etapa"
+              disabled={disabled}
+              className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                disabled
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer hover:bg-red-50"
+              }`}
+              title={disabled ? "Desabilitado" : "Remover etapa"}
             >
               <Trash2 size={16} />
             </button>
@@ -208,8 +240,13 @@ export default function ProcessAccordion({
           {openProcess === process.id && (
             <div className="pb-4 space-y-4">
               <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Nome da etapa
+                </p>
                 <TextField
-                  label="Nome da etapa"
                   inputName={`stepName-${process.id}`}
                   id={`stepName-${process.id}`}
                   type="text"
@@ -218,12 +255,21 @@ export default function ProcessAccordion({
                   onChange={(e) =>
                     updateProcess(process.id, "stepName", e.target.value)
                   }
+                  maxLength={30}
+                  minLength={20}
+                  showCharCount
+                  disabled={disabled}
                 />
               </div>
 
               <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Descrição
+                </p>
                 <TextAreaField
-                  label="Descrição"
                   id={`description-${process.id}`}
                   textareaName={`description-${process.id}`}
                   placeholder="Descreva esta etapa do processo"
@@ -233,7 +279,9 @@ export default function ProcessAccordion({
                   }
                   rows={3}
                   showCharCount
-                  maxLength={200}
+                  maxLength={345}
+                  minLength={190}
+                  disabled={disabled}
                 />
               </div>
             </div>
@@ -244,7 +292,12 @@ export default function ProcessAccordion({
       <button
         type="button"
         onClick={addProcess}
-        className="w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        disabled={disabled}
+        className={`w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner ${
+          disabled
+            ? "cursor-not-allowed opacity-60 bg-white-neutral-light-200"
+            : "cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
+        }`}
       >
         <Plus size={16} />
         Adicionar Etapa

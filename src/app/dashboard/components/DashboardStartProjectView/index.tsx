@@ -98,7 +98,7 @@ export default function DashboardStartProjectView() {
             com facilidade.
           </p>
 
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center z-20">
             <div className="bg-primary-light-500 h-[42px] w-[42px] rounded-[10px] hidden sm:flex items-center justify-center">
               <Sparkle width="24" height="24" fill="#ffffff" />
             </div>

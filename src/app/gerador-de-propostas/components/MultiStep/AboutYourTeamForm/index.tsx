@@ -10,6 +10,7 @@ import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TeamMemberAccordion from "./TeamMembersAccordion";
 import { TeamMember } from "#/types/project";
+import InfoIcon from "#/components/icons/InfoIcon";
 
 export default function AboutYourTeamForm() {
   const { prevStep, nextStep, updateFormData, formData, currentStep } =
@@ -17,6 +18,7 @@ export default function AboutYourTeamForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrors({});
     updateFormData("step3", {
       ...formData?.step3,
       hideSection: e.target.checked,
@@ -78,6 +80,8 @@ export default function AboutYourTeamForm() {
     nextStep();
   };
 
+  const hideSectionChecked = formData?.step3?.hideSection || false;
+
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
@@ -99,17 +103,32 @@ export default function AboutYourTeamForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step3?.hideSection || false}
+            checked={hideSectionChecked}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />
           Ocultar seção
         </label>
 
+        {hideSectionChecked && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção{" "}
+              <span className="font-bold">&quot;Sobre seu time&quot;</span> está
+              atualmente oculta da proposta.
+            </p>
+          </div>
+        )}
+
         <div className="py-6">
           <div className="py-2">
+            <p
+              className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center"
+              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            >
+              Subtítulo
+            </p>
             <TextAreaField
-              label="Subtítulo"
               id="ourTeamSubtitle"
               textareaName="ourTeamSubtitle"
               placeholder="Fale mais sobre você ou seu time"
@@ -120,12 +139,14 @@ export default function AboutYourTeamForm() {
               rows={2}
               showCharCount
               error={errors.ourTeamSubtitle}
+              disabled={hideSectionChecked}
             />
           </div>
           <div className="pt-4">
             <TeamMemberAccordion
               teamMembers={formData?.step3?.teamMembers || []}
               onTeamMembersChange={handleTeamMembersChange}
+              disabled={hideSectionChecked}
             />
             {errors.teamMembers && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -137,7 +158,7 @@ export default function AboutYourTeamForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6 items-center">
         <button
           type="button"
           onClick={handleBack}
@@ -152,6 +173,14 @@ export default function AboutYourTeamForm() {
         >
           Avançar
         </button>
+        {errors.ourTeamSubtitle || errors.teamMembers ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

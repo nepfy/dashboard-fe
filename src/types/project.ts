@@ -21,12 +21,13 @@ export interface Expertise {
 
 export interface Result {
   id: string;
+  client: string;
+  subtitle: string;
+  investment: string;
+  roi: string;
   photo?: string;
-  client?: string;
-  subtitle?: string;
-  investment?: string;
-  roi?: string;
-  sortOrder?: number;
+  hidePhoto?: boolean;
+  sortOrder: number;
 }
 
 export interface Client {
@@ -208,7 +209,6 @@ export interface Step4Data {
 
 export interface Step5Data {
   hideSection?: boolean;
-  resultsSubtitle?: string;
   results?: Result[];
 }
 
@@ -263,6 +263,7 @@ export interface Step14Data {
 export interface Step15Data {
   hideSection?: boolean;
   endMessageTitle?: string;
+  endMessageTitle2?: string;
   endMessageDescription?: string;
   projectValidUntil?: Date | string;
 }

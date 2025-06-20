@@ -3,13 +3,19 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check, Eye, EyeOff } from "lucide-react";
 
 import QuestionIcon from "#/components/icons/QuestionIcon";
-import { TextField } from "#/components/Inputs";
+import InfoIcon from "#/components/icons/InfoIcon";
 import Modal from "#/components/Modal";
 import TitleDescription from "../../TitleDescription";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
+
+interface PasswordValidation {
+  minLength: boolean;
+  hasNumber: boolean;
+  hasUppercase: boolean;
+}
 
 export default function AccessForm() {
   const router = useRouter();
@@ -21,6 +27,13 @@ export default function AccessForm() {
   const [isMobile, setIsMobile] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isFinishing, setIsFinishing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Estado para controlar visualização da senha
+  const [passwordValidation, setPasswordValidation] =
+    useState<PasswordValidation>({
+      minLength: false,
+      hasNumber: false,
+      hasUppercase: false,
+    });
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -35,6 +48,20 @@ export default function AccessForm() {
 
   const pageUrl = formData?.step16?.pageUrl || "";
   const pagePassword = formData?.step16?.pagePassword || "";
+
+  const validatePassword = (password: string): PasswordValidation => {
+    return {
+      minLength: password.length >= 6,
+      hasNumber: /\d/.test(password),
+      hasUppercase: /[A-Z]/.test(password),
+    };
+  };
+
+  const isPasswordValid = (validation: PasswordValidation): boolean => {
+    return (
+      validation.minLength && validation.hasNumber && validation.hasUppercase
+    );
+  };
 
   const handleBack = () => {
     prevStep();
@@ -55,8 +82,9 @@ export default function AccessForm() {
 
     if (pagePassword.length === 0) {
       newErrors.pagePassword = "O campo 'Senha' é obrigatório";
-    } else if (pagePassword.length < 6) {
-      newErrors.pagePassword = "A senha deve ter pelo menos 6 caracteres";
+    } else if (!isPasswordValid(passwordValidation)) {
+      newErrors.pagePassword =
+        "A senha deve atender todos os requisitos de segurança";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -67,10 +95,8 @@ export default function AccessForm() {
     try {
       setIsFinishing(true);
 
-      // Primeiro salva o projeto com os dados finais
       await finishProject();
 
-      // Redireciona para o dashboard com parâmetro de sucesso
       const projectName = formData?.step1?.projectName || "Nova Proposta";
       router.push(
         `/dashboard?success=true&project=${encodeURIComponent(projectName)}`
@@ -128,10 +154,16 @@ export default function AccessForm() {
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+
     updateFormData("step16", {
       ...formData?.step16,
-      pagePassword: e.target.value,
+      pagePassword: newPassword,
     });
+
+    // Valida a senha em tempo real
+    const validation = validatePassword(newPassword);
+    setPasswordValidation(validation);
 
     if (errors.pagePassword) {
       setErrors((prev) => {
@@ -150,6 +182,34 @@ export default function AccessForm() {
     setURLModal(!urlModal);
   };
 
+  // Função para alternar visualização da senha
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const ValidationIndicator = ({
+    isValid,
+    text,
+  }: {
+    isValid: boolean;
+    text: string;
+  }) => (
+    <div className="flex items-center gap-2">
+      <div
+        className={`w-4 h-4 flex items-center justify-center ${
+          isValid ? "text-secondary-light-300" : "text-white-neutral-light-500"
+        }`}
+      >
+        <Check size={10} />
+      </div>
+      <span
+        className={`text-sm ${isValid ? "text-gray-700" : "text-gray-600"}`}
+      >
+        {text}
+      </span>
+    </div>
+  );
+
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
@@ -158,9 +218,12 @@ export default function AccessForm() {
           description="Personalize e proteja sua proposta com segurança"
         />
 
-        <div className="mt-6 space-y-4 flex items-start justify-between gap-2 max-w-[560px]">
-          <div className="flex-1">
-            <p className="font-medium text-white-neutral-light-900 text-[14px] mb-2">
+        <div className="mt-6 space-y-4 flex items-start justify-between gap-2 max-w-[560px] relative">
+          <div className="w-full">
+            <p
+              className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            >
               Personalize a URL da proposta com o nome do seu cliente:
             </p>
 
@@ -179,35 +242,91 @@ export default function AccessForm() {
                           text-white-neutral-light-800 max-w-[250px]"
                 rows={isMobile ? 2 : 1}
                 style={{ resize: "none" }}
+                maxLength={10}
               />
 
               <span className="text-white-neutral-light-600">.nepfy.com</span>
             </div>
             {errors?.pageUrl && (
-              <div className="text-red-700 rounded-md text-sm font-medium">
+              <div className="text-red-700 rounded-md text-sm font-medium mt-2">
                 {errors?.pageUrl}
               </div>
             )}
           </div>
 
-          <div className="mt-1 sm:mt-0" onClick={toggleUrlModal}>
+          <div className="absolute right-2 top-2.5" onClick={toggleUrlModal}>
             <QuestionIcon className="cursor-pointer" fill="#8B8895" />
           </div>
         </div>
 
-        <div className="mt-6 space-y-4 flex items-start justify-between gap-2 max-w-[560px]">
-          <TextField
-            label="Crie uma senha para a sua proposta"
-            id="pagePassword"
-            inputName="pagePassword"
-            type="password"
-            placeholder="Digite uma senha para a sua proposta"
-            value={pagePassword}
-            onChange={handlePasswordChange}
-            onClick={togglePasswordModal}
-            info
-            error={errors?.pagePassword}
-          />
+        <div className="mt-6 space-y-4 max-w-[560px]">
+          <div className="flex items-start justify-between gap-2 relative">
+            <div className="w-full">
+              <label
+                htmlFor="pagePassword"
+                className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Crie uma senha para a sua proposta
+              </label>
+
+              <div className="relative">
+                <input
+                  id="pagePassword"
+                  name="pagePassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Digite uma senha para a sua proposta"
+                  value={pagePassword}
+                  onChange={handlePasswordChange}
+                  className="w-full px-4 py-3 pr-12 rounded-[var(--radius-s)] 
+                            border border-white-neutral-light-300 
+                            focus:outline-none focus:border-[var(--color-primary-light-400)]
+                            bg-white-neutral-light-100 
+                            placeholder:text-[var(--color-white-neutral-light-400)]  
+                            text-white-neutral-light-800"
+                />
+
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 
+                           text-white-neutral-light-600 hover:text-white-neutral-light-800 
+                           focus:outline-none transition-colors duration-200"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
+              {errors?.pagePassword && (
+                <div className="text-red-700 rounded-md text-sm font-medium mt-2">
+                  {errors?.pagePassword}
+                </div>
+              )}
+            </div>
+
+            <div
+              className="absolute right-2 top-2.5"
+              onClick={togglePasswordModal}
+            >
+              <QuestionIcon className="cursor-pointer" fill="#8B8895" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <ValidationIndicator
+              isValid={passwordValidation.minLength}
+              text="Pelo menos 6 caracteres"
+            />
+            <ValidationIndicator
+              isValid={passwordValidation.hasNumber}
+              text="1 número"
+            />
+            <ValidationIndicator
+              isValid={passwordValidation.hasUppercase}
+              text="1 letra maiúscula"
+            />
+          </div>
         </div>
 
         {errors?.general && (
@@ -217,7 +336,7 @@ export default function AccessForm() {
         )}
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
@@ -235,7 +354,10 @@ export default function AccessForm() {
         <button
           type="button"
           onClick={handleFinish}
-          disabled={isFinishing}
+          disabled={
+            isFinishing ||
+            (!!pagePassword && !isPasswordValid(passwordValidation))
+          }
           className="w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium 
                      border rounded-[12px] bg-primary-light-500 button-inner-inverse 
                      border-white-neutral-light-300 cursor-pointer text-white-neutral-light-100
@@ -251,51 +373,87 @@ export default function AccessForm() {
             "Finalizar"
           )}
         </button>
+        {errors?.general || errors?.pagePassword || errors?.pageUrl ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
 
       <Modal
         isOpen={urlModal}
         onClose={() => setURLModal(false)}
         title="URL da proposta"
+        boldTitle
       >
         <div className="p-6 text-[14px]">
-          <p className="text-white-neutral-light-500 text-sm mb-4">
+          <p className="text-white-neutral-light-900 text-sm mb-4">
             Sua URL terá o formato:{" "}
             <span className="text-primary-light-500">
               usuario-cliente.nepfy.com
             </span>
           </p>
 
-          <p className="text-white-neutral-light-500 mb-4">
+          <p className="text-white-neutral-light-900 mb-4">
             <span className="font-bold"> Nome de usuário:</span> Este é o seu
             identificador na plataforma e aparecerá em todas as suas propostas.
           </p>
 
-          <p className="text-white-neutral-light-500 mb-4">
-            • Exemplo:{" "}
-            <span className="text-primary-light-500">joaosilva-cliente</span>
+          <p className="text-white-neutral-light-900 flex items-center gap-2 mb-4">
+            <span className="text-primary-light-500 text-2xl"> • </span>
+            <span>
+              Exemplo: <span className="text-primary-light-500">joaosilva</span>
+              -cliente
+            </span>
           </p>
 
-          <p className="text-white-neutral-light-500 mb-4">
+          <p className="text-white-neutral-light-900 mb-4">
             <span className="font-bold"> Nome do cliente:</span> Essa parte
             identifica para quem a proposta está sendo enviada.
           </p>
 
-          <p className="text-white-neutral-light-500 mb-4">
-            • Exemplo: joaosilva-
-            <span className="text-primary-light-500">odontopati</span>
+          <p className="text-white-neutral-light-900 flex items-center gap-2 mb-4">
+            <span className="text-primary-light-500 text-2xl"> • </span>
+            <span>
+              Exemplo: joaosilva-
+              <span className="text-primary-light-500">odontopati</span>
+            </span>
           </p>
 
-          <p className="text-white-neutral-light-500 font-bold mb-4">
+          <p className="text-white-neutral-light-900 font-bold mb-4">
             Regras para o nome do cliente:
           </p>
-          <ul className="text-white-neutral-light-500 text-sm">
-            <li>• Escolha um nome curto (até 10 caracteres).</li>
-            <li>• Use apenas letras minúsculas.</li>
-            <li>• Evite espaços, números ou caracteres especiais.</li>
-            <li>
-              • Não use o mesmo nome de cliente mais de uma vez (cada proposta
-              deve ter uma URL única)
+          <ul className="text-sm">
+            <li className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl"> • </span>{" "}
+              <span className="text-white-neutral-light-900">
+                {" "}
+                Escolha um nome curto (até 10 caracteres).
+              </span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl"> • </span>{" "}
+              <span className="text-white-neutral-light-900">
+                {" "}
+                Use apenas letras minúsculas.
+              </span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl"> • </span>{" "}
+              <span className="text-white-neutral-light-900">
+                Não é permitido o uso de espaços, números ou caracteres
+                especiais.
+              </span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl"> • </span>{" "}
+              <span className="text-white-neutral-light-900">
+                Não use o mesmo nome de cliente mais de uma vez (cada proposta
+                deve ter uma URL única)
+              </span>
             </li>
           </ul>
         </div>
@@ -313,21 +471,39 @@ export default function AccessForm() {
         isOpen={passwordModal}
         onClose={() => setPasswordModal(false)}
         title="Senha da proposta"
+        boldTitle
       >
         <div className="p-6">
-          <p className="text-white-neutral-light-500 font-bold mb-4">
-            Essa senha será enviada ao seu cliente para que ele possa visualizar
-            a proposta com segurança.
+          <p className="text-white-neutral-light-900 text-sm mb-4">
+            Essa senha deve ser enviada por você ao cliente para acesso seguro à
+            proposta
           </p>
 
-          <p className="text-white-neutral-light-500 font-bold mb-4">
+          <p className="text-white-neutral-light-900 text-sm font-bold mb-4">
             Requisitos da senha:
           </p>
 
-          <ul className="text-white-neutral-light-500 text-sm">
-            <li>• Pelo menos 6 caracteres</li>
-            <li>• Contém 1 letra maiúscula</li>
-            <li>• Contém 1 número</li>
+          <ul className="text-white-neutral-light-900 text-sm">
+            <li className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl"> • </span>{" "}
+              <span className="text-white-neutral-light-900">
+                Pelo menos 6 caracteres
+              </span>
+            </li>
+
+            <li className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl"> • </span>{" "}
+              <span className="text-white-neutral-light-900">
+                Contém 1 letra maiúscula
+              </span>
+            </li>
+
+            <li className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl"> • </span>{" "}
+              <span className="text-white-neutral-light-900">
+                Contém 1 número
+              </span>
+            </li>
           </ul>
         </div>
       </Modal>

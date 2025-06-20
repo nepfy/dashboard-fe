@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
-import TagInput from "#/components/Inputs/TagInput";
+import InfoIcon from "#/components/icons/InfoIcon";
+
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
@@ -17,9 +18,16 @@ export default function ProjectDeliveriesForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isHidden = e.target.checked;
+    setErrors({});
+
     updateFormData("step11", {
       ...formData?.step11,
-      hideSection: e.target.checked,
+      hideSection: isHidden,
+      // Se a seção for ocultada e já houver serviços, removê-los
+      includedServices: isHidden
+        ? []
+        : formData?.step11?.includedServices || [],
     });
   };
 
@@ -27,13 +35,6 @@ export default function ProjectDeliveriesForm() {
     updateFormData("step11", {
       ...formData?.step11,
       includedServices: services,
-    });
-  };
-
-  const handleServicesChange = (services: string[]) => {
-    updateFormData("step11", {
-      ...formData?.step11,
-      deliveryServices: services,
     });
   };
 
@@ -50,7 +51,21 @@ export default function ProjectDeliveriesForm() {
 
     if (!hideSection) {
       if (servicesList.length === 0) {
-        newErrors.includedServices = "Ao menos 1 item é requerido";
+        newErrors.includedServices = "Ao menos 1 entrega é requerida";
+      } else {
+        // Validate individual service items
+        servicesList.forEach((service: Service, index: number) => {
+          if (!service.title?.trim()) {
+            newErrors[`service_${index}_title`] = `Título da entrega ${
+              index + 1
+            } é obrigatório`;
+          }
+          if (!service.description?.trim()) {
+            newErrors[`service_${index}_description`] = `Descrição da entrega ${
+              index + 1
+            } é obrigatória`;
+          }
+        });
       }
     }
 
@@ -61,6 +76,9 @@ export default function ProjectDeliveriesForm() {
 
     nextStep();
   };
+
+  // Determinar se o accordion deve estar desabilitado
+  const isAccordionDisabled = formData?.step11?.hideSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -90,32 +108,33 @@ export default function ProjectDeliveriesForm() {
           Ocultar seção
         </label>
 
+        {isAccordionDisabled && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção{" "}
+              <span className="font-bold">&quot;Entregas incluídas&quot;</span>{" "}
+              está atualmente oculta da proposta.
+            </p>
+          </div>
+        )}
+
         <div className="py-6">
           <div className="pt-4">
             <ProjectDeliveriesAccordion
               servicesList={formData?.step11?.includedServices || []}
               onFormChange={handleFormListChange}
+              disabled={isAccordionDisabled}
             />
-            {errors.includedServices && (
+            {errors.includedServices && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
                 {errors.includedServices}
               </p>
             )}
           </div>
-
-          <div className="pb-6">
-            <TagInput
-              label="Serviços"
-              placeholder="Digite um serviço e pressione ; ou Tab"
-              value={formData?.step11?.deliveryServices || []}
-              onChange={handleServicesChange}
-              infoText="Separe os serviços por ponto e vírgula (;) ou Tab. Use as setas para navegar e Delete para remover."
-            />
-          </div>
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
@@ -130,6 +149,14 @@ export default function ProjectDeliveriesForm() {
         >
           Avançar
         </button>
+        {errors.includedServices ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { LoaderCircle, ArrowLeft } from "lucide-react";
 import Modal from "#/components/Modal";
 import { TextField } from "#/components/Inputs";
 import { Project } from "#/types/project";
@@ -38,9 +38,33 @@ export default function ImportDataModal({
   // Import functionality state
   const [selectedProject, setSelectedProject] = useState("");
   const [projectsList, setProjectsList] = useState<ProjectProps[]>([]);
+  const [hasExistingProjects, setHasExistingProjects] = useState<
+    boolean | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check if user has existing projects when component mounts
+  useEffect(() => {
+    checkExistingProjects();
+  }, []);
+
+  const checkExistingProjects = async () => {
+    try {
+      const response = await fetch("/api/projects?limit=1");
+      const result = await response.json();
+
+      if (result.success) {
+        setHasExistingProjects(result.data.length > 0);
+      } else {
+        setHasExistingProjects(false);
+      }
+    } catch (err) {
+      console.error("Error checking existing projects:", err);
+      setHasExistingProjects(false);
+    }
+  };
 
   const fetchProjects = async () => {
     try {
@@ -180,7 +204,12 @@ export default function ImportDataModal({
     <Modal
       isOpen={true}
       onClose={onClose || (() => {})}
-      title="Criar novo projeto!"
+      title={
+        currentStep === "initial"
+          ? "Como você quer identificar essa proposta?"
+          : "Criar nova proposta!"
+      }
+      boldTitle
       footer={false}
       closeOnClickOutside={!isImporting}
       showCloseButton={!isImporting}
@@ -189,11 +218,10 @@ export default function ImportDataModal({
       {currentStep === "initial" && (
         <>
           <div className="p-6">
-            <p className="text-white-neutral-light-500 font-bold text-sm mb-4">
-              Vamos começar criando seu novo projeto.
-            </p>
-            <p className="text-white-neutral-light-500 text-sm mb-6">
-              Primeiro, preencha as informações básicas do seu projeto:
+            <p className="text-white-neutral-light-900 text-sm mb-8">
+              <span className="font-bold">Esses dados são só pra você.</span>{" "}
+              Eles vão aparecer no seu painel de gerenciamento pra facilitar na
+              hora de encontrar e organizar suas propostas.
             </p>
 
             <div className="space-y-4">
@@ -243,9 +271,9 @@ export default function ImportDataModal({
             <button
               type="button"
               onClick={handleInitialFormSubmit}
-              className="w-full sm:w-[140px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
+              className="w-full sm:w-[75px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
             >
-              Continuar
+              Salvar
             </button>
           </div>
         </>
@@ -255,36 +283,42 @@ export default function ImportDataModal({
       {currentStep === "import-choice" && (
         <>
           <div className="p-6">
-            <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
-              Perfeito! Agora vamos configurar seu projeto &quot;{projectName}
-              &quot;.
+            <p className="text-white-neutral-light-900 font-semibold text-sm mb-3">
+              Você está prestes a criar uma nova proposta.
             </p>
-            <p className="text-white-neutral-light-500 text-sm mb-3">
-              Para facilitar, é possível importar informações de um projeto já
+            <p className="text-white-neutral-light-900 text-sm mb-3">
+              Para facilitar, é possível importar informações de uma proposta já
               existente, como dados do time, serviços, termos de trabalho, entre
               outros. Assim, você poderá aproveitar o que já foi preenchido e
-              fazer apenas os ajustes necessários para personalizar o novo
-              projeto.
+              fazer apenas os ajustes necessários para personalizar a nova
+              proposta.
             </p>
 
-            <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
+            <p className="text-white-neutral-light-900 font-semibold text-sm mb-3">
               Escolha uma das opções abaixo:
             </p>
 
-            <div className="flex gap-2">
-              <span className="text-white-neutral-light-500">&#8226;</span>
-              <p className="text-white-neutral-light-500 text-sm mb-3">
-                <span className="font-bold">
-                  Importar dados de um projeto anterior:
-                </span>{" "}
-                Selecione um projeto já preenchido para importar as informações.
-                Depois, você poderá alterar o que for necessário.
-              </p>
-            </div>
+            {/* Only show import option if user has existing projects */}
+            {hasExistingProjects && (
+              <div className="flex items-center gap-2">
+                <span className="text-primary-light-500 text-2xl p-0">
+                  &#8226;
+                </span>
+                <p className="text-white-neutral-light-900 text-sm mb-3">
+                  <span className="font-bold">
+                    Importar dados de um projeto anterior:
+                  </span>{" "}
+                  Selecione um projeto já preenchido para importar as
+                  informações. Depois, você poderá alterar o que for necessário.
+                </p>
+              </div>
+            )}
 
-            <div className="flex gap-2">
-              <span className="text-white-neutral-light-500">&#8226;</span>
-              <p className="text-white-neutral-light-500 text-sm mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl p-0">
+                &#8226;
+              </span>
+              <p className="text-white-neutral-light-900 text-sm mb-3">
                 <span className="font-bold">
                   Iniciar um novo projeto do zero:
                 </span>{" "}
@@ -293,28 +327,33 @@ export default function ImportDataModal({
               </p>
             </div>
           </div>
-          <div className="flex justify-start flex-wrap sm:flex-nowrap p-6 border-t border-t-white-neutral-light-300 gap-2">
+          <div className="flex justify-between flex-wrap sm:flex-nowrap p-6 border-t border-t-white-neutral-light-300 gap-2">
             <button
               type="button"
               onClick={handleBack}
-              className="w-full sm:w-[100px] h-[38px] px-4 py-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer button-inner"
+              className="w-[36px] h-[36px] cursor-pointer text-white-neutral-light-900 hover:text-white-neutral-light-700"
             >
-              Voltar
+              <ArrowLeft size={20} strokeWidth={2} />
             </button>
-            <button
-              type="button"
-              onClick={handleImportDataClick}
-              className="w-full sm:w-[140px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
-            >
-              Importar dados
-            </button>
-            <button
-              type="button"
-              onClick={handleCreateNewClick}
-              className="w-full sm:w-[180px] h-[38px] px-4 py-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer button-inner"
-            >
-              Criar novo projeto
-            </button>
+            <div>
+              {/* Only show import button if user has existing projects */}
+              {hasExistingProjects && (
+                <button
+                  type="button"
+                  onClick={handleImportDataClick}
+                  className="w-full sm:w-[140px] h-[38px] px-4 py-2 mr-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+                >
+                  Importar dados
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleCreateNewClick}
+                className="w-full sm:w-[180px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-primary-light-600 cursor-pointer button-inner-inverse"
+              >
+                Criar nova proposta
+              </button>
+            </div>
           </div>
         </>
       )}

@@ -4,6 +4,7 @@ import { ArrowLeft, Eye } from "lucide-react";
 import { useState } from "react";
 
 import { TextAreaField } from "#/components/Inputs";
+import InfoIcon from "#/components/icons/InfoIcon";
 
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
@@ -28,7 +29,7 @@ export default function InvestmentForm() {
 
     if (!hideSection) {
       if (investmentTitle.length < 50) {
-        newErrors.aboutUsTitle =
+        newErrors.investmentTitle = // ← Corrigido: era 'aboutUsTitle'
           "O campo 'Título' deve ter pelo menos 50 caracteres";
       }
     }
@@ -65,6 +66,8 @@ export default function InvestmentForm() {
     });
   };
 
+  const isDisabled = formData?.step10?.hideSection || false;
+
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
@@ -93,10 +96,25 @@ export default function InvestmentForm() {
           Ocultar seção
         </label>
 
+        {isDisabled && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção{" "}
+              <span className="font-bold">&quot;Investimento&quot;</span> está
+              atualmente oculta da proposta.
+            </p>
+          </div>
+        )}
+
         <div className="py-6">
           <div className="py-2">
+            <p
+              className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center"
+              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            >
+              Título {/* ← Corrigido: era 'Títutlo' */}
+            </p>
             <TextAreaField
-              label="Título"
               id="investmentTitle"
               textareaName="investmentTitle"
               placeholder="Fale sobre você ou sua empresa"
@@ -106,12 +124,13 @@ export default function InvestmentForm() {
               minLength={50}
               showCharCount
               error={errors.investmentTitle}
+              disabled={isDisabled}
             />
           </div>
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[90px] xl:h-[100px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[90px] xl:h-[100px] flex items-center gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
@@ -126,6 +145,14 @@ export default function InvestmentForm() {
         >
           Avançar
         </button>
+        {errors.investmentTitle ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

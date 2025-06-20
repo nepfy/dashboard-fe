@@ -2,20 +2,27 @@ import { useState } from "react";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 
 import PictureIcon from "#/components/icons/PictureIcon";
+import EyeOpened from "#/components/icons/EyeOpened";
+import EyeClosed from "#/components/icons/EyeClosed";
+
 import { TextField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
-import { useImageUpload } from "#/hooks/useImageUpload";
 
+import { useImageUpload } from "#/hooks/useImageUpload";
 import { Result } from "#/types/project";
 
 interface ResultsAccordionProps {
   results: Result[];
   onResultsChange: (results: Result[]) => void;
+  disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function ResultsAccordion({
   results,
   onResultsChange,
+  disabled = false,
+  errors = {},
 }: ResultsAccordionProps) {
   const [openResult, setOpenResult] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -26,9 +33,16 @@ export default function ResultsAccordion({
     new Set()
   );
 
-  const { uploadImage, uploadError, clearError } = useImageUpload();
+  // Upload errors for each result
+  const [uploadErrors, setUploadErrors] = useState<{
+    [key: string]: string;
+  }>({});
+
+  const { uploadImage, clearError } = useImageUpload();
 
   const addResult = () => {
+    if (disabled) return;
+
     const newResult: Result = {
       id: `result-${Date.now()}`,
       client: "",
@@ -36,6 +50,7 @@ export default function ResultsAccordion({
       investment: "",
       roi: "",
       sortOrder: results.length,
+      hidePhoto: false, // Default to showing photo
     };
 
     const updatedResults = [...results, newResult];
@@ -44,6 +59,8 @@ export default function ResultsAccordion({
   };
 
   const removeResult = (resultId: string) => {
+    if (disabled) return;
+
     const updatedResults = results.filter((result) => result.id !== resultId);
     // Update sort orders after removal
     const reorderedResults = updatedResults.map((result, index) => ({
@@ -55,9 +72,17 @@ export default function ResultsAccordion({
     if (openResult === resultId) {
       setOpenResult(null);
     }
+
+    // Remove upload error for deleted item
+    setUploadErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[resultId];
+      return newErrors;
+    });
   };
 
   const handleRemoveClick = (resultId: string) => {
+    if (disabled) return;
     setResultToRemove(resultId);
     setShowRemoveModal(true);
   };
@@ -78,20 +103,66 @@ export default function ResultsAccordion({
   const updateResult = (
     resultId: string,
     field: keyof Result,
-    value: string | number
+    value: string | number | boolean
   ) => {
+    if (disabled) {
+      return;
+    }
+
     const updatedResults = results.map((result) =>
       result.id === resultId ? { ...result, [field]: value } : result
     );
+
     onResultsChange(updatedResults);
   };
 
   const toggleResult = (resultId: string) => {
+    if (disabled) return;
     setOpenResult(openResult === resultId ? null : resultId);
   };
 
+  const handleHidePhotoToggle = (resultId: string) => {
+    if (disabled) return;
+
+    const result = results.find((r) => r.id === resultId);
+    if (result) {
+      const newHidePhotoValue = !result.hidePhoto;
+
+      // Criar o objeto de atualizações
+      const updates: Partial<Result> = {
+        hidePhoto: newHidePhotoValue,
+      };
+
+      // Se estiver ocultando a foto, limpar foto existente
+      if (newHidePhotoValue) {
+        updates.photo = "";
+
+        // Limpar erros de upload
+        setUploadErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[resultId];
+          return newErrors;
+        });
+      }
+
+      // Aplicar todas as atualizações de uma vez
+      const updatedResults = results.map((result) =>
+        result.id === resultId ? { ...result, ...updates } : result
+      );
+
+      onResultsChange(updatedResults);
+    }
+  };
+
   const handleFileChange = async (resultId: string, file: File | null) => {
-    if (!file) return;
+    if (!file || disabled) return;
+
+    // Clear any previous errors for this result
+    setUploadErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[resultId];
+      return newErrors;
+    });
 
     try {
       // Clear any previous errors
@@ -108,12 +179,19 @@ export default function ResultsAccordion({
         updateResult(resultId, "photo", result.data.url);
       } else {
         console.error("Upload failed:", result.error);
-        // You might want to show a toast notification here
-        alert(result.error || "Erro ao fazer upload da imagem");
+        // Set error message for this specific result
+        setUploadErrors((prev) => ({
+          ...prev,
+          [resultId]: result.error || "Erro ao fazer upload da imagem",
+        }));
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Erro ao fazer upload da imagem");
+      // Set error message for this specific result
+      setUploadErrors((prev) => ({
+        ...prev,
+        [resultId]: "Erro ao fazer upload da imagem",
+      }));
     } finally {
       // Remove result from uploading set
       setUploadingResults((prev) => {
@@ -147,22 +225,29 @@ export default function ResultsAccordion({
 
   // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", "");
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
+    if (disabled) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDragOverIndex(index);
   };
 
   const handleDragLeave = () => {
+    if (disabled) return;
     setDragOverIndex(null);
   };
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    if (disabled) return;
     e.preventDefault();
 
     if (draggedIndex === null || draggedIndex === dropIndex) {
@@ -200,229 +285,353 @@ export default function ResultsAccordion({
     field: "investment" | "roi",
     value: string
   ) => {
+    if (disabled) return;
     const formattedValue = formatCurrency(value);
     updateResult(resultId, field, formattedValue);
   };
 
   return (
     <div className="space-y-2">
-      {results.map((result, index) => (
-        <div
-          key={result.id}
-          draggable
-          onDragStart={(e) => handleDragStart(e, index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragEnd={handleDragEnd}
-          className={`transition-all duration-200 ${
-            draggedIndex === index ? "opacity-50 scale-95" : ""
-          } ${
-            dragOverIndex === index && draggedIndex !== index
-              ? "border-2 border-primary-light-400 border-dashed"
-              : ""
-          }`}
-        >
-          {/* Accordion Header */}
-          <div className="flex justify-center gap-4 w-full">
+      {results.map((result, index) => {
+        return (
+          <div
+            key={result.id}
+            className={`transition-all duration-200 ${
+              draggedIndex === index ? "opacity-50 scale-95" : ""
+            } ${
+              dragOverIndex === index && draggedIndex !== index
+                ? "border-2 border-primary-light-400 border-dashed"
+                : ""
+            } ${disabled ? "opacity-60" : ""}`}
+          >
+            {/* Accordion Header */}
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-                draggedIndex === index ? "cursor-grabbing" : ""
-              }`}
-              onClick={(e) => {
-                e.preventDefault();
-                if (draggedIndex === null) {
-                  toggleResult(result.id);
-                }
-              }}
+              className="flex justify-center gap-4 w-full"
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, index)}
             >
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                    title="Arraste para reordenar"
-                  >
-                    ⋮⋮
-                  </div>
-                  <span className="text-sm font-medium text-white-neutral-light-900">
-                    Resultado {index + 1}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <ChevronDown
-                  size={20}
-                  className={`transition-transform duration-200 ${
-                    openResult === result.id ? "rotate-180" : ""
-                  }`}
-                />
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveClick(result.id);
-              }}
-              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover resultado"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
-
-          {openResult === result.id && (
-            <div className="pb-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white-neutral-light-700 mb-2">
-                  Foto
-                </label>
-
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <div className="w-full sm:w-[160px]">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileChange(result.id, e.target.files?.[0] || null)
-                      }
-                      className="hidden"
-                      id={`photo-${result.id}`}
-                      disabled={isUploadingForResult(result.id)}
-                    />
-                    <label
-                      htmlFor={`photo-${result.id}`}
-                      className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
-                        isUploadingForResult(result.id)
-                          ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
-                          : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
-                      }`}
-                    >
-                      {isUploadingForResult(result.id) ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
-                          Enviando...
-                        </>
-                      ) : (
-                        <>
-                          <PictureIcon width="16" height="16" />
-                          Alterar imagem
-                        </>
-                      )}
-                    </label>
-                  </div>
-                  <div className="text-xs text-white-neutral-light-500">
-                    {result.photo
-                      ? "Imagem carregada"
-                      : "Nenhuma imagem selecionada"}
-                  </div>
-                </div>
-
-                <div className="text-xs text-white-neutral-light-400 mt-3">
-                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
-                </div>
-
-                {/* Show upload error if exists */}
-                {uploadError && isUploadingForResult(result.id) && (
-                  <div className="text-xs text-red-500 mt-2">{uploadError}</div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <TextField
-                  label="Nome"
-                  inputName={`client-${result.id}`}
-                  id={`client-${result.id}`}
-                  type="text"
-                  placeholder="Nome do cliente"
-                  value={result.client || ""}
-                  onChange={(e) =>
-                    updateResult(result.id, "client", e.target.value)
+              <div
+                className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                  disabled
+                    ? "cursor-not-allowed"
+                    : "hover:bg-white-neutral-light-400"
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (!disabled && draggedIndex === null) {
+                    toggleResult(result.id);
                   }
-                />
-
-                <div>
-                  <label className="block text-sm font-medium text-white-neutral-light-700 mb-1.5">
-                    Instagram
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white-neutral-light-600 text-sm">
-                      @
-                    </span>
-                    <input
-                      type="text"
-                      name={`subtitle-${result.id}`}
-                      id={`subtitle-${result.id}`}
-                      placeholder="Adicione o perfil do instagram"
-                      value={result.subtitle || ""}
-                      onChange={(e) =>
-                        updateResult(result.id, "subtitle", e.target.value)
+                }}
+              >
+                <div
+                  className="flex items-center gap-3"
+                  draggable={!disabled}
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                        disabled
+                          ? "cursor-not-allowed"
+                          : "cursor-grab active:cursor-grabbing"
+                      }`}
+                      title={
+                        disabled ? "Desabilitado" : "Arraste para reordenar"
                       }
-                      className="w-full pl-9 pr-4 py-3 rounded-[var(--radius-s)] border border-white-neutral-light-300 bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)] text-white-neutral-light-800"
-                    />
+                    >
+                      ⋮⋮
+                    </div>
+                    <span className="text-sm font-medium text-white-neutral-light-900">
+                      Resultado {index + 1}
+                    </span>
                   </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    size={20}
+                    className={`transition-transform duration-200 ${
+                      openResult === result.id ? "rotate-180" : ""
+                    }`}
+                  />
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-white-neutral-light-700 mb-1.5">
-                    Investimento
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white-neutral-light-600 text-sm">
-                      R$
-                    </span>
-                    <input
-                      type="text"
-                      name={`investment-${result.id}`}
-                      id={`investment-${result.id}`}
-                      placeholder="0,00"
-                      value={result.investment || ""}
-                      onChange={(e) =>
-                        handleCurrencyChange(
-                          result.id,
-                          "investment",
-                          e.target.value
-                        )
-                      }
-                      className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-s)] border border-white-neutral-light-300 bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)] text-white-neutral-light-800"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-white-neutral-light-700 mb-1.5">
-                    ROI
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white-neutral-light-600 text-sm">
-                      R$
-                    </span>
-                    <input
-                      type="text"
-                      name={`roi-${result.id}`}
-                      id={`roi-${result.id}`}
-                      placeholder="0,00"
-                      value={result.roi || ""}
-                      onChange={(e) =>
-                        handleCurrencyChange(result.id, "roi", e.target.value)
-                      }
-                      className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-s)] border border-white-neutral-light-300 bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)] text-white-neutral-light-800"
-                    />
-                  </div>
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveClick(result.id);
+                }}
+                disabled={disabled}
+                className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                  disabled
+                    ? "cursor-not-allowed opacity-60"
+                    : "cursor-pointer hover:bg-red-50"
+                }`}
+                title={disabled ? "Desabilitado" : "Remover resultado"}
+              >
+                <Trash2 size={16} />
+              </button>
             </div>
-          )}
-        </div>
-      ))}
+
+            {openResult === result.id && (
+              <div className="pb-4 space-y-4">
+                {/* Photo Section */}
+                <div>
+                  <div
+                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
+                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                  >
+                    Foto
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleHidePhotoToggle(result.id);
+                      }}
+                      className={`p-1 rounded transition-colors ${
+                        disabled
+                          ? "cursor-not-allowed opacity-60"
+                          : "cursor-pointer hover:bg-white-neutral-light-300"
+                      }`}
+                      disabled={disabled}
+                      title={result.hidePhoto ? "Mostrar foto" : "Ocultar foto"}
+                    >
+                      {result.hidePhoto ? <EyeClosed /> : <EyeOpened />}
+                    </button>
+                  </div>
+
+                  {/* Photo Upload Section - Only show if hidePhoto is false */}
+                  {!result.hidePhoto && (
+                    <div>
+                      <div className="flex flex-col sm:flex-row items-center gap-4">
+                        <div className="w-full sm:w-[160px]">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) =>
+                              handleFileChange(
+                                result.id,
+                                e.target.files?.[0] || null
+                              )
+                            }
+                            className="hidden"
+                            id={`photo-${result.id}`}
+                            disabled={
+                              isUploadingForResult(result.id) || disabled
+                            }
+                          />
+                          <label
+                            htmlFor={`photo-${result.id}`}
+                            className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                              isUploadingForResult(result.id) || disabled
+                                ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
+                                : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
+                            }`}
+                          >
+                            {isUploadingForResult(result.id) ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                                Enviando...
+                              </>
+                            ) : (
+                              <>
+                                <PictureIcon width="16" height="16" />
+                                Alterar imagem
+                              </>
+                            )}
+                          </label>
+                        </div>
+                        <div className="text-xs text-white-neutral-light-500">
+                          {result.photo
+                            ? "Imagem carregada"
+                            : "Nenhuma imagem selecionada"}
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-white-neutral-light-400 mt-3">
+                        Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo:
+                        5MB
+                      </div>
+
+                      {/* Show upload error if exists for this specific result */}
+                      {uploadErrors[result.id] && (
+                        <div className="text-xs text-red-500 mt-2 font-medium">
+                          {uploadErrors[result.id]}
+                        </div>
+                      )}
+
+                      {/* Show validation error if photo is required but missing */}
+                      {errors[`result_${index}_photo`] && (
+                        <div className="text-xs text-red-500 mt-2 font-medium">
+                          {errors[`result_${index}_photo`]}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Show message when photo is hidden */}
+                  {result.hidePhoto && (
+                    <div className="text-xs text-white-neutral-light-900 p-2 bg-white-neutral-light-100 rounded-2xs">
+                      Foto oculta da proposta
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p
+                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+                      style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    >
+                      Cliente
+                    </p>
+                    <TextField
+                      inputName={`client-${result.id}`}
+                      id={`client-${result.id}`}
+                      type="text"
+                      placeholder="Nome do cliente"
+                      value={result.client || ""}
+                      onChange={(e) =>
+                        updateResult(result.id, "client", e.target.value)
+                      }
+                      disabled={disabled}
+                      error={errors[`result_${index}_client`]}
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center mb-1.5"
+                      style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    >
+                      Instagram
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white-neutral-light-600 text-sm">
+                        @
+                      </span>
+                      <input
+                        type="text"
+                        name={`subtitle-${result.id}`}
+                        id={`subtitle-${result.id}`}
+                        placeholder="Adicione o perfil do instagram"
+                        value={result.subtitle || ""}
+                        onChange={(e) =>
+                          updateResult(result.id, "subtitle", e.target.value)
+                        }
+                        disabled={disabled}
+                        className={`w-full pl-9 pr-4 py-3 rounded-[var(--radius-s)] border bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none text-white-neutral-light-800 ${
+                          errors[`result_${index}_subtitle`]
+                            ? "border-red-500 focus:border-red-500"
+                            : "border-white-neutral-light-300 focus:border-[var(--color-primary-light-400)]"
+                        }`}
+                      />
+                    </div>
+                    {/* Show validation error for Instagram field */}
+                    {errors[`result_${index}_subtitle`] && (
+                      <div className="text-xs text-red-500 mt-1 font-medium">
+                        {errors[`result_${index}_subtitle`]}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center mb-1.5"
+                      style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    >
+                      Investimento
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white-neutral-light-600 text-sm">
+                        R$
+                      </span>
+                      <input
+                        type="text"
+                        name={`investment-${result.id}`}
+                        id={`investment-${result.id}`}
+                        placeholder="0,00"
+                        value={result.investment || ""}
+                        onChange={(e) =>
+                          handleCurrencyChange(
+                            result.id,
+                            "investment",
+                            e.target.value
+                          )
+                        }
+                        disabled={disabled}
+                        className={`w-full pl-10 pr-4 py-3 rounded-[var(--radius-s)] border bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none text-white-neutral-light-800 ${
+                          errors[`result_${index}_investment`]
+                            ? "border-red-500 focus:border-red-500"
+                            : "border-white-neutral-light-300 focus:border-[var(--color-primary-light-400)]"
+                        }`}
+                      />
+                    </div>
+                    {/* Show validation error for Investment field */}
+                    {errors[`result_${index}_investment`] && (
+                      <div className="text-xs text-red-500 mt-1 font-medium">
+                        {errors[`result_${index}_investment`]}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label
+                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center mb-1.5"
+                      style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    >
+                      ROI
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white-neutral-light-600 text-sm">
+                        R$
+                      </span>
+                      <input
+                        type="text"
+                        name={`roi-${result.id}`}
+                        id={`roi-${result.id}`}
+                        placeholder="0,00"
+                        value={result.roi || ""}
+                        onChange={(e) =>
+                          handleCurrencyChange(result.id, "roi", e.target.value)
+                        }
+                        disabled={disabled}
+                        className={`w-full pl-10 pr-4 py-3 rounded-[var(--radius-s)] border bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none text-white-neutral-light-800 ${
+                          errors[`result_${index}_roi`]
+                            ? "border-red-500 focus:border-red-500"
+                            : "border-white-neutral-light-300 focus:border-[var(--color-primary-light-400)]"
+                        }`}
+                      />
+                    </div>
+                    {/* Show validation error for ROI field */}
+                    {errors[`result_${index}_roi`] && (
+                      <div className="text-xs text-red-500 mt-1 font-medium">
+                        {errors[`result_${index}_roi`]}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
 
       <button
         type="button"
         onClick={addResult}
-        className="w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        disabled={disabled}
+        className={`w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner ${
+          disabled
+            ? "cursor-not-allowed opacity-60 bg-white-neutral-light-200"
+            : "cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
+        }`}
       >
         <Plus size={16} />
         Adicionar Resultado

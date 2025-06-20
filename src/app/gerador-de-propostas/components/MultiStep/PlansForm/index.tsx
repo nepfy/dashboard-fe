@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
+import InfoIcon from "#/components/icons/InfoIcon";
+
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
@@ -16,9 +18,12 @@ export default function PlansForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isHidden = e.target.checked;
+    setErrors({});
     updateFormData("step12", {
       ...formData?.step12,
-      hideSection: e.target.checked,
+      hideSection: isHidden,
+      plans: isHidden ? [] : formData?.step12?.plans || [],
     });
   };
 
@@ -54,6 +59,8 @@ export default function PlansForm() {
     nextStep();
   };
 
+  const isAccordionDisabled = formData?.step12?.hideSection || false;
+
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
@@ -82,11 +89,22 @@ export default function PlansForm() {
           Ocultar seção
         </label>
 
+        {isAccordionDisabled && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção{" "}
+              <span className="font-bold">&quot;Planos e Valores&quot;</span>{" "}
+              está atualmente oculta da proposta.
+            </p>
+          </div>
+        )}
+
         <div className="py-6">
           <div className="pt-4">
             <PlansAccordion
               plansList={formData?.step12?.plans || []}
               onFormChange={handlePlansChange}
+              disabled={isAccordionDisabled}
             />
             {errors.plans && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -97,7 +115,7 @@ export default function PlansForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
@@ -112,6 +130,14 @@ export default function PlansForm() {
         >
           Avançar
         </button>
+        {errors.plans ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

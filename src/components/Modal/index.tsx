@@ -7,6 +7,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  boldTitle?: boolean;
   children: React.ReactNode;
   showCloseButton?: boolean;
   width?: string;
@@ -18,6 +19,7 @@ const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   title,
+  boldTitle = false,
   children,
   showCloseButton = true,
   width,
@@ -83,7 +85,9 @@ const Modal: React.FC<ModalProps> = ({
             {title && (
               <h3
                 id="modal-title"
-                className="font-medium text-white-neutral-light-800"
+                className={`font-medium text-white-neutral-light-800
+                  ${boldTitle ? "font-bold text-[24px]" : "font-medium"}  
+                `}
               >
                 {title}
               </h3>

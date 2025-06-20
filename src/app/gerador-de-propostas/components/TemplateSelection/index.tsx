@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Slider from "react-slick";
+import Image from "next/image";
 
 import Stars from "#/components/icons/Stars";
 import { TemplateType } from "#/types/project";
@@ -19,7 +20,45 @@ interface TemplateSelectionProps {
   onSelectTemplate: (template: TemplateType, color: string) => void;
 }
 
-// Color Selection Component
+const colorToImageName: Record<string, string> = {
+  // Flash
+  "#4F21A1": "roxo",
+  "#BE8406": "amarelo",
+  "#9B3218": "vermelho",
+  "#05722C": "verde",
+  "#182E9B": "azul",
+  "#212121": "cinza",
+
+  // Prime
+  "#010101": "preto",
+  "#E9E9E9": "cinza",
+  "#F0E5E0": "marrom",
+  "#223630": "verde",
+  "#621D1E": "vermelho",
+  "#08306C": "azul",
+
+  // Essencial
+  "#F0CCE6": "rosa",
+  "#EBEBEB": "cinza",
+  "#EEE0BA": "amarelo",
+  "#BCFBD5": "verde",
+  "#741E20": "vermelho",
+  "#0A3EF4": "azul",
+
+  // Grid
+  "#2C2C2C": "preto",
+  "#146EF4": "azul",
+  "#78838E": "cinza",
+  "#294D41": "verde",
+  "#5E4D35": "marrom",
+  "#7C4257": "rosa",
+};
+
+const getImagePath = (templateName: string, color: string): string => {
+  const imageName = colorToImageName[color] || "azul"; // fallback para azul
+  return `/images/templates/${templateName.toLowerCase()}/${imageName}.jpg`;
+};
+
 const ColorPicker = ({
   colors,
   selectedColor,
@@ -49,7 +88,6 @@ const ColorPicker = ({
   </div>
 );
 
-// Template Card Component
 const TemplateCard = ({
   template,
   selectedColor,
@@ -72,12 +110,15 @@ const TemplateCard = ({
       </p>
     </div>
 
-    {/* Preview */}
-    <div
-      className="rounded-2xs h-[190px] m-2 flex items-center justify-center p-7"
-      style={{ backgroundColor: selectedColor }}
-    >
-      <p className="text-white-neutral-light-100">{template.description}</p>
+    {/* Preview - Agora com imagem */}
+    <div className="rounded-2xs h-[190px] m-2 overflow-hidden">
+      <Image
+        src={getImagePath(template.title, selectedColor)}
+        alt={`Preview do template ${template.title}`}
+        width={324}
+        height={190}
+        className="w-full h-full object-cover rounded-2xs"
+      />
     </div>
 
     {/* Color Selection */}
@@ -111,7 +152,6 @@ const TemplateCard = ({
   </div>
 );
 
-// Coming Soon Card
 const ComingSoonCard = () => (
   <div className="rounded-2xs bg-primary-light-300 w-[700px] h-[220px] p-6 flex flex-col justify-between gap-4 relative">
     <p className="text-white-neutral-light-100 text-2xl font-bold max-w-[390px]">
@@ -125,7 +165,6 @@ const ComingSoonCard = () => (
   </div>
 );
 
-// Mobile Navigation
 const MobileNavigation = ({
   currentSlide,
   totalSlides,
@@ -185,7 +224,6 @@ const MobileNavigation = ({
   </div>
 );
 
-// Main Component
 export default function TemplateSelection({
   templates,
   onSelectTemplate,
@@ -199,9 +237,7 @@ export default function TemplateSelection({
   // Get selected color or default to first color
   const getSelectedColor = (template: Template) => {
     return (
-      selectedColors[template.title] ||
-      template.colorsList[0] ||
-      "#primary-light-300"
+      selectedColors[template.title] || template.colorsList[0] || "#4F21A1"
     );
   };
 

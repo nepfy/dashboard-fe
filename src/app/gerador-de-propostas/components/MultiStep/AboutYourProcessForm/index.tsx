@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
 import { TextAreaField } from "#/components/Inputs";
+import InfoIcon from "#/components/icons/InfoIcon";
 
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
@@ -12,15 +13,20 @@ import { ProcessStep } from "#/types/project";
 
 import ProcessAccordion from "./ProcessAccordion";
 
-export default function AboutYourTeamForm() {
+export default function AboutYourProcessForm() {
   const { prevStep, nextStep, updateFormData, formData, currentStep } =
     useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isHidden = e.target.checked;
+    setErrors({});
+
     updateFormData("step7", {
       ...formData?.step7,
-      hideSection: e.target.checked,
+      hideSection: isHidden,
+      // Se a seção for ocultada e já houver etapas, removê-las
+      processSteps: isHidden ? [] : formData?.step7?.processSteps || [],
     });
   };
 
@@ -61,13 +67,27 @@ export default function AboutYourTeamForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (processSubtitle.length < 30) {
-        newErrors.ourTeamSubtitle =
+      if (processSubtitle.length < 70) {
+        newErrors.processSubtitle =
           "O campo 'Subtítulo' deve ter pelo menos 70 caracteres";
       }
 
       if (processList.length === 0) {
-        newErrors.teamMembers = "Ao menos 1 item é requerido";
+        newErrors.processList = "Ao menos 1 etapa é requerida";
+      } else {
+        // Validate individual process items
+        processList.forEach((process: ProcessStep, index: number) => {
+          if (!process.stepName?.trim()) {
+            newErrors[`process_${index}_stepName`] = `Nome da etapa ${
+              index + 1
+            } é obrigatório`;
+          }
+          if (!process.description?.trim()) {
+            newErrors[`process_${index}_description`] = `Descrição da etapa ${
+              index + 1
+            } é obrigatória`;
+          }
+        });
       }
     }
 
@@ -78,6 +98,9 @@ export default function AboutYourTeamForm() {
 
     nextStep();
   };
+
+  // Determinar se o accordion deve estar desabilitado
+  const isAccordionDisabled = formData?.step7?.hideSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -107,28 +130,42 @@ export default function AboutYourTeamForm() {
           Ocultar seção
         </label>
 
-        <div className="py-6">
-          <div className="py-2">
-            <TextAreaField
-              label="Subtítulo"
-              id="processSubtitle"
-              textareaName="processSubtitle"
-              placeholder="Detalhe o processo de desenvolvimento"
-              value={formData?.step7?.processSubtitle || ""}
-              onChange={handleFieldChange("processSubtitle")}
-              maxLength={55}
-              minLength={30}
-              rows={2}
-              showCharCount
-              error={errors.processSubtitle}
-            />
+        {isAccordionDisabled && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção{" "}
+              <span className="font-bold">&quot;Etapas do processo&quot;</span>{" "}
+              está atualmente oculta da proposta.
+            </p>
           </div>
+        )}
+
+        <div className="py-6">
+          {!isAccordionDisabled && (
+            <div className="py-2">
+              <TextAreaField
+                label="Subtítulo"
+                id="processSubtitle"
+                textareaName="processSubtitle"
+                placeholder="Detalhe o processo de desenvolvimento"
+                value={formData?.step7?.processSubtitle || ""}
+                onChange={handleFieldChange("processSubtitle")}
+                maxLength={100}
+                minLength={70}
+                rows={2}
+                showCharCount
+                error={errors.processSubtitle}
+                disabled={isAccordionDisabled}
+              />
+            </div>
+          )}
           <div className="pt-4">
             <ProcessAccordion
               processList={formData?.step7?.processSteps || []}
               onFormChange={handleFormListChange}
+              disabled={isAccordionDisabled}
             />
-            {errors.teamMembers && (
+            {errors.processList && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
                 {errors.processList}
               </p>
@@ -137,7 +174,7 @@ export default function AboutYourTeamForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
@@ -152,6 +189,15 @@ export default function AboutYourTeamForm() {
         >
           Avançar
         </button>
+
+        {errors.processSubtitle || errors.processList ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -9,11 +9,13 @@ import { Plan, PlanDetail } from "#/types/project";
 interface PlansAccordionProps {
   plansList: Plan[];
   onFormChange: (plans: Plan[]) => void;
+  disabled?: boolean;
 }
 
 export default function PlansAccordion({
   plansList,
   onFormChange,
+  disabled = false,
 }: PlansAccordionProps) {
   const [openPlan, setOpenPlan] = useState<string | null>(null);
   const [openItem, setOpenItem] = useState<string | null>(null);
@@ -32,6 +34,8 @@ export default function PlansAccordion({
   } | null>(null);
 
   const addPlan = () => {
+    if (disabled) return;
+
     const newPlan: Plan = {
       id: `plan-${Date.now()}`,
       title: "",
@@ -50,6 +54,8 @@ export default function PlansAccordion({
   };
 
   const removePlan = (planId: string) => {
+    if (disabled) return;
+
     const updatedPlans = plansList.filter((plan) => plan.id !== planId);
     // Update sort orders after removal
     const reorderedPlans = updatedPlans.map((plan, index) => ({
@@ -64,6 +70,7 @@ export default function PlansAccordion({
   };
 
   const handleRemoveClick = (planId: string) => {
+    if (disabled) return;
     setPlanToRemove(planId);
     setShowRemoveModal(true);
   };
@@ -83,6 +90,8 @@ export default function PlansAccordion({
 
   // Item management functions
   const addItem = (planId: string) => {
+    if (disabled) return;
+
     const newItem: PlanDetail = {
       id: `item-${Date.now()}`,
       description: "",
@@ -106,6 +115,8 @@ export default function PlansAccordion({
   };
 
   const removeItem = (planId: string, itemId: string) => {
+    if (disabled) return;
+
     const updatedPlans = plansList.map((plan) => {
       if (plan.id === planId) {
         const filteredItems = (plan.planDetails || []).filter(
@@ -128,6 +139,7 @@ export default function PlansAccordion({
   };
 
   const handleRemoveItemClick = (planId: string, itemId: string) => {
+    if (disabled) return;
     setItemToRemove({ planId, itemId });
     setShowRemoveItemModal(true);
   };
@@ -150,9 +162,22 @@ export default function PlansAccordion({
     field: keyof Plan,
     value: string | number | boolean | PlanDetail[]
   ) => {
+    if (disabled) return;
+
     const updatedPlans = plansList.map((plan) =>
       plan.id === planId ? { ...plan, [field]: value } : plan
     );
+    onFormChange(updatedPlans);
+  };
+
+  // Função modificada para garantir que apenas um plano seja marcado como melhor oferta
+  const handleBestOfferChange = (planId: string, isChecked: boolean) => {
+    if (disabled) return;
+
+    const updatedPlans = plansList.map((plan) => ({
+      ...plan,
+      isBestOffer: plan.id === planId ? isChecked : false, // Remove de todos os outros e define apenas no selecionado
+    }));
     onFormChange(updatedPlans);
   };
 
@@ -162,6 +187,8 @@ export default function PlansAccordion({
     field: keyof PlanDetail,
     value: string | number
   ) => {
+    if (disabled) return;
+
     const updatedPlans = plansList.map((plan) => {
       if (plan.id === planId) {
         const updatedItems = (plan.planDetails || []).map((item) =>
@@ -192,36 +219,46 @@ export default function PlansAccordion({
   };
 
   const handleCurrencyChange = (planId: string, value: string) => {
+    if (disabled) return;
     const formattedValue = formatCurrency(value);
     updatePlan(planId, "price", formattedValue);
   };
 
   const togglePlan = (planId: string) => {
+    if (disabled) return;
     setOpenPlan(openPlan === planId ? null : planId);
   };
 
   const toggleItem = (itemId: string) => {
+    if (disabled) return;
     setOpenItem(openItem === itemId ? null : itemId);
   };
 
   // Drag and Drop handlers for Plans
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", "");
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
+    if (disabled) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDragOverIndex(index);
   };
 
   const handleDragLeave = () => {
+    if (disabled) return;
     setDragOverIndex(null);
   };
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    if (disabled) return;
     e.preventDefault();
 
     if (draggedIndex === null || draggedIndex === dropIndex) {
@@ -256,6 +293,10 @@ export default function PlansAccordion({
 
   // Drag and Drop handlers for Items
   const handleItemDragStart = (e: React.DragEvent, index: number) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
     setDraggedItemIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", "");
@@ -263,6 +304,7 @@ export default function PlansAccordion({
   };
 
   const handleItemDragOver = (e: React.DragEvent, index: number) => {
+    if (disabled) return;
     e.preventDefault();
     e.stopPropagation();
     e.dataTransfer.dropEffect = "move";
@@ -270,6 +312,7 @@ export default function PlansAccordion({
   };
 
   const handleItemDragLeave = () => {
+    if (disabled) return;
     setDragOverItemIndex(null);
   };
 
@@ -278,6 +321,7 @@ export default function PlansAccordion({
     planId: string,
     dropIndex: number
   ) => {
+    if (disabled) return;
     e.preventDefault();
     e.stopPropagation();
 
@@ -315,11 +359,11 @@ export default function PlansAccordion({
   };
 
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 ${disabled ? "opacity-60" : ""}`}>
       {plansList.map((plan, index) => (
         <div
           key={plan.id}
-          draggable
+          draggable={!disabled}
           onDragStart={(e) => handleDragStart(e, index)}
           onDragOver={(e) => handleDragOver(e, index)}
           onDragLeave={handleDragLeave}
@@ -336,12 +380,14 @@ export default function PlansAccordion({
           {/* Accordion Header */}
           <div className="flex justify-center gap-4 w-full">
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-                draggedIndex === index ? "cursor-grabbing" : ""
-              }`}
+              className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                disabled
+                  ? "cursor-not-allowed"
+                  : "cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400"
+              } ${draggedIndex === index ? "cursor-grabbing" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
-                if (draggedIndex === null) {
+                if (!disabled && draggedIndex === null) {
                   togglePlan(plan.id!);
                 }
               }}
@@ -349,8 +395,12 @@ export default function PlansAccordion({
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                    title="Arraste para reordenar"
+                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                      disabled
+                        ? "cursor-not-allowed"
+                        : "cursor-grab active:cursor-grabbing"
+                    }`}
+                    title={disabled ? "Desabilitado" : "Arraste para reordenar"}
                   >
                     ⋮⋮
                   </div>
@@ -381,8 +431,13 @@ export default function PlansAccordion({
                 e.stopPropagation();
                 handleRemoveClick(plan.id!);
               }}
-              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover plano"
+              disabled={disabled}
+              className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                disabled
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer hover:bg-red-50"
+              }`}
+              title={disabled ? "Desabilitado" : "Remover plano"}
             >
               <Trash2 size={16} />
             </button>
@@ -392,8 +447,13 @@ export default function PlansAccordion({
           {openPlan === plan.id && (
             <div className="pb-4 space-y-4">
               <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Nome do pacote
+                </p>
                 <TextField
-                  label="Título do plano"
                   inputName={`title-${plan.id}`}
                   id={`title-${plan.id}`}
                   type="text"
@@ -402,12 +462,20 @@ export default function PlansAccordion({
                   onChange={(e) =>
                     updatePlan(plan.id!, "title", e.target.value)
                   }
+                  maxLength={25}
+                  showCharCount
+                  disabled={disabled}
                 />
               </div>
 
               <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Descrição do pacote
+                </p>
                 <TextAreaField
-                  label="Descrição"
                   id={`description-${plan.id}`}
                   textareaName={`description-${plan.id}`}
                   placeholder="Descreva este plano"
@@ -419,25 +487,36 @@ export default function PlansAccordion({
                   showCharCount
                   maxLength={130}
                   minLength={50}
+                  disabled={disabled}
                 />
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-white-neutral-light-800 text-sm">
+                <label
+                  className={`flex items-center gap-2 text-white-neutral-light-800 text-sm p-3 rounded-2xs ${
+                    plan.isBestOffer
+                      ? "border border-white-neutral-light-200 bg-white-neutral-light-100 shadow-[0px_2px_3px_0px_#00000026]"
+                      : ""
+                  } ${disabled ? "opacity-60" : ""}`}
+                >
                   <input
                     type="checkbox"
                     checked={plan.isBestOffer || false}
                     onChange={(e) =>
-                      updatePlan(plan.id!, "isBestOffer", e.target.checked)
+                      handleBestOfferChange(plan.id!, e.target.checked)
                     }
                     className="border border-white-neutral-light-300 checkbox-custom"
+                    disabled={disabled}
                   />
-                  Marcar como melhor oferta
+                  Definir como &quot;Melhor oferta&quot;
                 </label>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white-neutral-light-700 mb-1.5">
+                <label
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-1.5"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
                   Valor
                 </label>
                 <div className="relative">
@@ -453,17 +532,27 @@ export default function PlansAccordion({
                     onChange={(e) =>
                       handleCurrencyChange(plan.id!, e.target.value)
                     }
-                    className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-s)] border border-white-neutral-light-300 bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)] text-white-neutral-light-800"
+                    disabled={disabled}
+                    className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-s)] border border-white-neutral-light-300 bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)] text-white-neutral-light-800 disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="text-white-neutral-light-700 text-sm font-medium block mb-2">
+              <div className="mb-6">
+                <label
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
                   Tipo de cobrança
                 </label>
                 <div className="space-y-2 mt-2">
-                  <label className="flex items-center gap-2 text-white-neutral-light-800 text-sm">
+                  <label
+                    className={`flex items-center gap-2 text-white-neutral-light-800 text-sm p-3 rounded-2xs ${
+                      plan.pricePeriod === "one-time"
+                        ? "border border-white-neutral-light-200 bg-white-neutral-light-100 shadow-[0px_2px_3px_0px_#00000026]"
+                        : ""
+                    } ${disabled ? "opacity-60" : ""}`}
+                  >
                     <input
                       type="radio"
                       name={`pricePeriod-${plan.id}`}
@@ -478,11 +567,17 @@ export default function PlansAccordion({
                           e.target.value as "monthly" | "yearly" | "one-time"
                         )
                       }
-                      className="border border-white-neutral-light-300"
+                      disabled={disabled}
                     />
                     Pagamento único
                   </label>
-                  <label className="flex items-center gap-2 text-white-neutral-light-800 text-sm">
+                  <label
+                    className={`flex items-center gap-2 text-white-neutral-light-800 text-sm p-3 rounded-2xs ${
+                      plan.pricePeriod === "monthly"
+                        ? "border border-white-neutral-light-200 bg-white-neutral-light-100 shadow-[0px_2px_3px_0px_#00000026]"
+                        : ""
+                    } ${disabled ? "opacity-60" : ""}`}
+                  >
                     <input
                       type="radio"
                       name={`pricePeriod-${plan.id}`}
@@ -496,10 +591,17 @@ export default function PlansAccordion({
                         )
                       }
                       className="border border-white-neutral-light-300"
+                      disabled={disabled}
                     />
                     Mensal
                   </label>
-                  <label className="flex items-center gap-2 text-white-neutral-light-800 text-sm">
+                  <label
+                    className={`flex items-center gap-2 text-white-neutral-light-800 text-sm p-3 rounded-2xs ${
+                      plan.pricePeriod === "yearly"
+                        ? "border border-white-neutral-light-200 bg-white-neutral-light-100 shadow-[0px_2px_3px_0px_#00000026]"
+                        : ""
+                    } ${disabled ? "opacity-60" : ""}`}
+                  >
                     <input
                       type="radio"
                       name={`pricePeriod-${plan.id}`}
@@ -513,6 +615,7 @@ export default function PlansAccordion({
                         )
                       }
                       className="border border-white-neutral-light-300"
+                      disabled={disabled}
                     />
                     Anual
                   </label>
@@ -524,7 +627,7 @@ export default function PlansAccordion({
                 {(plan.planDetails || []).map((item, itemIndex) => (
                   <div
                     key={item.id}
-                    draggable
+                    draggable={!disabled}
                     onDragStart={(e) => handleItemDragStart(e, itemIndex)}
                     onDragOver={(e) => handleItemDragOver(e, itemIndex)}
                     onDragLeave={handleItemDragLeave}
@@ -544,7 +647,11 @@ export default function PlansAccordion({
                     {/* Item Header */}
                     <div className="flex justify-center gap-4 w-full">
                       <div
-                        className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                        className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                          disabled
+                            ? "cursor-not-allowed"
+                            : "cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400"
+                        } ${
                           draggedItemIndex === itemIndex
                             ? "cursor-grabbing"
                             : ""
@@ -552,7 +659,7 @@ export default function PlansAccordion({
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          if (draggedItemIndex === null) {
+                          if (!disabled && draggedItemIndex === null) {
                             toggleItem(item.id!);
                           }
                         }}
@@ -560,8 +667,16 @@ export default function PlansAccordion({
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-2">
                             <div
-                              className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                              title="Arraste para reordenar"
+                              className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                                disabled
+                                  ? "cursor-not-allowed"
+                                  : "cursor-grab active:cursor-grabbing"
+                              }`}
+                              title={
+                                disabled
+                                  ? "Desabilitado"
+                                  : "Arraste para reordenar"
+                              }
                             >
                               ⋮⋮
                             </div>
@@ -586,8 +701,13 @@ export default function PlansAccordion({
                           e.stopPropagation();
                           handleRemoveItemClick(plan.id!, item.id!);
                         }}
-                        className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-                        title="Remover item"
+                        disabled={disabled}
+                        className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                          disabled
+                            ? "cursor-not-allowed opacity-60"
+                            : "cursor-pointer hover:bg-red-50"
+                        }`}
+                        title={disabled ? "Desabilitado" : "Remover item"}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -595,7 +715,7 @@ export default function PlansAccordion({
 
                     {/* Item Content */}
                     {openItem === item.id && (
-                      <div className="pb-4 space-y-4">
+                      <div className="pb-2 space-y-4">
                         <div>
                           <TextField
                             label="Título"
@@ -612,6 +732,9 @@ export default function PlansAccordion({
                                 e.target.value
                               )
                             }
+                            maxLength={40}
+                            showCharCount
+                            disabled={disabled}
                           />
                         </div>
                       </div>
@@ -622,7 +745,12 @@ export default function PlansAccordion({
                 <button
                   type="button"
                   onClick={() => addItem(plan.id!)}
-                  className="w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+                  disabled={disabled}
+                  className={`w-full p-4 border border-white-neutral-light-700 rounded-2xs transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner mb-4 ${
+                    disabled
+                      ? "cursor-not-allowed opacity-60 bg-white-neutral-light-200"
+                      : "cursor-pointer bg-white-neutral-light-200 hover:bg-white-neutral-light-100"
+                  }`}
                 >
                   <Plus size={16} />
                   Adicionar item no pacote
@@ -630,8 +758,13 @@ export default function PlansAccordion({
               </div>
 
               <div>
+                <label
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Botão do CTA
+                </label>
                 <TextField
-                  label="Texto do botão CTA"
                   inputName={`ctaButtonTitle-${plan.id}`}
                   id={`ctaButtonTitle-${plan.id}`}
                   type="text"
@@ -640,6 +773,7 @@ export default function PlansAccordion({
                   onChange={(e) =>
                     updatePlan(plan.id!, "ctaButtonTitle", e.target.value)
                   }
+                  disabled={disabled}
                 />
               </div>
             </div>
@@ -650,7 +784,12 @@ export default function PlansAccordion({
       <button
         type="button"
         onClick={addPlan}
-        className="w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        disabled={disabled}
+        className={`w-full p-4 border border-white-neutral-light-300 rounded-2xs transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner ${
+          disabled
+            ? "cursor-not-allowed opacity-95 bg-white-neutral-light-200"
+            : "cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
+        }`}
       >
         <Plus size={16} />
         Adicionar Plano

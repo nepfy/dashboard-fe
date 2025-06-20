@@ -8,6 +8,7 @@ interface TagInputProps {
   value?: string | string[];
   onChange?: (tags: string[]) => void;
   infoText?: string;
+  error?: string;
 }
 
 const TagInput: React.FC<TagInputProps> = ({
@@ -16,6 +17,7 @@ const TagInput: React.FC<TagInputProps> = ({
   value = "",
   onChange,
   infoText,
+  error,
 }) => {
   const getTagArray = (): string[] => {
     if (Array.isArray(value)) {
@@ -158,7 +160,12 @@ const TagInput: React.FC<TagInputProps> = ({
       <div
         ref={containerRef}
         onClick={handleContainerClick}
-        className="w-full min-h-[48px] px-3 py-2 mt-1.5 rounded-xs border border-white-neutral-light-300 bg-white-neutral-light-100 focus-within:border-primary-light-400 cursor-text flex flex-wrap gap-2 items-center"
+        className={`w-full min-h-[48px] px-3 py-2 mt-1.5 rounded-xs  bg-white-neutral-light-100  cursor-text flex flex-wrap gap-2 items-center 
+          ${
+            error
+              ? "border border-red-700"
+              : "border border-white-neutral-light-300 focus-within:border-primary-light-400"
+          }`}
       >
         {/* Render tag */}
         {tags.map((tag, index) => (
@@ -195,13 +202,18 @@ const TagInput: React.FC<TagInputProps> = ({
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-white-neutral-light-800 placeholder:text-white-neutral-light-400"
+          className="flex-1 min-w-[120px] bg-transparent border-none outline-none  text-white-neutral-light-800 placeholder:text-white-neutral-light-400"
           onFocus={() => setFocusedIndex(null)}
         />
       </div>
 
       {infoText && (
         <div className="text-gray-500 rounded-md text-xs mt-2">{infoText}</div>
+      )}
+      {error && (
+        <div className="text-red-700 rounded-md text-sm font-medium">
+          {error}
+        </div>
       )}
     </div>
   );

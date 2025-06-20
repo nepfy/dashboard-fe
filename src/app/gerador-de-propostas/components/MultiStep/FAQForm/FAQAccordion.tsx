@@ -10,11 +10,13 @@ import { FAQ } from "#/types/project";
 interface FAQAccordionProps {
   faqList: FAQ[];
   onFormChange: (faq: FAQ[]) => void;
+  disabled?: boolean;
 }
 
 export default function FAQAccordion({
   faqList,
   onFormChange,
+  disabled = false,
 }: FAQAccordionProps) {
   const [openFAQ, setOpenFAQ] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -23,6 +25,8 @@ export default function FAQAccordion({
   const [faqToRemove, setFaqToRemove] = useState<string | null>(null);
 
   const addFAQ = () => {
+    if (disabled) return;
+
     const newFAQ: FAQ = {
       id: `faq-${Date.now()}`,
       question: "",
@@ -36,6 +40,8 @@ export default function FAQAccordion({
   };
 
   const removeFAQ = (faqId: string) => {
+    if (disabled) return;
+
     const updatedFAQ = faqList.filter((faq) => faq.id !== faqId);
     // Update sort orders after removal
     const reorderedFAQ = updatedFAQ.map((faq, index) => ({
@@ -50,6 +56,7 @@ export default function FAQAccordion({
   };
 
   const handleRemoveClick = (faqId: string) => {
+    if (disabled) return;
     setFaqToRemove(faqId);
     setShowRemoveModal(true);
   };
@@ -72,6 +79,8 @@ export default function FAQAccordion({
     field: keyof FAQ,
     value: string | number
   ) => {
+    if (disabled) return;
+
     const updatedFAQ = faqList.map((faq) =>
       faq.id === faqId ? { ...faq, [field]: value } : faq
     );
@@ -79,27 +88,35 @@ export default function FAQAccordion({
   };
 
   const toggleFAQ = (faqId: string) => {
+    if (disabled) return;
     setOpenFAQ(openFAQ === faqId ? null : faqId);
   };
 
   // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", "");
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
+    if (disabled) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDragOverIndex(index);
   };
 
   const handleDragLeave = () => {
+    if (disabled) return;
     setDragOverIndex(null);
   };
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    if (disabled) return;
     e.preventDefault();
 
     if (draggedIndex === null || draggedIndex === dropIndex) {
@@ -133,11 +150,11 @@ export default function FAQAccordion({
   };
 
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 ${disabled ? "opacity-60" : ""}`}>
       {faqList.map((faq, index) => (
         <div
           key={faq.id}
-          draggable
+          draggable={!disabled}
           onDragStart={(e) => handleDragStart(e, index)}
           onDragOver={(e) => handleDragOver(e, index)}
           onDragLeave={handleDragLeave}
@@ -154,12 +171,14 @@ export default function FAQAccordion({
           {/* Accordion Header */}
           <div className="flex justify-center gap-4 w-full">
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-                draggedIndex === index ? "cursor-grabbing" : ""
-              }`}
+              className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                disabled
+                  ? "cursor-not-allowed"
+                  : "cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400"
+              } ${draggedIndex === index ? "cursor-grabbing" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
-                if (draggedIndex === null) {
+                if (!disabled && draggedIndex === null) {
                   toggleFAQ(faq.id!);
                 }
               }}
@@ -167,8 +186,12 @@ export default function FAQAccordion({
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                    title="Arraste para reordenar"
+                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                      disabled
+                        ? "cursor-not-allowed"
+                        : "cursor-grab active:cursor-grabbing"
+                    }`}
+                    title={disabled ? "Desabilitado" : "Arraste para reordenar"}
                   >
                     ⋮⋮
                   </div>
@@ -193,8 +216,13 @@ export default function FAQAccordion({
                 e.stopPropagation();
                 handleRemoveClick(faq.id!);
               }}
-              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover pergunta"
+              disabled={disabled}
+              className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                disabled
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer hover:bg-red-50"
+              }`}
+              title={disabled ? "Desabilitado" : "Remover pergunta"}
             >
               <Trash2 size={16} />
             </button>
@@ -203,22 +231,36 @@ export default function FAQAccordion({
           {/* Accordion Content */}
           {openFAQ === faq.id && (
             <div className="pb-4 space-y-4">
-              <TextField
-                label="Pergunta"
-                inputName={`question-${faq.id}`}
-                id={`question-${faq.id}`}
-                type="text"
-                placeholder="Adicione a pergunta frequente"
-                value={faq.question}
-                maxLength={120}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  updateFAQ(faq.id!, "question", e.target.value)
-                }
-              />
+              <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Pergunta
+                </p>
+                <TextField
+                  inputName={`question-${faq.id}`}
+                  id={`question-${faq.id}`}
+                  type="text"
+                  placeholder="Adicione a pergunta frequente"
+                  value={faq.question}
+                  maxLength={100}
+                  showCharCount
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    updateFAQ(faq.id!, "question", e.target.value)
+                  }
+                  disabled={disabled}
+                />
+              </div>
 
               <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Resposta
+                </p>
                 <TextAreaField
-                  label="Resposta"
                   id={`answer-${faq.id}`}
                   textareaName={`answer-${faq.id}`}
                   placeholder="Escreva a resposta para esta pergunta"
@@ -227,6 +269,7 @@ export default function FAQAccordion({
                   rows={4}
                   showCharCount
                   maxLength={300}
+                  disabled={disabled}
                 />
               </div>
             </div>
@@ -237,7 +280,12 @@ export default function FAQAccordion({
       <button
         type="button"
         onClick={addFAQ}
-        className="w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        disabled={disabled}
+        className={`w-full p-4 border border-white-neutral-light-300 rounded-2xs transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner ${
+          disabled
+            ? "cursor-not-allowed opacity-95 bg-white-neutral-light-200"
+            : "cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
+        }`}
       >
         <Plus size={16} />
         Adicionar Pergunta

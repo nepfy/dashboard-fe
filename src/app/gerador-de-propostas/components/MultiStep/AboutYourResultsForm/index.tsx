@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
-import { TextAreaField } from "#/components/Inputs";
+import InfoIcon from "#/components/icons/InfoIcon";
 
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
+
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import ResultsAccordion from "./ResultsAccordion";
+
 import { Result } from "#/types/project";
 
 export default function AboutYourResultsForm() {
@@ -17,28 +19,16 @@ export default function AboutYourResultsForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isHidden = e.target.checked;
+    setErrors({});
+
     updateFormData("step5", {
       ...formData?.step5,
-      hideSection: e.target.checked,
+      hideSection: isHidden,
+      // Se a seção for ocultada e já houver resultados, removê-los
+      results: isHidden ? [] : formData?.step5?.results || [],
     });
   };
-
-  const handleFieldChange =
-    (fieldName: string) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      updateFormData("step5", {
-        ...formData?.step5,
-        [fieldName]: e.target.value,
-      });
-
-      if (errors[fieldName]) {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[fieldName];
-          return newErrors;
-        });
-      }
-    };
 
   const handleResultsChange = (results: Result[]) => {
     updateFormData("step5", {
@@ -54,27 +44,49 @@ export default function AboutYourResultsForm() {
   const handleNext = () => {
     setErrors({});
 
-    const resultsSubtitle = formData?.step5?.resultsSubtitle || "";
     const hideSection = formData?.step5?.hideSection || false;
     const results = formData?.step5?.results || [];
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (resultsSubtitle.length < 70) {
-        newErrors.resultsSubtitle =
-          "O campo 'Subtítulo' deve ter pelo menos 70 caracteres";
-      }
-
       // Validate results list
       if (results.length === 0) {
         newErrors.results = "Ao menos 1 resultado é requerido";
       } else {
         // Validate individual result items
         results.forEach((result: Result, index: number) => {
+          // Validate client field
           if (!result.client?.trim()) {
             newErrors[`result_${index}_client`] = `Cliente do resultado ${
               index + 1
             } é obrigatório`;
+          }
+
+          // Validate subtitle field (Instagram)
+          if (!result.subtitle?.trim()) {
+            newErrors[`result_${index}_subtitle`] = `Instagram do resultado ${
+              index + 1
+            } é obrigatório`;
+          }
+
+          // Validate investment field
+          if (!result.investment?.trim()) {
+            newErrors[
+              `result_${index}_investment`
+            ] = `Investimento do resultado ${index + 1} é obrigatório`;
+          }
+
+          // Validate ROI field
+          if (!result.roi?.trim()) {
+            newErrors[`result_${index}_roi`] = `ROI do resultado ${
+              index + 1
+            } é obrigatório`;
+          }
+
+          if (result.hidePhoto === false && !result.photo?.trim()) {
+            newErrors[`result_${index}_photo`] = `Foto do resultado ${
+              index + 1
+            } é obrigatória ou deve ser ocultada`;
           }
         });
       }
@@ -82,11 +94,17 @@ export default function AboutYourResultsForm() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+
+      console.log("Validation errors:", newErrors);
+      console.log("Current results state:", results);
+
       return;
     }
 
     nextStep();
   };
+
+  const isAccordionDisabled = formData?.step5?.hideSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -117,29 +135,25 @@ export default function AboutYourResultsForm() {
           Ocultar seção
         </label>
 
-        <div className="py-6 space-y-6">
-          <div>
-            <TextAreaField
-              label="Subtítulo"
-              id="resultsSubtitle"
-              textareaName="resultsSubtitle"
-              placeholder="Descreva os resultados que você entrega"
-              value={formData?.step5?.resultsSubtitle || ""}
-              onChange={handleFieldChange("resultsSubtitle")}
-              maxLength={95}
-              minLength={70}
-              rows={2}
-              showCharCount
-              error={errors.resultsSubtitle}
-            />
+        {isAccordionDisabled && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção{" "}
+              <span className="font-bold">&quot;Seus resultados&quot;</span>{" "}
+              está atualmente oculta da proposta.
+            </p>
           </div>
+        )}
 
+        <div className="py-6 space-y-6">
           <div>
             <ResultsAccordion
               results={formData?.step5?.results || []}
               onResultsChange={handleResultsChange}
+              disabled={isAccordionDisabled}
+              errors={errors}
             />
-            {errors.results && (
+            {errors.results && !isAccordionDisabled && (
               <div className="text-red-700 rounded-md text-sm font-medium mt-3">
                 {errors.results}
               </div>
@@ -148,7 +162,7 @@ export default function AboutYourResultsForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
@@ -163,6 +177,16 @@ export default function AboutYourResultsForm() {
         >
           Avançar
         </button>
+        {Object.keys(errors).length > 0 && !isAccordionDisabled ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              {errors.results
+                ? "Preencha todos os campos"
+                : "Corrija os erros para continuar"}
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

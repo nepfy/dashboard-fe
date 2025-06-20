@@ -11,11 +11,13 @@ import { TeamMember } from "#/types/project";
 interface TeamMemberAccordionProps {
   teamMembers: TeamMember[];
   onTeamMembersChange: (members: TeamMember[]) => void;
+  disabled: boolean;
 }
 
 export default function TeamMemberAccordion({
   teamMembers,
   onTeamMembersChange,
+  disabled = false,
 }: TeamMemberAccordionProps) {
   const [openMember, setOpenMember] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -29,6 +31,8 @@ export default function TeamMemberAccordion({
   const { uploadImage, uploadError, clearError } = useImageUpload();
 
   const addTeamMember = () => {
+    if (disabled) return;
+
     const newMember: TeamMember = {
       id: `member-${Date.now()}`,
       name: "",
@@ -42,6 +46,7 @@ export default function TeamMemberAccordion({
   };
 
   const removeMember = (memberId: string) => {
+    if (disabled) return;
     const updatedMembers = teamMembers.filter(
       (member) => member.id !== memberId
     );
@@ -58,6 +63,7 @@ export default function TeamMemberAccordion({
   };
 
   const handleRemoveClick = (memberId: string) => {
+    if (disabled) return;
     setMemberToRemove(memberId);
     setShowRemoveModal(true);
   };
@@ -80,6 +86,7 @@ export default function TeamMemberAccordion({
     field: keyof TeamMember,
     value: string
   ) => {
+    if (disabled) return;
     const updatedMembers = teamMembers.map((member) =>
       member.id === memberId ? { ...member, [field]: value } : member
     );
@@ -87,6 +94,7 @@ export default function TeamMemberAccordion({
   };
 
   const toggleMember = (memberId: string) => {
+    if (disabled) return;
     setOpenMember(openMember === memberId ? null : memberId);
   };
 
@@ -130,22 +138,30 @@ export default function TeamMemberAccordion({
 
   // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", "");
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
+    if (disabled) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDragOverIndex(index);
   };
 
   const handleDragLeave = () => {
+    if (disabled) return;
     setDragOverIndex(null);
   };
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    if (disabled) return;
     e.preventDefault();
 
     if (draggedIndex === null || draggedIndex === dropIndex) {
@@ -195,17 +211,21 @@ export default function TeamMemberAccordion({
             dragOverIndex === index && draggedIndex !== index
               ? "border-2 border-primary-light-400 border-dashed"
               : ""
-          }`}
+          } ${disabled ? "opacity-60" : ""}`}
         >
           {/* Accordion Header */}
           <div className="flex justify-center gap-4 w-full">
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-                draggedIndex === index ? "cursor-grabbing" : ""
+              className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                disabled
+                  ? "cursor-not-allowed"
+                  : draggedIndex === index
+                  ? "cursor-grabbing"
+                  : "cursor-grab hover:bg-white-neutral-light-400"
               }`}
               onClick={(e) => {
                 e.preventDefault();
-                if (draggedIndex === null) {
+                if (!disabled && draggedIndex === null) {
                   toggleMember(member.id);
                 }
               }}
@@ -213,8 +233,12 @@ export default function TeamMemberAccordion({
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing"
-                    title="Arraste para reordenar"
+                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                      disabled
+                        ? "cursor-not-allowed"
+                        : "cursor-grab active:cursor-grabbing"
+                    }`}
+                    title={disabled ? "Desabilitado" : "Arraste para reordenar"}
                   >
                     ⋮⋮
                   </div>
@@ -239,8 +263,13 @@ export default function TeamMemberAccordion({
                 e.stopPropagation();
                 handleRemoveClick(member.id);
               }}
-              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover integrante"
+              disabled={disabled}
+              className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                disabled
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer hover:bg-red-50"
+              }`}
+              title={disabled ? "Desabilitado" : "Remover integrante"}
             >
               <Trash2 size={16} />
             </button>
@@ -249,7 +278,10 @@ export default function TeamMemberAccordion({
           {openMember === member.id && (
             <div className="pb-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white-neutral-light-700 mb-2">
+                <label
+                  className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
                   Foto
                 </label>
 
@@ -305,8 +337,13 @@ export default function TeamMemberAccordion({
 
               {/* Name Field */}
               <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Nome
+                </p>
                 <TextField
-                  label="Nome"
                   inputName={`name-${member.id}`}
                   id={`name-${member.id}`}
                   type="text"
@@ -320,8 +357,13 @@ export default function TeamMemberAccordion({
 
               {/* Role Field */}
               <div>
+                <p
+                  className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Cargo
+                </p>
                 <TextField
-                  label="Cargo"
                   inputName={`role-${member.id}`}
                   id={`role-${member.id}`}
                   type="text"
@@ -340,7 +382,12 @@ export default function TeamMemberAccordion({
       <button
         type="button"
         onClick={addTeamMember}
-        className="w-full p-4 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
+        disabled={disabled}
+        className={`w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner ${
+          disabled
+            ? "cursor-not-allowed opacity-60 bg-white-neutral-light-200"
+            : "cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
+        }`}
       >
         <Plus size={16} />
         Adicionar Integrante

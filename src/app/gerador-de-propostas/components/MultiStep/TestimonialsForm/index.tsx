@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
+import InfoIcon from "#/components/icons/InfoIcon";
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
 import TestimonialsAccordion from "./TestimonialsAccordion"; // Import the accordion
@@ -15,9 +16,14 @@ export default function TestimonialsForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isHidden = e.target.checked;
+    setErrors({});
+
     updateFormData("step9", {
       ...formData?.step9,
-      hideSection: e.target.checked,
+      hideSection: isHidden,
+      // Se a seção for ocultada e já houver depoimentos, removê-los
+      testimonials: isHidden ? [] : formData?.step9?.testimonials || [],
     });
   };
 
@@ -42,6 +48,20 @@ export default function TestimonialsForm() {
     if (!hideSection) {
       if (!testimonials || testimonials.length === 0) {
         newErrors.testimonials = "Ao menos 1 depoimento é requerido";
+      } else {
+        // Validate individual testimonial items
+        testimonials.forEach((testimonial: Testimonial, index: number) => {
+          if (!testimonial.testimonial?.trim()) {
+            newErrors[`testimonial_${index}_testimonial`] = `Depoimento ${
+              index + 1
+            } é obrigatório`;
+          }
+          if (!testimonial.name?.trim()) {
+            newErrors[`testimonial_${index}_name`] = `Nome do depoimento ${
+              index + 1
+            } é obrigatório`;
+          }
+        });
       }
     }
 
@@ -52,6 +72,8 @@ export default function TestimonialsForm() {
 
     nextStep();
   };
+
+  const isAccordionDisabled = formData?.step9?.hideSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -83,12 +105,22 @@ export default function TestimonialsForm() {
           Ocultar seção
         </label>
 
+        {isAccordionDisabled && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção <span className="font-bold">&quot;Depoimentos&quot;</span>{" "}
+              está atualmente oculta da proposta.
+            </p>
+          </div>
+        )}
+
         <div className="py-6">
           <TestimonialsAccordion
             testimonials={formData?.step9?.testimonials || []}
             onChange={handleTestimonialsChange}
+            disabled={isAccordionDisabled}
           />
-          {errors.testimonials && (
+          {errors.testimonials && !isAccordionDisabled && (
             <p className="text-red-700 rounded-md text-sm font-medium mt-3">
               {errors.testimonials}
             </p>
@@ -96,7 +128,7 @@ export default function TestimonialsForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
         <button
           type="button"
           onClick={handleBack}
@@ -111,6 +143,14 @@ export default function TestimonialsForm() {
         >
           Avançar
         </button>
+        {errors.testimonials ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

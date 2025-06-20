@@ -6,6 +6,7 @@ import { ArrowLeft, Eye } from "lucide-react";
 import { TextAreaField } from "#/components/Inputs";
 import StepProgressIndicator from "../../StepProgressIndicator";
 import ExpertiseAccordion from "./ExpertiseAccordion";
+import InfoIcon from "#/components/icons/InfoIcon";
 
 import TitleDescription from "../../TitleDescription";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
@@ -17,6 +18,7 @@ export default function AboutYourExpertiseForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrors({});
     updateFormData("step4", {
       ...formData?.step4,
       hideSection: e.target.checked,
@@ -78,6 +80,9 @@ export default function AboutYourExpertiseForm() {
       }
     };
 
+  // Determine if section is hidden
+  const hideSectionChecked = formData?.step4?.hideSection || false;
+
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="p-7">
@@ -100,17 +105,34 @@ export default function AboutYourExpertiseForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step4?.hideSection || false}
+            checked={hideSectionChecked}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />
           Ocultar seção
         </label>
 
+        {hideSectionChecked && (
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+            <p className="text-white-neutral-light-800 text-sm">
+              A seção{" "}
+              <span className="font-bold">
+                &quot;Suas especializações&quot;
+              </span>{" "}
+              está atualmente oculta da proposta.
+            </p>
+          </div>
+        )}
+
         <div className="py-6 space-y-6">
           <div>
+            <p
+              className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            >
+              Subtítulo
+            </p>
             <TextAreaField
-              label="Subtítulo"
               id="expertiseSubtitle"
               textareaName="expertiseSubtitle"
               placeholder="Descreva suas especialidades"
@@ -121,6 +143,7 @@ export default function AboutYourExpertiseForm() {
               rows={2}
               showCharCount
               error={errors.expertiseSubtitle}
+              disabled={hideSectionChecked}
             />
           </div>
 
@@ -128,6 +151,7 @@ export default function AboutYourExpertiseForm() {
             <ExpertiseAccordion
               expertise={formData?.step4?.expertise || []}
               onExpertiseChange={handleExpertiseChange}
+              disabled={hideSectionChecked}
             />
             {errors.expertiseList && (
               <div className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -138,7 +162,7 @@ export default function AboutYourExpertiseForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex gap-2 p-6 items-center">
         <button
           type="button"
           onClick={handleBack}
@@ -153,6 +177,14 @@ export default function AboutYourExpertiseForm() {
         >
           Avançar
         </button>
+        {errors.expertiseSubtitle || errors.expertiseList ? (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+            <InfoIcon fill="#D00003" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Preencha todos os campos
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

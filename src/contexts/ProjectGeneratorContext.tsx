@@ -187,11 +187,6 @@ export function ProjectGeneratorProvider({
       expertiseSubtitle: projectData.expertiseSubtitle,
     });
 
-    // Step 5 - Results
-    safeUpdate("step5", {
-      resultsSubtitle: projectData.resultsSubtitle,
-    });
-
     // Step 7 - Process
     safeUpdate("step7", {
       processSubtitle: projectData.processSubtitle,
