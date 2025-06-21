@@ -1,4 +1,3 @@
-// src/app/api/projects/[id]/copy-link/route.ts
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
@@ -28,7 +27,6 @@ export async function GET(
       );
     }
 
-    // Aguardar os parâmetros antes de usar
     const resolvedParams = await params;
     const projectId = resolvedParams.id;
 
@@ -39,7 +37,6 @@ export async function GET(
       );
     }
 
-    // Buscar o projeto com join para obter os dados do usuário
     const projectWithUser = await db
       .select({
         projectUrl: projectsTable.projectUrl,
@@ -64,7 +61,6 @@ export async function GET(
 
     const project = projectWithUser[0];
 
-    // Verificar se o usuário logado é o dono do projeto
     if (project.userEmail !== emailAddress) {
       return NextResponse.json(
         { success: false, error: "Acesso negado ao projeto" },
@@ -72,7 +68,6 @@ export async function GET(
       );
     }
 
-    // Verificar se os dados necessários existem
     if (!project.projectUrl) {
       return NextResponse.json(
         {
