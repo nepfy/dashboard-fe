@@ -6,102 +6,102 @@ const SuccessSVG = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_27455_80022)">
+    <g clipPath="url(#clip0_27455_80022)">
       <path
         d="M119.346 120.429C119.302 120.431 119.256 120.431 119.212 120.431H34.3206C31.7686 120.431 29.7031 118.363 29.7031 115.814V103.206H113.331V114.281C113.331 117.633 116.012 120.358 119.346 120.429Z"
         stroke="black"
-        stroke-width="0.977757"
-        stroke-miterlimit="10"
+        strokeWidth="0.977757"
+        strokeMiterlimit="10"
       />
       <path
         d="M125.39 19.5146V114.252C125.39 117.62 122.696 120.358 119.345 120.429C116.011 120.358 113.329 117.633 113.329 114.281V103.206H35.5195V19.5146C35.5195 16.1023 38.2866 13.3352 41.699 13.3352H119.211C122.623 13.3352 125.39 16.1023 125.39 19.5146Z"
         stroke="black"
-        stroke-width="0.977757"
-        stroke-miterlimit="10"
+        strokeWidth="0.977757"
+        strokeMiterlimit="10"
       />
       <path
         d="M67.8594 22.7744H94.139"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M67.8594 30.1343H94.139"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M46.0469 43.8479H68.484"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M46.0469 51.1614H62.9058"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M46.0469 73.1023H62.9058"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M46.0469 58.4751H68.484"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M46.0469 65.7886H68.484"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M46.0469 80.4133H68.484"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M64.6406 26.4558H97.8599"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M15.3047 98.636V138.301"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M33.5273 130.988V149.457"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M121.41 131.609V138.301"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M135.664 123.924V138.301"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M132.555 76.8201L145.351 64.0237"
         stroke="black"
-        stroke-width="0.733318"
-        stroke-miterlimit="10"
+        strokeWidth="0.733318"
+        strokeMiterlimit="10"
       />
       <path
         d="M156.53 44.2998L154.855 42.6254L154.164 43.3172L155.838 44.9916C156.302 45.456 156.3 46.2064 155.838 46.6684L122.357 80.1493C120.832 81.6746 118.353 81.6746 116.825 80.1493L112.609 75.9327L111.917 76.6245L116.134 80.841C118.04 82.7477 121.14 82.7477 123.046 80.841L156.527 47.3602C157.371 46.5169 157.371 45.1431 156.527 44.2998H156.53ZM119.59 65.0331L105.256 50.6992C104.413 49.8559 103.042 49.8559 102.198 50.6992L95.6228 57.2746C94.782 58.1155 94.782 59.4893 95.6228 60.3326L101.768 66.4778L102.46 65.786L96.3146 59.6408C95.8526 59.1788 95.8526 58.4284 96.3146 57.9664L102.89 51.391C103.352 50.929 104.102 50.9314 104.564 51.391L119.59 66.4167L145.415 40.5917L144.723 39.8999L119.59 65.0331Z"

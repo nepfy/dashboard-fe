@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { LoaderCircle } from "lucide-react";
 
 import {
@@ -36,6 +36,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
   const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
+  const [menuTriggerElement, setMenuTriggerElement] =
+    useState<HTMLElement | null>(null);
+
+  // Store refs for each row's trigger button
+  const triggerRefs = useRef<Record<string, HTMLButtonElement>>({});
 
   const handleRowSelect = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -98,13 +103,28 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     onRowSelect?.([]);
   };
 
-  const handleMenuToggle = (rowId: string, event: React.MouseEvent) => {
+  const handleMenuToggle = (
+    rowId: string,
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.stopPropagation();
-    setOpenMenuRowId(openMenuRowId === rowId ? null : rowId);
+
+    const triggerElement = triggerRefs.current[rowId];
+
+    if (openMenuRowId === rowId) {
+      // Close the menu
+      setOpenMenuRowId(null);
+      setMenuTriggerElement(null);
+    } else {
+      // Open the menu
+      setOpenMenuRowId(rowId);
+      setMenuTriggerElement(triggerElement);
+    }
   };
 
   const handleMenuClose = () => {
     setOpenMenuRowId(null);
+    setMenuTriggerElement(null);
   };
 
   const handleRowStatusUpdate = async (projectId: string, status: string) => {
@@ -112,6 +132,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
       try {
         await onStatusUpdate(projectId, status);
         setOpenMenuRowId(null);
+        setMenuTriggerElement(null);
       } catch (error) {
         console.error("Falha ao atualizar proposta:", error);
       }
@@ -123,6 +144,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
       try {
         await onBulkDuplicate([projectId]);
         setOpenMenuRowId(null);
+        setMenuTriggerElement(null);
       } catch (error) {
         console.error("Falha ao duplicar proposta:", error);
       }
@@ -135,6 +157,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         const newStatus = viewMode === "archived" ? "draft" : "archived";
         await onStatusUpdate(projectId, newStatus);
         setOpenMenuRowId(null);
+        setMenuTriggerElement(null);
       } catch (error) {
         console.error("Falha ao arquivar/desarquivar proposta:", error);
       }
@@ -169,7 +192,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         />
       )}
 
-      <div className="w-full overflow-x-scroll overflow-visible bg-white-neutral-light-100 rounded-2xs h-fit">
+      <div className="w-full overflow-x-auto bg-white-neutral-light-100 rounded-2xs">
         <div className="p-4">
           <table className="w-full h-full p-3 box-border relative">
             <thead className="bg-white-neutral-light-200 rounded-2xs">
@@ -268,25 +291,19 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
                       {getStatusBadge(row.projectStatus)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 relative">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
                       <button
+                        ref={(el) => {
+                          if (el) {
+                            triggerRefs.current[row.id] = el;
+                          }
+                        }}
                         onClick={(e) => handleMenuToggle(row.id, e)}
                         className="cursor-pointer hover:bg-gray-100 p-1 rounded"
                         disabled={isOperationInProgress}
                       >
                         ...
                       </button>
-                      <RowEditMenu
-                        isOpen={openMenuRowId === row.id}
-                        onClose={handleMenuClose}
-                        projectId={row.id}
-                        currentStatus={row.projectStatus}
-                        viewMode={viewMode}
-                        onStatusUpdate={handleRowStatusUpdate}
-                        onDuplicate={handleRowDuplicate}
-                        onArchive={handleRowArchive}
-                        isUpdating={isUpdating}
-                      />
                     </td>
                   </tr>
                 ))
@@ -304,6 +321,24 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           </table>
         </div>
       </div>
+
+      {/* Render RowEditMenu outside the table using Portal */}
+      {openMenuRowId && (
+        <RowEditMenu
+          isOpen={true}
+          onClose={handleMenuClose}
+          projectId={openMenuRowId}
+          currentStatus={
+            data?.find((row) => row.id === openMenuRowId)?.projectStatus
+          }
+          viewMode={viewMode}
+          onStatusUpdate={handleRowStatusUpdate}
+          onDuplicate={handleRowDuplicate}
+          onArchive={handleRowArchive}
+          isUpdating={isUpdating}
+          triggerElement={menuTriggerElement}
+        />
+      )}
     </div>
   );
 };

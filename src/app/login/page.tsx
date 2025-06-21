@@ -129,7 +129,7 @@ export default function Login() {
                 <PasswordInput
                   label="Senha"
                   id="password"
-                  placeholder="Crie uma senha"
+                  placeholder="Insira a sua senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   showPassword={showPassword}
