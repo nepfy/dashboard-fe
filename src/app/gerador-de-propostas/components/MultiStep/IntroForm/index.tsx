@@ -1,10 +1,11 @@
+// src/app/gerador-de-propostas/components/MultiStep/IntroForm/index.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
 import { TextField } from "#/components/Inputs";
-import TagInput from "#/components/Inputs/TagInput"; // Import the new component
+import TagInput from "#/components/Inputs/TagInput";
 
 import ImportDataModal from "../../ImportData";
 import TitleDescription from "../../TitleDescription";
@@ -25,6 +26,7 @@ export default function IntroStep() {
     templateType,
     currentStep,
     resetForm,
+    importProjectData, // Use the context method instead of local one
   } = useProjectGenerator();
 
   useEffect(() => {
@@ -44,15 +46,17 @@ export default function IntroStep() {
     }
   }, [templateType, currentStep, formData?.step1]);
 
+  // Use the importProjectData from context which populates ALL steps
   const handleImportProject = (projectData: Project) => {
+    // Update the form data for the initial form fields (client and project name)
     updateFormData("step1", {
-      companyName: projectData.companyName,
-      companyEmail: projectData.companyEmail,
-      ctaButtonTitle: projectData.ctaButtonTitle,
-      pageTitle: projectData.pageTitle,
-      pageSubtitle: projectData.pageSubtitle,
-      mainColor: projectData.mainColor,
+      ...formData?.step1,
+      clientName: projectData.clientName,
+      projectName: projectData.projectName,
     });
+
+    // Import all project data using the context method
+    importProjectData(projectData);
 
     setShowImportModal(false);
   };
@@ -93,34 +97,24 @@ export default function IntroStep() {
       // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(companyEmail)) {
-        newErrors.companyEmail = "Digite um email válido";
+        newErrors.companyEmail = "Por favor, insira um email válido";
       }
     }
 
     if (!ctaButtonTitle.trim()) {
-      newErrors.ctaButtonTitle = "O texto do botão CTA é obrigatório";
+      newErrors.ctaButtonTitle = "O texto do botão é obrigatório";
     }
 
     if (!pageTitle.trim()) {
-      newErrors.pageTitle = "O título principal é obrigatório";
-    } else if (pageTitle.length < 30) {
-      newErrors.pageTitle =
-        "O título principal deve ter pelo menos 30 caracteres";
-    } else if (pageTitle.length > 50) {
-      newErrors.pageTitle =
-        "O título principal deve ter no máximo 50 caracteres";
+      newErrors.pageTitle = "O título da página é obrigatório";
     }
 
     if (!pageSubtitle.trim()) {
-      newErrors.pageSubtitle = "O subtítulo é obrigatório";
-    } else if (pageSubtitle.length < 70) {
-      newErrors.pageSubtitle = "O subtítulo deve ter pelo menos 70 caracteres";
-    } else if (pageSubtitle.length > 115) {
-      newErrors.pageSubtitle = "O subtítulo deve ter no máximo 115 caracteres";
+      newErrors.pageSubtitle = "O subtítulo da página é obrigatório";
     }
 
     if (services.length === 0) {
-      newErrors.services = "Adicione pelo menos um serviço";
+      newErrors.services = "Pelo menos um serviço deve ser adicionado";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -138,6 +132,7 @@ export default function IntroStep() {
         [fieldName]: e.target.value,
       });
 
+      // Clear error for this field if it exists
       if (errors[fieldName]) {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -150,10 +145,11 @@ export default function IntroStep() {
   const handleServicesChange = (services: string[]) => {
     updateFormData("step1", {
       ...formData?.step1,
-      services: services,
+      services,
     });
 
-    if (errors.services && services.length > 0) {
+    // Clear services error if it exists
+    if (errors.services) {
       setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors.services;
@@ -183,13 +179,8 @@ export default function IntroStep() {
 
           <div className="py-6">
             <div className="pb-6">
-              <p
-                className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Nome para exibição na proposta
-              </p>
               <TextField
+                label="Nome para exibição na proposta"
                 id="companyName"
                 inputName="companyName"
                 type="text"
@@ -201,17 +192,12 @@ export default function IntroStep() {
             </div>
 
             <div className="pb-6">
-              <p
-                className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Email
-              </p>
               <TextField
+                label="Email"
                 id="companyEmail"
                 inputName="companyEmail"
-                type="email"
-                placeholder="Digite seu email"
+                type="text"
+                placeholder="Digite o seu email"
                 value={formData?.step1?.companyEmail || ""}
                 onChange={handleFieldChange("companyEmail")}
                 error={errors.companyEmail}
@@ -219,17 +205,12 @@ export default function IntroStep() {
             </div>
 
             <div className="pb-6">
-              <p
-                className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Botão CTA
-              </p>
               <TextField
+                label="Texto do botão de ação"
                 id="ctaButtonTitle"
                 inputName="ctaButtonTitle"
                 type="text"
-                placeholder="Iniciar projeto"
+                placeholder="ex: Vamos conversar"
                 value={formData?.step1?.ctaButtonTitle || ""}
                 onChange={handleFieldChange("ctaButtonTitle")}
                 error={errors.ctaButtonTitle}
@@ -237,60 +218,38 @@ export default function IntroStep() {
             </div>
 
             <div className="pb-6">
-              <p
-                className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Título principal
-              </p>
               <TextField
+                label="Título da página"
                 id="pageTitle"
                 inputName="pageTitle"
                 type="text"
-                placeholder="Escreva seu título principal"
+                placeholder="Digite o título principal da sua proposta"
                 value={formData?.step1?.pageTitle || ""}
                 onChange={handleFieldChange("pageTitle")}
-                maxLength={50}
-                minLength={30}
-                showCharCount
                 error={errors.pageTitle}
               />
             </div>
 
             <div className="pb-6">
-              <p
-                className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Serviços
-              </p>
-              <TagInput
-                placeholder="Digite um serviço e pressione ; ou Tab"
-                value={formData?.step1?.services || []}
-                onChange={handleServicesChange}
-                infoText="Separe os serviços por ponto e vírgula (;) ou Tab. Use as setas para navegar e Delete para remover."
-                error={errors.services}
+              <TextField
+                label="Subtítulo da página"
+                id="pageSubtitle"
+                inputName="pageSubtitle"
+                type="text"
+                placeholder="Digite uma descrição complementar"
+                value={formData?.step1?.pageSubtitle || ""}
+                onChange={handleFieldChange("pageSubtitle")}
+                error={errors.pageSubtitle}
               />
             </div>
 
             <div className="pb-6">
-              <p
-                className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Subtítulo
-              </p>
-              <TextField
-                id="pageSubtitle"
-                inputName="pageSubtitle"
-                type="text"
-                placeholder="Escreva seu subtítulo"
-                value={formData?.step1?.pageSubtitle || ""}
-                onChange={handleFieldChange("pageSubtitle")}
-                maxLength={115}
-                minLength={70}
-                showCharCount
-                error={errors.pageSubtitle}
+              <TagInput
+                label="Serviços"
+                placeholder="Digite um serviço e pressione Enter"
+                value={formData?.step1?.services || []}
+                onChange={handleServicesChange}
+                error={errors.services}
               />
             </div>
           </div>
@@ -317,11 +276,11 @@ export default function IntroStep() {
     );
   }
 
-  return (
+  return showImportModal ? (
     <ImportDataModal
       onImportProject={handleImportProject}
       onCreateNew={handleCreateNew}
       onClose={handleCloseModal}
     />
-  );
+  ) : null;
 }
