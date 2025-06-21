@@ -6,6 +6,7 @@ import {
   formatValidityDate,
 } from "#/helpers/formatDateAndTime";
 import CalendarIcon from "#/components/icons/CalendarIcon";
+import AnchorLinkIcon from "#/components/icons/AnchorLinkIcon";
 
 import TableBulkEdit from "./TableBulkEdit";
 import RowEditMenu from "./RowEditMenu";
@@ -246,7 +247,8 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                 data!.map((row) => (
                   <tr
                     key={row.id}
-                    className={`py-4 ${
+                    onClick={() => handleRowSelect(row.id)}
+                    className={`py-4 hover:bg-white-neutral-light-200 ${
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
@@ -261,10 +263,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         disabled={isOperationInProgress}
                       />
                       <span
-                        className="truncate md:whitespace-nowrap max-w-[100px] sm:max-w-none"
+                        className="flex items-center justify-center gap-2 truncate md:whitespace-nowrap max-w-[100px] sm:max-w-none"
                         title={row.clientName}
                       >
                         {row.clientName}
+                        {selectedRows.has(row.id) ? <AnchorLinkIcon /> : ""}
                       </span>
                     </td>
                     <td className="px-3 py-4 text-sm text-white-neutral-light-900">

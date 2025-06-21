@@ -7,6 +7,7 @@ import UpdateIcon from "#/components/icons/UpdateIcon";
 import CopyIcon from "#/components/icons/CopyIcon";
 import EditIcon from "#/components/icons/EditIcon";
 import Archive from "#/components/icons/Archive";
+import AnchorLinkIcon from "#/components/icons/AnchorLinkIcon";
 import Modal from "#/components/Modal";
 import Portal from "#/components/Portal"; // Import the Portal component
 import { getStatusBadge } from "../ProjectsTable/getStatusBadge";
@@ -224,6 +225,10 @@ export default function RowEditMenu({
       case "duplicate":
         setShowDuplicateModal(true);
         break;
+      case "copy-link":
+        navigator.clipboard.writeText(
+          `${window.location.origin}/propostas/${projectId}`
+        );
       case "edit":
         handleEditClick();
         break;
@@ -359,6 +364,19 @@ export default function RowEditMenu({
                 >
                   <CopyIcon width="16" height="16" />
                   Duplicar
+                </button>
+
+                <button
+                  onClick={() => handleMenuItemClick("copy-link")}
+                  disabled={isMenuDisabled}
+                  className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                    isMenuDisabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-white-neutral-light-300 cursor-pointer"
+                  }`}
+                >
+                  <AnchorLinkIcon width="16" height="16" />
+                  Copiar Link
                 </button>
 
                 <button
