@@ -95,12 +95,20 @@ export default function AccessForm() {
     try {
       setIsFinishing(true);
 
-      await finishProject();
+      const result = await finishProject();
+
+      console.log("result", result);
 
       const projectName = formData?.step1?.projectName || "Nova Proposta";
-      router.push(
-        `/dashboard?success=true&project=${encodeURIComponent(projectName)}`
-      );
+
+      const baseUrl = `/dashboard?success=true&project=${encodeURIComponent(
+        projectName
+      )}`;
+      const redirectUrl = result?.data?.id
+        ? `${baseUrl}&projectId=${result?.data?.id}`
+        : baseUrl;
+
+      router.push(redirectUrl);
     } catch (error) {
       console.error("Erro ao finalizar projeto:", error);
       setErrors({
@@ -131,7 +139,10 @@ export default function AccessForm() {
         throw new Error(result.error || "Erro ao finalizar projeto");
       }
 
-      return result;
+      return {
+        success: true,
+        data: result.data,
+      };
     } catch (error) {
       console.error("Erro ao finalizar projeto:", error);
       throw error;

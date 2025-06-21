@@ -12,6 +12,7 @@ import TableBulkEdit from "./TableBulkEdit";
 import RowEditMenu from "./RowEditMenu";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
+import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 
 interface EnhancedTableProps extends TableProps {
   isUpdating?: boolean;
@@ -21,6 +22,89 @@ interface EnhancedTableProps extends TableProps {
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
   viewMode?: "active" | "archived";
 }
+
+interface CopyLinkIconProps {
+  projectId: string;
+  isSelected: boolean;
+}
+
+const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
+  projectId,
+  isSelected,
+}) => {
+  const { copyLinkWithCache } = useCopyLinkWithCache();
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const handleCopyClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setMessage(null);
+
+    try {
+      const result = await copyLinkWithCache(projectId);
+
+      await navigator.clipboard.writeText(result.fullUrl);
+
+      const successMessage = result.fromCache
+        ? "Link copiado! (cache)"
+        : "Link copiado!";
+
+      setMessage(successMessage);
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 2000);
+    } catch (error) {
+      console.error("Erro ao copiar link:", error);
+      setMessage("Erro ao copiar");
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 2000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!isSelected) return null;
+
+  return (
+    <div className="relative">
+      <button
+        onClick={handleCopyClick}
+        disabled={isLoading}
+        className={`inline-flex items-center justify-center p-1 rounded-full transition-colors ${
+          isLoading
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-white-neutral-light-300 cursor-pointer"
+        }`}
+        title="Copiar link do projeto"
+      >
+        {isLoading ? (
+          <LoaderCircle className="w-4 h-4 animate-spin" />
+        ) : (
+          <AnchorLinkIcon width="16" height="16" />
+        )}
+      </button>
+
+      {message && (
+        <div
+          className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 text-xs rounded whitespace-nowrap z-10 ${
+            message.includes("Erro")
+              ? "bg-red-100 text-red-700"
+              : "bg-green-100 text-green-700"
+          }`}
+        >
+          {message}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ProjectsTable: React.FC<EnhancedTableProps> = ({
   data,
@@ -104,23 +188,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     onRowSelect?.([]);
   };
 
-  const handleMenuToggle = (
-    rowId: string,
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleMenuToggle = (rowId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-
     const triggerElement = triggerRefs.current[rowId];
-
-    if (openMenuRowId === rowId) {
-      // Close the menu
-      setOpenMenuRowId(null);
-      setMenuTriggerElement(null);
-    } else {
-      // Open the menu
-      setOpenMenuRowId(rowId);
-      setMenuTriggerElement(triggerElement);
-    }
+    setMenuTriggerElement(triggerElement);
+    setOpenMenuRowId(openMenuRowId === rowId ? null : rowId);
   };
 
   const handleMenuClose = () => {
@@ -248,7 +320,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                   <tr
                     key={row.id}
                     onClick={() => handleRowSelect(row.id)}
-                    className={`py-4 hover:bg-white-neutral-light-200 ${
+                    className={`py-4 hover:bg-white-neutral-light-200 cursor-pointer ${
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
@@ -267,7 +339,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         title={row.clientName}
                       >
                         {row.clientName}
-                        {selectedRows.has(row.id) ? <AnchorLinkIcon /> : ""}
+                        {/* MODIFICADO: Substituído por componente com cache */}
+                        <CopyLinkIcon
+                          projectId={row.id}
+                          isSelected={selectedRows.has(row.id)}
+                        />
                       </span>
                     </td>
                     <td className="px-3 py-4 text-sm text-white-neutral-light-900">
@@ -325,7 +401,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         </div>
       </div>
 
-      {/* Render RowEditMenu outside the table using Portal */}
       {openMenuRowId && (
         <RowEditMenu
           isOpen={true}

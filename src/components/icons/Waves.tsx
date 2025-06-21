@@ -34,7 +34,7 @@ export const WavesMobile = ({
         gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="white" />
-        <stop offset="1" stopColor="white" stop-opacity="0" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_27135_134077"
@@ -45,7 +45,7 @@ export const WavesMobile = ({
         gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="white" />
-        <stop offset="1" stopColor="white" stop-opacity="0" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
       </linearGradient>
     </defs>
   </svg>
@@ -85,7 +85,7 @@ export const Waves = ({
         gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="white" />
-        <stop offset="1" stopColor="white" stop-opacity="0" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_27135_133512"
@@ -96,7 +96,7 @@ export const Waves = ({
         gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="white" />
-        <stop offset="1" stopColor="white" stop-opacity="0" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
       </linearGradient>
     </defs>
   </svg>

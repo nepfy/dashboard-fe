@@ -9,7 +9,9 @@ import EditIcon from "#/components/icons/EditIcon";
 import Archive from "#/components/icons/Archive";
 import AnchorLinkIcon from "#/components/icons/AnchorLinkIcon";
 import Modal from "#/components/Modal";
-import Portal from "#/components/Portal"; // Import the Portal component
+import Portal from "#/components/Portal";
+
+import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 import { getStatusBadge } from "../ProjectsTable/getStatusBadge";
 
 interface RowEditMenuProps {
@@ -81,7 +83,6 @@ export default function RowEditMenu({
   const [isProcessing, setIsProcessing] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
-  // Modal states
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
@@ -90,13 +91,14 @@ export default function RowEditMenu({
   const [isCopyingLink, setIsCopyingLink] = useState(false);
   const [copyLinkMessage, setCopyLinkMessage] = useState<string | null>(null);
 
-  // Calculate menu position based on trigger element
+  const { copyLinkWithCache } = useCopyLinkWithCache();
+
   const calculatePosition = useCallback(() => {
     if (!triggerElement || !isOpen) return;
 
     const triggerRect = triggerElement.getBoundingClientRect();
-    const menuWidth = 280; // min-w-[280px]
-    const menuHeight = showStatusPanel ? 390 : 280; // Approximate heights
+    const menuWidth = 280;
+    const menuHeight = showStatusPanel ? 390 : 280;
 
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -127,7 +129,6 @@ export default function RowEditMenu({
     setMenuPosition({ top, left });
   }, [triggerElement, isOpen, showStatusPanel]);
 
-  // Calculate position when menu opens or status panel changes
   useEffect(() => {
     if (isOpen) {
       calculatePosition();
@@ -146,7 +147,6 @@ export default function RowEditMenu({
     }
   }, [isOpen, calculatePosition]);
 
-  // Handle clicks outside the menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -225,29 +225,15 @@ export default function RowEditMenu({
     setCopyLinkMessage(null);
 
     try {
-      // Buscar dados do projeto específico com join para obter userName
-      const response = await fetch(`/api/projects/${projectId}/copy-link`);
-      const result = await response.json();
+      const result = await copyLinkWithCache(projectId);
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || "Erro ao buscar dados do projeto");
-      }
+      await navigator.clipboard.writeText(result.fullUrl);
+      const message = result.fromCache
+        ? "Link copiado novamente com sucesso!"
+        : "Link copiado com sucesso!";
 
-      const { projectUrl, userName } = result.data;
+      setCopyLinkMessage(message);
 
-      if (!projectUrl || !userName) {
-        throw new Error("Dados insuficientes para gerar o link");
-      }
-
-      // Montar a URL no formato especificado
-      const fullUrl = `https://${userName}-${projectUrl}.nepfy.com`;
-
-      // Copiar para a área de transferência
-      await navigator.clipboard.writeText(fullUrl);
-
-      setCopyLinkMessage("Link copiado com sucesso!");
-
-      // Limpar a mensagem após 3 segundos
       setTimeout(() => {
         setCopyLinkMessage(null);
       }, 3000);
@@ -255,7 +241,6 @@ export default function RowEditMenu({
       console.error("Erro ao copiar link:", error);
       setCopyLinkMessage("Erro ao copiar link. Tente novamente.");
 
-      // Limpar a mensagem de erro após 3 segundos
       setTimeout(() => {
         setCopyLinkMessage(null);
       }, 3000);

@@ -13,6 +13,7 @@ export default function Dashboard() {
   const searchParams = useSearchParams();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [projectName, setProjectName] = useState("");
+  const [projectId, setProjectId] = useState<string | null>(null);
 
   const {
     projectsData,
@@ -32,9 +33,11 @@ export default function Dashboard() {
   useEffect(() => {
     const success = searchParams?.get("success");
     const project = searchParams?.get("project");
+    const projectIdParam = searchParams?.get("projectId");
 
     if (success === "true") {
       setProjectName(project ? decodeURIComponent(project) : "Nova Proposta");
+      setProjectId(projectIdParam ?? null);
       setShowSuccessModal(true);
 
       // Clean up URL parameters
@@ -46,6 +49,7 @@ export default function Dashboard() {
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setProjectName("");
+    setProjectId(null);
   };
 
   const handleBulkStatusUpdate = async (
@@ -135,6 +139,7 @@ export default function Dashboard() {
         isOpen={showSuccessModal}
         onCloseAction={handleCloseSuccessModal}
         projectName={projectName}
+        projectId={projectId ?? undefined}
       />
 
       {projectsData?.length && pagination ? (

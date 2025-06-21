@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
 
 import MultiStepForm from "./components/MultiStepForm";
 import TemplateSelection from "./components/TemplateSelection";
@@ -128,9 +129,9 @@ export default function ProjectGenerator() {
 
   if (isLoadingEdit) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500"></div>
-        <p className="ml-4">Carregando proposta...</p>
+      <div className="flex items-center justify-center h-full p-7">
+        <LoaderCircle className="animate-spin text-primary-light-400 mr-2" />{" "}
+        Carregando proposta...
       </div>
     );
   }
