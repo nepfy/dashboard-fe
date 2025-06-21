@@ -87,6 +87,9 @@ export default function RowEditMenu({
   const [isArchiving, setIsArchiving] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState(false);
 
+  const [isCopyingLink, setIsCopyingLink] = useState(false);
+  const [copyLinkMessage, setCopyLinkMessage] = useState<string | null>(null);
+
   // Calculate menu position based on trigger element
   const calculatePosition = useCallback(() => {
     if (!triggerElement || !isOpen) return;
@@ -197,6 +200,8 @@ export default function RowEditMenu({
       setShowDuplicateModal(false);
       setIsArchiving(false);
       setIsDuplicating(false);
+      setIsCopyingLink(false);
+      setCopyLinkMessage(null);
     }
   }, [isOpen]);
 
@@ -215,6 +220,50 @@ export default function RowEditMenu({
     onClose();
   };
 
+  const handleCopyLink = async () => {
+    setIsCopyingLink(true);
+    setCopyLinkMessage(null);
+
+    try {
+      // Buscar dados do projeto específico com join para obter userName
+      const response = await fetch(`/api/projects/${projectId}/copy-link`);
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Erro ao buscar dados do projeto");
+      }
+
+      const { projectUrl, userName } = result.data;
+
+      if (!projectUrl || !userName) {
+        throw new Error("Dados insuficientes para gerar o link");
+      }
+
+      // Montar a URL no formato especificado
+      const fullUrl = `https://${userName}-${projectUrl}.nepfy.com`;
+
+      // Copiar para a área de transferência
+      await navigator.clipboard.writeText(fullUrl);
+
+      setCopyLinkMessage("Link copiado com sucesso!");
+
+      // Limpar a mensagem após 3 segundos
+      setTimeout(() => {
+        setCopyLinkMessage(null);
+      }, 3000);
+    } catch (error) {
+      console.error("Erro ao copiar link:", error);
+      setCopyLinkMessage("Erro ao copiar link. Tente novamente.");
+
+      // Limpar a mensagem de erro após 3 segundos
+      setTimeout(() => {
+        setCopyLinkMessage(null);
+      }, 3000);
+    } finally {
+      setIsCopyingLink(false);
+    }
+  };
+
   const handleMenuItemClick = (action: string) => {
     console.log(`Action: ${action} for project: ${projectId}`);
 
@@ -226,9 +275,8 @@ export default function RowEditMenu({
         setShowDuplicateModal(true);
         break;
       case "copy-link":
-        navigator.clipboard.writeText(
-          `${window.location.origin}/propostas/${projectId}`
-        );
+        handleCopyLink();
+        break;
       case "edit":
         handleEditClick();
         break;
@@ -308,7 +356,7 @@ export default function RowEditMenu({
   };
 
   const isMenuDisabled =
-    isUpdating || isProcessing || isArchiving || isDuplicating;
+    isUpdating || isProcessing || isArchiving || isDuplicating || isCopyingLink;
   const hasStatusChanged = selectedStatus !== currentStatus;
 
   return (
@@ -375,9 +423,25 @@ export default function RowEditMenu({
                       : "hover:bg-white-neutral-light-300 cursor-pointer"
                   }`}
                 >
-                  <AnchorLinkIcon width="16" height="16" />
+                  {isCopyingLink ? (
+                    <LoaderCircle className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <AnchorLinkIcon width="16" height="16" />
+                  )}
                   Copiar Link
                 </button>
+
+                {copyLinkMessage && (
+                  <div
+                    className={`text-xs px-2 py-1 mx-2 rounded ${
+                      copyLinkMessage.includes("sucesso")
+                        ? "text-green-700 bg-green-100"
+                        : "text-red-700 bg-red-100"
+                    }`}
+                  >
+                    {copyLinkMessage}
+                  </div>
+                )}
 
                 <button
                   onClick={() => handleMenuItemClick("edit")}

@@ -1,4 +1,3 @@
-// Update your ProjectsTable types.ts file
 export interface ProjectsDataProps {
   additionalAddress?: string;
   cep?: string;
@@ -22,6 +21,7 @@ export interface ProjectsDataProps {
     | "archived";
   projectValidUntil?: string;
   projectVisualizationDate?: string;
+  projectUrl?: string; // Adicionar campo projectUrl
   state?: string;
   street?: string;
   updated_at?: string;
