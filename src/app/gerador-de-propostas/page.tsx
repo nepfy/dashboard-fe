@@ -1,9 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
 import MultiStepForm from "./components/MultiStepForm";
-import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplateSelection from "./components/TemplateSelection";
 
+import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { TemplateType } from "#/types/project";
 
 const templates = [
@@ -60,8 +64,59 @@ const templates = [
 ];
 
 export default function ProjectGenerator() {
-  const { updateFormData, setTemplateType, templateType } =
+  const searchParams = useSearchParams();
+  const { updateFormData, setTemplateType, templateType, loadProjectData } =
     useProjectGenerator();
+
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+  const [hasLoadedEdit, setHasLoadedEdit] = useState(false);
+
+  useEffect(() => {
+    const editId = searchParams?.get("editId");
+
+    if (!editId || hasLoadedEdit) {
+      return;
+    }
+
+    const loadEditData = async () => {
+      try {
+        setIsLoadingEdit(true);
+        console.log("Carregando dados da proposta:", editId);
+
+        const response = await fetch(`/api/projects/${editId}`);
+        const result = await response.json();
+
+        console.log("Resposta da API:", result);
+
+        if (result.success) {
+          const projectData = result.data;
+          console.log("Dados do projeto:", projectData);
+
+          loadProjectData(projectData);
+
+          if (projectData.templateType) {
+            setTemplateType(projectData.templateType);
+          }
+
+          setHasLoadedEdit(true);
+        } else {
+          console.error("Erro ao carregar dados da proposta:", result.error);
+          setIsLoadingEdit(false);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados da proposta:", error);
+        setIsLoadingEdit(false);
+      }
+    };
+
+    loadEditData();
+  }, [searchParams?.get("editId"), hasLoadedEdit]);
+
+  useEffect(() => {
+    if (hasLoadedEdit && templateType) {
+      setIsLoadingEdit(false);
+    }
+  }, [hasLoadedEdit, templateType]);
 
   const handleTemplateSelect = (template: TemplateType, color: string) => {
     setTemplateType(template);
@@ -70,6 +125,15 @@ export default function ProjectGenerator() {
       mainColor: color,
     });
   };
+
+  if (isLoadingEdit) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500"></div>
+        <p className="ml-4">Carregando proposta...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 h-full">

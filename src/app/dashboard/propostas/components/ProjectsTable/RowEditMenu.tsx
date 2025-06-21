@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 
 import UpdateIcon from "#/components/icons/UpdateIcon";
@@ -70,6 +71,7 @@ export default function RowEditMenu({
   isUpdating = false,
   triggerElement,
 }: RowEditMenuProps) {
+  const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
   const [showStatusPanel, setShowStatusPanel] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<ProjectStatus>(
@@ -186,7 +188,6 @@ export default function RowEditMenu({
     triggerElement,
   ]);
 
-  // Reset all states when menu closes
   useEffect(() => {
     if (!isOpen) {
       setShowStatusPanel(false);
@@ -208,6 +209,11 @@ export default function RowEditMenu({
     return null;
   }
 
+  const handleEditClick = () => {
+    router.push(`/gerador-de-propostas?editId=${projectId}`);
+    onClose();
+  };
+
   const handleMenuItemClick = (action: string) => {
     console.log(`Action: ${action} for project: ${projectId}`);
 
@@ -219,8 +225,7 @@ export default function RowEditMenu({
         setShowDuplicateModal(true);
         break;
       case "edit":
-        console.log("Edit functionality not implemented yet");
-        onClose();
+        handleEditClick();
         break;
       case "archive":
         setShowArchiveModal(true);

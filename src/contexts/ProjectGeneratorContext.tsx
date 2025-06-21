@@ -10,6 +10,7 @@ interface ProjectGeneratorContextType {
   currentStep: number;
   templateType: TemplateType | null;
   currentProjectId: string | null;
+  isEditMode: boolean;
   updateFormData: <T extends keyof ProposalFormData>(
     step: T,
     data: ProposalFormData[T]
@@ -20,6 +21,7 @@ interface ProjectGeneratorContextType {
   goToStep: (step: number) => void;
   resetForm: () => void;
   importProjectData: (projectData: Project) => void;
+  loadProjectData: (projectData: Project) => void;
   // Draft functionality
   saveDraft: () => Promise<void>;
   isSavingDraft: boolean;
@@ -61,6 +63,7 @@ export function ProjectGeneratorProvider({
     null
   );
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const {
     saveDraft: saveDraftHook,
@@ -95,6 +98,24 @@ export function ProjectGeneratorProvider({
     setCurrentStep(1); // Move to step 1 after template selection
   };
 
+  const loadProjectData = (projectData: Project) => {
+    console.log("Context - Loading project data for editing:", projectData);
+
+    // Definir como projeto existente para edição
+    if (projectData.id) {
+      setCurrentProjectId(projectData.id);
+      setIsEditMode(true);
+    }
+
+    // Set template type if available
+    if (projectData.templateType) {
+      setTemplateTypeState(projectData.templateType as TemplateType);
+    }
+
+    // Carregar dados usando a função importProjectData existente
+    importProjectData(projectData);
+  };
+
   const nextStep = () => {
     console.log("Context - nextStep called, current:", currentStep);
     setCurrentStep((prev) => {
@@ -126,6 +147,7 @@ export function ProjectGeneratorProvider({
     setCurrentStep(0);
     setTemplateTypeState(null);
     setCurrentProjectId(null);
+    setIsEditMode(false);
   };
 
   const importProjectData = (projectData: Project) => {
@@ -240,6 +262,7 @@ export function ProjectGeneratorProvider({
     currentStep,
     templateType,
     currentProjectId: currentProjectId || hookProjectId,
+    isEditMode,
     updateFormData,
     setTemplateType,
     nextStep,
@@ -247,6 +270,7 @@ export function ProjectGeneratorProvider({
     goToStep,
     resetForm,
     importProjectData,
+    loadProjectData,
     // Draft functionality
     saveDraft,
     isSavingDraft,
