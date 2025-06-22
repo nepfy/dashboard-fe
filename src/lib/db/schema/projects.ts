@@ -39,24 +39,47 @@ export const projectsTable = pgTable("projects", {
   pageSubtitle: text("page_subtitle"),
   services: text("services"), // comma-separated values or JSON array
 
+  hideAboutUsSection: boolean("hide_about_us_section").default(false),
   aboutUsTitle: varchar("about_us_title", { length: 255 }),
   aboutUsSubtitle1: text("about_us_subtitle_1"),
   aboutUsSubtitle2: text("about_us_subtitle_2"),
 
+  hideAboutYourTeamSection: boolean("hide_about_your_team_section").default(
+    false
+  ),
   ourTeamSubtitle: text("our_team_subtitle"),
 
+  hideExpertiseSection: boolean("hide_expertise_section").default(false),
   expertiseSubtitle: text("expertise_subtitle"),
 
+  hideResultsSection: boolean("hide_results_section").default(false),
   resultsSubtitle: text("results_subtitle"),
 
+  hideClientsSection: boolean("hide_clients_section").default(false),
+
+  hideProcessSection: boolean("hide_process_section").default(false),
+  hideProcessSubtitle: boolean("hide_process_subtitle").default(false),
   processSubtitle: text("process_subtitle"),
 
+  hideCTASection: boolean("hide_cta_section").default(false),
   ctaBackgroundImage: text("cta_background_image"),
 
+  hideTestimonialsSection: boolean("hide_testimonials_section").default(false),
+
+  hideInvestmentSection: boolean("hide_investment_section").default(false),
   investmentTitle: varchar("investment_title", { length: 255 }),
 
-  deliveryServices: text("delivery_services"),
+  hideIncludedServicesSection: boolean(
+    "hide_included_services_section"
+  ).default(false),
 
+  hidePlansSection: boolean("hide_plans_section").default(false),
+
+  hideTermsSection: boolean("hide_terms_section").default(false),
+
+  hideFaqSection: boolean("hide_faq_section").default(false),
+
+  hideFinalMessageSection: boolean("hide_final_message_section").default(false),
   endMessageTitle: varchar("end_message_title", { length: 255 }),
   endMessageTitle2: varchar("end_message_title_2", { length: 255 }),
   endMessageDescription: text("end_message_description"),

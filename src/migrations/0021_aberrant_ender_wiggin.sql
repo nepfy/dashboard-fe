@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "hide_process_subtitle" boolean DEFAULT false;

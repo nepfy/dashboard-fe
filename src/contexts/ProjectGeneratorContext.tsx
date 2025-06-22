@@ -263,6 +263,7 @@ export function ProjectGeneratorProvider({
 
     // Step 8 - CTA Background
     safeUpdate("step8", {
+      hideCTASection: projectData.hideCTASection || false,
       ctaBackgroundImage: projectData.ctaBackgroundImage,
     });
 
@@ -274,6 +275,7 @@ export function ProjectGeneratorProvider({
 
     // Step 10 - Investment
     safeUpdate("step10", {
+      hideInvestmentSection: projectData.hideInvestmentSection || false,
       investmentTitle: projectData.investmentTitle,
     });
 
@@ -304,6 +306,8 @@ export function ProjectGeneratorProvider({
 
     // Step 15 - End message
     safeUpdate("step15", {
+      hideFinalMessage: projectData.hideFinalMessage || false,
+      hideFinalMessageSubtitle: projectData.hideFinalMessageSubtitle || false,
       endMessageTitle: projectData.endMessageTitle,
       endMessageTitle2: projectData.endMessageTitle2,
       endMessageDescription: projectData.endMessageDescription,

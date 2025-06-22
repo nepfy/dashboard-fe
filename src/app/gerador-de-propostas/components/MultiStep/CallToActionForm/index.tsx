@@ -27,7 +27,7 @@ export default function CallToActionForm() {
 
     updateFormData("step8", {
       ...formData?.step8,
-      hideSection: isHidden,
+      hideCTASection: isHidden,
       // Se a seção for ocultada, limpar a imagem
       ctaBackgroundImage: isHidden
         ? ""
@@ -87,7 +87,7 @@ export default function CallToActionForm() {
     setErrors({});
 
     const ctaBackgroundImage = formData?.step8?.ctaBackgroundImage;
-    const hideSection = formData?.step8?.hideSection || false;
+    const hideSection = formData?.step8?.hideCTASection || false;
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
@@ -105,7 +105,7 @@ export default function CallToActionForm() {
   };
 
   // Determinar se o formulário deve estar desabilitado
-  const isDisabled = formData?.step8?.hideSection || false;
+  const isDisabled = formData?.step8?.hideCTASection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -130,7 +130,7 @@ export default function CallToActionForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step8?.hideSection || false}
+            checked={formData?.step8?.hideCTASection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

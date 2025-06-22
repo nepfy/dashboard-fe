@@ -31,7 +31,7 @@ export default function FinalMessageForm() {
     const endMessageTitle2 = formData?.step15?.endMessageTitle2 || "";
     const endMessageDescription = formData?.step15?.endMessageDescription || "";
     const projectValidUntil = formData?.step15?.projectValidUntil || "";
-    const hideSection = formData?.step15?.hideSection || false;
+    const hideSection = formData?.step15?.hideFinalMessage || false;
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
@@ -110,7 +110,7 @@ export default function FinalMessageForm() {
 
     updateFormData("step15", {
       ...formData?.step15,
-      hideSection: isHidden,
+      hideFinalMessage: isHidden,
       endMessageTitle: isHidden ? "" : formData?.step15?.endMessageTitle || "",
       endMessageTitle2: isHidden
         ? ""
@@ -162,7 +162,7 @@ export default function FinalMessageForm() {
     }
   };
 
-  const isFormDisabled = formData?.step15?.hideSection || false;
+  const isFormDisabled = formData?.step15?.hideFinalMessage || false;
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
@@ -186,7 +186,7 @@ export default function FinalMessageForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step15?.hideSection || false}
+            checked={formData?.step15?.hideFinalMessage || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

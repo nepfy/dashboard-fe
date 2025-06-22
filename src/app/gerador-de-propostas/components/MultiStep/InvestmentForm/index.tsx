@@ -24,7 +24,7 @@ export default function InvestmentForm() {
     setErrors({});
 
     const investmentTitle = formData?.step10?.investmentTitle || "";
-    const hideSection = formData?.step10?.hideSection || false;
+    const hideSection = formData?.step10?.hideInvestmentSection || false;
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
@@ -62,11 +62,11 @@ export default function InvestmentForm() {
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFormData("step10", {
       ...formData?.step10,
-      hideSection: e.target.checked,
+      hideInvestmentSection: e.target.checked,
     });
   };
 
-  const isDisabled = formData?.step10?.hideSection || false;
+  const isDisabled = formData?.step10?.hideInvestmentSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -89,7 +89,7 @@ export default function InvestmentForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step10?.hideSection || false}
+            checked={formData?.step10?.hideInvestmentSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

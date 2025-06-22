@@ -145,11 +145,13 @@ export interface Project {
   processSubtitle?: string;
   processSteps?: ProcessStep[];
 
+  hideCTASection?: boolean;
   ctaBackgroundImage?: string;
 
   hideTestimonialsSection?: boolean;
   testimonials?: Testimonial[];
 
+  hideInvestmentSection?: boolean;
   investmentTitle?: string;
 
   hideIncludedServicesSection?: boolean;
@@ -164,6 +166,8 @@ export interface Project {
   hideFaqSection?: boolean;
   faq?: FAQ[];
 
+  hideFinalMessage?: boolean;
+  hideFinalMessageSubtitle?: boolean;
   endMessageTitle?: string;
   endMessageTitle2?: string;
   endMessageDescription?: string;
@@ -231,7 +235,7 @@ export interface Step7Data {
 }
 
 export interface Step8Data {
-  hideSection?: boolean;
+  hideCTASection?: boolean;
   ctaBackgroundImage?: string;
   ctaBackgroundImageName?: string;
 }
@@ -242,7 +246,7 @@ export interface Step9Data {
 }
 
 export interface Step10Data {
-  hideSection?: boolean;
+  hideInvestmentSection?: boolean;
   investmentTitle?: string;
 }
 
@@ -267,7 +271,8 @@ export interface Step14Data {
 }
 
 export interface Step15Data {
-  hideSection?: boolean;
+  hideFinalMessage?: boolean;
+  hideFinalMessageSubtitle?: boolean;
   endMessageTitle?: string;
   endMessageTitle2?: string;
   endMessageDescription?: string;

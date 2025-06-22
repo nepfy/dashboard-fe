@@ -91,29 +91,48 @@ export async function POST(request: Request) {
         ? formData.step1.services.join(",")
         : formData.step1?.services,
 
+      hideAboutUsSection: formData.step2?.hideAboutUsSection || false,
       aboutUsTitle: formData.step2?.aboutUsTitle,
       aboutUsSubtitle1: formData.step2?.aboutUsSubtitle1,
       aboutUsSubtitle2: formData.step2?.aboutUsSubtitle2,
 
+      hideAboutYourTeamSection:
+        formData.step3?.hideAboutYourTeamSection || false,
       ourTeamSubtitle: formData.step3?.ourTeamSubtitle,
 
+      hideExpertiseSection: formData.step4?.hideExpertiseSection || false,
       expertiseSubtitle: formData.step4?.expertiseSubtitle,
 
+      hideResultsSection: formData.step5?.hideResultsSection || false,
       resultsSubtitle: formData.step5?.resultsSubtitle,
 
+      hideClientsSection: formData.step6?.hideClientsSection || false,
+      hideLogoField: formData.step6?.hideLogoField || false,
+
+      hideProcessSection: formData.step7?.hideProcessSection || false,
+      hideProcessSubtitle: formData.step7?.hideProcessSubtitle || false,
       processSubtitle: formData.step7?.processSubtitle,
 
+      hideCTASection: formData.step8?.hideCTASection || false,
       ctaBackgroundImage: formData.step8?.ctaBackgroundImage,
 
+      hideTestimonialsSection: formData.step9?.hideTestimonialsSection || false,
+
+      hideInvestmentSection: formData.step10?.hideInvestmentSection || false,
       investmentTitle: formData.step10?.investmentTitle,
 
-      // Handle deliveryServices - convert array to comma-separated string
-      deliveryServices: Array.isArray(formData.step11?.deliveryServices)
-        ? formData.step11.deliveryServices.join(",")
-        : formData.step11?.deliveryServices,
+      hideIncludedServicesSection:
+        formData.step11?.hideIncludedServicesSection || false,
 
+      hidePlansSection: formData.step12?.hidePlansSection || false,
+
+      hideFaqSection: formData.step14?.hideFaqSection || false,
+
+      hideTermsSection: formData.step13?.hideTermsSection || false,
       termsTitle: formData.step13?.termsTitle,
 
+      hideFinalMessageSection:
+        formData.step15?.hideFinalMessageSection || false,
       endMessageTitle: formData.step15?.endMessageTitle,
       endMessageTitle2: formData.step15?.endMessageTitle2,
       endMessageDescription: formData.step15?.endMessageDescription,
