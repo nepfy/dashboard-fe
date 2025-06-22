@@ -105,8 +105,8 @@ export const projectResultsTable = pgTable("project_results", {
   photo: text("photo"), // URL or file path
   client: varchar("client", { length: 255 }),
   subtitle: text("subtitle"),
-  investment: decimal("investment", { precision: 10, scale: 2 }),
-  roi: decimal("roi", { precision: 10, scale: 2 }), // Return on Investment
+  investment: decimal("investment", { precision: 15, scale: 2 }),
+  roi: decimal("roi", { precision: 10, scale: 2 }),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
 });
@@ -171,7 +171,7 @@ export const projectPlansTable = pgTable("project_plans", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   isBestOffer: boolean("is_best_offer").default(false),
-  price: decimal("price", { precision: 10, scale: 2 }),
+  price: decimal("price", { precision: 15, scale: 2 }),
   pricePeriod: varchar("price_period", { length: 50 }), // monthly, yearly, one-time
   ctaButtonTitle: varchar("cta_button_title", { length: 100 }),
   sortOrder: integer("sort_order").default(0),

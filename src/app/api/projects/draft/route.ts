@@ -238,19 +238,50 @@ export async function POST(request: Request) {
       // Insert new results
       if (formData.step5.results.length > 0) {
         const resultsToInsert = formData.step5.results.map(
-          (result: Result, index: number) => ({
-            projectId: finalProjectId,
-            photo: result.photo || null,
-            client: result.client || "",
-            subtitle: result.subtitle || "",
-            // Converter valores decimais do formato brasileiro para americano
-            investment: convertDecimal(result.investment || "0"),
-            roi: convertDecimal(result.roi || "0"),
-            sortOrder: result.sortOrder || index,
-          })
+          (result: Result, index: number) => {
+            // Convert and validate values
+            const convertedInvestment = convertDecimal(
+              result.investment || "0"
+            );
+            const convertedRoi = convertDecimal(result.roi || "0");
+
+            // Additional validation - check if values are within reasonable bounds
+            const investmentNum = parseFloat(convertedInvestment);
+            const roiNum = parseFloat(convertedRoi);
+
+            // Log problematic values for debugging
+            if (investmentNum > 1000000000000) {
+              // 1 trillion
+              console.warn(
+                `Large investment value detected for result ${index}: ${investmentNum}`
+              );
+            }
+            if (roiNum > 1000000000000) {
+              // 1 trillion
+              console.warn(
+                `Large ROI value detected for result ${index}: ${roiNum}`
+              );
+            }
+
+            return {
+              projectId: finalProjectId,
+              photo: result.photo || null,
+              client: result.client || "",
+              subtitle: result.subtitle || "",
+              investment: convertedInvestment,
+              roi: convertedRoi,
+              sortOrder: result.sortOrder || index,
+            };
+          }
         );
 
-        await db.insert(projectResultsTable).values(resultsToInsert);
+        try {
+          await db.insert(projectResultsTable).values(resultsToInsert);
+        } catch (insertError) {
+          console.error("Error inserting project results:", insertError);
+          console.error("Values attempted to insert:", resultsToInsert);
+          throw insertError;
+        }
       }
     }
 
