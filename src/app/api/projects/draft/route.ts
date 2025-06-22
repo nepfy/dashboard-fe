@@ -5,13 +5,34 @@ import { db } from "#/lib/db";
 import { eq, and } from "drizzle-orm";
 import {
   projectsTable,
-  projectServicesTable,
   projectTeamMembersTable,
   projectExpertiseTable,
+  projectResultsTable,
+  projectClientsTable,
+  projectProcessStepsTable,
+  projectTestimonialsTable,
+  projectServicesTable,
+  projectPlansTable,
+  projectPlanDetailsTable,
+  projectTermsConditionsTable,
+  projectFaqTable,
 } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
-import { TeamMember, Expertise } from "#/types/project";
+import convertDecimal from "#/helpers/convertDecimal";
+import {
+  TeamMember,
+  Expertise,
+  Result,
+  Client,
+  ProcessStep,
+  Testimonial,
+  Service,
+  Plan,
+  PlanDetail,
+  TermsCondition,
+  FAQ,
+} from "#/types/project";
 
 export async function POST(request: Request) {
   try {
@@ -94,6 +115,7 @@ export async function POST(request: Request) {
       termsTitle: formData.step13?.termsTitle,
 
       endMessageTitle: formData.step15?.endMessageTitle,
+      endMessageTitle2: formData.step15?.endMessageTitle2,
       endMessageDescription: formData.step15?.endMessageDescription,
 
       projectUrl: formData.step16?.pageUrl,
@@ -207,6 +229,103 @@ export async function POST(request: Request) {
       }
     }
 
+    if (formData.step5?.results && Array.isArray(formData.step5.results)) {
+      // Delete existing results for this project
+      await db
+        .delete(projectResultsTable)
+        .where(eq(projectResultsTable.projectId, finalProjectId));
+
+      // Insert new results
+      if (formData.step5.results.length > 0) {
+        const resultsToInsert = formData.step5.results.map(
+          (result: Result, index: number) => ({
+            projectId: finalProjectId,
+            photo: result.photo || null,
+            client: result.client || "",
+            subtitle: result.subtitle || "",
+            // Converter valores decimais do formato brasileiro para americano
+            investment: convertDecimal(result.investment || "0"),
+            roi: convertDecimal(result.roi || "0"),
+            sortOrder: result.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectResultsTable).values(resultsToInsert);
+      }
+    }
+
+    if (formData.step6?.clients && Array.isArray(formData.step6.clients)) {
+      // Delete existing clients for this project
+      await db
+        .delete(projectClientsTable)
+        .where(eq(projectClientsTable.projectId, finalProjectId));
+
+      // Insert new clients
+      if (formData.step6.clients.length > 0) {
+        const clientsToInsert = formData.step6.clients.map(
+          (client: Client, index: number) => ({
+            projectId: finalProjectId,
+            logo: client.logo || null,
+            name: client.name || "",
+            sortOrder: client.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectClientsTable).values(clientsToInsert);
+      }
+    }
+
+    if (
+      formData.step7?.processSteps &&
+      Array.isArray(formData.step7.processSteps)
+    ) {
+      // Delete existing process steps for this project
+      await db
+        .delete(projectProcessStepsTable)
+        .where(eq(projectProcessStepsTable.projectId, finalProjectId));
+
+      // Insert new process steps
+      if (formData.step7.processSteps.length > 0) {
+        const processStepsToInsert = formData.step7.processSteps.map(
+          (processStep: ProcessStep, index: number) => ({
+            projectId: finalProjectId,
+            stepCounter: processStep.stepCounter || index + 1,
+            stepName: processStep.stepName || "",
+            description: processStep.description || null,
+            sortOrder: processStep.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectProcessStepsTable).values(processStepsToInsert);
+      }
+    }
+
+    if (
+      formData.step9?.testimonials &&
+      Array.isArray(formData.step9.testimonials)
+    ) {
+      // Delete existing testimonials for this project
+      await db
+        .delete(projectTestimonialsTable)
+        .where(eq(projectTestimonialsTable.projectId, finalProjectId));
+
+      // Insert new testimonials
+      if (formData.step9.testimonials.length > 0) {
+        const testimonialsToInsert = formData.step9.testimonials.map(
+          (testimonial: Testimonial, index: number) => ({
+            projectId: finalProjectId,
+            testimonial: testimonial.testimonial || "",
+            name: testimonial.name || "",
+            role: testimonial.role || null,
+            photo: testimonial.photo || null,
+            sortOrder: testimonial.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectTestimonialsTable).values(testimonialsToInsert);
+      }
+    }
+
     // Handle includedServices - save to projectServicesTable
     if (
       formData.step11?.includedServices &&
@@ -219,14 +338,8 @@ export async function POST(request: Request) {
 
       // Insert new services
       if (formData.step11.includedServices.length > 0) {
-        interface IncludedService {
-          title?: string;
-          description?: string;
-          sortOrder?: number;
-        }
-
         const servicesToInsert = formData.step11.includedServices.map(
-          (service: IncludedService, index: number) => ({
+          (service: Service, index: number) => ({
             projectId: finalProjectId,
             title: service.title || "",
             description: service.description || "",
@@ -235,6 +348,100 @@ export async function POST(request: Request) {
         );
 
         await db.insert(projectServicesTable).values(servicesToInsert);
+      }
+    }
+
+    if (formData.step12?.plans && Array.isArray(formData.step12.plans)) {
+      // Delete existing plans and their details for this project
+      await db
+        .delete(projectPlansTable)
+        .where(eq(projectPlansTable.projectId, finalProjectId));
+      // Note: projectPlanDetailsTable will be deleted automatically due to cascade
+
+      // Insert new plans
+      if (formData.step12.plans.length > 0) {
+        for (let index = 0; index < formData.step12.plans.length; index++) {
+          const plan: Plan = formData.step12.plans[index];
+
+          // Insert the plan first
+          const insertedPlans = await db
+            .insert(projectPlansTable)
+            .values({
+              projectId: finalProjectId,
+              title: plan.title || "",
+              description: plan.description || null,
+              isBestOffer: plan.isBestOffer || false,
+              price: convertDecimal(plan.price || 0),
+              pricePeriod: plan.pricePeriod || "one-time",
+              ctaButtonTitle: plan.ctaButtonTitle || null,
+              sortOrder: plan.sortOrder || index,
+            })
+            .returning();
+
+          const insertedPlanId = insertedPlans[0].id;
+
+          // Insert plan details if they exist
+          if (plan.planDetails && plan.planDetails.length > 0) {
+            const planDetailsToInsert = plan.planDetails.map(
+              (detail: PlanDetail, detailIndex: number) => ({
+                planId: insertedPlanId,
+                description: detail.description || "",
+                sortOrder: detail.sortOrder || detailIndex,
+              })
+            );
+
+            await db
+              .insert(projectPlanDetailsTable)
+              .values(planDetailsToInsert);
+          }
+        }
+      }
+    }
+
+    if (
+      formData.step13?.termsConditions &&
+      Array.isArray(formData.step13.termsConditions)
+    ) {
+      // Delete existing terms conditions for this project
+      await db
+        .delete(projectTermsConditionsTable)
+        .where(eq(projectTermsConditionsTable.projectId, finalProjectId));
+
+      // Insert new terms conditions
+      if (formData.step13.termsConditions.length > 0) {
+        const termsConditionsToInsert = formData.step13.termsConditions.map(
+          (termsCondition: TermsCondition, index: number) => ({
+            projectId: finalProjectId,
+            title: termsCondition.title || `Termo ${index + 1}`, // Fallback se title estiver vazio
+            description: termsCondition.description || "",
+            sortOrder: termsCondition.sortOrder || index,
+          })
+        );
+
+        await db
+          .insert(projectTermsConditionsTable)
+          .values(termsConditionsToInsert);
+      }
+    }
+
+    if (formData.step14?.faq && Array.isArray(formData.step14.faq)) {
+      // Delete existing FAQ for this project
+      await db
+        .delete(projectFaqTable)
+        .where(eq(projectFaqTable.projectId, finalProjectId));
+
+      // Insert new FAQ
+      if (formData.step14.faq.length > 0) {
+        const faqToInsert = formData.step14.faq.map(
+          (faq: FAQ, index: number) => ({
+            projectId: finalProjectId,
+            question: faq.question || "",
+            answer: faq.answer || "",
+            sortOrder: faq.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectFaqTable).values(faqToInsert);
       }
     }
 

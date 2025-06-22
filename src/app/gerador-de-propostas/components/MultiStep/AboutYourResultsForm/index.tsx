@@ -24,7 +24,7 @@ export default function AboutYourResultsForm() {
 
     updateFormData("step5", {
       ...formData?.step5,
-      hideSection: isHidden,
+      hideYourResultsSection: isHidden,
       // Se a seção for ocultada e já houver resultados, removê-los
       results: isHidden ? [] : formData?.step5?.results || [],
     });
@@ -44,11 +44,12 @@ export default function AboutYourResultsForm() {
   const handleNext = () => {
     setErrors({});
 
-    const hideSection = formData?.step5?.hideSection || false;
+    const hideYourResultsSection =
+      formData?.step5?.hideYourResultsSection || false;
     const results = formData?.step5?.results || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideYourResultsSection) {
       // Validate results list
       if (results.length === 0) {
         newErrors.results = "Ao menos 1 resultado é requerido";
@@ -104,7 +105,7 @@ export default function AboutYourResultsForm() {
     nextStep();
   };
 
-  const isAccordionDisabled = formData?.step5?.hideSection || false;
+  const isAccordionDisabled = formData?.step5?.hideYourResultsSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -128,7 +129,7 @@ export default function AboutYourResultsForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step5?.hideSection || false}
+            checked={formData?.step5?.hideYourResultsSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

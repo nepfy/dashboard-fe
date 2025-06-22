@@ -22,7 +22,7 @@ export default function PlansForm() {
     setErrors({});
     updateFormData("step12", {
       ...formData?.step12,
-      hideSection: isHidden,
+      hidePlansSection: isHidden,
       plans: isHidden ? [] : formData?.step12?.plans || [],
     });
   };
@@ -41,11 +41,11 @@ export default function PlansForm() {
   const handleNext = () => {
     setErrors({});
 
-    const hideSection = formData?.step12?.hideSection || false;
+    const hidePlansSection = formData?.step12?.hidePlansSection || false;
     const plansList = formData?.step12?.plans || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hidePlansSection) {
       if (plansList.length === 0) {
         newErrors.plans = "Ao menos 1 plano é requerido";
       }
@@ -59,7 +59,7 @@ export default function PlansForm() {
     nextStep();
   };
 
-  const isAccordionDisabled = formData?.step12?.hideSection || false;
+  const isAccordionDisabled = formData?.step12?.hidePlansSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -82,7 +82,7 @@ export default function PlansForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step12?.hideSection || false}
+            checked={formData?.step12?.hidePlansSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

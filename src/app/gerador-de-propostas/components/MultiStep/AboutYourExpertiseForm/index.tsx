@@ -21,7 +21,7 @@ export default function AboutYourExpertiseForm() {
     setErrors({});
     updateFormData("step4", {
       ...formData?.step4,
-      hideSection: e.target.checked,
+      hideExpertiseSection: e.target.checked,
     });
   };
 
@@ -39,12 +39,12 @@ export default function AboutYourExpertiseForm() {
   const handleNext = () => {
     setErrors({});
 
+    const hideExpertiseSection = formData?.step4?.hideExpertiseSection || false;
     const expertiseSubtitle = formData?.step4?.expertiseSubtitle || "";
-    const hideSection = formData?.step4?.hideSection || false;
     const expertiseList = formData?.step4?.expertise || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideExpertiseSection) {
       if (expertiseSubtitle.length < 90) {
         newErrors.expertiseSubtitle =
           "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
@@ -80,7 +80,7 @@ export default function AboutYourExpertiseForm() {
       }
     };
 
-  const hideSectionChecked = formData?.step4?.hideSection || false;
+  const hideSectionChecked = formData?.step4?.hideExpertiseSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -103,7 +103,7 @@ export default function AboutYourExpertiseForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step4?.hideSection || false}
+            checked={formData?.step4?.hideExpertiseSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

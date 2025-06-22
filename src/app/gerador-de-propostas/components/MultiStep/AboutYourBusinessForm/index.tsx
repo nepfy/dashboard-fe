@@ -28,17 +28,18 @@ export default function AboutYourBusinessForm() {
     const aboutUsTitle = formData?.step2?.aboutUsTitle || "";
     const aboutUsSubtitle1 = formData?.step2?.aboutUsSubtitle1 || "";
     const aboutUsSubtitle2 = formData?.step2?.aboutUsSubtitle2 || "";
-    const hideSection = formData?.step2?.hideSection || false;
-    const hideSubtitles = formData?.step2?.hideSubtitles || false;
+    const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
+    const hideSubtitles1 = formData?.step2?.hideSubtitles1 || false;
+    const hideSubtitles2 = formData?.step2?.hideSubtitles2 || false;
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideAboutUsSection) {
       if (fieldVisibility.aboutUsTitle && aboutUsTitle.length < 85) {
         newErrors.aboutUsTitle =
           "O campo 'Sobre nós' deve ter pelo menos 85 caracteres";
       }
 
-      if (!hideSubtitles) {
+      if (!hideSubtitles1 || !hideSubtitles2) {
         if (fieldVisibility.aboutUsSubtitle1 && aboutUsSubtitle1.length < 40) {
           newErrors.aboutUsSubtitle1 =
             "O campo 'Subtítulo 1' deve ter pelo menos 40 caracteres";
@@ -83,7 +84,7 @@ export default function AboutYourBusinessForm() {
     toggleFieldVisibility("aboutUsSubtitle2");
     updateFormData("step2", {
       ...formData?.step2,
-      hideSection: e.target.checked,
+      hideAboutUsSection: e.target.checked,
     });
   };
 
@@ -94,8 +95,9 @@ export default function AboutYourBusinessForm() {
     }));
   };
 
-  const hideSectionChecked = formData?.step2?.hideSection || false;
-  const hideSubtitlesChecked = formData?.step2?.hideSubtitles || false;
+  const hideSectionChecked = formData?.step2?.hideAboutUsSection || false;
+  const hideSubtitlesChecked1 = formData?.step2?.hideSubtitles1 || false;
+  const hideSubtitlesChecked2 = formData?.step2?.hideSubtitles2 || false;
 
   const [fieldVisibility, setFieldVisibility] = useState({
     aboutUsTitle: !hideSectionChecked,
@@ -187,7 +189,11 @@ export default function AboutYourBusinessForm() {
                 className={`${
                   hideSectionChecked ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                disabled={hideSectionChecked || hideSubtitlesChecked}
+                disabled={
+                  hideSectionChecked ||
+                  hideSubtitlesChecked1 ||
+                  hideSubtitlesChecked2
+                }
               >
                 {fieldVisibility.aboutUsSubtitle1 ? (
                   <EyeOpened />
@@ -207,7 +213,11 @@ export default function AboutYourBusinessForm() {
                 minLength={40}
                 showCharCount
                 error={errors.aboutUsSubtitle1}
-                disabled={hideSectionChecked || hideSubtitlesChecked}
+                disabled={
+                  hideSectionChecked ||
+                  hideSubtitlesChecked1 ||
+                  hideSubtitlesChecked2
+                }
               />
             )}
           </div>
@@ -224,7 +234,11 @@ export default function AboutYourBusinessForm() {
                 className={`${
                   hideSectionChecked ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                disabled={hideSectionChecked || hideSubtitlesChecked}
+                disabled={
+                  hideSectionChecked ||
+                  hideSubtitlesChecked1 ||
+                  hideSubtitlesChecked2
+                }
               >
                 {fieldVisibility.aboutUsSubtitle2 ? (
                   <EyeOpened />
@@ -244,7 +258,11 @@ export default function AboutYourBusinessForm() {
                 minLength={195}
                 showCharCount
                 error={errors.aboutUsSubtitle2}
-                disabled={hideSectionChecked || hideSubtitlesChecked}
+                disabled={
+                  hideSectionChecked ||
+                  hideSubtitlesChecked1 ||
+                  hideSubtitlesChecked2
+                }
               />
             )}
           </div>

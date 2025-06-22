@@ -1,4 +1,3 @@
-// src/lib/db/schema/projects.ts
 import {
   pgTable,
   uuid,
@@ -10,7 +9,7 @@ import {
   integer,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { timestamps, address } from "#/lib/db/schema/helpers/columns.helpers";
+import { timestamps } from "#/lib/db/schema/helpers/columns.helpers";
 import { personUserTable } from "#/lib/db/schema/users";
 
 export const projectsTable = pgTable("projects", {
@@ -21,7 +20,6 @@ export const projectsTable = pgTable("projects", {
 
   projectName: varchar("project_name", { length: 255 }).notNull(),
   clientName: varchar("client_name", { length: 255 }).notNull(),
-  ...address,
   projectSentDate: timestamp("project_sent_date", { mode: "date" }),
   projectValidUntil: timestamp("project_valid_until", {
     mode: "date",
@@ -53,20 +51,21 @@ export const projectsTable = pgTable("projects", {
 
   processSubtitle: text("process_subtitle"),
 
-  ctaBackgroundImage: text("cta_background_image"), // URL or file path
+  ctaBackgroundImage: text("cta_background_image"),
 
   investmentTitle: varchar("investment_title", { length: 255 }),
 
   deliveryServices: text("delivery_services"),
 
   endMessageTitle: varchar("end_message_title", { length: 255 }),
+  endMessageTitle2: varchar("end_message_title_2", { length: 255 }),
   endMessageDescription: text("end_message_description"),
 
   projectUrl: varchar("project_url", { length: 255 }), // Just the project part, not full URL
   pagePassword: varchar("page_password", { length: 255 }),
 
   isPublished: boolean("is_published").default(false),
-  isProposalGenerated: boolean("is_proposal_generated").default(false), // Flag to know if it has proposal data
+  isProposalGenerated: boolean("is_proposal_generated").default(false),
 
   ...timestamps,
 });

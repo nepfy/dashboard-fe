@@ -22,7 +22,7 @@ export default function FAQForm() {
     setErrors({});
     updateFormData("step14", {
       ...formData?.step14,
-      hideSection: isHidden,
+      hideFaqSection: isHidden,
       faq: isHidden ? [] : formData?.step14?.faq || [],
     });
   };
@@ -41,11 +41,11 @@ export default function FAQForm() {
   const handleNext = () => {
     setErrors({});
 
-    const hideSection = formData?.step14?.hideSection || false;
+    const hideFaqSection = formData?.step14?.hideFaqSection || false;
     const faqList = formData?.step14?.faq || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideFaqSection) {
       if (faqList.length === 0) {
         newErrors.faq = "Ao menos 1 item é requerido";
       }
@@ -59,7 +59,7 @@ export default function FAQForm() {
     nextStep();
   };
 
-  const isAccordionDisabled = formData?.step14?.hideSection || false;
+  const isAccordionDisabled = formData?.step14?.hideFaqSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -82,7 +82,7 @@ export default function FAQForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step14?.hideSection || false}
+            checked={formData?.step14?.hideFaqSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

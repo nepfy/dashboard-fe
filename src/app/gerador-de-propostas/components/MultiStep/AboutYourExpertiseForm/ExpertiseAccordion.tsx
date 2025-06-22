@@ -5,6 +5,7 @@ import { TextField, TextAreaField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
 
 import { Expertise } from "#/types/project";
+
 import DiamondIcon from "./iconsList/DiamondIcon";
 import CircleIcon from "./iconsList/CircleIcon";
 import BubblesIcon from "./iconsList/BubblesIcon";

@@ -24,7 +24,7 @@ export default function AboutYourProcessForm() {
 
     updateFormData("step7", {
       ...formData?.step7,
-      hideSection: isHidden,
+      hideProcessSection: isHidden,
       // Se a seção for ocultada e já houver etapas, removê-las
       processSteps: isHidden ? [] : formData?.step7?.processSteps || [],
     });
@@ -62,12 +62,13 @@ export default function AboutYourProcessForm() {
     setErrors({});
 
     const processSubtitle = formData?.step7?.processSubtitle || "";
-    const hideSection = formData?.step7?.hideSection || false;
+    const hideProcessSection = formData?.step7?.hideProcessSection || false;
+    const hideProcessSubtitle = formData?.step7?.hideProcessSubtitle || false;
     const processList = formData?.step7?.processSteps || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
-      if (processSubtitle.length < 70) {
+    if (!hideProcessSection) {
+      if (processSubtitle.length < 70 && !hideProcessSubtitle) {
         newErrors.processSubtitle =
           "O campo 'Subtítulo' deve ter pelo menos 70 caracteres";
       }
@@ -99,8 +100,7 @@ export default function AboutYourProcessForm() {
     nextStep();
   };
 
-  // Determinar se o accordion deve estar desabilitado
-  const isAccordionDisabled = formData?.step7?.hideSection || false;
+  const isAccordionDisabled = formData?.step7?.hideProcessSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -123,7 +123,7 @@ export default function AboutYourProcessForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step7?.hideSection || false}
+            checked={formData?.step7?.hideProcessSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

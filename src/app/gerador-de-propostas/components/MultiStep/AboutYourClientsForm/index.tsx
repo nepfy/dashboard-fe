@@ -24,7 +24,7 @@ export default function AboutYourClientsForm() {
 
     updateFormData("step6", {
       ...formData?.step6,
-      hideSection: isHidden,
+      hideClientsSection: isHidden,
       // Se a seção for ocultada e já houver clientes, removê-los
       clients: isHidden ? [] : formData?.step6?.clients || [],
     });
@@ -43,11 +43,11 @@ export default function AboutYourClientsForm() {
 
   const handleNext = () => {
     setErrors({});
-    const hideSection = formData?.step6?.hideSection || false;
+    const hideClientsSection = formData?.step6?.hideClientsSection || false;
     const clients = formData?.step6?.clients || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideClientsSection) {
       if (clients.length === 0) {
         newErrors.clients = "Ao menos 1 cliente é requerido";
       } else {
@@ -70,7 +70,7 @@ export default function AboutYourClientsForm() {
   };
 
   // Determinar se o accordion deve estar desabilitado
-  const isAccordionDisabled = formData?.step6?.hideSection || false;
+  const isAccordionDisabled = formData?.step6?.hideClientsSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -94,7 +94,7 @@ export default function AboutYourClientsForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step6?.hideSection || false}
+            checked={formData?.step6?.hideClientsSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

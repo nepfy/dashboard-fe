@@ -7,6 +7,15 @@ import {
   projectsTable,
   projectTeamMembersTable,
   projectExpertiseTable,
+  projectResultsTable,
+  projectClientsTable,
+  projectProcessStepsTable,
+  projectTestimonialsTable,
+  projectServicesTable,
+  projectPlansTable,
+  projectPlanDetailsTable,
+  projectTermsConditionsTable,
+  projectFaqTable,
 } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
@@ -79,11 +88,121 @@ export async function GET(
       .where(eq(projectExpertiseTable.projectId, projectId))
       .orderBy(projectExpertiseTable.sortOrder);
 
+    // Get results
+    const results = await db
+      .select()
+      .from(projectResultsTable)
+      .where(eq(projectResultsTable.projectId, projectId))
+      .orderBy(projectResultsTable.sortOrder);
+
+    // Get clients
+    const clients = await db
+      .select()
+      .from(projectClientsTable)
+      .where(eq(projectClientsTable.projectId, projectId))
+      .orderBy(projectClientsTable.sortOrder);
+
+    // Get process steps
+    const processSteps = await db
+      .select()
+      .from(projectProcessStepsTable)
+      .where(eq(projectProcessStepsTable.projectId, projectId))
+      .orderBy(projectProcessStepsTable.sortOrder);
+
+    // Get testimonials
+    const testimonials = await db
+      .select()
+      .from(projectTestimonialsTable)
+      .where(eq(projectTestimonialsTable.projectId, projectId))
+      .orderBy(projectTestimonialsTable.sortOrder);
+
+    // Get included services
+    const includedServices = await db
+      .select()
+      .from(projectServicesTable)
+      .where(eq(projectServicesTable.projectId, projectId))
+      .orderBy(projectServicesTable.sortOrder);
+
+    // Get plans with their details
+    const plansWithDetails = await db
+      .select({
+        id: projectPlansTable.id,
+        title: projectPlansTable.title,
+        description: projectPlansTable.description,
+        isBestOffer: projectPlansTable.isBestOffer,
+        price: projectPlansTable.price,
+        pricePeriod: projectPlansTable.pricePeriod,
+        ctaButtonTitle: projectPlansTable.ctaButtonTitle,
+        sortOrder: projectPlansTable.sortOrder,
+        // Plan details
+        planDetailId: projectPlanDetailsTable.id,
+        planDetailDescription: projectPlanDetailsTable.description,
+        planDetailSortOrder: projectPlanDetailsTable.sortOrder,
+      })
+      .from(projectPlansTable)
+      .leftJoin(
+        projectPlanDetailsTable,
+        eq(projectPlansTable.id, projectPlanDetailsTable.planId)
+      )
+      .where(eq(projectPlansTable.projectId, projectId))
+      .orderBy(projectPlansTable.sortOrder, projectPlanDetailsTable.sortOrder);
+
+    // Transform the flat result into nested structure
+    const plansMap = new Map();
+    plansWithDetails.forEach((row) => {
+      if (!plansMap.has(row.id)) {
+        plansMap.set(row.id, {
+          id: row.id,
+          title: row.title,
+          description: row.description,
+          isBestOffer: row.isBestOffer,
+          price: row.price,
+          pricePeriod: row.pricePeriod,
+          ctaButtonTitle: row.ctaButtonTitle,
+          sortOrder: row.sortOrder,
+          planDetails: [],
+        });
+      }
+
+      // Add plan detail if it exists
+      if (row.planDetailId) {
+        plansMap.get(row.id).planDetails.push({
+          id: row.planDetailId,
+          description: row.planDetailDescription,
+          sortOrder: row.planDetailSortOrder,
+        });
+      }
+    });
+
+    const plans = Array.from(plansMap.values());
+
+    // Get terms conditions
+    const termsConditions = await db
+      .select()
+      .from(projectTermsConditionsTable)
+      .where(eq(projectTermsConditionsTable.projectId, projectId))
+      .orderBy(projectTermsConditionsTable.sortOrder);
+
+    // Get FAQ
+    const faq = await db
+      .select()
+      .from(projectFaqTable)
+      .where(eq(projectFaqTable.projectId, projectId))
+      .orderBy(projectFaqTable.sortOrder);
+
     // Combine project data with relations
     const projectWithRelations = {
       ...project[0],
       teamMembers: teamMembers || [],
       expertise: expertise || [],
+      results: results || [],
+      clients: clients || [],
+      processSteps: processSteps || [],
+      testimonials: testimonials || [],
+      includedServices: includedServices || [],
+      plans: plans || [],
+      termsConditions: termsConditions || [],
+      faq: faq || [],
     };
 
     return NextResponse.json({

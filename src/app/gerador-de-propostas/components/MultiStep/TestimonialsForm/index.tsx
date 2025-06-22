@@ -21,7 +21,7 @@ export default function TestimonialsForm() {
 
     updateFormData("step9", {
       ...formData?.step9,
-      hideSection: isHidden,
+      hideTestimonialsSection: isHidden,
       // Se a seção for ocultada e já houver depoimentos, removê-los
       testimonials: isHidden ? [] : formData?.step9?.testimonials || [],
     });
@@ -42,10 +42,11 @@ export default function TestimonialsForm() {
     setErrors({});
 
     const testimonials = formData?.step9?.testimonials;
-    const hideSection = formData?.step9?.hideSection || false;
+    const hideTestimonialsSection =
+      formData?.step9?.hideTestimonialsSection || false;
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideTestimonialsSection) {
       if (!testimonials || testimonials.length === 0) {
         newErrors.testimonials = "Ao menos 1 depoimento é requerido";
       } else {
@@ -73,7 +74,7 @@ export default function TestimonialsForm() {
     nextStep();
   };
 
-  const isAccordionDisabled = formData?.step9?.hideSection || false;
+  const isAccordionDisabled = formData?.step9?.hideTestimonialsSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -98,7 +99,7 @@ export default function TestimonialsForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step9?.hideSection || false}
+            checked={formData?.step9?.hideTestimonialsSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

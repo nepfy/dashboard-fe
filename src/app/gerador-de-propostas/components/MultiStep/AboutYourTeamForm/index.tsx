@@ -21,7 +21,7 @@ export default function AboutYourTeamForm() {
     setErrors({});
     updateFormData("step3", {
       ...formData?.step3,
-      hideSection: e.target.checked,
+      hideAboutYourTeamSection: e.target.checked,
     });
   };
 
@@ -57,7 +57,7 @@ export default function AboutYourTeamForm() {
     setErrors({});
 
     const ourTeamSubtitle = formData?.step3?.ourTeamSubtitle || "";
-    const hideSection = formData?.step3?.hideSection || false;
+    const hideSection = formData?.step3?.hideAboutYourTeamSection || false;
     const teamMembers = formData?.step3?.teamMembers || [];
     const newErrors: { [key: string]: string } = {};
 
@@ -80,7 +80,7 @@ export default function AboutYourTeamForm() {
     nextStep();
   };
 
-  const hideSectionChecked = formData?.step3?.hideSection || false;
+  const hideSectionChecked = formData?.step3?.hideAboutYourTeamSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">

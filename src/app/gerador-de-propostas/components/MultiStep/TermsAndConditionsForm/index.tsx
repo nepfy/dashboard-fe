@@ -22,7 +22,7 @@ export default function TermsAndConditionsForm() {
     setErrors({});
     updateFormData("step13", {
       ...formData?.step13,
-      hideSection: isHidden,
+      hideTermsSection: isHidden,
       termsConditions: isHidden ? [] : formData?.step13?.termsConditions || [],
     });
   };
@@ -41,11 +41,11 @@ export default function TermsAndConditionsForm() {
   const handleNext = () => {
     setErrors({});
 
-    const hideSection = formData?.step13?.hideSection || false;
+    const hideTermsSection = formData?.step13?.hideTermsSection || false;
     const termsConditionsList = formData?.step13?.termsConditions || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideTermsSection) {
       if (termsConditionsList.length === 0) {
         newErrors.termsConditions = "Ao menos 1 item é requerido";
       }
@@ -59,7 +59,7 @@ export default function TermsAndConditionsForm() {
     nextStep();
   };
 
-  const isAccordionDisabled = formData?.step13?.hideSection || false;
+  const isAccordionDisabled = formData?.step13?.hideTermsSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -82,7 +82,7 @@ export default function TermsAndConditionsForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step13?.hideSection || false}
+            checked={formData?.step13?.hideTermsSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />

@@ -10,6 +10,7 @@ export interface TeamMember {
 
 export interface Expertise {
   id: string;
+  hideExpertiseIcon?: boolean;
   icon?: string | React.ReactElement;
   title: string;
   description?: string;
@@ -97,13 +98,6 @@ export interface Project {
 
   projectName?: string;
   clientName?: string;
-  street?: string;
-  number?: string;
-  neighborhood?: string;
-  city?: string;
-  state?: string;
-  cep?: string;
-  additionalAddress?: string;
   projectSentDate?: Date | string;
   projectValidUntil?: Date | string;
   projectStatus?:
@@ -126,38 +120,48 @@ export interface Project {
   pageSubtitle?: string;
   services?: string;
 
+  hideAboutUsSection?: boolean;
   aboutUsTitle?: string;
   aboutUsSubtitle1?: string;
   aboutUsSubtitle2?: string;
 
+  hideAboutYourTeamSection?: boolean;
   ourTeamSubtitle?: string;
-  hideTeamSection?: boolean;
   teamMembers?: TeamMember[];
 
+  hideExpertiseSection?: boolean;
   expertiseSubtitle?: string;
   expertise?: Expertise[];
 
-  resultsSubtitle?: string;
+  hideResultsSection?: boolean;
   results?: Result[];
 
+  hideClientsSection?: boolean;
+  hideLogoField?: boolean;
   clients?: Client[];
 
+  hideProcessSection?: boolean;
+  hideProcessSubtitle?: boolean;
   processSubtitle?: string;
   processSteps?: ProcessStep[];
 
   ctaBackgroundImage?: string;
 
+  hideTestimonialsSection?: boolean;
   testimonials?: Testimonial[];
 
   investmentTitle?: string;
 
+  hideIncludedServicesSection?: boolean;
   includedServices?: Service[];
-  deliveryServices?: string[];
 
+  hidePlansSection?: boolean;
   plans?: Plan[];
 
+  hideTermsSection?: boolean;
   termsConditions?: TermsCondition[];
 
+  hideFaqSection?: boolean;
   faq?: FAQ[];
 
   endMessageTitle?: string;
@@ -187,37 +191,40 @@ export interface Step1Data {
 }
 
 export interface Step2Data {
-  hideSection?: boolean;
-  hideSubtitles?: boolean;
+  hideAboutUsSection?: boolean;
+  hideSubtitles1?: boolean;
+  hideSubtitles2?: boolean;
   aboutUsTitle?: string;
   aboutUsSubtitle1?: string;
   aboutUsSubtitle2?: string;
 }
 
 export interface Step3Data {
-  hideSection?: boolean;
+  hideAboutYourTeamSection?: boolean;
   ourTeamSubtitle?: string;
   teamMembers?: TeamMember[];
 }
 
 export interface Step4Data {
-  hideSection?: boolean;
+  hideExpertiseSection?: boolean;
   expertiseSubtitle?: string;
   expertise?: Expertise[];
 }
 
 export interface Step5Data {
-  hideSection?: boolean;
+  hideYourResultsSection?: boolean;
   results?: Result[];
 }
 
 export interface Step6Data {
-  hideSection?: boolean;
+  hideClientsSection?: boolean;
+  hideLogoField?: boolean;
   clients?: Client[];
 }
 
 export interface Step7Data {
-  hideSection?: boolean;
+  hideProcessSection?: boolean;
+  hideProcessSubtitle?: boolean;
   processSubtitle?: string;
   processSteps?: ProcessStep[];
 }
@@ -229,7 +236,7 @@ export interface Step8Data {
 }
 
 export interface Step9Data {
-  hideSection?: boolean;
+  hideTestimonialsSection?: boolean;
   testimonials?: Testimonial[];
 }
 
@@ -239,23 +246,22 @@ export interface Step10Data {
 }
 
 export interface Step11Data {
-  hideSection?: boolean;
+  hideIncludedServicesSection?: boolean;
   includedServices?: Service[];
-  deliveryServices?: string[];
 }
 
 export interface Step12Data {
-  hideSection?: boolean;
+  hidePlansSection?: boolean;
   plans?: Plan[];
 }
 
 export interface Step13Data {
-  hideSection?: boolean;
+  hideTermsSection?: boolean;
   termsConditions?: TermsCondition[];
 }
 
 export interface Step14Data {
-  hideSection?: boolean;
+  hideFaqSection?: boolean;
   faq?: FAQ[];
 }
 

@@ -218,8 +218,9 @@ export function ProjectGeneratorProvider({
         : undefined,
     });
 
-    // Step 2 - About us
+    // Step 2 - About us (Your Business)
     safeUpdate("step2", {
+      hideAboutUsSection: projectData.hideAboutUsSection || false,
       aboutUsTitle: projectData.aboutUsTitle,
       aboutUsSubtitle1: projectData.aboutUsSubtitle1,
       aboutUsSubtitle2: projectData.aboutUsSubtitle2,
@@ -228,28 +229,34 @@ export function ProjectGeneratorProvider({
     // Step 3 - Our team
     safeUpdate("step3", {
       ourTeamSubtitle: projectData.ourTeamSubtitle,
-      hideSection: projectData.hideTeamSection || false,
+      hideAboutYourTeamSection: projectData.hideAboutYourTeamSection || false,
       teamMembers: projectData.teamMembers || [],
     });
 
     // Step 4 - Expertise
     safeUpdate("step4", {
+      hideExpertiseSection: projectData.hideExpertiseSection || false,
       expertiseSubtitle: projectData.expertiseSubtitle,
       expertise: projectData.expertise || [],
     });
 
     // Step 5 - Results
     safeUpdate("step5", {
+      hideYourResultsSection: projectData.hideResultsSection || false,
       results: projectData.results || [],
     });
 
     // Step 6 - Clients
     safeUpdate("step6", {
+      hideClientsSection: projectData.hideClientsSection || false,
+      hideLogoField: projectData.hideLogoField || false,
       clients: projectData.clients || [],
     });
 
     // Step 7 - Process
     safeUpdate("step7", {
+      hideProcessSection: projectData.hideProcessSection || false,
+      hideProcessSubtitle: projectData.hideProcessSubtitle || false,
       processSubtitle: projectData.processSubtitle,
       processSteps: projectData.processSteps || [],
     });
@@ -261,6 +268,7 @@ export function ProjectGeneratorProvider({
 
     // Step 9 - Testimonials
     safeUpdate("step9", {
+      hideTestimonialsSection: projectData.hideTestimonialsSection || false,
       testimonials: projectData.testimonials || [],
     });
 
@@ -271,22 +279,26 @@ export function ProjectGeneratorProvider({
 
     // Step 11 - Services
     safeUpdate("step11", {
+      hideIncludedServicesSection:
+        projectData.hideIncludedServicesSection || false,
       includedServices: projectData.includedServices || [],
-      deliveryServices: projectData.deliveryServices,
     });
 
     // Step 12 - Plans
     safeUpdate("step12", {
+      hidePlansSection: projectData.hidePlansSection || false,
       plans: projectData.plans || [],
     });
 
     // Step 13 - Terms
     safeUpdate("step13", {
+      hideTermsSection: projectData.hideTermsSection || false,
       termsConditions: projectData.termsConditions || [],
     });
 
     // Step 14 - FAQ
     safeUpdate("step14", {
+      hideFaqSection: projectData.hideFaqSection || false,
       faq: projectData.faq || [],
     });
 

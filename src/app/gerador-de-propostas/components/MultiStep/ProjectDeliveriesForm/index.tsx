@@ -23,7 +23,7 @@ export default function ProjectDeliveriesForm() {
 
     updateFormData("step11", {
       ...formData?.step11,
-      hideSection: isHidden,
+      hideIncludedServicesSection: isHidden,
       // Se a seção for ocultada e já houver serviços, removê-los
       includedServices: isHidden
         ? []
@@ -45,11 +45,12 @@ export default function ProjectDeliveriesForm() {
   const handleNext = () => {
     setErrors({});
 
-    const hideSection = formData?.step11?.hideSection || false;
+    const hideIncludedServicesSection =
+      formData?.step11?.hideIncludedServicesSection || false;
     const servicesList = formData?.step11?.includedServices || [];
     const newErrors: { [key: string]: string } = {};
 
-    if (!hideSection) {
+    if (!hideIncludedServicesSection) {
       if (servicesList.length === 0) {
         newErrors.includedServices = "Ao menos 1 entrega é requerida";
       } else {
@@ -78,7 +79,8 @@ export default function ProjectDeliveriesForm() {
   };
 
   // Determinar se o accordion deve estar desabilitado
-  const isAccordionDisabled = formData?.step11?.hideSection || false;
+  const isAccordionDisabled =
+    formData?.step11?.hideIncludedServicesSection || false;
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -101,7 +103,7 @@ export default function ProjectDeliveriesForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={formData?.step11?.hideSection || false}
+            checked={formData?.step11?.hideIncludedServicesSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />
