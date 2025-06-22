@@ -110,20 +110,12 @@ export default function AboutYourExpertiseForm() {
           Ocultar seção
         </label>
 
-        {!hideSectionChecked && (
-          <div className="bg-blue-light-10 border border-blue-light-50 rounded-2xs py-4 px-6 flex items-center justify-center gap-2 mb-4">
-            <InfoIcon fill="#0066CC" />
-            <p className="text-white-neutral-light-800 text-sm">
-              Esta seção aparecerá na sua proposta
-            </p>
-          </div>
-        )}
-
         {hideSectionChecked && (
-          <div className="bg-gray-light-10 border border-gray-light-50 rounded-2xs py-4 px-6 flex items-center justify-center gap-2 mb-4">
-            <InfoIcon fill="#6B7280" />
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
             <p className="text-white-neutral-light-800 text-sm">
-              Esta seção foi ocultada e não aparecerá na proposta
+              A seção{" "}
+              <span className="font-bold">&quot;Suas especialidades&quot;</span>{" "}
+              está atualmente oculta da proposta.
             </p>
           </div>
         )}
