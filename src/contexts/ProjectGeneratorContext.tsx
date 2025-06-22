@@ -95,24 +95,21 @@ export function ProjectGeneratorProvider({
   const setTemplateType = (template: TemplateType) => {
     console.log("Context - Setting template type:", template);
     setTemplateTypeState(template);
-    setCurrentStep(1); // Move to step 1 after template selection
+    setCurrentStep(1);
   };
 
   const loadProjectData = (projectData: Project) => {
     console.log("Context - Loading project data for editing:", projectData);
 
-    // Definir como projeto existente para edição
     if (projectData.id) {
       setCurrentProjectId(projectData.id);
       setIsEditMode(true);
     }
 
-    // Set template type if available
     if (projectData.templateType) {
       setTemplateTypeState(projectData.templateType as TemplateType);
     }
 
-    // Carregar dados usando a função importProjectData existente
     importProjectData(projectData);
   };
 
@@ -162,16 +159,18 @@ export function ProjectGeneratorProvider({
       step: T,
       data: ProposalFormData[T]
     ) => {
-      const hasValidData = Object.values(data || {}).some(
-        (value) => value !== null && value !== undefined && value !== ""
-      );
+      const hasValidData = Object.values(data || {}).some((value) => {
+        if (Array.isArray(value)) {
+          return value.length > 0;
+        }
+        return value !== null && value !== undefined && value !== "";
+      });
 
       if (hasValidData) {
         updateFormData(step, data);
       }
     };
 
-    // Set template type if available
     if (projectData.templateType) {
       setTemplateTypeState(projectData.templateType as TemplateType);
     }
@@ -192,6 +191,7 @@ export function ProjectGeneratorProvider({
         : undefined,
     });
 
+    // Step 2 - About us
     safeUpdate("step2", {
       aboutUsTitle: projectData.aboutUsTitle,
       aboutUsSubtitle1: projectData.aboutUsSubtitle1,
@@ -201,17 +201,29 @@ export function ProjectGeneratorProvider({
     // Step 3 - Team
     safeUpdate("step3", {
       ourTeamSubtitle: projectData.ourTeamSubtitle,
-      // Note: teamMembers would need to be fetched from related tables
+      teamMembers: projectData.teamMembers || [],
     });
 
     // Step 4 - Expertise
     safeUpdate("step4", {
       expertiseSubtitle: projectData.expertiseSubtitle,
+      expertise: projectData.expertise || [],
+    });
+
+    // Step 5 - Results
+    safeUpdate("step5", {
+      results: projectData.results || [],
+    });
+
+    // Step 6 - Clients
+    safeUpdate("step6", {
+      clients: projectData.clients || [],
     });
 
     // Step 7 - Process
     safeUpdate("step7", {
       processSubtitle: projectData.processSubtitle,
+      processSteps: projectData.processSteps || [],
     });
 
     // Step 8 - CTA Background
@@ -219,24 +231,41 @@ export function ProjectGeneratorProvider({
       ctaBackgroundImage: projectData.ctaBackgroundImage,
     });
 
+    // Step 9 - Testimonials
+    safeUpdate("step9", {
+      testimonials: projectData.testimonials || [],
+    });
+
     // Step 10 - Investment
     safeUpdate("step10", {
       investmentTitle: projectData.investmentTitle,
     });
 
+    // Step 11 - Services
     safeUpdate("step11", {
-      includedServices: projectData.includedServices,
+      includedServices: projectData.includedServices || [],
       deliveryServices: projectData.deliveryServices,
+    });
+
+    // Step 12 - Plans
+    safeUpdate("step12", {
+      plans: projectData.plans || [],
     });
 
     // Step 13 - Terms
     safeUpdate("step13", {
-      termsConditions: projectData?.termsConditions,
+      termsConditions: projectData.termsConditions || [],
+    });
+
+    // Step 14 - FAQ
+    safeUpdate("step14", {
+      faq: projectData.faq || [],
     });
 
     // Step 15 - End message
     safeUpdate("step15", {
       endMessageTitle: projectData.endMessageTitle,
+      endMessageTitle2: projectData.endMessageTitle2,
       endMessageDescription: projectData.endMessageDescription,
       projectValidUntil: projectData.projectValidUntil,
     });
@@ -271,7 +300,6 @@ export function ProjectGeneratorProvider({
     resetForm,
     importProjectData,
     loadProjectData,
-    // Draft functionality
     saveDraft,
     isSavingDraft,
     lastSaved,

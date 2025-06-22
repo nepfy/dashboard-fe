@@ -109,8 +109,16 @@ export default function IntroStep() {
       newErrors.pageTitle = "O título da página é obrigatório";
     }
 
+    if (pageTitle.length < 30) {
+      newErrors.pageTitle = "O título deve ter no mínimo 30 caracteres";
+    }
+
     if (!pageSubtitle.trim()) {
       newErrors.pageSubtitle = "O subtítulo da página é obrigatório";
+    }
+
+    if (pageSubtitle.length < 70) {
+      newErrors.pageSubtitle = "O subtítulo deve ter no mínimo 70 caracteres";
     }
 
     if (services.length === 0) {
@@ -179,8 +187,13 @@ export default function IntroStep() {
 
           <div className="py-6">
             <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Nome para exibição na proposta
+              </label>
               <TextField
-                label="Nome para exibição na proposta"
                 id="companyName"
                 inputName="companyName"
                 type="text"
@@ -192,8 +205,13 @@ export default function IntroStep() {
             </div>
 
             <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Email
+              </label>
               <TextField
-                label="Email"
                 id="companyEmail"
                 inputName="companyEmail"
                 type="text"
@@ -205,12 +223,17 @@ export default function IntroStep() {
             </div>
 
             <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Botão CTA
+              </label>
               <TextField
-                label="Texto do botão de ação"
                 id="ctaButtonTitle"
                 inputName="ctaButtonTitle"
                 type="text"
-                placeholder="ex: Vamos conversar"
+                placeholder="Iniciar projeto"
                 value={formData?.step1?.ctaButtonTitle || ""}
                 onChange={handleFieldChange("ctaButtonTitle")}
                 error={errors.ctaButtonTitle}
@@ -218,8 +241,13 @@ export default function IntroStep() {
             </div>
 
             <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Título principal
+              </label>
               <TextField
-                label="Título da página"
                 id="pageTitle"
                 inputName="pageTitle"
                 type="text"
@@ -227,12 +255,36 @@ export default function IntroStep() {
                 value={formData?.step1?.pageTitle || ""}
                 onChange={handleFieldChange("pageTitle")}
                 error={errors.pageTitle}
+                maxLength={50}
+                minLength={30}
+                showCharCount
               />
             </div>
 
             <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Serviços
+              </label>
+              <TagInput
+                placeholder="Digite um serviço e pressione Enter"
+                value={formData?.step1?.services || []}
+                onChange={handleServicesChange}
+                error={errors.services}
+                infoText="Separe o serviço por ponto e vírgula (;) ou pressione Enter após digitar cada serviço."
+              />
+            </div>
+
+            <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Subtítulo
+              </label>
               <TextField
-                label="Subtítulo da página"
                 id="pageSubtitle"
                 inputName="pageSubtitle"
                 type="text"
@@ -240,16 +292,9 @@ export default function IntroStep() {
                 value={formData?.step1?.pageSubtitle || ""}
                 onChange={handleFieldChange("pageSubtitle")}
                 error={errors.pageSubtitle}
-              />
-            </div>
-
-            <div className="pb-6">
-              <TagInput
-                label="Serviços"
-                placeholder="Digite um serviço e pressione Enter"
-                value={formData?.step1?.services || []}
-                onChange={handleServicesChange}
-                error={errors.services}
+                maxLength={115}
+                minLength={70}
+                showCharCount
               />
             </div>
           </div>

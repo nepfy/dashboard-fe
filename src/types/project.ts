@@ -163,6 +163,7 @@ export interface Project {
   faq?: FAQ[];
 
   endMessageTitle?: string;
+  endMessageTitle2?: string;
   endMessageDescription?: string;
 
   projectUrl?: string;
