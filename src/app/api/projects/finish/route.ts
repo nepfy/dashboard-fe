@@ -2,8 +2,14 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { eq, and } from "drizzle-orm";
-import { projectsTable } from "#/lib/db/schema/projects";
+import {
+  projectsTable,
+  projectTeamMembersTable,
+  projectExpertiseTable,
+} from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
+
+import { TeamMember, Expertise } from "#/types/project";
 
 export async function POST(request: Request) {
   try {
@@ -69,7 +75,9 @@ export async function POST(request: Request) {
       ctaButtonTitle: formData.step1?.ctaButtonTitle,
       pageTitle: formData.step1?.pageTitle,
       pageSubtitle: formData.step1?.pageSubtitle,
-      services: formData.step1?.services?.join(","),
+      services: Array.isArray(formData.step1?.services)
+        ? formData.step1.services.join(",")
+        : formData.step1?.services,
 
       aboutUsTitle: formData.step2?.aboutUsTitle,
       aboutUsSubtitle1: formData.step2?.aboutUsSubtitle1,
@@ -87,6 +95,10 @@ export async function POST(request: Request) {
 
       investmentTitle: formData.step10?.investmentTitle,
 
+      deliveryServices: Array.isArray(formData.step11?.deliveryServices)
+        ? formData.step11.deliveryServices.join(",")
+        : formData.step11?.deliveryServices,
+
       termsTitle: formData.step13?.termsTitle,
 
       endMessageTitle: formData.step15?.endMessageTitle,
@@ -96,11 +108,12 @@ export async function POST(request: Request) {
       pagePassword: formData.step16?.pagePassword,
       projectValidUntil: formData.step16?.projectValidUntil
         ? new Date(formData.step16.projectValidUntil)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 
-      // Set as active and proposal generated when finishing
       projectStatus: "active",
       isProposalGenerated: true,
+      projectSentDate: new Date(),
+      created_at: new Date(),
       updated_at: new Date(),
     };
 
@@ -108,24 +121,6 @@ export async function POST(request: Request) {
 
     if (projectId) {
       // Update existing project
-      const existingProject = await db
-        .select()
-        .from(projectsTable)
-        .where(
-          and(
-            eq(projectsTable.id, projectId),
-            eq(projectsTable.personId, userId)
-          )
-        )
-        .limit(1);
-
-      if (existingProject.length === 0) {
-        return NextResponse.json(
-          { success: false, error: "Projeto não encontrado" },
-          { status: 404 }
-        );
-      }
-
       savedProject = await db
         .update(projectsTable)
         .set({
@@ -143,10 +138,7 @@ export async function POST(request: Request) {
       // Create new project
       savedProject = await db
         .insert(projectsTable)
-        .values({
-          ...projectData,
-          created_at: new Date(),
-        })
+        .values(projectData)
         .returning();
     }
 
@@ -157,10 +149,62 @@ export async function POST(request: Request) {
       );
     }
 
+    const finalProjectId = savedProject[0].id;
+
+    if (
+      formData.step3?.teamMembers &&
+      Array.isArray(formData.step3.teamMembers)
+    ) {
+      // Delete existing team members for this project
+      await db
+        .delete(projectTeamMembersTable)
+        .where(eq(projectTeamMembersTable.projectId, finalProjectId));
+
+      // Insert new team members
+      if (formData.step3.teamMembers.length > 0) {
+        const teamMembersToInsert = formData.step3.teamMembers.map(
+          (member: TeamMember, index: number) => ({
+            projectId: finalProjectId,
+            name: member.name || "",
+            role: member.role || "",
+            photo: member.photo || null,
+            sortOrder: member.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectTeamMembersTable).values(teamMembersToInsert);
+      }
+    }
+
+    if (formData.step4?.expertise && Array.isArray(formData.step4.expertise)) {
+      // Delete existing expertise for this project
+      await db
+        .delete(projectExpertiseTable)
+        .where(eq(projectExpertiseTable.projectId, finalProjectId));
+
+      // Insert new expertise
+      if (formData.step4.expertise.length > 0) {
+        const expertiseToInsert = formData.step4.expertise.map(
+          (expertise: Expertise, index: number) => ({
+            projectId: finalProjectId,
+            title: expertise.title || "",
+            description: expertise.description || "",
+            icon: expertise.icon || null,
+            sortOrder: expertise.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectExpertiseTable).values(expertiseToInsert);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "Projeto finalizado com sucesso",
-      data: savedProject[0],
+      data: {
+        ...savedProject[0],
+        projectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/${formData.step16.pageUrl}`,
+      },
     });
   } catch (error) {
     console.error("Error finishing project:", error);

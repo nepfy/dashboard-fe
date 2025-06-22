@@ -3,8 +3,15 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { eq, and } from "drizzle-orm";
-import { projectsTable, projectServicesTable } from "#/lib/db/schema/projects";
+import {
+  projectsTable,
+  projectServicesTable,
+  projectTeamMembersTable,
+  projectExpertiseTable,
+} from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
+
+import { TeamMember, Expertise } from "#/types/project";
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +19,7 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized" },
+        { success: false, error: "Não autorizado" },
         { status: 401 }
       );
     }
@@ -84,16 +91,16 @@ export async function POST(request: Request) {
         ? formData.step11.deliveryServices.join(",")
         : formData.step11?.deliveryServices,
 
-      termsTitle: formData.step13?.termsConditions,
+      termsTitle: formData.step13?.termsTitle,
 
       endMessageTitle: formData.step15?.endMessageTitle,
       endMessageDescription: formData.step15?.endMessageDescription,
-      projectValidUntil: formData.step15?.projectValidUntil
-        ? new Date(formData.step16.projectValidUntil)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 
       projectUrl: formData.step16?.pageUrl,
       pagePassword: formData.step16?.pagePassword,
+      projectValidUntil: formData.step16?.projectValidUntil
+        ? new Date(formData.step16.projectValidUntil)
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
 
       projectStatus: "draft",
       isProposalGenerated: false,
@@ -153,6 +160,53 @@ export async function POST(request: Request) {
 
     const finalProjectId = savedProject[0].id;
 
+    if (
+      formData.step3?.teamMembers &&
+      Array.isArray(formData.step3.teamMembers)
+    ) {
+      // Delete existing team members for this project
+      await db
+        .delete(projectTeamMembersTable)
+        .where(eq(projectTeamMembersTable.projectId, finalProjectId));
+
+      // Insert new team members
+      if (formData.step3.teamMembers.length > 0) {
+        const teamMembersToInsert = formData.step3.teamMembers.map(
+          (member: TeamMember, index: number) => ({
+            projectId: finalProjectId,
+            name: member.name || "",
+            role: member.role || "",
+            photo: member.photo || null,
+            sortOrder: member.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectTeamMembersTable).values(teamMembersToInsert);
+      }
+    }
+
+    if (formData.step4?.expertise && Array.isArray(formData.step4.expertise)) {
+      // Delete existing expertise for this project
+      await db
+        .delete(projectExpertiseTable)
+        .where(eq(projectExpertiseTable.projectId, finalProjectId));
+
+      // Insert new expertise
+      if (formData.step4.expertise.length > 0) {
+        const expertiseToInsert = formData.step4.expertise.map(
+          (expertise: Expertise, index: number) => ({
+            projectId: finalProjectId,
+            title: expertise.title || "",
+            description: expertise.description || "",
+            icon: expertise.icon || null,
+            sortOrder: expertise.sortOrder || index,
+          })
+        );
+
+        await db.insert(projectExpertiseTable).values(expertiseToInsert);
+      }
+    }
+
     // Handle includedServices - save to projectServicesTable
     if (
       formData.step11?.includedServices &&
@@ -164,13 +218,13 @@ export async function POST(request: Request) {
         .where(eq(projectServicesTable.projectId, finalProjectId));
 
       // Insert new services
-      interface IncludedService {
-        title?: string;
-        description?: string;
-        sortOrder?: number;
-      }
-
       if (formData.step11.includedServices.length > 0) {
+        interface IncludedService {
+          title?: string;
+          description?: string;
+          sortOrder?: number;
+        }
+
         const servicesToInsert = formData.step11.includedServices.map(
           (service: IncludedService, index: number) => ({
             projectId: finalProjectId,

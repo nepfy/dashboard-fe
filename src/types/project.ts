@@ -1,6 +1,3 @@
-// src/types/projects.ts
-
-// Template types
 export type TemplateType = "flash" | "prime" | "essencial" | null;
 
 export interface TeamMember {
@@ -134,6 +131,7 @@ export interface Project {
   aboutUsSubtitle2?: string;
 
   ourTeamSubtitle?: string;
+  hideTeamSection?: boolean;
   teamMembers?: TeamMember[];
 
   expertiseSubtitle?: string;

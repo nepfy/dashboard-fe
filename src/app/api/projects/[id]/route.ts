@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { eq, and } from "drizzle-orm";
-import { projectsTable } from "#/lib/db/schema/projects";
+import {
+  projectsTable,
+  projectTeamMembersTable,
+  projectExpertiseTable,
+} from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
 export async function GET(
@@ -15,7 +19,7 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized" },
+        { success: false, error: "Não autorizado" },
         { status: 401 }
       );
     }
@@ -28,10 +32,8 @@ export async function GET(
       );
     }
 
-    // Await params before accessing its properties
     const { id: projectId } = await params;
 
-    // Get the user's person ID
     const personResult = await db
       .select({
         id: personUserTable.id,
@@ -48,7 +50,6 @@ export async function GET(
 
     const userId = personResult[0].id;
 
-    // Fetch the specific project
     const project = await db
       .select()
       .from(projectsTable)
@@ -64,14 +65,35 @@ export async function GET(
       );
     }
 
+    // Get team members
+    const teamMembers = await db
+      .select()
+      .from(projectTeamMembersTable)
+      .where(eq(projectTeamMembersTable.projectId, projectId))
+      .orderBy(projectTeamMembersTable.sortOrder);
+
+    // Get expertise
+    const expertise = await db
+      .select()
+      .from(projectExpertiseTable)
+      .where(eq(projectExpertiseTable.projectId, projectId))
+      .orderBy(projectExpertiseTable.sortOrder);
+
+    // Combine project data with relations
+    const projectWithRelations = {
+      ...project[0],
+      teamMembers: teamMembers || [],
+      expertise: expertise || [],
+    };
+
     return NextResponse.json({
       success: true,
-      data: project[0],
+      data: projectWithRelations,
     });
   } catch (error) {
-    console.error("Error fetching project:", error);
+    console.error("Error loading project:", error);
     return NextResponse.json(
-      { success: false, error: `${error}` },
+      { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }
     );
   }

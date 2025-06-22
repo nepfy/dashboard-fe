@@ -1,4 +1,3 @@
-// src/contexts/ProjectGeneratorContext.tsx
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
@@ -22,6 +21,7 @@ interface ProjectGeneratorContextType {
   resetForm: () => void;
   importProjectData: (projectData: Project) => void;
   loadProjectData: (projectData: Project) => void;
+  loadProjectWithRelations: (projectId: string) => Promise<Project | null>;
   // Draft functionality
   saveDraft: () => Promise<void>;
   isSavingDraft: boolean;
@@ -98,19 +98,47 @@ export function ProjectGeneratorProvider({
     setCurrentStep(1);
   };
 
-  const loadProjectData = (projectData: Project) => {
+  const loadProjectWithRelations = async (
+    projectId: string
+  ): Promise<Project | null> => {
+    try {
+      const response = await fetch(
+        `/api/projects/${projectId}?includeRelations=true`
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        return result.data;
+      }
+      throw new Error(result.error || "Erro ao carregar projeto");
+    } catch (error) {
+      console.error("Error loading project with relations:", error);
+      return null;
+    }
+  };
+
+  const loadProjectData = async (projectData: Project) => {
     console.log("Context - Loading project data for editing:", projectData);
 
     if (projectData.id) {
       setCurrentProjectId(projectData.id);
       setIsEditMode(true);
+
+      const completeProjectData = await loadProjectWithRelations(
+        projectData.id
+      );
+      if (completeProjectData) {
+        importProjectData(completeProjectData);
+      } else {
+        importProjectData(projectData);
+      }
+    } else {
+      importProjectData(projectData);
     }
 
     if (projectData.templateType) {
       setTemplateTypeState(projectData.templateType as TemplateType);
     }
-
-    importProjectData(projectData);
   };
 
   const nextStep = () => {
@@ -150,7 +178,6 @@ export function ProjectGeneratorProvider({
   const importProjectData = (projectData: Project) => {
     console.log("Context - Importing project data:", projectData);
 
-    // Set the current project ID
     if (projectData.id) {
       setCurrentProjectId(projectData.id);
     }
@@ -198,9 +225,10 @@ export function ProjectGeneratorProvider({
       aboutUsSubtitle2: projectData.aboutUsSubtitle2,
     });
 
-    // Step 3 - Team
+    // Step 3 - Our team
     safeUpdate("step3", {
       ourTeamSubtitle: projectData.ourTeamSubtitle,
+      hideSection: projectData.hideTeamSection || false,
       teamMembers: projectData.teamMembers || [],
     });
 
@@ -300,6 +328,7 @@ export function ProjectGeneratorProvider({
     resetForm,
     importProjectData,
     loadProjectData,
+    loadProjectWithRelations,
     saveDraft,
     isSavingDraft,
     lastSaved,

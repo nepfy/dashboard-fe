@@ -102,28 +102,22 @@ export default function TeamMemberAccordion({
     if (!file) return;
 
     try {
-      // Clear any previous errors
       clearError();
 
-      // Add member to uploading set
       setUploadingMembers((prev) => new Set(prev).add(memberId));
 
-      // Upload the image
       const result = await uploadImage(file);
 
       if (result.success && result.data) {
-        // Update the member with the uploaded image URL
         updateMember(memberId, "photo", result.data.url);
       } else {
         console.error("Upload failed:", result.error);
-        // You might want to show a toast notification here
         alert(result.error || "Erro ao fazer upload da imagem");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Erro ao fazer upload da imagem");
     } finally {
-      // Remove member from uploading set
       setUploadingMembers((prev) => {
         const newSet = new Set(prev);
         newSet.delete(memberId);

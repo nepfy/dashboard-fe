@@ -80,7 +80,6 @@ export default function AboutYourExpertiseForm() {
       }
     };
 
-  // Determine if section is hidden
   const hideSectionChecked = formData?.step4?.hideSection || false;
 
   return (
@@ -96,30 +95,35 @@ export default function AboutYourExpertiseForm() {
         >
           <Eye width="18" height="18" /> Pré-visualizar essa seção
         </button>
-
         <TitleDescription
-          title="Suas especializações:"
-          description="Destaque o que você faz de melhor"
+          title="Suas especialidades:"
+          description="Mostre em que você é especialista"
         />
 
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={hideSectionChecked}
+            checked={formData?.step4?.hideSection || false}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />
           Ocultar seção
         </label>
 
-        {hideSectionChecked && (
-          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+        {!hideSectionChecked && (
+          <div className="bg-blue-light-10 border border-blue-light-50 rounded-2xs py-4 px-6 flex items-center justify-center gap-2 mb-4">
+            <InfoIcon fill="#0066CC" />
             <p className="text-white-neutral-light-800 text-sm">
-              A seção{" "}
-              <span className="font-bold">
-                &quot;Suas especializações&quot;
-              </span>{" "}
-              está atualmente oculta da proposta.
+              Esta seção aparecerá na sua proposta
+            </p>
+          </div>
+        )}
+
+        {hideSectionChecked && (
+          <div className="bg-gray-light-10 border border-gray-light-50 rounded-2xs py-4 px-6 flex items-center justify-center gap-2 mb-4">
+            <InfoIcon fill="#6B7280" />
+            <p className="text-white-neutral-light-800 text-sm">
+              Esta seção foi ocultada e não aparecerá na proposta
             </p>
           </div>
         )}
