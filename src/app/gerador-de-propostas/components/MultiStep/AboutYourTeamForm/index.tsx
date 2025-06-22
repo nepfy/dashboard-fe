@@ -56,8 +56,8 @@ export default function AboutYourTeamForm() {
   const handleNext = () => {
     setErrors({});
 
-    const ourTeamSubtitle = formData?.step3?.ourTeamSubtitle || "";
     const hideSection = formData?.step3?.hideAboutYourTeamSection || false;
+    const ourTeamSubtitle = formData?.step3?.ourTeamSubtitle || "";
     const teamMembers = formData?.step3?.teamMembers || [];
     const newErrors: { [key: string]: string } = {};
 

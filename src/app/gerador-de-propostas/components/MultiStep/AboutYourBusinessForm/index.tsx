@@ -25,18 +25,22 @@ export default function AboutYourBusinessForm() {
   const handleNext = () => {
     setErrors({});
 
+    const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
+    const hideAboutUsTitle = formData?.step2?.hideAboutUsTitle || false;
+    const hideSubtitles1 = formData?.step2?.hideSubtitles1 || false;
+    const hideSubtitles2 = formData?.step2?.hideSubtitles2 || false;
+
     const aboutUsTitle = formData?.step2?.aboutUsTitle || "";
     const aboutUsSubtitle1 = formData?.step2?.aboutUsSubtitle1 || "";
     const aboutUsSubtitle2 = formData?.step2?.aboutUsSubtitle2 || "";
-    const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
-    const hideSubtitles1 = formData?.step2?.hideSubtitles1 || false;
-    const hideSubtitles2 = formData?.step2?.hideSubtitles2 || false;
     const newErrors: { [key: string]: string } = {};
 
     if (!hideAboutUsSection) {
-      if (fieldVisibility.aboutUsTitle && aboutUsTitle.length < 85) {
-        newErrors.aboutUsTitle =
-          "O campo 'Sobre nós' deve ter pelo menos 85 caracteres";
+      if (!hideAboutUsTitle) {
+        if (fieldVisibility.aboutUsTitle && aboutUsTitle.length < 85) {
+          newErrors.aboutUsTitle =
+            "O campo 'Sobre nós' deve ter pelo menos 85 caracteres";
+        }
       }
 
       if (!hideSubtitles1 || !hideSubtitles2) {
@@ -95,14 +99,16 @@ export default function AboutYourBusinessForm() {
     }));
   };
 
-  const hideSectionChecked = formData?.step2?.hideAboutUsSection || false;
+  const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
+  const hideAboutUsTitle = formData?.step2?.hideAboutUsTitle || false;
   const hideSubtitlesChecked1 = formData?.step2?.hideSubtitles1 || false;
   const hideSubtitlesChecked2 = formData?.step2?.hideSubtitles2 || false;
 
   const [fieldVisibility, setFieldVisibility] = useState({
-    aboutUsTitle: !hideSectionChecked,
-    aboutUsSubtitle1: !hideSectionChecked,
-    aboutUsSubtitle2: !hideSectionChecked,
+    aboutUsSection: !hideAboutUsSection,
+    aboutUsTitle: !hideAboutUsTitle,
+    aboutUsSubtitle1: !hideSubtitlesChecked1,
+    aboutUsSubtitle2: !hideSubtitlesChecked2,
   });
 
   return (
@@ -126,14 +132,14 @@ export default function AboutYourBusinessForm() {
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">
           <input
             type="checkbox"
-            checked={hideSectionChecked}
+            checked={hideAboutUsSection}
             onChange={handleHideSectionChange}
             className="border border-white-neutral-light-300 checkbox-custom"
           />
           Ocultar seção
         </label>
 
-        {hideSectionChecked && (
+        {hideAboutUsSection && (
           <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
             <p className="text-white-neutral-light-800 text-sm">
               A seção{" "}
@@ -154,9 +160,9 @@ export default function AboutYourBusinessForm() {
                 type="button"
                 onClick={() => toggleFieldVisibility("aboutUsTitle")}
                 className={`${
-                  hideSectionChecked ? "cursor-not-allowed" : "cursor-pointer"
+                  hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                disabled={hideSectionChecked}
+                disabled={hideAboutUsSection}
               >
                 {fieldVisibility.aboutUsTitle ? <EyeOpened /> : <EyeClosed />}
               </button>
@@ -172,7 +178,7 @@ export default function AboutYourBusinessForm() {
                 minLength={85}
                 showCharCount
                 error={errors.aboutUsTitle}
-                disabled={hideSectionChecked}
+                disabled={hideAboutUsTitle || hideAboutUsSection}
               />
             )}
           </div>
@@ -187,13 +193,9 @@ export default function AboutYourBusinessForm() {
                 type="button"
                 onClick={() => toggleFieldVisibility("aboutUsSubtitle1")}
                 className={`${
-                  hideSectionChecked ? "cursor-not-allowed" : "cursor-pointer"
+                  hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                disabled={
-                  hideSectionChecked ||
-                  hideSubtitlesChecked1 ||
-                  hideSubtitlesChecked2
-                }
+                disabled={hideAboutUsSection || hideSubtitlesChecked1}
               >
                 {fieldVisibility.aboutUsSubtitle1 ? (
                   <EyeOpened />
@@ -213,11 +215,7 @@ export default function AboutYourBusinessForm() {
                 minLength={40}
                 showCharCount
                 error={errors.aboutUsSubtitle1}
-                disabled={
-                  hideSectionChecked ||
-                  hideSubtitlesChecked1 ||
-                  hideSubtitlesChecked2
-                }
+                disabled={hideAboutUsSection || hideSubtitlesChecked1}
               />
             )}
           </div>
@@ -232,13 +230,9 @@ export default function AboutYourBusinessForm() {
                 type="button"
                 onClick={() => toggleFieldVisibility("aboutUsSubtitle2")}
                 className={`${
-                  hideSectionChecked ? "cursor-not-allowed" : "cursor-pointer"
+                  hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                disabled={
-                  hideSectionChecked ||
-                  hideSubtitlesChecked1 ||
-                  hideSubtitlesChecked2
-                }
+                disabled={hideAboutUsSection || hideSubtitlesChecked2}
               >
                 {fieldVisibility.aboutUsSubtitle2 ? (
                   <EyeOpened />
@@ -258,11 +252,7 @@ export default function AboutYourBusinessForm() {
                 minLength={195}
                 showCharCount
                 error={errors.aboutUsSubtitle2}
-                disabled={
-                  hideSectionChecked ||
-                  hideSubtitlesChecked1 ||
-                  hideSubtitlesChecked2
-                }
+                disabled={hideAboutUsSection || hideSubtitlesChecked2}
               />
             )}
           </div>

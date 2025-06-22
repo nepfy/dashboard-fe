@@ -96,9 +96,6 @@ export default function AboutYourResultsForm() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
 
-      console.log("Validation errors:", newErrors);
-      console.log("Current results state:", results);
-
       return;
     }
 

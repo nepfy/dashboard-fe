@@ -192,6 +192,7 @@ export interface Step1Data {
 
 export interface Step2Data {
   hideAboutUsSection?: boolean;
+  hideAboutUsTitle?: boolean;
   hideSubtitles1?: boolean;
   hideSubtitles2?: boolean;
   aboutUsTitle?: string;
