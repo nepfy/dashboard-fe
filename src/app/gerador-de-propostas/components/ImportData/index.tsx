@@ -134,7 +134,14 @@ export default function ImportDataModal({
     });
 
     setInitialFormErrors({});
-    setCurrentStep("import-choice");
+
+    // MUDANÇA PRINCIPAL: Se não há projetos existentes, vai direto para criar novo
+    if (hasExistingProjects === false) {
+      handleCreateNewClick();
+    } else {
+      // Se há projetos existentes, vai para o step de escolha
+      setCurrentStep("import-choice");
+    }
   };
 
   const handleImportDataClick = async () => {
@@ -200,28 +207,52 @@ export default function ImportDataModal({
     }
   };
 
+  // Função para determinar o título do modal baseado no step e se há projetos existentes
+  const getModalTitle = () => {
+    if (currentStep === "initial") {
+      return "Como você quer identificar essa proposta?";
+    }
+    return "Criar nova proposta!";
+  };
+
+  // Função para determinar a descrição no step inicial
+  const getInitialStepDescription = () => {
+    if (hasExistingProjects === false) {
+      return (
+        <>
+          <span className="font-bold">Esses dados são só pra você.</span> Eles
+          vão aparecer no seu painel de gerenciamento pra facilitar na hora de
+          encontrar e organizar suas propostas.
+        </>
+      );
+    }
+
+    return (
+      <>
+        <span className="font-bold">Esses dados são só pra você.</span> Eles vão
+        aparecer no seu painel de gerenciamento pra facilitar na hora de
+        encontrar e organizar suas propostas.
+      </>
+    );
+  };
+
   return (
     <Modal
       isOpen={true}
       onClose={onClose || (() => {})}
-      title={
-        currentStep === "initial"
-          ? "Como você quer identificar essa proposta?"
-          : "Criar nova proposta!"
-      }
+      title={getModalTitle()}
       boldTitle
       footer={false}
-      closeOnClickOutside={!isImporting}
+      closeOnClickOutside={false}
       showCloseButton={!isImporting}
+      disableClose
     >
       {/* Initial Step - Client and Project Name */}
       {currentStep === "initial" && (
         <>
           <div className="p-6">
             <p className="text-white-neutral-light-900 text-sm mb-8">
-              <span className="font-bold">Esses dados são só pra você.</span>{" "}
-              Eles vão aparecer no seu painel de gerenciamento pra facilitar na
-              hora de encontrar e organizar suas propostas.
+              {getInitialStepDescription()}
             </p>
 
             <div className="space-y-4">
@@ -273,14 +304,14 @@ export default function ImportDataModal({
               onClick={handleInitialFormSubmit}
               className="w-full sm:w-[75px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
             >
-              Salvar
+              {hasExistingProjects === false ? "Criar" : "Salvar"}
             </button>
           </div>
         </>
       )}
 
-      {/* Import Choice Step */}
-      {currentStep === "import-choice" && (
+      {/* Import Choice Step - Só aparece se houver projetos existentes */}
+      {currentStep === "import-choice" && hasExistingProjects && (
         <>
           <div className="p-6">
             <p className="text-white-neutral-light-900 font-semibold text-sm mb-3">
@@ -298,21 +329,18 @@ export default function ImportDataModal({
               Escolha uma das opções abaixo:
             </p>
 
-            {/* Only show import option if user has existing projects */}
-            {hasExistingProjects && (
-              <div className="flex items-center gap-2">
-                <span className="text-primary-light-500 text-2xl p-0">
-                  &#8226;
-                </span>
-                <p className="text-white-neutral-light-900 text-sm mb-3">
-                  <span className="font-bold">
-                    Importar dados de um projeto anterior:
-                  </span>{" "}
-                  Selecione um projeto já preenchido para importar as
-                  informações. Depois, você poderá alterar o que for necessário.
-                </p>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <span className="text-primary-light-500 text-2xl p-0">
+                &#8226;
+              </span>
+              <p className="text-white-neutral-light-900 text-sm mb-3">
+                <span className="font-bold">
+                  Importar dados de um projeto anterior:
+                </span>{" "}
+                Selecione um projeto já preenchido para importar as informações.
+                Depois, você poderá alterar o que for necessário.
+              </p>
+            </div>
 
             <div className="flex items-center gap-2">
               <span className="text-primary-light-500 text-2xl p-0">
@@ -336,16 +364,13 @@ export default function ImportDataModal({
               <ArrowLeft size={20} strokeWidth={2} />
             </button>
             <div>
-              {/* Only show import button if user has existing projects */}
-              {hasExistingProjects && (
-                <button
-                  type="button"
-                  onClick={handleImportDataClick}
-                  className="w-full sm:w-[140px] h-[38px] px-4 py-2 mr-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
-                >
-                  Importar dados
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={handleImportDataClick}
+                className="w-full sm:w-[140px] h-[38px] px-4 py-2 mr-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+              >
+                Importar dados
+              </button>
               <button
                 type="button"
                 onClick={handleCreateNewClick}

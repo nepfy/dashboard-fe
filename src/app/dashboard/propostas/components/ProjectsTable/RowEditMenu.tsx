@@ -337,7 +337,7 @@ export default function RowEditMenu({
   };
 
   const getArchiveButtonText = () => {
-    return viewMode === "archived" ? "Restaurar" : "Confirmar";
+    return viewMode === "archived" ? "Restaurar" : "Arquivar";
   };
 
   const isMenuDisabled =

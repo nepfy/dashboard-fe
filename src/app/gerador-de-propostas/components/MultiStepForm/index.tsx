@@ -18,245 +18,114 @@ import FinalMessageForm from "#/app/gerador-de-propostas/components/MultiStep/Fi
 import AccessForm from "#/app/gerador-de-propostas/components/MultiStep/AccessForm";
 
 import IntroPreview from "#/app/gerador-de-propostas/components/MultiPreview/IntroPreview";
+import AboutBusinessPreview from "#/app/gerador-de-propostas/components/MultiPreview/AboutYourBusinessPreview";
+import TeamPreview from "#/app/gerador-de-propostas/components/MultiPreview/TeamPreview";
+import ExpertisePreview from "#/app/gerador-de-propostas/components/MultiPreview/ExpertisePreview";
+import ResultsPreview from "#/app/gerador-de-propostas/components/MultiPreview/ResultsPreview";
+import ClientsPreview from "#/app/gerador-de-propostas/components/MultiPreview/ClientsPreview";
+import ProcessPreview from "#/app/gerador-de-propostas/components/MultiPreview/ProcessPreview";
+import CTAPreview from "#/app/gerador-de-propostas/components/MultiPreview/CTAPreview";
+import TestimonialsPreview from "#/app/gerador-de-propostas/components/MultiPreview/TestimonialsPreview";
+import InvestmentPreview from "#/app/gerador-de-propostas/components/MultiPreview/InvestmentPreview";
+import DeliveriesPreview from "#/app/gerador-de-propostas/components/MultiPreview/DeliveriesPreview";
+import PlansPreview from "#/app/gerador-de-propostas/components/MultiPreview/PlansPreview";
+import TermsPreview from "#/app/gerador-de-propostas/components/MultiPreview/TermsPreview";
+import FAQPreview from "#/app/gerador-de-propostas/components/MultiPreview/FAQPreview";
+import FinalMessagePreview from "#/app/gerador-de-propostas/components/MultiPreview/FinalMessagePreview";
+import AccessPreview from "#/app/gerador-de-propostas/components/MultiPreview/AccessPreview";
 
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
+
+// Mapeamento dos formulários e previews
+const stepComponents = {
+  1: { Form: IntroForm, Preview: IntroPreview },
+  2: { Form: AboutYourBusinessForm, Preview: AboutBusinessPreview },
+  3: { Form: AboutYourTeamForm, Preview: TeamPreview },
+  4: { Form: AboutYourExpertiseForm, Preview: ExpertisePreview },
+  5: { Form: AboutYourResultsForm, Preview: ResultsPreview },
+  6: { Form: AboutYourClientsForm, Preview: ClientsPreview },
+  7: { Form: AboutYourProcessForm, Preview: ProcessPreview },
+  8: { Form: CallToActionForm, Preview: CTAPreview },
+  9: { Form: TestimonialsForm, Preview: TestimonialsPreview },
+  10: { Form: InvestmentForm, Preview: InvestmentPreview },
+  11: { Form: ProjectDeliveriesForm, Preview: DeliveriesPreview },
+  12: { Form: PlansForm, Preview: PlansPreview },
+  13: { Form: TermsAndConditionsForm, Preview: TermsPreview },
+  14: { Form: FAQForm, Preview: FAQPreview },
+  15: { Form: FinalMessageForm, Preview: FinalMessagePreview },
+  16: { Form: AccessForm, Preview: AccessPreview },
+};
 
 export default function MultiStepForm() {
   const { currentStep } = useProjectGenerator();
 
-  if (currentStep === 1) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <IntroForm />
-        </div>
+  // Obtém os componentes do step atual
+  const currentComponents =
+    stepComponents[currentStep as keyof typeof stepComponents];
 
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
+  if (!currentComponents) {
+    return (
+      <div className="h-full flex items-center justify-center p-7">
+        <div className="text-center">
+          <h2 className="text-white-neutral-light-800 text-xl font-medium mb-2">
+            Step não encontrado
+          </h2>
+          <p className="text-white-neutral-light-500">
+            O step {currentStep} não foi configurado.
+          </p>
         </div>
       </div>
     );
   }
 
-  if (currentStep === 2) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <AboutYourBusinessForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 3) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <AboutYourTeamForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 4) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <AboutYourExpertiseForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 5) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <AboutYourResultsForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 6) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <AboutYourClientsForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 7) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <AboutYourProcessForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 8) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <CallToActionForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 9) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <TestimonialsForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 10) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <InvestmentForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 11) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <ProjectDeliveriesForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 12) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <PlansForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 13) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <TermsAndConditionsForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 14) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <FAQForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 15) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <FinalMessageForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 16) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-full h-full">
-          <AccessForm />
-        </div>
-
-        <div className="hidden xl:block w-full h-full bg-primary-light-100">
-          <IntroPreview />
-        </div>
-      </div>
-    );
-  }
+  const { Form, Preview } = currentComponents;
 
   return (
-    <div className="flex items-center justify-center h-full">
-      <div className="w-full h-full">
-        <IntroForm />
+    <div className="h-full flex">
+      {/* Lado esquerdo - Formulário */}
+      <div className="w-full xl:w-1/2 h-full overflow-y-auto">
+        <Form />
       </div>
 
-      <div className="hidden xl:block w-full h-full bg-primary-light-100">
-        <IntroPreview />
+      {/* Lado direito - Preview (visível apenas em desktop) */}
+      <div className="hidden xl:block xl:w-1/2 h-full overflow-hidden border-l border-white-neutral-light-300">
+        <Preview />
       </div>
     </div>
   );
 }
+
+// Hook para usar informações do step atual
+export const useCurrentStep = () => {
+  const { currentStep } = useProjectGenerator();
+
+  const stepInfo = {
+    1: { title: "Introdução", description: "Configure a apresentação inicial" },
+    2: { title: "Sobre o Negócio", description: "Conte sobre sua empresa" },
+    3: { title: "Sua Equipe", description: "Apresente seu time" },
+    4: { title: "Expertise", description: "Mostre sua experiência" },
+    5: { title: "Resultados", description: "Demonstre seus resultados" },
+    6: { title: "Clientes", description: "Apresente seus clientes" },
+    7: { title: "Processo", description: "Explique seu processo" },
+    8: { title: "Chamada para Ação", description: "Configure o CTA" },
+    9: { title: "Depoimentos", description: "Adicione depoimentos" },
+    10: { title: "Investimento", description: "Configure preços" },
+    11: { title: "Entregas", description: "Defina entregas do projeto" },
+    12: { title: "Planos", description: "Configure planos de serviço" },
+    13: { title: "Termos", description: "Adicione termos e condições" },
+    14: { title: "FAQ", description: "Perguntas frequentes" },
+    15: { title: "Mensagem Final", description: "Finalize a proposta" },
+    16: { title: "Acesso", description: "Configure acesso à proposta" },
+  };
+
+  return {
+    currentStep,
+    stepInfo: stepInfo[currentStep as keyof typeof stepInfo] || {
+      title: "Step",
+      description: "Configuração",
+    },
+    totalSteps: Object.keys(stepInfo).length,
+    isFirstStep: currentStep === 1,
+    isLastStep: currentStep === 16,
+  };
+};

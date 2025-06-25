@@ -13,6 +13,7 @@ interface ModalProps {
   width?: string;
   closeOnClickOutside?: boolean;
   footer?: boolean;
+  disableClose?: boolean; // Nova prop para desabilitar todas as formas de fechar
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -25,13 +26,15 @@ const Modal: React.FC<ModalProps> = ({
   width,
   closeOnClickOutside = true,
   footer = true,
+  disableClose = false, // Valor padrão false
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Handle escape key press to close the modal
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen) {
+      // Só fecha com ESC se disableClose for false
+      if (event.key === "Escape" && isOpen && !disableClose) {
         onClose();
       }
     };
@@ -46,18 +49,26 @@ const Modal: React.FC<ModalProps> = ({
     }
 
     return () => {
-      document.addEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "auto";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, disableClose]);
 
   // Handle clicking outside of the modal to close it
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (
       closeOnClickOutside &&
+      !disableClose && // Só permite fechar clicando fora se disableClose for false
       modalRef.current &&
       !modalRef.current.contains(e.target as Node)
     ) {
+      onClose();
+    }
+  };
+
+  // Função para fechar o modal (usada pelos botões)
+  const handleClose = () => {
+    if (!disableClose) {
       onClose();
     }
   };
@@ -80,7 +91,7 @@ const Modal: React.FC<ModalProps> = ({
         style={{ width: width || undefined }}
         onClick={(e) => e.stopPropagation()}
       >
-        {(title || showCloseButton) && (
+        {(title || (showCloseButton && !disableClose)) && (
           <div className="flex items-center justify-between px-6 pt-6">
             {title && (
               <h3
@@ -92,9 +103,10 @@ const Modal: React.FC<ModalProps> = ({
                 {title}
               </h3>
             )}
-            {showCloseButton && (
+            {/* Só mostra o botão X se showCloseButton for true E disableClose for false */}
+            {showCloseButton && !disableClose && (
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="p-1 rounded-full hover:bg-white-neutral-light-200 transition-colors cursor-pointer"
                 aria-label="Close modal"
               >
@@ -108,8 +120,13 @@ const Modal: React.FC<ModalProps> = ({
         {footer && (
           <div className="border-t border-white-neutral-light-300 p-6">
             <button
-              onClick={onClose}
-              className="w-[93px] h-[44px] text-center text-white rounded-[var(--radius-xs)] font-medium transition-colors cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] button-inner-inverse"
+              onClick={handleClose}
+              disabled={disableClose} // Desabilita o botão se disableClose for true
+              className={`w-[93px] h-[44px] text-center text-white rounded-[var(--radius-xs)] font-medium transition-colors button-inner-inverse ${
+                disableClose
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] cursor-pointer"
+              }`}
             >
               Entendi
             </button>
