@@ -213,9 +213,11 @@ export function ProjectGeneratorProvider({
       ctaButtonTitle: projectData.ctaButtonTitle,
       pageTitle: projectData.pageTitle,
       pageSubtitle: projectData.pageSubtitle,
+      hidePageSubtitle: projectData.hidePageSubtitle,
       services: projectData.services
         ? projectData.services.split(",")
         : undefined,
+      hideServices: projectData.hideServices,
     });
 
     // Step 2 - About us (Your Business)

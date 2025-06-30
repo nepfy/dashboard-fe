@@ -37,7 +37,9 @@ export const projectsTable = pgTable("projects", {
   ctaButtonTitle: varchar("cta_button_title", { length: 100 }),
   pageTitle: varchar("page_title", { length: 255 }),
   pageSubtitle: text("page_subtitle"),
-  services: text("services"), // comma-separated values or JSON array
+  hidePageSubtitle: boolean("hide_page_subtitle").default(false),
+  services: text("services"),
+  hideServices: boolean("hide_services").default(false),
 
   hideAboutUsSection: boolean("hide_about_us_section").default(false),
   aboutUsTitle: varchar("about_us_title", { length: 255 }),

@@ -87,9 +87,11 @@ export async function POST(request: Request) {
       ctaButtonTitle: formData.step1?.ctaButtonTitle,
       pageTitle: formData.step1?.pageTitle,
       pageSubtitle: formData.step1?.pageSubtitle,
+      hidePageSubtitle: formData.step1?.hidePageSubtitle || false,
       services: Array.isArray(formData.step1?.services)
         ? formData.step1.services.join(",")
         : formData.step1?.services,
+      hideServices: formData.step1?.hideServices || false,
 
       hideAboutUsSection: formData.step2?.hideAboutUsSection || false,
       aboutUsTitle: formData.step2?.aboutUsTitle,

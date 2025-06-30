@@ -1,12 +1,13 @@
-// src/app/gerador-de-propostas/components/MultiStep/IntroForm/index.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
-import { TextField } from "#/components/Inputs";
+import { TextField, TextAreaField } from "#/components/Inputs";
 import TagInput from "#/components/Inputs/TagInput";
 
+import EyeOpened from "#/components/icons/EyeOpened";
+import EyeClosed from "#/components/icons/EyeClosed";
 import ImportDataModal from "../../ImportData";
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
@@ -15,9 +16,6 @@ import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { Project } from "#/types/project";
 
 export default function IntroStep() {
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
   const {
     updateFormData,
     nextStep,
@@ -26,11 +24,26 @@ export default function IntroStep() {
     templateType,
     currentStep,
     resetForm,
-    importProjectData, // Use the context method instead of local one
+    importProjectData,
   } = useProjectGenerator();
 
+  const hidePageSubtitle = formData?.step1?.hidePageSubtitle || false;
+  const hideServices = formData?.step1?.hideServices || false;
+
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [modalDismissed, setModalDismissed] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [fieldVisibility, setFieldVisibility] = useState({
+    pageSubtitle: !hidePageSubtitle,
+    services: !hideServices,
+  });
+
   useEffect(() => {
-    const hasFormData =
+    if (modalDismissed) {
+      return;
+    }
+
+    const hasContentFormData =
       formData?.step1 &&
       (formData.step1.companyName ||
         formData.step1.companyEmail ||
@@ -39,34 +52,77 @@ export default function IntroStep() {
         formData.step1.pageSubtitle ||
         (formData.step1.services && formData.step1.services.length > 0));
 
-    if (templateType && currentStep === 1 && !hasFormData) {
+    const hasVisibilityToggles =
+      formData?.step1 &&
+      (formData.step1.hidePageSubtitle !== undefined ||
+        formData.step1.hideServices !== undefined);
+
+    if (
+      templateType &&
+      currentStep === 1 &&
+      !hasContentFormData &&
+      !hasVisibilityToggles
+    ) {
       setShowImportModal(true);
     } else {
       setShowImportModal(false);
     }
-  }, [templateType, currentStep, formData?.step1]);
+  }, [templateType, currentStep, formData?.step1, modalDismissed]);
 
-  // Use the importProjectData from context which populates ALL steps
   const handleImportProject = (projectData: Project) => {
-    // Update the form data for the initial form fields (client and project name)
     updateFormData("step1", {
       ...formData?.step1,
       clientName: projectData.clientName,
       projectName: projectData.projectName,
     });
 
-    // Import all project data using the context method
     importProjectData(projectData);
 
     setShowImportModal(false);
+    setModalDismissed(true);
   };
 
   const handleCreateNew = () => {
     setShowImportModal(false);
+    setModalDismissed(true);
   };
 
   const handleCloseModal = () => {
     setShowImportModal(false);
+    setModalDismissed(true);
+  };
+
+  const toggleFieldVisibility = (fieldName: keyof typeof fieldVisibility) => {
+    const newVisibility = !fieldVisibility[fieldName];
+
+    setFieldVisibility((prev) => ({
+      ...prev,
+      [fieldName]: newVisibility,
+    }));
+
+    if (fieldName === "pageSubtitle") {
+      updateFormData("step1", {
+        ...formData?.step1,
+        hidePageSubtitle: !newVisibility,
+      });
+    } else if (fieldName === "services") {
+      updateFormData("step1", {
+        ...formData?.step1,
+        hideServices: !newVisibility,
+      });
+    }
+
+    if (!newVisibility) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        if (fieldName === "pageSubtitle") {
+          delete newErrors.pageSubtitle;
+        } else if (fieldName === "services") {
+          delete newErrors.services;
+        }
+        return newErrors;
+      });
+    }
   };
 
   const handleBack = () => {
@@ -86,7 +142,6 @@ export default function IntroStep() {
 
     const newErrors: { [key: string]: string } = {};
 
-    // Validate required fields
     if (!companyName.trim()) {
       newErrors.companyName = "O nome da empresa é obrigatório";
     }
@@ -94,11 +149,15 @@ export default function IntroStep() {
     if (!companyEmail.trim()) {
       newErrors.companyEmail = "O email é obrigatório";
     } else {
-      // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(companyEmail)) {
         newErrors.companyEmail = "Por favor, insira um email válido";
       }
+    }
+
+    if (ctaButtonTitle.length > 25) {
+      newErrors.ctaButtonTitle =
+        "O texto do botão não pode ter mais do que 25 caracteres";
     }
 
     if (!ctaButtonTitle.trim()) {
@@ -113,16 +172,20 @@ export default function IntroStep() {
       newErrors.pageTitle = "O título deve ter no mínimo 30 caracteres";
     }
 
-    if (!pageSubtitle.trim()) {
-      newErrors.pageSubtitle = "O subtítulo da página é obrigatório";
+    if (fieldVisibility.pageSubtitle) {
+      if (!pageSubtitle.trim()) {
+        newErrors.pageSubtitle = "O subtítulo da página é obrigatório";
+      }
+
+      if (pageSubtitle.length < 70) {
+        newErrors.pageSubtitle = "O subtítulo deve ter no mínimo 70 caracteres";
+      }
     }
 
-    if (pageSubtitle.length < 70) {
-      newErrors.pageSubtitle = "O subtítulo deve ter no mínimo 70 caracteres";
-    }
-
-    if (services.length === 0) {
-      newErrors.services = "Pelo menos um serviço deve ser adicionado";
+    if (fieldVisibility.services) {
+      if (services.length === 0) {
+        newErrors.services = "Pelo menos um serviço deve ser adicionado";
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -140,7 +203,22 @@ export default function IntroStep() {
         [fieldName]: e.target.value,
       });
 
-      // Clear error for this field if it exists
+      if (errors[fieldName]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fieldName];
+          return newErrors;
+        });
+      }
+    };
+
+  const handleTextAreaChange =
+    (fieldName: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      updateFormData("step1", {
+        ...formData?.step1,
+        [fieldName]: e.target.value,
+      });
+
       if (errors[fieldName]) {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -156,7 +234,6 @@ export default function IntroStep() {
       services,
     });
 
-    // Clear services error if it exists
     if (errors.services) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -237,6 +314,8 @@ export default function IntroStep() {
                 value={formData?.step1?.ctaButtonTitle || ""}
                 onChange={handleFieldChange("ctaButtonTitle")}
                 error={errors.ctaButtonTitle}
+                maxLength={25}
+                showCharCount
               />
             </div>
 
@@ -267,14 +346,27 @@ export default function IntroStep() {
                 style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
               >
                 Serviços
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFieldVisibility("services");
+                  }}
+                  className="cursor-pointer"
+                >
+                  {fieldVisibility.services ? <EyeOpened /> : <EyeClosed />}
+                </button>
               </label>
-              <TagInput
-                placeholder="Digite um serviço e pressione Enter"
-                value={formData?.step1?.services || []}
-                onChange={handleServicesChange}
-                error={errors.services}
-                infoText="Separe o serviço por ponto e vírgula (;) ou pressione Enter após digitar cada serviço."
-              />
+              {fieldVisibility.services && (
+                <TagInput
+                  placeholder="Digite um serviço e pressione Enter"
+                  value={formData?.step1?.services || []}
+                  onChange={handleServicesChange}
+                  error={errors.services}
+                  infoText="Separe o serviço por ponto e vírgula (;) ou pressione Enter após digitar cada serviço."
+                  disabled={hideServices}
+                />
+              )}
             </div>
 
             <div className="pb-6">
@@ -283,19 +375,33 @@ export default function IntroStep() {
                 style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
               >
                 Subtítulo
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFieldVisibility("pageSubtitle");
+                  }}
+                  className="cursor-pointer"
+                >
+                  {fieldVisibility.pageSubtitle ? <EyeOpened /> : <EyeClosed />}
+                </button>
               </label>
-              <TextField
-                id="pageSubtitle"
-                inputName="pageSubtitle"
-                type="text"
-                placeholder="Digite uma descrição complementar"
-                value={formData?.step1?.pageSubtitle || ""}
-                onChange={handleFieldChange("pageSubtitle")}
-                error={errors.pageSubtitle}
-                maxLength={115}
-                minLength={70}
-                showCharCount
-              />
+              {fieldVisibility.pageSubtitle && (
+                <TextAreaField
+                  id="pageSubtitle"
+                  placeholder="Digite uma descrição complementar"
+                  value={formData?.step1?.pageSubtitle || ""}
+                  onChange={handleTextAreaChange("pageSubtitle")}
+                  error={errors.pageSubtitle}
+                  disabled={hidePageSubtitle}
+                  maxLength={115}
+                  minLength={70}
+                  showCharCount
+                  autoExpand={true}
+                  minHeight={60}
+                  maxHeight={200}
+                />
+              )}
             </div>
           </div>
         </div>

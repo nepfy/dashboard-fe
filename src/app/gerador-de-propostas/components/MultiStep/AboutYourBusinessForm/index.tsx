@@ -18,17 +18,26 @@ export default function AboutYourBusinessForm() {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  // Get current values from formData
+  const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
+  const hideAboutUsTitle = formData?.step2?.hideAboutUsTitle || false;
+  const hideSubtitles1 = formData?.step2?.hideSubtitles1 || false;
+  const hideSubtitles2 = formData?.step2?.hideSubtitles2 || false;
+
+  // Calculate field visibility based on formData (no local state needed)
+  const fieldVisibility = {
+    aboutUsSection: !hideAboutUsSection,
+    aboutUsTitle: !hideAboutUsTitle && !hideAboutUsSection,
+    aboutUsSubtitle1: !hideSubtitles1 && !hideAboutUsSection,
+    aboutUsSubtitle2: !hideSubtitles2 && !hideAboutUsSection,
+  };
+
   const handleBack = () => {
     prevStep();
   };
 
   const handleNext = () => {
     setErrors({});
-
-    const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
-    const hideAboutUsTitle = formData?.step2?.hideAboutUsTitle || false;
-    const hideSubtitles1 = formData?.step2?.hideSubtitles1 || false;
-    const hideSubtitles2 = formData?.step2?.hideSubtitles2 || false;
 
     const aboutUsTitle = formData?.step2?.aboutUsTitle || "";
     const aboutUsSubtitle1 = formData?.step2?.aboutUsSubtitle1 || "";
@@ -83,33 +92,64 @@ export default function AboutYourBusinessForm() {
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrors({});
-    toggleFieldVisibility("aboutUsTitle");
-    toggleFieldVisibility("aboutUsSubtitle1");
-    toggleFieldVisibility("aboutUsSubtitle2");
+    const isHiding = e.target.checked;
+
     updateFormData("step2", {
       ...formData?.step2,
-      hideAboutUsSection: e.target.checked,
+      hideAboutUsSection: isHiding,
     });
   };
 
-  const toggleFieldVisibility = (fieldName: keyof typeof fieldVisibility) => {
-    setFieldVisibility((prev) => ({
-      ...prev,
-      [fieldName]: !prev[fieldName],
-    }));
+  const toggleFieldVisibility = (fieldName: string) => {
+    setErrors({});
+
+    if (fieldName === "aboutUsTitle") {
+      const newValue = !hideAboutUsTitle;
+      updateFormData("step2", {
+        ...formData?.step2,
+        hideAboutUsTitle: newValue,
+      });
+
+      // Clear error if hiding field
+      if (newValue) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.aboutUsTitle;
+          return newErrors;
+        });
+      }
+    } else if (fieldName === "aboutUsSubtitle1") {
+      const newValue = !hideSubtitles1;
+      updateFormData("step2", {
+        ...formData?.step2,
+        hideSubtitles1: newValue,
+      });
+
+      // Clear error if hiding field
+      if (newValue) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.aboutUsSubtitle1;
+          return newErrors;
+        });
+      }
+    } else if (fieldName === "aboutUsSubtitle2") {
+      const newValue = !hideSubtitles2;
+      updateFormData("step2", {
+        ...formData?.step2,
+        hideSubtitles2: newValue,
+      });
+
+      // Clear error if hiding field
+      if (newValue) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.aboutUsSubtitle2;
+          return newErrors;
+        });
+      }
+    }
   };
-
-  const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
-  const hideAboutUsTitle = formData?.step2?.hideAboutUsTitle || false;
-  const hideSubtitlesChecked1 = formData?.step2?.hideSubtitles1 || false;
-  const hideSubtitlesChecked2 = formData?.step2?.hideSubtitles2 || false;
-
-  const [fieldVisibility, setFieldVisibility] = useState({
-    aboutUsSection: !hideAboutUsSection,
-    aboutUsTitle: !hideAboutUsTitle,
-    aboutUsSubtitle1: !hideSubtitlesChecked1,
-    aboutUsSubtitle2: !hideSubtitlesChecked2,
-  });
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -151,14 +191,27 @@ export default function AboutYourBusinessForm() {
 
         <div className="py-6">
           <div className="py-2">
-            <p
-              className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
-              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            <div
+              className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
+                hideAboutUsSection || hideAboutUsTitle
+                  ? "bg-white-neutral-light-300"
+                  : ""
+              }`}
+              style={{
+                backgroundColor:
+                  hideAboutUsSection || hideAboutUsTitle
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+              }}
             >
-              Sobre nós
+              <span>Sobre nós</span>
               <button
                 type="button"
-                onClick={() => toggleFieldVisibility("aboutUsTitle")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFieldVisibility("aboutUsTitle");
+                }}
                 className={`${
                   hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
@@ -166,7 +219,7 @@ export default function AboutYourBusinessForm() {
               >
                 {fieldVisibility.aboutUsTitle ? <EyeOpened /> : <EyeClosed />}
               </button>
-            </p>
+            </div>
             {fieldVisibility.aboutUsTitle && (
               <TextAreaField
                 id="aboutUsTitle"
@@ -183,19 +236,32 @@ export default function AboutYourBusinessForm() {
             )}
           </div>
 
-          <div className="py-1">
-            <p
-              className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
-              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+          <div className="py-2">
+            <div
+              className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
+                hideAboutUsSection || hideSubtitles1
+                  ? "bg-white-neutral-light-300"
+                  : ""
+              }`}
+              style={{
+                backgroundColor:
+                  hideAboutUsSection || hideSubtitles1
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+              }}
             >
-              Subtítulo 1
+              <span>Subtítulo 1</span>
               <button
                 type="button"
-                onClick={() => toggleFieldVisibility("aboutUsSubtitle1")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFieldVisibility("aboutUsSubtitle1");
+                }}
                 className={`${
                   hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                disabled={hideAboutUsSection || hideSubtitlesChecked1}
+                disabled={hideAboutUsSection}
               >
                 {fieldVisibility.aboutUsSubtitle1 ? (
                   <EyeOpened />
@@ -203,7 +269,7 @@ export default function AboutYourBusinessForm() {
                   <EyeClosed />
                 )}
               </button>
-            </p>
+            </div>
             {fieldVisibility.aboutUsSubtitle1 && (
               <TextAreaField
                 id="aboutUsSubtitle1"
@@ -215,24 +281,37 @@ export default function AboutYourBusinessForm() {
                 minLength={40}
                 showCharCount
                 error={errors.aboutUsSubtitle1}
-                disabled={hideAboutUsSection || hideSubtitlesChecked1}
+                disabled={hideAboutUsSection || hideSubtitles1}
               />
             )}
           </div>
 
-          <div className="py-1">
-            <p
-              className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
-              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+          <div className="py-2">
+            <div
+              className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
+                hideAboutUsSection || hideSubtitles2
+                  ? "bg-white-neutral-light-300"
+                  : ""
+              }`}
+              style={{
+                backgroundColor:
+                  hideAboutUsSection || hideSubtitles2
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+              }}
             >
-              Subtítulo 2
+              <span>Subtítulo 2</span>
               <button
                 type="button"
-                onClick={() => toggleFieldVisibility("aboutUsSubtitle2")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFieldVisibility("aboutUsSubtitle2");
+                }}
                 className={`${
                   hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
-                disabled={hideAboutUsSection || hideSubtitlesChecked2}
+                disabled={hideAboutUsSection}
               >
                 {fieldVisibility.aboutUsSubtitle2 ? (
                   <EyeOpened />
@@ -240,7 +319,7 @@ export default function AboutYourBusinessForm() {
                   <EyeClosed />
                 )}
               </button>
-            </p>
+            </div>
             {fieldVisibility.aboutUsSubtitle2 && (
               <TextAreaField
                 id="aboutUsSubtitle2"
@@ -252,7 +331,7 @@ export default function AboutYourBusinessForm() {
                 minLength={195}
                 showCharCount
                 error={errors.aboutUsSubtitle2}
-                disabled={hideAboutUsSection || hideSubtitlesChecked2}
+                disabled={hideAboutUsSection || hideSubtitles2}
               />
             )}
           </div>

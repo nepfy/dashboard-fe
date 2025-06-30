@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useRef, useEffect } from "react";
 import QuestionIcon from "#/components/icons/QuestionIcon";
 
 interface CustomTextAreaProps
@@ -15,6 +17,9 @@ interface CustomTextAreaProps
   minLength?: number;
   showCharCount?: boolean;
   rows?: number;
+  autoExpand?: boolean;
+  minHeight?: number;
+  maxHeight?: number;
 }
 
 // Custom resize icon component
@@ -54,10 +59,57 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
     minLength,
     showCharCount = false,
     rows = 4,
+    autoExpand = false,
+    minHeight = 60,
+    maxHeight,
+    ...rest
   } = props;
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const currentLength = typeof value === "string" ? value.length : 0;
   const isNearLimit = maxLength ? currentLength >= maxLength - 2 : false;
+
+  const adjustHeight = () => {
+    if (!autoExpand || !textareaRef.current) return;
+
+    const textarea = textareaRef.current;
+
+    textarea.style.height = "auto";
+
+    let newHeight = textarea.scrollHeight;
+
+    if (newHeight < minHeight) newHeight = minHeight;
+    if (maxHeight && newHeight > maxHeight) newHeight = maxHeight;
+
+    textarea.style.height = `${newHeight}px`;
+  };
+
+  useEffect(() => {
+    if (autoExpand) {
+      adjustHeight();
+    }
+  }, [value, autoExpand]);
+
+  useEffect(() => {
+    if (autoExpand && textareaRef.current) {
+      // Set initial min height
+      textareaRef.current.style.minHeight = `${minHeight}px`;
+      if (maxHeight) {
+        textareaRef.current.style.maxHeight = `${maxHeight}px`;
+      }
+      adjustHeight();
+    }
+  }, [autoExpand, minHeight, maxHeight]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (onChange) {
+      onChange(e);
+    }
+
+    if (autoExpand) {
+      setTimeout(adjustHeight, 0);
+    }
+  };
 
   return (
     <div className="block w-full">
@@ -75,17 +127,21 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
 
       <div className="relative">
         <textarea
+          {...rest}
+          ref={textareaRef}
           disabled={disabled}
           id={id}
           name={textareaName}
           placeholder={placeholder}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           onBlur={onBlur}
           maxLength={maxLength}
-          rows={rows}
+          rows={autoExpand ? 1 : rows}
           style={{
-            resize: "none", // Hide default resize handle
+            resize: autoExpand ? "none" : "none",
+            overflow: autoExpand ? "hidden" : "auto",
+            transition: autoExpand ? "height 0.1s ease" : "none",
           }}
           className={`w-full px-4 py-3 mt-1.5 rounded-xs 
                       border bg-white-neutral-light-100
@@ -100,35 +156,39 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
           `}
         />
 
-        {/* Custom resize handle */}
-        <div
-          className="absolute bottom-1 right-1 w-4 h-4 cursor-ns-resize flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-          onMouseDown={(e) => {
-            e.preventDefault();
-            const textarea = e.currentTarget
-              .previousElementSibling as HTMLTextAreaElement;
-            const startY = e.clientY;
-            const startHeight = parseInt(getComputedStyle(textarea).height, 10);
+        {!autoExpand && (
+          <div
+            className="absolute bottom-1 right-1 w-4 h-4 cursor-ns-resize flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              const textarea = textareaRef.current;
+              if (!textarea) return;
 
-            const handleMouseMove = (moveEvent: MouseEvent) => {
-              const newHeight = startHeight + (moveEvent.clientY - startY);
-              if (newHeight > 60) {
-                // Minimum height
-                textarea.style.height = `${newHeight}px`;
-              }
-            };
+              const startY = e.clientY;
+              const startHeight = parseInt(
+                getComputedStyle(textarea).height,
+                10
+              );
 
-            const handleMouseUp = () => {
-              document.removeEventListener("mousemove", handleMouseMove);
-              document.removeEventListener("mouseup", handleMouseUp);
-            };
+              const handleMouseMove = (moveEvent: MouseEvent) => {
+                const newHeight = startHeight + (moveEvent.clientY - startY);
+                if (newHeight > minHeight) {
+                  textarea.style.height = `${newHeight}px`;
+                }
+              };
 
-            document.addEventListener("mousemove", handleMouseMove);
-            document.addEventListener("mouseup", handleMouseUp);
-          }}
-        >
-          <ResizeIcon />
-        </div>
+              const handleMouseUp = () => {
+                document.removeEventListener("mousemove", handleMouseMove);
+                document.removeEventListener("mouseup", handleMouseUp);
+              };
+
+              document.addEventListener("mousemove", handleMouseMove);
+              document.addEventListener("mouseup", handleMouseUp);
+            }}
+          >
+            <ResizeIcon />
+          </div>
+        )}
       </div>
 
       <div className="mt-2 flex items-center justify-between">

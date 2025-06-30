@@ -155,6 +155,13 @@
       "when": 1750635561751,
       "tag": "0021_aberrant_ender_wiggin",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1751309626340,
+      "tag": "0022_lowly_katie_power",
+      "breakpoints": true
     }
   ]
 }

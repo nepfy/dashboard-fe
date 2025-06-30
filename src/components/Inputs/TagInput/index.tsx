@@ -9,6 +9,7 @@ interface TagInputProps {
   onChange?: (tags: string[]) => void;
   infoText?: string;
   error?: string;
+  disabled?: boolean;
 }
 
 const TagInput: React.FC<TagInputProps> = ({
@@ -18,6 +19,7 @@ const TagInput: React.FC<TagInputProps> = ({
   onChange,
   infoText,
   error,
+  disabled,
 }) => {
   const getTagArray = (): string[] => {
     if (Array.isArray(value)) {
@@ -204,6 +206,7 @@ const TagInput: React.FC<TagInputProps> = ({
           onKeyDown={handleKeyDown}
           className="flex-1 min-w-[120px] bg-transparent border-none outline-none  text-white-neutral-light-800 placeholder:text-white-neutral-light-400"
           onFocus={() => setFocusedIndex(null)}
+          disabled={disabled}
         />
       </div>
 

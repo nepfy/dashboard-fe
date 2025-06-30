@@ -118,7 +118,9 @@ export interface Project {
   ctaButtonTitle?: string;
   pageTitle?: string;
   pageSubtitle?: string;
+  hidePageSubtitle?: boolean;
   services?: string;
+  hideServices?: boolean;
 
   hideAboutUsSection?: boolean;
   aboutUsTitle?: string;
@@ -190,7 +192,9 @@ export interface Step1Data {
   companyEmail?: string;
   ctaButtonTitle?: string;
   pageTitle?: string;
+  hidePageSubtitle?: boolean;
   pageSubtitle?: string;
+  hideServices?: boolean;
   services?: string[];
 }
 
