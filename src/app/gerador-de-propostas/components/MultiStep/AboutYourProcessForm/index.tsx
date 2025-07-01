@@ -141,35 +141,33 @@ export default function AboutYourProcessForm() {
         )}
 
         <div className="py-6">
-          {!isAccordionDisabled && (
-            <div className="py-2">
-              <label
-                className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center ${
-                  isAccordionDisabled ? "bg-white-neutral-light-300" : ""
-                }`}
-                style={{
-                  backgroundColor: isAccordionDisabled
-                    ? undefined
-                    : "rgba(107, 70, 245, 0.05)",
-                }}
-              >
-                Subtítulo
-              </label>
-              <TextAreaField
-                id="processSubtitle"
-                textareaName="processSubtitle"
-                placeholder="Detalhe o processo de desenvolvimento"
-                value={formData?.step7?.processSubtitle || ""}
-                onChange={handleFieldChange("processSubtitle")}
-                maxLength={100}
-                minLength={70}
-                rows={2}
-                showCharCount
-                error={errors.processSubtitle}
-                disabled={isAccordionDisabled}
-              />
-            </div>
-          )}
+          <div className="py-2">
+            <label
+              className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center ${
+                isAccordionDisabled ? "bg-white-neutral-light-300" : ""
+              }`}
+              style={{
+                backgroundColor: isAccordionDisabled
+                  ? undefined
+                  : "rgba(107, 70, 245, 0.05)",
+              }}
+            >
+              Subtítulo
+            </label>
+            <TextAreaField
+              id="processSubtitle"
+              textareaName="processSubtitle"
+              placeholder="Detalhe o processo de desenvolvimento"
+              value={formData?.step7?.processSubtitle || ""}
+              onChange={handleFieldChange("processSubtitle")}
+              maxLength={100}
+              minLength={70}
+              rows={2}
+              showCharCount
+              error={errors.processSubtitle}
+              disabled={isAccordionDisabled}
+            />
+          </div>
           <div className="pt-4">
             <ProcessAccordion
               processList={formData?.step7?.processSteps || []}

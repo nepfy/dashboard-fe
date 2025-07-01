@@ -32,6 +32,8 @@ export default function FinalMessageForm() {
     const endMessageDescription = formData?.step15?.endMessageDescription || "";
     const projectValidUntil = formData?.step15?.projectValidUntil || "";
     const hideSection = formData?.step15?.hideFinalMessage || false;
+    const hideFinalMessageSubtitle =
+      formData?.step15?.hideFinalMessageSubtitle || false;
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
@@ -45,9 +47,11 @@ export default function FinalMessageForm() {
           "O campo 'Agradecimento 2' deve ter pelo menos 20 caracteres";
       }
 
-      if (endMessageDescription.length < 70) {
-        newErrors.endMessageDescription =
-          "O campo 'Descrição da mensagem final' deve ter pelo menos 70 caracteres";
+      if (!hideFinalMessageSubtitle) {
+        if (endMessageDescription.length < 70) {
+          newErrors.endMessageDescription =
+            "O campo 'Descrição da mensagem final' deve ter pelo menos 70 caracteres";
+        }
       }
 
       if (
@@ -130,20 +134,17 @@ export default function FinalMessageForm() {
     const newVisibility = !subtitleVisible;
     setSubtitleVisible(newVisibility);
 
-    if (!newVisibility) {
-      updateFormData("step15", {
-        ...formData?.step15,
-        endMessageDescription: "",
-      });
+    updateFormData("step15", {
+      ...formData?.step15,
+      hideFinalMessageSubtitle: !newVisibility,
+    });
 
-      // Limpar erro do campo se existir
-      if (errors.endMessageDescription) {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors.endMessageDescription;
-          return newErrors;
-        });
-      }
+    if (!newVisibility && errors.endMessageDescription) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.endMessageDescription;
+        return newErrors;
+      });
     }
   };
 

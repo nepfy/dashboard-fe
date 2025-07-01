@@ -22,8 +22,8 @@ export default function TestimonialsForm() {
     updateFormData("step9", {
       ...formData?.step9,
       hideTestimonialsSection: isHidden,
-      // Se a seção for ocultada e já houver depoimentos, removê-los
-      testimonials: isHidden ? [] : formData?.step9?.testimonials || [],
+      // Keep the testimonials data - DO NOT remove them when hiding
+      testimonials: formData?.step9?.testimonials || [],
     });
   };
 

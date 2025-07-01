@@ -774,6 +774,8 @@ export default function PlansAccordion({
                     updatePlan(plan.id!, "ctaButtonTitle", e.target.value)
                   }
                   disabled={disabled}
+                  maxLength={25}
+                  showCharCount
                 />
               </div>
             </div>

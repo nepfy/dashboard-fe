@@ -329,11 +329,11 @@ export default function ImportDataModal({
               Escolha uma das opções abaixo:
             </p>
 
-            <div className="flex items-center gap-2">
-              <span className="text-primary-light-500 text-2xl p-0">
+            <div className="flex items-baseline gap-2">
+              <span className="text-primary-light-500 text-2xl relative top-[2px]">
                 &#8226;
               </span>
-              <p className="text-white-neutral-light-900 text-sm mb-3">
+              <p className="text-white-neutral-light-900 text-sm mb-3 leading-[1.4]">
                 <span className="font-bold">
                   Importar dados de um projeto anterior:
                 </span>{" "}
@@ -342,11 +342,11 @@ export default function ImportDataModal({
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-primary-light-500 text-2xl p-0">
-                &#8226;
+            <div className="flex items-baseline gap-2">
+              <span className="text-primary-light-500 text-2xl relative top-[2px]">
+                &bull;
               </span>
-              <p className="text-white-neutral-light-900 text-sm mb-3">
+              <p className="text-white-neutral-light-900 text-sm mb-3 leading-[1.4]">
                 <span className="font-bold">
                   Iniciar um novo projeto do zero:
                 </span>{" "}

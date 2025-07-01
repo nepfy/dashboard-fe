@@ -27,7 +27,9 @@ export default function AccessForm() {
   const [isMobile, setIsMobile] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isFinishing, setIsFinishing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Estado para controlar visualização da senha
+  const [showPassword, setShowPassword] = useState(false);
+  const [userName, setUserName] = useState("usuário");
+  const [isLoadingUserName, setIsLoadingUserName] = useState(true);
   const [passwordValidation, setPasswordValidation] =
     useState<PasswordValidation>({
       minLength: false,
@@ -46,6 +48,34 @@ export default function AccessForm() {
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
+  // Fetch user data to get userName
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setIsLoadingUserName(true);
+        const response = await fetch("/api/user-account", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data?.userName) {
+          setUserName(result.data.userName);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        // Keep default "usuário" if fetch fails
+      } finally {
+        setIsLoadingUserName(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const pageUrl = formData?.step16?.pageUrl || "";
   const pagePassword = formData?.step16?.pagePassword || "";
 
@@ -56,6 +86,13 @@ export default function AccessForm() {
       hasUppercase: /[A-Z]/.test(password),
     };
   };
+
+  useEffect(() => {
+    if (pagePassword) {
+      const validation = validatePassword(pagePassword);
+      setPasswordValidation(validation);
+    }
+  }, [pagePassword]);
 
   const isPasswordValid = (validation: PasswordValidation): boolean => {
     return (
@@ -239,7 +276,9 @@ export default function AccessForm() {
             </p>
 
             <div className="flex items-center justify-start gap-4">
-              <span className="text-white-neutral-light-600">usuário-</span>
+              <span className="text-white-neutral-light-600">
+                {isLoadingUserName ? "carregando..." : `${userName}-`}
+              </span>
 
               <textarea
                 placeholder="Digite o nome do seu cliente"
@@ -253,10 +292,22 @@ export default function AccessForm() {
                           text-white-neutral-light-800 max-w-[250px]"
                 rows={isMobile ? 2 : 1}
                 style={{ resize: "none" }}
-                maxLength={10}
+                maxLength={20}
               />
 
               <span className="text-white-neutral-light-600">.nepfy.com</span>
+            </div>
+
+            <div className="mt-2 flex justify-end">
+              <div
+                className={`text-xs ${
+                  pageUrl.length >= 18
+                    ? "text-red-500"
+                    : "text-white-neutral-light-500"
+                }`}
+              >
+                {pageUrl.length} / 20
+              </div>
             </div>
             {errors?.pageUrl && (
               <div className="text-red-700 rounded-md text-sm font-medium mt-2">
@@ -367,7 +418,10 @@ export default function AccessForm() {
           onClick={handleFinish}
           disabled={
             isFinishing ||
-            (!!pagePassword && !isPasswordValid(passwordValidation))
+            !pageUrl ||
+            pageUrl.length < 3 ||
+            !pagePassword ||
+            !isPasswordValid(passwordValidation)
           }
           className="w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium 
                      border rounded-[12px] bg-primary-light-500 button-inner-inverse 
@@ -404,7 +458,7 @@ export default function AccessForm() {
           <p className="text-white-neutral-light-900 text-sm mb-4">
             Sua URL terá o formato:{" "}
             <span className="text-primary-light-500">
-              usuario-cliente.nepfy.com
+              {userName}-cliente.nepfy.com
             </span>
           </p>
 
@@ -416,7 +470,8 @@ export default function AccessForm() {
           <p className="text-white-neutral-light-900 flex items-center gap-2 mb-4">
             <span className="text-primary-light-500 text-2xl"> • </span>
             <span>
-              Exemplo: <span className="text-primary-light-500">joaosilva</span>
+              Exemplo:{" "}
+              <span className="text-primary-light-500">{userName}</span>
               -cliente
             </span>
           </p>
@@ -429,7 +484,7 @@ export default function AccessForm() {
           <p className="text-white-neutral-light-900 flex items-center gap-2 mb-4">
             <span className="text-primary-light-500 text-2xl"> • </span>
             <span>
-              Exemplo: joaosilva-
+              Exemplo: {userName}-
               <span className="text-primary-light-500">odontopati</span>
             </span>
           </p>
@@ -442,7 +497,7 @@ export default function AccessForm() {
               <span className="text-primary-light-500 text-2xl"> • </span>{" "}
               <span className="text-white-neutral-light-900">
                 {" "}
-                Escolha um nome curto (até 10 caracteres).
+                Escolha um nome curto (até 20 caracteres).
               </span>
             </li>
             <li className="flex items-center gap-2">
@@ -468,9 +523,9 @@ export default function AccessForm() {
             </li>
           </ul>
         </div>
-        <div className="w-full flex items-center justify-end">
+        <div className="w-full flex items-center justify-center">
           <Image
-            src="/images/browserbar.jpg"
+            src="/images/browserbar-project-generator.jpg"
             alt="Imagem de um navegador com o link do cliente"
             width={352}
             height={32}

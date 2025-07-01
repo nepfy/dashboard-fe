@@ -62,7 +62,7 @@ export default function UserNameStep() {
           placeholder="Digite seu nome de usuário"
           type="text"
           error={formErrors.userName}
-          maxLength={10}
+          maxLength={20}
           showCharCount
           required
           info
@@ -105,7 +105,7 @@ export default function UserNameStep() {
               Para funcionar direitinho, siga essas orientações:
             </p>
             <p className="text-white-neutral-light-500 text-sm">
-              &#8226; Escolha um nome curto (até 25 caracteres).
+              &#8226; Escolha um nome curto (até 20 caracteres).
             </p>
             <p className="text-white-neutral-light-500 text-sm">
               &#8226; Use apenas letras
