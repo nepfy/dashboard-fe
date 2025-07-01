@@ -193,12 +193,6 @@ export default function TeamMemberAccordion({
       {teamMembers.map((member, index) => (
         <div
           key={member.id}
-          draggable
-          onDragStart={(e) => handleDragStart(e, index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragEnd={handleDragEnd}
           className={`transition-all duration-200 ${
             draggedIndex === index ? "opacity-50 scale-95" : ""
           } ${
@@ -206,6 +200,9 @@ export default function TeamMemberAccordion({
               ? "border-2 border-primary-light-400 border-dashed"
               : ""
           } ${disabled ? "opacity-60" : ""}`}
+          onDragOver={(e) => handleDragOver(e, index)}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, index)}
         >
           {/* Accordion Header */}
           <div className="flex justify-center gap-4 w-full">
@@ -217,6 +214,9 @@ export default function TeamMemberAccordion({
                   ? "cursor-grabbing"
                   : "cursor-grab hover:bg-white-neutral-light-400"
               }`}
+              draggable={!disabled}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
               onClick={(e) => {
                 e.preventDefault();
                 if (!disabled && draggedIndex === null) {
@@ -393,7 +393,7 @@ export default function TeamMemberAccordion({
         title="Tem certeza de que deseja excluir este item?"
         footer={false}
       >
-        <p className="text-white-neutral-light-500 text-sm mb-6 p-6">
+        <p className="text-white-neutral-light-900 text-sm px-6 pb-7">
           Essa ação não poderá ser desfeita.
         </p>
 
@@ -403,7 +403,7 @@ export default function TeamMemberAccordion({
             onClick={handleConfirmRemove}
             className="px-4 py-2 text-sm font-medium bg-primary-light-500 button-inner-inverse border rounded-[12px] text-white-neutral-light-100 border-white-neutral-light-300 hover:bg-primary-light-600 cursor-pointer"
           >
-            Remover
+            Excluir
           </button>
           <button
             type="button"

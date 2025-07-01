@@ -142,8 +142,10 @@ export const projectClientsTable = pgTable("project_clients", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
-  logo: text("logo"), // URL or file path
+  logo: text("logo"),
+  hideLogo: boolean("hide_logo").default(false),
   name: varchar("name", { length: 255 }).notNull(),
+  hideClientName: boolean("hide_logo").default(false),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
 });

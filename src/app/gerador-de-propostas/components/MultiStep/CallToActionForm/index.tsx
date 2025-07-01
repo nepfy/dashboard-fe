@@ -147,73 +147,78 @@ export default function CallToActionForm() {
           </div>
         )}
 
-        {!isDisabled && (
-          <div className="mt-6 space-y-4">
-            <div className={`${isDisabled ? "opacity-60" : ""}`}>
-              <label
-                className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Plano de fundo do CTA
-              </label>
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="w-full sm:w-[200px]">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-                      handleFileChange(e.target.files?.[0] || null)
-                    }
-                    className="hidden"
-                    id="cta-background-image"
-                    disabled={isUploading || isDisabled}
-                  />
-                  <label
-                    htmlFor="cta-background-image"
-                    className={`w-full sm:w-[200px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
-                      isUploading || isDisabled
-                        ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
-                        : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
-                    }`}
-                  >
-                    {isUploading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <PictureIcon width="16" height="16" />
-                        Alterar imagem
-                      </>
-                    )}
-                  </label>
-                </div>
-                <div className="text-xs text-white-neutral-light-500">
-                  {formData?.step8?.ctaBackgroundImageName ||
-                    (formData?.step8?.ctaBackgroundImage
-                      ? "Imagem carregada"
-                      : "Nenhuma imagem selecionada")}
-                </div>
+        <div className="mt-6 space-y-4">
+          <div className={`${isDisabled ? "opacity-60" : ""}`}>
+            <label
+              className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-3 ${
+                isUploading || isDisabled ? "bg-white-neutral-light-300" : ""
+              }`}
+              style={{
+                backgroundColor:
+                  isUploading || isDisabled
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+              }}
+            >
+              Plano de fundo do CTA
+            </label>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="w-full sm:w-[200px]">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    handleFileChange(e.target.files?.[0] || null)
+                  }
+                  className="hidden"
+                  id="cta-background-image"
+                  disabled={isUploading || isDisabled}
+                />
+                <label
+                  htmlFor="cta-background-image"
+                  className={`w-full sm:w-[200px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                    isUploading || isDisabled
+                      ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
+                      : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
+                  }`}
+                >
+                  {isUploading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <PictureIcon width="16" height="16" />
+                      Alterar imagem
+                    </>
+                  )}
+                </label>
               </div>
-              <div className="text-xs text-white-neutral-light-400 mt-3">
-                Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
+              <div className="text-xs text-white-neutral-light-500">
+                {formData?.step8?.ctaBackgroundImageName ||
+                  (formData?.step8?.ctaBackgroundImage
+                    ? "Imagem carregada"
+                    : "Nenhuma imagem selecionada")}
               </div>
-
-              {/* Show upload error if exists */}
-              {uploadError && (
-                <div className="text-xs text-red-500 mt-2 font-medium">
-                  {uploadError}
-                </div>
-              )}
-              {errors.ctaBackgroundImage && !isDisabled && (
-                <p className="text-red-700 rounded-md text-sm font-medium mt-2">
-                  {errors.ctaBackgroundImage}
-                </p>
-              )}
             </div>
+            <div className="text-xs text-white-neutral-light-400 mt-3">
+              Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
+            </div>
+
+            {/* Show upload error if exists */}
+            {uploadError && (
+              <div className="text-xs text-red-500 mt-2 font-medium">
+                {uploadError}
+              </div>
+            )}
+            {errors.ctaBackgroundImage && !isDisabled && (
+              <p className="text-red-700 rounded-md text-sm font-medium mt-2">
+                {errors.ctaBackgroundImage}
+              </p>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">

@@ -240,12 +240,12 @@ export default function ProcessAccordion({
           {openProcess === process.id && (
             <div className="pb-4 space-y-4">
               <div>
-                <p
-                  className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+                <label
+                  className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
                   style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                 >
                   Nome da etapa
-                </p>
+                </label>
                 <TextField
                   inputName={`stepName-${process.id}`}
                   id={`stepName-${process.id}`}
@@ -264,7 +264,7 @@ export default function ProcessAccordion({
 
               <div>
                 <p
-                  className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+                  className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center"
                   style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                 >
                   Descrição
@@ -309,7 +309,7 @@ export default function ProcessAccordion({
         title="Tem certeza de que deseja excluir este item?"
         footer={false}
       >
-        <p className="text-white-neutral-light-500 text-sm mb-6 p-6">
+        <p className="text-white-neutral-light-900 text-sm px-6 pb-7">
           Essa ação não poderá ser desfeita.
         </p>
 
@@ -319,7 +319,7 @@ export default function ProcessAccordion({
             onClick={handleConfirmRemove}
             className="px-4 py-2 text-sm font-medium bg-primary-light-500 button-inner-inverse border rounded-[12px] text-white-neutral-light-100 border-white-neutral-light-300 hover:bg-primary-light-600 cursor-pointer"
           >
-            Remover
+            Excluir
           </button>
           <button
             type="button"

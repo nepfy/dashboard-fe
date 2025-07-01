@@ -122,12 +122,18 @@ export default function AboutYourExpertiseForm() {
 
         <div className="py-6 space-y-6">
           <div>
-            <p
-              className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
-              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            <label
+              className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center ${
+                hideSectionChecked ? "bg-white-neutral-light-300" : ""
+              }`}
+              style={{
+                backgroundColor: hideSectionChecked
+                  ? undefined
+                  : "rgba(107, 70, 245, 0.05)",
+              }}
             >
               Subtítulo
-            </p>
+            </label>
             <TextAreaField
               id="expertiseSubtitle"
               textareaName="expertiseSubtitle"

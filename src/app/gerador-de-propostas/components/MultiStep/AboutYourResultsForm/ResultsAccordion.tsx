@@ -33,7 +33,6 @@ export default function ResultsAccordion({
     new Set()
   );
 
-  // Upload errors for each result
   const [uploadErrors, setUploadErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -50,7 +49,7 @@ export default function ResultsAccordion({
       investment: "",
       roi: "",
       sortOrder: results.length,
-      hidePhoto: false, // Default to showing photo
+      hidePhoto: false,
     };
 
     const updatedResults = [...results, newResult];
@@ -62,7 +61,6 @@ export default function ResultsAccordion({
     if (disabled) return;
 
     const updatedResults = results.filter((result) => result.id !== resultId);
-    // Update sort orders after removal
     const reorderedResults = updatedResults.map((result, index) => ({
       ...result,
       sortOrder: index,
@@ -73,7 +71,6 @@ export default function ResultsAccordion({
       setOpenResult(null);
     }
 
-    // Remove upload error for deleted item
     setUploadErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[resultId];
@@ -128,12 +125,10 @@ export default function ResultsAccordion({
     if (result) {
       const newHidePhotoValue = !result.hidePhoto;
 
-      // Criar o objeto de atualizações
       const updates: Partial<Result> = {
         hidePhoto: newHidePhotoValue,
       };
 
-      // Se estiver ocultando a foto, limpar foto existente
       if (newHidePhotoValue) {
         updates.photo = "";
 
@@ -145,7 +140,6 @@ export default function ResultsAccordion({
         });
       }
 
-      // Aplicar todas as atualizações de uma vez
       const updatedResults = results.map((result) =>
         result.id === resultId ? { ...result, ...updates } : result
       );
@@ -157,7 +151,6 @@ export default function ResultsAccordion({
   const handleFileChange = async (resultId: string, file: File | null) => {
     if (!file || disabled) return;
 
-    // Clear any previous errors for this result
     setUploadErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[resultId];
@@ -165,21 +158,16 @@ export default function ResultsAccordion({
     });
 
     try {
-      // Clear any previous errors
       clearError();
 
-      // Add result to uploading set
       setUploadingResults((prev) => new Set(prev).add(resultId));
 
-      // Upload the image
       const result = await uploadImage(file);
 
       if (result.success && result.data) {
-        // Update the result with the uploaded image URL
         updateResult(resultId, "photo", result.data.url);
       } else {
         console.error("Upload failed:", result.error);
-        // Set error message for this specific result
         setUploadErrors((prev) => ({
           ...prev,
           [resultId]: result.error || "Erro ao fazer upload da imagem",
@@ -187,13 +175,11 @@ export default function ResultsAccordion({
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      // Set error message for this specific result
       setUploadErrors((prev) => ({
         ...prev,
         [resultId]: "Erro ao fazer upload da imagem",
       }));
     } finally {
-      // Remove result from uploading set
       setUploadingResults((prev) => {
         const newSet = new Set(prev);
         newSet.delete(resultId);
@@ -206,24 +192,19 @@ export default function ResultsAccordion({
     return uploadingResults.has(resultId);
   };
 
-  // Currency mask function
   const formatCurrency = (value: string): string => {
-    // Remove all non-numeric characters
     const numericValue = value.replace(/\D/g, "");
 
     if (!numericValue) return "";
 
-    // Convert to number and divide by 100 to handle cents
     const number = parseInt(numericValue) / 100;
 
-    // Format as Brazilian currency
     return number.toLocaleString("pt-BR", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
   };
 
-  // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
     if (disabled) {
       e.preventDefault();
@@ -259,12 +240,10 @@ export default function ResultsAccordion({
     const reorderedResults = [...results];
     const draggedResult = reorderedResults[draggedIndex];
 
-    // Remove the dragged item
     reorderedResults.splice(draggedIndex, 1);
-    // Insert it at the new position
+
     reorderedResults.splice(dropIndex, 0, draggedResult);
 
-    // Update sort orders
     const updatedResults = reorderedResults.map((result, index) => ({
       ...result,
       sortOrder: index,
@@ -288,6 +267,16 @@ export default function ResultsAccordion({
     if (disabled) return;
     const formattedValue = formatCurrency(value);
     updateResult(resultId, field, formattedValue);
+  };
+
+  const formatInstagramUsername = (value: string): string => {
+    return value.replace(/[^a-zA-Z0-9._]/g, "").toLowerCase();
+  };
+
+  const handleInstagramChange = (resultId: string, value: string) => {
+    if (disabled) return;
+    const formattedValue = formatInstagramUsername(value);
+    updateResult(resultId, "subtitle", formattedValue);
   };
 
   return (
@@ -457,14 +446,12 @@ export default function ResultsAccordion({
                         5MB
                       </div>
 
-                      {/* Show upload error if exists for this specific result */}
                       {uploadErrors[result.id] && (
                         <div className="text-xs text-red-500 mt-2 font-medium">
                           {uploadErrors[result.id]}
                         </div>
                       )}
 
-                      {/* Show validation error if photo is required but missing */}
                       {errors[`result_${index}_photo`] && (
                         <div className="text-xs text-red-500 mt-2 font-medium">
                           {errors[`result_${index}_photo`]}
@@ -472,23 +459,16 @@ export default function ResultsAccordion({
                       )}
                     </div>
                   )}
-
-                  {/* Show message when photo is hidden */}
-                  {result.hidePhoto && (
-                    <div className="text-xs text-white-neutral-light-900 p-2 bg-white-neutral-light-100 rounded-2xs">
-                      Foto oculta da proposta
-                    </div>
-                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <p
-                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+                    <label
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-2"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       Cliente
-                    </p>
+                    </label>
                     <TextField
                       inputName={`client-${result.id}`}
                       id={`client-${result.id}`}
@@ -505,7 +485,7 @@ export default function ResultsAccordion({
 
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center mb-1.5"
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-3"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       Instagram
@@ -516,14 +496,15 @@ export default function ResultsAccordion({
                       </span>
                       <input
                         type="text"
-                        name={`subtitle-${result.id}`}
-                        id={`subtitle-${result.id}`}
-                        placeholder="Adicione o perfil do instagram"
+                        name={`instagram-username-${result.id}`}
+                        id={`instagram-username-${result.id}`}
+                        placeholder="username"
                         value={result.subtitle || ""}
                         onChange={(e) =>
-                          updateResult(result.id, "subtitle", e.target.value)
+                          handleInstagramChange(result.id, e.target.value)
                         }
                         disabled={disabled}
+                        maxLength={30}
                         className={`w-full pl-9 pr-4 py-3 rounded-[var(--radius-s)] border bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none text-white-neutral-light-800 ${
                           errors[`result_${index}_subtitle`]
                             ? "border-red-500 focus:border-red-500"
@@ -531,7 +512,6 @@ export default function ResultsAccordion({
                         }`}
                       />
                     </div>
-                    {/* Show validation error for Instagram field */}
                     {errors[`result_${index}_subtitle`] && (
                       <div className="text-xs text-red-500 mt-1 font-medium">
                         {errors[`result_${index}_subtitle`]}
@@ -543,7 +523,7 @@ export default function ResultsAccordion({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center mb-1.5"
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-2"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       Investimento
@@ -573,7 +553,7 @@ export default function ResultsAccordion({
                         }`}
                       />
                     </div>
-                    {/* Show validation error for Investment field */}
+
                     {errors[`result_${index}_investment`] && (
                       <div className="text-xs text-red-500 mt-1 font-medium">
                         {errors[`result_${index}_investment`]}
@@ -583,7 +563,7 @@ export default function ResultsAccordion({
 
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center mb-1.5"
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-2"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       ROI
@@ -609,7 +589,7 @@ export default function ResultsAccordion({
                         }`}
                       />
                     </div>
-                    {/* Show validation error for ROI field */}
+
                     {errors[`result_${index}_roi`] && (
                       <div className="text-xs text-red-500 mt-1 font-medium">
                         {errors[`result_${index}_roi`]}
@@ -643,7 +623,7 @@ export default function ResultsAccordion({
         title="Tem certeza de que deseja excluir este item?"
         footer={false}
       >
-        <p className="text-white-neutral-light-500 text-sm mb-6 p-6">
+        <p className="text-white-neutral-light-900 text-sm px-6 pb-7">
           Essa ação não poderá ser desfeita.
         </p>
 
@@ -653,7 +633,7 @@ export default function ResultsAccordion({
             onClick={handleConfirmRemove}
             className="px-4 py-2 text-sm font-medium bg-primary-light-500 button-inner-inverse border rounded-[12px] text-white-neutral-light-100 border-white-neutral-light-300 hover:bg-primary-light-600 cursor-pointer"
           >
-            Remover
+            Excluir
           </button>
           <button
             type="button"

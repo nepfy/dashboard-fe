@@ -31,7 +31,9 @@ export interface Result {
 export interface Client {
   id: string;
   logo?: string;
+  hideLogo?: boolean;
   name: string;
+  hideClientName?: boolean;
   sortOrder?: number;
 }
 
@@ -139,7 +141,6 @@ export interface Project {
   results?: Result[];
 
   hideClientsSection?: boolean;
-  hideLogoField?: boolean;
   clients?: Client[];
 
   hideProcessSection?: boolean;

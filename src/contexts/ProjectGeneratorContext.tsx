@@ -251,7 +251,6 @@ export function ProjectGeneratorProvider({
     // Step 6 - Clients
     safeUpdate("step6", {
       hideClientsSection: projectData.hideClientsSection || false,
-      hideLogoField: projectData.hideLogoField || false,
       clients: projectData.clients || [],
     });
 

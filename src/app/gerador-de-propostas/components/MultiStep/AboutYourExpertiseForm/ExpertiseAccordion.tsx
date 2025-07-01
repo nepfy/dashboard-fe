@@ -71,7 +71,6 @@ export default function ExpertiseAccordion({
     null
   );
 
-  // Individual field visibility states for icon section only
   const [iconVisibility, setIconVisibility] = useState<{
     [key: string]: boolean;
   }>({});
@@ -83,7 +82,7 @@ export default function ExpertiseAccordion({
       id: `expertise-${Date.now()}`,
       title: "",
       description: "",
-      icon: iconOptions[0].icon, // Default to first icon
+      icon: iconOptions[0].icon,
       sortOrder: expertise.length,
     };
 
@@ -91,7 +90,6 @@ export default function ExpertiseAccordion({
     onExpertiseChange(updatedExpertise);
     setOpenExpertise(newExpertise.id);
 
-    // Initialize icon visibility for new expertise item
     setIconVisibility((prev) => ({
       ...prev,
       [newExpertise.id]: true,
@@ -104,7 +102,7 @@ export default function ExpertiseAccordion({
     const updatedExpertise = expertise.filter(
       (item) => item.id !== expertiseId
     );
-    // Update sort orders after removal
+
     const reorderedExpertise = updatedExpertise.map((item, index) => ({
       ...item,
       sortOrder: index,
@@ -115,7 +113,6 @@ export default function ExpertiseAccordion({
       setOpenExpertise(null);
     }
 
-    // Remove icon visibility for deleted item
     setIconVisibility((prev) => {
       const newVisibility = { ...prev };
       delete newVisibility[expertiseId];
@@ -160,7 +157,6 @@ export default function ExpertiseAccordion({
     setOpenExpertise(openExpertise === expertiseId ? null : expertiseId);
   };
 
-  // Toggle icon section visibility
   const toggleIconVisibility = (expertiseId: string) => {
     if (disabled) return;
 
@@ -170,12 +166,10 @@ export default function ExpertiseAccordion({
     }));
   };
 
-  // Get icon visibility with default value
   const getIconVisibility = (expertiseId: string) => {
     return iconVisibility[expertiseId] ?? true;
   };
 
-  // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
     if (disabled) {
       e.preventDefault();
@@ -211,12 +205,9 @@ export default function ExpertiseAccordion({
     const reorderedExpertise = [...expertise];
     const draggedItem = reorderedExpertise[draggedIndex];
 
-    // Remove the dragged item
     reorderedExpertise.splice(draggedIndex, 1);
-    // Insert it at the new position
     reorderedExpertise.splice(dropIndex, 0, draggedItem);
 
-    // Update sort orders
     const updatedExpertise = reorderedExpertise.map((item, index) => ({
       ...item,
       sortOrder: index,
@@ -343,8 +334,8 @@ export default function ExpertiseAccordion({
                       </button>
                     </label>
                     {iconVisible && (
-                      <div className="flex items-center justify-center">
-                        <div className="flex justify-start items-center gap-2 flex-wrap p-6 max-w-[590px] bg-white-neutral-light-100 rounded-2xs">
+                      <div className="flex items-center justify-center w-full bg-white-neutral-light-100 rounded-2xs py-2">
+                        <div className="flex justify-start items-center gap-2 flex-wrap p-6 max-w-[590px]">
                           {iconOptions.map((iconOption) => (
                             <button
                               key={iconOption.id}
@@ -392,6 +383,8 @@ export default function ExpertiseAccordion({
                     type="text"
                     placeholder="Nome da especialização"
                     value={item.title}
+                    maxLength={30}
+                    showCharCount
                     onChange={(e) =>
                       updateExpertise(item.id, "title", e.target.value)
                     }
@@ -447,7 +440,7 @@ export default function ExpertiseAccordion({
         title="Tem certeza de que deseja excluir este item?"
         footer={false}
       >
-        <p className="text-white-neutral-light-500 text-sm mb-6 p-6">
+        <p className="text-white-neutral-light-900 text-sm px-6 pb-7">
           Essa ação não poderá ser desfeita.
         </p>
 
@@ -457,7 +450,7 @@ export default function ExpertiseAccordion({
             onClick={handleConfirmRemove}
             className="px-4 py-2 text-sm font-medium bg-primary-light-500 button-inner-inverse border rounded-[12px] text-white-neutral-light-100 border-white-neutral-light-300 hover:bg-primary-light-600 cursor-pointer"
           >
-            Remover
+            Excluir
           </button>
           <button
             type="button"

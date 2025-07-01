@@ -25,7 +25,6 @@ export default function AboutYourClientsForm() {
     updateFormData("step6", {
       ...formData?.step6,
       hideClientsSection: isHidden,
-      // Se a seção for ocultada e já houver clientes, removê-los
       clients: isHidden ? [] : formData?.step6?.clients || [],
     });
   };

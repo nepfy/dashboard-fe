@@ -31,12 +31,14 @@ export default function ClientsAccordion({
     new Set()
   );
 
-  // Logo visibility states for each client
   const [logoVisibility, setLogoVisibility] = useState<{
     [key: string]: boolean;
   }>({});
 
-  // Upload errors for each client
+  const [clientNameVisibility, setClientNameVisibility] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [uploadErrors, setUploadErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -56,8 +58,12 @@ export default function ClientsAccordion({
     onClientsChange(updatedClients);
     setOpenClient(newClient.id);
 
-    // Initialize logo visibility for new client item
     setLogoVisibility((prev) => ({
+      ...prev,
+      [newClient.id]: true,
+    }));
+
+    setClientNameVisibility((prev) => ({
       ...prev,
       [newClient.id]: true,
     }));
@@ -67,7 +73,6 @@ export default function ClientsAccordion({
     if (disabled) return;
 
     const updatedClients = clients.filter((client) => client.id !== clientId);
-    // Update sort orders after removal
     const reorderedClients = updatedClients.map((client, index) => ({
       ...client,
       sortOrder: index,
@@ -78,14 +83,18 @@ export default function ClientsAccordion({
       setOpenClient(null);
     }
 
-    // Remove logo visibility for deleted item
     setLogoVisibility((prev) => {
       const newVisibility = { ...prev };
       delete newVisibility[clientId];
       return newVisibility;
     });
 
-    // Remove upload error for deleted item
+    setClientNameVisibility((prev) => {
+      const newVisibility = { ...prev };
+      delete newVisibility[clientId];
+      return newVisibility;
+    });
+
     setUploadErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[clientId];
@@ -115,7 +124,7 @@ export default function ClientsAccordion({
   const updateClient = (
     clientId: string,
     field: keyof Client,
-    value: string
+    value: string | boolean
   ) => {
     if (disabled) return;
 
@@ -130,7 +139,6 @@ export default function ClientsAccordion({
     setOpenClient(openClient === clientId ? null : clientId);
   };
 
-  // Toggle logo section visibility
   const toggleLogoVisibility = (clientId: string) => {
     if (disabled) return;
 
@@ -140,15 +148,32 @@ export default function ClientsAccordion({
     }));
   };
 
-  // Get logo visibility with default value
+  const toggleClientNameVisibility = (clientId: string) => {
+    if (disabled) return;
+
+    setClientNameVisibility((prev) => ({
+      ...prev,
+      [clientId]: !(prev[clientId] ?? true),
+    }));
+
+    updateClient(
+      clientId,
+      "hideClientName",
+      !(clientNameVisibility[clientId] ?? true)
+    );
+  };
+
   const getLogoVisibility = (clientId: string) => {
     return logoVisibility[clientId] ?? true;
+  };
+
+  const getClientNameVisibility = (clientId: string) => {
+    return clientNameVisibility[clientId] ?? true;
   };
 
   const handleFileChange = async (clientId: string, file: File | null) => {
     if (!file || disabled) return;
 
-    // Clear any previous errors for this client
     setUploadErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[clientId];
@@ -156,21 +181,16 @@ export default function ClientsAccordion({
     });
 
     try {
-      // Clear any previous errors
       clearError();
 
-      // Add client to uploading set
       setUploadingClients((prev) => new Set(prev).add(clientId));
 
-      // Upload the image
       const result = await uploadImage(file);
 
       if (result.success && result.data) {
-        // Update the client with the uploaded image URL
         updateClient(clientId, "logo", result.data.url);
       } else {
         console.error("Upload failed:", result.error);
-        // Set error message for this specific client
         setUploadErrors((prev) => ({
           ...prev,
           [clientId]: result.error || "Erro ao fazer upload da imagem",
@@ -178,13 +198,11 @@ export default function ClientsAccordion({
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      // Set error message for this specific client
       setUploadErrors((prev) => ({
         ...prev,
         [clientId]: "Erro ao fazer upload da imagem",
       }));
     } finally {
-      // Remove client from uploading set
       setUploadingClients((prev) => {
         const newSet = new Set(prev);
         newSet.delete(clientId);
@@ -197,7 +215,6 @@ export default function ClientsAccordion({
     return uploadingClients.has(clientId);
   };
 
-  // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
     if (disabled) {
       e.preventDefault();
@@ -233,12 +250,9 @@ export default function ClientsAccordion({
     const reorderedClients = [...clients];
     const draggedClient = reorderedClients[draggedIndex];
 
-    // Remove the dragged item
     reorderedClients.splice(draggedIndex, 1);
-    // Insert it at the new position
     reorderedClients.splice(dropIndex, 0, draggedClient);
 
-    // Update sort orders
     const updatedClients = reorderedClients.map((client, index) => ({
       ...client,
       sortOrder: index,
@@ -258,6 +272,7 @@ export default function ClientsAccordion({
     <div className="space-y-2">
       {clients.map((client, index) => {
         const logoVisible = getLogoVisibility(client.id);
+        const clientNameVisible = getClientNameVisibility(client.id);
 
         return (
           <div
@@ -345,10 +360,15 @@ export default function ClientsAccordion({
             {/* Accordion Content */}
             {openClient === client.id && (
               <div className="pb-4 space-y-4">
+                <p className="text-white-neutral-light-800 py-3">
+                  Dica: Você pode adicionar o logo do cliente ou apenas escrever
+                  o nome caso não tenha a imagem.
+                </p>
+
                 {/* Logo Section */}
                 <div>
                   <label
-                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
+                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-3"
                     style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                   >
                     Logo
@@ -419,7 +439,6 @@ export default function ClientsAccordion({
                         recomendado: 100×100px. Tamanho máximo: 5MB
                       </div>
 
-                      {/* Show upload error if exists for this specific client */}
                       {uploadErrors[client.id] && (
                         <div className="text-xs text-red-500 mt-2 font-medium">
                           {uploadErrors[client.id]}
@@ -429,24 +448,41 @@ export default function ClientsAccordion({
                   )}
                 </div>
 
+                {/* Nome do Cliente Section */}
                 <div>
-                  <p
-                    className="text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center"
+                  <label
+                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
                     style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                   >
                     Nome do cliente
-                  </p>
-                  <TextField
-                    inputName={`name-${client.id}`}
-                    id={`name-${client.id}`}
-                    type="text"
-                    placeholder="Insira o nome do cliente"
-                    value={client.name}
-                    onChange={(e) =>
-                      updateClient(client.id, "name", e.target.value)
-                    }
-                    disabled={disabled}
-                  />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleClientNameVisibility(client.id);
+                      }}
+                      className={`cursor-pointer ${
+                        disabled ? "cursor-not-allowed opacity-60" : ""
+                      }`}
+                      disabled={disabled}
+                    >
+                      {clientNameVisible ? <EyeOpened /> : <EyeClosed />}
+                    </button>
+                  </label>
+                  {clientNameVisible && (
+                    <TextField
+                      inputName={`name-${client.id}`}
+                      id={`name-${client.id}`}
+                      type="text"
+                      placeholder="Insira o nome do cliente"
+                      value={client.name}
+                      onChange={(e) =>
+                        updateClient(client.id, "name", e.target.value)
+                      }
+                      disabled={disabled}
+                    />
+                  )}
                 </div>
               </div>
             )}
@@ -474,7 +510,7 @@ export default function ClientsAccordion({
         title="Tem certeza de que deseja excluir este item?"
         footer={false}
       >
-        <p className="text-white-neutral-light-500 text-sm mb-6 p-6">
+        <p className="text-white-neutral-light-900 text-sm px-6 pb-7">
           Essa ação não poderá ser desfeita.
         </p>
 
@@ -484,7 +520,7 @@ export default function ClientsAccordion({
             onClick={handleConfirmRemove}
             className="px-4 py-2 text-sm font-medium bg-primary-light-500 button-inner-inverse border rounded-[12px] text-white-neutral-light-100 border-white-neutral-light-300 hover:bg-primary-light-600 cursor-pointer"
           >
-            Remover
+            Excluir
           </button>
           <button
             type="button"

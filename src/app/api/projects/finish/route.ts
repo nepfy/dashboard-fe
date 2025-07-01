@@ -83,7 +83,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Convert form data to database format
     const projectData = {
       personId: userId,
       projectName:
@@ -310,7 +309,9 @@ export async function POST(request: Request) {
           (client: Client, index: number) => ({
             projectId: finalProjectId,
             logo: client.logo || null,
+            hideLogo: client.hideLogo || null,
             name: client.name || "",
+            hideClientName: client.hideClientName || null,
             sortOrder: client.sortOrder || index,
           })
         );
