@@ -82,8 +82,8 @@ export default function ExpertiseAccordion({
       id: `expertise-${Date.now()}`,
       title: "",
       description: "",
-      icon: iconOptions[0].name, // Salvar como string
-      hideExpertiseIcon: false, // Iniciar com ícone visível
+      icon: iconOptions[0].name,
+      hideExpertiseIcon: false,
       sortOrder: expertise.length,
     };
 
@@ -233,12 +233,6 @@ export default function ExpertiseAccordion({
         return (
           <div
             key={item.id}
-            draggable={!disabled}
-            onDragStart={(e) => handleDragStart(e, index)}
-            onDragOver={(e) => handleDragOver(e, index)}
-            onDragLeave={handleDragLeave}
-            onDrop={(e) => handleDrop(e, index)}
-            onDragEnd={handleDragEnd}
             className={`transition-all duration-200 ${
               draggedIndex === index ? "opacity-50 scale-95" : ""
             } ${
@@ -247,7 +241,15 @@ export default function ExpertiseAccordion({
                 : ""
             } ${disabled ? "opacity-60" : ""}`}
           >
-            <div className="flex justify-center gap-4 w-full">
+            <div
+              className="flex justify-center gap-4 w-full"
+              draggable={!disabled}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+            >
               <div
                 className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
                   disabled

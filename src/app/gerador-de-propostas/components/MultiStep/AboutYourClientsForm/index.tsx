@@ -25,7 +25,6 @@ export default function AboutYourClientsForm() {
     updateFormData("step6", {
       ...formData?.step6,
       hideClientsSection: isHidden,
-      clients: isHidden ? [] : formData?.step6?.clients || [],
     });
   };
 
@@ -68,12 +67,11 @@ export default function AboutYourClientsForm() {
     nextStep();
   };
 
-  // Determinar se o accordion deve estar desabilitado
   const isAccordionDisabled = formData?.step6?.hideClientsSection || false;
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div className="p-7">
+    <div className="h-full flex flex-col justify-between overflow-y-scroll relative">
+      <div className="p-7 mb-13">
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
         </div>
@@ -126,7 +124,7 @@ export default function AboutYourClientsForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6 fixed bottom-0 bg-white-neutral-light-200">
         <button
           type="button"
           onClick={handleBack}

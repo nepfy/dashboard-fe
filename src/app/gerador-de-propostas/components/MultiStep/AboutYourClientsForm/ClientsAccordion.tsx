@@ -142,25 +142,27 @@ export default function ClientsAccordion({
   const toggleLogoVisibility = (clientId: string) => {
     if (disabled) return;
 
+    const newVisibility = !(logoVisibility[clientId] ?? true);
+
     setLogoVisibility((prev) => ({
       ...prev,
-      [clientId]: !(prev[clientId] ?? true),
+      [clientId]: newVisibility,
     }));
+
+    updateClient(clientId, "hideLogo", !newVisibility);
   };
 
   const toggleClientNameVisibility = (clientId: string) => {
     if (disabled) return;
 
+    const newVisibility = !(clientNameVisibility[clientId] ?? true);
+
     setClientNameVisibility((prev) => ({
       ...prev,
-      [clientId]: !(prev[clientId] ?? true),
+      [clientId]: newVisibility,
     }));
 
-    updateClient(
-      clientId,
-      "hideClientName",
-      !(clientNameVisibility[clientId] ?? true)
-    );
+    updateClient(clientId, "hideClientName", !newVisibility);
   };
 
   const getLogoVisibility = (clientId: string) => {
@@ -291,6 +293,9 @@ export default function ClientsAccordion({
               onDragOver={(e) => handleDragOver(e, index)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, index)}
+              draggable={!disabled}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
             >
               <div
                 className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
@@ -305,12 +310,7 @@ export default function ClientsAccordion({
                   }
                 }}
               >
-                <div
-                  className="flex items-center gap-3"
-                  draggable={!disabled}
-                  onDragStart={(e) => handleDragStart(e, index)}
-                  onDragEnd={handleDragEnd}
-                >
+                <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
