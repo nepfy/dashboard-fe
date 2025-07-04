@@ -50,6 +50,7 @@ export default function ResultsAccordion({
       roi: "",
       sortOrder: results.length,
       hidePhoto: false,
+      photo: "",
     };
 
     const updatedResults = [...results, newResult];
@@ -125,20 +126,13 @@ export default function ResultsAccordion({
     if (result) {
       const newHidePhotoValue = !result.hidePhoto;
 
+      // Apenas atualizar o campo hidePhoto, SEM apagar a foto
       const updates: Partial<Result> = {
         hidePhoto: newHidePhotoValue,
       };
 
-      if (newHidePhotoValue) {
-        updates.photo = "";
-
-        // Limpar erros de upload
-        setUploadErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[resultId];
-          return newErrors;
-        });
-      }
+      // NÃO apagar a foto quando ocultar
+      // A foto permanece salva no campo 'photo', apenas fica oculta
 
       const updatedResults = results.map((result) =>
         result.id === resultId ? { ...result, ...updates } : result
@@ -299,6 +293,9 @@ export default function ResultsAccordion({
               onDragOver={(e) => handleDragOver(e, index)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, index)}
+              draggable={!disabled}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
             >
               <div
                 className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
@@ -313,12 +310,7 @@ export default function ResultsAccordion({
                   }
                 }}
               >
-                <div
-                  className="flex items-center gap-3"
-                  draggable={!disabled}
-                  onDragStart={(e) => handleDragStart(e, index)}
-                  onDragEnd={handleDragEnd}
-                >
+                <div className="flex items-center gap-3" draggable={!disabled}>
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
@@ -396,8 +388,8 @@ export default function ResultsAccordion({
                   {/* Photo Upload Section - Only show if hidePhoto is false */}
                   {!result.hidePhoto && (
                     <div>
-                      <div className="flex flex-col sm:flex-row items-center gap-4">
-                        <div className="w-full sm:w-[160px]">
+                      <div className="flex flex-col sm:flex-row items-center gap-4 mt-3">
+                        <div className="w-full sm:w-[170px]">
                           <input
                             type="file"
                             accept="image/*"
@@ -415,8 +407,8 @@ export default function ResultsAccordion({
                           />
                           <label
                             htmlFor={`photo-${result.id}`}
-                            className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
-                              isUploadingForResult(result.id) || disabled
+                            className={`w-full sm:w-[170px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                              isUploadingForResult(result.id)
                                 ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
                                 : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
                             }`}
@@ -429,7 +421,9 @@ export default function ResultsAccordion({
                             ) : (
                               <>
                                 <PictureIcon width="16" height="16" />
-                                Alterar imagem
+                                {result.photo
+                                  ? "Alterar imagem"
+                                  : "Adicionar imagem"}
                               </>
                             )}
                           </label>

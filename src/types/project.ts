@@ -23,7 +23,7 @@ export interface Result {
   subtitle: string;
   investment: string;
   roi: string;
-  photo?: string;
+  photo: string;
   hidePhoto?: boolean;
   sortOrder: number;
 }
