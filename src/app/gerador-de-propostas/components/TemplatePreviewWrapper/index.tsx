@@ -37,7 +37,7 @@ export default function TemplatePreviewWrapper({
 
   return (
     <div
-      className={`h-full p-7 relative overflow-hidden ${className}`}
+      className={`h-full p-7 relative ${className}`}
       style={{
         background: backgroundGradient,
         backdropFilter: "blur(105.34431457519531px)",

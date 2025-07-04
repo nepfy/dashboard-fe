@@ -17,7 +17,7 @@ export default function ProjectGenerator({
   return (
     <ProjectGeneratorProvider>
       <div className="bg-white-neutral-light-200 h-screen flex flex-col relative">
-        <nav className="p-7 border-b border-b-white-neutral-light-300 flex items-center justify-between">
+        <nav className="p-7 border-b border-b-white-neutral-light-300 bg-white-neutral-light-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo fill="#1C1A22" />
 
@@ -49,13 +49,7 @@ export default function ProjectGenerator({
           </div>
         </nav>
 
-        <main className="flex-1">{children}</main>
-        {/* 
-        <footer className="hidden xl:block absolute bottom-0 left-0 right-0 z-10 p-3 bg-white-neutral-light-200 xl:bg-transparent">
-          <p className="text-white-neutral-light-400">
-            &copy; {date.getFullYear()} Nepfy
-          </p>
-        </footer> */}
+        <main className="flex-1 overflow-hidden h-full">{children}</main>
       </div>
     </ProjectGeneratorProvider>
   );

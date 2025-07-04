@@ -59,7 +59,6 @@ const stepComponents = {
 export default function MultiStepForm() {
   const { currentStep } = useProjectGenerator();
 
-  // Obtém os componentes do step atual
   const currentComponents =
     stepComponents[currentStep as keyof typeof stepComponents];
 
@@ -81,21 +80,18 @@ export default function MultiStepForm() {
   const { Form, Preview } = currentComponents;
 
   return (
-    <div className="h-full flex">
-      {/* Lado esquerdo - Formulário */}
-      <div className="w-full xl:w-1/2 h-full overflow-y-auto">
+    <div className="h-full flex overflow-hidden">
+      <div className="w-full xl:w-1/2 h-full overflow-hidden">
         <Form />
       </div>
 
-      {/* Lado direito - Preview (visível apenas em desktop) */}
-      <div className="hidden xl:block xl:w-1/2 h-full overflow-hidden border-l border-white-neutral-light-300">
+      <div className="hidden xl:block xl:w-1/2 border-l border-white-neutral-light-300">
         <Preview />
       </div>
     </div>
   );
 }
 
-// Hook para usar informações do step atual
 export const useCurrentStep = () => {
   const { currentStep } = useProjectGenerator();
 

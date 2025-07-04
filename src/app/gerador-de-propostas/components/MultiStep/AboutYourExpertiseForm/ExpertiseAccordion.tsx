@@ -71,7 +71,7 @@ export default function ExpertiseAccordion({
     null
   );
 
-  const [iconVisibility, setIconVisibility] = useState<{
+  const [, setIconVisibility] = useState<{
     [key: string]: boolean;
   }>({});
 
@@ -82,7 +82,8 @@ export default function ExpertiseAccordion({
       id: `expertise-${Date.now()}`,
       title: "",
       description: "",
-      icon: iconOptions[0].icon,
+      icon: iconOptions[0].name, // Salvar como string
+      hideExpertiseIcon: false, // Iniciar com ícone visível
       sortOrder: expertise.length,
     };
 
@@ -142,7 +143,7 @@ export default function ExpertiseAccordion({
   const updateExpertise = (
     expertiseId: string,
     field: keyof Expertise,
-    value: string
+    value: string | boolean
   ) => {
     if (disabled) return;
 
@@ -160,14 +161,15 @@ export default function ExpertiseAccordion({
   const toggleIconVisibility = (expertiseId: string) => {
     if (disabled) return;
 
-    setIconVisibility((prev) => ({
-      ...prev,
-      [expertiseId]: !(prev[expertiseId] ?? true),
-    }));
+    const currentExpertise = expertise.find((item) => item.id === expertiseId);
+    const currentHideState = currentExpertise?.hideExpertiseIcon ?? false;
+
+    updateExpertise(expertiseId, "hideExpertiseIcon", !currentHideState);
   };
 
   const getIconVisibility = (expertiseId: string) => {
-    return iconVisibility[expertiseId] ?? true;
+    const expertiseItem = expertise.find((item) => item.id === expertiseId);
+    return !(expertiseItem?.hideExpertiseIcon ?? false);
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {

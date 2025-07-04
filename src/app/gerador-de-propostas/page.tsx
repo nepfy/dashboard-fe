@@ -143,15 +143,15 @@ export default function ProjectGenerator() {
           <MultiStepForm />
         </div>
       ) : (
-        <>
-          <h2 className="text-white-neutral-light-800 text-[21px] text-center lg:text-left font-medium py-4 lg:pb-0 lg:pt-8">
+        <div className="h-full w-full md:flex flex-col justify-center overflow-y-scroll lg:mb-6">
+          <h2 className="text-white-neutral-light-800 text-[21px] text-center font-medium py-4 lg:pb-0 lg:pt-12">
             Escolha o modelo da sua proposta
           </h2>
           <TemplateSelection
             templates={templates}
             onSelectTemplate={handleTemplateSelect}
           />
-        </>
+        </div>
       )}
     </div>
   );

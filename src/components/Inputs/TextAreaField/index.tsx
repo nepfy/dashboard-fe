@@ -143,7 +143,7 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
             overflow: autoExpand ? "hidden" : "auto",
             transition: autoExpand ? "height 0.1s ease" : "none",
           }}
-          className={`w-full px-4 py-3 mt-1.5 rounded-xs 
+          className={`w-full px-4 py-1.5 mt-1.5 rounded-xs 
                       border bg-white-neutral-light-100
                     placeholder:text-[var(--color-white-neutral-light-400)] 
                       focus:outline-none pr-8
