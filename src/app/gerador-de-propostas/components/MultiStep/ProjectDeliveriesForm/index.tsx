@@ -24,10 +24,6 @@ export default function ProjectDeliveriesForm() {
     updateFormData("step11", {
       ...formData?.step11,
       hideIncludedServicesSection: isHidden,
-      // Se a seção for ocultada e já houver serviços, removê-los
-      includedServices: isHidden
-        ? []
-        : formData?.step11?.includedServices || [],
     });
   };
 
@@ -83,8 +79,8 @@ export default function ProjectDeliveriesForm() {
     formData?.step11?.hideIncludedServicesSection || false;
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div className="p-7">
+    <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
+      <div className="p-7 mb-20">
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
         </div>
@@ -136,7 +132,7 @@ export default function ProjectDeliveriesForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6 fixed bottom-0 bg-white-neutral-light-200">
         <button
           type="button"
           onClick={handleBack}

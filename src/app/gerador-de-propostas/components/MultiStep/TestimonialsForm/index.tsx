@@ -6,7 +6,7 @@ import { ArrowLeft, Eye } from "lucide-react";
 import InfoIcon from "#/components/icons/InfoIcon";
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
-import TestimonialsAccordion from "./TestimonialsAccordion"; // Import the accordion
+import TestimonialsAccordion from "./TestimonialsAccordion";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { Testimonial } from "#/types/project";
 
@@ -22,8 +22,6 @@ export default function TestimonialsForm() {
     updateFormData("step9", {
       ...formData?.step9,
       hideTestimonialsSection: isHidden,
-      // Keep the testimonials data - DO NOT remove them when hiding
-      testimonials: formData?.step9?.testimonials || [],
     });
   };
 
@@ -77,8 +75,8 @@ export default function TestimonialsForm() {
   const isAccordionDisabled = formData?.step9?.hideTestimonialsSection || false;
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div className="p-7">
+    <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
+      <div className="p-7 mb-20">
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
         </div>
@@ -129,7 +127,7 @@ export default function TestimonialsForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6 fixed bottom-0 bg-white-neutral-light-200">
         <button
           type="button"
           onClick={handleBack}

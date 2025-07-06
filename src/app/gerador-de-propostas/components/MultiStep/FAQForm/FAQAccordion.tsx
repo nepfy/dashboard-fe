@@ -154,12 +154,6 @@ export default function FAQAccordion({
       {faqList.map((faq, index) => (
         <div
           key={faq.id}
-          draggable={!disabled}
-          onDragStart={(e) => handleDragStart(e, index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragEnd={handleDragEnd}
           className={`transition-all duration-200 ${
             draggedIndex === index ? "opacity-50 scale-95" : ""
           } ${
@@ -169,7 +163,15 @@ export default function FAQAccordion({
           }`}
         >
           {/* Accordion Header */}
-          <div className="flex justify-center gap-4 w-full">
+          <div
+            className="flex justify-center gap-4 w-full"
+            draggable={!disabled}
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+          >
             <div
               className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
                 disabled

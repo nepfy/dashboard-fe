@@ -145,7 +145,7 @@ export const projectClientsTable = pgTable("project_clients", {
   logo: text("logo"),
   hideLogo: boolean("hide_logo").default(false),
   name: varchar("name", { length: 255 }).notNull(),
-  hideClientName: boolean("hide_logo").default(false),
+  hideClientName: boolean("hide_client_name").default(false),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
 });

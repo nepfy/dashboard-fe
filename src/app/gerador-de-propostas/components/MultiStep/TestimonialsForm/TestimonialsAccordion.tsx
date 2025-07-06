@@ -143,17 +143,19 @@ export default function TestimonialsAccordion({
     );
   };
 
-  // Toggle photo section visibility
   const togglePhotoVisibility = (testimonialId: string) => {
     if (disabled) return;
 
+    const newVisibility = !(photoVisibility[testimonialId] ?? true);
+
     setPhotoVisibility((prev) => ({
       ...prev,
-      [testimonialId]: !(prev[testimonialId] ?? true),
+      [testimonialId]: newVisibility,
     }));
+
+    updateTestimonial(testimonialId, "hidePhoto", !newVisibility);
   };
 
-  // Get photo visibility with default value
   const getPhotoVisibility = (testimonialId: string) => {
     return photoVisibility[testimonialId] ?? true;
   };
@@ -161,7 +163,6 @@ export default function TestimonialsAccordion({
   const handleFileChange = async (testimonialId: string, file: File | null) => {
     if (!file || disabled) return;
 
-    // Clear any previous errors for this testimonial
     setUploadErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[testimonialId];
@@ -169,21 +170,16 @@ export default function TestimonialsAccordion({
     });
 
     try {
-      // Clear any previous errors
       clearError();
 
-      // Add testimonial to uploading set
       setUploadingTestimonials((prev) => new Set(prev).add(testimonialId));
 
-      // Upload the image
       const result = await uploadImage(file);
 
       if (result.success && result.data) {
-        // Update the testimonial with the uploaded image URL
         updateTestimonial(testimonialId, "photo", result.data.url);
       } else {
         console.error("Upload failed:", result.error);
-        // Set error message for this specific testimonial
         setUploadErrors((prev) => ({
           ...prev,
           [testimonialId]: result.error || "Erro ao fazer upload da imagem",
@@ -191,13 +187,11 @@ export default function TestimonialsAccordion({
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      // Set error message for this specific testimonial
       setUploadErrors((prev) => ({
         ...prev,
         [testimonialId]: "Erro ao fazer upload da imagem",
       }));
     } finally {
-      // Remove testimonial from uploading set
       setUploadingTestimonials((prev) => {
         const newSet = new Set(prev);
         newSet.delete(testimonialId);
@@ -246,7 +240,6 @@ export default function TestimonialsAccordion({
     const draggedTestimonial = reorderedTestimonials[draggedIndex];
 
     reorderedTestimonials.splice(draggedIndex, 1);
-    // Insert it at the new position
     reorderedTestimonials.splice(dropIndex, 0, draggedTestimonial);
 
     const updatedTestimonials = reorderedTestimonials.map(
@@ -287,6 +280,9 @@ export default function TestimonialsAccordion({
               onDragOver={(e) => handleDragOver(e, index)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, index)}
+              draggable={!disabled}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
             >
               <div
                 className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
@@ -301,12 +297,7 @@ export default function TestimonialsAccordion({
                   }
                 }}
               >
-                <div
-                  className="flex items-center gap-3"
-                  draggable={!disabled}
-                  onDragStart={(e) => handleDragStart(e, index)}
-                  onDragEnd={handleDragEnd}
-                >
+                <div className="flex items-center gap-3" draggable={!disabled}>
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
@@ -321,7 +312,7 @@ export default function TestimonialsAccordion({
                       ⋮⋮
                     </div>
                     <span className="text-sm font-medium text-white-neutral-light-900">
-                      Depoimento {index + 1}
+                      {testimonial.name}
                     </span>
                   </div>
                 </div>
@@ -432,91 +423,89 @@ export default function TestimonialsAccordion({
                   </div>
                 </div>
 
-                {!testimonial.hidePhoto && (
-                  <div>
-                    <label
-                      className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
-                      style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                <div>
+                  <label
+                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
+                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                  >
+                    Foto
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        togglePhotoVisibility(testimonial.id);
+                      }}
+                      className={`cursor-pointer ${
+                        disabled ? "cursor-not-allowed opacity-60" : ""
+                      }`}
+                      disabled={disabled}
                     >
-                      Foto
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          togglePhotoVisibility(testimonial.id);
-                        }}
-                        className={`cursor-pointer ${
-                          disabled ? "cursor-not-allowed opacity-60" : ""
-                        }`}
-                        disabled={disabled}
-                      >
-                        {photoVisible ? <EyeOpened /> : <EyeClosed />}
-                      </button>
-                    </label>
-                    {photoVisible && (
-                      <div>
-                        <div className="flex flex-col sm:flex-row items-center gap-4">
-                          <div className="w-full sm:w-[160px]">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) =>
-                                handleFileChange(
-                                  testimonial.id,
-                                  e.target.files?.[0] || null
-                                )
-                              }
-                              className="hidden"
-                              id={`photo-${testimonial.id}`}
-                              disabled={
-                                isUploadingForTestimonial(testimonial.id) ||
-                                disabled
-                              }
-                            />
-                            <label
-                              htmlFor={`photo-${testimonial.id}`}
-                              className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
-                                isUploadingForTestimonial(testimonial.id) ||
-                                disabled
-                                  ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
-                                  : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
-                              }`}
-                            >
-                              {isUploadingForTestimonial(testimonial.id) ? (
-                                <>
-                                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
-                                  Enviando...
-                                </>
-                              ) : (
-                                <>
-                                  <PictureIcon width="16" height="16" />
-                                  Alterar imagem
-                                </>
-                              )}
-                            </label>
-                          </div>
-                          <div className="text-xs text-white-neutral-light-500">
-                            {testimonial?.photo
-                              ? "Imagem carregada"
-                              : "Nenhuma foto selecionada"}
-                          </div>
+                      {photoVisible ? <EyeOpened /> : <EyeClosed />}
+                    </button>
+                  </label>
+                  {!testimonial.hidePhoto && (
+                    <div>
+                      <div className="flex flex-col sm:flex-row items-center gap-4">
+                        <div className="w-full sm:w-[160px]">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) =>
+                              handleFileChange(
+                                testimonial.id,
+                                e.target.files?.[0] || null
+                              )
+                            }
+                            className="hidden"
+                            id={`photo-${testimonial.id}`}
+                            disabled={
+                              isUploadingForTestimonial(testimonial.id) ||
+                              disabled
+                            }
+                          />
+                          <label
+                            htmlFor={`photo-${testimonial.id}`}
+                            className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                              isUploadingForTestimonial(testimonial.id) ||
+                              disabled
+                                ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
+                                : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
+                            }`}
+                          >
+                            {isUploadingForTestimonial(testimonial.id) ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                                Enviando...
+                              </>
+                            ) : (
+                              <>
+                                <PictureIcon width="16" height="16" />
+                                Alterar imagem
+                              </>
+                            )}
+                          </label>
                         </div>
-                        <div className="text-xs text-white-neutral-light-400 mt-3">
-                          Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo:
-                          5MB
+                        <div className="text-xs text-white-neutral-light-500">
+                          {testimonial?.photo
+                            ? "Imagem carregada"
+                            : "Nenhuma foto selecionada"}
                         </div>
-
-                        {/* Show upload error if exists for this specific testimonial */}
-                        {uploadErrors[testimonial.id] && (
-                          <div className="text-xs text-red-500 mt-2 font-medium">
-                            {uploadErrors[testimonial.id]}
-                          </div>
-                        )}
                       </div>
-                    )}
-                  </div>
-                )}
+                      <div className="text-xs text-white-neutral-light-400 mt-3">
+                        Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo:
+                        5MB
+                      </div>
+
+                      {/* Show upload error if exists for this specific testimonial */}
+                      {uploadErrors[testimonial.id] && (
+                        <div className="text-xs text-red-500 mt-2 font-medium">
+                          {uploadErrors[testimonial.id]}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

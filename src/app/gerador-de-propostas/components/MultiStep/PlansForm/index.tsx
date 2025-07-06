@@ -23,7 +23,6 @@ export default function PlansForm() {
     updateFormData("step12", {
       ...formData?.step12,
       hidePlansSection: isHidden,
-      plans: isHidden ? [] : formData?.step12?.plans || [],
     });
   };
 
@@ -62,8 +61,8 @@ export default function PlansForm() {
   const isAccordionDisabled = formData?.step12?.hidePlansSection || false;
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div className="p-7">
+    <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
+      <div className="p-7 mb-20">
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
         </div>
@@ -115,7 +114,7 @@ export default function PlansForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6 fixed bottom-0 bg-white-neutral-light-200">
         <button
           type="button"
           onClick={handleBack}

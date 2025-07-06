@@ -276,8 +276,12 @@ export default function AccessForm() {
             </p>
 
             <div className="flex items-center justify-start gap-4">
-              <span className="text-white-neutral-light-600">
-                {isLoadingUserName ? "carregando..." : `${userName}-`}
+              <span className="text-white-neutral-light-600 flex items-center">
+                {isLoadingUserName ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white-neutral-light-600 border-t-transparent mr-1"></div>
+                ) : (
+                  `${userName}-`
+                )}
               </span>
 
               <textarea

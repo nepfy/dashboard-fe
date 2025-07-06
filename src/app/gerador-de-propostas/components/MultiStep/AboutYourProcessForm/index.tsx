@@ -25,8 +25,6 @@ export default function AboutYourProcessForm() {
     updateFormData("step7", {
       ...formData?.step7,
       hideProcessSection: isHidden,
-      // Se a seção for ocultada e já houver etapas, removê-las
-      processSteps: isHidden ? [] : formData?.step7?.processSteps || [],
     });
   };
 
@@ -103,8 +101,8 @@ export default function AboutYourProcessForm() {
   const isAccordionDisabled = formData?.step7?.hideProcessSection || false;
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div className="p-7">
+    <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
+      <div className="p-7 mb-20">
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
         </div>
@@ -183,7 +181,7 @@ export default function AboutYourProcessForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6 fixed bottom-0 bg-white-neutral-light-200">
         <button
           type="button"
           onClick={handleBack}

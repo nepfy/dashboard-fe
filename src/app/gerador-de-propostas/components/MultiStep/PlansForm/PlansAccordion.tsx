@@ -363,12 +363,6 @@ export default function PlansAccordion({
       {plansList.map((plan, index) => (
         <div
           key={plan.id}
-          draggable={!disabled}
-          onDragStart={(e) => handleDragStart(e, index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragEnd={handleDragEnd}
           className={`transition-all duration-200 ${
             draggedIndex === index ? "opacity-50 scale-95" : ""
           } ${
@@ -378,7 +372,15 @@ export default function PlansAccordion({
           }`}
         >
           {/* Accordion Header */}
-          <div className="flex justify-center gap-4 w-full">
+          <div
+            className="flex justify-center gap-4 w-full"
+            draggable={!disabled}
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragEnd={handleDragEnd}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, index)}
+          >
             <div
               className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
                 disabled
@@ -627,12 +629,6 @@ export default function PlansAccordion({
                 {(plan.planDetails || []).map((item, itemIndex) => (
                   <div
                     key={item.id}
-                    draggable={!disabled}
-                    onDragStart={(e) => handleItemDragStart(e, itemIndex)}
-                    onDragOver={(e) => handleItemDragOver(e, itemIndex)}
-                    onDragLeave={handleItemDragLeave}
-                    onDrop={(e) => handleItemDrop(e, plan.id!, itemIndex)}
-                    onDragEnd={handleItemDragEnd}
                     className={`transition-all duration-200 ${
                       draggedItemIndex === itemIndex
                         ? "opacity-50 scale-95"
@@ -645,7 +641,15 @@ export default function PlansAccordion({
                     }`}
                   >
                     {/* Item Header */}
-                    <div className="flex justify-center gap-4 w-full">
+                    <div
+                      className="flex justify-center gap-4 w-full"
+                      draggable={!disabled}
+                      onDragStart={(e) => handleItemDragStart(e, itemIndex)}
+                      onDragEnd={handleItemDragEnd}
+                      onDragOver={(e) => handleItemDragOver(e, itemIndex)}
+                      onDragLeave={handleItemDragLeave}
+                      onDrop={(e) => handleItemDrop(e, plan.id!, itemIndex)}
+                    >
                       <div
                         className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
                           disabled

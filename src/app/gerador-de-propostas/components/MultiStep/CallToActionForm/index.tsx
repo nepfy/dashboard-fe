@@ -28,16 +28,8 @@ export default function CallToActionForm() {
     updateFormData("step8", {
       ...formData?.step8,
       hideCTASection: isHidden,
-      // Se a seção for ocultada, limpar a imagem
-      ctaBackgroundImage: isHidden
-        ? ""
-        : formData?.step8?.ctaBackgroundImage || "",
-      ctaBackgroundImageName: isHidden
-        ? ""
-        : formData?.step8?.ctaBackgroundImageName || "",
     });
 
-    // Limpar erro de upload quando ocultar seção
     if (isHidden) {
       setUploadError("");
     }
@@ -46,19 +38,15 @@ export default function CallToActionForm() {
   const handleFileChange = async (file: File | null) => {
     if (!file || isDisabled) return;
 
-    // Limpar erros anteriores
     setUploadError("");
     clearError();
 
     try {
-      // Set uploading state
       setIsUploading(true);
 
-      // Upload the image
       const result = await uploadImage(file);
 
       if (result.success && result.data) {
-        // Update the form data with the uploaded image URL
         updateFormData("step8", {
           ...formData?.step8,
           ctaBackgroundImage: result.data.url,
@@ -66,15 +54,12 @@ export default function CallToActionForm() {
         });
       } else {
         console.error("Upload failed:", result.error);
-        // Definir erro específico ao invés de alert
         setUploadError(result.error || "Erro ao fazer upload da imagem");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      // Definir erro específico ao invés de alert
       setUploadError("Erro ao fazer upload da imagem");
     } finally {
-      // Remove uploading state
       setIsUploading(false);
     }
   };
@@ -104,11 +89,10 @@ export default function CallToActionForm() {
     nextStep();
   };
 
-  // Determinar se o formulário deve estar desabilitado
   const isDisabled = formData?.step8?.hideCTASection || false;
 
   return (
-    <div className="h-full flex flex-col justify-between">
+    <div className="h-full flex flex-col justify-between relative overflow-x-scroll">
       <div className="p-7">
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
@@ -206,7 +190,6 @@ export default function CallToActionForm() {
               Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
             </div>
 
-            {/* Show upload error if exists */}
             {uploadError && (
               <div className="text-xs text-red-500 mt-2 font-medium">
                 {uploadError}
@@ -221,7 +204,7 @@ export default function CallToActionForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6 fixed bottom-0 bg-white-neutral-light-200">
         <button
           type="button"
           onClick={handleBack}

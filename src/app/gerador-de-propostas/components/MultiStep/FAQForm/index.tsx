@@ -23,7 +23,6 @@ export default function FAQForm() {
     updateFormData("step14", {
       ...formData?.step14,
       hideFaqSection: isHidden,
-      faq: isHidden ? [] : formData?.step14?.faq || [],
     });
   };
 
@@ -62,8 +61,8 @@ export default function FAQForm() {
   const isAccordionDisabled = formData?.step14?.hideFaqSection || false;
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div className="p-7">
+    <div className="h-full flex flex-col justify-between overflow-y-scroll relative">
+      <div className="p-7 mb-20">
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
         </div>
@@ -117,7 +116,7 @@ export default function FAQForm() {
         </div>
       </div>
 
-      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
+      <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6 bg-white-neutral-light-200 fixed bottom-0">
         <button
           type="button"
           onClick={handleBack}

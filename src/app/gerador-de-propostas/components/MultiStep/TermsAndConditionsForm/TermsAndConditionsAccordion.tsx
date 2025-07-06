@@ -177,20 +177,26 @@ export default function TermsAndConditionsAccordion({
           }`}
         >
           {/* Accordion Header */}
-          <div className="flex justify-center gap-4 w-full">
+          <div
+            className="flex justify-center gap-4 w-full"
+            draggable
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragEnd={handleDragEnd}
+            onClick={(e) => {
+              e.preventDefault();
+              toggleTermsCondition(termsCondition.id!);
+            }}
+            title="Arraste para reordenar"
+          >
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4`}
+              className={`flex flex-1 items-center justify-between py-2 px-4 hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 cursor-grab active:cursor-grabbing ${
+                draggedIndex === index ? "cursor-grabbing" : ""
+              } `}
             >
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <div
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragEnd={handleDragEnd}
-                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing ${
-                      draggedIndex === index ? "cursor-grabbing" : ""
-                    }`}
-                    title="Arraste para reordenar"
+                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing`}
                   >
                     ⋮⋮
                   </div>
