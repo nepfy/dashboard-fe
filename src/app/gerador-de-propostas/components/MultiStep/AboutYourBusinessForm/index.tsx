@@ -232,6 +232,7 @@ export default function AboutYourBusinessForm() {
                 showCharCount
                 error={errors.aboutUsTitle}
                 disabled={hideAboutUsTitle || hideAboutUsSection}
+                allowOverText
               />
             )}
           </div>
@@ -282,6 +283,7 @@ export default function AboutYourBusinessForm() {
                 showCharCount
                 error={errors.aboutUsSubtitle1}
                 disabled={hideAboutUsSection || hideSubtitles1}
+                allowOverText
               />
             )}
           </div>
@@ -332,6 +334,7 @@ export default function AboutYourBusinessForm() {
                 showCharCount
                 error={errors.aboutUsSubtitle2}
                 disabled={hideAboutUsSection || hideSubtitles2}
+                allowOverText
               />
             )}
           </div>

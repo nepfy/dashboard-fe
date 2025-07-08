@@ -213,6 +213,7 @@ export default function FinalMessageForm() {
               showCharCount
               error={errors.endMessageTitle}
               disabled={isFormDisabled}
+              allowOverText
             />
           </div>
 
@@ -234,6 +235,7 @@ export default function FinalMessageForm() {
               showCharCount
               error={errors.endMessageTitle2}
               disabled={isFormDisabled}
+              allowOverText
             />
           </div>
 
@@ -274,6 +276,7 @@ export default function FinalMessageForm() {
                 style={{
                   display: subtitleVisible ? "block" : "none",
                 }}
+                allowOverText
               />
             )}
           </div>

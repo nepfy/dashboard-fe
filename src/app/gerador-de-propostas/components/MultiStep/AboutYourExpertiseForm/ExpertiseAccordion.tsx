@@ -393,6 +393,7 @@ export default function ExpertiseAccordion({
                       updateExpertise(item.id, "title", e.target.value)
                     }
                     disabled={disabled}
+                    allowOverText
                   />
                 </div>
 
@@ -416,6 +417,7 @@ export default function ExpertiseAccordion({
                     showCharCount
                     maxLength={150}
                     disabled={disabled}
+                    allowOverText
                   />
                 </div>
               </div>

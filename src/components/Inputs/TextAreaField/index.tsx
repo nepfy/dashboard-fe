@@ -20,9 +20,9 @@ interface CustomTextAreaProps
   autoExpand?: boolean;
   minHeight?: number;
   maxHeight?: number;
+  allowOverText?: boolean; // Nova prop
 }
 
-// Custom resize icon component
 const ResizeIcon = () => (
   <svg
     width="12"
@@ -62,12 +62,15 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
     autoExpand = false,
     minHeight = 60,
     maxHeight,
+    allowOverText = false,
     ...rest
   } = props;
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const currentLength = typeof value === "string" ? value.length : 0;
   const isNearLimit = maxLength ? currentLength >= maxLength - 2 : false;
+  const isOverLimit = maxLength ? currentLength > maxLength : false;
 
   const adjustHeight = () => {
     if (!autoExpand || !textareaRef.current) return;
@@ -82,6 +85,10 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
     if (maxHeight && newHeight > maxHeight) newHeight = maxHeight;
 
     textarea.style.height = `${newHeight}px`;
+
+    if (overlayRef.current && allowOverText) {
+      overlayRef.current.style.height = `${newHeight}px`;
+    }
   };
 
   useEffect(() => {
@@ -92,7 +99,6 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
 
   useEffect(() => {
     if (autoExpand && textareaRef.current) {
-      // Set initial min height
       textareaRef.current.style.minHeight = `${minHeight}px`;
       if (maxHeight) {
         textareaRef.current.style.maxHeight = `${maxHeight}px`;
@@ -109,6 +115,36 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
     if (autoExpand) {
       setTimeout(adjustHeight, 0);
     }
+  };
+
+  const renderTextWithOverflow = () => {
+    if (!allowOverText || !maxLength || !value || typeof value !== "string") {
+      return null;
+    }
+
+    if (currentLength <= maxLength) {
+      return null;
+    }
+
+    const normalText = value.substring(0, maxLength);
+    const overflowText = value.substring(maxLength);
+
+    return (
+      <div
+        ref={overlayRef}
+        className="absolute inset-0 px-4 py-1.5 pointer-events-none whitespace-pre-wrap break-words"
+        style={{
+          fontSize: "inherit",
+          fontFamily: "inherit",
+          lineHeight: "inherit",
+          overflow: autoExpand ? "hidden" : "auto",
+          resize: autoExpand ? "none" : "none",
+        }}
+      >
+        <span className="text-white-neutral-light-800">{normalText}</span>
+        <span className="text-red-500 font-medium">{overflowText}</span>
+      </div>
+    );
   };
 
   return (
@@ -136,7 +172,7 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
           value={value}
           onChange={handleChange}
           onBlur={onBlur}
-          maxLength={maxLength}
+          maxLength={allowOverText ? undefined : maxLength}
           rows={autoExpand ? 1 : rows}
           style={{
             resize: autoExpand ? "none" : "none",
@@ -146,19 +182,27 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
           className={`w-full px-4 py-1.5 mt-1.5 rounded-xs 
                       border bg-white-neutral-light-100
                     placeholder:text-[var(--color-white-neutral-light-400)] 
-                      focus:outline-none pr-8
-          ${disabled ? "opacity-50" : "text-white-neutral-light-800"}
+                      focus:outline-none pr-8 relative
           ${
-            error
+            disabled
+              ? "opacity-50"
+              : allowOverText && isOverLimit
+              ? "text-transparent"
+              : "text-white-neutral-light-800"
+          }
+          ${
+            error || (allowOverText && isOverLimit)
               ? "border-red-700"
               : "focus:border-[var(--color-primary-light-400)] border-white-neutral-light-300"
           }
           `}
         />
 
+        {allowOverText && renderTextWithOverflow()}
+
         {!autoExpand && (
           <div
-            className="absolute bottom-1 right-1 w-4 h-4 cursor-ns-resize flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+            className="absolute bottom-1 right-1 w-4 h-4 cursor-ns-resize flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors z-10"
             onMouseDown={(e) => {
               e.preventDefault();
               const textarea = textareaRef.current;
@@ -174,6 +218,9 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
                 const newHeight = startHeight + (moveEvent.clientY - startY);
                 if (newHeight > minHeight) {
                   textarea.style.height = `${newHeight}px`;
+                  if (overlayRef.current && allowOverText) {
+                    overlayRef.current.style.height = `${newHeight}px`;
+                  }
                 }
               };
 
@@ -195,15 +242,20 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
         {infoText && (
           <div className="text-gray-500 rounded-md text-xs">{infoText}</div>
         )}
-        {error && (
+        {(error || (allowOverText && isOverLimit)) && (
           <div className="text-red-700 rounded-md text-sm font-medium">
-            {error}
+            {error ||
+              (allowOverText && isOverLimit
+                ? `Texto excede o limite de ${maxLength} caracteres`
+                : "")}
           </div>
         )}
         {showCharCount && maxLength && (
           <div
             className={`text-xs ml-auto ${
-              isNearLimit ? "text-red-500" : "text-white-neutral-light-500"
+              isNearLimit || isOverLimit
+                ? "text-red-500"
+                : "text-white-neutral-light-500"
             }`}
           >
             {currentLength} / {maxLength}{" "}

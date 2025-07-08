@@ -164,6 +164,7 @@ export default function AboutYourProcessForm() {
               showCharCount
               error={errors.processSubtitle}
               disabled={isAccordionDisabled}
+              allowOverText
             />
           </div>
           <div className="pt-4">

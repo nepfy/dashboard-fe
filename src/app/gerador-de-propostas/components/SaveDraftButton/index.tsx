@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import { Save, Check, AlertCircle } from "lucide-react";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
-import { useSaveDraft } from "#/hooks/useProjectGenerator/useSaveDraft";
 
 interface SaveDraftButtonProps {
   className?: string;
@@ -17,53 +16,63 @@ export default function SaveDraftButton({
   showText = true,
   variant = "secondary",
 }: SaveDraftButtonProps) {
-  const { formData, templateType, currentStep } = useProjectGenerator();
-  const { saveDraft, isSaving, lastSaved, getLastSavedText } = useSaveDraft();
+  const {
+    formData,
+    templateType,
+    currentStep,
+    currentProjectId,
+    saveDraft,
+    isSavingDraft,
+    lastSaved,
+    getLastSavedText,
+  } = useProjectGenerator();
+
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
     "idle"
   );
   const [statusMessage, setStatusMessage] = useState("");
 
+  // Auto-save every 5 minutes
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
-      if (!isSaving && formData) {
+      if (!isSavingDraft && formData && templateType) {
         handleSaveDraft(true);
       }
-    }, 5 * 60 * 1000);
+    }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(autoSaveInterval);
-  }, [formData, isSaving]);
+  }, [formData, templateType, isSavingDraft]);
 
   const handleSaveDraft = async (isAutoSave = false) => {
-    if (isSaving) return;
+    if (isSavingDraft) return;
+
+    // Don't save if we don't have essential data
+    if (!templateType) {
+      console.log("SaveDraftButton: No template type, skipping save");
+      return;
+    }
 
     try {
-      const result = await saveDraft(formData, templateType);
+      console.log(
+        "SaveDraftButton: Saving draft with projectId:",
+        currentProjectId
+      );
+      await saveDraft();
 
-      if (result.success) {
-        setSaveStatus("success");
-        setStatusMessage(
-          isAutoSave ? "Salvo automaticamente" : "Rascunho salvo!"
-        );
+      setSaveStatus("success");
+      setStatusMessage(
+        isAutoSave ? "Salvo automaticamente" : "Rascunho salvo!"
+      );
 
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSaveStatus("idle");
-          setStatusMessage("");
-        }, 3000);
-      } else {
-        setSaveStatus("error");
-        setStatusMessage(result.message || "Erro ao salvar");
-
-        // Clear error message after 5 seconds
-        setTimeout(() => {
-          setSaveStatus("idle");
-          setStatusMessage("");
-        }, 5000);
-      }
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSaveStatus("idle");
+        setStatusMessage("");
+      }, 3000);
     } catch (error) {
+      console.error("SaveDraftButton: Error saving draft:", error);
       setSaveStatus("error");
-      setStatusMessage(`Erro ao salvar rascunho ${error}`);
+      setStatusMessage("Erro ao salvar rascunho");
 
       setTimeout(() => {
         setSaveStatus("idle");
@@ -87,7 +96,7 @@ export default function SaveDraftButton({
   };
 
   const getIcon = () => {
-    if (isSaving) {
+    if (isSavingDraft) {
       return (
         <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
       );
@@ -95,47 +104,47 @@ export default function SaveDraftButton({
 
     switch (saveStatus) {
       case "success":
-        return <Check size={16} className="hidden sm:block text-green-600" />;
+        return <Check size={16} className="text-green-600" />;
       case "error":
-        return (
-          <AlertCircle size={16} className="hidden sm:block text-red-600" />
-        );
+        return <AlertCircle size={16} className="text-red-600" />;
       default:
-        return <Save className="hidden sm:block" size={16} />;
+        return <Save size={16} />;
     }
   };
 
   const getButtonText = () => {
-    if (isSaving) return "Salvando...";
+    if (isSavingDraft) return "Salvando...";
     if (saveStatus === "success") return "Salvo!";
     if (saveStatus === "error") return "Erro ao salvar";
     return "Salvar rascunho";
   };
 
-  return (
-    <>
-      {currentStep !== 0 && (
-        <div className={`relative ${className}`}>
-          <button
-            type="button"
-            onClick={() => handleSaveDraft(false)}
-            disabled={isSaving}
-            className={`${getButtonClass()} ${
-              isSaving ? "opacity-75 cursor-not-allowed" : ""
-            }`}
-            title="Salvar progresso como rascunho"
-          >
-            {getIcon()}
-            {showText && <span className="text-sm">{getButtonText()}</span>}
-          </button>
+  // Only show the button if we're not on step 0 (template selection)
+  if (currentStep === 0) {
+    return null;
+  }
 
-          {(statusMessage || lastSaved) && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 text-xs text-white-neutral-light-500 whitespace-nowrap">
-              {statusMessage || getLastSavedText()}
-            </div>
-          )}
+  return (
+    <div className={`relative ${className}`}>
+      <button
+        type="button"
+        onClick={() => handleSaveDraft(false)}
+        disabled={isSavingDraft}
+        className={`${getButtonClass()} ${
+          isSavingDraft ? "opacity-75 cursor-not-allowed" : ""
+        }`}
+        title="Salvar progresso como rascunho"
+      >
+        {getIcon()}
+        {showText && <span className="text-sm">{getButtonText()}</span>}
+      </button>
+
+      {/* Status message and last saved info */}
+      {(statusMessage || lastSaved) && (
+        <div className="absolute top-full left-0 mt-1 text-xs text-white-neutral-light-500 whitespace-nowrap">
+          {statusMessage || getLastSavedText()}
         </div>
       )}
-    </>
+    </div>
   );
 }

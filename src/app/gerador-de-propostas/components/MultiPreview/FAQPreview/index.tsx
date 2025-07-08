@@ -3,7 +3,7 @@ import { useState } from "react";
 import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
-import { ChevronDown, MessageCircle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export default function FAQPreview() {
   const { formData } = useProjectGenerator();
@@ -66,16 +66,9 @@ export default function FAQPreview() {
             {/* Empty State */}
             {(!formData?.step14?.faq || formData.step14.faq.length === 0) && (
               <div className="text-center py-12">
-                <div className="bg-white/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <MessageCircle className="w-8 h-8 text-white/60" />
-                </div>
                 <h3 className="text-lg font-semibold text-white mb-2">
                   Nenhuma pergunta adicionada
                 </h3>
-                <p className="text-white/70 text-sm">
-                  Adicione perguntas frequentes para esclarecer dúvidas dos seus
-                  clientes
-                </p>
               </div>
             )}
           </div>

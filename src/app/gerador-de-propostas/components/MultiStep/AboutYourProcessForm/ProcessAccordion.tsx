@@ -257,6 +257,7 @@ export default function ProcessAccordion({
                   minLength={20}
                   showCharCount
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
 
@@ -280,6 +281,7 @@ export default function ProcessAccordion({
                   maxLength={345}
                   minLength={190}
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
             </div>

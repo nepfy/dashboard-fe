@@ -125,6 +125,7 @@ export default function InvestmentForm() {
               showCharCount
               error={errors.investmentTitle}
               disabled={isDisabled}
+              allowOverText
             />
           </div>
         </div>

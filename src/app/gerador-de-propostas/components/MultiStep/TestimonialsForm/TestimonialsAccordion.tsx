@@ -370,6 +370,7 @@ export default function TestimonialsAccordion({
                     showCharCount
                     maxLength={200}
                     disabled={disabled}
+                    allowOverText
                   />
                 </div>
 

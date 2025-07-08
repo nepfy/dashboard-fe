@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { ProposalFormData, TemplateType, Project } from "#/types/project";
 import { useSaveDraft } from "#/hooks/useProjectGenerator/useSaveDraft";
 
@@ -22,7 +28,6 @@ interface ProjectGeneratorContextType {
   importProjectData: (projectData: Project) => void;
   loadProjectData: (projectData: Project) => void;
   loadProjectWithRelations: (projectId: string) => Promise<Project | null>;
-  // Draft functionality
   saveDraft: () => Promise<void>;
   isSavingDraft: boolean;
   lastSaved: Date | null;
@@ -70,8 +75,17 @@ export function ProjectGeneratorProvider({
     isSaving: isSavingDraft,
     lastSaved,
     getLastSavedText,
-    currentProjectId: hookProjectId,
+    setProjectId,
+    clearDraftData,
   } = useSaveDraft();
+
+  useEffect(() => {
+    setProjectId(currentProjectId);
+  }, [currentProjectId, setProjectId]);
+
+  console.log("Context - currentStep:", currentStep);
+  console.log("Context - currentProjectId:", currentProjectId);
+  console.log("Context - mainColor:", formData.step1?.mainColor);
 
   console.log("Context - currentStep:", currentStep);
   console.log("Context - mainColor:", formData.step1?.mainColor);
@@ -173,6 +187,7 @@ export function ProjectGeneratorProvider({
     setTemplateTypeState(null);
     setCurrentProjectId(null);
     setIsEditMode(false);
+    clearDraftData();
   };
 
   const importProjectData = (projectData: Project) => {
@@ -322,20 +337,16 @@ export function ProjectGeneratorProvider({
     });
   };
 
-  // Draft functionality
+  // Draft functionality - always pass the current project ID
   const saveDraft = async () => {
-    await saveDraftHook(
-      formData,
-      templateType,
-      currentProjectId || hookProjectId
-    );
+    await saveDraftHook(formData, templateType, currentProjectId);
   };
 
   const value = {
     formData,
     currentStep,
     templateType,
-    currentProjectId: currentProjectId || hookProjectId,
+    currentProjectId,
     isEditMode,
     updateFormData,
     setTemplateType,

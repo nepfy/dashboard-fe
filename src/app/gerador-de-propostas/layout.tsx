@@ -1,4 +1,3 @@
-// src/app/gerador-de-propostas/layout.tsx
 import Link from "next/link";
 
 import CloseIcon from "#/components/icons/CloseIcon";
@@ -12,8 +11,6 @@ export default function ProjectGenerator({
 }: {
   children: React.ReactNode;
 }) {
-  // const date = new Date();
-
   return (
     <ProjectGeneratorProvider>
       <div className="bg-white-neutral-light-200 h-screen flex flex-col relative">

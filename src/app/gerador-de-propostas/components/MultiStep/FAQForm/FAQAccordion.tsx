@@ -198,7 +198,7 @@ export default function FAQAccordion({
                     ⋮⋮
                   </div>
                   <span className="text-sm font-medium text-white-neutral-light-900">
-                    {faq.question ? faq.question : `Pergunta ${index + 1}`}
+                    {`Pergunta ${index + 1}`}
                   </span>
                 </div>
               </div>
@@ -252,6 +252,7 @@ export default function FAQAccordion({
                     updateFAQ(faq.id!, "question", e.target.value)
                   }
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
 
@@ -272,6 +273,7 @@ export default function FAQAccordion({
                   showCharCount
                   maxLength={300}
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
             </div>

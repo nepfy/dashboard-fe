@@ -81,11 +81,11 @@ export default function MultiStepForm() {
 
   return (
     <div className="h-full flex overflow-hidden">
-      <div className="w-full xl:w-1/2 h-full overflow-hidden">
+      <div className="w-full xl:w-2/5 h-full overflow-hidden">
         <Form />
       </div>
 
-      <div className="hidden xl:block xl:w-1/2 border-l border-white-neutral-light-300">
+      <div className="hidden xl:block xl:w-3/5 border-l border-white-neutral-light-300">
         <Preview />
       </div>
     </div>

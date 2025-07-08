@@ -146,6 +146,7 @@ export default function AboutYourTeamForm() {
               showCharCount
               error={errors.ourTeamSubtitle}
               disabled={hideSectionChecked}
+              allowOverText
             />
           </div>
           <div className="pt-4">

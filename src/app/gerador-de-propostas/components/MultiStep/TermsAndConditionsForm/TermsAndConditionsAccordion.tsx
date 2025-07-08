@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 
-import { TextField } from "#/components/Inputs";
 import { TextAreaField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
 
@@ -201,15 +200,13 @@ export default function TermsAndConditionsAccordion({
                     ⋮⋮
                   </div>
                   <span
-                    className="text-sm font-medium text-white-neutral-light-900 cursor-pointer select-text"
+                    className="text-sm font-medium text-white-neutral-light-900 cursor-pointer select-text overflow-hidden"
                     onClick={(e) => {
                       e.preventDefault();
                       toggleTermsCondition(termsCondition.id!);
                     }}
                   >
-                    {termsCondition.title
-                      ? termsCondition.title
-                      : `Termo ${index + 1}`}
+                    {`Termo ${index + 1}`}
                   </span>
                 </div>
               </div>
@@ -250,22 +247,22 @@ export default function TermsAndConditionsAccordion({
               >
                 Título
               </label>
-              <TextField
-                inputName={`title-${termsCondition.id}`}
+              <TextAreaField
                 id={`title-${termsCondition.id}`}
-                type="text"
                 placeholder="Adicione o títutlo desejado"
                 value={termsCondition.title}
                 maxLength={80}
+                rows={2}
                 showCharCount
                 disabled={disabled}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   updateTermsCondition(
                     termsCondition.id!,
                     "title",
                     e.target.value
                   )
                 }
+                allowOverText
               />
 
               <div>
@@ -291,6 +288,7 @@ export default function TermsAndConditionsAccordion({
                   showCharCount
                   maxLength={380}
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
             </div>

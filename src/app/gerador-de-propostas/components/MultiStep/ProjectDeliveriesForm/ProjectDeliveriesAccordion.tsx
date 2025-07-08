@@ -278,6 +278,7 @@ export default function ProjectDeliveriesAccordion({
                   maxLength={340}
                   minLength={165}
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
             </div>

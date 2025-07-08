@@ -146,6 +146,7 @@ export default function AboutYourExpertiseForm() {
               showCharCount
               error={errors.expertiseSubtitle}
               disabled={hideSectionChecked}
+              allowOverText
             />
           </div>
 

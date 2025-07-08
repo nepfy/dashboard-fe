@@ -25,6 +25,7 @@ export default function IntroStep() {
     currentStep,
     resetForm,
     importProjectData,
+    isEditMode,
   } = useProjectGenerator();
 
   const hidePageSubtitle = formData?.step1?.hidePageSubtitle || false;
@@ -39,7 +40,7 @@ export default function IntroStep() {
   });
 
   useEffect(() => {
-    if (modalDismissed) {
+    if (modalDismissed || isEditMode) {
       return;
     }
 
@@ -67,7 +68,7 @@ export default function IntroStep() {
     } else {
       setShowImportModal(false);
     }
-  }, [templateType, currentStep, formData?.step1, modalDismissed]);
+  }, [templateType, currentStep, formData?.step1, modalDismissed, isEditMode]);
 
   const handleImportProject = (projectData: Project) => {
     updateFormData("step1", {
@@ -337,6 +338,7 @@ export default function IntroStep() {
                 maxLength={50}
                 minLength={30}
                 showCharCount
+                allowOverText
               />
             </div>
 
@@ -400,6 +402,7 @@ export default function IntroStep() {
                   autoExpand={true}
                   minHeight={60}
                   maxHeight={200}
+                  allowOverText
                 />
               )}
             </div>

@@ -467,6 +467,7 @@ export default function PlansAccordion({
                   maxLength={25}
                   showCharCount
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
 
@@ -490,6 +491,7 @@ export default function PlansAccordion({
                   maxLength={130}
                   minLength={50}
                   disabled={disabled}
+                  allowOverText
                 />
               </div>
 
@@ -739,6 +741,7 @@ export default function PlansAccordion({
                             maxLength={40}
                             showCharCount
                             disabled={disabled}
+                            allowOverText
                           />
                         </div>
                       </div>
@@ -780,6 +783,7 @@ export default function PlansAccordion({
                   disabled={disabled}
                   maxLength={25}
                   showCharCount
+                  allowOverText
                 />
               </div>
             </div>
