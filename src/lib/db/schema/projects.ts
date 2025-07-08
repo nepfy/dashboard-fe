@@ -58,6 +58,7 @@ export const projectsTable = pgTable("projects", {
   resultsSubtitle: text("results_subtitle"),
 
   hideClientsSection: boolean("hide_clients_section").default(false),
+  clientSubtitle: text("client_subtitle"),
 
   hideProcessSection: boolean("hide_process_section").default(false),
   hideProcessSubtitle: boolean("hide_process_subtitle").default(false),
@@ -80,6 +81,8 @@ export const projectsTable = pgTable("projects", {
   hideTermsSection: boolean("hide_terms_section").default(false),
 
   hideFaqSection: boolean("hide_faq_section").default(false),
+  hideFaqSubtitle: boolean("hide_faq_subtitle").default(false),
+  faqSubtitle: varchar("faq_subtitle", { length: 255 }),
 
   hideFinalMessageSection: boolean("hide_final_message_section").default(false),
   hideFinalMessageSubtitle: boolean("hide_final_message_subtitle").default(

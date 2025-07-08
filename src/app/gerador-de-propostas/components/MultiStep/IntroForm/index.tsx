@@ -31,12 +31,15 @@ export default function IntroStep() {
   const hidePageSubtitle = formData?.step1?.hidePageSubtitle || false;
   const hideServices = formData?.step1?.hideServices || false;
 
+  // Check if template type is Grid to hide specific fields
+  const isGridTemplate = templateType?.toLowerCase() === "grid";
+
   const [showImportModal, setShowImportModal] = useState(false);
   const [modalDismissed, setModalDismissed] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [fieldVisibility, setFieldVisibility] = useState({
-    pageSubtitle: !hidePageSubtitle,
-    services: !hideServices,
+    pageSubtitle: !hidePageSubtitle && !isGridTemplate,
+    services: !hideServices && !isGridTemplate,
   });
 
   useEffect(() => {
@@ -45,6 +48,21 @@ export default function IntroStep() {
       setShowImportModal(true);
     }
   }, [modalDismissed]);
+
+  // Update field visibility when template type changes
+  useEffect(() => {
+    if (isGridTemplate) {
+      setFieldVisibility({
+        pageSubtitle: false,
+        services: false,
+      });
+    } else {
+      setFieldVisibility({
+        pageSubtitle: !hidePageSubtitle,
+        services: !hideServices,
+      });
+    }
+  }, [isGridTemplate, hidePageSubtitle, hideServices]);
 
   const handleImportProject = (projectData: Project) => {
     updateFormData("step1", {
@@ -70,6 +88,11 @@ export default function IntroStep() {
   };
 
   const toggleFieldVisibility = (fieldName: keyof typeof fieldVisibility) => {
+    // Don't allow toggling if it's Grid template
+    if (isGridTemplate) {
+      return;
+    }
+
     const newVisibility = !fieldVisibility[fieldName];
 
     setFieldVisibility((prev) => ({
@@ -149,7 +172,8 @@ export default function IntroStep() {
       newErrors.pageTitle = "O título deve ter no mínimo 30 caracteres";
     }
 
-    if (fieldVisibility.pageSubtitle) {
+    // Only validate pageSubtitle if it's visible (not Grid template)
+    if (fieldVisibility.pageSubtitle && !isGridTemplate) {
       if (!pageSubtitle.trim()) {
         newErrors.pageSubtitle = "O subtítulo da página é obrigatório";
       }
@@ -159,7 +183,8 @@ export default function IntroStep() {
       }
     }
 
-    if (fieldVisibility.services) {
+    // Only validate services if it's visible (not Grid template)
+    if (fieldVisibility.services && !isGridTemplate) {
       if (services.length === 0) {
         newErrors.services = "Pelo menos um serviço deve ser adicionado";
       }
@@ -318,70 +343,80 @@ export default function IntroStep() {
               />
             </div>
 
-            <div className="pb-6">
-              <label
-                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Serviços
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleFieldVisibility("services");
-                  }}
-                  className="cursor-pointer"
+            {/* Only show Services field if not Grid template */}
+            {!isGridTemplate && (
+              <div className="pb-6">
+                <label
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                 >
-                  {fieldVisibility.services ? <EyeOpened /> : <EyeClosed />}
-                </button>
-              </label>
-              {fieldVisibility.services && (
-                <TagInput
-                  placeholder="Digite um serviço e pressione Enter"
-                  value={formData?.step1?.services || []}
-                  onChange={handleServicesChange}
-                  error={errors.services}
-                  infoText="Separe o serviço por ponto e vírgula (;) ou pressione Enter após digitar cada serviço."
-                  disabled={hideServices}
-                />
-              )}
-            </div>
+                  Serviços
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleFieldVisibility("services");
+                    }}
+                    className="cursor-pointer"
+                  >
+                    {fieldVisibility.services ? <EyeOpened /> : <EyeClosed />}
+                  </button>
+                </label>
+                {fieldVisibility.services && (
+                  <TagInput
+                    placeholder="Digite um serviço e pressione Enter"
+                    value={formData?.step1?.services || []}
+                    onChange={handleServicesChange}
+                    error={errors.services}
+                    infoText="Separe o serviço por ponto e vírgula (;) ou pressione Enter após digitar cada serviço."
+                    disabled={hideServices}
+                  />
+                )}
+              </div>
+            )}
 
-            <div className="pb-6">
-              <label
-                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Subtítulo
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleFieldVisibility("pageSubtitle");
-                  }}
-                  className="cursor-pointer"
+            {/* Only show Subtitle field if not Grid template */}
+            {!isGridTemplate && (
+              <div className="pb-6">
+                <label
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                 >
-                  {fieldVisibility.pageSubtitle ? <EyeOpened /> : <EyeClosed />}
-                </button>
-              </label>
-              {fieldVisibility.pageSubtitle && (
-                <TextAreaField
-                  id="pageSubtitle"
-                  placeholder="Digite uma descrição complementar"
-                  value={formData?.step1?.pageSubtitle || ""}
-                  onChange={handleTextAreaChange("pageSubtitle")}
-                  error={errors.pageSubtitle}
-                  disabled={hidePageSubtitle}
-                  maxLength={115}
-                  minLength={70}
-                  showCharCount
-                  autoExpand={true}
-                  minHeight={60}
-                  maxHeight={200}
-                  allowOverText
-                />
-              )}
-            </div>
+                  Subtítulo
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleFieldVisibility("pageSubtitle");
+                    }}
+                    className="cursor-pointer"
+                  >
+                    {fieldVisibility.pageSubtitle ? (
+                      <EyeOpened />
+                    ) : (
+                      <EyeClosed />
+                    )}
+                  </button>
+                </label>
+                {fieldVisibility.pageSubtitle && (
+                  <TextAreaField
+                    id="pageSubtitle"
+                    placeholder="Digite uma descrição complementar"
+                    value={formData?.step1?.pageSubtitle || ""}
+                    onChange={handleTextAreaChange("pageSubtitle")}
+                    error={errors.pageSubtitle}
+                    disabled={hidePageSubtitle}
+                    maxLength={115}
+                    minLength={70}
+                    showCharCount
+                    autoExpand={true}
+                    minHeight={60}
+                    maxHeight={200}
+                    allowOverText
+                  />
+                )}
+              </div>
+            )}
           </div>
         </div>
 

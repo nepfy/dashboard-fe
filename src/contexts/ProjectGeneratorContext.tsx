@@ -260,6 +260,7 @@ export function ProjectGeneratorProvider({
     // Step 5 - Results
     safeUpdate("step5", {
       hideYourResultsSection: projectData.hideResultsSection || false,
+      resultsSubtitle: projectData.resultsSubtitle,
       results: projectData.results || [],
     });
 
@@ -317,6 +318,8 @@ export function ProjectGeneratorProvider({
     // Step 14 - FAQ
     safeUpdate("step14", {
       hideFaqSection: projectData.hideFaqSection || false,
+      hideFaqSubtitle: projectData.hideFaqSubtitle,
+      faqSubtitle: projectData.faqSubtitle,
       faq: projectData.faq || [],
     });
 

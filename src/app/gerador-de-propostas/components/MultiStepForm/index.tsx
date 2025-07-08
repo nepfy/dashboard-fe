@@ -36,31 +36,112 @@ import AccessPreview from "#/app/gerador-de-propostas/components/MultiPreview/Ac
 
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
-// Mapeamento dos formulários e previews
-const stepComponents = {
-  1: { Form: IntroForm, Preview: IntroPreview },
-  2: { Form: AboutYourBusinessForm, Preview: AboutBusinessPreview },
-  3: { Form: AboutYourTeamForm, Preview: TeamPreview },
-  4: { Form: AboutYourExpertiseForm, Preview: ExpertisePreview },
-  5: { Form: AboutYourResultsForm, Preview: ResultsPreview },
-  6: { Form: AboutYourClientsForm, Preview: ClientsPreview },
-  7: { Form: AboutYourProcessForm, Preview: ProcessPreview },
-  8: { Form: CallToActionForm, Preview: CTAPreview },
-  9: { Form: TestimonialsForm, Preview: TestimonialsPreview },
-  10: { Form: InvestmentForm, Preview: InvestmentPreview },
-  11: { Form: ProjectDeliveriesForm, Preview: DeliveriesPreview },
-  12: { Form: PlansForm, Preview: PlansPreview },
-  13: { Form: TermsAndConditionsForm, Preview: TermsPreview },
-  14: { Form: FAQForm, Preview: FAQPreview },
-  15: { Form: FinalMessageForm, Preview: FinalMessagePreview },
-  16: { Form: AccessForm, Preview: AccessPreview },
+// Mapeamento completo dos formulários e previews
+const allStepComponents = {
+  intro: { Form: IntroForm, Preview: IntroPreview },
+  business: { Form: AboutYourBusinessForm, Preview: AboutBusinessPreview },
+  team: { Form: AboutYourTeamForm, Preview: TeamPreview },
+  expertise: { Form: AboutYourExpertiseForm, Preview: ExpertisePreview },
+  results: { Form: AboutYourResultsForm, Preview: ResultsPreview },
+  clients: { Form: AboutYourClientsForm, Preview: ClientsPreview },
+  process: { Form: AboutYourProcessForm, Preview: ProcessPreview },
+  cta: { Form: CallToActionForm, Preview: CTAPreview },
+  testimonials: { Form: TestimonialsForm, Preview: TestimonialsPreview },
+  investment: { Form: InvestmentForm, Preview: InvestmentPreview },
+  deliveries: { Form: ProjectDeliveriesForm, Preview: DeliveriesPreview },
+  plans: { Form: PlansForm, Preview: PlansPreview },
+  terms: { Form: TermsAndConditionsForm, Preview: TermsPreview },
+  faq: { Form: FAQForm, Preview: FAQPreview },
+  finalMessage: { Form: FinalMessageForm, Preview: FinalMessagePreview },
+  access: { Form: AccessForm, Preview: AccessPreview },
+};
+
+// Configuração dos steps por template
+const templateStepConfigurations = {
+  flash: [
+    "intro",
+    "business",
+    "team",
+    "expertise",
+    "results",
+    "clients",
+    "process",
+    "cta",
+    "testimonials",
+    "investment",
+    "deliveries",
+    "plans",
+    "terms",
+    "faq",
+    "finalMessage",
+    "access",
+  ],
+  prime: [
+    "intro",
+    "business",
+    "team",
+    "expertise",
+    "results",
+    "clients",
+    "cta",
+    "process",
+    "testimonials",
+    "investment",
+    "deliveries",
+    "plans",
+    "terms",
+    "faq",
+    "finalMessage",
+    "access",
+  ],
+  essencial: [
+    "intro",
+    "business",
+    "team",
+    "expertise",
+    "results",
+    "clients",
+    "process",
+    "cta",
+    "testimonials",
+    "investment",
+    "deliveries",
+    "plans",
+    "terms",
+    "faq",
+    "finalMessage",
+    "access",
+  ],
+  grid: [
+    "intro",
+    "business",
+    "team",
+    "expertise",
+    "results",
+    "testimonials",
+    "plans",
+    "faq",
+    "finalMessage",
+    "access",
+  ],
 };
 
 export default function MultiStepForm() {
-  const { currentStep } = useProjectGenerator();
+  const { currentStep, templateType } = useProjectGenerator();
 
+  // Obter configuração dos steps para o template atual
+  const templateKey =
+    templateType?.toLowerCase() as keyof typeof templateStepConfigurations;
+  const stepOrder =
+    templateStepConfigurations[templateKey] || templateStepConfigurations.flash;
+
+  // Calcular o step atual baseado na posição na configuração do template
+  const currentStepIndex = Math.max(0, currentStep - 1);
+  const currentStepKey = stepOrder[currentStepIndex];
+
+  // Obter os componentes para o step atual
   const currentComponents =
-    stepComponents[currentStep as keyof typeof stepComponents];
+    allStepComponents[currentStepKey as keyof typeof allStepComponents];
 
   if (!currentComponents) {
     return (
@@ -70,7 +151,8 @@ export default function MultiStepForm() {
             Step não encontrado
           </h2>
           <p className="text-white-neutral-light-500">
-            O step {currentStep} não foi configurado.
+            O step {currentStep} não foi configurado para o template{" "}
+            {templateType}.
           </p>
         </div>
       </div>
@@ -93,35 +175,77 @@ export default function MultiStepForm() {
 }
 
 export const useCurrentStep = () => {
-  const { currentStep } = useProjectGenerator();
+  const { currentStep, templateType } = useProjectGenerator();
 
+  // Obter configuração dos steps para o template atual
+  const templateKey =
+    templateType?.toLowerCase() as keyof typeof templateStepConfigurations;
+  const stepOrder =
+    templateStepConfigurations[templateKey] || templateStepConfigurations.flash;
+
+  // Informações dos steps
   const stepInfo = {
-    1: { title: "Introdução", description: "Configure a apresentação inicial" },
-    2: { title: "Sobre o Negócio", description: "Conte sobre sua empresa" },
-    3: { title: "Sua Equipe", description: "Apresente seu time" },
-    4: { title: "Expertise", description: "Mostre sua experiência" },
-    5: { title: "Resultados", description: "Demonstre seus resultados" },
-    6: { title: "Clientes", description: "Apresente seus clientes" },
-    7: { title: "Processo", description: "Explique seu processo" },
-    8: { title: "Chamada para Ação", description: "Configure o CTA" },
-    9: { title: "Depoimentos", description: "Adicione depoimentos" },
-    10: { title: "Investimento", description: "Configure preços" },
-    11: { title: "Entregas", description: "Defina entregas do projeto" },
-    12: { title: "Planos", description: "Configure planos de serviço" },
-    13: { title: "Termos", description: "Adicione termos e condições" },
-    14: { title: "FAQ", description: "Perguntas frequentes" },
-    15: { title: "Mensagem Final", description: "Finalize a proposta" },
-    16: { title: "Acesso", description: "Configure acesso à proposta" },
+    intro: {
+      title: "Introdução",
+      description: "Configure a apresentação inicial",
+    },
+    business: {
+      title: "Sobre o Negócio",
+      description: "Conte sobre sua empresa",
+    },
+    team: { title: "Sua Equipe", description: "Apresente seu time" },
+    expertise: {
+      title: "Suas Especializações",
+      description: "Mostre sua experiência",
+    },
+    results: {
+      title: "Seus Resultados",
+      description: "Demonstre seus resultados",
+    },
+    clients: { title: "Seus Clientes", description: "Apresente seus clientes" },
+    process: {
+      title: "Etapas do Processo",
+      description: "Explique seu processo",
+    },
+    cta: { title: "Chamada para Ação", description: "Configure o CTA" },
+    testimonials: { title: "Depoimentos", description: "Adicione depoimentos" },
+    investment: { title: "Investimento", description: "Configure preços" },
+    deliveries: {
+      title: "Entregas Incluídas",
+      description: "Defina entregas do projeto",
+    },
+    plans: {
+      title: "Planos e Valores",
+      description: "Configure planos de serviço",
+    },
+    terms: {
+      title: "Termos e Condições",
+      description: "Adicione termos e condições",
+    },
+    faq: { title: "Perguntas Frequentes", description: "Perguntas frequentes" },
+    finalMessage: {
+      title: "Mensagem Final",
+      description: "Finalize a proposta",
+    },
+    access: { title: "Acesso", description: "Configure acesso à proposta" },
   };
+
+  // Calcular o step atual baseado na posição na configuração do template
+  const currentStepIndex = Math.max(0, currentStep - 1);
+  const currentStepKey = stepOrder[currentStepIndex];
 
   return {
     currentStep,
-    stepInfo: stepInfo[currentStep as keyof typeof stepInfo] || {
+    currentStepIndex,
+    currentStepKey,
+    stepOrder,
+    stepInfo: stepInfo[currentStepKey as keyof typeof stepInfo] || {
       title: "Step",
       description: "Configuração",
     },
-    totalSteps: Object.keys(stepInfo).length,
+    totalSteps: stepOrder.length,
     isFirstStep: currentStep === 1,
-    isLastStep: currentStep === 16,
+    isLastStep: currentStep === stepOrder.length,
+    templateType,
   };
 };

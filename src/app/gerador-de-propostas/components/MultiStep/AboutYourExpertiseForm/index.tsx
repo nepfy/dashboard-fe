@@ -13,9 +13,20 @@ import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { Expertise } from "#/types/project";
 
 export default function AboutYourExpertiseForm() {
-  const { prevStep, nextStep, updateFormData, formData, currentStep } =
-    useProjectGenerator();
+  const {
+    prevStep,
+    nextStep,
+    updateFormData,
+    formData,
+    currentStep,
+    templateType,
+  } = useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Check template types to hide subtitle field
+  const isEssencialTemplate = templateType?.toLowerCase() === "essencial";
+  const isGridTemplate = templateType?.toLowerCase() === "grid";
+  const shouldHideSubtitle = isEssencialTemplate || isGridTemplate;
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrors({});
@@ -45,7 +56,8 @@ export default function AboutYourExpertiseForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideExpertiseSection) {
-      if (expertiseSubtitle.length < 90) {
+      // Only validate subtitle if it should be visible (not Essencial or Grid template)
+      if (!shouldHideSubtitle && expertiseSubtitle.length < 90) {
         newErrors.expertiseSubtitle =
           "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
       }
@@ -121,34 +133,37 @@ export default function AboutYourExpertiseForm() {
         )}
 
         <div className="py-6 space-y-6">
-          <div>
-            <label
-              className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center ${
-                hideSectionChecked ? "bg-white-neutral-light-300" : ""
-              }`}
-              style={{
-                backgroundColor: hideSectionChecked
-                  ? undefined
-                  : "rgba(107, 70, 245, 0.05)",
-              }}
-            >
-              Subtítulo
-            </label>
-            <TextAreaField
-              id="expertiseSubtitle"
-              textareaName="expertiseSubtitle"
-              placeholder="Descreva suas especialidades"
-              value={formData?.step4?.expertiseSubtitle || ""}
-              onChange={handleFieldChange("expertiseSubtitle")}
-              maxLength={120}
-              minLength={90}
-              rows={2}
-              showCharCount
-              error={errors.expertiseSubtitle}
-              disabled={hideSectionChecked}
-              allowOverText
-            />
-          </div>
+          {/* Only show subtitle field if not Essencial or Grid template */}
+          {!shouldHideSubtitle && (
+            <div>
+              <label
+                className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center ${
+                  hideSectionChecked ? "bg-white-neutral-light-300" : ""
+                }`}
+                style={{
+                  backgroundColor: hideSectionChecked
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+                }}
+              >
+                Subtítulo
+              </label>
+              <TextAreaField
+                id="expertiseSubtitle"
+                textareaName="expertiseSubtitle"
+                placeholder="Descreva suas especialidades"
+                value={formData?.step4?.expertiseSubtitle || ""}
+                onChange={handleFieldChange("expertiseSubtitle")}
+                maxLength={120}
+                minLength={90}
+                rows={2}
+                showCharCount
+                error={errors.expertiseSubtitle}
+                disabled={hideSectionChecked}
+                allowOverText
+              />
+            </div>
+          )}
 
           <div>
             <ExpertiseAccordion

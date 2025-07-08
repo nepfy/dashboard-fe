@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
+import { TextAreaField } from "#/components/Inputs";
 import InfoIcon from "#/components/icons/InfoIcon";
+import EyeOpened from "#/components/icons/EyeOpened";
+import EyeClosed from "#/components/icons/EyeClosed";
 
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
@@ -13,9 +16,26 @@ import { FAQ } from "#/types/project";
 import FAQAccordion from "./FAQAccordion";
 
 export default function FAQForm() {
-  const { prevStep, nextStep, updateFormData, formData, currentStep } =
-    useProjectGenerator();
+  const {
+    prevStep,
+    nextStep,
+    updateFormData,
+    formData,
+    currentStep,
+    templateType,
+  } = useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Check if template type is Prime or Essencial to show faqSubtitle
+  const isPrimeOrEssencial =
+    templateType?.toLowerCase() === "prime" ||
+    templateType?.toLowerCase() === "essencial";
+
+  // Get current field visibility state
+  const hideFaqSubtitle = formData?.step14?.hideFaqSubtitle || false;
+  const [fieldVisibility, setFieldVisibility] = useState({
+    faqSubtitle: !hideFaqSubtitle && isPrimeOrEssencial,
+  });
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isHidden = e.target.checked;
@@ -33,6 +53,48 @@ export default function FAQForm() {
     });
   };
 
+  const toggleFieldVisibility = (fieldName: keyof typeof fieldVisibility) => {
+    const newVisibility = !fieldVisibility[fieldName];
+
+    setFieldVisibility((prev) => ({
+      ...prev,
+      [fieldName]: newVisibility,
+    }));
+
+    if (fieldName === "faqSubtitle") {
+      updateFormData("step14", {
+        ...formData?.step14,
+        hideFaqSubtitle: !newVisibility,
+      });
+    }
+
+    if (!newVisibility) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        if (fieldName === "faqSubtitle") {
+          delete newErrors.faqSubtitle;
+        }
+        return newErrors;
+      });
+    }
+  };
+
+  const handleTextAreaChange =
+    (fieldName: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      updateFormData("step14", {
+        ...formData?.step14,
+        [fieldName]: e.target.value,
+      });
+
+      if (errors[fieldName]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fieldName];
+          return newErrors;
+        });
+      }
+    };
+
   const handleBack = () => {
     prevStep();
   };
@@ -42,11 +104,24 @@ export default function FAQForm() {
 
     const hideFaqSection = formData?.step14?.hideFaqSection || false;
     const faqList = formData?.step14?.faq || [];
+    const faqSubtitle = formData?.step14?.faqSubtitle || "";
     const newErrors: { [key: string]: string } = {};
 
     if (!hideFaqSection) {
       if (faqList.length === 0) {
         newErrors.faq = "Ao menos 1 item é requerido";
+      }
+
+      // Only validate faqSubtitle if it's visible (Prime or Essencial template)
+      if (fieldVisibility.faqSubtitle && isPrimeOrEssencial) {
+        if (!faqSubtitle.trim()) {
+          newErrors.faqSubtitle = "O subtítulo é obrigatório";
+        }
+
+        if (faqSubtitle.length < 70) {
+          newErrors.faqSubtitle =
+            "O subtítulo deve ter no mínimo 70 caracteres";
+        }
       }
     }
 
@@ -101,6 +176,45 @@ export default function FAQForm() {
         )}
 
         <div className="py-6">
+          {/* Only show Subtitle field if Prime or Essencial template */}
+          {isPrimeOrEssencial && !isAccordionDisabled && (
+            <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Subtítulo
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFieldVisibility("faqSubtitle");
+                  }}
+                  className="cursor-pointer"
+                >
+                  {fieldVisibility.faqSubtitle ? <EyeOpened /> : <EyeClosed />}
+                </button>
+              </label>
+              {fieldVisibility.faqSubtitle && (
+                <TextAreaField
+                  id="faqSubtitle"
+                  placeholder="Digite uma descrição complementar para a seção de perguntas frequentes"
+                  value={formData?.step14?.faqSubtitle || ""}
+                  onChange={handleTextAreaChange("faqSubtitle")}
+                  error={errors.faqSubtitle}
+                  disabled={hideFaqSubtitle}
+                  maxLength={115}
+                  minLength={70}
+                  showCharCount
+                  autoExpand={true}
+                  minHeight={60}
+                  maxHeight={200}
+                  allowOverText
+                />
+              )}
+            </div>
+          )}
+
           <div className="pt-4">
             <FAQAccordion
               faqList={formData?.step14?.faq || []}
@@ -131,7 +245,7 @@ export default function FAQForm() {
         >
           Avançar
         </button>
-        {errors.faq ? (
+        {errors.faq || errors.faqSubtitle ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

@@ -138,6 +138,8 @@ export async function POST(request: Request) {
       hidePlansSection: formData.step12?.hidePlansSection || false,
 
       hideFaqSection: formData.step14?.hideFaqSection || false,
+      hideFaqSubtitle: formData.step14.hideFaqSubtitle || false,
+      faqSubtitle: formData.step14.faqSubtitle || false,
 
       hideTermsSection: formData.step13?.hideTermsSection || false,
       termsTitle: formData.step13?.termsTitle,

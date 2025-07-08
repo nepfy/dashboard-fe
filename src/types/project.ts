@@ -138,9 +138,11 @@ export interface Project {
   expertise?: Expertise[];
 
   hideResultsSection?: boolean;
+  resultsSubtitle?: string;
   results?: Result[];
 
   hideClientsSection?: boolean;
+  clientSubtitle?: string;
   clients?: Client[];
 
   hideProcessSection?: boolean;
@@ -167,6 +169,8 @@ export interface Project {
   termsConditions?: TermsCondition[];
 
   hideFaqSection?: boolean;
+  hideFaqSubtitle?: boolean;
+  faqSubtitle?: string;
   faq?: FAQ[];
 
   hideFinalMessage?: boolean;
@@ -223,12 +227,14 @@ export interface Step4Data {
 
 export interface Step5Data {
   hideYourResultsSection?: boolean;
+  resultsSubtitle?: string;
   results?: Result[];
 }
 
 export interface Step6Data {
   hideClientsSection?: boolean;
   hideLogoField?: boolean;
+  clientSubtitle?: string;
   clients?: Client[];
 }
 
@@ -272,6 +278,8 @@ export interface Step13Data {
 
 export interface Step14Data {
   hideFaqSection?: boolean;
+  hideFaqSubtitle?: boolean;
+  faqSubtitle?: string;
   faq?: FAQ[];
 }
 

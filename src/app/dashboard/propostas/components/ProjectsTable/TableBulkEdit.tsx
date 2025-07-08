@@ -395,8 +395,8 @@ export default function TableBulkEdit({
         </div>
 
         <p className="text-white-neutral-light-500 text-sm px-6 py-3 sm:p-6">
-          Tem certeza que deseja duplicar este item? Uma cópia será criada
-          imediatamente.
+          Tem certeza que deseja duplicar este(s) item(ns)? Uma cópia será
+          criada imediatamente.
         </p>
 
         <div className="flex justify-start space-x-3 p-5 border-t border-t-white-neutral-light-300">

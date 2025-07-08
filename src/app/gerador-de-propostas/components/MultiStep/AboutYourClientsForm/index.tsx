@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
 import InfoIcon from "#/components/icons/InfoIcon";
+import { TextAreaField } from "#/components/Inputs";
 
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
@@ -14,9 +15,19 @@ import { Client } from "#/types/project";
 import ClientsAccordion from "./ClientsAccordion";
 
 export default function AboutYourClientsForm() {
-  const { prevStep, nextStep, updateFormData, formData, currentStep } =
-    useProjectGenerator();
+  const {
+    prevStep,
+    nextStep,
+    updateFormData,
+    formData,
+    currentStep,
+    templateType,
+  } = useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Check if template type is Essencial to show subtitle field
+  const isEssencialTemplate = templateType?.toLowerCase() === "essencial";
+  const shouldShowSubtitle = isEssencialTemplate;
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isHidden = e.target.checked;
@@ -35,6 +46,23 @@ export default function AboutYourClientsForm() {
     });
   };
 
+  const handleFieldChange =
+    (fieldName: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      updateFormData("step6", {
+        ...formData?.step6,
+        [fieldName]: e.target.value,
+      });
+
+      if (errors[fieldName]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fieldName];
+          return newErrors;
+        });
+      }
+    };
+
   const handleBack = () => {
     prevStep();
   };
@@ -42,10 +70,21 @@ export default function AboutYourClientsForm() {
   const handleNext = () => {
     setErrors({});
     const hideClientsSection = formData?.step6?.hideClientsSection || false;
+    const clientSubtitle = formData?.step6?.clientSubtitle || "";
     const clients = formData?.step6?.clients || [];
     const newErrors: { [key: string]: string } = {};
 
     if (!hideClientsSection) {
+      // Only validate subtitle if it should be visible (Essencial template)
+      if (shouldShowSubtitle) {
+        if (!clientSubtitle.trim()) {
+          newErrors.clientSubtitle = "O subtítulo é obrigatório";
+        } else if (clientSubtitle.length < 30) {
+          newErrors.clientSubtitle =
+            "O subtítulo deve ter pelo menos 30 caracteres";
+        }
+      }
+
       if (clients.length === 0) {
         newErrors.clients = "Ao menos 1 cliente é requerido";
       } else {
@@ -108,6 +147,38 @@ export default function AboutYourClientsForm() {
           </div>
         )}
 
+        {/* Only show subtitle field if Essencial template */}
+        {shouldShowSubtitle && (
+          <div className="py-4">
+            <label
+              className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center ${
+                isAccordionDisabled ? "bg-white-neutral-light-300" : ""
+              }`}
+              style={{
+                backgroundColor: isAccordionDisabled
+                  ? undefined
+                  : "rgba(107, 70, 245, 0.05)",
+              }}
+            >
+              Subtítulo
+            </label>
+            <TextAreaField
+              id="clientSubtitle"
+              textareaName="clientSubtitle"
+              placeholder="Descreva seus clientes"
+              value={formData?.step6?.clientSubtitle || ""}
+              onChange={handleFieldChange("clientSubtitle")}
+              maxLength={55}
+              minLength={30}
+              rows={2}
+              showCharCount
+              error={errors.clientSubtitle}
+              disabled={isAccordionDisabled}
+              allowOverText
+            />
+          </div>
+        )}
+
         <div className="py-6">
           <div>
             <ClientsAccordion
@@ -139,7 +210,7 @@ export default function AboutYourClientsForm() {
         >
           Avançar
         </button>
-        {errors.clients ? (
+        {errors.clients || errors.clientSubtitle ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

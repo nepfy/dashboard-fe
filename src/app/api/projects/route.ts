@@ -512,6 +512,8 @@ export async function POST(request: Request) {
 
       // Seção FAQ
       hideFaqSection: project.hideFaqSection,
+      hideFaqSubtitle: project.hideFaqSubtitle,
+      faqSubtitle: project.faqSubtitle,
 
       // Seção Mensagem Final
       hideFinalMessageSection: project.hideFinalMessageSection,

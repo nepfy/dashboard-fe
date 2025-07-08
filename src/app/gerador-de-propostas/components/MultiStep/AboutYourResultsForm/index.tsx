@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Eye } from "lucide-react";
 
 import InfoIcon from "#/components/icons/InfoIcon";
-
+import TextAreaField from "#/components/Inputs/TextAreaField";
 import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
 
@@ -14,9 +14,19 @@ import ResultsAccordion from "./ResultsAccordion";
 import { Result } from "#/types/project";
 
 export default function AboutYourResultsForm() {
-  const { prevStep, nextStep, updateFormData, formData, currentStep } =
-    useProjectGenerator();
+  const {
+    prevStep,
+    nextStep,
+    updateFormData,
+    formData,
+    currentStep,
+    templateType,
+  } = useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Check if template type is Prime to show subtitle field
+  const isPrimeTemplate = templateType?.toLowerCase() === "prime";
+  const shouldShowSubtitle = isPrimeTemplate;
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isHidden = e.target.checked;
@@ -35,6 +45,23 @@ export default function AboutYourResultsForm() {
     });
   };
 
+  const handleFieldChange =
+    (fieldName: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      updateFormData("step5", {
+        ...formData?.step5,
+        [fieldName]: e.target.value,
+      });
+
+      if (errors[fieldName]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fieldName];
+          return newErrors;
+        });
+      }
+    };
+
   const handleBack = () => {
     prevStep();
   };
@@ -44,10 +71,17 @@ export default function AboutYourResultsForm() {
 
     const hideYourResultsSection =
       formData?.step5?.hideYourResultsSection || false;
+    const resultsSubtitle = formData?.step5?.resultsSubtitle || "";
     const results = formData?.step5?.results || [];
     const newErrors: { [key: string]: string } = {};
 
     if (!hideYourResultsSection) {
+      // Only validate subtitle if it should be visible (Prime template)
+      if (shouldShowSubtitle && resultsSubtitle.length < 90) {
+        newErrors.resultsSubtitle =
+          "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
+      }
+
       // Validate results list
       if (results.length === 0) {
         newErrors.results = "Ao menos 1 resultado é requerido";
@@ -138,6 +172,38 @@ export default function AboutYourResultsForm() {
               <span className="font-bold">&quot;Seus resultados&quot;</span>{" "}
               está atualmente oculta da proposta.
             </p>
+          </div>
+        )}
+
+        {/* Only show subtitle field if Prime template */}
+        {shouldShowSubtitle && (
+          <div>
+            <label
+              className={`text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center ${
+                isAccordionDisabled ? "bg-white-neutral-light-300" : ""
+              }`}
+              style={{
+                backgroundColor: isAccordionDisabled
+                  ? undefined
+                  : "rgba(107, 70, 245, 0.05)",
+              }}
+            >
+              Subtítulo
+            </label>
+            <TextAreaField
+              id="resultsSubtitle"
+              textareaName="resultsSubtitle"
+              placeholder="Descreva seus resultados"
+              value={formData?.step5?.resultsSubtitle || ""}
+              onChange={handleFieldChange("resultsSubtitle")}
+              maxLength={120}
+              minLength={90}
+              rows={2}
+              showCharCount
+              error={errors.resultsSubtitle}
+              disabled={isAccordionDisabled}
+              allowOverText
+            />
           </div>
         )}
 
