@@ -29,6 +29,8 @@ export default function TableView({ viewMode }: TableViewProps) {
     updateMultipleProjectsStatus,
     duplicateProjects,
     fetchArchivedProjects,
+    refetch,
+    refetchArchived,
   } = useProjects(1, 10);
 
   useEffect(() => {
@@ -36,6 +38,11 @@ export default function TableView({ viewMode }: TableViewProps) {
       fetchArchivedProjects(1);
     }
   }, [viewMode, archivedProjectsData.length, fetchArchivedProjects]);
+
+  const handleRefresh = async () => {
+    await refetch();
+    await refetchArchived();
+  };
 
   const handleBulkStatusUpdate = async (
     projectIds: string[],
@@ -81,6 +88,7 @@ export default function TableView({ viewMode }: TableViewProps) {
 
       if (result.success) {
         console.log(`Successfully updated ${result.data} projects`);
+        await handleRefresh();
       } else {
         throw new Error(result.error || "Failed to update projects");
       }
@@ -140,6 +148,7 @@ export default function TableView({ viewMode }: TableViewProps) {
           onStatusUpdate={handleStatusUpdate}
           onBulkDuplicate={handleBulkDuplicate}
           viewMode={viewMode}
+          onRefresh={handleRefresh}
         />
 
         {currentPagination && currentPagination.totalPages > 1 && (

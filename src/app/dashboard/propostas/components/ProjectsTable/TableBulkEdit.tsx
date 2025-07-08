@@ -35,11 +35,9 @@ const statusMapping = {
   expirada: "expired",
   rejeitada: "rejected",
   arquivada: "archived",
-  // Add mappings for archived view restore options
   ativa: "active",
 } as const;
 
-// Options for active projects
 const activeOptions = [
   {
     value: "enviada",
@@ -71,7 +69,6 @@ const activeOptions = [
   },
 ];
 
-// Options for archived projects (restoration options)
 const archivedOptions = [
   {
     value: "ativa",
@@ -92,6 +89,7 @@ interface TableBulkEditProps {
   isUpdating?: boolean;
   isDuplicating?: boolean;
   viewMode?: "active" | "archived";
+  onRefresh?: () => Promise<void>;
 }
 
 export default function TableBulkEdit({
@@ -103,6 +101,7 @@ export default function TableBulkEdit({
   isUpdating = false,
   isDuplicating = false,
   viewMode = "active",
+  onRefresh,
 }: TableBulkEditProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
@@ -117,22 +116,18 @@ export default function TableBulkEdit({
     return () => clearTimeout(timer);
   }, []);
 
-  // Reset selected status when viewMode changes
   useEffect(() => {
     setSelectedStatus("");
   }, [viewMode]);
 
-  // Get options based on view mode
   const getOptions = () => {
     return viewMode === "archived" ? archivedOptions : activeOptions;
   };
 
-  // Get placeholder text based on view mode
   const getPlaceholderText = () => {
     return viewMode === "archived" ? "Restaurar para..." : "Atualizar status";
   };
 
-  // Get button text based on view mode
   const getUpdateButtonText = () => {
     if (isUpdating) {
       return viewMode === "archived" ? "Restaurando..." : "Atualizando...";
@@ -152,6 +147,10 @@ export default function TableBulkEdit({
         statusMapping[selectedStatus as keyof typeof statusMapping];
       await onStatusUpdate(apiStatus);
 
+      if (onRefresh) {
+        await onRefresh();
+      }
+
       setSelectedStatus("");
     } catch (error) {
       console.error("Failed to update status:", error);
@@ -168,6 +167,11 @@ export default function TableBulkEdit({
     try {
       setIsArchiving(true);
       await onStatusUpdate("archived");
+
+      if (onRefresh) {
+        await onRefresh();
+      }
+
       setSelectedStatus("");
       setShowArchiveModal(false);
     } catch (error) {
@@ -189,6 +193,11 @@ export default function TableBulkEdit({
   const handleDuplicateConfirm = async () => {
     try {
       await onDuplicateProjects(selectedProjectIds);
+
+      if (onRefresh) {
+        await onRefresh();
+      }
+
       setShowDuplicateModal(false);
     } catch (error) {
       console.error("Failed to duplicate projects:", error);

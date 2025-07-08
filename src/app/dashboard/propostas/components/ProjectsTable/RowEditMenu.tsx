@@ -22,9 +22,9 @@ interface RowEditMenuProps {
   viewMode?: "active" | "archived";
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onDuplicate?: (projectId: string) => Promise<void>;
-  onArchive?: (projectId: string) => Promise<void>;
   isUpdating?: boolean;
-  triggerElement?: HTMLElement | null; // Reference to the button that triggered the menu
+  triggerElement?: HTMLElement | null;
+  onRefresh?: () => Promise<void>;
 }
 
 type ProjectStatus =
@@ -70,9 +70,9 @@ export default function RowEditMenu({
   viewMode = "active",
   onStatusUpdate,
   onDuplicate,
-  onArchive,
   isUpdating = false,
   triggerElement,
+  onRefresh,
 }: RowEditMenuProps) {
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -98,33 +98,21 @@ export default function RowEditMenu({
 
     const triggerRect = triggerElement.getBoundingClientRect();
     const menuWidth = 280;
-    const menuHeight = showStatusPanel ? 390 : 280;
+    const menuHeight = showStatusPanel ? 390 : 320;
 
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    let top = triggerRect.bottom + 5;
+    let left = triggerRect.left;
 
-    let left = triggerRect.right - menuWidth;
-    let top = triggerRect.bottom + 4;
-
-    // Adjust if menu would go off the right edge
-    if (left < 8) {
-      left = 8;
+    if (left + menuWidth > window.innerWidth) {
+      left = triggerRect.right - menuWidth;
     }
 
-    // Adjust if menu would go off the left edge
-    if (left + menuWidth > viewportWidth - 8) {
-      left = viewportWidth - menuWidth - 8;
+    if (top + menuHeight > window.innerHeight) {
+      top = triggerRect.top - menuHeight - 5;
     }
 
-    // Adjust if menu would go off the bottom edge
-    if (top + menuHeight > viewportHeight - 8) {
-      top = triggerRect.top - menuHeight - 4;
-
-      // If still off-screen, position it at the top with some margin
-      if (top < 8) {
-        top = 8;
-      }
-    }
+    if (left < 5) left = 5;
+    if (top < 5) top = 5;
 
     setMenuPosition({ top, left });
   }, [triggerElement, isOpen, showStatusPanel]);
@@ -132,103 +120,45 @@ export default function RowEditMenu({
   useEffect(() => {
     if (isOpen) {
       calculatePosition();
-
-      // Recalculate on scroll and resize
-      const handleScroll = () => calculatePosition();
-      const handleResize = () => calculatePosition();
-
-      window.addEventListener("scroll", handleScroll, true);
-      window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", calculatePosition);
+      window.addEventListener("scroll", calculatePosition);
 
       return () => {
-        window.removeEventListener("scroll", handleScroll, true);
-        window.removeEventListener("resize", handleResize);
+        window.removeEventListener("resize", calculatePosition);
+        window.removeEventListener("scroll", calculatePosition);
       };
     }
   }, [isOpen, calculatePosition]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        // Also check if click is on the trigger element to prevent immediate reopening
-        if (triggerElement && !triggerElement.contains(event.target as Node)) {
-          // Only close if no modals are open
-          if (!showArchiveModal && !showDuplicateModal) {
-            onClose();
-          }
-        }
-      }
-    };
-
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        if (showArchiveModal) {
-          setShowArchiveModal(false);
-        } else if (showDuplicateModal) {
-          setShowDuplicateModal(false);
-        } else if (showStatusPanel) {
-          setShowStatusPanel(false);
-        } else {
-          onClose();
-        }
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        !triggerElement?.contains(event.target as Node)
+      ) {
+        onClose();
       }
     };
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleEscapeKey);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscapeKey);
-    };
-  }, [
-    isOpen,
-    onClose,
-    showStatusPanel,
-    showArchiveModal,
-    showDuplicateModal,
-    triggerElement,
-  ]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setShowStatusPanel(false);
-      setIsProcessing(false);
-      setShowArchiveModal(false);
-      setShowDuplicateModal(false);
-      setIsArchiving(false);
-      setIsDuplicating(false);
-      setIsCopyingLink(false);
-      setCopyLinkMessage(null);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (currentStatus) {
-      setSelectedStatus(currentStatus as ProjectStatus);
-    }
-  }, [currentStatus]);
-
-  if (!isOpen) {
-    return null;
-  }
+  }, [isOpen, onClose, triggerElement]);
 
   const handleEditClick = () => {
-    router.push(`/gerador-de-propostas?editId=${projectId}`);
+    router.push(`/gerador-de-propostas?id=${projectId}`);
     onClose();
   };
 
   const handleCopyLink = async () => {
-    setIsCopyingLink(true);
-    setCopyLinkMessage(null);
-
     try {
-      const result = await copyLinkWithCache(projectId);
+      setIsCopyingLink(true);
+      await copyLinkWithCache(projectId);
 
-      await navigator.clipboard.writeText(result.fullUrl);
-      const message = result.fromCache
+      const message = copyLinkWithCache.toString().includes("cache")
         ? "Link copiado novamente com sucesso!"
         : "Link copiado com sucesso!";
 
@@ -293,19 +223,28 @@ export default function RowEditMenu({
     setSelectedStatus((currentStatus as ProjectStatus) || "draft");
   };
 
-  // Archive modal handlers
   const handleArchiveConfirm = async () => {
-    if (onArchive) {
+    if (onStatusUpdate) {
       try {
         setIsArchiving(true);
-        await onArchive(projectId);
+
+        const targetStatus = viewMode === "archived" ? "active" : "archived";
+
+        await onStatusUpdate(projectId, targetStatus);
+
+        if (onRefresh) {
+          await onRefresh();
+        }
+
         setShowArchiveModal(false);
         onClose();
       } catch (error) {
-        console.error("Failed to archive/unarchive project:", error);
+        console.error("Failed to archive/restore project:", error);
       } finally {
         setIsArchiving(false);
       }
+    } else {
+      console.error("onStatusUpdate is not available");
     }
   };
 
@@ -318,6 +257,11 @@ export default function RowEditMenu({
       try {
         setIsDuplicating(true);
         await onDuplicate(projectId);
+
+        if (onRefresh) {
+          await onRefresh();
+        }
+
         setShowDuplicateModal(false);
         onClose();
       } catch (error) {
@@ -346,133 +290,139 @@ export default function RowEditMenu({
 
   return (
     <>
-      <Portal>
-        <div
-          ref={menuRef}
-          className="fixed shadow-lg border border-white-neutral-light-300 rounded-[12px] bg-white-neutral-light-100 z-50 min-w-[230px] sm:min-w-[280px]"
-          style={{
-            top: `${menuPosition.top}px`,
-            left: `${menuPosition.left}px`,
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
+      {!showArchiveModal && !showDuplicateModal && (
+        <Portal>
           <div
-            className={`relative ${showStatusPanel ? "h-[390px]" : "h-full"}`}
+            ref={menuRef}
+            className="fixed shadow-lg border border-white-neutral-light-300 rounded-[12px] bg-white-neutral-light-100 z-50 min-w-[230px] sm:min-w-[280px]"
+            style={{
+              top: `${menuPosition.top}px`,
+              left: `${menuPosition.left}px`,
+              display:
+                showArchiveModal || showDuplicateModal ? "none" : "block",
+            }}
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Main Menu */}
             <div
-              className={`${
-                showStatusPanel
-                  ? "opacity-0 pointer-events-none"
-                  : "opacity-100"
-              } transition-opacity duration-200`}
+              className={`relative ${showStatusPanel ? "h-[390px]" : "h-full"}`}
             >
-              <p className="font-medium text-white-neutral-light-900 px-4 py-4">
-                Opções
-              </p>
-              <div className="flex flex-col gap-1 cursor-pointer px-2">
-                <button
-                  onClick={() => handleMenuItemClick("update-status")}
-                  disabled={isMenuDisabled}
-                  className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
-                    isMenuDisabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white-neutral-light-300 cursor-pointer"
-                  }`}
-                >
-                  <UpdateIcon width="16" height="16" />
-                  {viewMode === "archived"
-                    ? "Restaurar Status"
-                    : "Atualizar Status"}
-                </button>
-
-                <button
-                  onClick={() => handleMenuItemClick("duplicate")}
-                  disabled={isMenuDisabled}
-                  className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
-                    isMenuDisabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white-neutral-light-300 cursor-pointer"
-                  }`}
-                >
-                  <CopyIcon width="16" height="16" />
-                  Duplicar
-                </button>
-
-                <button
-                  onClick={() => handleMenuItemClick("copy-link")}
-                  disabled={isMenuDisabled}
-                  className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
-                    isMenuDisabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white-neutral-light-300 cursor-pointer"
-                  }`}
-                >
-                  {isCopyingLink ? (
-                    <LoaderCircle className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <AnchorLinkIcon width="16" height="16" />
-                  )}
-                  Copiar Link
-                </button>
-
-                {copyLinkMessage && (
-                  <div
-                    className={`text-xs px-2 py-1 mx-2 rounded ${
-                      copyLinkMessage.includes("sucesso")
-                        ? "text-green-700 bg-green-100"
-                        : "text-red-700 bg-red-100"
+              {/* Main Menu */}
+              <div
+                className={`${
+                  showStatusPanel
+                    ? "opacity-0 pointer-events-none"
+                    : "opacity-100"
+                } transition-opacity duration-200`}
+              >
+                <p className="font-medium text-white-neutral-light-900 px-4 py-4">
+                  Opções
+                </p>
+                <div className="flex flex-col gap-1 cursor-pointer px-2">
+                  <button
+                    onClick={() => handleMenuItemClick("update-status")}
+                    disabled={isMenuDisabled}
+                    className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                      isMenuDisabled
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white-neutral-light-300 cursor-pointer"
                     }`}
                   >
-                    {copyLinkMessage}
-                  </div>
-                )}
+                    <UpdateIcon width="16" height="16" />
+                    {viewMode === "archived"
+                      ? "Restaurar Status"
+                      : "Atualizar Status"}
+                  </button>
 
-                <button
-                  onClick={() => handleMenuItemClick("edit")}
-                  disabled={isMenuDisabled}
-                  className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
-                    isMenuDisabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white-neutral-light-300 cursor-pointer"
-                  }`}
-                >
-                  <EditIcon width="16" height="16" />
-                  Editar
-                </button>
+                  <button
+                    onClick={() => handleMenuItemClick("duplicate")}
+                    disabled={isMenuDisabled}
+                    className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                      isMenuDisabled
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white-neutral-light-300 cursor-pointer"
+                    }`}
+                  >
+                    <CopyIcon width="16" height="16" />
+                    Duplicar
+                  </button>
 
-                <button
-                  onClick={() => handleMenuItemClick("archive")}
-                  disabled={isMenuDisabled}
-                  className={`text-left pb-4 pt-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 mb-2 transition-colors ${
-                    isMenuDisabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white-neutral-light-300 cursor-pointer"
-                  }`}
-                >
-                  <Archive width="16" height="16" />
-                  {getArchiveButtonText()}
-                </button>
+                  <button
+                    onClick={() => handleMenuItemClick("copy-link")}
+                    disabled={isMenuDisabled}
+                    className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                      isMenuDisabled
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-white-neutral-light-300 cursor-pointer"
+                    }`}
+                  >
+                    {isCopyingLink ? (
+                      <LoaderCircle className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <AnchorLinkIcon width="16" height="16" />
+                    )}
+                    Copiar Link
+                  </button>
+
+                  {copyLinkMessage && (
+                    <div
+                      className={`text-xs px-2 py-1 mx-2 rounded ${
+                        copyLinkMessage.includes("sucesso")
+                          ? "text-green-700 bg-green-100"
+                          : "text-red-700 bg-red-100"
+                      }`}
+                    >
+                      {copyLinkMessage}
+                    </div>
+                  )}
+
+                  {viewMode === "active" && (
+                    <button
+                      onClick={() => handleMenuItemClick("edit")}
+                      disabled={isMenuDisabled}
+                      className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                        isMenuDisabled
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      <EditIcon width="16" height="16" />
+                      Editar
+                    </button>
+                  )}
+
+                  {viewMode === "active" && (
+                    <button
+                      onClick={() => handleMenuItemClick("archive")}
+                      disabled={isMenuDisabled}
+                      className={`text-left pb-4 pt-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 mb-2 transition-colors ${
+                        isMenuDisabled
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      <Archive width="16" height="16" />
+                      {getArchiveButtonText()}
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Status Update Panel */}
-            <div
-              className={`absolute top-0 h-[350px] w-full bg-white-neutral-light-100 flex flex-col justify-between rounded-[12px] transition-opacity duration-200 ${
-                showStatusPanel
-                  ? "opacity-100 pointer-events-auto"
-                  : "opacity-0 pointer-events-none"
-              }`}
-            >
-              <div className="flex-1">
-                <p className="font-medium text-white-neutral-light-900 p-3 border-b border-white-neutral-light-300">
-                  {viewMode === "archived"
-                    ? "Restaurar status"
-                    : "Atualizar status"}
-                </p>
+              {/* Status Update Panel */}
+              <div
+                className={`absolute top-0 h-[350px] w-full bg-white-neutral-light-100 flex flex-col justify-between rounded-[12px] transition-opacity duration-200 ${
+                  showStatusPanel
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-0 pointer-events-none"
+                }`}
+              >
+                <div className="flex-1">
+                  <p className="font-medium text-white-neutral-light-900 p-3 border-b border-white-neutral-light-300">
+                    {viewMode === "archived"
+                      ? "Restaurar Status"
+                      : "Atualizar Status"}
+                  </p>
 
-                <div className="p-3 bg-white-neutral-light-100">
-                  <div className="space-y-2">
+                  <div className="px-3 py-4 space-y-3 max-h-[240px] overflow-y-auto">
                     {getStatusOptions().map((option) => (
                       <label
                         key={option.value}
@@ -491,7 +441,7 @@ export default function RowEditMenu({
                             setSelectedStatus(e.target.value as ProjectStatus)
                           }
                           disabled={isProcessing}
-                          className="w-4 h-4 text-primary-light-400 border-white-neutral-light-300 focus:ring-primary-light-400 focus:ring-2"
+                          className="w-4 h-4 text-primary-light-400 border-white-neutral-light-300"
                         />
                         <div className="flex items-center gap-2">
                           {getStatusBadge(option.value)}
@@ -500,37 +450,37 @@ export default function RowEditMenu({
                     ))}
                   </div>
                 </div>
-              </div>
 
-              <div className="p-3 flex items-center gap-2 border-t border-t-white-neutral-light-300 bg-white-neutral-light-50 rounded-b-[12px] bg-white-neutral-light-100">
-                <button
-                  onClick={handleStatusSave}
-                  disabled={isProcessing || !hasStatusChanged}
-                  className={`flex-1 h-[36px] text-sm font-medium text-white rounded-[var(--radius-s)] border border-primary-light-25 transition-colors ${
-                    isProcessing || !hasStatusChanged
-                      ? "bg-gray-400 cursor-not-allowed opacity-50"
-                      : "bg-primary-light-400 hover:bg-primary-light-500 cursor-pointer button-inner-inverse"
-                  }`}
-                >
-                  {isProcessing ? "Salvando..." : "Salvar"}
-                </button>
+                <div className="p-3 border-t border-white-neutral-light-300 flex gap-2">
+                  <button
+                    onClick={handleStatusSave}
+                    disabled={isProcessing || !hasStatusChanged}
+                    className={`flex-1 h-[36px] text-sm font-medium rounded-[var(--radius-s)] transition-colors ${
+                      isProcessing || !hasStatusChanged
+                        ? "bg-gray-400 cursor-not-allowed opacity-50"
+                        : "bg-primary-light-400 hover:bg-primary-light-500 cursor-pointer button-inner-inverse text-white-neutral-light-100"
+                    }`}
+                  >
+                    {isProcessing ? "Salvando..." : "Salvar"}
+                  </button>
 
-                <button
-                  onClick={handleStatusCancel}
-                  disabled={isProcessing}
-                  className={`flex-1 h-[36px] text-sm font-medium border rounded-[var(--radius-s)] border-white-neutral-light-300 button-inner transition-colors ${
-                    isProcessing
-                      ? "bg-white-neutral-light-100 opacity-50 cursor-not-allowed"
-                      : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200 cursor-pointer"
-                  }`}
-                >
-                  Cancelar
-                </button>
+                  <button
+                    onClick={handleStatusCancel}
+                    disabled={isProcessing}
+                    className={`flex-1 h-[36px] text-sm font-medium border rounded-[var(--radius-s)] border-white-neutral-light-300 button-inner transition-colors ${
+                      isProcessing
+                        ? "bg-white-neutral-light-100 opacity-50 cursor-not-allowed"
+                        : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200 cursor-pointer"
+                    }`}
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Portal>
+        </Portal>
+      )}
 
       {/* Archive Confirmation Modal */}
       <Modal
@@ -581,18 +531,6 @@ export default function RowEditMenu({
         <div className="flex justify-start space-x-3 p-6 border-t border-t-white-neutral-light-300">
           <button
             type="button"
-            onClick={handleArchiveCancel}
-            disabled={isArchiving}
-            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
-              isArchiving
-                ? "text-white border-white-neutral-light-300 cursor-not-allowed"
-                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
-            }`}
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
             onClick={handleArchiveConfirm}
             disabled={isArchiving}
             className={`px-4 py-2 text-sm font-medium text-white rounded-xs ${
@@ -609,6 +547,18 @@ export default function RowEditMenu({
             ) : (
               getArchiveButtonText()
             )}
+          </button>
+          <button
+            type="button"
+            onClick={handleArchiveCancel}
+            disabled={isArchiving}
+            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
+              isArchiving
+                ? "text-white border-white-neutral-light-300 cursor-not-allowed"
+                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+            }`}
+          >
+            Cancelar
           </button>
         </div>
       </Modal>
@@ -647,18 +597,6 @@ export default function RowEditMenu({
         <div className="flex justify-start space-x-3 p-6 border-t border-t-white-neutral-light-300">
           <button
             type="button"
-            onClick={handleDuplicateCancel}
-            disabled={isDuplicating}
-            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
-              isDuplicating
-                ? "text-gray-400 border-white-neutral-light-300 cursor-not-allowed"
-                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
-            }`}
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
             onClick={handleDuplicateConfirm}
             disabled={isDuplicating}
             className={`px-4 py-2 text-sm font-medium text-white rounded-xs ${
@@ -673,8 +611,20 @@ export default function RowEditMenu({
                 Duplicando...
               </div>
             ) : (
-              "Confirmar"
+              "Duplicar"
             )}
+          </button>
+          <button
+            type="button"
+            onClick={handleDuplicateCancel}
+            disabled={isDuplicating}
+            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
+              isDuplicating
+                ? "text-white border-white-neutral-light-300 cursor-not-allowed"
+                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+            }`}
+          >
+            Cancelar
           </button>
         </div>
       </Modal>

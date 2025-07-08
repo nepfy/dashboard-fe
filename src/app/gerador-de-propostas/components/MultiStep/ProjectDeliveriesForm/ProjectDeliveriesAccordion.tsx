@@ -201,7 +201,7 @@ export default function ProjectDeliveriesAccordion({
                     ⋮⋮
                   </div>
                   <span className="text-sm font-medium text-white-neutral-light-900">
-                    {service.title || `Entrega ${index + 1}`}
+                    {`Entrega ${index + 1}`}
                   </span>
                 </div>
               </div>

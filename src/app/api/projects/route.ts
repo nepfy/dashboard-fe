@@ -2,7 +2,20 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { eq, desc, count, isNotNull, and, inArray, ne } from "drizzle-orm";
-import { projectsTable } from "#/lib/db/schema/projects";
+import {
+  projectsTable,
+  projectTeamMembersTable,
+  projectExpertiseTable,
+  projectResultsTable,
+  projectClientsTable,
+  projectProcessStepsTable,
+  projectTestimonialsTable,
+  projectServicesTable,
+  projectPlansTable,
+  projectPlanDetailsTable,
+  projectTermsConditionsTable,
+  projectFaqTable,
+} from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 
 const VALID_STATUSES = [
@@ -399,7 +412,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate project ownership
     const isOwner = await validateProjectOwnership(projectIds, userId);
     if (!isOwner) {
       return NextResponse.json(
@@ -411,7 +423,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get the original projects to duplicate
+    // Buscar projetos originais com todos os dados relacionados
     const originalProjects = await db
       .select()
       .from(projectsTable)
@@ -429,18 +441,98 @@ export async function POST(request: Request) {
       );
     }
 
+    // Duplicar projetos principais com TODOS os campos
     const duplicatedProjects = originalProjects.map((project) => ({
+      // Campos básicos obrigatórios
       personId: project.personId,
       projectName: `${project.projectName} - Cópia`,
       clientName: project.clientName,
-      projectSentDate: null,
       projectValidUntil: project.projectValidUntil,
       projectStatus: "draft",
+
+      // Resetar campos específicos de envio/visualização
+      projectSentDate: null,
       projectVisualizationDate: null,
+
+      // Campos de template e configuração
+      templateType: project.templateType,
+      mainColor: project.mainColor,
+      companyName: project.companyName,
+      companyEmail: project.companyEmail,
+      ctaButtonTitle: project.ctaButtonTitle,
+      pageTitle: project.pageTitle,
+      pageSubtitle: project.pageSubtitle,
+      hidePageSubtitle: project.hidePageSubtitle,
+      services: project.services,
+      hideServices: project.hideServices,
+
+      // Seção Sobre Nós
+      hideAboutUsSection: project.hideAboutUsSection,
+      aboutUsTitle: project.aboutUsTitle,
+      aboutUsSubtitle1: project.aboutUsSubtitle1,
+      aboutUsSubtitle2: project.aboutUsSubtitle2,
+
+      // Seção Equipe
+      hideAboutYourTeamSection: project.hideAboutYourTeamSection,
+      ourTeamSubtitle: project.ourTeamSubtitle,
+
+      // Seção Expertise
+      hideExpertiseSection: project.hideExpertiseSection,
+      expertiseSubtitle: project.expertiseSubtitle,
+
+      // Seção Resultados
+      hideResultsSection: project.hideResultsSection,
+      resultsSubtitle: project.resultsSubtitle,
+
+      // Seção Clientes
+      hideClientsSection: project.hideClientsSection,
+
+      // Seção Processo
+      hideProcessSection: project.hideProcessSection,
+      hideProcessSubtitle: project.hideProcessSubtitle,
+      processSubtitle: project.processSubtitle,
+
+      // Seção CTA
+      hideCTASection: project.hideCTASection,
+      ctaBackgroundImage: project.ctaBackgroundImage,
+
+      // Seção Depoimentos
+      hideTestimonialsSection: project.hideTestimonialsSection,
+
+      // Seção Investimento
+      hideInvestmentSection: project.hideInvestmentSection,
+      investmentTitle: project.investmentTitle,
+
+      // Seção Serviços Inclusos
+      hideIncludedServicesSection: project.hideIncludedServicesSection,
+
+      // Seção Planos
+      hidePlansSection: project.hidePlansSection,
+
+      // Seção Termos
+      hideTermsSection: project.hideTermsSection,
+
+      // Seção FAQ
+      hideFaqSection: project.hideFaqSection,
+
+      // Seção Mensagem Final
+      hideFinalMessageSection: project.hideFinalMessageSection,
+      endMessageTitle: project.endMessageTitle,
+      endMessageTitle2: project.endMessageTitle2,
+      endMessageDescription: project.endMessageDescription,
+
+      // Campos de publicação
+      projectUrl: null,
+      pagePassword: project.pagePassword,
+      isPublished: false,
+      isProposalGenerated: project.isProposalGenerated,
+
+      // Timestamps
       created_at: new Date(),
       updated_at: new Date(),
     }));
 
+    // Inserir projetos duplicados
     const insertedProjects = await db
       .insert(projectsTable)
       .values(duplicatedProjects)
@@ -451,6 +543,250 @@ export async function POST(request: Request) {
         { success: false, error: "Falha ao duplicar os projetos" },
         { status: 500 }
       );
+    }
+
+    // Agora duplicar todas as tabelas relacionadas
+    for (let i = 0; i < originalProjects.length; i++) {
+      const originalProjectId = originalProjects[i].id;
+      const newProjectId = insertedProjects[i].id;
+
+      try {
+        // Duplicar membros da equipe
+        const teamMembers = await db
+          .select()
+          .from(projectTeamMembersTable)
+          .where(eq(projectTeamMembersTable.projectId, originalProjectId));
+
+        if (teamMembers.length > 0) {
+          const duplicatedTeamMembers = teamMembers.map((member) => ({
+            projectId: newProjectId,
+            name: member.name,
+            role: member.role,
+            photo: member.photo,
+            sortOrder: member.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db
+            .insert(projectTeamMembersTable)
+            .values(duplicatedTeamMembers);
+        }
+
+        // Duplicar expertise
+        const expertise = await db
+          .select()
+          .from(projectExpertiseTable)
+          .where(eq(projectExpertiseTable.projectId, originalProjectId));
+
+        if (expertise.length > 0) {
+          const duplicatedExpertise = expertise.map((exp) => ({
+            projectId: newProjectId,
+            icon: exp.icon,
+            title: exp.title,
+            description: exp.description,
+            sortOrder: exp.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db.insert(projectExpertiseTable).values(duplicatedExpertise);
+        }
+
+        // Duplicar resultados
+        const results = await db
+          .select()
+          .from(projectResultsTable)
+          .where(eq(projectResultsTable.projectId, originalProjectId));
+
+        if (results.length > 0) {
+          const duplicatedResults = results.map((result) => ({
+            projectId: newProjectId,
+            photo: result.photo,
+            client: result.client,
+            subtitle: result.subtitle,
+            investment: result.investment,
+            roi: result.roi,
+            sortOrder: result.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db.insert(projectResultsTable).values(duplicatedResults);
+        }
+
+        // Duplicar clientes
+        const clients = await db
+          .select()
+          .from(projectClientsTable)
+          .where(eq(projectClientsTable.projectId, originalProjectId));
+
+        if (clients.length > 0) {
+          const duplicatedClients = clients.map((client) => ({
+            projectId: newProjectId,
+            logo: client.logo,
+            name: client.name,
+            hideLogo: client.hideLogo,
+            hideClientName: client.hideClientName,
+            sortOrder: client.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db.insert(projectClientsTable).values(duplicatedClients);
+        }
+
+        // Duplicar etapas do processo
+        const processSteps = await db
+          .select()
+          .from(projectProcessStepsTable)
+          .where(eq(projectProcessStepsTable.projectId, originalProjectId));
+
+        if (processSteps.length > 0) {
+          const duplicatedProcessSteps = processSteps.map((step) => ({
+            projectId: newProjectId,
+            stepCounter: step.stepCounter,
+            stepName: step.stepName,
+            description: step.description,
+            sortOrder: step.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db
+            .insert(projectProcessStepsTable)
+            .values(duplicatedProcessSteps);
+        }
+
+        // Duplicar depoimentos
+        const testimonials = await db
+          .select()
+          .from(projectTestimonialsTable)
+          .where(eq(projectTestimonialsTable.projectId, originalProjectId));
+
+        if (testimonials.length > 0) {
+          const duplicatedTestimonials = testimonials.map((testimonial) => ({
+            projectId: newProjectId,
+            testimonial: testimonial.testimonial,
+            name: testimonial.name,
+            role: testimonial.role,
+            photo: testimonial.photo,
+            sortOrder: testimonial.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db
+            .insert(projectTestimonialsTable)
+            .values(duplicatedTestimonials);
+        }
+
+        // Duplicar serviços
+        const services = await db
+          .select()
+          .from(projectServicesTable)
+          .where(eq(projectServicesTable.projectId, originalProjectId));
+
+        if (services.length > 0) {
+          const duplicatedServices = services.map((service) => ({
+            projectId: newProjectId,
+            title: service.title,
+            description: service.description,
+            sortOrder: service.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db.insert(projectServicesTable).values(duplicatedServices);
+        }
+
+        // Duplicar planos e seus detalhes
+        const plans = await db
+          .select()
+          .from(projectPlansTable)
+          .where(eq(projectPlansTable.projectId, originalProjectId));
+
+        if (plans.length > 0) {
+          const duplicatedPlans = plans.map((plan) => ({
+            projectId: newProjectId,
+            title: plan.title,
+            description: plan.description,
+            isBestOffer: plan.isBestOffer,
+            price: plan.price,
+            pricePeriod: plan.pricePeriod,
+            ctaButtonTitle: plan.ctaButtonTitle,
+            sortOrder: plan.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+
+          const insertedPlans = await db
+            .insert(projectPlansTable)
+            .values(duplicatedPlans)
+            .returning();
+
+          // Para cada plano inserido, duplicar seus detalhes
+          for (let j = 0; j < plans.length; j++) {
+            const originalPlanId = plans[j].id;
+            const newPlanId = insertedPlans[j].id;
+
+            const planDetails = await db
+              .select()
+              .from(projectPlanDetailsTable)
+              .where(eq(projectPlanDetailsTable.planId, originalPlanId));
+
+            if (planDetails.length > 0) {
+              const duplicatedPlanDetails = planDetails.map((detail) => ({
+                planId: newPlanId,
+                description: detail.description,
+                sortOrder: detail.sortOrder,
+                created_at: new Date(),
+                updated_at: new Date(),
+              }));
+              await db
+                .insert(projectPlanDetailsTable)
+                .values(duplicatedPlanDetails);
+            }
+          }
+        }
+
+        // Duplicar termos e condições
+        const termsConditions = await db
+          .select()
+          .from(projectTermsConditionsTable)
+          .where(eq(projectTermsConditionsTable.projectId, originalProjectId));
+
+        if (termsConditions.length > 0) {
+          const duplicatedTermsConditions = termsConditions.map((term) => ({
+            projectId: newProjectId,
+            title: term.title,
+            description: term.description,
+            sortOrder: term.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db
+            .insert(projectTermsConditionsTable)
+            .values(duplicatedTermsConditions);
+        }
+
+        // Duplicar FAQ
+        const faq = await db
+          .select()
+          .from(projectFaqTable)
+          .where(eq(projectFaqTable.projectId, originalProjectId));
+
+        if (faq.length > 0) {
+          const duplicatedFaq = faq.map((faqItem) => ({
+            projectId: newProjectId,
+            question: faqItem.question,
+            answer: faqItem.answer,
+            sortOrder: faqItem.sortOrder,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }));
+          await db.insert(projectFaqTable).values(duplicatedFaq);
+        }
+      } catch (relatedDataError) {
+        console.error(
+          `Erro ao duplicar dados relacionados do projeto ${originalProjectId}:`,
+          relatedDataError
+        );
+        // Continue com outros projetos mesmo se houver erro em um
+      }
     }
 
     return NextResponse.json({

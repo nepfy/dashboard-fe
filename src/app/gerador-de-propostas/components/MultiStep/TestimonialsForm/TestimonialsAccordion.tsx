@@ -312,7 +312,7 @@ export default function TestimonialsAccordion({
                       ⋮⋮
                     </div>
                     <span className="text-sm font-medium text-white-neutral-light-900">
-                      {testimonial.name}
+                      {`Depoimento ${index + 1}`}
                     </span>
                   </div>
                 </div>

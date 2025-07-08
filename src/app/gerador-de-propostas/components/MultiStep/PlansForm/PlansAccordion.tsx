@@ -407,7 +407,7 @@ export default function PlansAccordion({
                     ⋮⋮
                   </div>
                   <span className="text-sm font-medium text-white-neutral-light-900">
-                    {plan.title || `Plano ${index + 1}`}
+                    {`Plano ${index + 1}`}
                   </span>
                   {plan.isBestOffer && (
                     <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-md text-xs">
@@ -687,7 +687,7 @@ export default function PlansAccordion({
                               ⋮⋮
                             </div>
                             <span className="text-sm font-medium text-white-neutral-light-900">
-                              {item.description || `Item ${itemIndex + 1}`}
+                              {`Item ${itemIndex + 1}`}
                             </span>
                           </div>
                         </div>

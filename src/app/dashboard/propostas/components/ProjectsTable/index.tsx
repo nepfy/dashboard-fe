@@ -21,6 +21,7 @@ interface EnhancedTableProps extends TableProps {
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
   viewMode?: "active" | "archived";
+  onRefresh?: () => Promise<void>;
 }
 
 interface CopyLinkIconProps {
@@ -117,6 +118,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   onStatusUpdate,
   onBulkDuplicate,
   viewMode = "active",
+  onRefresh,
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -224,19 +226,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
     }
   };
 
-  const handleRowArchive = async (projectId: string) => {
-    if (onStatusUpdate) {
-      try {
-        const newStatus = viewMode === "archived" ? "draft" : "archived";
-        await onStatusUpdate(projectId, newStatus);
-        setOpenMenuRowId(null);
-        setMenuTriggerElement(null);
-      } catch (error) {
-        console.error("Falha ao arquivar/desarquivar proposta:", error);
-      }
-    }
-  };
-
   const isOperationInProgress = isUpdating || isDuplicating;
   const showBulkEdit = selectedRows.size > 0;
 
@@ -262,6 +251,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           isUpdating={isUpdating}
           isDuplicating={isDuplicating}
           viewMode={viewMode}
+          onRefresh={onRefresh}
         />
       )}
 
@@ -339,7 +329,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         title={row.clientName}
                       >
                         {row.clientName}
-                        {/* MODIFICADO: Substituído por componente com cache */}
                         <CopyLinkIcon
                           projectId={row.id}
                           isSelected={selectedRows.has(row.id)}
@@ -412,9 +401,9 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           viewMode={viewMode}
           onStatusUpdate={handleRowStatusUpdate}
           onDuplicate={handleRowDuplicate}
-          onArchive={handleRowArchive}
           isUpdating={isUpdating}
           triggerElement={menuTriggerElement}
+          onRefresh={onRefresh}
         />
       )}
     </div>
