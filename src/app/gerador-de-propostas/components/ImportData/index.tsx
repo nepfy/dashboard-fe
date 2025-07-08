@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { LoaderCircle, ArrowLeft } from "lucide-react";
 import Modal from "#/components/Modal";
@@ -199,10 +200,25 @@ export default function ImportDataModal({
 
       const projectData = await fetchProjectData(selectedProject);
 
+      const {
+        id,
+        clientName,
+        projectName,
+        projectSentDate,
+        projectValidUntil,
+        projectStatus,
+        projectVisualizationDate,
+        projectUrl,
+        pagePassword,
+        ...dataToImport
+      } = projectData;
+
       const updatedProjectData = {
-        ...projectData,
-        clientName: clientName.trim(),
-        projectName: projectName.trim(),
+        ...dataToImport,
+        clientName: formData?.step1?.clientName,
+        projectName: formData?.step1?.projectName,
+        mainColor: formData?.step1?.mainColor,
+        templateType: formData?.step1?.templateType,
       };
 
       updateFormData("step1", {

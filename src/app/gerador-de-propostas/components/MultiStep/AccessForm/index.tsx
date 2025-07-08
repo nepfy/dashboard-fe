@@ -431,14 +431,7 @@ export default function AccessForm() {
                      disabled:opacity-50 disabled:cursor-not-allowed
                      flex items-center justify-center gap-2"
         >
-          {isFinishing ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              Finalizando
-            </>
-          ) : (
-            "Finalizar"
-          )}
+          {isFinishing ? "Finalizando" : "Finalizar"}
         </button>
         {errors?.general || errors?.pagePassword || errors?.pageUrl ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
