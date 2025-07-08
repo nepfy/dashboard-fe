@@ -82,6 +82,9 @@ export const projectsTable = pgTable("projects", {
   hideFaqSection: boolean("hide_faq_section").default(false),
 
   hideFinalMessageSection: boolean("hide_final_message_section").default(false),
+  hideFinalMessageSubtitle: boolean("hide_final_message_subtitle").default(
+    false
+  ),
   endMessageTitle: varchar("end_message_title", { length: 255 }),
   endMessageTitle2: varchar("end_message_title_2", { length: 255 }),
   endMessageDescription: text("end_message_description"),

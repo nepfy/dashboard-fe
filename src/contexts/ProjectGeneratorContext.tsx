@@ -323,7 +323,7 @@ export function ProjectGeneratorProvider({
     // Step 15 - End message
     safeUpdate("step15", {
       hideFinalMessage: projectData.hideFinalMessage || false,
-      hideFinalMessageSubtitle: projectData.hideFinalMessageSubtitle || false,
+      hideFinalMessageSubtitle: projectData.hideFinalMessageSubtitle,
       endMessageTitle: projectData.endMessageTitle,
       endMessageTitle2: projectData.endMessageTitle2,
       endMessageDescription: projectData.endMessageDescription,

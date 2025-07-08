@@ -515,6 +515,7 @@ export async function POST(request: Request) {
 
       // Seção Mensagem Final
       hideFinalMessageSection: project.hideFinalMessageSection,
+      hideFinalMessageSubtitle: project.hideFinalMessageSubtitle,
       endMessageTitle: project.endMessageTitle,
       endMessageTitle2: project.endMessageTitle2,
       endMessageDescription: project.endMessageDescription,

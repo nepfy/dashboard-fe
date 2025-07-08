@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, Eye } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import InfoIcon from "#/components/icons/InfoIcon";
 import EyeOpened from "#/components/icons/EyeOpened";
@@ -18,7 +18,16 @@ export default function FinalMessageForm() {
     useProjectGenerator();
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [subtitleVisible, setSubtitleVisible] = useState(true);
+
+  // Initialize subtitleVisible based on formData
+  const [subtitleVisible, setSubtitleVisible] = useState(
+    !formData?.step15?.hideFinalMessageSubtitle
+  );
+
+  // Sync subtitleVisible with formData when it changes
+  useEffect(() => {
+    setSubtitleVisible(!formData?.step15?.hideFinalMessageSubtitle);
+  }, [formData?.step15?.hideFinalMessageSubtitle]);
 
   const handleBack = () => {
     prevStep();
@@ -122,7 +131,6 @@ export default function FinalMessageForm() {
     if (isFormDisabled) return;
 
     const newVisibility = !subtitleVisible;
-    setSubtitleVisible(newVisibility);
 
     updateFormData("step15", {
       ...formData?.step15,
@@ -152,6 +160,11 @@ export default function FinalMessageForm() {
       return "";
     }
   };
+
+  console.log(
+    "formData.step15?.hideFinalMessageSubtitle ",
+    formData.step15?.hideFinalMessageSubtitle
+  );
 
   const isFormDisabled = formData?.step15?.hideFinalMessage || false;
   const hasErrors = Object.keys(errors).length > 0;

@@ -176,6 +176,13 @@
       "when": 1751990975985,
       "tag": "0024_old_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1751994697922,
+      "tag": "0025_burly_the_initiative",
+      "breakpoints": true
     }
   ]
 }

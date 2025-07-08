@@ -25,12 +25,10 @@ export default function ImportDataModal({
 }: ImportDataModalProps) {
   const { updateFormData, formData } = useProjectGenerator();
 
-  // Step management - if in edit mode, stay on initial step
   const [currentStep, setCurrentStep] = useState<
     "initial" | "import-choice" | "project-selection"
   >("initial");
 
-  // Initial form data - populate from existing data if in edit mode
   const [clientName, setClientName] = useState(
     isEditMode ? formData?.step1?.clientName || "" : ""
   );
@@ -41,7 +39,6 @@ export default function ImportDataModal({
     [key: string]: string;
   }>({});
 
-  // Import functionality state
   const [selectedProject, setSelectedProject] = useState("");
   const [projectsList, setProjectsList] = useState<ProjectProps[]>([]);
   const [hasExistingProjects, setHasExistingProjects] = useState<
@@ -50,19 +47,28 @@ export default function ImportDataModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingEditData, setIsLoadingEditData] = useState(isEditMode);
 
-  // Check if user has existing projects when component mounts (only if not in edit mode)
   useEffect(() => {
     if (!isEditMode) {
       checkExistingProjects();
     }
   }, [isEditMode]);
 
-  // Update local state when formData changes in edit mode
   useEffect(() => {
     if (isEditMode) {
-      setClientName(formData?.step1?.clientName || "");
-      setProjectName(formData?.step1?.projectName || "");
+      const hasData =
+        formData?.step1?.clientName && formData?.step1?.projectName;
+
+      if (hasData) {
+        setClientName(formData?.step1?.clientName || "");
+        setProjectName(formData?.step1?.projectName || "");
+        setIsLoadingEditData(false);
+      } else {
+        // Still waiting for data to load
+        setIsLoadingEditData(true);
+      }
     }
   }, [formData?.step1?.clientName, formData?.step1?.projectName, isEditMode]);
 
@@ -126,8 +132,7 @@ export default function ImportDataModal({
     }
   };
 
-  // Handle initial form submission
-  const handleInitialFormSubmit = () => {
+  const handleInitialFormSubmit = async () => {
     const errors: { [key: string]: string } = {};
 
     if (!clientName.trim()) {
@@ -143,7 +148,12 @@ export default function ImportDataModal({
       return;
     }
 
-    // Save the client and project names to form data
+    if (isEditMode) {
+      setIsSaving(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+
     updateFormData("step1", {
       ...formData?.step1,
       clientName: clientName.trim(),
@@ -152,13 +162,12 @@ export default function ImportDataModal({
 
     setInitialFormErrors({});
 
-    // If in edit mode, just close the modal after updating
     if (isEditMode) {
+      setIsSaving(false);
       onClose?.();
       return;
     }
 
-    // If not in edit mode, proceed with normal flow
     if (hasExistingProjects === false) {
       handleCreateNewClick();
     } else {
@@ -172,7 +181,6 @@ export default function ImportDataModal({
   };
 
   const handleCreateNewClick = () => {
-    // The form data has already been saved in handleInitialFormSubmit
     onCreateNew?.();
     onClose?.();
   };
@@ -191,14 +199,12 @@ export default function ImportDataModal({
 
       const projectData = await fetchProjectData(selectedProject);
 
-      // Update the imported project data with the initial form data
       const updatedProjectData = {
         ...projectData,
         clientName: clientName.trim(),
         projectName: projectName.trim(),
       };
 
-      // Also update the form data with imported project info
       updateFormData("step1", {
         clientName: clientName.trim(),
         projectName: projectName.trim(),
@@ -229,10 +235,9 @@ export default function ImportDataModal({
     }
   };
 
-  // Função para determinar o título do modal baseado no step, edit mode e se há projetos existentes
   const getModalTitle = () => {
     if (isEditMode) {
-      return "Editar Identificação do Projeto";
+      return "Identificação do Projeto";
     }
     if (currentStep === "initial") {
       return "Como você quer identificar essa proposta?";
@@ -240,7 +245,6 @@ export default function ImportDataModal({
     return "Criar nova proposta!";
   };
 
-  // Função para determinar a descrição no step inicial
   const getInitialStepDescription = () => {
     if (isEditMode) {
       return (
@@ -280,77 +284,105 @@ export default function ImportDataModal({
       boldTitle
       footer={false}
       closeOnClickOutside={false}
-      showCloseButton={!isImporting}
+      showCloseButton={
+        !isImporting && !isSaving && !(isEditMode && isLoadingEditData)
+      }
       disableClose
     >
       {/* Initial Step - Client and Project Name */}
       {currentStep === "initial" && (
         <>
-          <div className="p-6">
-            <p className="text-white-neutral-light-900 text-sm mb-8">
-              {getInitialStepDescription()}
-            </p>
-
-            <div className="space-y-4">
-              <TextField
-                label="Nome do Cliente"
-                inputName="clientName"
-                id="clientName"
-                type="text"
-                placeholder="Digite o nome do cliente"
-                value={clientName}
-                onChange={(e) => {
-                  setClientName(e.target.value);
-                  if (initialFormErrors.clientName) {
-                    setInitialFormErrors((prev) => {
-                      const newErrors = { ...prev };
-                      delete newErrors.clientName;
-                      return newErrors;
-                    });
-                  }
-                }}
-                error={initialFormErrors.clientName}
-              />
-
-              <TextField
-                label="Nome do Projeto"
-                inputName="projectName"
-                id="projectName"
-                type="text"
-                placeholder="Digite o nome do projeto"
-                value={projectName}
-                onChange={(e) => {
-                  setProjectName(e.target.value);
-                  if (initialFormErrors.projectName) {
-                    setInitialFormErrors((prev) => {
-                      const newErrors = { ...prev };
-                      delete newErrors.projectName;
-                      return newErrors;
-                    });
-                  }
-                }}
-                error={initialFormErrors.projectName}
-              />
+          {/* Show loader while waiting for edit data to load */}
+          {isEditMode && isLoadingEditData ? (
+            <div className="flex items-center justify-center h-[200px] p-6">
+              <LoaderCircle className="animate-spin text-primary-light-400" />
+              <span className="ml-2 text-white-neutral-light-500">
+                Carregando dados do projeto...
+              </span>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="p-6">
+                <p className="text-white-neutral-light-900 text-sm mb-8">
+                  {getInitialStepDescription()}
+                </p>
 
-          <div className="flex justify-start p-6 border-t border-t-white-neutral-light-300">
-            <button
-              type="button"
-              onClick={handleInitialFormSubmit}
-              className="w-full sm:w-[75px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
-            >
-              {isEditMode
-                ? "Salvar"
-                : hasExistingProjects === false
-                ? "Criar"
-                : "Salvar"}
-            </button>
-          </div>
+                <div className="space-y-4">
+                  <TextField
+                    label="Nome do Cliente"
+                    inputName="clientName"
+                    id="clientName"
+                    type="text"
+                    placeholder="Digite o nome do cliente"
+                    value={clientName}
+                    onChange={(e) => {
+                      setClientName(e.target.value);
+                      if (initialFormErrors.clientName) {
+                        setInitialFormErrors((prev) => {
+                          const newErrors = { ...prev };
+                          delete newErrors.clientName;
+                          return newErrors;
+                        });
+                      }
+                    }}
+                    error={initialFormErrors.clientName}
+                    disabled={isSaving}
+                  />
+
+                  <TextField
+                    label="Nome do Projeto"
+                    inputName="projectName"
+                    id="projectName"
+                    type="text"
+                    placeholder="Digite o nome do projeto"
+                    value={projectName}
+                    onChange={(e) => {
+                      setProjectName(e.target.value);
+                      if (initialFormErrors.projectName) {
+                        setInitialFormErrors((prev) => {
+                          const newErrors = { ...prev };
+                          delete newErrors.projectName;
+                          return newErrors;
+                        });
+                      }
+                    }}
+                    error={initialFormErrors.projectName}
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-start p-6 border-t border-t-white-neutral-light-300">
+                <button
+                  type="button"
+                  onClick={handleInitialFormSubmit}
+                  disabled={isSaving}
+                  className={`w-full sm:w-[95px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs cursor-pointer button-inner-inverse ${
+                    isSaving
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-primary-light-500 hover:bg-blue-700"
+                  }`}
+                >
+                  {isSaving ? (
+                    <div className="flex items-center justify-center">
+                      <LoaderCircle className="w-4 h-4 animate-spin mr-1" />
+                      {isEditMode ? "Salvando..." : "Criando..."}
+                    </div>
+                  ) : isEditMode ? (
+                    "Salvar"
+                  ) : hasExistingProjects === false ? (
+                    "Criar"
+                  ) : (
+                    "Salvar"
+                  )}
+                </button>
+              </div>
+            </>
+          )}
         </>
       )}
 
-      {/* Import Choice Step - Só aparece se houver projetos existentes e não estiver em edit mode */}
+      {/* Import Choice Step */}
       {currentStep === "import-choice" &&
         hasExistingProjects &&
         !isEditMode && (
@@ -425,7 +457,7 @@ export default function ImportDataModal({
           </>
         )}
 
-      {/* Project Selection Step - Só aparece se não estiver em edit mode */}
+      {/* Project Selection Step */}
       {currentStep === "project-selection" && !isEditMode && (
         <>
           <div className="p-6">

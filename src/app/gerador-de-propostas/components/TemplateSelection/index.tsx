@@ -277,7 +277,7 @@ export default function TemplateSelection({
   return (
     <div className="w-full lg:h-full lg:flex justify-center items-center lg:px-7 lg:py-4">
       {/* Desktop View */}
-      <div className="hidden lg:flex flex-wrap items-end lg:justify-center xl:justify-start gap-4 max-w-[1100px] h-full">
+      <div className="hidden lg:flex flex-wrap items-end xl:items-center lg:justify-center xl:justify-start gap-4 max-w-[1100px] h-full xl:h-auto">
         {templates.map((template) => (
           <TemplateCard
             key={template.title}

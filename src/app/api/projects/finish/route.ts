@@ -144,6 +144,7 @@ export async function POST(request: Request) {
 
       hideFinalMessageSection:
         formData.step15?.hideFinalMessageSection || false,
+      hideFinalMessageSubtitle: formData.step15?.hideFinalMessageSubtitle,
       endMessageTitle: formData.step15?.endMessageTitle,
       endMessageTitle2: formData.step15?.endMessageTitle2,
       endMessageDescription: formData.step15?.endMessageDescription,

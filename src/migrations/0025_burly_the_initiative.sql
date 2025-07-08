@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "hide_final_message_subtitle" boolean DEFAULT false;
