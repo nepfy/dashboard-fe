@@ -147,12 +147,12 @@ export async function POST(request: Request) {
       endMessageTitle: formData.step15?.endMessageTitle,
       endMessageTitle2: formData.step15?.endMessageTitle2,
       endMessageDescription: formData.step15?.endMessageDescription,
+      projectValidUntil: formData.step15?.projectValidUntil
+        ? new Date(formData.step15.projectValidUntil)
+        : null,
 
       projectUrl: formData.step16?.pageUrl,
       pagePassword: formData.step16?.pagePassword,
-      projectValidUntil: formData.step16?.projectValidUntil
-        ? new Date(formData.step16.projectValidUntil)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 
       projectStatus: "draft",
       isProposalGenerated: true,

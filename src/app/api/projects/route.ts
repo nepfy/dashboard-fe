@@ -441,9 +441,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Duplicar projetos principais com TODOS os campos
     const duplicatedProjects = originalProjects.map((project) => ({
-      // Campos básicos obrigatórios
       personId: project.personId,
       projectName: `${project.projectName} - Cópia`,
       clientName: project.clientName,
@@ -785,7 +783,6 @@ export async function POST(request: Request) {
           `Erro ao duplicar dados relacionados do projeto ${originalProjectId}:`,
           relatedDataError
         );
-        // Continue com outros projetos mesmo se houver erro em um
       }
     }
 

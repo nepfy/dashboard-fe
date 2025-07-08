@@ -19,7 +19,7 @@ export interface ProjectsDataProps {
     | "draft"
     | "expired"
     | "archived";
-  projectValidUntil?: string;
+  projectValidUntil?: Date | string;
   projectVisualizationDate?: string;
   projectUrl?: string; // Adicionar campo projectUrl
   state?: string;

@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ALTER COLUMN "project_valid_until" DROP NOT NULL;

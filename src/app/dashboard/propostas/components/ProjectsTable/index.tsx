@@ -354,7 +354,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         height="16"
                         className="inline mr-1"
                       />
-                      {formatValidityDate(row.projectValidUntil)}
+                      {formatValidityDate(
+                        row.projectValidUntil instanceof Date
+                          ? row.projectValidUntil.toISOString()
+                          : row.projectValidUntil
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
                       {getStatusBadge(row.projectStatus)}

@@ -23,7 +23,7 @@ export const projectsTable = pgTable("projects", {
   projectSentDate: timestamp("project_sent_date", { mode: "date" }),
   projectValidUntil: timestamp("project_valid_until", {
     mode: "date",
-  }).notNull(),
+  }),
   projectStatus: varchar("project_status", { length: 255 }).notNull(),
   projectVisualizationDate: timestamp("project_visualization_date", {
     mode: "date",

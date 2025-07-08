@@ -134,8 +134,6 @@ export default function AccessForm() {
 
       const result = await finishProject();
 
-      console.log("result", result);
-
       const projectName = formData?.step1?.projectName || "Nova Proposta";
 
       const baseUrl = `/dashboard?success=true&project=${encodeURIComponent(

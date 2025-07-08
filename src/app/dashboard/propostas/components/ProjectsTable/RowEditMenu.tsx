@@ -149,7 +149,7 @@ export default function RowEditMenu({
   }, [isOpen, onClose, triggerElement]);
 
   const handleEditClick = () => {
-    router.push(`/gerador-de-propostas?id=${projectId}`);
+    router.push(`/gerador-de-propostas?editId=${projectId}`);
     onClose();
   };
 

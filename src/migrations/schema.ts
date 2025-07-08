@@ -129,7 +129,7 @@ export const projects = pgTable(
     }).notNull(),
     projectValidUntil: timestamp("project_valid_until", {
       mode: "string",
-    }).notNull(),
+    }),
     projectStatus: varchar("project_status", { length: 255 }).notNull(),
     updatedAt: timestamp("updated_at", { mode: "string" }),
     createdAt: timestamp("created_at", { mode: "string" })

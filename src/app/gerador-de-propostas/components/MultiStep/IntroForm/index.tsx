@@ -40,35 +40,11 @@ export default function IntroStep() {
   });
 
   useEffect(() => {
-    if (modalDismissed || isEditMode) {
-      return;
-    }
-
-    const hasContentFormData =
-      formData?.step1 &&
-      (formData.step1.companyName ||
-        formData.step1.companyEmail ||
-        formData.step1.ctaButtonTitle ||
-        formData.step1.pageTitle ||
-        formData.step1.pageSubtitle ||
-        (formData.step1.services && formData.step1.services.length > 0));
-
-    const hasVisibilityToggles =
-      formData?.step1 &&
-      (formData.step1.hidePageSubtitle !== undefined ||
-        formData.step1.hideServices !== undefined);
-
-    if (
-      templateType &&
-      currentStep === 1 &&
-      !hasContentFormData &&
-      !hasVisibilityToggles
-    ) {
+    // Always show the modal when modalDismissed is false
+    if (!modalDismissed) {
       setShowImportModal(true);
-    } else {
-      setShowImportModal(false);
     }
-  }, [templateType, currentStep, formData?.step1, modalDismissed, isEditMode]);
+  }, [modalDismissed]);
 
   const handleImportProject = (projectData: Project) => {
     updateFormData("step1", {
@@ -435,6 +411,7 @@ export default function IntroStep() {
       onImportProject={handleImportProject}
       onCreateNew={handleCreateNew}
       onClose={handleCloseModal}
+      isEditMode={isEditMode}
     />
   ) : null;
 }

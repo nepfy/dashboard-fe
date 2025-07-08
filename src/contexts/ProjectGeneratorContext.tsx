@@ -327,7 +327,9 @@ export function ProjectGeneratorProvider({
       endMessageTitle: projectData.endMessageTitle,
       endMessageTitle2: projectData.endMessageTitle2,
       endMessageDescription: projectData.endMessageDescription,
-      projectValidUntil: projectData.projectValidUntil,
+      projectValidUntil: projectData.projectValidUntil
+        ? new Date(projectData.projectValidUntil)
+        : undefined,
     });
 
     // Step 16 - Project settings

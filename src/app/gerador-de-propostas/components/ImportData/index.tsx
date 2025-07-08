@@ -14,23 +14,29 @@ interface ImportDataModalProps {
   onImportProject?: (projectData: Project) => void;
   onCreateNew?: () => void;
   onClose?: () => void;
+  isEditMode?: boolean;
 }
 
 export default function ImportDataModal({
   onImportProject,
   onCreateNew,
   onClose,
+  isEditMode = false,
 }: ImportDataModalProps) {
-  const { updateFormData } = useProjectGenerator();
+  const { updateFormData, formData } = useProjectGenerator();
 
-  // Step management
+  // Step management - if in edit mode, stay on initial step
   const [currentStep, setCurrentStep] = useState<
     "initial" | "import-choice" | "project-selection"
   >("initial");
 
-  // Initial form data
-  const [clientName, setClientName] = useState("");
-  const [projectName, setProjectName] = useState("");
+  // Initial form data - populate from existing data if in edit mode
+  const [clientName, setClientName] = useState(
+    isEditMode ? formData?.step1?.clientName || "" : ""
+  );
+  const [projectName, setProjectName] = useState(
+    isEditMode ? formData?.step1?.projectName || "" : ""
+  );
   const [initialFormErrors, setInitialFormErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -45,10 +51,20 @@ export default function ImportDataModal({
   const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if user has existing projects when component mounts
+  // Check if user has existing projects when component mounts (only if not in edit mode)
   useEffect(() => {
-    checkExistingProjects();
-  }, []);
+    if (!isEditMode) {
+      checkExistingProjects();
+    }
+  }, [isEditMode]);
+
+  // Update local state when formData changes in edit mode
+  useEffect(() => {
+    if (isEditMode) {
+      setClientName(formData?.step1?.clientName || "");
+      setProjectName(formData?.step1?.projectName || "");
+    }
+  }, [formData?.step1?.clientName, formData?.step1?.projectName, isEditMode]);
 
   const checkExistingProjects = async () => {
     try {
@@ -129,17 +145,23 @@ export default function ImportDataModal({
 
     // Save the client and project names to form data
     updateFormData("step1", {
+      ...formData?.step1,
       clientName: clientName.trim(),
       projectName: projectName.trim(),
     });
 
     setInitialFormErrors({});
 
-    // MUDANÇA PRINCIPAL: Se não há projetos existentes, vai direto para criar novo
+    // If in edit mode, just close the modal after updating
+    if (isEditMode) {
+      onClose?.();
+      return;
+    }
+
+    // If not in edit mode, proceed with normal flow
     if (hasExistingProjects === false) {
       handleCreateNewClick();
     } else {
-      // Se há projetos existentes, vai para o step de escolha
       setCurrentStep("import-choice");
     }
   };
@@ -207,8 +229,11 @@ export default function ImportDataModal({
     }
   };
 
-  // Função para determinar o título do modal baseado no step e se há projetos existentes
+  // Função para determinar o título do modal baseado no step, edit mode e se há projetos existentes
   const getModalTitle = () => {
+    if (isEditMode) {
+      return "Editar Identificação do Projeto";
+    }
     if (currentStep === "initial") {
       return "Como você quer identificar essa proposta?";
     }
@@ -217,6 +242,17 @@ export default function ImportDataModal({
 
   // Função para determinar a descrição no step inicial
   const getInitialStepDescription = () => {
+    if (isEditMode) {
+      return (
+        <>
+          <span className="font-bold">Atualize os dados de identificação.</span>{" "}
+          Esses dados são só pra você e vão aparecer no seu painel de
+          gerenciamento pra facilitar na hora de encontrar e organizar suas
+          propostas.
+        </>
+      );
+    }
+
     if (hasExistingProjects === false) {
       return (
         <>
@@ -304,87 +340,93 @@ export default function ImportDataModal({
               onClick={handleInitialFormSubmit}
               className="w-full sm:w-[75px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-blue-700 cursor-pointer button-inner-inverse"
             >
-              {hasExistingProjects === false ? "Criar" : "Salvar"}
+              {isEditMode
+                ? "Salvar"
+                : hasExistingProjects === false
+                ? "Criar"
+                : "Salvar"}
             </button>
           </div>
         </>
       )}
 
-      {/* Import Choice Step - Só aparece se houver projetos existentes */}
-      {currentStep === "import-choice" && hasExistingProjects && (
-        <>
-          <div className="p-6">
-            <p className="text-white-neutral-light-900 font-semibold text-sm mb-3">
-              Você está prestes a criar uma nova proposta.
-            </p>
-            <p className="text-white-neutral-light-900 text-sm mb-3">
-              Para facilitar, é possível importar informações de uma proposta já
-              existente, como dados do time, serviços, termos de trabalho, entre
-              outros. Assim, você poderá aproveitar o que já foi preenchido e
-              fazer apenas os ajustes necessários para personalizar a nova
-              proposta.
-            </p>
-
-            <p className="text-white-neutral-light-900 font-semibold text-sm mb-3">
-              Escolha uma das opções abaixo:
-            </p>
-
-            <div className="flex items-baseline gap-2">
-              <span className="text-primary-light-500 text-2xl relative top-[2px]">
-                &#8226;
-              </span>
-              <p className="text-white-neutral-light-900 text-sm mb-3 leading-[1.4]">
-                <span className="font-bold">
-                  Importar dados de um projeto anterior:
-                </span>{" "}
-                Selecione um projeto já preenchido para importar as informações.
-                Depois, você poderá alterar o que for necessário.
+      {/* Import Choice Step - Só aparece se houver projetos existentes e não estiver em edit mode */}
+      {currentStep === "import-choice" &&
+        hasExistingProjects &&
+        !isEditMode && (
+          <>
+            <div className="p-6">
+              <p className="text-white-neutral-light-900 font-semibold text-sm mb-3">
+                Você está prestes a criar uma nova proposta.
               </p>
-            </div>
-
-            <div className="flex items-baseline gap-2">
-              <span className="text-primary-light-500 text-2xl relative top-[2px]">
-                &bull;
-              </span>
-              <p className="text-white-neutral-light-900 text-sm mb-3 leading-[1.4]">
-                <span className="font-bold">
-                  Iniciar um novo projeto do zero:
-                </span>{" "}
-                Comece com um projeto completamente em branco, preenchendo todos
-                os dados manualmente.
+              <p className="text-white-neutral-light-900 text-sm mb-3">
+                Para facilitar, é possível importar informações de uma proposta
+                já existente, como dados do time, serviços, termos de trabalho,
+                entre outros. Assim, você poderá aproveitar o que já foi
+                preenchido e fazer apenas os ajustes necessários para
+                personalizar a nova proposta.
               </p>
+
+              <p className="text-white-neutral-light-900 font-semibold text-sm mb-3">
+                Escolha uma das opções abaixo:
+              </p>
+
+              <div className="flex items-baseline gap-2">
+                <span className="text-primary-light-500 text-2xl relative top-[2px]">
+                  &#8226;
+                </span>
+                <p className="text-white-neutral-light-900 text-sm mb-3 leading-[1.4]">
+                  <span className="font-bold">
+                    Importar dados de um projeto anterior:
+                  </span>{" "}
+                  Selecione um projeto já preenchido para importar as
+                  informações. Depois, você poderá alterar o que for necessário.
+                </p>
+              </div>
+
+              <div className="flex items-baseline gap-2">
+                <span className="text-primary-light-500 text-2xl relative top-[2px]">
+                  &bull;
+                </span>
+                <p className="text-white-neutral-light-900 text-sm mb-3 leading-[1.4]">
+                  <span className="font-bold">
+                    Iniciar um novo projeto do zero:
+                  </span>{" "}
+                  Comece com um projeto completamente em branco, preenchendo
+                  todos os dados manualmente.
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex justify-between flex-wrap sm:flex-nowrap p-6 border-t border-t-white-neutral-light-300 gap-2">
-            <button
-              type="button"
-              onClick={handleBack}
-              className="w-[36px] h-[36px] cursor-pointer text-white-neutral-light-900 hover:text-white-neutral-light-700"
-            >
-              <ArrowLeft size={20} strokeWidth={2} />
-            </button>
-            <div>
+            <div className="flex justify-between flex-wrap sm:flex-nowrap p-6 border-t border-t-white-neutral-light-300 gap-2">
               <button
                 type="button"
-                onClick={handleImportDataClick}
-                className="w-full sm:w-[140px] h-[38px] px-4 py-2 mr-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+                onClick={handleBack}
+                className="w-[36px] h-[36px] cursor-pointer text-white-neutral-light-900 hover:text-white-neutral-light-700"
               >
-                Importar dados
+                <ArrowLeft size={20} strokeWidth={2} />
               </button>
-              <button
-                type="button"
-                onClick={handleCreateNewClick}
-                className="w-full sm:w-[180px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-primary-light-600 cursor-pointer button-inner-inverse"
-              >
-                Criar nova proposta
-              </button>
+              <div>
+                <button
+                  type="button"
+                  onClick={handleImportDataClick}
+                  className="w-full sm:w-[140px] h-[38px] px-4 py-2 mr-2 text-sm font-medium border rounded-xs text-gray-700 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+                >
+                  Importar dados
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCreateNewClick}
+                  className="w-full sm:w-[180px] h-[38px] px-4 py-2 text-sm font-medium text-white rounded-xs bg-primary-light-500 hover:bg-primary-light-600 cursor-pointer button-inner-inverse"
+                >
+                  Criar nova proposta
+                </button>
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
-      {/* Project Selection Step */}
-      {currentStep === "project-selection" && (
+      {/* Project Selection Step - Só aparece se não estiver em edit mode */}
+      {currentStep === "project-selection" && !isEditMode && (
         <>
           <div className="p-6">
             <p className="text-white-neutral-light-500 font-bold text-sm mb-3">

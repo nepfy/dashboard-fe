@@ -26,17 +26,40 @@ const MONTH_NAMES_PT = [
  * @returns Formatted date string
  */
 export const formatDateToDDMonYYYY = (dateString: string): string => {
-  const date = new Date(dateString);
-
-  if (isNaN(date.getTime())) {
+  if (!dateString) {
     return "Data inválida";
   }
 
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = MONTH_NAMES_PT[date.getMonth()];
-  const year = date.getFullYear();
+  try {
+    let datePart: string;
 
-  return `${day} ${month} ${year}`;
+    if (dateString.includes("T")) {
+      datePart = dateString.split("T")[0];
+    } else if (dateString.includes(" ")) {
+      datePart = dateString.split(" ")[0];
+    } else {
+      datePart = dateString;
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+      return "Data inválida";
+    }
+
+    const date = new Date(datePart + "T12:00:00");
+
+    if (isNaN(date.getTime())) {
+      return "Data inválida";
+    }
+
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = MONTH_NAMES_PT[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${day} ${month} ${year}`;
+  } catch (error) {
+    console.error("Error formatting date:", error, "Input:", dateString);
+    return "Data inválida";
+  }
 };
 
 /**
