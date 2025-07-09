@@ -1,12 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
   "/login(.*)",
   "/criar-conta(.*)",
   "/recuperar-conta(.*)",
   "/termos-de-uso(.*)",
-  "/project/(.*)", // Torna as rotas de projeto públicas
+  "/project(.*)",
 ]);
 
 function isMainDomain(hostname: string): boolean {
@@ -37,21 +37,6 @@ function parseSubdomain(
   const userName = parts[0];
   const projectUrl = parts.slice(1).join("-");
 
-  // Validações básicas
-  if (!userName || !projectUrl) {
-    return null;
-  }
-
-  // userName deve ter pelo menos 2 caracteres e ser alfanumérico
-  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
-    return null;
-  }
-
-  // projectUrl deve ter pelo menos 2 caracteres e permitir hífens
-  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
-    return null;
-  }
-
   return { userName, projectUrl };
 }
 
@@ -59,7 +44,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
-  // Skip para API routes, arquivos estáticos e _next em TODOS os domínios
+  // Skip for API routes, static files, and _next on ALL domains
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
@@ -69,50 +54,44 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // PRIMEIRA VERIFICAÇÃO: Se não é um domínio principal
-  if (!isMainDomain(hostname)) {
-    // Verifica se é um subdomínio de projeto válido
-    const subdomainData = parseSubdomain(hostname);
+  // Check if this is a subdomain route (project page)
+  const subdomainData = parseSubdomain(hostname);
 
-    if (subdomainData) {
-      // É um subdomínio válido - fazer rewrite para a página do projeto
-      const { userName, projectUrl } = subdomainData;
+  if (subdomainData) {
+    // This is a subdomain route - bypass Clerk auth and handle subdomain routing
+    const { userName, projectUrl } = subdomainData;
 
-      // Rewrite para a página do projeto
-      const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+    // Rewrite to the project page
+    const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
 
-      // Passa o hostname original e dados do subdomínio como headers
-      const response = NextResponse.rewrite(newUrl);
-      response.headers.set("x-subdomain", hostname.split(".")[0]);
-      response.headers.set("x-username", userName);
-      response.headers.set("x-project-url", projectUrl);
+    // Pass original hostname and subdomain data as headers
+    const response = NextResponse.rewrite(newUrl);
+    response.headers.set("x-subdomain", hostname.split(".")[0]);
+    response.headers.set("x-username", userName);
+    response.headers.set("x-project-url", projectUrl);
 
-      return response;
-    } else {
-      // Subdomínio inválido - retorna 404 diretamente sem chamar Clerk
-      return new NextResponse(null, { status: 404 });
-    }
+    return response;
   }
 
-  // SEGUNDA VERIFICAÇÃO: É um domínio principal - aplicar autenticação Clerk
+  // This is the main app domain - apply Clerk authentication
   const { userId, redirectToSignIn } = await auth();
 
-  // Para o path raiz ("/"), deixa o componente da página lidar com a autenticação
+  // For the root path ("/"), let the page component handle authentication
   if (url.pathname === "/") {
     return NextResponse.next();
   }
 
-  // Permite rotas públicas sem autenticação
+  // Allow public routes without authentication
   if (isPublicRoute(req)) {
     return NextResponse.next();
   }
 
-  // Requer autenticação para rotas protegidas
+  // Require authentication for protected routes
   if (!userId) {
     return redirectToSignIn({ returnBackUrl: req.url });
   }
 
-  // Permite usuários autenticados acessarem rotas protegidas
+  // Allow authenticated users to access protected routes
   return NextResponse.next();
 });
 
