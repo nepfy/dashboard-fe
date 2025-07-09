@@ -5,48 +5,6 @@ export function generateSubdomainUrl(
   return `https://${userName}-${projectUrl}.nepfy.com`;
 }
 
-export function parseSubdomain(
-  hostname: string
-): { userName: string; projectUrl: string } | null {
-  // Verifica se é um domínio principal
-  if (isMainDomain(hostname)) {
-    return null;
-  }
-
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  // Deve ter pelo menos 2 partes
-  if (parts.length < 2) {
-    return null;
-  }
-
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
-
-  // Validações básicas
-  if (!userName || !projectUrl) {
-    return null;
-  }
-
-  // userName deve ter pelo menos 2 caracteres e ser alfanumérico
-  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
-    return null;
-  }
-
-  // projectUrl deve ter pelo menos 2 caracteres e permitir hífens
-  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
-    return null;
-  }
-
-  return { userName, projectUrl };
-}
-
-export function isValidSubdomain(hostname: string): boolean {
-  const parsed = parseSubdomain(hostname);
-  return parsed !== null;
-}
-
 export function isMainDomain(hostname: string): boolean {
   return (
     hostname === "app.nepfy.com" ||
@@ -91,4 +49,31 @@ export function isValidProjectSubdomain(hostname: string): boolean {
   }
 
   return true;
+}
+
+export function parseSubdomain(
+  hostname: string
+): { userName: string; projectUrl: string } | null {
+  // Verifica se é um domínio principal
+  if (isMainDomain(hostname)) {
+    return null;
+  }
+
+  // Verifica se é um subdomínio de projeto válido
+  if (!isValidProjectSubdomain(hostname)) {
+    return null;
+  }
+
+  const subdomain = hostname.split(".")[0];
+  const parts = subdomain.split("-");
+
+  const userName = parts[0];
+  const projectUrl = parts.slice(1).join("-");
+
+  return { userName, projectUrl };
+}
+
+export function isValidSubdomain(hostname: string): boolean {
+  const parsed = parseSubdomain(hostname);
+  return parsed !== null;
 }

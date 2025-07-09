@@ -19,20 +19,49 @@ function isMainDomain(hostname: string): boolean {
   );
 }
 
-function parseSubdomain(
-  hostname: string
-): { userName: string; projectUrl: string } | null {
-  // First check if it's a main domain
+function isValidProjectSubdomain(hostname: string): boolean {
   if (isMainDomain(hostname)) {
-    return null;
+    return false;
   }
 
   const subdomain = hostname.split(".")[0];
   const parts = subdomain.split("-");
 
   if (parts.length < 2) {
+    return false;
+  }
+
+  const userName = parts[0];
+  const projectUrl = parts.slice(1).join("-");
+
+  if (!userName || !projectUrl) {
+    return false;
+  }
+
+  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
+    return false;
+  }
+
+  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
+    return false;
+  }
+
+  return true;
+}
+
+function parseSubdomain(
+  hostname: string
+): { userName: string; projectUrl: string } | null {
+  if (isMainDomain(hostname)) {
     return null;
   }
+
+  if (!isValidProjectSubdomain(hostname)) {
+    return null;
+  }
+
+  const subdomain = hostname.split(".")[0];
+  const parts = subdomain.split("-");
 
   const userName = parts[0];
   const projectUrl = parts.slice(1).join("-");
@@ -44,6 +73,11 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
+  // Debug logging (remove in production)
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Middleware] ${req.method} ${hostname}${url.pathname}`);
+  }
+
   // Skip for API routes, static files, and _next on ALL domains
   if (
     url.pathname.startsWith("/api/") ||
@@ -54,52 +88,60 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // Check if this is a subdomain route (project page)
-  const subdomainData = parseSubdomain(hostname);
+  // Handle subdomain routing BEFORE Clerk authentication
+  if (!isMainDomain(hostname)) {
+    const subdomainData = parseSubdomain(hostname);
 
-  if (subdomainData) {
-    // This is a subdomain route - bypass Clerk auth and handle subdomain routing
-    const { userName, projectUrl } = subdomainData;
+    if (subdomainData) {
+      // Valid project subdomain
+      const { userName, projectUrl } = subdomainData;
 
-    // Rewrite to the project page
-    const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[Middleware] Valid subdomain: ${userName}-${projectUrl}`);
+      }
 
-    // Pass original hostname and subdomain data as headers
-    const response = NextResponse.rewrite(newUrl);
-    response.headers.set("x-subdomain", hostname.split(".")[0]);
-    response.headers.set("x-username", userName);
-    response.headers.set("x-project-url", projectUrl);
+      const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+      const response = NextResponse.rewrite(newUrl);
+      response.headers.set("x-subdomain", hostname.split(".")[0]);
+      response.headers.set("x-username", userName);
+      response.headers.set("x-project-url", projectUrl);
 
-    return response;
+      return response;
+    } else {
+      // Invalid subdomain format
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[Middleware] Invalid subdomain: ${hostname}`);
+      }
+
+      return new NextResponse(null, { status: 404 });
+    }
   }
 
-  // This is the main app domain - apply Clerk authentication
+  // Main app domain - apply Clerk authentication
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Middleware] Main domain, applying Clerk auth`);
+  }
+
   const { userId, redirectToSignIn } = await auth();
 
-  // For the root path ("/"), let the page component handle authentication
   if (url.pathname === "/") {
     return NextResponse.next();
   }
 
-  // Allow public routes without authentication
   if (isPublicRoute(req)) {
     return NextResponse.next();
   }
 
-  // Require authentication for protected routes
   if (!userId) {
     return redirectToSignIn({ returnBackUrl: req.url });
   }
 
-  // Allow authenticated users to access protected routes
   return NextResponse.next();
 });
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
   ],
 };
