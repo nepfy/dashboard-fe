@@ -1,6 +1,10 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    turbo: {
+      resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
+    },
+  },
   images: {
     remotePatterns: [
       {
@@ -9,12 +13,43 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "9pv534kdwoxoqhab.public.blob.vercel-storage.com",
-        port: "",
-        pathname: "**",
+        hostname: "images.clerk.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "uploadthing.com",
+      },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+      },
+      {
+        protocol: "https",
+        hostname: "rnfdxuqkqzgphduk.public.blob.vercel-storage.com",
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ];
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

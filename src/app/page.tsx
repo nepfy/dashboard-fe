@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect } from "react";
@@ -9,22 +8,25 @@ export default function Home() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
-  const onboardingComplete = user?.publicMetadata?.onboardingComplete;
-
   useEffect(() => {
-    if (onboardingComplete) {
-      router.push("/dashboard");
-    } else {
-      router.push("/onboarding");
-    }
-  }, [onboardingComplete]);
+    if (isLoaded && user) {
+      const onboardingComplete = user?.publicMetadata?.onboardingComplete;
 
-  if (!isLoaded)
+      if (onboardingComplete) {
+        router.push("/dashboard");
+      } else {
+        router.push("/onboarding");
+      }
+    }
+  }, [user, isLoaded, router]);
+
+  if (!isLoaded) {
     return (
       <div className="h-screen flex justify-center items-center">
-        <p> Carrregando, por favor aguarde! </p>
+        <p>Carregando, por favor aguarde!</p>
       </div>
     );
+  }
 
   return (
     <>
