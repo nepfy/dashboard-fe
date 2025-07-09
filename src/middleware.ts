@@ -1,12 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
-
-const isPublicRoute = createRouteMatcher([
-  "/login(.*)",
-  "/criar-conta(.*)",
-  "/recuperar-conta(.*)",
-  "/termos-de-uso(.*)",
-]);
 
 function isMainDomain(hostname: string): boolean {
   return (
@@ -54,7 +46,7 @@ function parseSubdomain(
   return { userName, projectUrl };
 }
 
-// Middleware principal
+// Middleware completamente customizado
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
@@ -69,12 +61,12 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // PRIMEIRO: Verifica subdomínios antes de qualquer coisa
+  // Se NÃO é domínio principal, processar subdomínios
   if (!isMainDomain(hostname)) {
     const subdomainData = parseSubdomain(hostname);
 
     if (subdomainData) {
-      // Subdomínio válido - fazer rewrite para página do projeto
+      // Subdomínio válido - rewrite para página do projeto
       const { userName, projectUrl } = subdomainData;
       const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
 
@@ -90,29 +82,9 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  // SEGUNDO: Se chegou aqui, é domínio principal - aplicar Clerk
-  return clerkMiddleware(async (auth, request: NextRequest) => {
-    const { userId, redirectToSignIn } = await auth();
-
-    // Para o path raiz ("/"), deixa o componente da página lidar com a autenticação
-    if (url.pathname === "/") {
-      return NextResponse.next();
-    }
-
-    // Permite rotas públicas sem autenticação
-    if (isPublicRoute(request)) {
-      return NextResponse.next();
-    }
-
-    // Requer autenticação para rotas protegidas
-    if (!userId) {
-      return redirectToSignIn({ returnBackUrl: request.url });
-    }
-
-    // Permite usuários autenticados acessarem rotas protegidas
-    return NextResponse.next();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  })(req, {} as any);
+  // Se é domínio principal, deixa passar para o Clerk processar
+  // O Clerk será configurado separadamente
+  return NextResponse.next();
 }
 
 export const config = {
