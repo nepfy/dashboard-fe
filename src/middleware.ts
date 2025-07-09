@@ -1,12 +1,24 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+const isPublicRoute = createRouteMatcher([
+  "/login(.*)",
+  "/criar-conta(.*)",
+  "/recuperar-conta(.*)",
+  "/termos-de-uso(.*)",
+  "/projects(.*)",
+]);
 
 function isMainDomain(hostname: string): boolean {
+  // Handle localhost cases (both with and without port)
+  const isLocalhost =
+    hostname === "localhost" || hostname.startsWith("localhost:");
+
   return (
     hostname === "app.nepfy.com" ||
-    hostname === "localhost:3000" ||
     hostname === "nepfy.com" ||
     hostname === "www.nepfy.com" ||
-    hostname === "localhost"
+    isLocalhost
   );
 }
 
@@ -18,40 +30,33 @@ function parseSubdomain(
     return null;
   }
 
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
+  // Extract subdomain from hostname
+  const parts = hostname.split(".");
+  if (parts.length < 3) {
+    return null; // Not a valid subdomain
+  }
 
-  if (parts.length < 2) {
+  const subdomain = parts[0];
+  const domainParts = subdomain.split("-");
+
+  if (domainParts.length < 2) {
     return null;
   }
 
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
-
-  // Validações básicas
-  if (!userName || !projectUrl) {
-    return null;
-  }
-
-  // userName deve ter pelo menos 2 caracteres e ser alfanumérico
-  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
-    return null;
-  }
-
-  // projectUrl deve ter pelo menos 2 caracteres e permitir hífens
-  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
-    return null;
-  }
+  const userName = domainParts[0];
+  const projectUrl = domainParts.slice(1).join("-");
 
   return { userName, projectUrl };
 }
 
-// Middleware completamente customizado
-export function middleware(req: NextRequest) {
+export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
-  // Skip para API routes, arquivos estáticos e _next em TODOS os domínios
+  console.log("Middleware - hostname:", hostname);
+  console.log("Middleware - pathname:", url.pathname);
+
+  // Skip for API routes, static files, and _next on ALL domains
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
@@ -61,31 +66,56 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Se NÃO é domínio principal, processar subdomínios
-  if (!isMainDomain(hostname)) {
-    const subdomainData = parseSubdomain(hostname);
+  // Check if this is a subdomain route (project page)
+  const subdomainData = parseSubdomain(hostname);
 
-    if (subdomainData) {
-      // Subdomínio válido - rewrite para página do projeto
-      const { userName, projectUrl } = subdomainData;
-      const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+  if (subdomainData) {
+    // This is a subdomain route - bypass Clerk auth and handle subdomain routing
+    const { userName, projectUrl } = subdomainData;
 
-      const response = NextResponse.rewrite(newUrl);
-      response.headers.set("x-subdomain", hostname.split(".")[0]);
-      response.headers.set("x-username", userName);
-      response.headers.set("x-project-url", projectUrl);
+    console.log("Subdomain detected:", { userName, projectUrl });
 
-      return response;
-    } else {
-      // Subdomínio inválido - retorna 404
-      return new NextResponse(null, { status: 404 });
-    }
+    // Rewrite to the project page
+    const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+
+    console.log("Rewriting to:", newUrl.pathname);
+
+    // Pass original hostname and subdomain data as headers
+    const response = NextResponse.rewrite(newUrl);
+    response.headers.set("x-subdomain", hostname.split(".")[0]);
+    response.headers.set("x-username", userName);
+    response.headers.set("x-project-url", projectUrl);
+
+    return response;
   }
 
-  // Se é domínio principal, deixa passar para o Clerk processar
-  // O Clerk será configurado separadamente
+  // This is the main app domain - apply Clerk authentication
+  console.log("Main domain detected, applying Clerk auth");
+
+  const { userId, redirectToSignIn } = await auth();
+
+  // For the root path ("/"), let the page component handle authentication
+  if (url.pathname === "/") {
+    console.log("Root path - letting page component handle auth");
+    return NextResponse.next();
+  }
+
+  // Allow public routes without authentication
+  if (isPublicRoute(req)) {
+    console.log("Public route - allowing access");
+    return NextResponse.next();
+  }
+
+  // Require authentication for protected routes
+  if (!userId) {
+    console.log("No user ID - redirecting to sign in");
+    return redirectToSignIn({ returnBackUrl: req.url });
+  }
+
+  // Allow authenticated users to access protected routes
+  console.log("Authenticated user - allowing access");
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
