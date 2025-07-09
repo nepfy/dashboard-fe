@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { isMainDomain, parseSubdomain } from "#/lib/subdomain";
 
 const isPublicRoute = createRouteMatcher([
   "/login(.*)",
@@ -8,42 +9,11 @@ const isPublicRoute = createRouteMatcher([
   "/termos-de-uso(.*)",
 ]);
 
-function isMainDomain(hostname: string): boolean {
-  return (
-    hostname === "app.nepfy.com" ||
-    hostname === "localhost:3000" ||
-    hostname === "nepfy.com" ||
-    hostname === "www.nepfy.com" ||
-    hostname === "localhost"
-  );
-}
-
-function parseSubdomain(
-  hostname: string
-): { userName: string; projectUrl: string } | null {
-  // First check if it's a main domain
-  if (isMainDomain(hostname)) {
-    return null;
-  }
-
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  if (parts.length < 2) {
-    return null;
-  }
-
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
-
-  return { userName, projectUrl };
-}
-
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
-  // Skip for API routes, static files, and _next on ALL domains
+  // Skip para API routes, arquivos estáticos e _next em TODOS os domínios
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
@@ -53,17 +23,17 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // Check if this is a subdomain route (project page)
+  // Verifica se é um subdomínio de projeto válido
   const subdomainData = parseSubdomain(hostname);
 
   if (subdomainData) {
-    // This is a subdomain route - bypass Clerk auth and handle subdomain routing
+    // Este é um subdomínio de projeto válido - bypass Clerk auth e fazer o roteamento
     const { userName, projectUrl } = subdomainData;
 
-    // Rewrite to the project page
+    // Rewrite para a página do projeto
     const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
 
-    // Pass original hostname and subdomain data as headers
+    // Passa o hostname original e dados do subdomínio como headers
     const response = NextResponse.rewrite(newUrl);
     response.headers.set("x-subdomain", hostname.split(".")[0]);
     response.headers.set("x-username", userName);
@@ -72,25 +42,31 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return response;
   }
 
-  // This is the main app domain - apply Clerk authentication
+  // Verifica se é um subdomínio inválido (não é domínio principal mas também não é válido)
+  if (!isMainDomain(hostname)) {
+    // Para subdomínios inválidos, retorna 404 em vez de redirecionar para login
+    return new NextResponse(null, { status: 404 });
+  }
+
+  // Este é o domínio principal da aplicação - aplicar autenticação Clerk
   const { userId, redirectToSignIn } = await auth();
 
-  // For the root path ("/"), let the page component handle authentication
+  // Para o path raiz ("/"), deixa o componente da página lidar com a autenticação
   if (url.pathname === "/") {
     return NextResponse.next();
   }
 
-  // Allow public routes without authentication
+  // Permite rotas públicas sem autenticação
   if (isPublicRoute(req)) {
     return NextResponse.next();
   }
 
-  // Require authentication for protected routes
+  // Requer autenticação para rotas protegidas
   if (!userId) {
     return redirectToSignIn({ returnBackUrl: req.url });
   }
 
-  // Allow authenticated users to access protected routes
+  // Permite usuários autenticados acessarem rotas protegidas
   return NextResponse.next();
 });
 
