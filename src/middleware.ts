@@ -6,7 +6,6 @@ const isPublicRoute = createRouteMatcher([
   "/criar-conta(.*)",
   "/recuperar-conta(.*)",
   "/termos-de-uso(.*)",
-  "/project/(.*)", // Torna as rotas de projeto públicas
 ]);
 
 function isMainDomain(hostname: string): boolean {
@@ -55,7 +54,8 @@ function parseSubdomain(
   return { userName, projectUrl };
 }
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
+// Middleware principal
+export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
@@ -69,51 +69,51 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // Verifica se é um subdomínio de projeto PRIMEIRO, antes de qualquer coisa do Clerk
-  const subdomainData = parseSubdomain(hostname);
-
-  if (subdomainData) {
-    // Este é um subdomínio de projeto válido - fazer rewrite e NÃO chamar auth
-    const { userName, projectUrl } = subdomainData;
-
-    // Rewrite para a página do projeto
-    const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
-
-    // Passa o hostname original e dados do subdomínio como headers
-    const response = NextResponse.rewrite(newUrl);
-    response.headers.set("x-subdomain", hostname.split(".")[0]);
-    response.headers.set("x-username", userName);
-    response.headers.set("x-project-url", projectUrl);
-
-    return response;
-  }
-
-  // Se não é domínio principal e não é subdomínio válido = 404
+  // PRIMEIRO: Verifica subdomínios antes de qualquer coisa
   if (!isMainDomain(hostname)) {
-    return new NextResponse(null, { status: 404 });
+    const subdomainData = parseSubdomain(hostname);
+
+    if (subdomainData) {
+      // Subdomínio válido - fazer rewrite para página do projeto
+      const { userName, projectUrl } = subdomainData;
+      const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+
+      const response = NextResponse.rewrite(newUrl);
+      response.headers.set("x-subdomain", hostname.split(".")[0]);
+      response.headers.set("x-username", userName);
+      response.headers.set("x-project-url", projectUrl);
+
+      return response;
+    } else {
+      // Subdomínio inválido - retorna 404
+      return new NextResponse(null, { status: 404 });
+    }
   }
 
-  // Agora sim, é domínio principal - aplicar autenticação Clerk
-  const { userId, redirectToSignIn } = await auth();
+  // SEGUNDO: Se chegou aqui, é domínio principal - aplicar Clerk
+  return clerkMiddleware(async (auth, request: NextRequest) => {
+    const { userId, redirectToSignIn } = await auth();
 
-  // Para o path raiz ("/"), deixa o componente da página lidar com a autenticação
-  if (url.pathname === "/") {
+    // Para o path raiz ("/"), deixa o componente da página lidar com a autenticação
+    if (url.pathname === "/") {
+      return NextResponse.next();
+    }
+
+    // Permite rotas públicas sem autenticação
+    if (isPublicRoute(request)) {
+      return NextResponse.next();
+    }
+
+    // Requer autenticação para rotas protegidas
+    if (!userId) {
+      return redirectToSignIn({ returnBackUrl: request.url });
+    }
+
+    // Permite usuários autenticados acessarem rotas protegidas
     return NextResponse.next();
-  }
-
-  // Permite rotas públicas sem autenticação
-  if (isPublicRoute(req)) {
-    return NextResponse.next();
-  }
-
-  // Requer autenticação para rotas protegidas
-  if (!userId) {
-    return redirectToSignIn({ returnBackUrl: req.url });
-  }
-
-  // Permite usuários autenticados acessarem rotas protegidas
-  return NextResponse.next();
-});
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  })(req, {} as any);
+}
 
 export const config = {
   matcher: [
