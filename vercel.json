@@ -23,10 +23,5 @@
       "domain": "*.nepfy.com",
       "value": "nepfy.com"
     }
-  ],
-  "functions": {
-    "src/middleware.ts": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
