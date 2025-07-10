@@ -1,10 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RedirectToSignIn, SignedOut, useUser } from "@clerk/nextjs";
 
-export default function Home() {
+function checkIsMainDomain(hostname: string): boolean {
+  return (
+    hostname === "app.nepfy.com" ||
+    hostname === "localhost:3000" ||
+    hostname === "nepfy.com" ||
+    hostname === "www.nepfy.com" ||
+    hostname === "localhost"
+  );
+}
+
+// Component for main domain (with Clerk)
+function MainDomainHome() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
@@ -35,4 +46,39 @@ export default function Home() {
       </SignedOut>
     </>
   );
+}
+
+// Component for subdomains (without Clerk)
+function SubdomainHome() {
+  return (
+    <div className="h-screen flex justify-center items-center">
+      <p>Página não encontrada</p>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [isMainDomain, setIsMainDomain] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Client-side hostname detection
+    const hostname = window.location.hostname;
+    setIsMainDomain(checkIsMainDomain(hostname));
+  }, []);
+
+  // Loading state while determining domain
+  if (isMainDomain === null) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
+
+  // Render appropriate component based on domain
+  if (isMainDomain) {
+    return <MainDomainHome />;
+  }
+
+  return <SubdomainHome />;
 }

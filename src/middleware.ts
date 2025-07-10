@@ -1,4 +1,13 @@
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+
+const isPublicRoute = createRouteMatcher([
+  "/login(.*)",
+  "/criar-conta(.*)",
+  "/recuperar-conta(.*)",
+  "/termos-de-uso(.*)",
+  "/project(.*)",
+]);
 
 function isMainDomain(hostname: string): boolean {
   return (
@@ -60,11 +69,21 @@ function parseSubdomain(
   return { userName, projectUrl };
 }
 
-export function middleware(req: NextRequest) {
+export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
 
   const hostname =
     req.headers.get("x-forwarded-host") || req.headers.get("host") || "";
+
+  // PRODUCTION FIX 2: Enhanced logging for debugging (only in development)
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Middleware Debug] ${req.method} ${hostname}${url.pathname}`);
+    console.log(
+      `[Headers] host: ${req.headers.get(
+        "host"
+      )}, x-forwarded-host: ${req.headers.get("x-forwarded-host")}`
+    );
+  }
 
   if (
     url.pathname.startsWith("/api/") ||
@@ -82,12 +101,6 @@ export function middleware(req: NextRequest) {
       if (subdomainData) {
         const { userName, projectUrl } = subdomainData;
 
-        if (process.env.NODE_ENV === "development") {
-          console.log(
-            `[Middleware] Valid subdomain: ${userName}-${projectUrl}`
-          );
-        }
-
         const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
 
         const response = NextResponse.rewrite(newUrl);
@@ -96,6 +109,12 @@ export function middleware(req: NextRequest) {
         response.headers.set("x-project-url", projectUrl);
 
         return response;
+      } else {
+        if (process.env.NODE_ENV === "development") {
+          console.log(`[Middleware] Invalid subdomain: ${hostname}`);
+        }
+
+        return new NextResponse(null, { status: 404 });
       }
     } catch (error) {
       console.error("Subdomain parsing error:", error);
@@ -103,12 +122,28 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  if (process.env.NODE_ENV === "development") {
-    console.log(`[Middleware] Main domain, continuing to Next.js routing`);
-  }
+  try {
+    const { userId, redirectToSignIn } = await auth();
 
-  return NextResponse.next();
-}
+    if (url.pathname === "/") {
+      return NextResponse.next();
+    }
+
+    if (isPublicRoute(req)) {
+      return NextResponse.next();
+    }
+
+    if (!userId) {
+      return redirectToSignIn({ returnBackUrl: req.url });
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Clerk auth error in middleware:", error);
+
+    return NextResponse.next();
+  }
+});
 
 export const config = {
   matcher: [

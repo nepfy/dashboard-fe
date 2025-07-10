@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ptBR } from "@clerk/localizations";
 import localFont from "next/font/local";
+import { headers } from "next/headers";
 import "#/styles/globals.css";
 
 const satoshi = localFont({
@@ -25,16 +26,40 @@ export const metadata: Metadata = {
   description: "Faça a gestão das suas propostas de forma simples e elegante.",
 };
 
-export default function RootLayout({
+function isMainDomain(hostname: string): boolean {
+  return (
+    hostname === "app.nepfy.com" ||
+    hostname === "localhost:3000" ||
+    hostname === "nepfy.com" ||
+    hostname === "www.nepfy.com" ||
+    hostname === "localhost"
+  );
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const hostname =
+    headersList.get("x-forwarded-host") || headersList.get("host") || "";
+
+  const shouldUseClerk = isMainDomain(hostname);
+
+  if (shouldUseClerk) {
+    return (
+      <ClerkProvider dynamic localization={ptBR}>
+        <html lang="pt-BR">
+          <body className={`${satoshi.variable} antialiased`}>{children}</body>
+        </html>
+      </ClerkProvider>
+    );
+  }
+
   return (
-    <ClerkProvider dynamic localization={ptBR}>
-      <html lang="pt-BR">
-        <body className={`${satoshi.variable} antialiased`}>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="pt-BR">
+      <body className={`${satoshi.variable} antialiased`}>{children}</body>
+    </html>
   );
 }
