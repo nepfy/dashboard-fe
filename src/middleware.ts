@@ -69,22 +69,25 @@ function parseSubdomain(
   return { userName, projectUrl };
 }
 
-// ALWAYS run clerkMiddleware - handle routing logic inside
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
-  // Skip for API routes, static files, and _next on ALL domains
+  console.log(`[Middleware] Processing: ${hostname}${url.pathname}`);
+
+  // Skip for static files and API routes on ALL domains
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
     url.pathname.startsWith("/static/") ||
-    url.pathname.includes(".")
+    url.pathname.match(
+      /\.(ico|png|svg|jpg|jpeg|gif|webp|js|css|woff|woff2|ttf)$/
+    )
   ) {
     return NextResponse.next();
   }
 
-  // Handle subdomain routing FIRST - but still within clerkMiddleware
+  // Handle subdomain routing FIRST
   if (!isMainDomain(hostname)) {
     const subdomainData = parseSubdomain(hostname);
 
@@ -93,20 +96,25 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       const { userName, projectUrl } = subdomainData;
 
       console.log(`[Middleware] Valid subdomain: ${userName}-${projectUrl}`);
+      console.log(`[Middleware] Original URL: ${url.pathname}`);
 
-      const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+      // Only rewrite if we're on the root path or project path
+      if (url.pathname === "/" || url.pathname.startsWith("/project/")) {
+        const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+        console.log(`[Middleware] Rewriting to: ${newUrl.pathname}`);
 
-      const response = NextResponse.rewrite(newUrl);
-      response.headers.set("x-subdomain", hostname.split(".")[0]);
-      response.headers.set("x-username", userName);
-      response.headers.set("x-project-url", projectUrl);
+        const response = NextResponse.rewrite(newUrl);
+        response.headers.set("x-subdomain", hostname.split(".")[0]);
+        response.headers.set("x-username", userName);
+        response.headers.set("x-project-url", projectUrl);
+        response.headers.set("x-is-subdomain", "true");
 
-      // Since /project routes are public, Clerk won't require auth
-      return response;
+        return response;
+      }
     } else {
       // Invalid subdomain format - return 404
       console.log(`[Middleware] Invalid subdomain: ${hostname}`);
-      return new NextResponse(null, { status: 404 });
+      return new NextResponse("Not Found", { status: 404 });
     }
   }
 
@@ -115,7 +123,22 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     `[Middleware] Main domain, applying Clerk auth for: ${url.pathname}`
   );
 
-  const { userId, redirectToSignIn } = await auth();
+  // For API routes on main domain, still check auth
+  if (url.pathname.startsWith("/api/")) {
+    const { userId } = await auth();
+
+    // Skip auth for public API routes if any
+    const publicApiRoutes = ["/api/public", "/api/health"];
+    const isPublicApi = publicApiRoutes.some((route) =>
+      url.pathname.startsWith(route)
+    );
+
+    if (!isPublicApi && !userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    return NextResponse.next();
+  }
 
   // Allow public routes without authentication
   if (isPublicRoute(req)) {
@@ -123,6 +146,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   // Require authentication for protected routes
+  const { userId, redirectToSignIn } = await auth();
   if (!userId) {
     return redirectToSignIn({ returnBackUrl: req.url });
   }
@@ -132,7 +156,9 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
+    // Match all routes except static files
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf)$).*)",
+    // Include API routes
+    "/api/(.*)",
   ],
 };

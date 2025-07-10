@@ -45,12 +45,21 @@ export default async function RootLayout({
   const hostname =
     headersList.get("x-forwarded-host") || headersList.get("host") || "";
 
-  const shouldUseClerk = isMainDomain(hostname);
+  // Check if middleware set subdomain headers
+  const isSubdomain = headersList.get("x-is-subdomain") === "true";
+  const shouldUseClerk = isMainDomain(hostname) && !isSubdomain;
+
+  console.log(
+    `[Layout] Hostname: ${hostname}, UseClerk: ${shouldUseClerk}, IsSubdomain: ${isSubdomain}`
+  );
 
   if (shouldUseClerk) {
     return (
       <ClerkProvider dynamic localization={ptBR}>
         <html lang="pt-BR">
+          <head>
+            <meta name="x-is-subdomain" content="false" />
+          </head>
           <body className={`${satoshi.variable} antialiased`}>{children}</body>
         </html>
       </ClerkProvider>
@@ -59,6 +68,9 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR">
+      <head>
+        <meta name="x-is-subdomain" content={isSubdomain ? "true" : "false"} />
+      </head>
       <body className={`${satoshi.variable} antialiased`}>{children}</body>
     </html>
   );
