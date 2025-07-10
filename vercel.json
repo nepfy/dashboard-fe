@@ -1,5 +1,15 @@
 {
   "version": 2,
+  "functions": {
+    "src/app/**/*.{js,ts,tsx}": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
   "routes": [
     {
       "src": "/api/(.*)",
@@ -18,10 +28,33 @@
       "dest": "/$1"
     }
   ],
-  "wildcard": [
+  "headers": [
     {
-      "domain": "*.nepfy.com",
-      "value": "nepfy.com"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Vary",
+          "value": "Host"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
     }
   ],
   "env": {
