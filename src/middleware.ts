@@ -6,7 +6,7 @@ const isPublicRoute = createRouteMatcher([
   "/criar-conta(.*)",
   "/recuperar-conta(.*)",
   "/termos-de-uso(.*)",
-  "/project(.*)",
+  "/project(.*)", // This makes project routes public
 ]);
 
 function isMainDomain(hostname: string): boolean {
@@ -19,6 +19,36 @@ function isMainDomain(hostname: string): boolean {
   );
 }
 
+function isValidProjectSubdomain(hostname: string): boolean {
+  if (isMainDomain(hostname)) {
+    return false;
+  }
+
+  const subdomain = hostname.split(".")[0];
+  const parts = subdomain.split("-");
+
+  if (parts.length < 2) {
+    return false;
+  }
+
+  const userName = parts[0];
+  const projectUrl = parts.slice(1).join("-");
+
+  if (!userName || !projectUrl) {
+    return false;
+  }
+
+  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
+    return false;
+  }
+
+  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
+    return false;
+  }
+
+  return true;
+}
+
 function parseSubdomain(
   hostname: string
 ): { userName: string; projectUrl: string } | null {
@@ -26,12 +56,12 @@ function parseSubdomain(
     return null;
   }
 
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  if (parts.length < 2) {
+  if (!isValidProjectSubdomain(hostname)) {
     return null;
   }
+
+  const subdomain = hostname.split(".")[0];
+  const parts = subdomain.split("-");
 
   const userName = parts[0];
   const projectUrl = parts.slice(1).join("-");
@@ -39,10 +69,12 @@ function parseSubdomain(
   return { userName, projectUrl };
 }
 
+// ALWAYS run clerkMiddleware - handle routing logic inside
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
+  // Skip for API routes, static files, and _next on ALL domains
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
@@ -52,27 +84,45 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  const subdomainData = parseSubdomain(hostname);
+  // Handle subdomain routing FIRST - but still within clerkMiddleware
+  if (!isMainDomain(hostname)) {
+    const subdomainData = parseSubdomain(hostname);
 
-  if (subdomainData) {
-    const { userName, projectUrl } = subdomainData;
+    if (subdomainData) {
+      // Valid project subdomain - rewrite to project page
+      const { userName, projectUrl } = subdomainData;
 
-    const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+      console.log(`[Middleware] Valid subdomain: ${userName}-${projectUrl}`);
 
-    const response = NextResponse.rewrite(newUrl);
-    response.headers.set("x-subdomain", hostname.split(".")[0]);
-    response.headers.set("x-username", userName);
-    response.headers.set("x-project-url", projectUrl);
+      const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
 
-    return response;
+      const response = NextResponse.rewrite(newUrl);
+      response.headers.set("x-subdomain", hostname.split(".")[0]);
+      response.headers.set("x-username", userName);
+      response.headers.set("x-project-url", projectUrl);
+
+      // Since /project routes are public, Clerk won't require auth
+      return response;
+    } else {
+      // Invalid subdomain format - return 404
+      console.log(`[Middleware] Invalid subdomain: ${hostname}`);
+      return new NextResponse(null, { status: 404 });
+    }
   }
+
+  // Main domain - apply Clerk authentication
+  console.log(
+    `[Middleware] Main domain, applying Clerk auth for: ${url.pathname}`
+  );
 
   const { userId, redirectToSignIn } = await auth();
 
+  // Allow public routes without authentication
   if (isPublicRoute(req)) {
     return NextResponse.next();
   }
 
+  // Require authentication for protected routes
   if (!userId) {
     return redirectToSignIn({ returnBackUrl: req.url });
   }
