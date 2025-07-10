@@ -5,7 +5,12 @@ const nextConfig = {
       resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
     },
     serverActions: {
-      allowedOrigins: ["nepfy.com", "*.nepfy.com", "localhost:3000"],
+      allowedOrigins: [
+        "nepfy.com",
+        "*.nepfy.com",
+        "app.nepfy.com",
+        "localhost:3000",
+      ],
     },
   },
   images: {
@@ -48,6 +53,10 @@ const nextConfig = {
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "Vary",
+            value: "Host",
           },
         ],
       },
