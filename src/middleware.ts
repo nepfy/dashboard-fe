@@ -189,4 +189,6 @@ export const config = {
     // Always run for API routes
     "/(api|trpc)(.*)",
   ],
+  // Optional: Runtime configuration for Edge Runtime
+  runtime: "experimental-edge",
 };

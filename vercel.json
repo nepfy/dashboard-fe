@@ -24,12 +24,6 @@
       "value": "nepfy.com"
     }
   ],
-  "functions": {
-    "src/middleware.ts": {
-      "memory": 128,
-      "maxDuration": 10
-    }
-  },
   "env": {
     "NEXT_PUBLIC_ROOT_DOMAIN": "nepfy.com"
   }
