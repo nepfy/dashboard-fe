@@ -7,7 +7,6 @@ const nextConfig = {
     serverActions: {
       allowedOrigins: ["nepfy.com", "*.nepfy.com", "localhost:3000"],
     },
-    nodeMiddleware: true,
   },
   images: {
     remotePatterns: [
