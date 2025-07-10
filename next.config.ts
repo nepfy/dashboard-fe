@@ -4,6 +4,10 @@ const nextConfig = {
     turbo: {
       resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
     },
+    serverActions: {
+      allowedOrigins: ["nepfy.com", "*.nepfy.com", "localhost:3000"],
+    },
+    nodeMiddleware: true,
   },
   images: {
     remotePatterns: [
