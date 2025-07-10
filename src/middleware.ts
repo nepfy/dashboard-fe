@@ -19,36 +19,6 @@ function isMainDomain(hostname: string): boolean {
   );
 }
 
-function isValidProjectSubdomain(hostname: string): boolean {
-  if (isMainDomain(hostname)) {
-    return false;
-  }
-
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  if (parts.length < 2) {
-    return false;
-  }
-
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
-
-  if (!userName || !projectUrl) {
-    return false;
-  }
-
-  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
-    return false;
-  }
-
-  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
-    return false;
-  }
-
-  return true;
-}
-
 function parseSubdomain(
   hostname: string
 ): { userName: string; projectUrl: string } | null {
@@ -56,12 +26,12 @@ function parseSubdomain(
     return null;
   }
 
-  if (!isValidProjectSubdomain(hostname)) {
-    return null;
-  }
-
   const subdomain = hostname.split(".")[0];
   const parts = subdomain.split("-");
+
+  if (parts.length < 2) {
+    return null;
+  }
 
   const userName = parts[0];
   const projectUrl = parts.slice(1).join("-");
@@ -71,19 +41,7 @@ function parseSubdomain(
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
-
-  const hostname =
-    req.headers.get("x-forwarded-host") || req.headers.get("host") || "";
-
-  // PRODUCTION FIX 2: Enhanced logging for debugging (only in development)
-  if (process.env.NODE_ENV === "development") {
-    console.log(`[Middleware Debug] ${req.method} ${hostname}${url.pathname}`);
-    console.log(
-      `[Headers] host: ${req.headers.get(
-        "host"
-      )}, x-forwarded-host: ${req.headers.get("x-forwarded-host")}`
-    );
-  }
+  const hostname = req.headers.get("host") || "";
 
   if (
     url.pathname.startsWith("/api/") ||
@@ -94,55 +52,32 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  if (!isMainDomain(hostname)) {
-    try {
-      const subdomainData = parseSubdomain(hostname);
+  const subdomainData = parseSubdomain(hostname);
 
-      if (subdomainData) {
-        const { userName, projectUrl } = subdomainData;
+  if (subdomainData) {
+    const { userName, projectUrl } = subdomainData;
 
-        const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+    const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
 
-        const response = NextResponse.rewrite(newUrl);
-        response.headers.set("x-subdomain", hostname.split(".")[0]);
-        response.headers.set("x-username", userName);
-        response.headers.set("x-project-url", projectUrl);
+    const response = NextResponse.rewrite(newUrl);
+    response.headers.set("x-subdomain", hostname.split(".")[0]);
+    response.headers.set("x-username", userName);
+    response.headers.set("x-project-url", projectUrl);
 
-        return response;
-      } else {
-        if (process.env.NODE_ENV === "development") {
-          console.log(`[Middleware] Invalid subdomain: ${hostname}`);
-        }
-
-        return new NextResponse(null, { status: 404 });
-      }
-    } catch (error) {
-      console.error("Subdomain parsing error:", error);
-      return new NextResponse(null, { status: 404 });
-    }
+    return response;
   }
 
-  try {
-    const { userId, redirectToSignIn } = await auth();
+  const { userId, redirectToSignIn } = await auth();
 
-    if (url.pathname === "/") {
-      return NextResponse.next();
-    }
-
-    if (isPublicRoute(req)) {
-      return NextResponse.next();
-    }
-
-    if (!userId) {
-      return redirectToSignIn({ returnBackUrl: req.url });
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    console.error("Clerk auth error in middleware:", error);
-
+  if (isPublicRoute(req)) {
     return NextResponse.next();
   }
+
+  if (!userId) {
+    return redirectToSignIn({ returnBackUrl: req.url });
+  }
+
+  return NextResponse.next();
 });
 
 export const config = {
