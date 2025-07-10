@@ -12,7 +12,6 @@ const nextConfig = {
         "localhost:3000",
       ],
     },
-    nodeMiddleware: true,
   },
   images: {
     remotePatterns: [
