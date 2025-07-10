@@ -45,7 +45,6 @@ export default async function RootLayout({
   const hostname =
     headersList.get("x-forwarded-host") || headersList.get("host") || "";
 
-  // Check if middleware set subdomain headers
   const isSubdomain = headersList.get("x-is-subdomain") === "true";
   const shouldUseClerk = isMainDomain(hostname) && !isSubdomain;
 

@@ -6,7 +6,7 @@ const isPublicRoute = createRouteMatcher([
   "/criar-conta(.*)",
   "/recuperar-conta(.*)",
   "/termos-de-uso(.*)",
-  "/project(.*)", // This makes project routes public
+  "/project(.*)",
 ]);
 
 function isMainDomain(hostname: string): boolean {
@@ -75,7 +75,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
   console.log(`[Middleware] Processing: ${hostname}${url.pathname}`);
 
-  // Skip for static files and API routes on ALL domains
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
@@ -87,12 +86,10 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // Handle subdomain routing FIRST
   if (!isMainDomain(hostname)) {
     const subdomainData = parseSubdomain(hostname);
 
     if (subdomainData) {
-      // Valid project subdomain - rewrite to project page
       const { userName, projectUrl } = subdomainData;
 
       console.log(`[Middleware] Valid subdomain: ${userName}-${projectUrl}`);
@@ -112,22 +109,18 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
         return response;
       }
     } else {
-      // Invalid subdomain format - return 404
       console.log(`[Middleware] Invalid subdomain: ${hostname}`);
       return new NextResponse("Not Found", { status: 404 });
     }
   }
 
-  // Main domain - apply Clerk authentication
   console.log(
     `[Middleware] Main domain, applying Clerk auth for: ${url.pathname}`
   );
 
-  // For API routes on main domain, still check auth
   if (url.pathname.startsWith("/api/")) {
     const { userId } = await auth();
 
-    // Skip auth for public API routes if any
     const publicApiRoutes = ["/api/public", "/api/health"];
     const isPublicApi = publicApiRoutes.some((route) =>
       url.pathname.startsWith(route)
@@ -140,12 +133,10 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.next();
   }
 
-  // Allow public routes without authentication
   if (isPublicRoute(req)) {
     return NextResponse.next();
   }
 
-  // Require authentication for protected routes
   const { userId, redirectToSignIn } = await auth();
   if (!userId) {
     return redirectToSignIn({ returnBackUrl: req.url });
@@ -156,9 +147,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
 export const config = {
   matcher: [
-    // Match all routes except static files
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf)$).*)",
-    // Include API routes
-    "/api/(.*)",
   ],
 };
