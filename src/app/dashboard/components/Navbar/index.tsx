@@ -8,7 +8,7 @@ import Link from "next/link";
 import MobileMenu from "../MobileMenu";
 import Notifications from "../Notifications";
 
-import NotificationIcon from "#/components/icons/NotificationIcon";
+// import NotificationIcon from "#/components/icons/NotificationIcon";
 import Logo from "#/components/icons/Logo";
 import MenuIcon from "#/components/icons/MenuIcon";
 
@@ -29,7 +29,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center">
-            <button
+            {/* <button
               className="p-2 text-gray-600 hover:text-gray-900 relative cursor-pointer"
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
             >
@@ -37,7 +37,7 @@ export default function Navbar() {
                 2
               </span>
               <NotificationIcon width="24" height="24" />
-            </button>
+            </button> */}
 
             <div className="hidden lg:block ml-3 relative">
               <div>

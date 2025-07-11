@@ -26,12 +26,12 @@ interface EnhancedTableProps extends TableProps {
 
 interface CopyLinkIconProps {
   projectId: string;
-  isSelected: boolean;
+  isVisible: boolean;
 }
 
 const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
   projectId,
-  isSelected,
+  isVisible,
 }) => {
   const { copyLinkWithCache } = useCopyLinkWithCache();
   const [isLoading, setIsLoading] = useState(false);
@@ -71,18 +71,16 @@ const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
     }
   };
 
-  if (!isSelected) return null;
-
   return (
     <div className="relative">
       <button
         onClick={handleCopyClick}
         disabled={isLoading}
-        className={`inline-flex items-center justify-center p-1 rounded-full transition-colors ${
-          isLoading
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-white-neutral-light-300 cursor-pointer"
-        }`}
+        className={`inline-flex items-center justify-center p-1 rounded-full transition-all duration-200 ${
+          isVisible
+            ? "opacity-100 cursor-pointer hover:bg-white-neutral-light-300"
+            : "opacity-0 cursor-default"
+        } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
         title="Copiar link do projeto"
       >
         {isLoading ? (
@@ -125,6 +123,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
   const [menuTriggerElement, setMenuTriggerElement] =
     useState<HTMLElement | null>(null);
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   // Store refs for each row's trigger button
   const triggerRefs = useRef<Record<string, HTMLButtonElement>>({});
@@ -310,34 +309,38 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                   <tr
                     key={row.id}
                     onClick={() => handleRowSelect(row.id)}
+                    onMouseEnter={() => setHoveredRowId(row.id)}
+                    onMouseLeave={() => setHoveredRowId(null)}
                     className={`py-4 hover:bg-white-neutral-light-200 cursor-pointer ${
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
                     }`}
                   >
-                    <td className="py-4 pl-4 pr-3 text-sm text-white-neutral-light-900 flex items-center">
+                    <td className="py-4 pl-4 pr-3 text-sm text-white-neutral-light-900 flex align-middle">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded-xl border border-white-neutral-light-300 text-blue-600 focus:ring-blue-500 mr-2 flex-shrink-0"
+                        className="h-4 w-4 rounded-xl border border-white-neutral-light-300 text-blue-600 focus:ring-blue-500 mr-2 flex-shrink-0 self-baseline mt-0.5"
                         checked={selectedRows.has(row.id)}
                         onChange={() => handleRowSelect(row.id)}
                         disabled={isOperationInProgress}
                       />
                       <span
-                        className="flex items-center justify-center gap-2 truncate md:whitespace-nowrap max-w-[100px] sm:max-w-none"
+                        className="flex justify-center gap-2 truncate md:whitespace-nowrap max-w-[100px] sm:max-w-none"
                         title={row.clientName}
                       >
                         {row.clientName}
                         <CopyLinkIcon
                           projectId={row.id}
-                          isSelected={selectedRows.has(row.id)}
+                          isVisible={
+                            hoveredRowId === row.id || selectedRows.has(row.id)
+                          }
                         />
                       </span>
                     </td>
-                    <td className="px-3 py-4 text-sm text-white-neutral-light-900">
+                    <td className="px-3 py-4 text-sm text-white-neutral-light-900 align-middle">
                       <span
-                        className="truncate md:whitespace-nowrap max-w-[120px] sm:max-w-none block"
+                        className="truncate md:whitespace-nowrap max-w-[120px] sm:max-w-none block mb-2"
                         title={row.projectName}
                       >
                         {row.projectName}
@@ -348,11 +351,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                       {formatVisualizationDate(row.projectVisualizationDate) ??
                         "Não visualizado"}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 align-top">
                       <CalendarIcon
                         width="16"
                         height="16"
-                        className="inline mr-1"
+                        className="inline mr-1 mb-1"
                       />
                       {formatValidityDate(
                         row.projectValidUntil instanceof Date
@@ -360,10 +363,10 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                           : row.projectValidUntil
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 align-top">
                       {getStatusBadge(row.projectStatus)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900">
+                    <td className="whitespace-nowrap px-3 py-2 text-sm text-white-neutral-light-900 align-top">
                       <button
                         ref={(el) => {
                           if (el) {

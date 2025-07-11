@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Lottie from "lottie-react";
+
 import Modal from "#/components/Modal";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
-
-import SuccessSVG from "./SuccessSVG";
+import propostaCriada from "#/lotties/proposta-criada.json";
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -16,12 +17,12 @@ interface SuccessModalProps {
 export default function SuccessModal({
   isOpen,
   onCloseAction,
-  projectName = "Proposta",
   projectId,
 }: SuccessModalProps) {
   const [, setShouldShow] = useState(false);
 
   const [isLoadingCopyLink, setIsLoadingCopyLink] = useState(false);
+  const [isLoadingViewLink, setIsLoadingViewLink] = useState(false);
   const [copyLinkMessage, setCopyLinkMessage] = useState<string | null>(null);
 
   const { copyLinkWithCache } = useCopyLinkWithCache();
@@ -36,6 +37,7 @@ export default function SuccessModal({
       setShouldShow(false);
       setCopyLinkMessage(null);
       setIsLoadingCopyLink(false);
+      setIsLoadingViewLink(false);
     }
   }, [isOpen]);
 
@@ -84,7 +86,43 @@ export default function SuccessModal({
     }
   };
 
+  const handleViewLink = async () => {
+    if (!projectId) {
+      setCopyLinkMessage("ID do projeto não encontrado");
+      setTimeout(() => setCopyLinkMessage(null), 3000);
+      return;
+    }
+
+    if (isLoadingViewLink) return;
+
+    setIsLoadingViewLink(true);
+    setCopyLinkMessage(null);
+
+    try {
+      const result = await copyLinkWithCache(projectId);
+
+      // Abre o link em uma nova guia
+      window.open(result.fullUrl, "_blank", "noopener,noreferrer");
+
+      setCopyLinkMessage("Proposta aberta em nova guia!");
+
+      setTimeout(() => {
+        setCopyLinkMessage(null);
+      }, 3000);
+    } catch (error) {
+      console.error("Erro ao abrir link:", error);
+      setCopyLinkMessage("Erro ao abrir a proposta. Tente novamente.");
+
+      setTimeout(() => {
+        setCopyLinkMessage(null);
+      }, 3000);
+    } finally {
+      setIsLoadingViewLink(false);
+    }
+  };
+
   const isCopyLinkDisabled = !projectId || isLoadingCopyLink;
+  const isViewLinkDisabled = !projectId || isLoadingViewLink;
 
   return (
     <Modal
@@ -96,12 +134,11 @@ export default function SuccessModal({
     >
       <div>
         <div className="w-full flex items-center justify-center pt-9 pb-4">
-          <SuccessSVG />
+          <Lottie animationData={propostaCriada} className="w-[200px]" />
         </div>
         <p className="text-white-neutral-light-500 mb-6 text-sm p-7">
-          Sua proposta &quot;{projectName}&quot; está pronta e já pode ser
-          compartilhada com seus clientes. Acompanhe o status diretamente na
-          plataforma.
+          Sua proposta está pronta e já pode ser compartilhada com seus
+          clientes. Acompanhe o status diretamente na plataforma.
         </p>
 
         {copyLinkMessage && (
@@ -118,7 +155,6 @@ export default function SuccessModal({
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="border-t border-t-white-neutral-light-300">
           <div className="flex flex-col sm:flex-row gap-3 justify-start items-center py-4 px-7">
             <button
@@ -136,14 +172,15 @@ export default function SuccessModal({
 
             <button
               type="button"
-              onClick={() => {}}
+              onClick={handleViewLink}
+              disabled={isViewLinkDisabled}
               className="flex items-center justify-center gap-1 w-[110px] h-[44px] 
                      px-4 py-2 text-sm font-medium border rounded-[12px] 
-                     border-white-neutral-light-300 cursor-pointer button-inner 
+                     border-white-neutral-light-300 disabled:hover:bg-white-neutral-light-100 cursor-pointer button-inner 
                      text-white-neutral-light-900 hover:bg-white-neutral-light-300
                      disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Visualizar
+              {isLoadingViewLink ? "Abrindo..." : "Visualizar"}
             </button>
           </div>
         </div>
