@@ -25,7 +25,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
     <div className="space-y-2 relative">
       <button
         type="button"
-        className="absolute right-4 bottom-[14px]"
+        className="absolute right-4 bottom-[14px] z-10 cursor-pointer text-white-neutral-light-500"
         onClick={toggleShowPassword}
         tabIndex={-1}
       >

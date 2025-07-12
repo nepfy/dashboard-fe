@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
 import { useSignUp } from "@clerk/nextjs";
+import { InfoIcon } from "lucide-react";
 
 import { CheckboxInput } from "#/components/Inputs";
 import MailEnvelope from "#/components/icons/MailEnvelope";
@@ -56,6 +57,32 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   setError,
 }) => {
   const { signUp, isLoaded: clerkLoaded } = useSignUp();
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  const passwordsMatch = password === confirmPassword;
+  const showPasswordMismatchError =
+    confirmPassword.trim() !== "" && password.trim() !== "" && !passwordsMatch;
+
+  // Handle click outside tooltip
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setShowTooltip(false);
+      }
+    };
+
+    if (showTooltip) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showTooltip]);
 
   const handleGoogleSignUp = async () => {
     if (!termsAccepted) {
@@ -141,6 +168,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
             setShowConfirmPassword(!showConfirmPassword)
           }
         />
+        {showPasswordMismatchError && (
+          <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
+            As senhas não coincidem
+          </div>
+        )}
         {error && (
           <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
             {error}
@@ -203,23 +235,52 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         </div>
       </div>
 
-      <button
-        disabled={!termsAccepted}
-        type="button"
-        onClick={handleGoogleSignUp}
-        className={`w-full py-3 px-4
-                  rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] 
-                  transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4
-                  ${
-                    termsAccepted
-                      ? "bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] cursor-pointer hover:bg-[var(--color-white-neutral-light-200)] "
-                      : "bg-gray-400 cursor-not-allowed text-[var(--color-white-neutral-light-600)]"
-                  }
-                  `}
+      <div
+        className="relative flex flex-col justify-end h-[82px]"
+        ref={tooltipRef}
       >
-        <GoogleLogo />
-        Continuar com o Google
-      </button>
+        {!termsAccepted && (
+          <InfoIcon
+            size={16}
+            className="mr-0.5 text-[var(--color-white-neutral-light-500)] cursor-help self-end"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTooltip(!showTooltip);
+            }}
+          />
+        )}
+        <button
+          disabled={!termsAccepted}
+          type="button"
+          onClick={handleGoogleSignUp}
+          className={`w-full py-3 px-4
+              rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] 
+              transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4
+              ${
+                termsAccepted
+                  ? "bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] cursor-pointer hover:bg-[var(--color-white-neutral-light-200)] "
+                  : "bg-gray-400 cursor-not-allowed text-[var(--color-white-neutral-light-600)]"
+              }
+              `}
+        >
+          <GoogleLogo />
+          Continuar com o Google
+        </button>
+
+        {/* Tooltip */}
+        {!termsAccepted && showTooltip && (
+          <div className="absolute bottom-4xl left-1/2 transform -translate-x-1/2 mb-2 sm:w-64 bg-gray-800 text-white text-sm rounded-lg py-4 px-3 z-10 w-[200px]">
+            <div className="text-center">
+              Você precisa aceitar os termos e condições primeiro para habilitar
+              esta opção
+            </div>
+            {/* Tooltip arrow */}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+          </div>
+        )}
+      </div>
       <div id="clerk-captcha" />
     </>
   );

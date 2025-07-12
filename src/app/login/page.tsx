@@ -92,13 +92,10 @@ export default function Login() {
   return (
     <div className="grid place-items-center pb-0 pt-0 h-screen min-h-[800px]">
       <Navbar />
-      <div className="grid xl:grid-cols-2 w-full h-full relative">
-        <IntroSlider
-          title="Gere propostas"
-          description="Prepare uma proposta visualmente cativante e bem estruturada."
-        />
+      <div className="flex items-center justify-center gap-0 w-full h-full relative">
+        <IntroSlider />
 
-        <div className="flex items-center justify-center pt-[78px] sm:pt-0 px-8 sm:p-0 mb-6 sm:mb-0">
+        <div className="flex items-center justify-center pt-[78px] sm:pt-0 px-8 sm:p-0 mb-6 sm:mb-0 w-full lg:w-1/2">
           <div className="w-full max-w-[480px] space-y-8">
             <FormHeader title="Entrar" description="Acesse sua conta Nepfy!" />
 
@@ -151,9 +148,9 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={!isFormValid()}
-                className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] cursor-pointer ${
+                className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] ${
                   isFormValid()
-                    ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)]"
+                    ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] cursor-pointer"
                     : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
@@ -189,7 +186,7 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4 h-[54px]"
+              className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4 h-[54px] cursor-pointer"
             >
               <GoogleLogo />
               Fazer login com o Google

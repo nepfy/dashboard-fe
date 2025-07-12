@@ -42,13 +42,10 @@ export default function Onboarding() {
     <FormProvider>
       <div className="grid place-items-center pb-2 sm:pb-0 pt-0 h-screen min-h-[740px]">
         <Navbar />
-        <div className="grid xl:grid-cols-2 w-full h-full relative">
-          <IntroSlider
-            title="Gere propostas"
-            description="Prepare uma proposta visualmente cativante e bem estruturada."
-          />
+        <div className="flex items-center justify-center gap-0 w-full h-full relative">
+          <IntroSlider />
 
-          <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20 mb-6 sm:mb-0 box-border">
+          <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20 mb-6 sm:mb-0 box-border w-full lg:w-1/2">
             <div className="w-full flex flex-col items-center justify-center space-y-8 h-full box-border">
               <MultiStepForm
                 onComplete={handleOnboardingComplete}
