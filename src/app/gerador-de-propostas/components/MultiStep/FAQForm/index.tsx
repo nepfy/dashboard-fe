@@ -110,6 +110,31 @@ export default function FAQForm() {
     if (!hideFaqSection) {
       if (faqList.length === 0) {
         newErrors.faq = "Ao menos 1 item é requerido";
+      } else {
+        // Validate individual FAQ items
+        faqList.forEach((faq: FAQ, index: number) => {
+          // Validate question field
+          if (!faq.question?.trim()) {
+            newErrors[`faq_${index}_question`] = `Pergunta ${
+              index + 1
+            } é obrigatória`;
+          } else if (faq.question.length > 100) {
+            newErrors[`faq_${index}_question`] = `Pergunta ${
+              index + 1
+            } deve ter no máximo 100 caracteres`;
+          }
+
+          // Validate answer field
+          if (!faq.answer?.trim()) {
+            newErrors[`faq_${index}_answer`] = `Resposta ${
+              index + 1
+            } é obrigatória`;
+          } else if (faq.answer.length > 300) {
+            newErrors[`faq_${index}_answer`] = `Resposta ${
+              index + 1
+            } deve ter no máximo 300 caracteres`;
+          }
+        });
       }
 
       // Only validate faqSubtitle if it's visible (Prime or Essencial template)
@@ -220,8 +245,9 @@ export default function FAQForm() {
               faqList={formData?.step14?.faq || []}
               onFormChange={handleFAQChange}
               disabled={isAccordionDisabled}
+              errors={errors}
             />
-            {errors.faq && (
+            {errors.faq && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
                 {errors.faq}
               </p>
@@ -245,7 +271,7 @@ export default function FAQForm() {
         >
           Avançar
         </button>
-        {errors.faq || errors.faqSubtitle ? (
+        {Object.keys(errors).length > 0 && !isAccordionDisabled ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

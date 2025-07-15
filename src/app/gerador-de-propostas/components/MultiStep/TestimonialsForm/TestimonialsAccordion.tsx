@@ -15,12 +15,14 @@ interface TestimonialsAccordionProps {
   testimonials: Testimonial[];
   onChange: (testimonials: Testimonial[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function TestimonialsAccordion({
   testimonials,
   onChange,
   disabled = false,
+  errors = {},
 }: TestimonialsAccordionProps) {
   const [openTestimonial, setOpenTestimonial] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -168,6 +170,16 @@ export default function TestimonialsAccordion({
       delete newErrors[testimonialId];
       return newErrors;
     });
+
+    // Check file size (350KB max)
+    const maxSize = 350 * 1024; // 350KB in bytes
+    if (file.size > maxSize) {
+      setUploadErrors((prev) => ({
+        ...prev,
+        [testimonialId]: "Arquivo muito grande. Tamanho máximo: 350KB.",
+      }));
+      return;
+    }
 
     try {
       clearError();
@@ -371,7 +383,14 @@ export default function TestimonialsAccordion({
                     maxLength={200}
                     disabled={disabled}
                     allowOverText
+                    autoExpand
                   />
+                  {/* Show validation error for testimonial text */}
+                  {errors[`testimonial_${index}_testimonial`] && (
+                    <p className="text-red-700 text-sm font-medium mt-2">
+                      {errors[`testimonial_${index}_testimonial`]}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -397,6 +416,12 @@ export default function TestimonialsAccordion({
                       }
                       disabled={disabled}
                     />
+                    {/* Show validation error for name */}
+                    {errors[`testimonial_${index}_name`] && (
+                      <p className="text-red-700 text-sm font-medium mt-2">
+                        {errors[`testimonial_${index}_name`]}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -426,8 +451,14 @@ export default function TestimonialsAccordion({
 
                 <div>
                   <label
-                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
-                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    className={`text-white-neutral-light-800 text-sm px-3 py-2 mb-3 rounded-3xs font-medium flex justify-between items-center ${
+                      !photoVisible ? "bg-white-neutral-light-300" : ""
+                    }`}
+                    style={{
+                      backgroundColor: !photoVisible
+                        ? undefined
+                        : "rgba(107, 70, 245, 0.05)",
+                    }}
                   >
                     Foto
                     <button
@@ -495,7 +526,7 @@ export default function TestimonialsAccordion({
                       </div>
                       <div className="text-xs text-white-neutral-light-400 mt-3">
                         Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo:
-                        5MB
+                        350KB
                       </div>
 
                       {/* Show upload error if exists for this specific testimonial */}
@@ -503,6 +534,13 @@ export default function TestimonialsAccordion({
                         <div className="text-xs text-red-500 mt-2 font-medium">
                           {uploadErrors[testimonial.id]}
                         </div>
+                      )}
+
+                      {/* Show validation error from form for photo */}
+                      {errors[`testimonial_${index}_photo`] && (
+                        <p className="text-red-700 text-sm font-medium mt-2">
+                          {errors[`testimonial_${index}_photo`]}
+                        </p>
                       )}
                     </div>
                   )}

@@ -47,6 +47,62 @@ export default function PlansForm() {
     if (!hidePlansSection) {
       if (plansList.length === 0) {
         newErrors.plans = "Ao menos 1 plano é requerido";
+      } else {
+        // Validate individual plan items
+        plansList.forEach((plan: Plan, index: number) => {
+          // Validate plan title (Nome do Plano)
+          if (!plan.title?.trim()) {
+            newErrors[`plan_${index}_title`] = `Nome do plano ${
+              index + 1
+            } é obrigatório`;
+          } else if (plan.title.length > 25) {
+            newErrors[`plan_${index}_title`] = `Nome do plano ${
+              index + 1
+            } deve ter no máximo 25 caracteres`;
+          }
+
+          // Validate plan description (Descrição do pacote)
+          if (!plan.description?.trim()) {
+            newErrors[`plan_${index}_description`] = `Descrição do plano ${
+              index + 1
+            } é obrigatória`;
+          } else {
+            // Check character limits for description
+            if (plan.description.length < 50) {
+              newErrors[`plan_${index}_description`] = `Descrição do plano ${
+                index + 1
+              } deve ter pelo menos 50 caracteres`;
+            } else if (plan.description.length > 130) {
+              newErrors[`plan_${index}_description`] = `Descrição do plano ${
+                index + 1
+              } deve ter no máximo 130 caracteres`;
+            }
+          }
+
+          // Validate price (Valor)
+          if (
+            !plan.price ||
+            plan.price === 0 ||
+            plan.price.toString().trim() === ""
+          ) {
+            newErrors[`plan_${index}_price`] = `Valor do plano ${
+              index + 1
+            } é obrigatório`;
+          }
+
+          // Validate CTA button (Botão do CTA)
+          if (!plan.ctaButtonTitle?.trim()) {
+            newErrors[
+              `plan_${index}_ctaButtonTitle`
+            ] = `Botão do CTA do plano ${index + 1} é obrigatório`;
+          } else if (plan.ctaButtonTitle.length > 25) {
+            newErrors[
+              `plan_${index}_ctaButtonTitle`
+            ] = `Botão do CTA do plano ${
+              index + 1
+            } deve ter no máximo 25 caracteres`;
+          }
+        });
       }
     }
 
@@ -104,8 +160,9 @@ export default function PlansForm() {
               plansList={formData?.step12?.plans || []}
               onFormChange={handlePlansChange}
               disabled={isAccordionDisabled}
+              errors={errors}
             />
-            {errors.plans && (
+            {errors.plans && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
                 {errors.plans}
               </p>
@@ -129,7 +186,7 @@ export default function PlansForm() {
         >
           Avançar
         </button>
-        {errors.plans ? (
+        {Object.keys(errors).length > 0 && !isAccordionDisabled ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

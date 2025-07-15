@@ -41,6 +41,13 @@ export default function CallToActionForm() {
     setUploadError("");
     clearError();
 
+    // Check file size (350KB max)
+    const maxSize = 350 * 1024; // 350KB in bytes
+    if (file.size > maxSize) {
+      setUploadError("Arquivo muito grande. Tamanho máximo: 350KB.");
+      return;
+    }
+
     try {
       setIsUploading(true);
 
@@ -187,7 +194,7 @@ export default function CallToActionForm() {
               </div>
             </div>
             <div className="text-xs text-white-neutral-light-400 mt-3">
-              Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
+              Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 350KB
             </div>
 
             {uploadError && (
@@ -214,8 +221,13 @@ export default function CallToActionForm() {
         </button>
         <button
           type="button"
-          className="w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] bg-primary-light-500 button-inner-inverse border-white-neutral-light-300 cursor-pointer text-white-neutral-light-100"
+          className={`w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] button-inner-inverse border-white-neutral-light-300 ${
+            isUploading
+              ? "bg-white-neutral-light-300 cursor-not-allowed opacity-50 text-white-neutral-light-500"
+              : "bg-primary-light-500 cursor-pointer text-white-neutral-light-100"
+          }`}
           onClick={handleNext}
+          disabled={isUploading}
         >
           Avançar
         </button>

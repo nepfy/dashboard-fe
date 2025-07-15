@@ -11,12 +11,14 @@ interface FAQAccordionProps {
   faqList: FAQ[];
   onFormChange: (faq: FAQ[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function FAQAccordion({
   faqList,
   onFormChange,
   disabled = false,
+  errors = {},
 }: FAQAccordionProps) {
   const [openFAQ, setOpenFAQ] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -235,7 +237,7 @@ export default function FAQAccordion({
             <div className="pb-4 space-y-4">
               <div>
                 <p
-                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center"
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center overflow-hidden"
                   style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                 >
                   Pergunta
@@ -254,6 +256,12 @@ export default function FAQAccordion({
                   disabled={disabled}
                   allowOverText
                 />
+                {/* Show validation error for question */}
+                {errors[`faq_${index}_question`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`faq_${index}_question`]}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -274,7 +282,14 @@ export default function FAQAccordion({
                   maxLength={300}
                   disabled={disabled}
                   allowOverText
+                  autoExpand
                 />
+                {/* Show validation error for answer */}
+                {errors[`faq_${index}_answer`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`faq_${index}_answer`]}
+                  </p>
+                )}
               </div>
             </div>
           )}

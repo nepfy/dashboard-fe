@@ -25,6 +25,7 @@ export default function SaveDraftButton({
     isSavingDraft,
     lastSaved,
     getLastSavedText,
+    isEditMode,
   } = useProjectGenerator();
 
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
@@ -113,6 +114,7 @@ export default function SaveDraftButton({
   };
 
   const getButtonText = () => {
+    if (isEditMode) return "Salvar alterações";
     if (isSavingDraft) return "Salvando...";
     if (saveStatus === "success") return "Salvo!";
     if (saveStatus === "error") return "Erro ao salvar";

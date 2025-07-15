@@ -15,12 +15,14 @@ interface ClientsAccordionProps {
   clients: Client[];
   onClientsChange: (clients: Client[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function ClientsAccordion({
   clients,
   onClientsChange,
   disabled = false,
+  errors = {},
 }: ClientsAccordionProps) {
   const [openClient, setOpenClient] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -270,11 +272,24 @@ export default function ClientsAccordion({
     setDragOverIndex(null);
   };
 
+  // Helper function to get the error for a specific field of a client item
+  const getFieldError = (index: number, field: string) => {
+    return errors[`client_${index}_${field}`];
+  };
+
+  // Helper function to check if a client item has any errors
+  const hasClientItemErrors = (index: number) => {
+    return Object.keys(errors).some((key) =>
+      key.startsWith(`client_${index}_`)
+    );
+  };
+
   return (
     <div className="space-y-2">
       {clients.map((client, index) => {
         const logoVisible = getLogoVisibility(client.id);
         const clientNameVisible = getClientNameVisibility(client.id);
+        const hasErrors = hasClientItemErrors(index);
 
         return (
           <div
@@ -298,7 +313,11 @@ export default function ClientsAccordion({
               onDragEnd={handleDragEnd}
             >
               <div
-                className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors rounded-2xs mb-4 ${
+                  hasErrors
+                    ? "bg-red-light-10 border border-red-light-50"
+                    : "bg-white-neutral-light-300"
+                } ${
                   disabled
                     ? "cursor-not-allowed"
                     : "hover:bg-white-neutral-light-400"
@@ -326,6 +345,9 @@ export default function ClientsAccordion({
                     </div>
                     <span className="text-sm font-medium text-white-neutral-light-900">
                       Cliente {index + 1}
+                      {hasErrors && (
+                        <span className="text-red-700 ml-1">*</span>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -368,8 +390,14 @@ export default function ClientsAccordion({
                 {/* Logo Section */}
                 <div>
                   <label
-                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-3"
-                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
+                      !logoVisible ? "bg-white-neutral-light-300" : ""
+                    }`}
+                    style={{
+                      backgroundColor: !logoVisible
+                        ? undefined
+                        : "rgba(107, 70, 245, 0.05)",
+                    }}
                   >
                     Logo
                     <button
@@ -439,9 +467,11 @@ export default function ClientsAccordion({
                         recomendado: 100×100px. Tamanho máximo: 5MB
                       </div>
 
-                      {uploadErrors[client.id] && (
-                        <div className="text-xs text-red-500 mt-2 font-medium">
-                          {uploadErrors[client.id]}
+                      {(uploadErrors[client.id] ||
+                        getFieldError(index, "logo")) && (
+                        <div className="text-xs text-red-700 mt-2 font-medium">
+                          {uploadErrors[client.id] ||
+                            getFieldError(index, "logo")}
                         </div>
                       )}
                     </div>
@@ -451,8 +481,14 @@ export default function ClientsAccordion({
                 {/* Nome do Cliente Section */}
                 <div>
                   <label
-                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
-                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
+                      !clientNameVisible ? "bg-white-neutral-light-300" : ""
+                    }`}
+                    style={{
+                      backgroundColor: !clientNameVisible
+                        ? undefined
+                        : "rgba(107, 70, 245, 0.05)",
+                    }}
                   >
                     Nome do cliente
                     <button
@@ -481,9 +517,17 @@ export default function ClientsAccordion({
                         updateClient(client.id, "name", e.target.value)
                       }
                       disabled={disabled}
+                      error={getFieldError(index, "name")}
                     />
                   )}
                 </div>
+
+                {/* Visibility validation error */}
+                {getFieldError(index, "visibility") && (
+                  <div className="text-red-700 rounded-md text-sm font-medium mt-2">
+                    {getFieldError(index, "visibility")}
+                  </div>
+                )}
               </div>
             )}
           </div>

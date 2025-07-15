@@ -198,6 +198,7 @@ export default function AboutYourTeamForm() {
               maxLength={55}
               minLength={30}
               rows={2}
+              autoExpand
               showCharCount
               error={errors.ourTeamSubtitle}
               disabled={hideSectionChecked}

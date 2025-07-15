@@ -10,12 +10,14 @@ interface TermsAndConditionsAccordionProps {
   termsConditionsList: TermsCondition[];
   onFormChange: (termsConditions: TermsCondition[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function TermsAndConditionsAccordion({
   termsConditionsList,
   onFormChange,
   disabled = false,
+  errors = {},
 }: TermsAndConditionsAccordionProps) {
   const [openTermsCondition, setOpenTermsCondition] = useState<string | null>(
     null
@@ -28,6 +30,8 @@ export default function TermsAndConditionsAccordion({
   >(null);
 
   const addTermsCondition = () => {
+    if (disabled) return;
+
     const newTermsCondition: TermsCondition = {
       id: `terms-condition-${Date.now()}`,
       title: "",
@@ -104,7 +108,10 @@ export default function TermsAndConditionsAccordion({
 
   // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
-    if (disabled) return;
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", "");
@@ -160,7 +167,7 @@ export default function TermsAndConditionsAccordion({
   };
 
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 ${disabled ? "opacity-60" : ""}`}>
       {termsConditionsList.map((termsCondition, index) => (
         <div
           key={termsCondition.id}
@@ -178,24 +185,33 @@ export default function TermsAndConditionsAccordion({
           {/* Accordion Header */}
           <div
             className="flex justify-center gap-4 w-full"
-            draggable
+            draggable={!disabled}
             onDragStart={(e) => handleDragStart(e, index)}
             onDragEnd={handleDragEnd}
             onClick={(e) => {
               e.preventDefault();
-              toggleTermsCondition(termsCondition.id!);
+              if (!disabled && draggedIndex === null) {
+                toggleTermsCondition(termsCondition.id!);
+              }
             }}
-            title="Arraste para reordenar"
+            title={disabled ? "Desabilitado" : "Arraste para reordenar"}
           >
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 hover:bg-white-neutral-light-400 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 cursor-grab active:cursor-grabbing ${
-                draggedIndex === index ? "cursor-grabbing" : ""
-              } `}
+              className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                disabled
+                  ? "cursor-not-allowed"
+                  : "cursor-grab active:cursor-grabbing hover:bg-white-neutral-light-400"
+              } ${draggedIndex === index ? "cursor-grabbing" : ""}`}
             >
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 cursor-grab active:cursor-grabbing`}
+                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                      disabled
+                        ? "cursor-not-allowed"
+                        : "cursor-grab active:cursor-grabbing"
+                    }`}
+                    title={disabled ? "Desabilitado" : "Arraste para reordenar"}
                   >
                     ⋮⋮
                   </div>
@@ -203,7 +219,9 @@ export default function TermsAndConditionsAccordion({
                     className="text-sm font-medium text-white-neutral-light-900 cursor-pointer select-text overflow-hidden"
                     onClick={(e) => {
                       e.preventDefault();
-                      toggleTermsCondition(termsCondition.id!);
+                      if (!disabled) {
+                        toggleTermsCondition(termsCondition.id!);
+                      }
                     }}
                   >
                     {`Termo ${index + 1}`}
@@ -214,12 +232,16 @@ export default function TermsAndConditionsAccordion({
               <div className="flex items-center gap-2">
                 <ChevronDown
                   size={20}
-                  className={`transition-transform duration-200 cursor-pointer ${
+                  className={`transition-transform duration-200 ${
+                    disabled ? "cursor-not-allowed" : "cursor-pointer"
+                  } ${
                     openTermsCondition === termsCondition.id ? "rotate-180" : ""
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    toggleTermsCondition(termsCondition.id!);
+                    if (!disabled) {
+                      toggleTermsCondition(termsCondition.id!);
+                    }
                   }}
                 />
               </div>
@@ -230,9 +252,13 @@ export default function TermsAndConditionsAccordion({
                 e.stopPropagation();
                 handleRemoveClick(termsCondition.id!);
               }}
-              className="text-white-neutral-light-900 w-11 h-11 hover:bg-red-50 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 cursor-pointer"
-              title="Remover termo"
               disabled={disabled}
+              className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                disabled
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer hover:bg-red-50"
+              }`}
+              title={disabled ? "Desabilitado" : "Remover termo"}
             >
               <Trash2 size={16} />
             </button>
@@ -241,29 +267,39 @@ export default function TermsAndConditionsAccordion({
           {/* Accordion Content */}
           {openTermsCondition === termsCondition.id && (
             <div className="pb-4 space-y-4">
-              <label
-                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-              >
-                Título
-              </label>
-              <TextAreaField
-                id={`title-${termsCondition.id}`}
-                placeholder="Adicione o títutlo desejado"
-                value={termsCondition.title}
-                maxLength={80}
-                rows={2}
-                showCharCount
-                disabled={disabled}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  updateTermsCondition(
-                    termsCondition.id!,
-                    "title",
-                    e.target.value
-                  )
-                }
-                allowOverText
-              />
+              <div>
+                <label
+                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                >
+                  Título
+                </label>
+                <TextAreaField
+                  id={`title-${termsCondition.id}`}
+                  textareaName={`title-${termsCondition.id}`}
+                  placeholder="Adicione o título desejado"
+                  value={termsCondition.title}
+                  maxLength={80}
+                  rows={2}
+                  showCharCount
+                  disabled={disabled}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    updateTermsCondition(
+                      termsCondition.id!,
+                      "title",
+                      e.target.value
+                    )
+                  }
+                  allowOverText
+                  autoExpand
+                />
+                {/* Show validation error for title */}
+                {errors[`termsCondition_${index}_title`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`termsCondition_${index}_title`]}
+                  </p>
+                )}
+              </div>
 
               <div>
                 <label
@@ -289,7 +325,14 @@ export default function TermsAndConditionsAccordion({
                   maxLength={380}
                   disabled={disabled}
                   allowOverText
+                  autoExpand
                 />
+                {/* Show validation error for description */}
+                {errors[`termsCondition_${index}_description`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`termsCondition_${index}_description`]}
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -299,9 +342,12 @@ export default function TermsAndConditionsAccordion({
       <button
         type="button"
         onClick={addTermsCondition}
-        className={`w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner
-          ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
         disabled={disabled}
+        className={`w-full p-4 border-1 border-white-neutral-light-300 rounded-2xs transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner ${
+          disabled
+            ? "cursor-not-allowed opacity-60 bg-white-neutral-light-200"
+            : "cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
+        }`}
       >
         <Plus size={16} />
         Adicionar Termo

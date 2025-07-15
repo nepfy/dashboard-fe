@@ -60,6 +60,8 @@ export default function AccessForm() {
       hasNumber: false,
       hasUppercase: false,
     });
+  // Track the original pageUrl state when component loads
+  const [originalPageUrl, setOriginalPageUrl] = useState<string>("");
 
   // Form data
   const pageUrl = formData?.step16?.pageUrl || "";
@@ -79,6 +81,12 @@ export default function AccessForm() {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  // Set original pageUrl when component loads
+  useEffect(() => {
+    setOriginalPageUrl(formData?.step16?.pageUrl || "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once when component mounts
 
   useEffect(() => {
     if (pagePassword) {
@@ -202,7 +210,11 @@ export default function AccessForm() {
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (!isEditMode) {
+    // Fixed logic: Only allow changes when NOT in edit mode OR when in edit mode but original pageUrl was empty
+    const shouldAllowChange =
+      !isEditMode || (isEditMode && originalPageUrl.length === 0);
+
+    if (shouldAllowChange) {
       const cleanValue = e.target.value.toLowerCase().replace(/[^a-z]/g, "");
 
       updateFormData("step16", {
@@ -258,6 +270,7 @@ export default function AccessForm() {
         onTogglePassword={togglePasswordVisibility}
         onToggleUrlModal={() => toggleModal("url")}
         onTogglePasswordModal={() => toggleModal("password")}
+        originalPageUrl={originalPageUrl}
       />
 
       <FormFooter
@@ -295,6 +308,7 @@ interface FormContentProps {
   onTogglePassword: () => void;
   onToggleUrlModal: () => void;
   onTogglePasswordModal: () => void;
+  originalPageUrl: string;
 }
 
 function FormContent({
@@ -312,6 +326,7 @@ function FormContent({
   onTogglePassword,
   onToggleUrlModal,
   onTogglePasswordModal,
+  originalPageUrl,
 }: FormContentProps) {
   return (
     <div className="p-7">
@@ -329,6 +344,7 @@ function FormContent({
         error={errors.pageUrl}
         onUrlChange={onUrlChange}
         onToggleModal={onToggleUrlModal}
+        originalPageUrl={originalPageUrl}
       />
 
       <PasswordSection
@@ -359,6 +375,7 @@ interface URLSectionProps {
   error?: string;
   onUrlChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onToggleModal: () => void;
+  originalPageUrl: string;
 }
 
 function URLSection({
@@ -370,7 +387,11 @@ function URLSection({
   error,
   onUrlChange,
   onToggleModal,
+  originalPageUrl,
 }: URLSectionProps) {
+  // Fixed logic: Disable field only when in edit mode AND original pageUrl had a value
+  const isFieldDisabled = isEditMode && originalPageUrl.length > 0;
+
   return (
     <div className="mt-6 space-y-4 flex items-start justify-between gap-2 max-w-[560px] relative">
       <div className="w-full">
@@ -400,14 +421,14 @@ function URLSection({
                       placeholder:text-[var(--color-white-neutral-light-400)]  
                       max-w-[250px]
             ${
-              isEditMode
+              isFieldDisabled
                 ? "bg-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
                 : "bg-white-neutral-light-100 text-white-neutral-light-800"
             }`}
             rows={isMobile ? 2 : 1}
             style={{ resize: "none" }}
             maxLength={MAX_URL_LENGTH}
-            disabled={isEditMode}
+            disabled={isFieldDisabled}
           />
 
           <span className="text-white-neutral-light-600">.nepfy.com</span>
@@ -566,7 +587,6 @@ function FormFooter({
   hasErrors,
   onBack,
   onFinish,
-  errors,
 }: FormFooterProps) {
   return (
     <div className="border-t border-t-white-neutral-light-300 w-full h-[130px] sm:h-[110px] flex items-center gap-2 p-6">
@@ -587,7 +607,7 @@ function FormFooter({
       <button
         type="button"
         onClick={onFinish}
-        disabled={isFinishing || !isFormValid || !errors}
+        disabled={isFinishing || !isFormValid || hasErrors}
         className="w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium 
                    border rounded-[12px] bg-primary-light-500 button-inner-inverse 
                    border-white-neutral-light-300 cursor-pointer text-white-neutral-light-100
@@ -656,12 +676,12 @@ function URLModalContent({ userName }: { userName: string }) {
           </span>
         </p>
 
-        <p className="text-white-neutral-light-900 mb-4">
+        <p className="text-white-neutral-light-900 mb-2">
           <span className="font-bold">Nome de usuário:</span> Este é o seu
           identificador na plataforma e aparecerá em todas as suas propostas.
         </p>
 
-        <p className="text-white-neutral-light-900 flex items-center gap-2 mb-4">
+        <p className="text-white-neutral-light-900 flex items-center gap-2 mb-2">
           <span className="text-primary-light-500 text-2xl">•</span>
           <span>
             Exemplo: <span className="text-primary-light-500">{userName}</span>
@@ -669,20 +689,20 @@ function URLModalContent({ userName }: { userName: string }) {
           </span>
         </p>
 
-        <p className="text-white-neutral-light-900 mb-4">
+        <p className="text-white-neutral-light-900 mb-2">
           <span className="font-bold">Nome do cliente:</span> Essa parte
           identifica para quem a proposta está sendo enviada.
         </p>
 
-        <p className="text-white-neutral-light-900 flex items-center gap-2 mb-4">
+        <p className="text-white-neutral-light-900 flex items-center gap-2 mb-2">
           <span className="text-primary-light-500 text-2xl">•</span>
           <span>
             Exemplo: {userName}-
-            <span className="text-primary-light-500">odontopati</span>
+            <span className="text-primary-light-500">odontologiapati</span>
           </span>
         </p>
 
-        <p className="text-white-neutral-light-900 font-bold mb-4">
+        <p className="text-white-neutral-light-900 font-bold mb-2">
           Regras para o nome do cliente:
         </p>
         <ul className="text-sm">

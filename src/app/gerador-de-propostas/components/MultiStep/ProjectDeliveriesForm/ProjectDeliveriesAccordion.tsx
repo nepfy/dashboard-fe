@@ -10,12 +10,14 @@ interface ProjectDeliveriesAccordionProps {
   servicesList: Service[];
   onFormChange: (services: Service[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function ProjectDeliveriesAccordion({
   servicesList,
   onFormChange,
   disabled = false,
+  errors = {},
 }: ProjectDeliveriesAccordionProps) {
   const [openService, setOpenService] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -256,6 +258,12 @@ export default function ProjectDeliveriesAccordion({
                   showCharCount
                   disabled={disabled}
                 />
+                {/* Show validation error for title */}
+                {errors[`service_${index}_title`] && (
+                  <span className="text-red-700 text-sm font-medium m-0">
+                    {errors[`service_${index}_title`]}
+                  </span>
+                )}
               </div>
 
               <div>
@@ -279,7 +287,14 @@ export default function ProjectDeliveriesAccordion({
                   minLength={165}
                   disabled={disabled}
                   allowOverText
+                  autoExpand
                 />
+                {/* Show validation error for description */}
+                {errors[`service_${index}_description`] && (
+                  <span className="text-red-700 text-sm font-medium m-0">
+                    {errors[`service_${index}_description`]}
+                  </span>
+                )}
               </div>
             </div>
           )}

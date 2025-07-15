@@ -83,11 +83,28 @@ export default function CreateAccount() {
         Array.isArray(err.errors)
       ) {
         if (err.errors[0].code === "form_password_pwned") {
-          setError("Senha comprometida. Por favor, escolha outra senha.");
+          return setError(
+            "Senha comprometida. Por favor, escolha outra senha."
+          );
         }
       } else {
-        setError("Um erro ocorreu. Por favor, tente novamente mais tarde");
+        return setError(
+          "Um erro ocorreu. Por favor, tente novamente mais tarde"
+        );
       }
+
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "message" in err &&
+        typeof (err as { message?: unknown }).message === "string" &&
+        (err as { message: string }).message ===
+          "That email address is taken. Please try another."
+      ) {
+        return setError("Email já cadastrado. Tente outro.");
+      }
+
+      setError("Um erro ocorreu., por favor, tente novamente mais tarde.");
     }
   };
 

@@ -47,6 +47,35 @@ export default function TermsAndConditionsForm() {
     if (!hideTermsSection) {
       if (termsConditionsList.length === 0) {
         newErrors.termsConditions = "Ao menos 1 item é requerido";
+      } else {
+        // Validate individual terms and conditions items
+        termsConditionsList.forEach(
+          (termsCondition: TermsCondition, index: number) => {
+            // Validate title field
+            if (!termsCondition.title?.trim()) {
+              newErrors[`termsCondition_${index}_title`] = `Título do termo ${
+                index + 1
+              } é obrigatório`;
+            } else if (termsCondition.title.length > 80) {
+              newErrors[`termsCondition_${index}_title`] = `Título do termo ${
+                index + 1
+              } deve ter no máximo 80 caracteres`;
+            }
+
+            // Validate description field
+            if (!termsCondition.description?.trim()) {
+              newErrors[
+                `termsCondition_${index}_description`
+              ] = `Descrição do termo ${index + 1} é obrigatória`;
+            } else if (termsCondition.description.length > 380) {
+              newErrors[
+                `termsCondition_${index}_description`
+              ] = `Descrição do termo ${
+                index + 1
+              } deve ter no máximo 380 caracteres`;
+            }
+          }
+        );
       }
     }
 
@@ -104,8 +133,9 @@ export default function TermsAndConditionsForm() {
               termsConditionsList={formData?.step13?.termsConditions || []}
               onFormChange={handleTermsConditionsChange}
               disabled={isAccordionDisabled}
+              errors={errors}
             />
-            {errors.termsConditions && (
+            {errors.termsConditions && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
                 {errors.termsConditions}
               </p>
@@ -129,7 +159,7 @@ export default function TermsAndConditionsForm() {
         >
           Avançar
         </button>
-        {errors.termsConditions ? (
+        {Object.keys(errors).length > 0 && !isAccordionDisabled ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

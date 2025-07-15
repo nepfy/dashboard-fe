@@ -10,12 +10,14 @@ interface ProcessAccordionProps {
   processList: ProcessStep[];
   onFormChange: (processSteps: ProcessStep[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function ProcessAccordion({
   processList,
   onFormChange,
   disabled = false,
+  errors = {},
 }: ProcessAccordionProps) {
   const [openProcess, setOpenProcess] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -153,141 +155,169 @@ export default function ProcessAccordion({
     setDragOverIndex(null);
   };
 
+  // Helper function to get the error for a specific field of a process item
+  const getFieldError = (index: number, field: string) => {
+    return errors[`process_${index}_${field}`];
+  };
+
+  // Helper function to check if a process item has any errors
+  const hasProcessItemErrors = (index: number) => {
+    return Object.keys(errors).some((key) =>
+      key.startsWith(`process_${index}_`)
+    );
+  };
+
   return (
     <div className="space-y-2">
-      {processList.map((process, index) => (
-        <div
-          key={process.id}
-          className={`transition-all duration-200 ${
-            draggedIndex === index ? "opacity-50 scale-95" : ""
-          } ${
-            dragOverIndex === index && draggedIndex !== index
-              ? "border-2 border-primary-light-400 border-dashed"
-              : ""
-          } ${disabled ? "opacity-60" : ""}`}
-        >
-          {/* Accordion Header */}
+      {processList.map((process, index) => {
+        const hasErrors = hasProcessItemErrors(index);
+
+        return (
           <div
-            className="flex justify-center gap-4 w-full"
-            onDragOver={(e) => handleDragOver(e, index)}
-            onDragLeave={handleDragLeave}
-            onDrop={(e) => handleDrop(e, index)}
-            draggable={!disabled}
-            onDragStart={(e) => handleDragStart(e, index)}
-            onDragEnd={handleDragEnd}
+            key={process.id}
+            className={`transition-all duration-200 ${
+              draggedIndex === index ? "opacity-50 scale-95" : ""
+            } ${
+              dragOverIndex === index && draggedIndex !== index
+                ? "border-2 border-primary-light-400 border-dashed"
+                : ""
+            } ${disabled ? "opacity-60" : ""}`}
           >
+            {/* Accordion Header */}
             <div
-              className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
-                disabled
-                  ? "cursor-not-allowed"
-                  : "hover:bg-white-neutral-light-400"
-              }`}
-              onClick={(e) => {
-                e.preventDefault();
-                if (!disabled && draggedIndex === null) {
-                  toggleProcess(process.id);
-                }
-              }}
+              className="flex justify-center gap-4 w-full"
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, index)}
+              draggable={!disabled}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
             >
-              <div className="flex items-center gap-3" draggable={!disabled}>
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
-                      disabled
-                        ? "cursor-not-allowed"
-                        : "cursor-grab active:cursor-grabbing"
-                    }`}
-                    title={disabled ? "Desabilitado" : "Arraste para reordenar"}
-                  >
-                    ⋮⋮
+              <div
+                className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors rounded-2xs mb-4 ${
+                  hasErrors
+                    ? "bg-red-light-10 border border-red-light-50"
+                    : "bg-white-neutral-light-300"
+                } ${
+                  disabled
+                    ? "cursor-not-allowed"
+                    : "hover:bg-white-neutral-light-400"
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (!disabled && draggedIndex === null) {
+                    toggleProcess(process.id);
+                  }
+                }}
+              >
+                <div className="flex items-center gap-3" draggable={!disabled}>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
+                        disabled
+                          ? "cursor-not-allowed"
+                          : "cursor-grab active:cursor-grabbing"
+                      }`}
+                      title={
+                        disabled ? "Desabilitado" : "Arraste para reordenar"
+                      }
+                    >
+                      ⋮⋮
+                    </div>
+                    <span className="text-sm font-medium text-white-neutral-light-900">
+                      Etapa {process.stepCounter}
+                      {hasErrors && (
+                        <span className="text-red-700 ml-1">*</span>
+                      )}
+                    </span>
                   </div>
-                  <span className="text-sm font-medium text-white-neutral-light-900">
-                    Etapa {process.stepCounter}
-                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    size={20}
+                    className={`transition-transform duration-200 ${
+                      openProcess === process.id ? "rotate-180" : ""
+                    }`}
+                  />
                 </div>
               </div>
-
-              <div className="flex items-center gap-2">
-                <ChevronDown
-                  size={20}
-                  className={`transition-transform duration-200 ${
-                    openProcess === process.id ? "rotate-180" : ""
-                  }`}
-                />
-              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveClick(process.id);
+                }}
+                disabled={disabled}
+                className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
+                  disabled
+                    ? "cursor-not-allowed opacity-60"
+                    : "cursor-pointer hover:bg-red-50"
+                }`}
+                title={disabled ? "Desabilitado" : "Remover etapa"}
+              >
+                <Trash2 size={16} />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveClick(process.id);
-              }}
-              disabled={disabled}
-              className={`text-white-neutral-light-900 w-11 h-11 transition-colors flex items-center justify-center bg-white-neutral-light-100 rounded-[12px] border border-white-neutral-light-300 ${
-                disabled
-                  ? "cursor-not-allowed opacity-60"
-                  : "cursor-pointer hover:bg-red-50"
-              }`}
-              title={disabled ? "Desabilitado" : "Remover etapa"}
-            >
-              <Trash2 size={16} />
-            </button>
+
+            {/* Accordion Content */}
+            {openProcess === process.id && (
+              <div className="pb-4 space-y-4">
+                <div>
+                  <label
+                    className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                  >
+                    Nome da etapa
+                  </label>
+                  <TextField
+                    inputName={`stepName-${process.id}`}
+                    id={`stepName-${process.id}`}
+                    type="text"
+                    placeholder="Nome da etapa do processo"
+                    value={process.stepName}
+                    onChange={(e) =>
+                      updateProcess(process.id, "stepName", e.target.value)
+                    }
+                    maxLength={30}
+                    minLength={20}
+                    disabled={disabled}
+                    showCharCount
+                    allowOverText
+                    error={getFieldError(index, "stepName")}
+                  />
+                </div>
+
+                <div>
+                  <p
+                    className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center"
+                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                  >
+                    Descrição
+                  </p>
+                  <TextAreaField
+                    id={`description-${process.id}`}
+                    textareaName={`description-${process.id}`}
+                    placeholder="Descreva esta etapa do processo"
+                    value={process.description || ""}
+                    onChange={(e) =>
+                      updateProcess(process.id, "description", e.target.value)
+                    }
+                    rows={3}
+                    showCharCount
+                    maxLength={345}
+                    minLength={190}
+                    disabled={disabled}
+                    autoExpand
+                    allowOverText
+                    error={getFieldError(index, "description")}
+                  />
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* Accordion Content */}
-          {openProcess === process.id && (
-            <div className="pb-4 space-y-4">
-              <div>
-                <label
-                  className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-                >
-                  Nome da etapa
-                </label>
-                <TextField
-                  inputName={`stepName-${process.id}`}
-                  id={`stepName-${process.id}`}
-                  type="text"
-                  placeholder="Nome da etapa do processo"
-                  value={process.stepName}
-                  onChange={(e) =>
-                    updateProcess(process.id, "stepName", e.target.value)
-                  }
-                  maxLength={30}
-                  minLength={20}
-                  showCharCount
-                  disabled={disabled}
-                  allowOverText
-                />
-              </div>
-
-              <div>
-                <p
-                  className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center"
-                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-                >
-                  Descrição
-                </p>
-                <TextAreaField
-                  id={`description-${process.id}`}
-                  textareaName={`description-${process.id}`}
-                  placeholder="Descreva esta etapa do processo"
-                  value={process.description || ""}
-                  onChange={(e) =>
-                    updateProcess(process.id, "description", e.target.value)
-                  }
-                  rows={3}
-                  showCharCount
-                  maxLength={345}
-                  minLength={190}
-                  disabled={disabled}
-                  allowOverText
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
+        );
+      })}
 
       <button
         type="button"

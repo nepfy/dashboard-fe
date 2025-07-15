@@ -52,15 +52,37 @@ export default function ProjectDeliveriesForm() {
       } else {
         // Validate individual service items
         servicesList.forEach((service: Service, index: number) => {
+          // Validate title field
           if (!service.title?.trim()) {
             newErrors[`service_${index}_title`] = `Título da entrega ${
               index + 1
             } é obrigatório`;
+          } else if (service.title.length > 50) {
+            newErrors[`service_${index}_title`] = `Título da entrega ${
+              index + 1
+            } deve ter no máximo 50 caracteres`;
           }
+
+          // Validate description field
           if (!service.description?.trim()) {
             newErrors[`service_${index}_description`] = `Descrição da entrega ${
               index + 1
             } é obrigatória`;
+          } else {
+            // Check character limits for description
+            if (service.description.length < 165) {
+              newErrors[
+                `service_${index}_description`
+              ] = `Descrição da entrega ${
+                index + 1
+              } deve ter pelo menos 165 caracteres`;
+            } else if (service.description.length > 340) {
+              newErrors[
+                `service_${index}_description`
+              ] = `Descrição da entrega ${
+                index + 1
+              } deve ter no máximo 340 caracteres`;
+            }
           }
         });
       }
@@ -122,6 +144,7 @@ export default function ProjectDeliveriesForm() {
               servicesList={formData?.step11?.includedServices || []}
               onFormChange={handleFormListChange}
               disabled={isAccordionDisabled}
+              errors={errors}
             />
             {errors.includedServices && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -147,7 +170,7 @@ export default function ProjectDeliveriesForm() {
         >
           Avançar
         </button>
-        {errors.includedServices ? (
+        {Object.keys(errors).length > 0 && !isAccordionDisabled ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

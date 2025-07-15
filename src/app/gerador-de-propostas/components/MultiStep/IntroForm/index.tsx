@@ -35,7 +35,8 @@ export default function IntroStep() {
 
   const [showImportModal, setShowImportModal] = useState(false);
   const [modalDismissed, setModalDismissed] = useState(false);
-  const [hasNavigatedToIntro, setHasNavigatedToIntro] = useState(false);
+  const [isInitialMount, setIsInitialMount] = useState(true);
+  const [isComingFromOtherStep, setIsComingFromOtherStep] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [fieldVisibility, setFieldVisibility] = useState({
     pageSubtitle: !hidePageSubtitle && !isGridTemplate,
@@ -43,19 +44,36 @@ export default function IntroStep() {
   });
 
   useEffect(() => {
-    // Only show the modal if:
-    // 1. It hasn't been dismissed yet AND
-    // 2. We're in edit mode OR we haven't navigated to intro from another step
+    if (currentStep === 1 && !isInitialMount) {
+      if (formData?.step1?.companyName || formData?.step1?.pageTitle) {
+        setIsComingFromOtherStep(true);
+      } else {
+        setIsComingFromOtherStep(false);
+      }
+    }
+  }, [
+    currentStep,
+    isInitialMount,
+    formData?.step1?.companyName,
+    formData?.step1?.pageTitle,
+  ]);
+
+  // Handle modal visibility
+  useEffect(() => {
+    // Show modal when:
+    // 1. Not dismissed AND
+    // 2. (Edit mode OR (new project AND not coming from other step))
     const shouldShowModal =
-      !modalDismissed && (isEditMode || !hasNavigatedToIntro);
+      !modalDismissed &&
+      (isEditMode || (!isEditMode && !isComingFromOtherStep));
 
     setShowImportModal(shouldShowModal);
 
-    // Mark that we've navigated to intro (for non-edit mode)
-    if (!isEditMode) {
-      setHasNavigatedToIntro(true);
+    // After first render, mark as no longer initial mount
+    if (isInitialMount) {
+      setIsInitialMount(false);
     }
-  }, [modalDismissed, isEditMode, hasNavigatedToIntro]);
+  }, [modalDismissed, isEditMode, isComingFromOtherStep, isInitialMount]);
 
   // Update field visibility when template type changes
   useEffect(() => {
@@ -136,9 +154,10 @@ export default function IntroStep() {
   const handleBack = () => {
     setTemplateType(null);
     resetForm();
-    // Reset navigation flags when going back to template selection
+    // Reset ALL navigation flags when going back to template selection
     setModalDismissed(false);
-    setHasNavigatedToIntro(false);
+    setIsInitialMount(true);
+    setIsComingFromOtherStep(false);
   };
 
   const handleNext = () => {
@@ -457,13 +476,15 @@ export default function IntroStep() {
         </div>
 
         <div className="border-t border-t-white-neutral-light-300 w-full h-[90px] xl:h-[100px] flex gap-2 p-6 fixed bottom-0 bg-white-neutral-light-200">
-          <button
-            type="button"
-            onClick={handleBack}
-            className="flex items-center justify-center gap-1 w-[110px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] border-white-neutral-light-300 cursor-pointer button-inner text-white-neutral-light-900 hover:bg-white-neutral-light-300"
-          >
-            <ArrowLeft size={16} /> Voltar
-          </button>
+          {!isEditMode && (
+            <button
+              type="button"
+              onClick={handleBack}
+              className="flex items-center justify-center gap-1 w-[110px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] border-white-neutral-light-300 cursor-pointer button-inner text-white-neutral-light-900 hover:bg-white-neutral-light-300"
+            >
+              <ArrowLeft size={16} /> Voltar
+            </button>
+          )}
 
           <button
             type="button"

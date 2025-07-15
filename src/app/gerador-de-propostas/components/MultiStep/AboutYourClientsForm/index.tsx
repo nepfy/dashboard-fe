@@ -40,6 +40,17 @@ export default function AboutYourClientsForm() {
   };
 
   const handleClientsChange = (clients: Client[]) => {
+    // Clear any client-related errors when clients change
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach((key) => {
+        if (key.startsWith("client_") || key === "clients") {
+          delete newErrors[key];
+        }
+      });
+      return newErrors;
+    });
+
     updateFormData("step6", {
       ...formData?.step6,
       clients: clients,
@@ -89,10 +100,27 @@ export default function AboutYourClientsForm() {
         newErrors.clients = "Ao menos 1 cliente é requerido";
       } else {
         clients.forEach((client: Client, index: number) => {
-          if (!client.name?.trim()) {
-            newErrors[`client_${index}_name`] = `Nome do cliente ${
+          const clientPrefix = `client_${index}`;
+
+          // Validate client name if not hidden
+          if (!client.hideClientName && !client.name?.trim()) {
+            newErrors[`${clientPrefix}_name`] = `Nome do cliente ${
               index + 1
             } é obrigatório`;
+          }
+
+          // Validate logo if not hidden
+          if (!client.hideLogo && !client.logo?.trim()) {
+            newErrors[`${clientPrefix}_logo`] = `Logo do cliente ${
+              index + 1
+            } é obrigatório`;
+          }
+
+          // If both logo and client name are hidden, show error
+          if (client.hideLogo && client.hideClientName) {
+            newErrors[`${clientPrefix}_visibility`] = `Cliente ${
+              index + 1
+            } deve ter pelo menos o logo ou o nome visível`;
           }
         });
       }
@@ -107,6 +135,13 @@ export default function AboutYourClientsForm() {
   };
 
   const isAccordionDisabled = formData?.step6?.hideClientsSection || false;
+
+  // Helper function to check if there are any client validation errors
+  const hasClientErrors = () => {
+    return Object.keys(errors).some(
+      (key) => key.startsWith("client_") || key === "clients"
+    );
+  };
 
   return (
     <div className="h-full flex flex-col justify-between overflow-y-scroll relative">
@@ -185,6 +220,7 @@ export default function AboutYourClientsForm() {
               clients={formData?.step6?.clients || []}
               onClientsChange={handleClientsChange}
               disabled={isAccordionDisabled}
+              errors={errors}
             />
             {errors.clients && !isAccordionDisabled && (
               <div className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -210,7 +246,7 @@ export default function AboutYourClientsForm() {
         >
           Avançar
         </button>
-        {errors.clients || errors.clientSubtitle ? (
+        {errors.clients || errors.clientSubtitle || hasClientErrors() ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

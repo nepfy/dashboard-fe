@@ -50,15 +50,32 @@ export default function TestimonialsForm() {
       } else {
         // Validate individual testimonial items
         testimonials.forEach((testimonial: Testimonial, index: number) => {
+          // Validate testimonial text field
           if (!testimonial.testimonial?.trim()) {
             newErrors[`testimonial_${index}_testimonial`] = `Depoimento ${
               index + 1
             } é obrigatório`;
+          } else if (testimonial.testimonial.length > 200) {
+            newErrors[`testimonial_${index}_testimonial`] = `Depoimento ${
+              index + 1
+            } deve ter no máximo 200 caracteres`;
           }
+
+          // Validate name field
           if (!testimonial.name?.trim()) {
             newErrors[`testimonial_${index}_name`] = `Nome do depoimento ${
               index + 1
             } é obrigatório`;
+          }
+
+          // Validate photo field - only if hidePhoto is false
+          if (
+            testimonial.hidePhoto === false &&
+            (!testimonial.photo || testimonial.photo.trim() === "")
+          ) {
+            newErrors[`testimonial_${index}_photo`] = `Foto do depoimento ${
+              index + 1
+            } é obrigatória ou deve ser ocultada`;
           }
         });
       }
@@ -118,6 +135,7 @@ export default function TestimonialsForm() {
             testimonials={formData?.step9?.testimonials || []}
             onChange={handleTestimonialsChange}
             disabled={isAccordionDisabled}
+            errors={errors}
           />
           {errors.testimonials && !isAccordionDisabled && (
             <p className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -142,7 +160,7 @@ export default function TestimonialsForm() {
         >
           Avançar
         </button>
-        {errors.testimonials ? (
+        {Object.keys(errors).length > 0 && !isAccordionDisabled ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

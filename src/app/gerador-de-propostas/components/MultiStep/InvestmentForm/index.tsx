@@ -28,9 +28,18 @@ export default function InvestmentForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (investmentTitle.length < 50) {
-        newErrors.investmentTitle = // ← Corrigido: era 'aboutUsTitle'
-          "O campo 'Título' deve ter pelo menos 50 caracteres";
+      // Check if field is empty
+      if (!investmentTitle.trim()) {
+        newErrors.investmentTitle = "O campo 'Título' é obrigatório";
+      } else {
+        // Check character limits
+        if (investmentTitle.length < 50) {
+          newErrors.investmentTitle =
+            "O campo 'Título' deve ter pelo menos 50 caracteres";
+        } else if (investmentTitle.length > 90) {
+          newErrors.investmentTitle =
+            "O campo 'Título' deve ter no máximo 90 caracteres";
+        }
       }
     }
 
@@ -60,10 +69,17 @@ export default function InvestmentForm() {
     };
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isHidden = e.target.checked;
+
     updateFormData("step10", {
       ...formData?.step10,
-      hideInvestmentSection: e.target.checked,
+      hideInvestmentSection: isHidden,
     });
+
+    // Clear errors when section is hidden
+    if (isHidden) {
+      setErrors({});
+    }
   };
 
   const isDisabled = formData?.step10?.hideInvestmentSection || false;
@@ -112,7 +128,7 @@ export default function InvestmentForm() {
               className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center"
               style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
             >
-              Título {/* ← Corrigido: era 'Títutlo' */}
+              Título
             </p>
             <TextAreaField
               id="investmentTitle"
@@ -126,6 +142,7 @@ export default function InvestmentForm() {
               error={errors.investmentTitle}
               disabled={isDisabled}
               allowOverText
+              autoExpand
             />
           </div>
         </div>
@@ -146,7 +163,7 @@ export default function InvestmentForm() {
         >
           Avançar
         </button>
-        {errors.investmentTitle ? (
+        {errors.investmentTitle && !isDisabled ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

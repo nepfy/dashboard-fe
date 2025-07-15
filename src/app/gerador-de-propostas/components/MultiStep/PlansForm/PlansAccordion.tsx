@@ -10,12 +10,14 @@ interface PlansAccordionProps {
   plansList: Plan[];
   onFormChange: (plans: Plan[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 export default function PlansAccordion({
   plansList,
   onFormChange,
   disabled = false,
+  errors = {},
 }: PlansAccordionProps) {
   const [openPlan, setOpenPlan] = useState<string | null>(null);
   const [openItem, setOpenItem] = useState<string | null>(null);
@@ -469,6 +471,12 @@ export default function PlansAccordion({
                   disabled={disabled}
                   allowOverText
                 />
+                {/* Show validation error for title */}
+                {errors[`plan_${index}_title`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`plan_${index}_title`]}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -492,7 +500,14 @@ export default function PlansAccordion({
                   minLength={50}
                   disabled={disabled}
                   allowOverText
+                  autoExpand
                 />
+                {/* Show validation error for description */}
+                {errors[`plan_${index}_description`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`plan_${index}_description`]}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -540,6 +555,12 @@ export default function PlansAccordion({
                     className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-s)] border border-white-neutral-light-300 bg-white-neutral-light-100 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none focus:border-[var(--color-primary-light-400)] text-white-neutral-light-800 disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                 </div>
+                {/* Show validation error for price */}
+                {errors[`plan_${index}_price`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`plan_${index}_price`]}
+                  </p>
+                )}
               </div>
 
               <div className="mb-6">
@@ -626,6 +647,13 @@ export default function PlansAccordion({
                 </div>
               </div>
 
+              <p
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-4"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Quais serviços estão inclusos nesse pacote?
+              </p>
+
               {/* Items Accordion */}
               <div className="space-y-2">
                 {(plan.planDetails || []).map((item, itemIndex) => (
@@ -687,7 +715,7 @@ export default function PlansAccordion({
                               ⋮⋮
                             </div>
                             <span className="text-sm font-medium text-white-neutral-light-900">
-                              {`Item ${itemIndex + 1}`}
+                              {`Entregável ${itemIndex + 1}`}
                             </span>
                           </div>
                         </div>
@@ -785,6 +813,12 @@ export default function PlansAccordion({
                   showCharCount
                   allowOverText
                 />
+                {/* Show validation error for CTA button */}
+                {errors[`plan_${index}_ctaButtonTitle`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`plan_${index}_ctaButtonTitle`]}
+                  </p>
+                )}
               </div>
             </div>
           )}

@@ -108,11 +108,10 @@ export default function UserNameStep() {
               &#8226; Escolha um nome curto (até 20 caracteres).
             </p>
             <p className="text-white-neutral-light-500 text-sm">
-              &#8226; Use apenas letras
+              &#8226; Use apenas letras minúsculas.
             </p>
             <p className="text-white-neutral-light-500 text-sm mb-3">
-              &#8226; minúsculas. Evite espaços, números ou caracteres
-              especiais.
+              &#8226; Evite espaços, números ou caracteres especiais.
             </p>
           </div>
           <div className="flex justify-end items-center w-full">

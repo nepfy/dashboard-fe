@@ -46,6 +46,17 @@ export default function AboutYourProcessForm() {
     };
 
   const handleFormListChange = (process: ProcessStep[]) => {
+    // Clear any process-related errors when process changes
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach((key) => {
+        if (key.startsWith("process_") || key === "processList") {
+          delete newErrors[key];
+        }
+      });
+      return newErrors;
+    });
+
     updateFormData("step7", {
       ...formData?.step7,
       processSteps: process,
@@ -76,15 +87,36 @@ export default function AboutYourProcessForm() {
       } else {
         // Validate individual process items
         processList.forEach((process: ProcessStep, index: number) => {
+          const processPrefix = `process_${index}`;
+
+          // Validate step name
           if (!process.stepName?.trim()) {
-            newErrors[`process_${index}_stepName`] = `Nome da etapa ${
+            newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
               index + 1
             } é obrigatório`;
+          } else if (process.stepName.length < 20) {
+            newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
+              index + 1
+            } deve ter pelo menos 20 caracteres`;
+          } else if (process.stepName.length > 30) {
+            newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
+              index + 1
+            } deve ter no máximo 30 caracteres`;
           }
+
+          // Validate description
           if (!process.description?.trim()) {
-            newErrors[`process_${index}_description`] = `Descrição da etapa ${
+            newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
               index + 1
             } é obrigatória`;
+          } else if (process.description.length < 190) {
+            newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
+              index + 1
+            } deve ter pelo menos 190 caracteres`;
+          } else if (process.description.length > 345) {
+            newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
+              index + 1
+            } deve ter no máximo 345 caracteres`;
           }
         });
       }
@@ -99,6 +131,13 @@ export default function AboutYourProcessForm() {
   };
 
   const isAccordionDisabled = formData?.step7?.hideProcessSection || false;
+
+  // Helper function to check if there are any process validation errors
+  const hasProcessErrors = () => {
+    return Object.keys(errors).some(
+      (key) => key.startsWith("process_") || key === "processList"
+    );
+  };
 
   return (
     <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
@@ -162,6 +201,7 @@ export default function AboutYourProcessForm() {
               minLength={70}
               rows={2}
               showCharCount
+              autoExpand
               error={errors.processSubtitle}
               disabled={isAccordionDisabled}
               allowOverText
@@ -172,6 +212,7 @@ export default function AboutYourProcessForm() {
               processList={formData?.step7?.processSteps || []}
               onFormChange={handleFormListChange}
               disabled={isAccordionDisabled}
+              errors={errors}
             />
             {errors.processList && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -198,7 +239,7 @@ export default function AboutYourProcessForm() {
           Avançar
         </button>
 
-        {errors.processSubtitle || errors.processList ? (
+        {errors.processSubtitle || errors.processList || hasProcessErrors() ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

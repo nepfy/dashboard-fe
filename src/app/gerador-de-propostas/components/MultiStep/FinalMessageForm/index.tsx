@@ -46,23 +46,48 @@ export default function FinalMessageForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (endMessageTitle.length < 20) {
-        newErrors.endMessageTitle =
-          "O campo 'Agradecimento 1' deve ter pelo menos 20 caracteres";
-      }
-
-      if (endMessageTitle2.length < 20) {
-        newErrors.endMessageTitle2 =
-          "O campo 'Agradecimento 2' deve ter pelo menos 20 caracteres";
-      }
-
-      if (!hideFinalMessageSubtitle) {
-        if (endMessageDescription.length < 70) {
-          newErrors.endMessageDescription =
-            "O campo 'Descrição da mensagem final' deve ter pelo menos 70 caracteres";
+      // Validate Agradecimento 1
+      if (!endMessageTitle.trim()) {
+        newErrors.endMessageTitle = "O campo 'Agradecimento 1' é obrigatório";
+      } else {
+        if (endMessageTitle.length < 20) {
+          newErrors.endMessageTitle =
+            "O campo 'Agradecimento 1' deve ter pelo menos 20 caracteres";
+        } else if (endMessageTitle.length > 50) {
+          newErrors.endMessageTitle =
+            "O campo 'Agradecimento 1' deve ter no máximo 50 caracteres";
         }
       }
 
+      // Validate Agradecimento 2
+      if (!endMessageTitle2.trim()) {
+        newErrors.endMessageTitle2 = "O campo 'Agradecimento 2' é obrigatório";
+      } else {
+        if (endMessageTitle2.length < 20) {
+          newErrors.endMessageTitle2 =
+            "O campo 'Agradecimento 2' deve ter pelo menos 20 caracteres";
+        } else if (endMessageTitle2.length > 50) {
+          newErrors.endMessageTitle2 =
+            "O campo 'Agradecimento 2' deve ter no máximo 50 caracteres";
+        }
+      }
+
+      // Validate Subtítulo only if it's visible
+      if (!hideFinalMessageSubtitle) {
+        if (!endMessageDescription.trim()) {
+          newErrors.endMessageDescription = "O campo 'Subtítulo' é obrigatório";
+        } else {
+          if (endMessageDescription.length < 70) {
+            newErrors.endMessageDescription =
+              "O campo 'Subtítulo' deve ter pelo menos 70 caracteres";
+          } else if (endMessageDescription.length > 225) {
+            newErrors.endMessageDescription =
+              "O campo 'Subtítulo' deve ter no máximo 225 caracteres";
+          }
+        }
+      }
+
+      // Validate Validade da proposta
       if (
         !projectValidUntil ||
         (typeof projectValidUntil === "string" &&
@@ -160,11 +185,6 @@ export default function FinalMessageForm() {
       return "";
     }
   };
-
-  console.log(
-    "formData.step15?.hideFinalMessageSubtitle ",
-    formData.step15?.hideFinalMessageSubtitle
-  );
 
   const isFormDisabled = formData?.step15?.hideFinalMessage || false;
   const hasErrors = Object.keys(errors).length > 0;
@@ -290,6 +310,7 @@ export default function FinalMessageForm() {
                   display: subtitleVisible ? "block" : "none",
                 }}
                 allowOverText
+                autoExpand
               />
             )}
           </div>
@@ -324,7 +345,7 @@ export default function FinalMessageForm() {
         >
           Avançar
         </button>
-        {hasErrors ? (
+        {hasErrors && !isFormDisabled ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">
