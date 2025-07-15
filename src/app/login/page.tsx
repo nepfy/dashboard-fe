@@ -102,9 +102,10 @@ export default function Login() {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-2 relative">
                 <MailEnvelope
-                  className="absolute right-4 bottom-[14px]"
+                  className="absolute right-4 bottom-[34px] z-40"
                   width="20"
                   height="20"
+                  fill="#1C1A22"
                 />
                 <TextField
                   label="Email"
