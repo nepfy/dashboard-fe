@@ -88,38 +88,42 @@ export default function AboutYourResultsForm() {
       } else {
         // Validate individual result items
         results.forEach((result: Result, index: number) => {
+          // Validate photo field - only if hidePhoto is false
+          if (
+            result.hidePhoto === false &&
+            (!result.photo || result.photo.trim() === "")
+          ) {
+            newErrors[`result_${index}_photo`] = `Foto do resultado ${
+              index + 1
+            } é obrigatória ou deve ser ocultada`;
+          }
+
           // Validate client field
-          if (!result.client?.trim()) {
+          if (!result.client || result.client.trim() === "") {
             newErrors[`result_${index}_client`] = `Cliente do resultado ${
               index + 1
             } é obrigatório`;
           }
 
           // Validate subtitle field (Instagram)
-          if (!result.subtitle?.trim()) {
+          if (!result.subtitle || result.subtitle.trim() === "") {
             newErrors[`result_${index}_subtitle`] = `Instagram do resultado ${
               index + 1
             } é obrigatório`;
           }
 
           // Validate investment field
-          if (!result.investment?.trim()) {
+          if (!result.investment || result.investment.trim() === "") {
             newErrors[
               `result_${index}_investment`
             ] = `Investimento do resultado ${index + 1} é obrigatório`;
           }
 
           // Validate ROI field
-          if (!result.roi?.trim()) {
+          if (!result.roi || result.roi.trim() === "") {
             newErrors[`result_${index}_roi`] = `ROI do resultado ${
               index + 1
             } é obrigatório`;
-          }
-
-          if (result.hidePhoto === false && !result.photo?.trim()) {
-            newErrors[`result_${index}_photo`] = `Foto do resultado ${
-              index + 1
-            } é obrigatória ou deve ser ocultada`;
           }
         });
       }
@@ -127,7 +131,6 @@ export default function AboutYourResultsForm() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-
       return;
     }
 

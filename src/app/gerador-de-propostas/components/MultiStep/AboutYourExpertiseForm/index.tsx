@@ -37,6 +37,17 @@ export default function AboutYourExpertiseForm() {
   };
 
   const handleExpertiseChange = (expertise: Expertise[]) => {
+    // Clear any expertise-related errors when expertise changes
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach((key) => {
+        if (key.startsWith("expertise_") || key === "expertiseList") {
+          delete newErrors[key];
+        }
+      });
+      return newErrors;
+    });
+
     updateFormData("step4", {
       ...formData?.step4,
       expertise: expertise,
@@ -56,14 +67,56 @@ export default function AboutYourExpertiseForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideExpertiseSection) {
-      // Only validate subtitle if it should be visible (not Essencial or Grid template)
-      if (!shouldHideSubtitle && expertiseSubtitle.length < 90) {
-        newErrors.expertiseSubtitle =
-          "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
+      // Validate subtitle if it should be visible (not Essencial or Grid template)
+      if (!shouldHideSubtitle) {
+        if (expertiseSubtitle.length < 90) {
+          newErrors.expertiseSubtitle =
+            "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
+        } else if (expertiseSubtitle.length > 120) {
+          newErrors.expertiseSubtitle =
+            "O campo 'Subtítulo' deve ter no máximo 120 caracteres";
+        }
       }
 
+      // Check if at least one expertise exists
       if (expertiseList.length === 0) {
         newErrors.expertiseList = "Ao menos 1 especialização é requerida";
+      } else {
+        // Validate each expertise item
+        expertiseList.forEach((expertise: Expertise, index: number) => {
+          const expertisePrefix = `expertise_${index}`;
+
+          // Check if icon is required and not hidden
+          if (!expertise.hideExpertiseIcon && !expertise.icon) {
+            newErrors[`${expertisePrefix}_icon`] = `Ícone da especialização ${
+              index + 1
+            } é obrigatório`;
+          }
+
+          // Validate title
+          if (!expertise.title?.trim()) {
+            newErrors[`${expertisePrefix}_title`] = `Título da especialização ${
+              index + 1
+            } é obrigatório`;
+          } else if (expertise.title.length > 30) {
+            newErrors[`${expertisePrefix}_title`] = `Título da especialização ${
+              index + 1
+            } deve ter no máximo 30 caracteres`;
+          }
+
+          // Validate description
+          if (!expertise.description?.trim()) {
+            newErrors[
+              `${expertisePrefix}_description`
+            ] = `Descrição da especialização ${index + 1} é obrigatória`;
+          } else if (expertise.description.length > 150) {
+            newErrors[
+              `${expertisePrefix}_description`
+            ] = `Descrição da especialização ${
+              index + 1
+            } deve ter no máximo 150 caracteres`;
+          }
+        });
       }
     }
 
@@ -93,6 +146,13 @@ export default function AboutYourExpertiseForm() {
     };
 
   const hideSectionChecked = formData?.step4?.hideExpertiseSection || false;
+
+  // Helper function to check if there are any expertise validation errors
+  const hasExpertiseErrors = () => {
+    return Object.keys(errors).some(
+      (key) => key.startsWith("expertise_") || key === "expertiseList"
+    );
+  };
 
   return (
     <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
@@ -160,6 +220,7 @@ export default function AboutYourExpertiseForm() {
                 showCharCount
                 error={errors.expertiseSubtitle}
                 disabled={hideSectionChecked}
+                autoExpand
                 allowOverText
               />
             </div>
@@ -170,6 +231,7 @@ export default function AboutYourExpertiseForm() {
               expertise={formData?.step4?.expertise || []}
               onExpertiseChange={handleExpertiseChange}
               disabled={hideSectionChecked}
+              errors={errors}
             />
             {errors.expertiseList && (
               <div className="text-red-700 rounded-md text-sm font-medium mt-3">
@@ -195,7 +257,9 @@ export default function AboutYourExpertiseForm() {
         >
           Avançar
         </button>
-        {errors.expertiseSubtitle || errors.expertiseList ? (
+        {errors.expertiseSubtitle ||
+        errors.expertiseList ||
+        hasExpertiseErrors() ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

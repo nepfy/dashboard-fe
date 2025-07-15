@@ -42,10 +42,36 @@ export default function AboutYourTeamForm() {
       }
     };
 
+  const [uploadingMembers, setUploadingMembers] = useState<Set<string>>(
+    new Set()
+  );
+
   const handleTeamMembersChange = (members: TeamMember[]) => {
     updateFormData("step3", {
       ...formData?.step3,
       teamMembers: members,
+    });
+
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach((key) => {
+        if (key.startsWith("member_") || key === "teamMembers") {
+          delete newErrors[key];
+        }
+      });
+      return newErrors;
+    });
+  };
+
+  const handleUploadStateChange = (memberId: string, isUploading: boolean) => {
+    setUploadingMembers((prev) => {
+      const newSet = new Set(prev);
+      if (isUploading) {
+        newSet.add(memberId);
+      } else {
+        newSet.delete(memberId);
+      }
+      return newSet;
     });
   };
 
@@ -62,13 +88,36 @@ export default function AboutYourTeamForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (ourTeamSubtitle.length < 30) {
+      if (ourTeamSubtitle.length < 30 || ourTeamSubtitle.length > 55) {
         newErrors.ourTeamSubtitle =
-          "O campo 'Subtítulo' deve ter pelo menos 30 caracteres";
+          "O campo 'Subtítulo' deve ter pelo menos 30 e no máximo 55 caracteres";
       }
 
       if (teamMembers.length === 0) {
         newErrors.teamMembers = "Ao menos 1 integrante é requerido";
+      } else {
+        // Validação dos campos obrigatórios de cada membro
+        teamMembers.forEach((member, index) => {
+          const memberNumber = index + 1;
+
+          if (!member.photo || member.photo.trim() === "") {
+            newErrors[
+              `member_${member.id}_photo`
+            ] = `A foto do Integrante ${memberNumber} é obrigatória`;
+          }
+
+          if (!member.name || member.name.trim() === "") {
+            newErrors[
+              `member_${member.id}_name`
+            ] = `O nome do Integrante ${memberNumber} é obrigatório`;
+          }
+
+          if (!member.role || member.role.trim() === "") {
+            newErrors[
+              `member_${member.id}_role`
+            ] = `O cargo do Integrante ${memberNumber} é obrigatório`;
+          }
+        });
       }
     }
 
@@ -81,6 +130,12 @@ export default function AboutYourTeamForm() {
   };
 
   const hideSectionChecked = formData?.step3?.hideAboutYourTeamSection || false;
+
+  const hasTeamMemberErrors = Object.keys(errors).some(
+    (key) => key.startsWith("member_") || key === "teamMembers"
+  );
+
+  const hasUploadsInProgress = uploadingMembers.size > 0;
 
   return (
     <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
@@ -154,11 +209,12 @@ export default function AboutYourTeamForm() {
               teamMembers={formData?.step3?.teamMembers || []}
               onTeamMembersChange={handleTeamMembersChange}
               disabled={hideSectionChecked}
+              errors={errors}
+              onUploadStateChange={handleUploadStateChange}
             />
             {errors.teamMembers && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">
-                {" "}
-                {errors.teamMembers}{" "}
+                {errors.teamMembers}
               </p>
             )}
           </div>
@@ -175,12 +231,17 @@ export default function AboutYourTeamForm() {
         </button>
         <button
           type="button"
-          className="w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] bg-primary-light-500 button-inner-inverse border-white-neutral-light-300 cursor-pointer text-white-neutral-light-100"
+          className={`w-full sm:w-[100px] h-[44px] px-4 py-2 text-sm font-medium border rounded-[12px] border-white-neutral-light-300 cursor-pointer ${
+            hasUploadsInProgress
+              ? "bg-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
+              : "bg-primary-light-500 button-inner-inverse text-white-neutral-light-100"
+          }`}
           onClick={handleNext}
+          disabled={hasUploadsInProgress}
         >
-          Avançar
+          {hasUploadsInProgress ? "Aguarde" : "Avançar"}
         </button>
-        {errors.ourTeamSubtitle || errors.teamMembers ? (
+        {errors.ourTeamSubtitle || hasTeamMemberErrors ? (
           <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">

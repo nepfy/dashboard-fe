@@ -31,11 +31,11 @@ export default function IntroStep() {
   const hidePageSubtitle = formData?.step1?.hidePageSubtitle || false;
   const hideServices = formData?.step1?.hideServices || false;
 
-  // Check if template type is Grid to hide specific fields
   const isGridTemplate = templateType?.toLowerCase() === "grid";
 
   const [showImportModal, setShowImportModal] = useState(false);
   const [modalDismissed, setModalDismissed] = useState(false);
+  const [hasNavigatedToIntro, setHasNavigatedToIntro] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [fieldVisibility, setFieldVisibility] = useState({
     pageSubtitle: !hidePageSubtitle && !isGridTemplate,
@@ -43,11 +43,19 @@ export default function IntroStep() {
   });
 
   useEffect(() => {
-    // Always show the modal when modalDismissed is false
-    if (!modalDismissed) {
-      setShowImportModal(true);
+    // Only show the modal if:
+    // 1. It hasn't been dismissed yet AND
+    // 2. We're in edit mode OR we haven't navigated to intro from another step
+    const shouldShowModal =
+      !modalDismissed && (isEditMode || !hasNavigatedToIntro);
+
+    setShowImportModal(shouldShowModal);
+
+    // Mark that we've navigated to intro (for non-edit mode)
+    if (!isEditMode) {
+      setHasNavigatedToIntro(true);
     }
-  }, [modalDismissed]);
+  }, [modalDismissed, isEditMode, hasNavigatedToIntro]);
 
   // Update field visibility when template type changes
   useEffect(() => {
@@ -128,6 +136,9 @@ export default function IntroStep() {
   const handleBack = () => {
     setTemplateType(null);
     resetForm();
+    // Reset navigation flags when going back to template selection
+    setModalDismissed(false);
+    setHasNavigatedToIntro(false);
   };
 
   const handleNext = () => {
@@ -155,6 +166,11 @@ export default function IntroStep() {
       }
     }
 
+    if (companyName.length > 25) {
+      newErrors.companyName =
+        "O nome da empresa não pode ter mais do que 25 caracteres";
+    }
+
     if (ctaButtonTitle.length > 25) {
       newErrors.ctaButtonTitle =
         "O texto do botão não pode ter mais do que 25 caracteres";
@@ -168,22 +184,22 @@ export default function IntroStep() {
       newErrors.pageTitle = "O título da página é obrigatório";
     }
 
-    if (pageTitle.length < 30) {
-      newErrors.pageTitle = "O título deve ter no mínimo 30 caracteres";
+    if (pageTitle.length < 30 || pageTitle.length > 50) {
+      newErrors.pageTitle =
+        "O título deve ter no mínimo 30 e no máximo 50 caracteres";
     }
 
-    // Only validate pageSubtitle if it's visible (not Grid template)
     if (fieldVisibility.pageSubtitle && !isGridTemplate) {
       if (!pageSubtitle.trim()) {
         newErrors.pageSubtitle = "O subtítulo da página é obrigatório";
       }
 
-      if (pageSubtitle.length < 70) {
-        newErrors.pageSubtitle = "O subtítulo deve ter no mínimo 70 caracteres";
+      if (pageSubtitle.length < 70 || pageSubtitle.length > 115) {
+        newErrors.pageSubtitle =
+          "O subtítulo deve ter no mínimo 70 e no máximo 115 caracteres";
       }
     }
 
-    // Only validate services if it's visible (not Grid template)
     if (fieldVisibility.services && !isGridTemplate) {
       if (services.length === 0) {
         newErrors.services = "Pelo menos um serviço deve ser adicionado";
@@ -280,6 +296,9 @@ export default function IntroStep() {
                 value={formData?.step1?.companyName || ""}
                 onChange={handleFieldChange("companyName")}
                 error={errors.companyName}
+                maxLength={25}
+                showCharCount
+                allowOverText
               />
             </div>
 
@@ -318,6 +337,7 @@ export default function IntroStep() {
                 error={errors.ctaButtonTitle}
                 maxLength={25}
                 showCharCount
+                allowOverText
               />
             </div>
 
@@ -347,8 +367,16 @@ export default function IntroStep() {
             {!isGridTemplate && (
               <div className="pb-6">
                 <label
-                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                  className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
+                    !fieldVisibility.services
+                      ? "bg-white-neutral-light-300"
+                      : ""
+                  }`}
+                  style={{
+                    backgroundColor: !fieldVisibility.services
+                      ? undefined
+                      : "rgba(107, 70, 245, 0.05)",
+                  }}
                 >
                   Serviços
                   <button
@@ -379,8 +407,16 @@ export default function IntroStep() {
             {!isGridTemplate && (
               <div className="pb-6">
                 <label
-                  className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-                  style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                  className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
+                    !fieldVisibility.pageSubtitle
+                      ? "bg-white-neutral-light-300"
+                      : ""
+                  }`}
+                  style={{
+                    backgroundColor: !fieldVisibility.pageSubtitle
+                      ? undefined
+                      : "rgba(107, 70, 245, 0.05)",
+                  }}
                 >
                   Subtítulo
                   <button

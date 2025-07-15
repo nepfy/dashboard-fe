@@ -33,6 +33,7 @@ interface ExpertiseAccordionProps {
   expertise: Expertise[];
   onExpertiseChange: (expertise: Expertise[]) => void;
   disabled?: boolean;
+  errors?: { [key: string]: string };
 }
 
 const iconOptions = [
@@ -62,6 +63,7 @@ export default function ExpertiseAccordion({
   expertise,
   onExpertiseChange,
   disabled = false,
+  errors = {},
 }: ExpertiseAccordionProps) {
   const [openExpertise, setOpenExpertise] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -163,8 +165,19 @@ export default function ExpertiseAccordion({
 
     const currentExpertise = expertise.find((item) => item.id === expertiseId);
     const currentHideState = currentExpertise?.hideExpertiseIcon ?? false;
+    const newHideState = !currentHideState;
 
-    updateExpertise(expertiseId, "hideExpertiseIcon", !currentHideState);
+    // If there's more than one expertise item, apply the visibility change to all items
+    if (expertise.length > 1) {
+      const updatedExpertise = expertise.map((item) => ({
+        ...item,
+        hideExpertiseIcon: newHideState,
+      }));
+      onExpertiseChange(updatedExpertise);
+    } else {
+      // If there's only one item, update just that item
+      updateExpertise(expertiseId, "hideExpertiseIcon", newHideState);
+    }
   };
 
   const getIconVisibility = (expertiseId: string) => {
@@ -225,10 +238,23 @@ export default function ExpertiseAccordion({
     setDragOverIndex(null);
   };
 
+  // Helper function to get the error for a specific field of an expertise item
+  const getFieldError = (index: number, field: string) => {
+    return errors[`expertise_${index}_${field}`];
+  };
+
+  // Helper function to check if an expertise item has any errors
+  const hasExpertiseItemErrors = (index: number) => {
+    return Object.keys(errors).some((key) =>
+      key.startsWith(`expertise_${index}_`)
+    );
+  };
+
   return (
     <div className="space-y-2">
       {expertise.map((item, index) => {
         const iconVisible = getIconVisibility(item.id);
+        const hasErrors = hasExpertiseItemErrors(index);
 
         return (
           <div
@@ -251,7 +277,11 @@ export default function ExpertiseAccordion({
               onDragEnd={handleDragEnd}
             >
               <div
-                className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
+                className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors rounded-2xs mb-4 ${
+                  hasErrors
+                    ? "bg-red-light-10 border border-red-light-50"
+                    : "bg-white-neutral-light-300"
+                } ${
                   disabled
                     ? "cursor-not-allowed"
                     : draggedIndex === index
@@ -281,6 +311,9 @@ export default function ExpertiseAccordion({
                     </div>
                     <span className="text-sm font-medium text-white-neutral-light-900">
                       Especialização {index + 1}
+                      {hasErrors && (
+                        <span className="text-red-700 ml-1">*</span>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -318,8 +351,14 @@ export default function ExpertiseAccordion({
                 {item.icon && (
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
-                      style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                      className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
+                        !iconVisible ? "bg-white-neutral-light-300" : ""
+                      }`}
+                      style={{
+                        backgroundColor: !iconVisible
+                          ? undefined
+                          : "rgba(107, 70, 245, 0.05)",
+                      }}
                     >
                       Ícone
                       <button
@@ -371,6 +410,11 @@ export default function ExpertiseAccordion({
                         </div>
                       </div>
                     )}
+                    {getFieldError(index, "icon") && (
+                      <div className="text-red-700 rounded-md text-sm font-medium mt-1">
+                        {getFieldError(index, "icon")}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -394,6 +438,7 @@ export default function ExpertiseAccordion({
                     }
                     disabled={disabled}
                     allowOverText
+                    error={getFieldError(index, "title")}
                   />
                 </div>
 
@@ -417,7 +462,9 @@ export default function ExpertiseAccordion({
                     showCharCount
                     maxLength={150}
                     disabled={disabled}
+                    autoExpand
                     allowOverText
+                    error={getFieldError(index, "description")}
                   />
                 </div>
               </div>

@@ -145,11 +145,22 @@ export default function ResultsAccordion({
   const handleFileChange = async (resultId: string, file: File | null) => {
     if (!file || disabled) return;
 
+    // Clear any existing upload errors for this result
     setUploadErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[resultId];
       return newErrors;
     });
+
+    // Check file size (350KB max)
+    const maxSize = 350 * 1024; // 350KB in bytes
+    if (file.size > maxSize) {
+      setUploadErrors((prev) => ({
+        ...prev,
+        [resultId]: "Arquivo muito grande. Tamanho máximo: 350KB.",
+      }));
+      return;
+    }
 
     try {
       clearError();
@@ -235,7 +246,6 @@ export default function ResultsAccordion({
     const draggedResult = reorderedResults[draggedIndex];
 
     reorderedResults.splice(draggedIndex, 1);
-
     reorderedResults.splice(dropIndex, 0, draggedResult);
 
     const updatedResults = reorderedResults.map((result, index) => ({
@@ -301,7 +311,7 @@ export default function ResultsAccordion({
                 className={`flex flex-1 items-center justify-between py-2 px-4 transition-colors bg-white-neutral-light-300 rounded-2xs mb-4 ${
                   disabled
                     ? "cursor-not-allowed"
-                    : "hover:bg-white-neutral-light-400"
+                    : "hover:bg-white-neutral-light-400 cursor-pointer"
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -310,7 +320,7 @@ export default function ResultsAccordion({
                   }
                 }}
               >
-                <div className="flex items-center gap-3" draggable={!disabled}>
+                <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-6 h-6 flex items-center justify-center font-medium text-white-neutral-light-900 ${
@@ -362,8 +372,14 @@ export default function ResultsAccordion({
                 {/* Photo Section */}
                 <div>
                   <div
-                    className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
-                    style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+                    className={`text-white-neutral-light-800 text-sm px-3 py-0 rounded-3xs font-medium flex justify-between items-center ${
+                      result.hidePhoto ? "bg-white-neutral-light-300" : ""
+                    }`}
+                    style={{
+                      backgroundColor: result.hidePhoto
+                        ? undefined
+                        : "rgba(107, 70, 245, 0.05)",
+                    }}
                   >
                     Foto
                     <button
@@ -407,7 +423,11 @@ export default function ResultsAccordion({
                           />
                           <label
                             htmlFor={`photo-${result.id}`}
-                            className={`w-full sm:w-[170px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                            className={`w-full sm:w-[170px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border rounded-2xs transition-colors button-inner ${
+                              errors[`result_${index}_photo`]
+                                ? "border-red-500"
+                                : "border-white-neutral-light-300"
+                            } ${
                               isUploadingForResult(result.id)
                                 ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
                                 : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
@@ -437,19 +457,21 @@ export default function ResultsAccordion({
 
                       <div className="text-xs text-white-neutral-light-400 mt-3">
                         Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo:
-                        5MB
+                        350KB
                       </div>
 
+                      {/* Show upload error */}
                       {uploadErrors[result.id] && (
-                        <div className="text-xs text-red-500 mt-2 font-medium">
+                        <p className="text-red-700 text-sm font-medium mt-2">
                           {uploadErrors[result.id]}
-                        </div>
+                        </p>
                       )}
 
+                      {/* Show validation error from form */}
                       {errors[`result_${index}_photo`] && (
-                        <div className="text-xs text-red-500 mt-2 font-medium">
+                        <p className="text-red-700 text-sm font-medium mt-2">
                           {errors[`result_${index}_photo`]}
-                        </div>
+                        </p>
                       )}
                     </div>
                   )}
@@ -458,7 +480,7 @@ export default function ResultsAccordion({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-2"
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       Cliente
@@ -479,7 +501,7 @@ export default function ResultsAccordion({
 
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-3"
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-3"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       Instagram
@@ -507,9 +529,9 @@ export default function ResultsAccordion({
                       />
                     </div>
                     {errors[`result_${index}_subtitle`] && (
-                      <div className="text-xs text-red-500 mt-1 font-medium">
+                      <p className="text-red-700 text-sm font-medium mt-1">
                         {errors[`result_${index}_subtitle`]}
-                      </div>
+                      </p>
                     )}
                   </div>
                 </div>
@@ -517,7 +539,7 @@ export default function ResultsAccordion({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-2"
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       Investimento
@@ -549,15 +571,15 @@ export default function ResultsAccordion({
                     </div>
 
                     {errors[`result_${index}_investment`] && (
-                      <div className="text-xs text-red-500 mt-1 font-medium">
+                      <p className="text-red-700 text-sm font-medium mt-1">
                         {errors[`result_${index}_investment`]}
-                      </div>
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label
-                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs not-only:font-medium flex justify-between items-center mb-2"
+                      className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"
                       style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
                     >
                       ROI
@@ -585,9 +607,9 @@ export default function ResultsAccordion({
                     </div>
 
                     {errors[`result_${index}_roi`] && (
-                      <div className="text-xs text-red-500 mt-1 font-medium">
+                      <p className="text-red-700 text-sm font-medium mt-1">
                         {errors[`result_${index}_roi`]}
-                      </div>
+                      </p>
                     )}
                   </div>
                 </div>

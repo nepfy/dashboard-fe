@@ -12,12 +12,16 @@ interface TeamMemberAccordionProps {
   teamMembers: TeamMember[];
   onTeamMembersChange: (members: TeamMember[]) => void;
   disabled: boolean;
+  errors?: { [key: string]: string };
+  onUploadStateChange?: (memberId: string, isUploading: boolean) => void;
 }
 
 export default function TeamMemberAccordion({
   teamMembers,
   onTeamMembersChange,
   disabled = false,
+  errors = {},
+  onUploadStateChange,
 }: TeamMemberAccordionProps) {
   const [openMember, setOpenMember] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -27,8 +31,11 @@ export default function TeamMemberAccordion({
   const [uploadingMembers, setUploadingMembers] = useState<Set<string>>(
     new Set()
   );
+  const [uploadErrors, setUploadErrors] = useState<{ [key: string]: string }>(
+    {}
+  );
 
-  const { uploadImage, uploadError, clearError } = useImageUpload();
+  const { uploadImage, clearError } = useImageUpload();
 
   const addTeamMember = () => {
     if (disabled) return;
@@ -50,7 +57,6 @@ export default function TeamMemberAccordion({
     const updatedMembers = teamMembers.filter(
       (member) => member.id !== memberId
     );
-    // Update sort orders after removal
     const reorderedMembers = updatedMembers.map((member, index) => ({
       ...member,
       sortOrder: index,
@@ -60,6 +66,13 @@ export default function TeamMemberAccordion({
     if (openMember === memberId) {
       setOpenMember(null);
     }
+
+    // Clear upload errors for removed member
+    setUploadErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[memberId];
+      return newErrors;
+    });
   };
 
   const handleRemoveClick = (memberId: string) => {
@@ -101,10 +114,29 @@ export default function TeamMemberAccordion({
   const handleFileChange = async (memberId: string, file: File | null) => {
     if (!file) return;
 
+    // Clear any existing upload errors for this member
+    setUploadErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[memberId];
+      return newErrors;
+    });
+
+    // Check file size (350KB max)
+    const maxSize = 350 * 1024; // 350KB in bytes
+    if (file.size > maxSize) {
+      setUploadErrors((prev) => ({
+        ...prev,
+        [memberId]: "Arquivo muito grande. Tamanho máximo: 350KB.",
+      }));
+      return;
+    }
+
     try {
       clearError();
 
       setUploadingMembers((prev) => new Set(prev).add(memberId));
+
+      onUploadStateChange?.(memberId, true);
 
       const result = await uploadImage(file);
 
@@ -112,17 +144,25 @@ export default function TeamMemberAccordion({
         updateMember(memberId, "photo", result.data.url);
       } else {
         console.error("Upload failed:", result.error);
-        alert(result.error || "Erro ao fazer upload da imagem");
+        setUploadErrors((prev) => ({
+          ...prev,
+          [memberId]: result.error || "Erro ao fazer upload da imagem",
+        }));
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Erro ao fazer upload da imagem");
+      setUploadErrors((prev) => ({
+        ...prev,
+        [memberId]: "Erro ao fazer upload da imagem",
+      }));
     } finally {
       setUploadingMembers((prev) => {
         const newSet = new Set(prev);
         newSet.delete(memberId);
         return newSet;
       });
+
+      onUploadStateChange?.(memberId, false);
     }
   };
 
@@ -293,7 +333,11 @@ export default function TeamMemberAccordion({
                     />
                     <label
                       htmlFor={`photo-${member.id}`}
-                      className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-white-neutral-light-300 rounded-2xs transition-colors button-inner ${
+                      className={`w-full sm:w-[160px] inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border rounded-2xs transition-colors button-inner ${
+                        errors[`member_${member.id}_photo`]
+                          ? "border-red-500"
+                          : "border-white-neutral-light-300"
+                      } ${
                         isUploadingForMember(member.id)
                           ? "bg-white-neutral-light-200 cursor-not-allowed opacity-50"
                           : "bg-white-neutral-light-100 cursor-pointer hover:bg-white-neutral-light-200"
@@ -320,12 +364,21 @@ export default function TeamMemberAccordion({
                 </div>
 
                 <div className="text-xs text-white-neutral-light-400 mt-3">
-                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 5MB
+                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 350KB
                 </div>
 
-                {/* Show upload error if exists */}
-                {uploadError && isUploadingForMember(member.id) && (
-                  <div className="text-xs text-red-500 mt-2">{uploadError}</div>
+                {/* Show validation error from form */}
+                {errors[`member_${member.id}_photo`] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {errors[`member_${member.id}_photo`]}
+                  </p>
+                )}
+
+                {/* Show upload error */}
+                {uploadErrors[member.id] && (
+                  <p className="text-red-700 text-sm font-medium mt-2">
+                    {uploadErrors[member.id]}
+                  </p>
                 )}
               </div>
 
@@ -346,6 +399,7 @@ export default function TeamMemberAccordion({
                   onChange={(e) =>
                     updateMember(member.id, "name", e.target.value)
                   }
+                  error={errors[`member_${member.id}_name`]}
                 />
               </div>
 
@@ -366,6 +420,7 @@ export default function TeamMemberAccordion({
                   onChange={(e) =>
                     updateMember(member.id, "role", e.target.value)
                   }
+                  error={errors[`member_${member.id}_role`]}
                 />
               </div>
             </div>

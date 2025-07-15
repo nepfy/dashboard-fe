@@ -25,6 +25,8 @@ interface FormContextType {
   formData: FormDataProps;
   formErrors: FormErrors;
   currentStep: number;
+  cpfValidated: boolean;
+  setCpfValidated: (validated: boolean) => void;
   handleChange: (
     e: ChangeEvent<HTMLInputElement> | { name: string; value: string }
   ) => void;
@@ -55,6 +57,8 @@ const FormContext = createContext<FormContextType>({
   },
   formErrors: {},
   currentStep: 1,
+  cpfValidated: false,
+  setCpfValidated: () => {},
   handleChange: () => {},
   handleMultiSelect: () => {},
   handleSingleSelect: () => {},
@@ -91,6 +95,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [enableNextStep, setEnableNextStep] = useState<boolean>(false);
+  const [cpfValidated, setCpfValidated] = useState<boolean>(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | { name: string; value: string }
@@ -98,6 +103,10 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     if ("target" in e) {
       e.preventDefault();
       const { name, value } = e.target;
+
+      if (name === "cpf") {
+        setCpfValidated(false);
+      }
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -112,6 +121,11 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
       }
     } else {
       const { name, value } = e;
+
+      if (name === "cpf") {
+        setCpfValidated(false);
+      }
+
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -192,7 +206,8 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
       formData.fullName.trim() !== "" &&
       formData.cpf.trim() !== "" &&
       formData.phone.trim() !== "" &&
-      !formErrors.cpf;
+      !formErrors.cpf &&
+      cpfValidated;
 
     setEnableNextStep(isValid);
   };
@@ -213,11 +228,11 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   };
 
   const enableNextStepUserName = () => {
-    // Username must be between 3 and 10 characters, and can only contain letters and numbers
+    // Username must be between 3 and 20 characters, and can only contain letters and numbers
     const isValid =
       formData.userName.trim() !== "" &&
       formData.userName.length >= 3 &&
-      formData.userName.length <= 10 &&
+      formData.userName.length <= 20 &&
       /^[a-zA-Z0-9]+$/.test(formData.userName) &&
       !formErrors.userName;
 
@@ -228,6 +243,8 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     formData,
     formErrors,
     currentStep,
+    cpfValidated,
+    setCpfValidated,
     handleChange,
     handleMultiSelect,
     handleSingleSelect,

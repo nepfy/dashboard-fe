@@ -44,16 +44,18 @@ export default function Navbar() {
                 <button className="flex items-center text-sm rounded-full focus:outline-none">
                   <div className="h-8 w-8 rounded-full bg-gray-300">
                     {user?.imageUrl ? (
-                      <Image
-                        src={user.imageUrl}
-                        width={32}
-                        height={32}
-                        alt="Foto de perfil do usuário"
-                        className="rounded-full"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                        }}
-                      />
+                      <Link href="/dashboard/configuracoes" className="block">
+                        <Image
+                          src={user.imageUrl}
+                          width={32}
+                          height={32}
+                          alt="Foto de perfil do usuário"
+                          className="rounded-full cursor-pointer hover:opacity-80 transition-opacity"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      </Link>
                     ) : null}
                   </div>
                 </button>

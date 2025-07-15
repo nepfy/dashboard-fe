@@ -26,15 +26,17 @@ export default function ImportDataModal({
 }: ImportDataModalProps) {
   const { updateFormData, formData } = useProjectGenerator();
 
+  console.log("formData", formData.step1);
+
   const [currentStep, setCurrentStep] = useState<
     "initial" | "import-choice" | "project-selection"
   >("initial");
 
   const [clientName, setClientName] = useState(
-    isEditMode ? formData?.step1?.clientName || "" : ""
+    formData?.step1?.clientName || ""
   );
   const [projectName, setProjectName] = useState(
-    isEditMode ? formData?.step1?.projectName || "" : ""
+    formData?.step1?.projectName || ""
   );
   const [initialFormErrors, setInitialFormErrors] = useState<{
     [key: string]: string;
@@ -67,7 +69,6 @@ export default function ImportDataModal({
         setProjectName(formData?.step1?.projectName || "");
         setIsLoadingEditData(false);
       } else {
-        // Still waiting for data to load
         setIsLoadingEditData(true);
       }
     }

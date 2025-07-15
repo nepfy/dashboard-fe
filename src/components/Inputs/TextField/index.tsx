@@ -61,8 +61,15 @@ const TextField: React.FC<CustomInputProps> = (props) => {
     );
   };
 
+  // Determinar qual mensagem de erro mostrar
+  const errorMessage =
+    error ||
+    (allowOverText && isOverLimit
+      ? `Texto excede o limite de ${maxLength} caracteres`
+      : "");
+
   return (
-    <div className="block w-full">
+    <div className="block w-full overflow-hidden">
       <label
         htmlFor={inputName}
         className="text-[var(--color-white-neutral-light-700)] text-sm font-medium flex items-center justify-between"
@@ -98,39 +105,55 @@ const TextField: React.FC<CustomInputProps> = (props) => {
               : "text-white-neutral-light-800"
           }
           ${
-            error || (allowOverText && isOverLimit)
+            errorMessage
               ? "border-red-700"
               : "focus:border-[var(--color-primary-light-400)] border-white-neutral-light-300"
           }
-          
           `}
         />
 
         {allowOverText && renderTextWithOverflow()}
       </div>
 
-      <div className="mt-2 flex items-center justify-between">
-        {infoText && (
-          <div className="text-gray-500 rounded-md text-xs">{infoText}</div>
-        )}
-        {(error || (allowOverText && isOverLimit)) && (
-          <div className="text-red-700 rounded-md text-sm font-medium">
-            {error ||
-              (allowOverText && isOverLimit
-                ? `Texto excede o limite de ${maxLength} caracteres`
-                : "")}
+      {/* Container para informações inferiores com layout flexível */}
+      <div className="mt-2 min-h-[20px]">
+        {/* Primeira linha: infoText ou errorMessage */}
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            {infoText && !errorMessage && (
+              <div className="text-gray-500 rounded-md text-xs">{infoText}</div>
+            )}
+
+            {errorMessage && (
+              <div className="text-red-700 rounded-md text-sm font-medium">
+                {errorMessage}
+              </div>
+            )}
           </div>
-        )}
-        {showCharCount && maxLength && (
-          <div
-            className={`text-xs ml-auto ${
-              isNearLimit || isOverLimit
-                ? "text-red-500"
-                : "text-white-neutral-light-500"
-            }`}
-          >
-            {currentLength} / {maxLength}{" "}
-            <span> {minLength && `(mín. ${minLength} caracteres)`} </span>
+
+          {/* Contador de caracteres sempre no canto direito */}
+          {showCharCount && maxLength && (
+            <div
+              className={`text-xs flex-shrink-0 ml-2 flex items-center justify-center gap-1 ${
+                isNearLimit || isOverLimit
+                  ? "text-red-500"
+                  : "text-white-neutral-light-500"
+              }`}
+            >
+              {currentLength} / {maxLength}
+              {minLength && (
+                <span className="block text-xs">
+                  (mín. {minLength} caracteres)
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Segunda linha: infoText quando há erro (para não sobrepor) */}
+        {infoText && errorMessage && (
+          <div className="text-gray-500 rounded-md text-xs mt-1">
+            {infoText}
           </div>
         )}
       </div>

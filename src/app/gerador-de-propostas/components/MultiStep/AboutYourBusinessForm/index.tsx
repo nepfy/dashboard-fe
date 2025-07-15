@@ -60,38 +60,53 @@ export default function AboutYourBusinessForm() {
     const aboutUsSubtitle2 = formData?.step2?.aboutUsSubtitle2 || "";
     const newErrors: { [key: string]: string } = {};
 
+    // Only validate if section is not hidden
     if (!hideAboutUsSection) {
-      if (!hideAboutUsTitle) {
-        if (fieldVisibility.aboutUsTitle && aboutUsTitle.length < 85) {
+      // Validate "Sobre nós" field
+      if (fieldVisibility.aboutUsTitle) {
+        if (aboutUsTitle.length < 85) {
           newErrors.aboutUsTitle =
             "O campo 'Sobre nós' deve ter pelo menos 85 caracteres";
+        } else if (aboutUsTitle.length > 160) {
+          newErrors.aboutUsTitle =
+            "O campo 'Sobre nós' deve ter no máximo 160 caracteres";
         }
       }
 
-      // Only validate subtitle fields based on template type
-      if (!isEssencialTemplate && (!hideSubtitles1 || !hideSubtitles2)) {
-        if (fieldVisibility.aboutUsSubtitle1 && aboutUsSubtitle1.length < 40) {
+      // Validate "Subtítulo 1" field (only for non-Essencial templates)
+      if (!isEssencialTemplate && fieldVisibility.aboutUsSubtitle1) {
+        if (aboutUsSubtitle1.length < 40) {
           newErrors.aboutUsSubtitle1 =
             "O campo 'Subtítulo 1' deve ter pelo menos 40 caracteres";
+        } else if (aboutUsSubtitle1.length > 70) {
+          newErrors.aboutUsSubtitle1 =
+            "O campo 'Subtítulo 1' deve ter no máximo 70 caracteres";
         }
+      }
 
-        // Only validate subtitle2 if not Grid template
-        if (
-          !isGridTemplate &&
-          fieldVisibility.aboutUsSubtitle2 &&
-          aboutUsSubtitle2.length < 195
-        ) {
+      // Validate "Subtítulo 2" field (only for Flash and Prime templates)
+      if (
+        !isEssencialTemplate &&
+        !isGridTemplate &&
+        fieldVisibility.aboutUsSubtitle2
+      ) {
+        if (aboutUsSubtitle2.length < 195) {
           newErrors.aboutUsSubtitle2 =
             "O campo 'Subtítulo 2' deve ter pelo menos 195 caracteres";
+        } else if (aboutUsSubtitle2.length > 250) {
+          newErrors.aboutUsSubtitle2 =
+            "O campo 'Subtítulo 2' deve ter no máximo 250 caracteres";
         }
       }
     }
 
+    // If there are validation errors, show them and prevent navigation
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    // If all validations pass, proceed to next step
     nextStep();
   };
 
@@ -103,6 +118,7 @@ export default function AboutYourBusinessForm() {
         [fieldName]: e.target.value,
       });
 
+      // Clear error for this field when user starts typing
       if (errors[fieldName]) {
         setErrors((prev) => {
           const newErrors = { ...prev };
@@ -262,6 +278,7 @@ export default function AboutYourBusinessForm() {
                 onChange={handleFieldChange("aboutUsTitle")}
                 maxLength={160}
                 minLength={85}
+                autoExpand={true}
                 showCharCount
                 error={errors.aboutUsTitle}
                 disabled={hideAboutUsTitle || hideAboutUsSection}
@@ -315,6 +332,7 @@ export default function AboutYourBusinessForm() {
                   onChange={handleFieldChange("aboutUsSubtitle1")}
                   maxLength={70}
                   minLength={40}
+                  autoExpand={true}
                   showCharCount
                   error={errors.aboutUsSubtitle1}
                   disabled={hideAboutUsSection || hideSubtitles1}
@@ -369,6 +387,7 @@ export default function AboutYourBusinessForm() {
                   onChange={handleFieldChange("aboutUsSubtitle2")}
                   maxLength={250}
                   minLength={195}
+                  autoExpand={true}
                   showCharCount
                   error={errors.aboutUsSubtitle2}
                   disabled={hideAboutUsSection || hideSubtitles2}
@@ -395,16 +414,16 @@ export default function AboutYourBusinessForm() {
         >
           Avançar
         </button>
-        {errors.aboutUsTitle ||
-        errors.aboutUsSubtitle1 ||
-        errors.aboutUsSubtitle2 ? (
-          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2 ">
+        {(errors.aboutUsTitle ||
+          errors.aboutUsSubtitle1 ||
+          errors.aboutUsSubtitle2) && (
+          <div className="bg-red-light-10 border border-red-light-50 rounded-2xs py-4 px-6 hidden xl:flex items-center justify-center gap-2">
             <InfoIcon fill="#D00003" />
             <p className="text-white-neutral-light-800 text-sm">
-              Preencha todos os campos
+              Preencha todos os campos corretamente
             </p>
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   );
