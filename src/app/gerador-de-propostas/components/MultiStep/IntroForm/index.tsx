@@ -26,69 +26,40 @@ export default function IntroStep() {
     resetForm,
     importProjectData,
     isEditMode,
+    showImportModal,
+    setShowImportModal,
+    modalDismissed,
+    setModalDismissed,
+    hasNavigatedBeyondStep1,
+    setHasNavigatedBeyondStep1,
   } = useProjectGenerator();
 
   const hidePageSubtitle = formData?.step1?.hidePageSubtitle || false;
   const hideServices = formData?.step1?.hideServices || false;
 
-  const isGridTemplate = templateType?.toLowerCase() === "grid";
-
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [modalDismissed, setModalDismissed] = useState(false);
-  const [isInitialMount, setIsInitialMount] = useState(true);
-  const [isComingFromOtherStep, setIsComingFromOtherStep] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [fieldVisibility, setFieldVisibility] = useState({
-    pageSubtitle: !hidePageSubtitle && !isGridTemplate,
-    services: !hideServices && !isGridTemplate,
+    pageSubtitle: !hidePageSubtitle,
+    services: !hideServices,
   });
 
+  // Detecta se o usuário já navegou além do step 1
   useEffect(() => {
-    if (currentStep === 1 && !isInitialMount) {
-      if (formData?.step1?.companyName || formData?.step1?.pageTitle) {
-        setIsComingFromOtherStep(true);
-      } else {
-        setIsComingFromOtherStep(false);
-      }
+    if (currentStep > 1) {
+      setHasNavigatedBeyondStep1(true);
     }
-  }, [
-    currentStep,
-    isInitialMount,
-    formData?.step1?.companyName,
-    formData?.step1?.pageTitle,
-  ]);
+  }, [currentStep, setHasNavigatedBeyondStep1]);
 
-  // Handle modal visibility
   useEffect(() => {
-    // Show modal when:
-    // 1. Not dismissed AND
-    // 2. (Edit mode OR (new project AND not coming from other step))
-    const shouldShowModal =
-      !modalDismissed &&
-      (isEditMode || (!isEditMode && !isComingFromOtherStep));
-
-    setShowImportModal(shouldShowModal);
-
-    // After first render, mark as no longer initial mount
-    if (isInitialMount) {
-      setIsInitialMount(false);
-    }
-  }, [modalDismissed, isEditMode, isComingFromOtherStep, isInitialMount]);
-
-  // Update field visibility when template type changes
-  useEffect(() => {
-    if (isGridTemplate) {
-      setFieldVisibility({
-        pageSubtitle: false,
-        services: false,
-      });
+    // Só mostra o modal se:
+    // 1. Não foi dismissado ainda E
+    // 2. (Está no modo edição OU não navegou além do step 1)
+    if (!modalDismissed && (isEditMode || !hasNavigatedBeyondStep1)) {
+      setShowImportModal(true);
     } else {
-      setFieldVisibility({
-        pageSubtitle: !hidePageSubtitle,
-        services: !hideServices,
-      });
+      setShowImportModal(false);
     }
-  }, [isGridTemplate, hidePageSubtitle, hideServices]);
+  }, [modalDismissed, isEditMode, hasNavigatedBeyondStep1, setShowImportModal]);
 
   const handleImportProject = (projectData: Project) => {
     updateFormData("step1", {
@@ -114,11 +85,6 @@ export default function IntroStep() {
   };
 
   const toggleFieldVisibility = (fieldName: keyof typeof fieldVisibility) => {
-    // Don't allow toggling if it's Grid template
-    if (isGridTemplate) {
-      return;
-    }
-
     const newVisibility = !fieldVisibility[fieldName];
 
     setFieldVisibility((prev) => ({
@@ -154,10 +120,9 @@ export default function IntroStep() {
   const handleBack = () => {
     setTemplateType(null);
     resetForm();
-    // Reset ALL navigation flags when going back to template selection
+    // Reset dos estados quando volta para seleção de template
     setModalDismissed(false);
-    setIsInitialMount(true);
-    setIsComingFromOtherStep(false);
+    setHasNavigatedBeyondStep1(false);
   };
 
   const handleNext = () => {
@@ -185,11 +150,6 @@ export default function IntroStep() {
       }
     }
 
-    if (companyName.length > 25) {
-      newErrors.companyName =
-        "O nome da empresa não pode ter mais do que 25 caracteres";
-    }
-
     if (ctaButtonTitle.length > 25) {
       newErrors.ctaButtonTitle =
         "O texto do botão não pode ter mais do que 25 caracteres";
@@ -203,23 +163,21 @@ export default function IntroStep() {
       newErrors.pageTitle = "O título da página é obrigatório";
     }
 
-    if (pageTitle.length < 30 || pageTitle.length > 50) {
-      newErrors.pageTitle =
-        "O título deve ter no mínimo 30 e no máximo 50 caracteres";
+    if (pageTitle.length < 30) {
+      newErrors.pageTitle = "O título deve ter no mínimo 30 caracteres";
     }
 
-    if (fieldVisibility.pageSubtitle && !isGridTemplate) {
+    if (fieldVisibility.pageSubtitle) {
       if (!pageSubtitle.trim()) {
         newErrors.pageSubtitle = "O subtítulo da página é obrigatório";
       }
 
-      if (pageSubtitle.length < 70 || pageSubtitle.length > 115) {
-        newErrors.pageSubtitle =
-          "O subtítulo deve ter no mínimo 70 e no máximo 115 caracteres";
+      if (pageSubtitle.length < 70) {
+        newErrors.pageSubtitle = "O subtítulo deve ter no mínimo 70 caracteres";
       }
     }
 
-    if (fieldVisibility.services && !isGridTemplate) {
+    if (fieldVisibility.services) {
       if (services.length === 0) {
         newErrors.services = "Pelo menos um serviço deve ser adicionado";
       }
@@ -315,9 +273,6 @@ export default function IntroStep() {
                 value={formData?.step1?.companyName || ""}
                 onChange={handleFieldChange("companyName")}
                 error={errors.companyName}
-                maxLength={25}
-                showCharCount
-                allowOverText
               />
             </div>
 
@@ -356,7 +311,6 @@ export default function IntroStep() {
                 error={errors.ctaButtonTitle}
                 maxLength={25}
                 showCharCount
-                allowOverText
               />
             </div>
 
@@ -382,96 +336,70 @@ export default function IntroStep() {
               />
             </div>
 
-            {/* Only show Services field if not Grid template */}
-            {!isGridTemplate && (
-              <div className="pb-6">
-                <label
-                  className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
-                    !fieldVisibility.services
-                      ? "bg-white-neutral-light-300"
-                      : ""
-                  }`}
-                  style={{
-                    backgroundColor: !fieldVisibility.services
-                      ? undefined
-                      : "rgba(107, 70, 245, 0.05)",
+            <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Serviços
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFieldVisibility("services");
                   }}
+                  className="cursor-pointer"
                 >
-                  Serviços
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      toggleFieldVisibility("services");
-                    }}
-                    className="cursor-pointer"
-                  >
-                    {fieldVisibility.services ? <EyeOpened /> : <EyeClosed />}
-                  </button>
-                </label>
-                {fieldVisibility.services && (
-                  <TagInput
-                    placeholder="Digite um serviço e pressione Enter"
-                    value={formData?.step1?.services || []}
-                    onChange={handleServicesChange}
-                    error={errors.services}
-                    infoText="Separe o serviço por ponto e vírgula (;) ou pressione Enter após digitar cada serviço."
-                    disabled={hideServices}
-                  />
-                )}
-              </div>
-            )}
+                  {fieldVisibility.services ? <EyeOpened /> : <EyeClosed />}
+                </button>
+              </label>
+              {fieldVisibility.services && (
+                <TagInput
+                  placeholder="Digite um serviço e pressione Enter"
+                  value={formData?.step1?.services || []}
+                  onChange={handleServicesChange}
+                  error={errors.services}
+                  infoText="Separe o serviço por ponto e vírgula (;) ou pressione Enter após digitar cada serviço."
+                  disabled={hideServices}
+                />
+              )}
+            </div>
 
-            {/* Only show Subtitle field if not Grid template */}
-            {!isGridTemplate && (
-              <div className="pb-6">
-                <label
-                  className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
-                    !fieldVisibility.pageSubtitle
-                      ? "bg-white-neutral-light-300"
-                      : ""
-                  }`}
-                  style={{
-                    backgroundColor: !fieldVisibility.pageSubtitle
-                      ? undefined
-                      : "rgba(107, 70, 245, 0.05)",
+            <div className="pb-6">
+              <label
+                className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+                style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+              >
+                Subtítulo
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFieldVisibility("pageSubtitle");
                   }}
+                  className="cursor-pointer"
                 >
-                  Subtítulo
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      toggleFieldVisibility("pageSubtitle");
-                    }}
-                    className="cursor-pointer"
-                  >
-                    {fieldVisibility.pageSubtitle ? (
-                      <EyeOpened />
-                    ) : (
-                      <EyeClosed />
-                    )}
-                  </button>
-                </label>
-                {fieldVisibility.pageSubtitle && (
-                  <TextAreaField
-                    id="pageSubtitle"
-                    placeholder="Digite uma descrição complementar"
-                    value={formData?.step1?.pageSubtitle || ""}
-                    onChange={handleTextAreaChange("pageSubtitle")}
-                    error={errors.pageSubtitle}
-                    disabled={hidePageSubtitle}
-                    maxLength={115}
-                    minLength={70}
-                    showCharCount
-                    autoExpand={true}
-                    minHeight={60}
-                    maxHeight={200}
-                    allowOverText
-                  />
-                )}
-              </div>
-            )}
+                  {fieldVisibility.pageSubtitle ? <EyeOpened /> : <EyeClosed />}
+                </button>
+              </label>
+              {fieldVisibility.pageSubtitle && (
+                <TextAreaField
+                  id="pageSubtitle"
+                  placeholder="Digite uma descrição complementar"
+                  value={formData?.step1?.pageSubtitle || ""}
+                  onChange={handleTextAreaChange("pageSubtitle")}
+                  error={errors.pageSubtitle}
+                  disabled={hidePageSubtitle}
+                  maxLength={115}
+                  minLength={70}
+                  showCharCount
+                  autoExpand={true}
+                  minHeight={60}
+                  maxHeight={200}
+                  allowOverText
+                />
+              )}
+            </div>
           </div>
         </div>
 
@@ -503,7 +431,6 @@ export default function IntroStep() {
       onImportProject={handleImportProject}
       onCreateNew={handleCreateNew}
       onClose={handleCloseModal}
-      isEditMode={isEditMode}
     />
   ) : null;
 }

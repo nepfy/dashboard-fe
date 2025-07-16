@@ -15,28 +15,24 @@ interface ImportDataModalProps {
   onImportProject?: (projectData: Project) => void;
   onCreateNew?: () => void;
   onClose?: () => void;
-  isEditMode?: boolean;
 }
 
 export default function ImportDataModal({
   onImportProject,
   onCreateNew,
   onClose,
-  isEditMode = false,
 }: ImportDataModalProps) {
-  const { updateFormData, formData } = useProjectGenerator();
-
-  console.log("formData", formData.step1);
+  const { updateFormData, formData, isEditMode } = useProjectGenerator();
 
   const [currentStep, setCurrentStep] = useState<
     "initial" | "import-choice" | "project-selection"
   >("initial");
 
   const [clientName, setClientName] = useState(
-    formData?.step1?.clientName || ""
+    isEditMode ? formData?.step1?.clientName : ""
   );
   const [projectName, setProjectName] = useState(
-    formData?.step1?.projectName || ""
+    isEditMode ? formData?.step1?.projectName : ""
   );
   const [initialFormErrors, setInitialFormErrors] = useState<{
     [key: string]: string;
@@ -69,6 +65,7 @@ export default function ImportDataModal({
         setProjectName(formData?.step1?.projectName || "");
         setIsLoadingEditData(false);
       } else {
+        // Still waiting for data to load
         setIsLoadingEditData(true);
       }
     }
@@ -137,11 +134,11 @@ export default function ImportDataModal({
   const handleInitialFormSubmit = async () => {
     const errors: { [key: string]: string } = {};
 
-    if (!clientName.trim()) {
+    if (!clientName?.trim()) {
       errors.clientName = "Nome do cliente é obrigatório";
     }
 
-    if (!projectName.trim()) {
+    if (!projectName?.trim()) {
       errors.projectName = "Nome do projeto é obrigatório";
     }
 
@@ -158,8 +155,8 @@ export default function ImportDataModal({
 
     updateFormData("step1", {
       ...formData?.step1,
-      clientName: clientName.trim(),
-      projectName: projectName.trim(),
+      clientName: clientName?.trim(),
+      projectName: projectName?.trim(),
     });
 
     setInitialFormErrors({});

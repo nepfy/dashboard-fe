@@ -16,6 +16,12 @@ interface ProjectGeneratorContextType {
   templateType: TemplateType | null;
   currentProjectId: string | null;
   isEditMode: boolean;
+  showImportModal: boolean;
+  setShowImportModal: (show: boolean) => void;
+  modalDismissed: boolean;
+  setModalDismissed: (dismissed: boolean) => void;
+  hasNavigatedBeyondStep1: boolean;
+  setHasNavigatedBeyondStep1: (navigated: boolean) => void;
   updateFormData: <T extends keyof ProposalFormData>(
     step: T,
     data: ProposalFormData[T]
@@ -69,6 +75,9 @@ export function ProjectGeneratorProvider({
   );
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [modalDismissed, setModalDismissed] = useState(false);
+  const [hasNavigatedBeyondStep1, setHasNavigatedBeyondStep1] = useState(false);
 
   const {
     saveDraft: saveDraftHook,
@@ -188,6 +197,9 @@ export function ProjectGeneratorProvider({
     setCurrentProjectId(null);
     setIsEditMode(false);
     clearDraftData();
+    setShowImportModal(false);
+    setModalDismissed(false);
+    setHasNavigatedBeyondStep1(false);
   };
 
   const importProjectData = (projectData: Project) => {
@@ -353,6 +365,12 @@ export function ProjectGeneratorProvider({
     templateType,
     currentProjectId,
     isEditMode,
+    showImportModal,
+    setShowImportModal,
+    modalDismissed,
+    setModalDismissed,
+    hasNavigatedBeyondStep1,
+    setHasNavigatedBeyondStep1,
     updateFormData,
     setTemplateType,
     nextStep,
