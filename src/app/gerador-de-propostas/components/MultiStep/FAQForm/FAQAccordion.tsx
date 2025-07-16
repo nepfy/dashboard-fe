@@ -279,7 +279,7 @@ export default function FAQAccordion({
                   onChange={(e) => updateFAQ(faq.id!, "answer", e.target.value)}
                   rows={4}
                   showCharCount
-                  maxLength={300}
+                  maxLength={130}
                   disabled={disabled}
                   allowOverText
                   autoExpand

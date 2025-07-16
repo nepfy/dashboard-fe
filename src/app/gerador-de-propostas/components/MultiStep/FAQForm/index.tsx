@@ -111,17 +111,11 @@ export default function FAQForm() {
       if (faqList.length === 0) {
         newErrors.faq = "Ao menos 1 item é requerido";
       } else {
-        // Validate individual FAQ items
         faqList.forEach((faq: FAQ, index: number) => {
-          // Validate question field
           if (!faq.question?.trim()) {
             newErrors[`faq_${index}_question`] = `Pergunta ${
               index + 1
             } é obrigatória`;
-          } else if (faq.question.length > 100) {
-            newErrors[`faq_${index}_question`] = `Pergunta ${
-              index + 1
-            } deve ter no máximo 100 caracteres`;
           }
 
           // Validate answer field
@@ -129,15 +123,10 @@ export default function FAQForm() {
             newErrors[`faq_${index}_answer`] = `Resposta ${
               index + 1
             } é obrigatória`;
-          } else if (faq.answer.length > 300) {
-            newErrors[`faq_${index}_answer`] = `Resposta ${
-              index + 1
-            } deve ter no máximo 300 caracteres`;
           }
         });
       }
 
-      // Only validate faqSubtitle if it's visible (Prime or Essencial template)
       if (fieldVisibility.faqSubtitle && isPrimeOrEssencial) {
         if (!faqSubtitle.trim()) {
           newErrors.faqSubtitle = "O subtítulo é obrigatório";

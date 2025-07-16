@@ -169,7 +169,7 @@ export default function AboutYourExpertiseForm() {
         </button>
         <TitleDescription
           title="Suas especialidades:"
-          description="Mostre em que você é especialista"
+          description="Destaque o que você faz de melhor"
         />
 
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">

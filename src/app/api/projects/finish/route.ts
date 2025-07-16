@@ -159,7 +159,7 @@ export async function POST(request: Request) {
 
       projectStatus: "draft",
       isProposalGenerated: true,
-      projectSentDate: new Date(),
+      projectSentDate: null,
       created_at: new Date(),
       updated_at: new Date(),
     };

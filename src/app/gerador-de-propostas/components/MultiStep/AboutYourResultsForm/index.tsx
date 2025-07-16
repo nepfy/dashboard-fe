@@ -169,7 +169,7 @@ export default function AboutYourResultsForm() {
         </label>
 
         {isAccordionDisabled && (
-          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4">
+          <div className="border border-yellow-light-50 rounded-2xs bg-yellow-light-25 p-4 mb-6">
             <p className="text-white-neutral-light-800 text-sm">
               A seção{" "}
               <span className="font-bold">&quot;Seus resultados&quot;</span>{" "}

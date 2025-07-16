@@ -46,14 +46,10 @@ export default function FinalMessageForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      // Validate Agradecimento 1
       if (!endMessageTitle.trim()) {
         newErrors.endMessageTitle = "O campo 'Agradecimento 1' é obrigatório";
       } else {
-        if (endMessageTitle.length < 20) {
-          newErrors.endMessageTitle =
-            "O campo 'Agradecimento 1' deve ter pelo menos 20 caracteres";
-        } else if (endMessageTitle.length > 50) {
+        if (endMessageTitle.length > 50) {
           newErrors.endMessageTitle =
             "O campo 'Agradecimento 1' deve ter no máximo 50 caracteres";
         }
@@ -63,10 +59,7 @@ export default function FinalMessageForm() {
       if (!endMessageTitle2.trim()) {
         newErrors.endMessageTitle2 = "O campo 'Agradecimento 2' é obrigatório";
       } else {
-        if (endMessageTitle2.length < 20) {
-          newErrors.endMessageTitle2 =
-            "O campo 'Agradecimento 2' deve ter pelo menos 20 caracteres";
-        } else if (endMessageTitle2.length > 50) {
+        if (endMessageTitle2.length > 50) {
           newErrors.endMessageTitle2 =
             "O campo 'Agradecimento 2' deve ter no máximo 50 caracteres";
         }

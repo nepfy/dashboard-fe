@@ -215,7 +215,7 @@ export default function AboutYourBusinessForm() {
         </button>
         <TitleDescription
           title="Sobre seu negócio:"
-          description="Conte mais sobre sua empresa e o que vocês fazem"
+          description="Conte quem é você ou a sua empresa"
         />
 
         <label className="flex items-center gap-2 text-white-neutral-light-800 text-xs py-4">

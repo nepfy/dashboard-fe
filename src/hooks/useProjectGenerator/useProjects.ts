@@ -283,15 +283,23 @@ export const useProjects = (
             );
           } else {
             setProjectsData((prevData) =>
-              prevData.map((project) =>
-                project.id === projectId
-                  ? {
-                      ...project,
-                      projectStatus: status,
-                      updated_at: new Date().toISOString(),
-                    }
-                  : project
-              )
+              prevData.map((project) => {
+                if (project.id === projectId) {
+                  const updatedProject = {
+                    ...project,
+                    projectStatus: status,
+                    updated_at: new Date().toISOString(),
+                  };
+
+                  // Set projectSentDate when changing to "active" status and it's currently null
+                  if (status === "active" && !project.projectSentDate) {
+                    updatedProject.projectSentDate = new Date().toISOString();
+                  }
+
+                  return updatedProject;
+                }
+                return project;
+              })
             );
 
             if (status === "approved") {
