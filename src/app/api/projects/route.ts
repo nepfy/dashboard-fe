@@ -141,7 +141,7 @@ export async function GET(request: Request) {
       statistics: {
         sentProjectsCount,
         approvedProjectsCount,
-        archivedProjectsCount, // Add archived count to statistics
+        archivedProjectsCount,
       },
     });
   } catch (error) {
@@ -444,15 +444,16 @@ export async function POST(request: Request) {
     const duplicatedProjects = originalProjects.map((project) => ({
       personId: project.personId,
       projectName: `${project.projectName} - Cópia`,
+      hideClientName: project.hideClientName,
       clientName: project.clientName,
+      hideClientPhoto: project.hideClientPhoto,
+      clientPhoto: project.clientPhoto,
       projectValidUntil: project.projectValidUntil,
       projectStatus: "draft",
 
-      // Resetar campos específicos de envio/visualização
       projectSentDate: null,
       projectVisualizationDate: null,
 
-      // Campos de template e configuração
       templateType: project.templateType,
       mainColor: project.mainColor,
       companyName: project.companyName,
@@ -464,76 +465,59 @@ export async function POST(request: Request) {
       services: project.services,
       hideServices: project.hideServices,
 
-      // Seção Sobre Nós
       hideAboutUsSection: project.hideAboutUsSection,
       aboutUsTitle: project.aboutUsTitle,
       aboutUsSubtitle1: project.aboutUsSubtitle1,
       aboutUsSubtitle2: project.aboutUsSubtitle2,
 
-      // Seção Equipe
       hideAboutYourTeamSection: project.hideAboutYourTeamSection,
       ourTeamSubtitle: project.ourTeamSubtitle,
 
-      // Seção Expertise
       hideExpertiseSection: project.hideExpertiseSection,
       expertiseSubtitle: project.expertiseSubtitle,
 
-      // Seção Resultados
       hideResultsSection: project.hideResultsSection,
       resultsSubtitle: project.resultsSubtitle,
 
-      // Seção Clientes
       hideClientsSection: project.hideClientsSection,
 
-      // Seção Processo
       hideProcessSection: project.hideProcessSection,
       hideProcessSubtitle: project.hideProcessSubtitle,
       processSubtitle: project.processSubtitle,
 
-      // Seção CTA
       hideCTASection: project.hideCTASection,
       ctaBackgroundImage: project.ctaBackgroundImage,
 
-      // Seção Depoimentos
       hideTestimonialsSection: project.hideTestimonialsSection,
 
-      // Seção Investimento
       hideInvestmentSection: project.hideInvestmentSection,
       investmentTitle: project.investmentTitle,
 
-      // Seção Serviços Inclusos
       hideIncludedServicesSection: project.hideIncludedServicesSection,
 
-      // Seção Planos
       hidePlansSection: project.hidePlansSection,
 
-      // Seção Termos
       hideTermsSection: project.hideTermsSection,
 
-      // Seção FAQ
       hideFaqSection: project.hideFaqSection,
       hideFaqSubtitle: project.hideFaqSubtitle,
       faqSubtitle: project.faqSubtitle,
 
-      // Seção Mensagem Final
       hideFinalMessageSection: project.hideFinalMessageSection,
       hideFinalMessageSubtitle: project.hideFinalMessageSubtitle,
       endMessageTitle: project.endMessageTitle,
       endMessageTitle2: project.endMessageTitle2,
       endMessageDescription: project.endMessageDescription,
 
-      // Campos de publicação
       projectUrl: null,
       pagePassword: project.pagePassword,
       isPublished: false,
       isProposalGenerated: project.isProposalGenerated,
 
-      // Timestamps
       created_at: new Date(),
       updated_at: new Date(),
     }));
 
-    // Inserir projetos duplicados
     const insertedProjects = await db
       .insert(projectsTable)
       .values(duplicatedProjects)
@@ -546,13 +530,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Agora duplicar todas as tabelas relacionadas
     for (let i = 0; i < originalProjects.length; i++) {
       const originalProjectId = originalProjects[i].id;
       const newProjectId = insertedProjects[i].id;
 
       try {
-        // Duplicar membros da equipe
         const teamMembers = await db
           .select()
           .from(projectTeamMembersTable)
@@ -573,7 +555,6 @@ export async function POST(request: Request) {
             .values(duplicatedTeamMembers);
         }
 
-        // Duplicar expertise
         const expertise = await db
           .select()
           .from(projectExpertiseTable)
@@ -592,7 +573,6 @@ export async function POST(request: Request) {
           await db.insert(projectExpertiseTable).values(duplicatedExpertise);
         }
 
-        // Duplicar resultados
         const results = await db
           .select()
           .from(projectResultsTable)
@@ -613,7 +593,6 @@ export async function POST(request: Request) {
           await db.insert(projectResultsTable).values(duplicatedResults);
         }
 
-        // Duplicar clientes
         const clients = await db
           .select()
           .from(projectClientsTable)
@@ -633,7 +612,6 @@ export async function POST(request: Request) {
           await db.insert(projectClientsTable).values(duplicatedClients);
         }
 
-        // Duplicar etapas do processo
         const processSteps = await db
           .select()
           .from(projectProcessStepsTable)
@@ -654,7 +632,6 @@ export async function POST(request: Request) {
             .values(duplicatedProcessSteps);
         }
 
-        // Duplicar depoimentos
         const testimonials = await db
           .select()
           .from(projectTestimonialsTable)
@@ -676,7 +653,6 @@ export async function POST(request: Request) {
             .values(duplicatedTestimonials);
         }
 
-        // Duplicar serviços
         const services = await db
           .select()
           .from(projectServicesTable)
@@ -694,7 +670,6 @@ export async function POST(request: Request) {
           await db.insert(projectServicesTable).values(duplicatedServices);
         }
 
-        // Duplicar planos e seus detalhes
         const plans = await db
           .select()
           .from(projectPlansTable)
@@ -719,7 +694,6 @@ export async function POST(request: Request) {
             .values(duplicatedPlans)
             .returning();
 
-          // Para cada plano inserido, duplicar seus detalhes
           for (let j = 0; j < plans.length; j++) {
             const originalPlanId = plans[j].id;
             const newPlanId = insertedPlans[j].id;
@@ -744,7 +718,6 @@ export async function POST(request: Request) {
           }
         }
 
-        // Duplicar termos e condições
         const termsConditions = await db
           .select()
           .from(projectTermsConditionsTable)
@@ -764,7 +737,6 @@ export async function POST(request: Request) {
             .values(duplicatedTermsConditions);
         }
 
-        // Duplicar FAQ
         const faq = await db
           .select()
           .from(projectFaqTable)

@@ -13,11 +13,136 @@ import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
+// Template field configurations
+interface FieldValidation {
+  required?: boolean;
+  maxLength?: number;
+  minLength?: number;
+  isEmail?: boolean;
+}
+
+interface TemplateConfig {
+  fields: string[];
+  labels: Record<string, string>;
+  placeholders?: Record<string, string>;
+  validation: Record<string, FieldValidation>;
+}
+
+const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
+  flash: {
+    fields: [
+      "endMessageTitle",
+      "endMessageTitle2",
+      "endMessageDescription",
+      "projectValidUntil",
+    ],
+    labels: {
+      endMessageTitle: "Agradecimento 1",
+      endMessageTitle2: "Agradecimento 2",
+      endMessageDescription: "Subtítulo",
+      projectValidUntil: "Qual a validade desta proposta?",
+    },
+    placeholders: {
+      endMessageTitle: "Ex: Agradecemos pela oportunidade!",
+      endMessageTitle2: "Ex: Esperamos seu retorno em breve!",
+      endMessageDescription:
+        "Escreva uma mensagem de agradecimento e próximos passos",
+    },
+    validation: {
+      endMessageTitle: { maxLength: 50, required: true },
+      endMessageTitle2: { maxLength: 50, required: true },
+      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      projectValidUntil: { required: true },
+    },
+  },
+  prime: {
+    fields: [
+      "endMessageTitle",
+      "endMessageTitle2",
+      "endMessageDescription",
+      "projectValidUntil",
+    ],
+    labels: {
+      endMessageTitle: "Agradecimento",
+      endMessageTitle2: "Frase de Impacto",
+      endMessageDescription: "Subtítulo",
+      projectValidUntil: "Qual a validade desta proposta?",
+    },
+    placeholders: {
+      endMessageTitle: "Ex: Agradecemos pela oportunidade!",
+      endMessageTitle2: "Adicione uma frase impactante",
+      endMessageDescription:
+        "Escreva uma mensagem de agradecimento e próximos passos",
+    },
+    validation: {
+      endMessageTitle: { maxLength: 50, required: true },
+      endMessageTitle2: { maxLength: 50, required: true },
+      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      projectValidUntil: { required: true },
+    },
+  },
+  essencial: {
+    fields: ["endMessageTitle", "endMessageDescription", "projectValidUntil"],
+    labels: {
+      endMessageTitle: "Frase de Impacto",
+      endMessageDescription: "Subtítulo",
+      projectValidUntil: "Qual a validade desta proposta?",
+    },
+    placeholders: {
+      endMessageTitle: "Adicione uma frase impactante",
+      endMessageDescription:
+        "Escreva uma mensagem de agradecimento e próximos passos",
+    },
+    validation: {
+      endMessageTitle: { maxLength: 45, required: true },
+      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      projectValidUntil: { required: true },
+    },
+  },
+  grid: {
+    fields: [
+      "endMessageTitle",
+      "endMessageDescription",
+      "endMessageTitle2",
+      "projectValidUntil",
+    ],
+    labels: {
+      endMessageTitle: "Frase de Impacto",
+      endMessageDescription: "Subtítulo",
+      endMessageTitle2: "Email",
+      projectValidUntil: "Qual a validade desta proposta?",
+    },
+    placeholders: {
+      endMessageTitle: "Adicione uma frase impactante",
+      endMessageDescription:
+        "Escreva uma mensagem de agradecimento e próximos passos",
+      endMessageTitle2: "Digite seu email de contato",
+    },
+    validation: {
+      endMessageTitle: { maxLength: 50, required: true },
+      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      endMessageTitle2: { required: true, isEmail: true },
+      projectValidUntil: { required: true },
+    },
+  },
+};
+
 export default function FinalMessageForm() {
-  const { prevStep, nextStep, updateFormData, formData, currentStep } =
-    useProjectGenerator();
+  const {
+    prevStep,
+    nextStep,
+    updateFormData,
+    formData,
+    currentStep,
+    templateType,
+  } = useProjectGenerator();
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const currentTemplate =
+    templateType?.toLowerCase() as keyof typeof TEMPLATE_FIELD_CONFIG;
+  const templateConfig =
+    TEMPLATE_FIELD_CONFIG[currentTemplate] || TEMPLATE_FIELD_CONFIG.flash;
 
   // Initialize subtitleVisible based on formData
   const [subtitleVisible, setSubtitleVisible] = useState(
@@ -33,62 +158,81 @@ export default function FinalMessageForm() {
     prevStep();
   };
 
+  const validateField = (fieldName: string, value: string): string | null => {
+    if (!templateConfig.fields.includes(fieldName)) {
+      return null; // Field not required for this template
+    }
+
+    const fieldValidation = templateConfig.validation[fieldName];
+    if (!fieldValidation) return null;
+
+    const label = templateConfig.labels[fieldName];
+
+    // Required validation
+    if (fieldValidation.required && (!value || !value.trim())) {
+      return `O campo '${label}' é obrigatório`;
+    }
+
+    // Skip other validations if field is empty (and not required)
+    if (!value || !value.trim()) return null;
+
+    // Email validation for Grid template
+    if (fieldValidation.isEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        return "Por favor, insira um email válido";
+      }
+    }
+
+    // Length validations
+    if (fieldValidation.minLength && value.length < fieldValidation.minLength) {
+      return `O campo '${label}' deve ter pelo menos ${fieldValidation.minLength} caracteres`;
+    }
+
+    if (fieldValidation.maxLength && value.length > fieldValidation.maxLength) {
+      return `O campo '${label}' deve ter no máximo ${fieldValidation.maxLength} caracteres`;
+    }
+
+    return null;
+  };
+
   const handleNext = () => {
     setErrors({});
 
-    const endMessageTitle = formData?.step15?.endMessageTitle || "";
-    const endMessageTitle2 = formData?.step15?.endMessageTitle2 || "";
-    const endMessageDescription = formData?.step15?.endMessageDescription || "";
-    const projectValidUntil = formData?.step15?.projectValidUntil || "";
+    const newErrors: { [key: string]: string } = {};
     const hideSection = formData?.step15?.hideFinalMessage || false;
     const hideFinalMessageSubtitle =
       formData?.step15?.hideFinalMessageSubtitle || false;
-    const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (!endMessageTitle.trim()) {
-        newErrors.endMessageTitle = "O campo 'Agradecimento 1' é obrigatório";
-      } else {
-        if (endMessageTitle.length > 50) {
-          newErrors.endMessageTitle =
-            "O campo 'Agradecimento 1' deve ter no máximo 50 caracteres";
-        }
-      }
+      // Validate each field based on template configuration
+      templateConfig.fields.forEach((fieldName) => {
+        let fieldValue = "";
+        let shouldValidate = true;
 
-      // Validate Agradecimento 2
-      if (!endMessageTitle2.trim()) {
-        newErrors.endMessageTitle2 = "O campo 'Agradecimento 2' é obrigatório";
-      } else {
-        if (endMessageTitle2.length > 50) {
-          newErrors.endMessageTitle2 =
-            "O campo 'Agradecimento 2' deve ter no máximo 50 caracteres";
+        switch (fieldName) {
+          case "endMessageTitle":
+            fieldValue = formData?.step15?.endMessageTitle || "";
+            break;
+          case "endMessageTitle2":
+            fieldValue = formData?.step15?.endMessageTitle2 || "";
+            break;
+          case "endMessageDescription":
+            fieldValue = formData?.step15?.endMessageDescription || "";
+            shouldValidate = !hideFinalMessageSubtitle; // Only validate if subtitle is visible
+            break;
+          case "projectValidUntil":
+            fieldValue = String(formData?.step15?.projectValidUntil || "");
+            break;
         }
-      }
 
-      // Validate Subtítulo only if it's visible
-      if (!hideFinalMessageSubtitle) {
-        if (!endMessageDescription.trim()) {
-          newErrors.endMessageDescription = "O campo 'Subtítulo' é obrigatório";
-        } else {
-          if (endMessageDescription.length < 70) {
-            newErrors.endMessageDescription =
-              "O campo 'Subtítulo' deve ter pelo menos 70 caracteres";
-          } else if (endMessageDescription.length > 225) {
-            newErrors.endMessageDescription =
-              "O campo 'Subtítulo' deve ter no máximo 225 caracteres";
+        if (shouldValidate) {
+          const error = validateField(fieldName, fieldValue);
+          if (error) {
+            newErrors[fieldName] = error;
           }
         }
-      }
-
-      // Validate Validade da proposta
-      if (
-        !projectValidUntil ||
-        (typeof projectValidUntil === "string" &&
-          projectValidUntil.trim() === "")
-      ) {
-        newErrors.projectValidUntil =
-          "O campo 'Validade da proposta' é obrigatório";
-      }
+      });
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -179,6 +323,131 @@ export default function FinalMessageForm() {
     }
   };
 
+  const renderField = (fieldName: string) => {
+    if (!templateConfig.fields.includes(fieldName)) return null;
+
+    const label = templateConfig.labels[fieldName];
+    const placeholder = templateConfig.placeholders?.[fieldName] || "";
+    const fieldValidation = templateConfig.validation[fieldName];
+
+    switch (fieldName) {
+      case "endMessageTitle":
+        return (
+          <div className="py-2" key={fieldName}>
+            <label
+              className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            >
+              {label}
+            </label>
+            <TextField
+              inputName="endMessageTitle"
+              id="endMessageTitle"
+              type="text"
+              placeholder={placeholder}
+              value={formData?.step15?.endMessageTitle || ""}
+              onChange={handleFieldChange("endMessageTitle")}
+              maxLength={fieldValidation?.maxLength || 50}
+              showCharCount
+              error={errors.endMessageTitle}
+              disabled={isFormDisabled}
+              allowOverText
+            />
+          </div>
+        );
+
+      case "endMessageTitle2":
+        return (
+          <div className="py-2" key={fieldName}>
+            <label
+              className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
+              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            >
+              {label}
+            </label>
+            <TextField
+              inputName="endMessageTitle2"
+              id="endMessageTitle2"
+              type={currentTemplate === "grid" ? "email" : "text"}
+              placeholder={placeholder}
+              value={formData?.step15?.endMessageTitle2 || ""}
+              onChange={handleFieldChange("endMessageTitle2")}
+              maxLength={fieldValidation?.maxLength || 50}
+              showCharCount={currentTemplate !== "grid"} // Don't show char count for email field
+              error={errors.endMessageTitle2}
+              disabled={isFormDisabled}
+              allowOverText={currentTemplate !== "grid"}
+            />
+          </div>
+        );
+
+      case "endMessageDescription":
+        return (
+          <div className="py-2" key={fieldName}>
+            <label
+              className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
+              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
+            >
+              {label}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleSubtitleVisibility();
+                }}
+                className={`cursor-pointer ${
+                  isFormDisabled ? "cursor-not-allowed opacity-60" : ""
+                }`}
+                disabled={isFormDisabled}
+              >
+                {subtitleVisible ? <EyeOpened /> : <EyeClosed />}
+              </button>
+            </label>
+            {subtitleVisible && (
+              <TextAreaField
+                id="endMessageDescription"
+                textareaName="endMessageDescription"
+                placeholder={placeholder}
+                value={formData?.step15?.endMessageDescription || ""}
+                onChange={handleFieldChange("endMessageDescription")}
+                maxLength={fieldValidation?.maxLength || 225}
+                minLength={fieldValidation?.minLength || 70}
+                showCharCount
+                rows={4}
+                error={errors.endMessageDescription}
+                disabled={isFormDisabled || !subtitleVisible}
+                style={{
+                  display: subtitleVisible ? "block" : "none",
+                }}
+                allowOverText
+                autoExpand
+              />
+            )}
+          </div>
+        );
+
+      case "projectValidUntil":
+        return (
+          <div className="py-2 max-w-[235px] w-full" key={fieldName}>
+            <DatePicker
+              label={label}
+              inputName="projectValidUntil"
+              id="projectValidUntil"
+              placeholder="Escolha uma data"
+              value={getDateValue()}
+              onChange={handleDateChange}
+              error={errors.projectValidUntil}
+              disabled={isFormDisabled}
+            />
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   const isFormDisabled = formData?.step15?.hideFinalMessage || false;
   const hasErrors = Object.keys(errors).length > 0;
 
@@ -221,105 +490,8 @@ export default function FinalMessageForm() {
         )}
 
         <div className={`py-6 ${isFormDisabled ? "opacity-60" : ""}`}>
-          <div className="py-2">
-            <label
-              className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-            >
-              Agradecimento 1
-            </label>
-            <TextField
-              inputName="endMessageTitle"
-              id="endMessageTitle"
-              type="text"
-              placeholder="Ex: Obrigado pela sua atenção!"
-              value={formData?.step15?.endMessageTitle || ""}
-              onChange={handleFieldChange("endMessageTitle")}
-              maxLength={50}
-              showCharCount
-              error={errors.endMessageTitle}
-              disabled={isFormDisabled}
-              allowOverText
-            />
-          </div>
-
-          <div className="py-2">
-            <label
-              className="text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2"
-              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-            >
-              Agradecimento 2
-            </label>
-            <TextField
-              inputName="endMessageTitle2"
-              id="endMessageTitle2"
-              type="text"
-              placeholder="Ex: Esperamos seu retorno em breve!"
-              value={formData?.step15?.endMessageTitle2 || ""}
-              onChange={handleFieldChange("endMessageTitle2")}
-              maxLength={50}
-              showCharCount
-              error={errors.endMessageTitle2}
-              disabled={isFormDisabled}
-              allowOverText
-            />
-          </div>
-
-          <div className="py-2">
-            <label
-              className="text-white-neutral-light-800 text-sm px-3 py-1 rounded-3xs font-medium flex justify-between items-center mb-2"
-              style={{ backgroundColor: "rgba(107, 70, 245, 0.05)" }}
-            >
-              Subtítulo
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleSubtitleVisibility();
-                }}
-                className={`cursor-pointer ${
-                  isFormDisabled ? "cursor-not-allowed opacity-60" : ""
-                }`}
-                disabled={isFormDisabled}
-              >
-                {subtitleVisible ? <EyeOpened /> : <EyeClosed />}
-              </button>
-            </label>
-            {subtitleVisible && (
-              <TextAreaField
-                id="endMessageDescription"
-                textareaName="endMessageDescription"
-                placeholder="Escreva uma mensagem de agradecimento e próximos passos"
-                value={formData?.step15?.endMessageDescription || ""}
-                onChange={handleFieldChange("endMessageDescription")}
-                maxLength={225}
-                minLength={70}
-                showCharCount
-                rows={4}
-                error={errors.endMessageDescription}
-                disabled={isFormDisabled || !subtitleVisible}
-                style={{
-                  display: subtitleVisible ? "block" : "none",
-                }}
-                allowOverText
-                autoExpand
-              />
-            )}
-          </div>
-
-          <div className="py-2 max-w-[235px] w-full">
-            <DatePicker
-              label="Qual a validade desta proposta?"
-              inputName="projectValidUntil"
-              id="projectValidUntil"
-              placeholder="Escolha uma data"
-              value={getDateValue()}
-              onChange={handleDateChange}
-              error={errors.projectValidUntil}
-              disabled={isFormDisabled}
-            />
-          </div>
+          {/* Render fields based on template configuration */}
+          {templateConfig.fields.map((fieldName) => renderField(fieldName))}
         </div>
       </div>
 

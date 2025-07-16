@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, {
@@ -34,7 +35,11 @@ interface ProjectGeneratorContextType {
   importProjectData: (projectData: Project) => void;
   loadProjectData: (projectData: Project) => void;
   loadProjectWithRelations: (projectId: string) => Promise<Project | null>;
-  saveDraft: () => Promise<void>;
+  saveDraft: () => Promise<{
+    success: boolean;
+    data?: Project;
+    error?: string;
+  }>;
   isSavingDraft: boolean;
   lastSaved: Date | null;
   getLastSavedText: () => string;
@@ -86,10 +91,19 @@ export function ProjectGeneratorProvider({
     getLastSavedText,
     setProjectId,
     clearDraftData,
+    currentProjectId: hookProjectId,
   } = useSaveDraft();
 
   useEffect(() => {
-    setProjectId(currentProjectId);
+    if (hookProjectId && hookProjectId !== currentProjectId) {
+      setCurrentProjectId(hookProjectId);
+    }
+  }, [hookProjectId]);
+
+  useEffect(() => {
+    if (currentProjectId && currentProjectId !== hookProjectId) {
+      setProjectId(currentProjectId);
+    }
   }, [currentProjectId, setProjectId]);
 
   console.log("Context - currentStep:", currentStep);
@@ -233,6 +247,7 @@ export function ProjectGeneratorProvider({
     safeUpdate("step1", {
       templateType: projectData?.templateType,
       mainColor: projectData.mainColor,
+      hideClientName: projectData.hideClientName,
       clientName: projectData.clientName,
       projectName: projectData.projectName,
       companyName: projectData.companyName,
@@ -245,6 +260,8 @@ export function ProjectGeneratorProvider({
         ? projectData.services.split(",")
         : undefined,
       hideServices: projectData.hideServices,
+      hideClientPhoto: projectData.hideClientPhoto,
+      clientPhoto: projectData.clientPhoto,
     });
 
     // Step 2 - About us (Your Business)
@@ -354,16 +371,21 @@ export function ProjectGeneratorProvider({
     });
   };
 
-  // Draft functionality - always pass the current project ID
   const saveDraft = async () => {
-    await saveDraftHook(formData, templateType, currentProjectId);
+    const result = await saveDraftHook(formData, templateType, hookProjectId);
+
+    if (result.success && result.data?.id && !hookProjectId) {
+      setCurrentProjectId(result.data.id);
+    }
+
+    return result;
   };
 
   const value = {
     formData,
     currentStep,
     templateType,
-    currentProjectId,
+    currentProjectId: hookProjectId || currentProjectId,
     isEditMode,
     showImportModal,
     setShowImportModal,

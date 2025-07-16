@@ -26,6 +26,8 @@ export default function FAQForm() {
   } = useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  console.log("  formData?.step14?.faqSubtitle", formData?.step14?.faqSubtitle);
+
   // Check if template type is Prime or Essencial to show faqSubtitle
   const isPrimeOrEssencial =
     templateType?.toLowerCase() === "prime" ||
@@ -213,7 +215,7 @@ export default function FAQForm() {
                 <TextAreaField
                   id="faqSubtitle"
                   placeholder="Digite uma descrição complementar para a seção de perguntas frequentes"
-                  value={formData?.step14?.faqSubtitle || ""}
+                  value={formData?.step14?.faqSubtitle}
                   onChange={handleTextAreaChange("faqSubtitle")}
                   error={errors.faqSubtitle}
                   disabled={hideFaqSubtitle}

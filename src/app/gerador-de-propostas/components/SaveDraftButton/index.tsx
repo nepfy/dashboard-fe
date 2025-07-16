@@ -53,6 +53,8 @@ export default function SaveDraftButton({
       return;
     }
 
+    const message = isEditMode ? "Alterações salvas" : "Rascunho salvo";
+
     try {
       console.log(
         "SaveDraftButton: Saving draft with projectId:",
@@ -61,9 +63,7 @@ export default function SaveDraftButton({
       await saveDraft();
 
       setSaveStatus("success");
-      setStatusMessage(
-        isAutoSave ? "Salvo automaticamente" : "Rascunho salvo!"
-      );
+      setStatusMessage(isAutoSave ? "Salvo automaticamente" : message);
 
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -143,7 +143,7 @@ export default function SaveDraftButton({
 
       {/* Status message and last saved info */}
       {(statusMessage || lastSaved) && (
-        <div className="absolute top-full left-0 mt-1 text-xs text-white-neutral-light-500 whitespace-nowrap">
+        <div className="absolute top-full left-4 mt-1 text-xs text-white-neutral-light-500 whitespace-nowrap">
           {statusMessage || getLastSavedText()}
         </div>
       )}

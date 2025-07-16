@@ -25,7 +25,9 @@ export const useSaveDraft = () => {
       try {
         setIsSaving(true);
 
-        const idToUse = projectId || currentProjectId;
+        const idToUse = projectId !== undefined ? projectId : currentProjectId;
+
+        console.log("useSaveDraft: Saving with project ID:", idToUse);
 
         const response = await fetch("/api/projects/draft", {
           method: "POST",
@@ -43,9 +45,15 @@ export const useSaveDraft = () => {
 
         if (result.success) {
           setLastSaved(new Date());
-          if (result.data?.id) {
+
+          if (result.data?.id && !idToUse) {
+            console.log(
+              "useSaveDraft: New project created with ID:",
+              result.data.id
+            );
             setCurrentProjectId(result.data.id);
           }
+
           return {
             success: true,
             message: result.message,
@@ -73,10 +81,12 @@ export const useSaveDraft = () => {
   );
 
   const setProjectId = useCallback((projectId: string | null) => {
+    console.log("useSaveDraft: Setting project ID to:", projectId);
     setCurrentProjectId(projectId);
   }, []);
 
   const clearDraftData = useCallback(() => {
+    console.log("useSaveDraft: Clearing draft data");
     setLastSaved(null);
     setCurrentProjectId(null);
   }, []);

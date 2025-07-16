@@ -99,7 +99,10 @@ export interface Project {
   personId?: string;
 
   projectName?: string;
+  hideClientName?: boolean;
   clientName?: string;
+  hideClientPhoto?: boolean;
+  clientPhoto?: string;
   projectSentDate?: Date | string;
   projectValidUntil?: Date | string;
   projectStatus?:
@@ -191,6 +194,7 @@ export interface Project {
 export interface Step1Data {
   templateType?: TemplateType;
   mainColor?: string;
+  hideClientName?: boolean;
   clientName?: string;
   projectName?: string;
   companyName?: string;
@@ -201,6 +205,8 @@ export interface Step1Data {
   pageSubtitle?: string;
   hideServices?: boolean;
   services?: string[];
+  hideClientPhoto?: boolean;
+  clientPhoto?: string;
 }
 
 export interface Step2Data {

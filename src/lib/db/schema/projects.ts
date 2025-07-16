@@ -19,7 +19,10 @@ export const projectsTable = pgTable("projects", {
     .references(() => personUserTable.id),
 
   projectName: varchar("project_name", { length: 255 }).notNull(),
+  hideClientName: boolean("hide_client_name").default(false),
   clientName: varchar("client_name", { length: 255 }).notNull(),
+  hideClientPhoto: boolean("hide_client_photo").default(false),
+  clientPhoto: text("client_photo"),
   projectSentDate: timestamp("project_sent_date", { mode: "date" }),
   projectValidUntil: timestamp("project_valid_until", {
     mode: "date",
@@ -42,7 +45,7 @@ export const projectsTable = pgTable("projects", {
   hideServices: boolean("hide_services").default(false),
 
   hideAboutUsSection: boolean("hide_about_us_section").default(false),
-  aboutUsTitle: varchar("about_us_title", { length: 255 }),
+  aboutUsTitle: varchar("about_us_title", { length: 420 }),
   aboutUsSubtitle1: text("about_us_subtitle_1"),
   aboutUsSubtitle2: text("about_us_subtitle_2"),
 

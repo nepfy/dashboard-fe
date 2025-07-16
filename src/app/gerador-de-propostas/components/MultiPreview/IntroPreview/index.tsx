@@ -1,3 +1,4 @@
+import Image from "next/image";
 import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper, {
@@ -16,9 +17,12 @@ export default function IntroPreview() {
             {formData?.step1?.pageTitle}
           </h1>
 
-          <p className="text-white/90 text-xl leading-relaxed drop-shadow-md">
-            {formData?.step1?.pageSubtitle}
-          </p>
+          {formData?.step1?.pageSubtitle &&
+            !formData.step1.hidePageSubtitle && (
+              <p className="text-white/90 text-xl leading-relaxed drop-shadow-md">
+                {formData.step1.pageSubtitle}
+              </p>
+            )}
 
           {formData?.step1?.companyName && (
             <div className="text-white/80 text-lg font-medium">
@@ -32,8 +36,27 @@ export default function IntroPreview() {
             </div>
           )}
 
+          {formData?.step1?.clientName && !formData.step1.hideClientName && (
+            <div className="text-white/80 text-lg font-medium">
+              {formData.step1.clientName}
+            </div>
+          )}
+
+          {formData?.step1?.clientPhoto &&
+            !formData?.step1?.hideClientPhoto && (
+              <div className="w-24 h-24 mx-auto mb-4 rounded-lg overflow-hidden relative">
+                <Image
+                  src={formData.step1.clientPhoto}
+                  alt={formData.step1.clientName || "Cliente"}
+                  fill
+                  className="object-cover"
+                  sizes="96px"
+                />
+              </div>
+            )}
+
           <div className="flex flex-wrap gap-3 justify-center">
-            {(formData?.step1?.services ?? []).length > 0
+            {formData?.step1?.services && !formData?.step1?.hideServices
               ? (formData?.step1?.services ?? []).map(
                   (service: string, index: number) => (
                     <span

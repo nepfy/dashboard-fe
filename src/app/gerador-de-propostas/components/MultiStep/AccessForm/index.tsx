@@ -115,7 +115,6 @@ export default function AccessForm() {
     }
   };
 
-  // API functions
   const fetchUserData = async () => {
     try {
       setUI((prev) => ({ ...prev, isLoadingUserName: true }));

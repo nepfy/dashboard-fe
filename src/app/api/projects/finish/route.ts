@@ -83,11 +83,33 @@ export async function POST(request: Request) {
       );
     }
 
+    // IMPORTANT: If projectId is provided, ensure we're updating an existing project
+    if (projectId) {
+      const existingProject = await db
+        .select()
+        .from(projectsTable)
+        .where(
+          and(
+            eq(projectsTable.id, projectId),
+            eq(projectsTable.personId, userId)
+          )
+        )
+        .limit(1);
+
+      if (existingProject.length === 0) {
+        return NextResponse.json(
+          { success: false, error: "Projeto não encontrado para finalização" },
+          { status: 404 }
+        );
+      }
+    }
+
     const projectData = {
       personId: userId,
       projectName:
         formData.step1?.projectName ||
         `Proposta ${new Date().toLocaleDateString()}`,
+      hideClientName: formData.step1?.hideClientName || false,
       clientName: formData.step1?.clientName || "Cliente não informado",
       templateType: templateType || "flash",
       mainColor: formData.step1?.mainColor,
@@ -97,6 +119,8 @@ export async function POST(request: Request) {
       pageTitle: formData.step1?.pageTitle,
       pageSubtitle: formData.step1?.pageSubtitle,
       hidePageSubtitle: formData.step1?.hidePageSubtitle || false,
+      hideClientPhoto: formData.step1?.hideClientPhoto || false,
+      clientPhoto: formData.step1?.clientPhoto || null,
       services: Array.isArray(formData.step1?.services)
         ? formData.step1.services.join(",")
         : formData.step1?.services,
@@ -139,7 +163,7 @@ export async function POST(request: Request) {
 
       hideFaqSection: formData.step14?.hideFaqSection || false,
       hideFaqSubtitle: formData.step14.hideFaqSubtitle || false,
-      faqSubtitle: formData.step14.faqSubtitle || false,
+      faqSubtitle: formData.step14.faqSubtitle,
 
       hideTermsSection: formData.step13?.hideTermsSection || false,
       termsTitle: formData.step13?.termsTitle,
@@ -160,7 +184,7 @@ export async function POST(request: Request) {
       projectStatus: "draft",
       isProposalGenerated: true,
       projectSentDate: null,
-      created_at: new Date(),
+      created_at: projectId ? undefined : new Date(), // Don't update created_at for existing projects
       updated_at: new Date(),
     };
 
@@ -168,6 +192,7 @@ export async function POST(request: Request) {
 
     if (projectId) {
       // Update existing project
+      console.log("Finishing existing project:", projectId);
       savedProject = await db
         .update(projectsTable)
         .set({
@@ -182,7 +207,7 @@ export async function POST(request: Request) {
         )
         .returning();
     } else {
-      // Create new project
+      // Only create new project if no projectId is provided
       savedProject = await db
         .insert(projectsTable)
         .values(projectData)

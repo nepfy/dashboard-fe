@@ -78,6 +78,7 @@ export async function POST(request: Request) {
       projectName:
         formData.step1?.projectName ||
         `Rascunho ${new Date().toLocaleDateString()}`,
+      hideClientName: formData.step1?.hideClientName || false,
       clientName: formData.step1?.clientName || "Cliente não informado",
       templateType: templateType || "flash",
       mainColor: formData.step1?.mainColor,
@@ -87,6 +88,8 @@ export async function POST(request: Request) {
       pageTitle: formData.step1?.pageTitle,
       pageSubtitle: formData.step1?.pageSubtitle,
       hidePageSubtitle: formData.step1?.hidePageSubtitle || false,
+      hideClientPhoto: formData.step1?.hideClientPhoto || false,
+      clientPhoto: formData.step1?.clientPhoto || null,
       services: Array.isArray(formData.step1?.services)
         ? formData.step1.services.join(",")
         : formData.step1?.services,
@@ -129,7 +132,7 @@ export async function POST(request: Request) {
 
       hideFaqSection: formData.step14?.hideFaqSection || false,
       hideFaqSubtitle: formData.step14.hideFaqSubtitle || false,
-      faqSubtitle: formData.step14.faqSubtitle || false,
+      faqSubtitle: formData.step14.faqSubtitle,
 
       hideTermsSection: formData.step13?.hideTermsSection || false,
       termsTitle: formData.step13?.termsTitle,

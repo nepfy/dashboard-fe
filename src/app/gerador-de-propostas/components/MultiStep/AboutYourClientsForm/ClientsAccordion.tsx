@@ -390,7 +390,7 @@ export default function ClientsAccordion({
                 {/* Logo Section */}
                 <div>
                   <label
-                    className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
+                    className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-3 ${
                       !logoVisible ? "bg-white-neutral-light-300" : ""
                     }`}
                     style={{
@@ -481,7 +481,7 @@ export default function ClientsAccordion({
                 {/* Nome do Cliente Section */}
                 <div>
                   <label
-                    className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center ${
+                    className={`text-white-neutral-light-800 text-sm px-3 py-2 rounded-3xs font-medium flex justify-between items-center mb-2 ${
                       !clientNameVisible ? "bg-white-neutral-light-300" : ""
                     }`}
                     style={{

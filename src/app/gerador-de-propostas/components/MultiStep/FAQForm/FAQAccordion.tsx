@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 
-import { TextField } from "#/components/Inputs";
 import { TextAreaField } from "#/components/Inputs";
 import Modal from "#/components/Modal";
 
@@ -242,19 +241,20 @@ export default function FAQAccordion({
                 >
                   Pergunta
                 </p>
-                <TextField
-                  inputName={`question-${faq.id}`}
+                <TextAreaField
                   id={`question-${faq.id}`}
-                  type="text"
+                  textareaName={`question-${faq.id}`}
                   placeholder="Adicione a pergunta frequente"
                   value={faq.question}
-                  maxLength={100}
-                  showCharCount
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     updateFAQ(faq.id!, "question", e.target.value)
                   }
+                  rows={4}
+                  showCharCount
+                  maxLength={80}
                   disabled={disabled}
                   allowOverText
+                  autoExpand
                 />
                 {/* Show validation error for question */}
                 {errors[`faq_${index}_question`] && (

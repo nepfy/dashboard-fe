@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ALTER COLUMN "about_us_title" SET DATA TYPE varchar(420);

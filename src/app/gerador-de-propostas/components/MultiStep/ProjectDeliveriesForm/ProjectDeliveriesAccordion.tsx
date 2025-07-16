@@ -11,6 +11,7 @@ interface ProjectDeliveriesAccordionProps {
   onFormChange: (services: Service[]) => void;
   disabled?: boolean;
   errors?: { [key: string]: string };
+  templateType?: string;
 }
 
 export default function ProjectDeliveriesAccordion({
@@ -18,12 +19,16 @@ export default function ProjectDeliveriesAccordion({
   onFormChange,
   disabled = false,
   errors = {},
+  templateType,
 }: ProjectDeliveriesAccordionProps) {
   const [openService, setOpenService] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [serviceToRemove, setServiceToRemove] = useState<string | null>(null);
+
+  // Check template types
+  const isEssencialTemplate = templateType?.toLowerCase() === "essencial";
 
   const addService = () => {
     if (disabled) return;
@@ -284,7 +289,7 @@ export default function ProjectDeliveriesAccordion({
                   rows={3}
                   showCharCount
                   maxLength={340}
-                  minLength={165}
+                  minLength={isEssencialTemplate ? undefined : 165}
                   disabled={disabled}
                   allowOverText
                   autoExpand

@@ -12,6 +12,31 @@ import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
+// Template field configurations
+const TEMPLATE_FIELD_CONFIG = {
+  flash: {
+    fields: ["aboutUsTitle", "aboutUsSubtitle1", "aboutUsSubtitle2"],
+    aboutUsTitle: { minLength: 85, maxLength: 160 },
+    aboutUsSubtitle1: { minLength: 40, maxLength: 70 },
+    aboutUsSubtitle2: { minLength: 195, maxLength: 250 },
+  },
+  prime: {
+    fields: ["aboutUsTitle", "aboutUsSubtitle1", "aboutUsSubtitle2"],
+    aboutUsTitle: { minLength: 85, maxLength: 160 },
+    aboutUsSubtitle1: { minLength: 40, maxLength: 70 },
+    aboutUsSubtitle2: { minLength: 195, maxLength: 250 },
+  },
+  essencial: {
+    fields: ["aboutUsTitle"],
+    aboutUsTitle: { minLength: 150, maxLength: 420 },
+  },
+  grid: {
+    fields: ["aboutUsTitle", "aboutUsSubtitle1"],
+    aboutUsTitle: { minLength: 100, maxLength: 220 },
+    aboutUsSubtitle1: { minLength: 150, maxLength: 420 },
+  },
+};
+
 export default function AboutYourBusinessForm() {
   const {
     prevStep,
@@ -24,80 +49,107 @@ export default function AboutYourBusinessForm() {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Check template types to hide specific fields
-  const isEssencialTemplate = templateType?.toLowerCase() === "essencial";
-  const isGridTemplate = templateType?.toLowerCase() === "grid";
+  const currentTemplate =
+    templateType?.toLowerCase() as keyof typeof TEMPLATE_FIELD_CONFIG;
+  const templateConfig =
+    TEMPLATE_FIELD_CONFIG[currentTemplate] || TEMPLATE_FIELD_CONFIG.flash;
 
   // Get current values from formData
   const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
   const hideAboutUsTitle = formData?.step2?.hideAboutUsTitle || false;
-  const hideSubtitles1 = formData?.step2?.hideSubtitles1 || isEssencialTemplate;
-  const hideSubtitles2 =
-    formData?.step2?.hideSubtitles2 || isEssencialTemplate || isGridTemplate;
-
-  // Calculate field visibility based on formData and template type
-  const fieldVisibility = {
-    aboutUsSection: !hideAboutUsSection,
-    aboutUsTitle: !hideAboutUsTitle && !hideAboutUsSection,
-    aboutUsSubtitle1:
-      !hideSubtitles1 && !hideAboutUsSection && !isEssencialTemplate,
-    aboutUsSubtitle2:
-      !hideSubtitles2 &&
-      !hideAboutUsSection &&
-      !isEssencialTemplate &&
-      !isGridTemplate,
-  };
+  const hideSubtitles1 = formData?.step2?.hideSubtitles1 || false;
+  const hideSubtitles2 = formData?.step2?.hideSubtitles2 || false;
 
   const handleBack = () => {
     prevStep();
   };
 
+  const validateField = (fieldName: string, value: string): string | null => {
+    if (!templateConfig.fields.includes(fieldName)) {
+      return null; // Field not required for this template
+    }
+
+    const fieldConfig =
+      templateConfig[fieldName as keyof typeof templateConfig];
+    if (!fieldConfig || typeof fieldConfig !== "object") {
+      return null;
+    }
+
+    const { minLength, maxLength } = fieldConfig as {
+      minLength: number;
+      maxLength: number;
+    };
+
+    if (!value.trim()) {
+      const fieldNames = {
+        aboutUsTitle: "Sobre nós",
+        aboutUsSubtitle1: "Subtítulo 1",
+        aboutUsSubtitle2: "Subtítulo 2",
+      };
+      return `O campo '${
+        fieldNames[fieldName as keyof typeof fieldNames]
+      }' é obrigatório`;
+    }
+
+    if (value.length < minLength) {
+      const fieldNames = {
+        aboutUsTitle: "Sobre nós",
+        aboutUsSubtitle1: "Subtítulo 1",
+        aboutUsSubtitle2: "Subtítulo 2",
+      };
+      return `O campo '${
+        fieldNames[fieldName as keyof typeof fieldNames]
+      }' deve ter pelo menos ${minLength} caracteres`;
+    }
+
+    if (value.length > maxLength) {
+      const fieldNames = {
+        aboutUsTitle: "Sobre nós",
+        aboutUsSubtitle1: "Subtítulo 1",
+        aboutUsSubtitle2: "Subtítulo 2",
+      };
+      return `O campo '${
+        fieldNames[fieldName as keyof typeof fieldNames]
+      }' deve ter no máximo ${maxLength} caracteres`;
+    }
+
+    return null;
+  };
+
   const handleNext = () => {
     setErrors({});
 
-    const aboutUsTitle = formData?.step2?.aboutUsTitle || "";
-    const aboutUsSubtitle1 = formData?.step2?.aboutUsSubtitle1 || "";
-    const aboutUsSubtitle2 = formData?.step2?.aboutUsSubtitle2 || "";
     const newErrors: { [key: string]: string } = {};
 
     // Only validate if section is not hidden
     if (!hideAboutUsSection) {
-      // Validate "Sobre nós" field
-      if (fieldVisibility.aboutUsTitle) {
-        if (aboutUsTitle.length < 85) {
-          newErrors.aboutUsTitle =
-            "O campo 'Sobre nós' deve ter pelo menos 85 caracteres";
-        } else if (aboutUsTitle.length > 160) {
-          newErrors.aboutUsTitle =
-            "O campo 'Sobre nós' deve ter no máximo 160 caracteres";
-        }
-      }
+      // Validate each field based on template configuration and visibility
+      templateConfig.fields.forEach((fieldName) => {
+        let isFieldVisible = false;
+        let fieldValue = "";
 
-      // Validate "Subtítulo 1" field (only for non-Essencial templates)
-      if (!isEssencialTemplate && fieldVisibility.aboutUsSubtitle1) {
-        if (aboutUsSubtitle1.length < 40) {
-          newErrors.aboutUsSubtitle1 =
-            "O campo 'Subtítulo 1' deve ter pelo menos 40 caracteres";
-        } else if (aboutUsSubtitle1.length > 70) {
-          newErrors.aboutUsSubtitle1 =
-            "O campo 'Subtítulo 1' deve ter no máximo 70 caracteres";
+        switch (fieldName) {
+          case "aboutUsTitle":
+            isFieldVisible = !hideAboutUsTitle;
+            fieldValue = formData?.step2?.aboutUsTitle || "";
+            break;
+          case "aboutUsSubtitle1":
+            isFieldVisible = !hideSubtitles1;
+            fieldValue = formData?.step2?.aboutUsSubtitle1 || "";
+            break;
+          case "aboutUsSubtitle2":
+            isFieldVisible = !hideSubtitles2;
+            fieldValue = formData?.step2?.aboutUsSubtitle2 || "";
+            break;
         }
-      }
 
-      // Validate "Subtítulo 2" field (only for Flash and Prime templates)
-      if (
-        !isEssencialTemplate &&
-        !isGridTemplate &&
-        fieldVisibility.aboutUsSubtitle2
-      ) {
-        if (aboutUsSubtitle2.length < 195) {
-          newErrors.aboutUsSubtitle2 =
-            "O campo 'Subtítulo 2' deve ter pelo menos 195 caracteres";
-        } else if (aboutUsSubtitle2.length > 250) {
-          newErrors.aboutUsSubtitle2 =
-            "O campo 'Subtítulo 2' deve ter no máximo 250 caracteres";
+        if (isFieldVisible) {
+          const error = validateField(fieldName, fieldValue);
+          if (error) {
+            newErrors[fieldName] = error;
+          }
         }
-      }
+      });
     }
 
     // If there are validation errors, show them and prevent navigation
@@ -139,17 +191,6 @@ export default function AboutYourBusinessForm() {
   };
 
   const toggleFieldVisibility = (fieldName: string) => {
-    // Don't allow toggling subtitle fields based on template type
-    if (
-      isEssencialTemplate &&
-      (fieldName === "aboutUsSubtitle1" || fieldName === "aboutUsSubtitle2")
-    ) {
-      return;
-    }
-    if (isGridTemplate && fieldName === "aboutUsSubtitle2") {
-      return;
-    }
-
     setErrors({});
 
     if (fieldName === "aboutUsTitle") {
@@ -200,6 +241,182 @@ export default function AboutYourBusinessForm() {
     }
   };
 
+  const renderField = (fieldName: string) => {
+    const fieldConfig =
+      templateConfig[fieldName as keyof typeof templateConfig];
+    if (!fieldConfig || typeof fieldConfig !== "object") return null;
+
+    const { minLength, maxLength } = fieldConfig as {
+      minLength: number;
+      maxLength: number;
+    };
+
+    switch (fieldName) {
+      case "aboutUsTitle":
+        const isAboutUsTitleVisible = !hideAboutUsTitle && !hideAboutUsSection;
+        return (
+          <div className="py-2" key={fieldName}>
+            <div
+              className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
+                hideAboutUsSection || hideAboutUsTitle
+                  ? "bg-white-neutral-light-300"
+                  : ""
+              }`}
+              style={{
+                backgroundColor:
+                  hideAboutUsSection || hideAboutUsTitle
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+              }}
+            >
+              <span>Sobre nós</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFieldVisibility("aboutUsTitle");
+                }}
+                className={`${
+                  hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
+                disabled={hideAboutUsSection}
+              >
+                {isAboutUsTitleVisible ? <EyeOpened /> : <EyeClosed />}
+              </button>
+            </div>
+            {isAboutUsTitleVisible && (
+              <TextAreaField
+                id="aboutUsTitle"
+                textareaName="aboutUsTitle"
+                placeholder="Fale sobre você ou sua empresa"
+                value={formData?.step2?.aboutUsTitle || ""}
+                onChange={handleFieldChange("aboutUsTitle")}
+                maxLength={maxLength}
+                minLength={minLength}
+                autoExpand={true}
+                showCharCount
+                error={errors.aboutUsTitle}
+                disabled={hideAboutUsTitle || hideAboutUsSection}
+                allowOverText
+              />
+            )}
+          </div>
+        );
+
+      case "aboutUsSubtitle1":
+        const isSubtitle1Visible = !hideSubtitles1 && !hideAboutUsSection;
+        return (
+          <div className="py-2" key={fieldName}>
+            <div
+              className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
+                hideAboutUsSection || hideSubtitles1
+                  ? "bg-white-neutral-light-300"
+                  : ""
+              }`}
+              style={{
+                backgroundColor:
+                  hideAboutUsSection || hideSubtitles1
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+              }}
+            >
+              <span>Subtítulo 1</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFieldVisibility("aboutUsSubtitle1");
+                }}
+                className={`${
+                  hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
+                disabled={hideAboutUsSection}
+              >
+                {isSubtitle1Visible ? <EyeOpened /> : <EyeClosed />}
+              </button>
+            </div>
+            {isSubtitle1Visible && (
+              <TextAreaField
+                id="aboutUsSubtitle1"
+                textareaName="aboutUsSubtitle1"
+                placeholder={
+                  currentTemplate === "grid"
+                    ? "Descreva mais detalhes sobre sua empresa"
+                    : "Descreva sua empresa ou negócio"
+                }
+                value={formData?.step2?.aboutUsSubtitle1 || ""}
+                onChange={handleFieldChange("aboutUsSubtitle1")}
+                maxLength={maxLength}
+                minLength={minLength}
+                autoExpand={true}
+                showCharCount
+                error={errors.aboutUsSubtitle1}
+                disabled={hideAboutUsSection || hideSubtitles1}
+                allowOverText
+              />
+            )}
+          </div>
+        );
+
+      case "aboutUsSubtitle2":
+        const isSubtitle2Visible = !hideSubtitles2 && !hideAboutUsSection;
+        return (
+          <div className="py-2" key={fieldName}>
+            <div
+              className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
+                hideAboutUsSection || hideSubtitles2
+                  ? "bg-white-neutral-light-300"
+                  : ""
+              }`}
+              style={{
+                backgroundColor:
+                  hideAboutUsSection || hideSubtitles2
+                    ? undefined
+                    : "rgba(107, 70, 245, 0.05)",
+              }}
+            >
+              <span>Subtítulo 2</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFieldVisibility("aboutUsSubtitle2");
+                }}
+                className={`${
+                  hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
+                disabled={hideAboutUsSection}
+              >
+                {isSubtitle2Visible ? <EyeOpened /> : <EyeClosed />}
+              </button>
+            </div>
+            {isSubtitle2Visible && (
+              <TextAreaField
+                id="aboutUsSubtitle2"
+                textareaName="aboutUsSubtitle2"
+                placeholder="Adicione mais detalhes"
+                value={formData?.step2?.aboutUsSubtitle2 || ""}
+                onChange={handleFieldChange("aboutUsSubtitle2")}
+                maxLength={maxLength}
+                minLength={minLength}
+                autoExpand={true}
+                showCharCount
+                error={errors.aboutUsSubtitle2}
+                disabled={hideAboutUsSection || hideSubtitles2}
+                allowOverText
+              />
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="h-full flex flex-col justify-between relative overflow-y-scroll">
       <div className="p-7 mb-13">
@@ -239,163 +456,8 @@ export default function AboutYourBusinessForm() {
         )}
 
         <div className="py-6">
-          <div className="py-2">
-            <div
-              className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
-                hideAboutUsSection || hideAboutUsTitle
-                  ? "bg-white-neutral-light-300"
-                  : ""
-              }`}
-              style={{
-                backgroundColor:
-                  hideAboutUsSection || hideAboutUsTitle
-                    ? undefined
-                    : "rgba(107, 70, 245, 0.05)",
-              }}
-            >
-              <span>Sobre nós</span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleFieldVisibility("aboutUsTitle");
-                }}
-                className={`${
-                  hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
-                }`}
-                disabled={hideAboutUsSection}
-              >
-                {fieldVisibility.aboutUsTitle ? <EyeOpened /> : <EyeClosed />}
-              </button>
-            </div>
-            {fieldVisibility.aboutUsTitle && (
-              <TextAreaField
-                id="aboutUsTitle"
-                textareaName="aboutUsTitle"
-                placeholder="Fale sobre você ou sua empresa"
-                value={formData?.step2?.aboutUsTitle || ""}
-                onChange={handleFieldChange("aboutUsTitle")}
-                maxLength={160}
-                minLength={85}
-                autoExpand={true}
-                showCharCount
-                error={errors.aboutUsTitle}
-                disabled={hideAboutUsTitle || hideAboutUsSection}
-                allowOverText
-              />
-            )}
-          </div>
-
-          {/* Only show Subtitle 1 if not Essencial template */}
-          {!isEssencialTemplate && (
-            <div className="py-2">
-              <div
-                className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
-                  hideAboutUsSection || hideSubtitles1
-                    ? "bg-white-neutral-light-300"
-                    : ""
-                }`}
-                style={{
-                  backgroundColor:
-                    hideAboutUsSection || hideSubtitles1
-                      ? undefined
-                      : "rgba(107, 70, 245, 0.05)",
-                }}
-              >
-                <span>Subtítulo 1</span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleFieldVisibility("aboutUsSubtitle1");
-                  }}
-                  className={`${
-                    hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
-                  }`}
-                  disabled={hideAboutUsSection}
-                >
-                  {fieldVisibility.aboutUsSubtitle1 ? (
-                    <EyeOpened />
-                  ) : (
-                    <EyeClosed />
-                  )}
-                </button>
-              </div>
-              {fieldVisibility.aboutUsSubtitle1 && (
-                <TextAreaField
-                  id="aboutUsSubtitle1"
-                  textareaName="aboutUsSubtitle1"
-                  placeholder="Descreva sua empresa ou negócio"
-                  value={formData?.step2?.aboutUsSubtitle1 || ""}
-                  onChange={handleFieldChange("aboutUsSubtitle1")}
-                  maxLength={70}
-                  minLength={40}
-                  autoExpand={true}
-                  showCharCount
-                  error={errors.aboutUsSubtitle1}
-                  disabled={hideAboutUsSection || hideSubtitles1}
-                  allowOverText
-                />
-              )}
-            </div>
-          )}
-
-          {/* Only show Subtitle 2 if not Essencial template and not Grid template */}
-          {!isEssencialTemplate && !isGridTemplate && (
-            <div className="py-2">
-              <div
-                className={`text-white-neutral-light-800 text-sm px-2 py-1 rounded-3xs font-medium flex justify-between items-center ${
-                  hideAboutUsSection || hideSubtitles2
-                    ? "bg-white-neutral-light-300"
-                    : ""
-                }`}
-                style={{
-                  backgroundColor:
-                    hideAboutUsSection || hideSubtitles2
-                      ? undefined
-                      : "rgba(107, 70, 245, 0.05)",
-                }}
-              >
-                <span>Subtítulo 2</span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleFieldVisibility("aboutUsSubtitle2");
-                  }}
-                  className={`${
-                    hideAboutUsSection ? "cursor-not-allowed" : "cursor-pointer"
-                  }`}
-                  disabled={hideAboutUsSection}
-                >
-                  {fieldVisibility.aboutUsSubtitle2 ? (
-                    <EyeOpened />
-                  ) : (
-                    <EyeClosed />
-                  )}
-                </button>
-              </div>
-              {fieldVisibility.aboutUsSubtitle2 && (
-                <TextAreaField
-                  id="aboutUsSubtitle2"
-                  textareaName="aboutUsSubtitle2"
-                  placeholder="Adicione mais detalhes"
-                  value={formData?.step2?.aboutUsSubtitle2 || ""}
-                  onChange={handleFieldChange("aboutUsSubtitle2")}
-                  maxLength={250}
-                  minLength={195}
-                  autoExpand={true}
-                  showCharCount
-                  error={errors.aboutUsSubtitle2}
-                  disabled={hideAboutUsSection || hideSubtitles2}
-                  allowOverText
-                />
-              )}
-            </div>
-          )}
+          {/* Render fields based on template configuration */}
+          {templateConfig.fields.map((fieldName) => renderField(fieldName))}
         </div>
       </div>
 
