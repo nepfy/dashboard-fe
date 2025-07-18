@@ -21,6 +21,23 @@ const satoshi = localFont({
   variable: "--font-satoshi",
 });
 
+const manrope = localFont({
+  src: [
+    {
+      path: "../../public/fonts/manrope.ttf",
+      weight: "100 900",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/manrope.ttf",
+      weight: "100 900",
+      style: "italic",
+    },
+  ],
+  variable: "--font-manrope",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: ".Nepfy",
   description: "Faça a gestão das suas propostas de forma simples e elegante.",
@@ -48,10 +65,6 @@ export default async function RootLayout({
   const isSubdomain = headersList.get("x-is-subdomain") === "true";
   const shouldUseClerk = isMainDomain(hostname) && !isSubdomain;
 
-  console.log(
-    `[Layout] Hostname: ${hostname}, UseClerk: ${shouldUseClerk}, IsSubdomain: ${isSubdomain}`
-  );
-
   if (shouldUseClerk) {
     return (
       <ClerkProvider dynamic localization={ptBR}>
@@ -59,7 +72,11 @@ export default async function RootLayout({
           <head>
             <meta name="x-is-subdomain" content="false" />
           </head>
-          <body className={`${satoshi.variable} antialiased`}>{children}</body>
+          <body
+            className={`${satoshi.variable} ${manrope.variable} antialiased`}
+          >
+            {children}
+          </body>
         </html>
       </ClerkProvider>
     );
@@ -70,7 +87,9 @@ export default async function RootLayout({
       <head>
         <meta name="x-is-subdomain" content={isSubdomain ? "true" : "false"} />
       </head>
-      <body className={`${satoshi.variable} antialiased`}>{children}</body>
+      <body className={`${satoshi.variable} ${manrope.variable} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }

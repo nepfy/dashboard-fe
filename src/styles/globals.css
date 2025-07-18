@@ -101,10 +101,15 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-satoshi);
   --font-mono: var(--font-satoshi);
+  --font-manrope: var(--font-manrope);
 }
 
 body {
   background: var(--color-white-neutral-light-200);
+}
+
+.font-manrope {
+  font-family: var(--font-manrope);
 }
 
 .light-text {

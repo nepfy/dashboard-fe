@@ -73,8 +73,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
-  console.log(`[Middleware] Processing: ${hostname}${url.pathname}`);
-
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
@@ -92,13 +90,9 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     if (subdomainData) {
       const { userName, projectUrl } = subdomainData;
 
-      console.log(`[Middleware] Valid subdomain: ${userName}-${projectUrl}`);
-      console.log(`[Middleware] Original URL: ${url.pathname}`);
-
       // Only rewrite if we're on the root path or project path
       if (url.pathname === "/" || url.pathname.startsWith("/project/")) {
         const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
-        console.log(`[Middleware] Rewriting to: ${newUrl.pathname}`);
 
         const response = NextResponse.rewrite(newUrl);
         response.headers.set("x-subdomain", hostname.split(".")[0]);
@@ -109,14 +103,9 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
         return response;
       }
     } else {
-      console.log(`[Middleware] Invalid subdomain: ${hostname}`);
       return new NextResponse("Not Found", { status: 404 });
     }
   }
-
-  console.log(
-    `[Middleware] Main domain, applying Clerk auth for: ${url.pathname}`
-  );
 
   if (url.pathname.startsWith("/api/")) {
     const { userId } = await auth();
