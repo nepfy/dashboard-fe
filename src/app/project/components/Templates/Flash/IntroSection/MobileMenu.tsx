@@ -29,13 +29,18 @@ export default function MobileMenu({ ctaButtonTitle }: MobileMenuProps) {
   return (
     <div className="mobile-menu-overlay fixed inset-0 bg-[#4F21A1] backdrop-opacity-1 z-100 opacity-0 invisible transition-all duration-300 overflow-hidden">
       <div className="flex flex-col h-screen overflow-y-auto">
-        <div className="flex justify-end w-full p-6">
+        <div className="flex justify-end w-full py-6 px-4">
           <label
             htmlFor="hamburger-toggle"
-            className="cursor-pointer hover:bg-white/10 rounded-full transition-colors mt-6"
+            className="cursor-pointer hover:bg-white/10 rounded-full transition-colors mt-3"
             aria-label="Close menu"
           >
-            <X className="w-6 h-6 text-white-neutral-light-100" />
+            <X
+              className="text-white-neutral-light-100"
+              size={42}
+              absoluteStrokeWidth={true}
+              strokeWidth={1}
+            />
           </label>
         </div>
 
