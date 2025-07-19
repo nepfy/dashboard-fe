@@ -1,4 +1,4 @@
-import HamburgerButton from "./HamburgerButton";
+import MobileMenu from "./MobileMenu";
 import type { HeaderProps } from "./intro-section";
 
 export default function Header({
@@ -18,7 +18,7 @@ export default function Header({
         <button className={`${ctaButtonClasses} p-5`}>{ctaButtonTitle}</button>
       </div>
 
-      <HamburgerButton />
+      <MobileMenu ctaButtonTitle={ctaButtonTitle} />
     </div>
   );
 }
