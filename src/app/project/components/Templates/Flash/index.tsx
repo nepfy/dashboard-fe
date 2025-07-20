@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -26,12 +26,14 @@ import PlansSection from "./PlansSection";
 import TermsSection from "./TermsSection";
 import FAQSection from "./FAQSection";
 import FinalMessageSection from "./FinalMessageSection";
+import PasswordSection from "./PasswordSection";
 
 interface FlashTemplateProps {
   data?: CompleteProjectData;
 }
 
 export default function FlashTemplate({ data }: FlashTemplateProps) {
+  const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
   const lenisRef = useRef<LenisRef>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<HTMLDivElement>(null);
@@ -39,6 +41,27 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
+
+  const needsPassword = data?.pagePassword && data.pagePassword.trim() !== "";
+
+  useEffect(() => {
+    if (!needsPassword) {
+      setIsPasswordCorrect(true);
+    } else {
+      if (typeof window !== "undefined") {
+        const hasEnteredPassword = sessionStorage.getItem(
+          `flash-password-${data?.id || "default"}`
+        );
+        if (hasEnteredPassword === "true") {
+          setIsPasswordCorrect(true);
+        }
+      }
+    }
+  }, [needsPassword, data?.id]);
+
+  const handlePasswordCorrect = () => {
+    setIsPasswordCorrect(true);
+  };
 
   lenis?.on("scroll", ScrollTrigger.update);
 
@@ -58,7 +81,8 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       !businessRef.current ||
       !businessComplementRef.current ||
       !containerRef.current ||
-      !backgroundRef.current
+      !backgroundRef.current ||
+      !isPasswordCorrect
     )
       return;
 
@@ -117,7 +141,18 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       tl.kill();
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, [data?.mainColor]);
+  }, [data?.mainColor, isPasswordCorrect]);
+
+  if (needsPassword && !isPasswordCorrect) {
+    return (
+      <PasswordSection
+        password={data?.pagePassword}
+        onPasswordCorrect={handlePasswordCorrect}
+        mainColor={data?.mainColor}
+        data={data}
+      />
+    );
+  }
 
   const initialGradient = `radial-gradient(220% 130% at 10.84% 2.05003%, #000000 10%, #000000 10%, ${data?.mainColor} 45.22%, ${data?.mainColor} 54.9%, ${data?.mainColor} 34.9%, #000000 61.78%)`;
 
