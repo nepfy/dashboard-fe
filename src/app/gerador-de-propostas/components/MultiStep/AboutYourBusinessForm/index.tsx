@@ -57,8 +57,8 @@ export default function AboutYourBusinessForm() {
   // Get current values from formData
   const hideAboutUsSection = formData?.step2?.hideAboutUsSection || false;
   const hideAboutUsTitle = formData?.step2?.hideAboutUsTitle || false;
-  const hideSubtitles1 = formData?.step2?.hideSubtitles1 || false;
-  const hideSubtitles2 = formData?.step2?.hideSubtitles2 || false;
+  const hideSubtitles1 = formData?.step2?.hideAboutUsSubtitle1 || false;
+  const hideSubtitles2 = formData?.step2?.hideAboutUsSubtitle2 || false;
 
   const handleBack = () => {
     prevStep();
@@ -212,7 +212,7 @@ export default function AboutYourBusinessForm() {
       const newValue = !hideSubtitles1;
       updateFormData("step2", {
         ...formData?.step2,
-        hideSubtitles1: newValue,
+        hideAboutUsSubtitle1: newValue,
       });
 
       // Clear error if hiding field
@@ -227,7 +227,7 @@ export default function AboutYourBusinessForm() {
       const newValue = !hideSubtitles2;
       updateFormData("step2", {
         ...formData?.step2,
-        hideSubtitles2: newValue,
+        hideAboutUsSubtitle2: newValue,
       });
 
       // Clear error if hiding field

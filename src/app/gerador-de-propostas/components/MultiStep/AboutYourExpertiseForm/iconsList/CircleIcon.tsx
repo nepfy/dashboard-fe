@@ -18,7 +18,7 @@ const CircleIcon = ({
       width="31.2485"
       height="31.2485"
       rx="6.00933"
-      stroke="#E0E3E9"
+      stroke={fill}
       strokeWidth="0.801244"
     />
     <path
@@ -37,7 +37,7 @@ const CircleIcon = ({
     />
     <path
       d="M18.0225 24.2776C20.8829 23.6927 23.1825 21.5935 24.0558 18.8452"
-      stroke="black"
+      stroke={fill}
       strokeWidth="1.20187"
       strokeLinecap="round"
       strokeLinejoin="round"

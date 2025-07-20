@@ -3,6 +3,7 @@ import { evaluatePasswordStrength, PasswordStrength } from "./evaluatePassword";
 import { maskPhone } from "./maskPhone";
 import { maskCNPJ } from "./validateAndMaskCNPJ";
 import { validateCPF, maskCPF } from "./validateAndMaskCpf";
+import { formatCurrency, formatCurrencyValue } from "./formatCurrency";
 
 export {
   formatCep,
@@ -13,5 +14,7 @@ export {
   maskCNPJ,
   validateCPF,
   maskCPF,
+  formatCurrency,
+  formatCurrencyValue,
 };
 export type { PasswordStrength };

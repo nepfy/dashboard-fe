@@ -22,7 +22,7 @@ export default function AboutBusinessPreview() {
               <div className="w-full">
                 <div className="space-y-6">
                   <div>
-                    {!formData?.step2?.hideSubtitles1 && (
+                    {!formData?.step2?.hideAboutUsSubtitle1 && (
                       <p className="text-white/90 leading-relaxed">
                         {formData?.step2?.aboutUsSubtitle1}
                       </p>
@@ -30,7 +30,7 @@ export default function AboutBusinessPreview() {
                   </div>
 
                   <div>
-                    {!formData?.step2?.hideSubtitles2 && (
+                    {!formData?.step2?.hideAboutUsSubtitle2 && (
                       <p className="text-white/90 leading-relaxed">
                         {formData?.step2?.aboutUsSubtitle2}
                       </p>

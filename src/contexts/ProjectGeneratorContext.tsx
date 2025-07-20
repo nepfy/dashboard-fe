@@ -268,6 +268,8 @@ export function ProjectGeneratorProvider({
     safeUpdate("step2", {
       hideAboutUsSection: projectData.hideAboutUsSection || false,
       aboutUsTitle: projectData.aboutUsTitle,
+      hideAboutUsSubtitle1: projectData.hideAboutUsSubtitle1 || false,
+      hideAboutUsSubtitle2: projectData.hideAboutUsSubtitle2 || false,
       aboutUsSubtitle1: projectData.aboutUsSubtitle1,
       aboutUsSubtitle2: projectData.aboutUsSubtitle2,
     });

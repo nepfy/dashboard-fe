@@ -48,7 +48,12 @@ export default function TeamSection({ data }: TeamSectionProps) {
   const [visibleMembers, setVisibleMembers] = useState(2);
 
   const teamMembers = data?.teamMembers || [];
-  const memberCount = teamMembers.length;
+  const sortedTeamMembers = [...teamMembers].sort((a, b) => {
+    const orderA = a.sortOrder ?? 0;
+    const orderB = b.sortOrder ?? 0;
+    return orderA - orderB;
+  });
+  const memberCount = sortedTeamMembers.length;
 
   useEffect(() => {
     const checkViewport = () => {
@@ -126,14 +131,14 @@ export default function TeamSection({ data }: TeamSectionProps) {
       return (
         <div className="w-full flex justify-start">
           <div className="max-w-[670px] w-full">
-            {teamMembers[0] && renderMember(teamMembers[0], 0)}
+            {sortedTeamMembers[0] && renderMember(sortedTeamMembers[0], 0)}
           </div>
         </div>
       );
     }
 
     if (isMobile) {
-      const visibleTeamMembers = teamMembers.slice(0, visibleMembers);
+      const visibleTeamMembers = sortedTeamMembers.slice(0, visibleMembers);
       const hasMoreMembers = visibleMembers < memberCount;
 
       return (
@@ -166,7 +171,9 @@ export default function TeamSection({ data }: TeamSectionProps) {
     if (memberCount === 2) {
       return (
         <div className="w-full grid grid-cols-2 gap-6">
-          {teamMembers.map((member, index) => renderMember(member, index))}
+          {sortedTeamMembers.map((member, index) =>
+            renderMember(member, index)
+          )}
         </div>
       );
     }
@@ -174,7 +181,7 @@ export default function TeamSection({ data }: TeamSectionProps) {
     return (
       <div className="w-full team-slider">
         <Slider ref={sliderRef} {...sliderSettings} className="relative">
-          {teamMembers.map((member, index) => (
+          {sortedTeamMembers.map((member, index) => (
             <div key={member?.id || index} className="px-2">
               {renderMember(member, index)}
             </div>
@@ -186,8 +193,8 @@ export default function TeamSection({ data }: TeamSectionProps) {
 
   return (
     <>
-      {!data?.hideAboutUsSection && (
-        <div className="w-full bg-black pt-50 lg:pt-100 px-6">
+      {!data?.hideAboutYourTeamSection && (
+        <div className="w-full pt-50 lg:pt-100 px-6 mb-50 lg:mb-0">
           {data?.ourTeamSubtitle && (
             <div className="w-full flex items-center justify-center mb-50">
               <h2 className="h-[162px] lg:h-[360px] border-l border-l-[#A0A0A0] pl-10 text-white text-3xl lg:text-7xl max-w-[690px] flex items-end">

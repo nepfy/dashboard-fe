@@ -48,6 +48,8 @@ export const projectsTable = pgTable("projects", {
   aboutUsTitle: varchar("about_us_title", { length: 420 }),
   aboutUsSubtitle1: text("about_us_subtitle_1"),
   aboutUsSubtitle2: text("about_us_subtitle_2"),
+  hideAboutUsSubtitle1: boolean("hide_about_us_subtitle_1").default(false),
+  hideAboutUsSubtitle2: boolean("hide_about_us_subtitle_2").default(false),
 
   hideAboutYourTeamSection: boolean("hide_about_your_team_section").default(
     false

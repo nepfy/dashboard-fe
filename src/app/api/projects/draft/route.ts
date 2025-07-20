@@ -99,6 +99,8 @@ export async function POST(request: Request) {
       aboutUsTitle: formData.step2?.aboutUsTitle,
       aboutUsSubtitle1: formData.step2?.aboutUsSubtitle1,
       aboutUsSubtitle2: formData.step2?.aboutUsSubtitle2,
+      hideAboutUsSubtitle2: formData.step2?.hideAboutUsSubtitle2 || false,
+      hideAboutUsSubtitle1: formData.step2?.hideAboutUsSubtitle1 || false,
 
       hideAboutYourTeamSection:
         formData.step3?.hideAboutYourTeamSection || false,

@@ -129,6 +129,8 @@ export interface Project {
 
   hideAboutUsSection?: boolean;
   aboutUsTitle?: string;
+  hideAboutUsSubtitle1?: boolean;
+  hideAboutUsSubtitle2?: boolean;
   aboutUsSubtitle1?: string;
   aboutUsSubtitle2?: string;
 
@@ -212,8 +214,8 @@ export interface Step1Data {
 export interface Step2Data {
   hideAboutUsSection?: boolean;
   hideAboutUsTitle?: boolean;
-  hideSubtitles1?: boolean;
-  hideSubtitles2?: boolean;
+  hideAboutUsSubtitle1?: boolean;
+  hideAboutUsSubtitle2?: boolean;
   aboutUsTitle?: string;
   aboutUsSubtitle1?: string;
   aboutUsSubtitle2?: string;

@@ -152,17 +152,23 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
         </div>
       </div>
       <div className="overflow-hidden">
-        <TeamSection data={data} />
+        <div className="bg-black">
+          <TeamSection data={data} />
 
-        <ExpertiseSection data={data} />
+          <ExpertiseSection data={data} />
+        </div>
 
-        <ResultsSection data={data} />
+        <div className="bg-black">
+          <ResultsSection data={data} />
 
-        <ClientSection data={data} />
+          <ClientSection data={data} />
+        </div>
 
-        <ProcessSection data={data} />
+        <div className="bg-[#4F21A1]">
+          <ProcessSection data={data} />
 
-        <ProcessListSection data={data} />
+          <ProcessListSection data={data} />
+        </div>
 
         <CTASection data={data} />
 

@@ -469,6 +469,8 @@ export async function POST(request: Request) {
       aboutUsTitle: project.aboutUsTitle,
       aboutUsSubtitle1: project.aboutUsSubtitle1,
       aboutUsSubtitle2: project.aboutUsSubtitle2,
+      hideAboutUsSubtitle2: project.hideAboutUsSubtitle2,
+      hideAboutUsSubtitle1: project.hideAboutUsSubtitle1,
 
       hideAboutYourTeamSection: project.hideAboutYourTeamSection,
       ourTeamSubtitle: project.ourTeamSubtitle,
