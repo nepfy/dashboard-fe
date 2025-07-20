@@ -6,13 +6,29 @@ interface TermsSectionProps {
 
 export default function TermsSection({ data }: TermsSectionProps) {
   return (
-    <div className="w-full">
-      <div className="w-full bg-red-500">
-        <h1>TermsSection</h1>
-      </div>
-      <div className="w-full bg-green-500">
-        <h1>{data?.termsConditions.map((term) => term.description)}</h1>
-      </div>
-    </div>
+    <>
+      {!data?.hideTermsSection && (
+        <div className="w-[90%] p-6 text-white flex flex-col lg:flex-row lg:mx-auto">
+          <p className="lg:w-2/5 w-[100px] font-semibold text-lg text-white h-[162px] border-l-[0.5px] border-l-[#A0A0A0] flex items-end justify-start pl-4 lg:pl-8 mb-8">
+            Nossos termos
+          </p>
+          <div className="border-l-[0.5px] border-l-[#A0A0A0] flex flex-col justify-center items-center pl-4 lg:pl-8">
+            {data?.termsConditions.map((condition) => (
+              <div
+                key={condition.id}
+                className="max-w-[450px] flex flex-col justify-center py-10"
+              >
+                <h2 className="text-sm text-[#CBDED4] mb-3">
+                  {condition.title}
+                </h2>
+                <p className="text-[#CBDED4] text-xs">
+                  {condition.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

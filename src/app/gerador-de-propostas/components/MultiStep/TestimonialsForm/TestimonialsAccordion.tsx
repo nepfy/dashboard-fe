@@ -55,7 +55,7 @@ export default function TestimonialsAccordion({
       testimonial: "",
       name: "",
       role: "",
-      hidePhoto: false, // Initialize hidePhoto as false
+      hidePhoto: false,
       sortOrder: testimonials.length,
     };
 

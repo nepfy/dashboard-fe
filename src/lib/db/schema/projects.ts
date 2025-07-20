@@ -185,6 +185,7 @@ export const projectTestimonialsTable = pgTable("project_testimonials", {
   role: varchar("role", { length: 255 }),
   photo: text("photo"), // URL or file path
   sortOrder: integer("sort_order").default(0),
+  hidePhoto: boolean("hide_photo").default(false),
   ...timestamps,
 });
 

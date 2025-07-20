@@ -380,6 +380,7 @@ export async function POST(request: Request) {
             role: testimonial.role || null,
             photo: testimonial.photo || null,
             sortOrder: testimonial.sortOrder || index,
+            hidePhoto: testimonial.hidePhoto,
           })
         );
 

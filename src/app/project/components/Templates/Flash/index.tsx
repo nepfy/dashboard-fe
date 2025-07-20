@@ -119,8 +119,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
     };
   }, [data?.mainColor]);
 
-  const initialGradient =
-    "radial-gradient(220% 130% at 10.84% 2.05003%, #000000 10%, #000000 10%, #4F21A1 45.22%, #4F21A1 54.9%, #4F21A1 34.9%, #000000 61.78%)";
+  const initialGradient = `radial-gradient(220% 130% at 10.84% 2.05003%, #000000 10%, #000000 10%, ${data?.mainColor} 45.22%, ${data?.mainColor} 54.9%, ${data?.mainColor} 34.9%, #000000 61.78%)`;
 
   return (
     <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
@@ -152,7 +151,26 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
         </div>
       </div>
       <div className="overflow-hidden">
-        <div className="bg-black">
+        <div
+          style={{
+            background: `linear-gradient(
+          190deg, 
+          #000000 0%,
+          #000000 10%,
+          #000000 20%,
+          #000000 30%,
+          #000000 30%,
+          #000000 40%,
+          ${data?.mainColor} 50%, 
+          ${data?.mainColor} 55%, 
+          ${data?.mainColor} 65%, 
+          #000000 70%, 
+          #000000 80%, 
+          #000000 90%, 
+          #000000 100%
+          )`,
+          }}
+        >
           <TeamSection data={data} />
 
           <ExpertiseSection data={data} />
@@ -164,7 +182,11 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
           <ClientSection data={data} />
         </div>
 
-        <div className="bg-[#4F21A1]">
+        <div
+          style={{
+            background: `${data?.mainColor}`,
+          }}
+        >
           <ProcessSection data={data} />
 
           <ProcessListSection data={data} />
@@ -172,15 +194,31 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
 
         <CTASection data={data} />
 
-        <TestimonialsSection data={data} />
+        <div
+          className="p-6"
+          style={{
+            background: `linear-gradient(
+              160deg,
+              #000000 0%,
+              #000000 10%,
+              #4A148C 25%,
+              #000000 30%,
+              #000000 60%,
+              #000000 80%,
+              #000000 100%
+            )`,
+          }}
+        >
+          <TestimonialsSection data={data} />
 
-        <InvestmentSection data={data} />
+          <InvestmentSection data={data} />
 
-        <DeliverySection data={data} />
+          <DeliverySection data={data} />
 
-        <PlansSection data={data} />
+          <PlansSection data={data} />
 
-        <TermsSection data={data} />
+          <TermsSection data={data} />
+        </div>
 
         <FAQSection data={data} />
 

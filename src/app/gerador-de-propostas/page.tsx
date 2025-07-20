@@ -25,43 +25,43 @@ const templates = [
       "#212121",
     ],
   },
-  {
-    title: "Prime",
-    description: "Design sofisticado, perfeito para ambientes corporativos.",
-    colorsList: [
-      "#010101",
-      "#E9E9E9",
-      "#F0E5E0",
-      "#223630",
-      "#621D1E",
-      "#08306C",
-    ],
-  },
-  {
-    title: "Essencial",
-    description: "Design minimalista e elegante, com simplicidade impactante.",
-    colorsList: [
-      "#F0CCE6",
-      "#EBEBEB",
-      "#EEE0BA",
-      "#BCFBD5",
-      "#741E20",
-      "#0A3EF4",
-    ],
-  },
-  {
-    title: "Grid",
-    description:
-      "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
-    colorsList: [
-      "#2C2C2C",
-      "#146EF4",
-      "#78838E",
-      "#294D41",
-      "#5E4D35",
-      "#7C4257",
-    ],
-  },
+  // {
+  //   title: "Prime",
+  //   description: "Design sofisticado, perfeito para ambientes corporativos.",
+  //   colorsList: [
+  //     "#010101",
+  //     "#E9E9E9",
+  //     "#F0E5E0",
+  //     "#223630",
+  //     "#621D1E",
+  //     "#08306C",
+  //   ],
+  // },
+  // {
+  //   title: "Essencial",
+  //   description: "Design minimalista e elegante, com simplicidade impactante.",
+  //   colorsList: [
+  //     "#F0CCE6",
+  //     "#EBEBEB",
+  //     "#EEE0BA",
+  //     "#BCFBD5",
+  //     "#741E20",
+  //     "#0A3EF4",
+  //   ],
+  // },
+  // {
+  //   title: "Grid",
+  //   description:
+  //     "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
+  //   colorsList: [
+  //     "#2C2C2C",
+  //     "#146EF4",
+  //     "#78838E",
+  //     "#294D41",
+  //     "#5E4D35",
+  //     "#7C4257",
+  //   ],
+  // },
 ];
 
 export default function ProjectGenerator() {
@@ -82,16 +82,12 @@ export default function ProjectGenerator() {
     const loadEditData = async () => {
       try {
         setIsLoadingEdit(true);
-        console.log("Carregando dados da proposta:", editId);
 
         const response = await fetch(`/api/projects/${editId}`);
         const result = await response.json();
 
-        console.log("Resposta da API:", result);
-
         if (result.success) {
           const projectData = result.data;
-          console.log("Dados do projeto:", projectData);
 
           loadProjectData(projectData);
 

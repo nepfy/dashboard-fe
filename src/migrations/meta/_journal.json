@@ -218,6 +218,13 @@
       "when": 1752972857805,
       "tag": "0030_illegal_kronos",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1753027944293,
+      "tag": "0031_milky_longshot",
+      "breakpoints": true
     }
   ]
 }

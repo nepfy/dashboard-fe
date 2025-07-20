@@ -24,7 +24,7 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
   return (
     <>
       {!data?.hideClientsSection && visibleClients.length > 0 && (
-        <div className="w-full overflow-hidden py-8 border-t-1 border-t-[#A0A0A0] mt-60">
+        <div className="w-full overflow-hidden py-8 border-t-[0.5px] border-t-[#A0A0A0] mt-60">
           {visibleClients.length >= 3 ? (
             <div className="relative my-20">
               <div className="flex animate-scroll">

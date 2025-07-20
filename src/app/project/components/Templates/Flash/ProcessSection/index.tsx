@@ -10,7 +10,7 @@ export default function ProcessSection({ data }: ProcessSectionProps) {
       {!data?.hideProcessSection && (
         <div className="w-full h-full p-6 flex flex-col lg:flex-row items-center">
           {!data?.hideProcessSubtitle && (
-            <div className="flex lg:items-start lg:justify-start lg:w-[30%] gap-6 lg:gap-0">
+            <div className="flex lg:items-start lg:justify-start lg:w-[30%] gap-6 lg:gap-8">
               <div className="border-l-1 border-l-[#A0A0A0] h-[160px] lg:h-[800px]" />
               <p className="text-[#DFD5E1] font-semibold text-base lg:max-w-[300px]">
                 A Jornada. {data?.processSubtitle}

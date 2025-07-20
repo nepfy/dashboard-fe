@@ -6,13 +6,15 @@ interface InvestmentSectionProps {
 
 export default function InvestmentSection({ data }: InvestmentSectionProps) {
   return (
-    <div className="w-full h-[1000px]">
-      <div className="w-full bg-red-500">
-        <h1>InvestmentSection</h1>
-      </div>
-      <div className="w-full bg-green-500">
-        <h1>{data?.investmentTitle}</h1>
-      </div>
-    </div>
+    <>
+      {!data?.hideInvestmentSection && (
+        <div className="w-full p-6 lg:w-[90%] lg:mx-auto py-30 lg:py-60">
+          <p className="font-medium text-4xl lg:text-7xl leading-3xl lg:leading-7xl text-[#DFD5E1]">
+            <span className="text-[#A0A0A0] lg:font-bold">Investimento. </span>
+            {data?.investmentTitle}
+          </p>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "project_testimonials" ADD COLUMN "hide_photo" boolean DEFAULT false;

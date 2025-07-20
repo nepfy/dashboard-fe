@@ -49,6 +49,7 @@ export interface ProjectTestimonial {
   name: string;
   role: string | null;
   photo: string | null;
+  hidePhoto?: boolean | null;
   sortOrder: number | null;
 }
 

@@ -142,12 +142,12 @@ const TemplateCard = ({
       >
         Selecionar
       </button>
-      <button
+      {/* <button
         type="button"
         className="w-[105px] h-9 cursor-pointer text-white-neutral-light-800 hover:text-white-neutral-light-600 transition-colors"
       >
         Visualizar
-      </button>
+      </button> */}
     </div>
   </div>
 );

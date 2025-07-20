@@ -649,6 +649,7 @@ export async function POST(request: Request) {
             sortOrder: testimonial.sortOrder,
             created_at: new Date(),
             updated_at: new Date(),
+            hidePhoto: testimonial.hidePhoto,
           }));
           await db
             .insert(projectTestimonialsTable)

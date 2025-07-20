@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Slider from "react-slick";
-import type { Settings } from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+// import Slider from "react-slick";
+// import type { Settings } from "react-slick";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
 
 import { useUserAccount } from "#/hooks/useUserAccount";
 
@@ -17,73 +17,73 @@ font-medium cursor-pointer rounded-[var(--radius-s)]
 flex items-center justify-between sm:justify-center sm:gap-1
 bg-white-neutral-light-100 border border-white-neutral-light-300`;
 
-const tutorialsList = [
-  {
-    id: 1,
-    title: "Introdução a Nepfy",
-    category: "Fundamentos",
-  },
-  {
-    id: 2,
-    title: "Criando Propostas",
-    category: "Fundamentos",
-  },
-  {
-    id: 3,
-    title: "Definindo Preços",
-    category: "Fundamentos",
-  },
-  {
-    id: 4,
-    title: "Gerando Contratos",
-    category: "Fundamentos",
-  },
-  {
-    id: 5,
-    title: "Alterando Propostas",
-    category: "Fundamentos",
-  },
-  {
-    id: 6,
-    title: "Dicas e Truques",
-    category: "Fundamentos",
-  },
-];
+// const tutorialsList = [
+//   {
+//     id: 1,
+//     title: "Introdução a Nepfy",
+//     category: "Fundamentos",
+//   },
+//   {
+//     id: 2,
+//     title: "Criando Propostas",
+//     category: "Fundamentos",
+//   },
+//   {
+//     id: 3,
+//     title: "Definindo Preços",
+//     category: "Fundamentos",
+//   },
+//   {
+//     id: 4,
+//     title: "Gerando Contratos",
+//     category: "Fundamentos",
+//   },
+//   {
+//     id: 5,
+//     title: "Alterando Propostas",
+//     category: "Fundamentos",
+//   },
+//   {
+//     id: 6,
+//     title: "Dicas e Truques",
+//     category: "Fundamentos",
+//   },
+// ];
 
 export default function DashboardStartProjectView() {
   const { userData } = useUserAccount();
 
-  const sliderSettings: Settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    arrows: false,
-    swipeToSlide: true,
-    responsive: [
-      {
-        breakpoint: 1280,
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 640,
-        settings: {
-          slidesToShow: 1.2,
-          centerMode: true,
-          centerPadding: "20px",
-        },
-      },
-    ],
-  };
+  // const sliderSettings: Settings = {
+  //   dots: false,
+  //   infinite: true,
+  //   speed: 500,
+  //   slidesToShow: 4,
+  //   slidesToScroll: 1,
+  //   arrows: false,
+  //   swipeToSlide: true,
+  //   responsive: [
+  //     {
+  //       breakpoint: 1280,
+  //       settings: {
+  //         slidesToShow: 3,
+  //       },
+  //     },
+  //     {
+  //       breakpoint: 1024,
+  //       settings: {
+  //         slidesToShow: 2,
+  //       },
+  //     },
+  //     {
+  //       breakpoint: 640,
+  //       settings: {
+  //         slidesToShow: 1.2,
+  //         centerMode: true,
+  //         centerPadding: "20px",
+  //       },
+  //     },
+  //   ],
+  // };
 
   return (
     <div>
@@ -131,7 +131,7 @@ export default function DashboardStartProjectView() {
           Tutoriais
         </p>
 
-        <div className="slider-container relative w-full px-0 sm:px-6">
+        {/* <div className="slider-container relative w-full px-0 sm:px-6">
           <Slider {...sliderSettings}>
             {tutorialsList.map((tutorial) => (
               <div key={tutorial.id} className="px-2">
@@ -146,7 +146,7 @@ export default function DashboardStartProjectView() {
             ))}
           </Slider>
           <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none bg-gradient-to-l from-white-neutral-light-100 to-transparent opacity-50" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

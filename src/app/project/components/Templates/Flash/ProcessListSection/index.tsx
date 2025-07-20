@@ -100,7 +100,7 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
   return (
     <>
       {!data?.hideProcessSection && (
-        <div className="w-full p-6 max-w-[1160px] mx-auto mt-30 lg:mt-0">
+        <div className="w-full p-6 lg:max-w-[70%] mx-auto mt-30 lg:mt-0 mb-20">
           {/* Static Process List */}
           <div className="w-full flex-col flex items-center justify-center mb-12">
             {sortedProcessSteps.map(
