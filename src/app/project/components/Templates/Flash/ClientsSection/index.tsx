@@ -28,7 +28,7 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
           {visibleClients.length >= 3 ? (
             <div className="relative my-20">
               <div className="flex animate-scroll">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 mx-2">
                   {visibleClients.map((client) => (
                     <div
                       key={`first-${client.id}`}
@@ -45,7 +45,7 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
                   ))}
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 mx-2">
                   {visibleClients.map((client) => (
                     <div
                       key={`second-${client.id}`}
@@ -62,7 +62,7 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
                   ))}
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 mx-2">
                   {visibleClients.map((client) => (
                     <div
                       key={`second-${client.id}`}
@@ -78,7 +78,7 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 mx-2">
                   {visibleClients.map((client) => (
                     <div
                       key={`second-${client.id}`}

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -15,22 +16,78 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
   const [contentHeights, setContentHeights] = useState<{
     [key: string]: number;
   }>({});
+  const [mobileContentHeights, setMobileContentHeights] = useState<{
+    [key: string]: number;
+  }>({});
   const contentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const mobileContentRefs = useRef<{ [key: string]: HTMLDivElement | null }>(
+    {}
+  );
 
   const handleStepClick = (stepId: string) => {
     setExpandedStep(expandedStep === stepId ? null : stepId);
   };
 
-  useEffect(() => {
+  // Function to calculate heights for desktop
+  const calculateDesktopHeights = () => {
     const heights: { [key: string]: number } = {};
     data?.processSteps?.forEach((step) => {
       const element = contentRefs.current[step.id];
       if (element) {
-        heights[step.id] = element.scrollHeight;
+        // Force a reflow and get the actual scrollHeight
+        element.style.height = "auto";
+        const height = element.scrollHeight;
+        element.style.height = "";
+        heights[step.id] = height;
       }
     });
     setContentHeights(heights);
+  };
+
+  // Function to calculate heights for mobile
+  const calculateMobileHeights = () => {
+    const heights: { [key: string]: number } = {};
+    data?.processSteps?.forEach((step) => {
+      const element = mobileContentRefs.current[step.id];
+      if (element) {
+        // Force a reflow and get the actual scrollHeight
+        element.style.height = "auto";
+        const height = element.scrollHeight;
+        element.style.height = "";
+        heights[step.id] = height;
+      }
+    });
+    setMobileContentHeights(heights);
+  };
+
+  // Function to calculate both heights
+  const calculateHeights = () => {
+    calculateDesktopHeights();
+    calculateMobileHeights();
+  };
+
+  // Calculate heights when data changes
+  useEffect(() => {
+    if (data?.processSteps) {
+      // Use setTimeout to ensure DOM is rendered
+      const timeout = setTimeout(() => {
+        calculateHeights();
+      }, 0);
+
+      return () => clearTimeout(timeout);
+    }
   }, [data?.processSteps]);
+
+  // Recalculate heights when a step is expanded (to handle dynamic content)
+  useEffect(() => {
+    if (expandedStep) {
+      const timeout = setTimeout(() => {
+        calculateHeights();
+      }, 0);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [expandedStep]);
 
   if (!data?.processSteps || data.processSteps.length === 0) {
     return null;
@@ -58,8 +115,8 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                   >
                     <div className="w-full py-4 px-6">
                       {/* Desktop Layout */}
-                      <div className="hidden lg:flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
+                      <div className="hidden lg:flex items-start justify-between mt-5">
+                        <div className="flex items-start space-x-4">
                           <span className="text-lg font-medium text-white min-w-[3rem]">
                             {stepNumber.toString().padStart(2, "0")}.
                           </span>
@@ -68,28 +125,27 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                           </span>
                         </div>
 
-                        <div className="flex-1 mx-8">
-                          <div
-                            className="overflow-hidden transition-all duration-600 ease-in-out"
-                            style={{
-                              maxHeight:
-                                isExpanded && process.description
-                                  ? `${contentHeights[process.id] || 0}px`
-                                  : "0px",
-                            }}
-                          >
-                            {process.description && (
-                              <div
-                                ref={(el) => {
-                                  contentRefs.current[process.id] = el;
-                                }}
-                              >
-                                <p className="text-[#A0A0A0] leading-relaxed mt-5">
-                                  {process.description}
-                                </p>
-                              </div>
-                            )}
-                          </div>
+                        <div
+                          className="flex-1 mx-8 overflow-hidden transition-all duration-600 ease-in-out"
+                          style={{
+                            maxHeight:
+                              isExpanded && process.description
+                                ? `${contentHeights[process.id] || "auto"}px`
+                                : "0px",
+                          }}
+                        >
+                          {process.description && (
+                            <div
+                              ref={(el) => {
+                                contentRefs.current[process.id] = el;
+                              }}
+                              className="pb-2" // Add some padding to ensure proper height calculation
+                            >
+                              <p className="text-[#A0A0A0] leading-relaxed">
+                                {process.description}
+                              </p>
+                            </div>
+                          )}
                         </div>
 
                         <button
@@ -138,15 +194,18 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                           style={{
                             maxHeight:
                               isExpanded && process.description
-                                ? `${contentHeights[process.id] || 0}px`
+                                ? `${
+                                    mobileContentHeights[process.id] || "auto"
+                                  }px`
                                 : "0px",
                           }}
                         >
                           {process.description && (
                             <div
                               ref={(el) => {
-                                contentRefs.current[process.id] = el;
+                                mobileContentRefs.current[process.id] = el;
                               }}
+                              className="pb-2" // Add some padding to ensure proper height calculation
                             >
                               <p className="text-[#A0A0A0] leading-relaxed">
                                 {process.description}
