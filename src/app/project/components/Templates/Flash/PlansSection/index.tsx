@@ -39,7 +39,7 @@ export default function PlansSection({ data }: PlansSectionProps) {
                   className="py-4 px-5 rounded-[18px] flex flex-col"
                   style={{
                     background: plan.isBestOffer
-                      ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, ${data?.mainColor} 64.9%, #A46EDB 81.78%)`
+                      ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`
                       : "transparent",
                   }}
                 >
@@ -96,8 +96,8 @@ export default function PlansSection({ data }: PlansSectionProps) {
                   className="w-full py-3 px-6 font-medium rounded-full relative h-[56px]"
                   style={{
                     background: plan.isBestOffer
-                      ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, ${data?.mainColor} 64.9%, #A46EDB 81.78%)`
-                      : `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, ${data?.mainColor} 64.9%, #A46EDB 81.78%)`,
+                      ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`
+                      : `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`,
                   }}
                 >
                   <div

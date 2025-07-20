@@ -98,9 +98,9 @@ export default function FAQSection({ data }: FAQSectionProps) {
             #000000 10%,
             #000000 20%,
             #000000 30%,
-            #200D42 40%, 
+            ${data?.mainColor} 40%, 
             ${data?.mainColor} 50%, 
-            #C085FD 65%, 
+            #000000 65%, 
             #000000 80%, 
             #000000 90%, 
             #000000 100%

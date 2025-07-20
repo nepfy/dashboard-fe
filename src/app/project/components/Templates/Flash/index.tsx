@@ -201,7 +201,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
               160deg,
               #000000 0%,
               #000000 10%,
-              #4A148C 25%,
+              ${data?.mainColor} 25%,
               #000000 30%,
               #000000 60%,
               #000000 80%,
