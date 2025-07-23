@@ -17,7 +17,6 @@ interface TemplatePreviewWrapperProps {
 
 export default function TemplatePreviewWrapper({
   children,
-  showTemplateIndicator = true,
   className = "",
   style = {},
   gradientOverride,
@@ -37,27 +36,13 @@ export default function TemplatePreviewWrapper({
 
   return (
     <div
-      className={`h-full p-7 relative ${className}`}
+      className={`h-full relative ${className}`}
       style={{
         background: backgroundGradient,
         backdropFilter: "blur(105.34431457519531px)",
         ...style,
       }}
     >
-      {showTemplateIndicator && (
-        <div className="absolute top-4 left-4 bg-white/10 backdrop-blur-md rounded-lg px-3 py-2 border border-white/20 z-10">
-          <div className="flex items-center gap-2">
-            <div
-              className="w-4 h-4 rounded-full border-2 border-white/50 shadow-sm"
-              style={{ backgroundColor: mainColor }}
-            />
-            <span className="text-white text-sm font-medium">
-              Template: {getTemplateDisplayName(templateType || "")}
-            </span>
-          </div>
-        </div>
-      )}
-
       <div className="relative z-10 h-full">{children}</div>
 
       <div
@@ -81,18 +66,4 @@ export const useTemplateColors = () => {
     gradient: generateTemplateGradient(templateType || "flash", mainColor),
     templateName: getTemplateDisplayName(templateType || ""),
   };
-};
-
-export const TemplateInfo = ({ className = "" }: { className?: string }) => {
-  const { mainColor, templateName } = useTemplateColors();
-
-  return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div
-        className="w-4 h-4 rounded-full border-2 border-current shadow-sm"
-        style={{ backgroundColor: mainColor }}
-      />
-      <span className="text-sm font-medium">{templateName}</span>
-    </div>
-  );
 };

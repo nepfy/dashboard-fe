@@ -1,43 +1,212 @@
+import { useState } from "react";
 import Image from "next/image";
 import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
+import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
+import TestimonialsSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/TestimonialsSectionPreview";
+import type { CompleteProjectData } from "#/app/project/types/project";
+import type { ProposalFormData } from "#/types/project";
+
+// Helper function to convert form data to CompleteProjectData
+const convertFormDataToCompleteProjectData = (
+  formData: ProposalFormData
+): CompleteProjectData => {
+  return {
+    id: "",
+    projectName: formData?.step1?.projectName || "",
+    hideClientName: formData?.step1?.hideClientName || false,
+    clientName: formData?.step1?.clientName || "",
+    hideClientPhoto: formData?.step1?.hideClientPhoto || false,
+    clientPhoto: formData?.step1?.clientPhoto || null,
+    projectSentDate: null,
+    projectValidUntil: null,
+    projectStatus: "",
+    projectVisualizationDate: null,
+    templateType: formData?.step1?.templateType || null,
+    mainColor: formData?.step1?.mainColor || null,
+    companyName: formData?.step1?.companyName || null,
+    companyEmail: formData?.step1?.companyEmail || null,
+    ctaButtonTitle: formData?.step1?.ctaButtonTitle || null,
+    pageTitle: formData?.step1?.pageTitle || null,
+    pageSubtitle: formData?.step1?.pageSubtitle || null,
+    hidePageSubtitle: formData?.step1?.hidePageSubtitle || false,
+    services: Array.isArray(formData?.step1?.services)
+      ? formData.step1.services.join(",")
+      : formData?.step1?.services || null,
+    hideServices: formData?.step1?.hideServices || false,
+    hideAboutUsSection: formData?.step2?.hideAboutUsSection || false,
+    aboutUsTitle: formData?.step2?.aboutUsTitle || null,
+    hideAboutUsSubtitle1: formData?.step2?.hideAboutUsSubtitle1 || false,
+    hideAboutUsSubtitle2: formData?.step2?.hideAboutUsSubtitle2 || false,
+    aboutUsSubtitle1: formData?.step2?.aboutUsSubtitle1 || null,
+    aboutUsSubtitle2: formData?.step2?.aboutUsSubtitle2 || null,
+    hideAboutYourTeamSection:
+      formData?.step3?.hideAboutYourTeamSection || false,
+    ourTeamSubtitle: formData?.step3?.ourTeamSubtitle || null,
+    teamMembers: (formData?.step3?.teamMembers || []).map((member) => ({
+      id: member.id || "",
+      name: member.name || "",
+      role: member.role || null,
+      photo: member.photo || null,
+      sortOrder: member.sortOrder || null,
+    })),
+    hideExpertiseSection: formData?.step4?.hideExpertiseSection || false,
+    expertiseSubtitle: formData?.step4?.expertiseSubtitle || null,
+    expertise: (formData?.step4?.expertise || []).map((exp) => ({
+      id: exp.id || "",
+      icon: typeof exp.icon === "string" ? exp.icon : null,
+      title: exp.title || "",
+      description: exp.description || null,
+      sortOrder: exp.sortOrder || null,
+      hideExpertiseIcon: exp.hideExpertiseIcon,
+    })),
+    hideResultsSection: formData?.step5?.hideYourResultsSection || false,
+    resultsSubtitle: formData?.step5?.resultsSubtitle || null,
+    results: (formData?.step5?.results || []).map((result) => ({
+      id: result.id || "",
+      photo: result.photo || null,
+      hidePhoto: result.hidePhoto,
+      client: result.client || null,
+      subtitle: result.subtitle || null,
+      investment: result.investment || null,
+      roi: result.roi || null,
+      sortOrder: result.sortOrder || null,
+    })),
+    hideClientsSection: formData?.step6?.hideClientsSection || false,
+    clientSubtitle: formData?.step6?.clientSubtitle || null,
+    clients: (formData?.step6?.clients || []).map((client) => ({
+      id: client.id || "",
+      logo: client.logo || null,
+      hideLogo: client.hideLogo || null,
+      name: client.name || "",
+      hideClientName: client.hideClientName || null,
+      sortOrder: client.sortOrder || null,
+    })),
+    hideProcessSection: formData?.step7?.hideProcessSection || false,
+    hideProcessSubtitle: formData?.step7?.hideProcessSubtitle || false,
+    processSubtitle: formData?.step7?.processSubtitle || null,
+    processSteps: (formData?.step7?.processSteps || []).map((step) => ({
+      id: step.id || "",
+      stepCounter: step.stepCounter || 0,
+      stepName: step.stepName || "",
+      description: step.description || null,
+      sortOrder: step.sortOrder || null,
+    })),
+    hideCTASection: formData?.step8?.hideCTASection || false,
+    ctaBackgroundImage: formData?.step8?.ctaBackgroundImage || null,
+    hideTestimonialsSection: formData?.step9?.hideTestimonialsSection || false,
+    testimonials: (formData?.step9?.testimonials || []).map((testimonial) => ({
+      id: testimonial.id || "",
+      testimonial: testimonial.testimonial || "",
+      name: testimonial.name || "",
+      role: testimonial.role || null,
+      photo: testimonial.photo || null,
+      hidePhoto: testimonial.hidePhoto || null,
+      sortOrder: testimonial.sortOrder || null,
+    })),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userName: null,
+    // Add other required fields with default values
+    hideInvestmentSection: false,
+    investmentTitle: null,
+    hideIncludedServicesSection: false,
+    includedServices: [],
+    hidePlansSection: false,
+    plans: [],
+    hideTermsSection: false,
+    termsConditions: [],
+    hideFaqSection: false,
+    hideFaqSubtitle: false,
+    faqSubtitle: null,
+    faq: [],
+    hideFinalMessageSection: false,
+    hideFinalMessageSubtitle: false,
+    endMessageTitle: null,
+    endMessageTitle2: null,
+    endMessageDescription: null,
+    projectUrl: null,
+    pagePassword: null,
+    isPublished: false,
+    isProposalGenerated: false,
+  };
+};
 
 export default function TestimonialsPreview() {
-  const { formData } = useProjectGenerator();
+  const { formData, templateType } = useProjectGenerator();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
+  const completeProjectData = convertFormDataToCompleteProjectData(formData);
+
+  // If Flash template is selected, render the Flash template section
+  if (templateType === "flash") {
+    return (
+      <>
+        <TemplatePreviewWrapper>
+          <div className="relative w-full h-full overflow-hidden">
+            <div className="absolute inset-0 w-full h-full">
+              <TestimonialsSectionPreview data={completeProjectData} />
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            <ExpandIcon width="16" height="16" />
+          </button>
+        </TemplatePreviewWrapper>
+
+        <PreviewModal
+          isPreviewOpen={isPreviewOpen}
+          setIsPreviewOpen={setIsPreviewOpen}
+        />
+      </>
+    );
+  }
+
+  // Default preview for other templates
   return (
     <TemplatePreviewWrapper>
       <div className="flex flex-col justify-center items-start h-full p-8">
         {!formData?.step9?.hideTestimonialsSection && (
           <>
             <div className="w-full space-y-8">
+              <div className="text-center mb-12">
+                <h2 className="text-white text-3xl font-bold mb-4 drop-shadow-lg">
+                  Depoimentos
+                </h2>
+              </div>
+
               <div className="w-full">
-                <div className="flex justify-center items-center gap-2 flex-wrap">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {formData?.step9?.testimonials?.map((testimonial) => (
-                    <div key={testimonial.id} className="rounded-lg p-4">
-                      <p className="text-xl font-semibold text-white-neutral-light-100 text-center mb-2">
-                        {testimonial.testimonial}
-                      </p>
-
-                      <p className="text-sm font-semibold text-white-neutral-light-100 text-center mb-2">
-                        {testimonial.name}
-                      </p>
-
-                      <p className="text-white-neutral-light-100 text-center">
-                        {testimonial.role}
-                      </p>
-
+                    <div key={testimonial.id} className="rounded-lg p-6">
                       {testimonial.photo && !testimonial.hidePhoto && (
-                        <div className="w-24 h-24 mx-auto mt-4 rounded-2xl overflow-hidden relative">
+                        <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden relative">
                           <Image
                             src={testimonial.photo}
-                            alt={testimonial.name}
+                            alt={testimonial.name || "Depoimento"}
                             fill
                             className="object-cover"
                             sizes="96px"
                           />
                         </div>
+                      )}
+
+                      <p className="text-white-neutral-light-200 text-center mb-4 italic">
+                        &ldquo;{testimonial.testimonial}&rdquo;
+                      </p>
+
+                      <h3 className="text-xl font-semibold text-white-neutral-light-100 text-center mb-2">
+                        {testimonial.name}
+                      </h3>
+
+                      {testimonial.role && (
+                        <p className="text-white-neutral-light-200 text-center">
+                          {testimonial.role}
+                        </p>
                       )}
                     </div>
                   ))}

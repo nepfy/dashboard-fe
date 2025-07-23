@@ -1,107 +1,123 @@
-import Image from "next/image";
 import { useState } from "react";
 import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
-import TemplatePreviewWrapper, {
-  useTemplateColors,
-} from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
+import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
+import IntroSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/IntroSectionPreview";
+import type { CompleteProjectData } from "#/app/project/types/project";
+import type { ProposalFormData } from "#/types/project";
+
+// Helper function to convert form data to CompleteProjectData
+const convertFormDataToCompleteProjectData = (
+  formData: ProposalFormData
+): CompleteProjectData => {
+  return {
+    id: "",
+    projectName: formData?.step1?.projectName || "",
+    hideClientName: formData?.step1?.hideClientName || false,
+    clientName: formData?.step1?.clientName || "",
+    hideClientPhoto: formData?.step1?.hideClientPhoto || false,
+    clientPhoto: formData?.step1?.clientPhoto || null,
+    projectSentDate: null,
+    projectValidUntil: null,
+    projectStatus: "",
+    projectVisualizationDate: null,
+    templateType: formData?.step1?.templateType || null,
+    mainColor: formData?.step1?.mainColor || null,
+    companyName: formData?.step1?.companyName || null,
+    companyEmail: formData?.step1?.companyEmail || null,
+    ctaButtonTitle: formData?.step1?.ctaButtonTitle || null,
+    pageTitle: formData?.step1?.pageTitle || null,
+    pageSubtitle: formData?.step1?.pageSubtitle || null,
+    hidePageSubtitle: formData?.step1?.hidePageSubtitle || false,
+    services: Array.isArray(formData?.step1?.services)
+      ? formData.step1.services.join(",")
+      : formData?.step1?.services || null,
+    hideServices: formData?.step1?.hideServices || false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userName: null,
+    // Add other required fields with default values
+    hideAboutUsSection: false,
+    aboutUsTitle: null,
+    hideAboutUsSubtitle1: false,
+    hideAboutUsSubtitle2: false,
+    aboutUsSubtitle1: null,
+    aboutUsSubtitle2: null,
+    hideAboutYourTeamSection: false,
+    ourTeamSubtitle: null,
+    teamMembers: [],
+    hideExpertiseSection: false,
+    expertiseSubtitle: null,
+    expertise: [],
+    hideResultsSection: false,
+    resultsSubtitle: null,
+    results: [],
+    hideClientsSection: false,
+    clientSubtitle: null,
+    clients: [],
+    hideProcessSection: false,
+    hideProcessSubtitle: false,
+    processSubtitle: null,
+    processSteps: [],
+    hideCTASection: false,
+    ctaBackgroundImage: null,
+    hideTestimonialsSection: false,
+    testimonials: [],
+    hideInvestmentSection: false,
+    investmentTitle: null,
+    hideIncludedServicesSection: false,
+    includedServices: [],
+    hidePlansSection: false,
+    plans: [],
+    hideTermsSection: false,
+    termsConditions: [],
+    hideFaqSection: false,
+    hideFaqSubtitle: false,
+    faqSubtitle: null,
+    faq: [],
+    hideFinalMessageSection: false,
+    hideFinalMessageSubtitle: false,
+    endMessageTitle: null,
+    endMessageTitle2: null,
+    endMessageDescription: null,
+    projectUrl: null,
+    pagePassword: null,
+    isPublished: false,
+    isProposalGenerated: false,
+  };
+};
 
 export default function IntroPreview() {
-  const { formData } = useProjectGenerator();
-  const { templateColors, mainColor } = useTemplateColors();
+  const { formData, templateType } = useProjectGenerator();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  return (
-    <>
-      <TemplatePreviewWrapper>
-        <div className="flex flex-col justify-center items-center text-center relative z-10 overflow-y-scroll h-full">
-          <div className="max-w-lg mx-auto space-y-6">
-            <h1 className="text-white text-4xl font-bold leading-tight drop-shadow-lg">
-              {formData?.step1?.pageTitle}
-            </h1>
+  const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-            {formData?.step1?.pageSubtitle &&
-              !formData.step1.hidePageSubtitle && (
-                <p className="text-white/90 text-xl leading-relaxed drop-shadow-md">
-                  {formData.step1.pageSubtitle}
-                </p>
-              )}
-
-            {formData?.step1?.companyName && (
-              <div className="text-white/80 text-lg font-medium">
-                {formData.step1.companyName}
-              </div>
-            )}
-
-            {formData?.step1?.companyEmail && (
-              <div className="text-white/80 text-lg font-medium">
-                {formData.step1.companyEmail}
-              </div>
-            )}
-
-            {formData?.step1?.clientName && !formData.step1.hideClientName && (
-              <div className="text-white/80 text-lg font-medium">
-                {formData.step1.clientName}
-              </div>
-            )}
-
-            {formData?.step1?.clientPhoto &&
-              !formData?.step1?.hideClientPhoto && (
-                <div className="w-24 h-24 mx-auto mb-4 rounded-lg overflow-hidden relative">
-                  <Image
-                    src={formData.step1.clientPhoto}
-                    alt={formData.step1.clientName || "Cliente"}
-                    fill
-                    className="object-cover"
-                    sizes="96px"
-                  />
-                </div>
-              )}
-
-            <div className="flex flex-wrap gap-3 justify-center">
-              {formData?.step1?.services && !formData?.step1?.hideServices
-                ? (formData?.step1?.services ?? []).map(
-                    (service: string, index: number) => (
-                      <span
-                        key={index}
-                        className="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm border border-white/30 hover:bg-white/30 transition-all duration-200 shadow-lg"
-                      >
-                        {service}
-                      </span>
-                    )
-                  )
-                : null}
-            </div>
-
-            <div className="pt-4">
-              {formData?.step1?.ctaButtonTitle && (
-                <button
-                  className="bg-white text-gray-900 hover:bg-white/90 transition-all duration-200 px-8 py-4 rounded-lg font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105"
-                  style={{
-                    color: templateColors.text,
-                    boxShadow: `0 10px 30px rgba(0,0,0,0.3), 0 0 0 1px ${mainColor}20`,
-                  }}
-                >
-                  {formData?.step1?.ctaButtonTitle}
-                </button>
-              )}
+  // If Flash template is selected, render the Flash template section
+  if (templateType === "flash") {
+    return (
+      <>
+        <TemplatePreviewWrapper>
+          <div className="relative w-full h-full overflow-hidden">
+            <div className="absolute inset-0 w-full h-full">
+              <IntroSectionPreview data={completeProjectData} />
             </div>
           </div>
-        </div>
 
-        <button
-          onClick={() => setIsPreviewOpen(true)}
-          className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"
-        >
-          <ExpandIcon width="16" height="16" />
-        </button>
-      </TemplatePreviewWrapper>
+          <button
+            onClick={() => setIsPreviewOpen(true)}
+            className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            <ExpandIcon width="16" height="16" />
+          </button>
+        </TemplatePreviewWrapper>
 
-      <PreviewModal
-        isPreviewOpen={isPreviewOpen}
-        setIsPreviewOpen={setIsPreviewOpen}
-      />
-    </>
-  );
+        <PreviewModal
+          isPreviewOpen={isPreviewOpen}
+          setIsPreviewOpen={setIsPreviewOpen}
+        />
+      </>
+    );
+  }
 }
