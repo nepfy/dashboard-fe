@@ -162,8 +162,8 @@ export default function MultiStepForm() {
   const { Form, Preview } = currentComponents;
 
   return (
-    <div className="h-full flex overflow-hidden">
-      <div className="w-full xl:w-2/5 h-full overflow-hidden">
+    <div className="h-full flex">
+      <div className="w-full xl:w-2/5 h-full">
         <Form />
       </div>
 

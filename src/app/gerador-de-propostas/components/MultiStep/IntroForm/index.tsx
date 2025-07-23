@@ -6,6 +6,7 @@ import { ArrowLeft, Eye } from "lucide-react";
 import { TextField, TextAreaField } from "#/components/Inputs";
 import TagInput from "#/components/Inputs/TagInput";
 import PictureIcon from "#/components/icons/PictureIcon";
+import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
 
 import EyeOpened from "#/components/icons/EyeOpened";
 import EyeClosed from "#/components/icons/EyeClosed";
@@ -69,13 +70,13 @@ export default function IntroStep() {
   const visibleFields =
     TEMPLATE_FIELDS[currentTemplate] || TEMPLATE_FIELDS.flash;
 
-  // Get values directly from formData - these represent the "hide" state
   const hidePageSubtitle = formData?.step1?.hidePageSubtitle || false;
   const hideServices = formData?.step1?.hideServices || false;
   const hideClientName = formData?.step1?.hideClientName || false;
   const hideClientPhoto = formData?.step1?.hideClientPhoto || false;
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const {
     uploadImage,
@@ -701,6 +702,15 @@ export default function IntroStep() {
     }
   };
 
+  if (isPreviewOpen) {
+    return (
+      <PreviewModal
+        isPreviewOpen={isPreviewOpen}
+        setIsPreviewOpen={setIsPreviewOpen}
+      />
+    );
+  }
+
   if (!showImportModal && templateType) {
     return (
       <div className="h-full flex flex-col justify-between overflow-y-scroll relative">
@@ -710,7 +720,7 @@ export default function IntroStep() {
           </div>
           <button
             type="button"
-            onClick={() => {}}
+            onClick={() => setIsPreviewOpen(true)}
             className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
           >
             <Eye width="18" height="18" /> Pré-visualizar essa seção

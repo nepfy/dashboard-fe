@@ -24,7 +24,7 @@ export default function ProcessSection({ data }: ProcessSectionProps) {
               {" "}
               Como funciona em{" "}
               <span className="bg-black text-white pl-4 py-2 pr-8 lg:pl-6 lg:pr-10 lg:py-3 text-2xl rounded-full text-start">
-                {data?.processSteps.length}
+                {data?.processSteps?.length}
               </span>{" "}
               passos simples{" "}
             </p>
