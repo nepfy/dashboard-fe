@@ -31,15 +31,6 @@ export default function InvestmentForm() {
       // Check if field is empty
       if (!investmentTitle.trim()) {
         newErrors.investmentTitle = "O campo 'Título' é obrigatório";
-      } else {
-        // Check character limits
-        if (investmentTitle.length < 50) {
-          newErrors.investmentTitle =
-            "O campo 'Título' deve ter pelo menos 50 caracteres";
-        } else if (investmentTitle.length > 90) {
-          newErrors.investmentTitle =
-            "O campo 'Título' deve ter no máximo 90 caracteres";
-        }
       }
     }
 
@@ -133,16 +124,14 @@ export default function InvestmentForm() {
             <TextAreaField
               id="investmentTitle"
               textareaName="investmentTitle"
-              placeholder="Fale sobre você ou sua empresa"
+              placeholder="Digite o título da seção de investimento"
               value={formData?.step10?.investmentTitle || ""}
               onChange={handleFieldChange("investmentTitle")}
-              maxLength={90}
-              minLength={50}
-              showCharCount
               error={errors.investmentTitle}
               disabled={isDisabled}
-              allowOverText
               autoExpand
+              showCharCount
+              charCountMessage="Recomendado: 80 caracteres"
             />
           </div>
         </div>

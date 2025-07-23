@@ -13,18 +13,9 @@ import { Service } from "#/types/project";
 import ProjectDeliveriesAccordion from "./ProjectDeliveriesAccordion";
 
 export default function ProjectDeliveriesForm() {
-  const {
-    prevStep,
-    nextStep,
-    updateFormData,
-    formData,
-    currentStep,
-    templateType,
-  } = useProjectGenerator();
+  const { prevStep, nextStep, updateFormData, formData, currentStep } =
+    useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  // Check template types
-  const isEssencialTemplate = templateType?.toLowerCase() === "essencial";
 
   const handleHideSectionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isHidden = e.target.checked;
@@ -79,30 +70,12 @@ export default function ProjectDeliveriesForm() {
             } é obrigatória`;
           } else {
             // Check character limits for description
-            // For Essencial template, only check maxLength (no minLength)
-            if (isEssencialTemplate) {
-              if (service.description.length > 340) {
-                newErrors[
-                  `service_${index}_description`
-                ] = `Descrição da entrega ${
-                  index + 1
-                } deve ter no máximo 340 caracteres`;
-              }
-            } else {
-              // For other templates, check both min and max length
-              if (service.description.length < 165) {
-                newErrors[
-                  `service_${index}_description`
-                ] = `Descrição da entrega ${
-                  index + 1
-                } deve ter pelo menos 165 caracteres`;
-              } else if (service.description.length > 340) {
-                newErrors[
-                  `service_${index}_description`
-                ] = `Descrição da entrega ${
-                  index + 1
-                } deve ter no máximo 340 caracteres`;
-              }
+            if (service.description.length > 340) {
+              newErrors[
+                `service_${index}_description`
+              ] = `Descrição da entrega ${
+                index + 1
+              } deve ter no máximo 340 caracteres`;
             }
           }
         });
@@ -166,7 +139,6 @@ export default function ProjectDeliveriesForm() {
               onFormChange={handleFormListChange}
               disabled={isAccordionDisabled}
               errors={errors}
-              templateType={templateType ?? undefined}
             />
             {errors.includedServices && !isAccordionDisabled && (
               <p className="text-red-700 rounded-md text-sm font-medium mt-3">

@@ -279,7 +279,6 @@ export default function TermsAndConditionsAccordion({
                   textareaName={`title-${termsCondition.id}`}
                   placeholder="Adicione o título desejado"
                   value={termsCondition.title}
-                  maxLength={80}
                   rows={2}
                   showCharCount
                   disabled={disabled}
@@ -290,7 +289,7 @@ export default function TermsAndConditionsAccordion({
                       e.target.value
                     )
                   }
-                  allowOverText
+                  charCountMessage="Recomendado: 80 caracteres"
                   autoExpand
                 />
                 {/* Show validation error for title */}
@@ -322,10 +321,9 @@ export default function TermsAndConditionsAccordion({
                   }
                   rows={4}
                   showCharCount
-                  maxLength={380}
                   disabled={disabled}
-                  allowOverText
                   autoExpand
+                  charCountMessage="Recomendado: 380 caracteres"
                 />
                 {/* Show validation error for description */}
                 {errors[`termsCondition_${index}_description`] && (

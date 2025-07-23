@@ -469,7 +469,6 @@ export default function PlansAccordion({
                   maxLength={25}
                   showCharCount
                   disabled={disabled}
-                  allowOverText
                 />
                 {/* Show validation error for title */}
                 {errors[`plan_${index}_title`] && (
@@ -489,18 +488,16 @@ export default function PlansAccordion({
                 <TextAreaField
                   id={`description-${plan.id}`}
                   textareaName={`description-${plan.id}`}
-                  placeholder="Descreva este plano"
+                  placeholder="Descreva o que está incluído neste plano"
                   value={plan.description || ""}
                   onChange={(e) =>
                     updatePlan(plan.id!, "description", e.target.value)
                   }
                   rows={3}
                   showCharCount
-                  maxLength={130}
-                  minLength={50}
                   disabled={disabled}
-                  allowOverText
-                  autoExpand
+                  autoExpand={true}
+                  charCountMessage="Recomendado: 130 caracteres"
                 />
                 {/* Show validation error for description */}
                 {errors[`plan_${index}_description`] && (
@@ -769,7 +766,6 @@ export default function PlansAccordion({
                             maxLength={40}
                             showCharCount
                             disabled={disabled}
-                            allowOverText
                           />
                         </div>
                       </div>
@@ -811,7 +807,6 @@ export default function PlansAccordion({
                   disabled={disabled}
                   maxLength={25}
                   showCharCount
-                  allowOverText
                 />
                 {/* Show validation error for CTA button */}
                 {errors[`plan_${index}_ctaButtonTitle`] && (

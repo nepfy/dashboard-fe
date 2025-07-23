@@ -11,7 +11,6 @@ interface ProjectDeliveriesAccordionProps {
   onFormChange: (services: Service[]) => void;
   disabled?: boolean;
   errors?: { [key: string]: string };
-  templateType?: string;
 }
 
 export default function ProjectDeliveriesAccordion({
@@ -19,16 +18,12 @@ export default function ProjectDeliveriesAccordion({
   onFormChange,
   disabled = false,
   errors = {},
-  templateType,
 }: ProjectDeliveriesAccordionProps) {
   const [openService, setOpenService] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [serviceToRemove, setServiceToRemove] = useState<string | null>(null);
-
-  // Check template types
-  const isEssencialTemplate = templateType?.toLowerCase() === "essencial";
 
   const addService = () => {
     if (disabled) return;
@@ -42,7 +37,7 @@ export default function ProjectDeliveriesAccordion({
 
     const updatedServices = [...servicesList, newService];
     onFormChange(updatedServices);
-    setOpenService(newService.id!);
+    setOpenService(newService.id || null);
   };
 
   const removeService = (serviceId: string) => {
@@ -157,6 +152,11 @@ export default function ProjectDeliveriesAccordion({
     setDragOverIndex(null);
   };
 
+  const getFieldError = (index: number, field: string) => {
+    const errorKey = `service_${index}_${field}`;
+    return errors[errorKey];
+  };
+
   return (
     <div className="space-y-2">
       {servicesList.map((service, index) => (
@@ -264,9 +264,9 @@ export default function ProjectDeliveriesAccordion({
                   disabled={disabled}
                 />
                 {/* Show validation error for title */}
-                {errors[`service_${index}_title`] && (
+                {getFieldError(index, "title") && (
                   <span className="text-red-700 text-sm font-medium m-0">
-                    {errors[`service_${index}_title`]}
+                    {getFieldError(index, "title")}
                   </span>
                 )}
               </div>
@@ -279,25 +279,23 @@ export default function ProjectDeliveriesAccordion({
                   Descrição
                 </p>
                 <TextAreaField
-                  id={`description-${service.id}`}
-                  textareaName={`description-${service.id}`}
-                  placeholder="Descreva esta entrega"
+                  id={`service-description-${service.id}`}
+                  textareaName={`service-description-${service.id}`}
+                  placeholder="Descreva detalhadamente esta entrega"
                   value={service.description || ""}
                   onChange={(e) =>
                     updateService(service.id!, "description", e.target.value)
                   }
-                  rows={3}
-                  showCharCount
-                  maxLength={340}
-                  minLength={isEssencialTemplate ? undefined : 165}
+                  error={getFieldError(index, "description")}
                   disabled={disabled}
-                  allowOverText
-                  autoExpand
+                  autoExpand={true}
+                  showCharCount
+                  charCountMessage="Recomendado: 340 caracteres"
                 />
                 {/* Show validation error for description */}
-                {errors[`service_${index}_description`] && (
+                {getFieldError(index, "description") && (
                   <span className="text-red-700 text-sm font-medium m-0">
-                    {errors[`service_${index}_description`]}
+                    {getFieldError(index, "description")}
                   </span>
                 )}
               </div>

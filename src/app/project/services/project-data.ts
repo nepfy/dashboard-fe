@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { db } from "#/lib/db";
-import { eq, ne, and } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import {
   projectsTable,
   projectTeamMembersTable,
@@ -103,9 +103,7 @@ export const getProjectData = cache(
         .where(
           and(
             eq(personUserTable.userName, userName),
-            eq(projectsTable.projectUrl, projectUrl),
-            ne(projectsTable.projectStatus, "draft"),
-            ne(projectsTable.projectStatus, "archived")
+            eq(projectsTable.projectUrl, projectUrl)
           )
         )
         .limit(1);

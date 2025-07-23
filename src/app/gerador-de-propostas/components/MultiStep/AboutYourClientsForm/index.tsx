@@ -90,9 +90,6 @@ export default function AboutYourClientsForm() {
       if (shouldShowSubtitle) {
         if (!clientSubtitle.trim()) {
           newErrors.clientSubtitle = "O subtítulo é obrigatório";
-        } else if (clientSubtitle.length < 30) {
-          newErrors.clientSubtitle =
-            "O subtítulo deve ter pelo menos 30 caracteres";
         }
       }
 
@@ -203,13 +200,10 @@ export default function AboutYourClientsForm() {
               placeholder="Descreva seus clientes"
               value={formData?.step6?.clientSubtitle || ""}
               onChange={handleFieldChange("clientSubtitle")}
-              maxLength={55}
-              minLength={30}
-              rows={2}
-              showCharCount
               error={errors.clientSubtitle}
-              disabled={isAccordionDisabled}
-              allowOverText
+              autoExpand={true}
+              showCharCount
+              charCountMessage="Recomendado: 100 caracteres"
             />
           </div>
         )}

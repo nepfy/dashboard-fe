@@ -437,7 +437,6 @@ export default function ExpertiseAccordion({
                       updateExpertise(item.id, "title", e.target.value)
                     }
                     disabled={disabled}
-                    allowOverText
                     error={getFieldError(index, "title")}
                   />
                 </div>
@@ -463,7 +462,6 @@ export default function ExpertiseAccordion({
                     maxLength={150}
                     disabled={disabled}
                     autoExpand
-                    allowOverText
                     error={getFieldError(index, "description")}
                   />
                 </div>

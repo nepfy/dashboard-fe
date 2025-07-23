@@ -271,20 +271,18 @@ export default function ProcessAccordion({
                     Nome da etapa
                   </label>
                   <TextField
-                    inputName={`stepName-${process.id}`}
-                    id={`stepName-${process.id}`}
+                    id={`process-step-name-${process.id}`}
+                    inputName={`process-step-name-${process.id}`}
                     type="text"
-                    placeholder="Nome da etapa do processo"
-                    value={process.stepName}
+                    placeholder="Ex: Análise inicial"
+                    value={process.stepName || ""}
                     onChange={(e) =>
                       updateProcess(process.id, "stepName", e.target.value)
                     }
-                    maxLength={30}
-                    minLength={20}
+                    error={getFieldError(index, "stepName")}
                     disabled={disabled}
                     showCharCount
-                    allowOverText
-                    error={getFieldError(index, "stepName")}
+                    charCountMessage="Recomendado: 25 caracteres"
                   />
                 </div>
 
@@ -296,21 +294,18 @@ export default function ProcessAccordion({
                     Descrição
                   </p>
                   <TextAreaField
-                    id={`description-${process.id}`}
-                    textareaName={`description-${process.id}`}
-                    placeholder="Descreva esta etapa do processo"
+                    id={`process-description-${process.id}`}
+                    textareaName={`process-description-${process.id}`}
+                    placeholder="Descreva detalhadamente esta etapa do processo"
                     value={process.description || ""}
                     onChange={(e) =>
                       updateProcess(process.id, "description", e.target.value)
                     }
-                    rows={3}
-                    showCharCount
-                    maxLength={345}
-                    minLength={190}
-                    disabled={disabled}
-                    autoExpand
-                    allowOverText
                     error={getFieldError(index, "description")}
+                    disabled={disabled}
+                    autoExpand={true}
+                    showCharCount
+                    charCountMessage="Recomendado: 300 caracteres"
                   />
                 </div>
               </div>

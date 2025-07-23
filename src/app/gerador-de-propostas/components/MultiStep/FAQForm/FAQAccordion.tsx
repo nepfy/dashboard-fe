@@ -251,10 +251,9 @@ export default function FAQAccordion({
                   }
                   rows={4}
                   showCharCount
-                  maxLength={80}
                   disabled={disabled}
-                  allowOverText
                   autoExpand
+                  charCountMessage="Recomendado: 80 caracteres"
                 />
                 {/* Show validation error for question */}
                 {errors[`faq_${index}_question`] && (
@@ -279,10 +278,9 @@ export default function FAQAccordion({
                   onChange={(e) => updateFAQ(faq.id!, "answer", e.target.value)}
                   rows={4}
                   showCharCount
-                  maxLength={130}
                   disabled={disabled}
-                  allowOverText
                   autoExpand
+                  charCountMessage="Recomendado: 130 caracteres"
                 />
                 {/* Show validation error for answer */}
                 {errors[`faq_${index}_answer`] && (

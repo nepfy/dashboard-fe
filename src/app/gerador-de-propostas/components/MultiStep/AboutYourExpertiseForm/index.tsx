@@ -67,14 +67,10 @@ export default function AboutYourExpertiseForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideExpertiseSection) {
-      // Validate subtitle if it should be visible (not Essencial or Grid template)
+      // Only validate subtitle if it should be visible (not Essencial or Grid template)
       if (!shouldHideSubtitle) {
-        if (expertiseSubtitle.length < 90) {
-          newErrors.expertiseSubtitle =
-            "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
-        } else if (expertiseSubtitle.length > 120) {
-          newErrors.expertiseSubtitle =
-            "O campo 'Subtítulo' deve ter no máximo 120 caracteres";
+        if (!expertiseSubtitle.trim()) {
+          newErrors.expertiseSubtitle = "O subtítulo é obrigatório";
         }
       }
 
@@ -211,17 +207,13 @@ export default function AboutYourExpertiseForm() {
               <TextAreaField
                 id="expertiseSubtitle"
                 textareaName="expertiseSubtitle"
-                placeholder="Descreva suas especialidades"
+                placeholder="Descreva suas especializações"
                 value={formData?.step4?.expertiseSubtitle || ""}
                 onChange={handleFieldChange("expertiseSubtitle")}
-                maxLength={120}
-                minLength={90}
-                rows={2}
-                showCharCount
                 error={errors.expertiseSubtitle}
-                disabled={hideSectionChecked}
-                autoExpand
-                allowOverText
+                autoExpand={true}
+                showCharCount
+                charCountMessage="Recomendado: 150 caracteres"
               />
             </div>
           )}

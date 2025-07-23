@@ -77,9 +77,8 @@ export default function AboutYourResultsForm() {
 
     if (!hideYourResultsSection) {
       // Only validate subtitle if it should be visible (Prime template)
-      if (shouldShowSubtitle && resultsSubtitle.length < 90) {
-        newErrors.resultsSubtitle =
-          "O campo 'Subtítulo' deve ter pelo menos 90 caracteres";
+      if (shouldShowSubtitle && !resultsSubtitle.trim()) {
+        newErrors.resultsSubtitle = "O subtítulo é obrigatório";
       }
 
       // Validate results list
@@ -199,13 +198,11 @@ export default function AboutYourResultsForm() {
               placeholder="Descreva seus resultados"
               value={formData?.step5?.resultsSubtitle || ""}
               onChange={handleFieldChange("resultsSubtitle")}
-              maxLength={120}
-              minLength={90}
-              rows={2}
-              showCharCount
               error={errors.resultsSubtitle}
               disabled={isAccordionDisabled}
-              allowOverText
+              autoExpand={true}
+              showCharCount
+              charCountMessage="Recomendado: 150 caracteres"
             />
           </div>
         )}

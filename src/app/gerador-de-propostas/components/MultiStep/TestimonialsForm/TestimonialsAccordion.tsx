@@ -380,10 +380,9 @@ export default function TestimonialsAccordion({
                     }
                     rows={3}
                     showCharCount
-                    maxLength={200}
                     disabled={disabled}
-                    allowOverText
                     autoExpand
+                    charCountMessage="Recomendado: 200 caracteres"
                   />
                   {/* Show validation error for testimonial text */}
                   {errors[`testimonial_${index}_testimonial`] && (

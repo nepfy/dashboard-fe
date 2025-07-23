@@ -211,18 +211,12 @@ export default function IntroStep() {
         if (!value || (typeof value === "string" && !value.trim())) {
           return "O título da página é obrigatório";
         }
-        if (typeof value === "string" && value.length < 30) {
-          return "O título deve ter no mínimo 30 caracteres";
-        }
         break;
 
       case "pageSubtitle":
         if (!hidePageSubtitle) {
           if (!value || (typeof value === "string" && !value.trim())) {
             return "O subtítulo da página é obrigatório";
-          }
-          if (typeof value === "string" && value.length < 70) {
-            return "O subtítulo deve ter no mínimo 70 caracteres";
           }
         }
         break;
@@ -463,8 +457,8 @@ export default function IntroStep() {
               value={formData?.step1?.ctaButtonTitle || ""}
               onChange={handleFieldChange("ctaButtonTitle")}
               error={errors.ctaButtonTitle}
-              maxLength={25}
               showCharCount
+              charCountMessage="Recomendado: 25 caracteres"
             />
           </div>
         );
@@ -486,10 +480,8 @@ export default function IntroStep() {
               value={formData?.step1?.pageTitle || ""}
               onChange={handleFieldChange("pageTitle")}
               error={errors.pageTitle}
-              maxLength={50}
-              minLength={30}
               showCharCount
-              allowOverText
+              charCountMessage="Recomendado: 50 caracteres"
             />
           </div>
         );
@@ -526,13 +518,11 @@ export default function IntroStep() {
                 value={formData?.step1?.pageSubtitle || ""}
                 onChange={handleTextAreaChange("pageSubtitle")}
                 error={errors.pageSubtitle}
-                maxLength={115}
-                minLength={70}
                 showCharCount
                 autoExpand={true}
                 minHeight={60}
                 maxHeight={200}
-                allowOverText
+                charCountMessage="Recomendado: 115 caracteres"
               />
             )}
           </div>

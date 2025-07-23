@@ -22,7 +22,7 @@ export default function SuccessModal({
   const [, setShouldShow] = useState(false);
 
   const [isLoadingCopyLink, setIsLoadingCopyLink] = useState(false);
-  // const [isLoadingViewLink, setIsLoadingViewLink] = useState(false);
+  const [isLoadingViewLink, setIsLoadingViewLink] = useState(false);
   const [copyLinkMessage, setCopyLinkMessage] = useState<string | null>(null);
 
   const { copyLinkWithCache } = useCopyLinkWithCache();
@@ -37,7 +37,7 @@ export default function SuccessModal({
       setShouldShow(false);
       setCopyLinkMessage(null);
       setIsLoadingCopyLink(false);
-      // setIsLoadingViewLink(false);
+      setIsLoadingViewLink(false);
     }
   }, [isOpen]);
 
@@ -86,43 +86,42 @@ export default function SuccessModal({
     }
   };
 
-  // const handleViewLink = async () => {
-  //   if (!projectId) {
-  //     setCopyLinkMessage("ID do projeto não encontrado");
-  //     setTimeout(() => setCopyLinkMessage(null), 3000);
-  //     return;
-  //   }
+  const handleViewLink = async () => {
+    if (!projectId) {
+      setCopyLinkMessage("ID do projeto não encontrado");
+      setTimeout(() => setCopyLinkMessage(null), 3000);
+      return;
+    }
 
-  //   if (isLoadingViewLink) return;
+    if (isLoadingViewLink) return;
 
-  //   setIsLoadingViewLink(true);
-  //   setCopyLinkMessage(null);
+    setIsLoadingViewLink(true);
+    setCopyLinkMessage(null);
 
-  //   try {
-  //     const result = await copyLinkWithCache(projectId);
+    try {
+      const result = await copyLinkWithCache(projectId);
 
-  //     // Abre o link em uma nova guia
-  //     window.open(result.fullUrl, "_blank", "noopener,noreferrer");
+      window.open(result.fullUrl, "_blank", "noopener,noreferrer");
 
-  //     setCopyLinkMessage("Proposta aberta em nova guia!");
+      setCopyLinkMessage("Proposta aberta em nova guia!");
 
-  //     setTimeout(() => {
-  //       setCopyLinkMessage(null);
-  //     }, 3000);
-  //   } catch (error) {
-  //     console.error("Erro ao abrir link:", error);
-  //     setCopyLinkMessage("Erro ao abrir a proposta. Tente novamente.");
+      setTimeout(() => {
+        setCopyLinkMessage(null);
+      }, 3000);
+    } catch (error) {
+      console.error("Erro ao abrir link:", error);
+      setCopyLinkMessage("Erro ao abrir a proposta. Tente novamente.");
 
-  //     setTimeout(() => {
-  //       setCopyLinkMessage(null);
-  //     }, 3000);
-  //   } finally {
-  //     setIsLoadingViewLink(false);
-  //   }
-  // };
+      setTimeout(() => {
+        setCopyLinkMessage(null);
+      }, 3000);
+    } finally {
+      setIsLoadingViewLink(false);
+    }
+  };
 
   const isCopyLinkDisabled = !projectId || isLoadingCopyLink;
-  // const isViewLinkDisabled = !projectId || isLoadingViewLink;
+  const isViewLinkDisabled = !projectId || isLoadingViewLink;
 
   return (
     <Modal
@@ -138,9 +137,7 @@ export default function SuccessModal({
         </div>
         <p className="text-white-neutral-light-500 mb-6 text-sm p-7">
           Sua proposta está pronta e já pode ser compartilhada com seus
-          clientes. Acompanhe o status diretamente na plataforma. Lembre-se de
-          alterar o status da proposta para &quot;Enviada&quot; para que o link
-          se torne ativo.
+          clientes. Acompanhe o status diretamente na plataforma.
         </p>
 
         {copyLinkMessage && (
@@ -172,7 +169,7 @@ export default function SuccessModal({
               {isLoadingCopyLink ? "Copiando..." : "Copiar link"}
             </button>
 
-            {/* <button
+            <button
               type="button"
               onClick={handleViewLink}
               disabled={isViewLinkDisabled}
@@ -183,7 +180,7 @@ export default function SuccessModal({
                      disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoadingViewLink ? "Abrindo..." : "Visualizar"}
-            </button> */}
+            </button>
           </div>
         </div>
       </div>

@@ -77,9 +77,10 @@ export default function AboutYourProcessForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideProcessSection) {
-      if (processSubtitle.length < 70 && !hideProcessSubtitle) {
-        newErrors.processSubtitle =
-          "O campo 'Subtítulo' deve ter pelo menos 70 caracteres";
+      if (!hideProcessSubtitle) {
+        if (!processSubtitle.trim()) {
+          newErrors.processSubtitle = "O subtítulo é obrigatório";
+        }
       }
 
       if (processList.length === 0) {
@@ -94,29 +95,21 @@ export default function AboutYourProcessForm() {
             newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
               index + 1
             } é obrigatório`;
-          } else if (process.stepName.length < 20) {
-            newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
-              index + 1
-            } deve ter pelo menos 20 caracteres`;
           } else if (process.stepName.length > 30) {
             newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
               index + 1
             } deve ter no máximo 30 caracteres`;
           }
 
-          // Validate description
+          // Validate step description
           if (!process.description?.trim()) {
             newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
               index + 1
             } é obrigatória`;
-          } else if (process.description.length < 190) {
+          } else if (process.description.length > 340) {
             newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
               index + 1
-            } deve ter pelo menos 190 caracteres`;
-          } else if (process.description.length > 345) {
-            newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
-              index + 1
-            } deve ter no máximo 345 caracteres`;
+            } deve ter no máximo 340 caracteres`;
           }
         });
       }
@@ -198,13 +191,11 @@ export default function AboutYourProcessForm() {
               value={formData?.step7?.processSubtitle || ""}
               onChange={handleFieldChange("processSubtitle")}
               maxLength={100}
-              minLength={70}
               rows={2}
               showCharCount
               autoExpand
               error={errors.processSubtitle}
               disabled={isAccordionDisabled}
-              allowOverText
             />
           </div>
           <div className="pt-4">

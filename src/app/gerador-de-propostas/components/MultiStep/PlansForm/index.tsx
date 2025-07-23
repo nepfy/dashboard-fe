@@ -68,11 +68,7 @@ export default function PlansForm() {
             } é obrigatória`;
           } else {
             // Check character limits for description
-            if (plan.description.length < 50) {
-              newErrors[`plan_${index}_description`] = `Descrição do plano ${
-                index + 1
-              } deve ter pelo menos 50 caracteres`;
-            } else if (plan.description.length > 130) {
+            if (plan.description.length > 130) {
               newErrors[`plan_${index}_description`] = `Descrição do plano ${
                 index + 1
               } deve ter no máximo 130 caracteres`;

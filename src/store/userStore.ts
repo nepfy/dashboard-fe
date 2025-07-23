@@ -4,7 +4,7 @@ import { UserAccount, UserState } from "#/types/userAccount";
 
 const STORAGE_KEY = "user-storage";
 const LAST_ACTIVITY_KEY = "last-activity-timestamp";
-const EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const EXPIRY_TIME = 24 * 60 * 60 * 1000;
 
 const isStorageExpired = () => {
   const lastActivity = localStorage.getItem(LAST_ACTIVITY_KEY);
@@ -28,12 +28,12 @@ const customStorage = {
       return null;
     }
 
-    updateLastActivity(); // Update timestamp on access
+    updateLastActivity();
     const value = localStorage.getItem(name);
     return value ? JSON.parse(value) : null;
   },
   setItem: (name: string, value: unknown) => {
-    updateLastActivity(); // Update timestamp on write
+    updateLastActivity();
     localStorage.setItem(name, JSON.stringify(value));
   },
   removeItem: (name: string) => {
@@ -89,7 +89,7 @@ export const useUserStore = create<UserState>()(
 
           if (result.success) {
             set({ userData: result.data, isLoading: false });
-            updateLastActivity(); // Update timestamp after successful fetch
+            updateLastActivity();
           } else {
             set({ error: result.error, isLoading: false });
           }
@@ -119,7 +119,7 @@ export const useUserStore = create<UserState>()(
                 : null,
               isLoading: false,
             }));
-            updateLastActivity(); // Update timestamp after successful update
+            updateLastActivity();
           } else {
             set({ error: result.error, isLoading: false });
           }
@@ -131,7 +131,6 @@ export const useUserStore = create<UserState>()(
         }
       },
 
-      // Add a logout function to clear storage
       logout: () => {
         set({ userData: null, error: null });
         localStorage.removeItem(STORAGE_KEY);

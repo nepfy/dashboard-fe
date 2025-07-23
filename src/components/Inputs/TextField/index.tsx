@@ -10,10 +10,8 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   info?: boolean;
-  maxLength?: number;
-  minLength?: number;
   showCharCount?: boolean;
-  allowOverText?: boolean;
+  charCountMessage?: string; // New prop for custom char count message
 }
 
 const TextField: React.FC<CustomInputProps> = (props) => {
@@ -31,42 +29,14 @@ const TextField: React.FC<CustomInputProps> = (props) => {
     onClick,
     disabled,
     info,
-    maxLength,
-    minLength,
     showCharCount = false,
-    allowOverText = false,
+    charCountMessage,
   } = props;
 
   const currentLength = typeof value === "string" ? value.length : 0;
-  const isNearLimit = maxLength ? currentLength >= maxLength - 2 : false;
-  const isOverLimit = maxLength ? currentLength > maxLength : false;
-
-  const renderTextWithOverflow = () => {
-    if (!allowOverText || !maxLength || !value || typeof value !== "string") {
-      return null;
-    }
-
-    if (currentLength <= maxLength) {
-      return null;
-    }
-
-    const normalText = value.substring(0, maxLength);
-    const overflowText = value.substring(maxLength);
-
-    return (
-      <div className="absolute inset-0 px-4 py-3 pointer-events-none flex items-center">
-        <span className="text-white-neutral-light-800">{normalText}</span>
-        <span className="text-red-500 font-medium">{overflowText}</span>
-      </div>
-    );
-  };
 
   // Determinar qual mensagem de erro mostrar
-  const errorMessage =
-    error ||
-    (allowOverText && isOverLimit
-      ? `Texto excede o limite de ${maxLength} caracteres`
-      : "");
+  const errorMessage = error || "";
 
   return (
     <div className="block w-full overflow-hidden">
@@ -92,18 +62,11 @@ const TextField: React.FC<CustomInputProps> = (props) => {
           value={value}
           onChange={onChange}
           onBlur={onBlur}
-          maxLength={allowOverText ? undefined : maxLength}
           className={`w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] 
                       border bg-white-neutral-light-100
                     placeholder:text-[var(--color-white-neutral-light-400)] 
                       focus:outline-none relative
-          ${
-            disabled
-              ? "opacity-50"
-              : allowOverText && isOverLimit
-              ? "text-transparent"
-              : "text-white-neutral-light-800"
-          }
+          ${disabled ? "opacity-50" : "text-white-neutral-light-800"}
           ${
             errorMessage
               ? "border-red-700"
@@ -111,8 +74,6 @@ const TextField: React.FC<CustomInputProps> = (props) => {
           }
           `}
         />
-
-        {allowOverText && renderTextWithOverflow()}
       </div>
 
       {/* Container para informações inferiores com layout flexível */}
@@ -131,21 +92,10 @@ const TextField: React.FC<CustomInputProps> = (props) => {
             )}
           </div>
 
-          {/* Contador de caracteres sempre no canto direito */}
-          {showCharCount && maxLength && (
-            <div
-              className={`text-xs flex-shrink-0 ml-2 flex items-center justify-center gap-1 ${
-                isNearLimit || isOverLimit
-                  ? "text-red-500"
-                  : "text-white-neutral-light-500"
-              }`}
-            >
-              {currentLength} / {maxLength}
-              {minLength && (
-                <span className="block text-xs">
-                  (mín. {minLength} caracteres)
-                </span>
-              )}
+          {/* Custom char count message if provided */}
+          {showCharCount && (
+            <div className="text-xs flex-shrink-0 ml-2 flex items-center justify-center gap-1 text-white-neutral-light-500">
+              {charCountMessage || `${currentLength} caracteres`}
             </div>
           )}
         </div>

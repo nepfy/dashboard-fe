@@ -219,13 +219,9 @@ export default function FAQForm() {
                   onChange={handleTextAreaChange("faqSubtitle")}
                   error={errors.faqSubtitle}
                   disabled={hideFaqSubtitle}
-                  maxLength={115}
-                  minLength={70}
-                  showCharCount
                   autoExpand={true}
                   minHeight={60}
                   maxHeight={200}
-                  allowOverText
                 />
               )}
             </div>

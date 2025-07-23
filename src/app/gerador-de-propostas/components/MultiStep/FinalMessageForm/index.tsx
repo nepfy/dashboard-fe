@@ -17,7 +17,6 @@ import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 interface FieldValidation {
   required?: boolean;
   maxLength?: number;
-  minLength?: number;
   isEmail?: boolean;
 }
 
@@ -51,7 +50,7 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
     validation: {
       endMessageTitle: { maxLength: 50, required: true },
       endMessageTitle2: { maxLength: 50, required: true },
-      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      endMessageDescription: { maxLength: 225, required: true },
       projectValidUntil: { required: true },
     },
   },
@@ -77,7 +76,7 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
     validation: {
       endMessageTitle: { maxLength: 50, required: true },
       endMessageTitle2: { maxLength: 50, required: true },
-      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      endMessageDescription: { maxLength: 225, required: true },
       projectValidUntil: { required: true },
     },
   },
@@ -95,7 +94,7 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
     },
     validation: {
       endMessageTitle: { maxLength: 45, required: true },
-      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      endMessageDescription: { maxLength: 225, required: true },
       projectValidUntil: { required: true },
     },
   },
@@ -120,7 +119,7 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
     },
     validation: {
       endMessageTitle: { maxLength: 50, required: true },
-      endMessageDescription: { minLength: 70, maxLength: 225, required: true },
+      endMessageDescription: { maxLength: 225, required: true },
       endMessageTitle2: { required: true, isEmail: true },
       projectValidUntil: { required: true },
     },
@@ -185,10 +184,6 @@ export default function FinalMessageForm() {
     }
 
     // Length validations
-    if (fieldValidation.minLength && value.length < fieldValidation.minLength) {
-      return `O campo '${label}' deve ter pelo menos ${fieldValidation.minLength} caracteres`;
-    }
-
     if (fieldValidation.maxLength && value.length > fieldValidation.maxLength) {
       return `O campo '${label}' deve ter no máximo ${fieldValidation.maxLength} caracteres`;
     }
@@ -351,7 +346,6 @@ export default function FinalMessageForm() {
               showCharCount
               error={errors.endMessageTitle}
               disabled={isFormDisabled}
-              allowOverText
             />
           </div>
         );
@@ -376,7 +370,6 @@ export default function FinalMessageForm() {
               showCharCount={currentTemplate !== "grid"} // Don't show char count for email field
               error={errors.endMessageTitle2}
               disabled={isFormDisabled}
-              allowOverText={currentTemplate !== "grid"}
             />
           </div>
         );
@@ -412,7 +405,6 @@ export default function FinalMessageForm() {
                 value={formData?.step15?.endMessageDescription || ""}
                 onChange={handleFieldChange("endMessageDescription")}
                 maxLength={fieldValidation?.maxLength || 225}
-                minLength={fieldValidation?.minLength || 70}
                 showCharCount
                 rows={4}
                 error={errors.endMessageDescription}
@@ -420,7 +412,6 @@ export default function FinalMessageForm() {
                 style={{
                   display: subtitleVisible ? "block" : "none",
                 }}
-                allowOverText
                 autoExpand
               />
             )}

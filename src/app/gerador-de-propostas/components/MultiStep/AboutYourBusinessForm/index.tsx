@@ -16,24 +16,24 @@ import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 const TEMPLATE_FIELD_CONFIG = {
   flash: {
     fields: ["aboutUsTitle", "aboutUsSubtitle1", "aboutUsSubtitle2"],
-    aboutUsTitle: { minLength: 85, maxLength: 160 },
-    aboutUsSubtitle1: { minLength: 40, maxLength: 70 },
-    aboutUsSubtitle2: { minLength: 195, maxLength: 250 },
+    aboutUsTitle: { maxLength: 160 },
+    aboutUsSubtitle1: { maxLength: 70 },
+    aboutUsSubtitle2: { maxLength: 250 },
   },
   prime: {
     fields: ["aboutUsTitle", "aboutUsSubtitle1", "aboutUsSubtitle2"],
-    aboutUsTitle: { minLength: 85, maxLength: 160 },
-    aboutUsSubtitle1: { minLength: 40, maxLength: 70 },
-    aboutUsSubtitle2: { minLength: 195, maxLength: 250 },
+    aboutUsTitle: { maxLength: 160 },
+    aboutUsSubtitle1: { maxLength: 70 },
+    aboutUsSubtitle2: { maxLength: 250 },
   },
   essencial: {
     fields: ["aboutUsTitle"],
-    aboutUsTitle: { minLength: 150, maxLength: 420 },
+    aboutUsTitle: { maxLength: 420 },
   },
   grid: {
     fields: ["aboutUsTitle", "aboutUsSubtitle1"],
-    aboutUsTitle: { minLength: 100, maxLength: 220 },
-    aboutUsSubtitle1: { minLength: 150, maxLength: 420 },
+    aboutUsTitle: { maxLength: 220 },
+    aboutUsSubtitle1: { maxLength: 420 },
   },
 };
 
@@ -75,11 +75,6 @@ export default function AboutYourBusinessForm() {
       return null;
     }
 
-    const { minLength, maxLength } = fieldConfig as {
-      minLength: number;
-      maxLength: number;
-    };
-
     if (!value.trim()) {
       const fieldNames = {
         aboutUsTitle: "Sobre nós",
@@ -89,28 +84,6 @@ export default function AboutYourBusinessForm() {
       return `O campo '${
         fieldNames[fieldName as keyof typeof fieldNames]
       }' é obrigatório`;
-    }
-
-    if (value.length < minLength) {
-      const fieldNames = {
-        aboutUsTitle: "Sobre nós",
-        aboutUsSubtitle1: "Subtítulo 1",
-        aboutUsSubtitle2: "Subtítulo 2",
-      };
-      return `O campo '${
-        fieldNames[fieldName as keyof typeof fieldNames]
-      }' deve ter pelo menos ${minLength} caracteres`;
-    }
-
-    if (value.length > maxLength) {
-      const fieldNames = {
-        aboutUsTitle: "Sobre nós",
-        aboutUsSubtitle1: "Subtítulo 1",
-        aboutUsSubtitle2: "Subtítulo 2",
-      };
-      return `O campo '${
-        fieldNames[fieldName as keyof typeof fieldNames]
-      }' deve ter no máximo ${maxLength} caracteres`;
     }
 
     return null;
@@ -246,10 +219,7 @@ export default function AboutYourBusinessForm() {
       templateConfig[fieldName as keyof typeof templateConfig];
     if (!fieldConfig || typeof fieldConfig !== "object") return null;
 
-    const { minLength, maxLength } = fieldConfig as {
-      minLength: number;
-      maxLength: number;
-    };
+    const maxLength = (fieldConfig as { maxLength?: number }).maxLength;
 
     switch (fieldName) {
       case "aboutUsTitle":
@@ -292,13 +262,11 @@ export default function AboutYourBusinessForm() {
                 placeholder="Fale sobre você ou sua empresa"
                 value={formData?.step2?.aboutUsTitle || ""}
                 onChange={handleFieldChange("aboutUsTitle")}
-                maxLength={maxLength}
-                minLength={minLength}
                 autoExpand={true}
                 showCharCount
                 error={errors.aboutUsTitle}
                 disabled={hideAboutUsTitle || hideAboutUsSection}
-                allowOverText
+                charCountMessage={`Recomendado: ${maxLength ?? ""} caracteres`}
               />
             )}
           </div>
@@ -348,13 +316,11 @@ export default function AboutYourBusinessForm() {
                 }
                 value={formData?.step2?.aboutUsSubtitle1 || ""}
                 onChange={handleFieldChange("aboutUsSubtitle1")}
-                maxLength={maxLength}
-                minLength={minLength}
                 autoExpand={true}
                 showCharCount
                 error={errors.aboutUsSubtitle1}
                 disabled={hideAboutUsSection || hideSubtitles1}
-                allowOverText
+                charCountMessage={`Recomendado: ${maxLength ?? ""} caracteres`}
               />
             )}
           </div>
@@ -400,13 +366,11 @@ export default function AboutYourBusinessForm() {
                 placeholder="Adicione mais detalhes"
                 value={formData?.step2?.aboutUsSubtitle2 || ""}
                 onChange={handleFieldChange("aboutUsSubtitle2")}
-                maxLength={maxLength}
-                minLength={minLength}
                 autoExpand={true}
                 showCharCount
                 error={errors.aboutUsSubtitle2}
                 disabled={hideAboutUsSection || hideSubtitles2}
-                allowOverText
+                charCountMessage={`Recomendado: ${maxLength ?? ""} caracteres`}
               />
             )}
           </div>

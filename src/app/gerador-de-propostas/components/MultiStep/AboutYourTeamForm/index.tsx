@@ -88,9 +88,11 @@ export default function AboutYourTeamForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideSection) {
-      if (ourTeamSubtitle.length < 30 || ourTeamSubtitle.length > 55) {
+      if (!ourTeamSubtitle.trim()) {
+        newErrors.ourTeamSubtitle = "O subtítulo é obrigatório";
+      } else if (ourTeamSubtitle.length > 55) {
         newErrors.ourTeamSubtitle =
-          "O campo 'Subtítulo' deve ter pelo menos 30 e no máximo 55 caracteres";
+          "O campo 'Subtítulo' deve ter no máximo 55 caracteres";
       }
 
       if (teamMembers.length === 0) {
@@ -192,17 +194,14 @@ export default function AboutYourTeamForm() {
             <TextAreaField
               id="ourTeamSubtitle"
               textareaName="ourTeamSubtitle"
-              placeholder="Fale mais sobre você ou seu time"
+              placeholder="Descreva sua equipe"
               value={formData?.step3?.ourTeamSubtitle || ""}
               onChange={handleFieldChange("ourTeamSubtitle")}
-              maxLength={55}
-              minLength={30}
-              rows={2}
-              autoExpand
-              showCharCount
               error={errors.ourTeamSubtitle}
               disabled={hideSectionChecked}
-              allowOverText
+              autoExpand
+              showCharCount
+              charCountMessage="Recomendado: 50 caracteres"
             />
           </div>
           <div className="pt-4">
