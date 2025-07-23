@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useProjects } from "#/hooks/useProjectGenerator/useProjects";
 
-import DashboardStartProjectView from "#/app/dashboard/components/DashboardStartProjectView";
+// import DashboardStartProjectView from "#/app/dashboard/components/DashboardStartProjectView";
 import DashboardProjectView from "#/app/dashboard/components/DashboardProjectView";
 import SuccessModal from "#/app/dashboard/components/SuccessModal";
 
@@ -142,8 +142,33 @@ export default function Dashboard() {
         projectId={projectId ?? undefined}
       />
 
-      {projectsData?.length && pagination ? (
-        <div className="p-7">
+      <div className="p-7">
+        <DashboardProjectView
+          projectsData={projectsData}
+          pagination={
+            pagination ?? {
+              currentPage: 1,
+              totalPages: 1,
+              totalCount: 0,
+              limit: 10,
+              hasNextPage: false,
+              hasPreviousPage: false,
+            }
+          }
+          onPageChange={setCurrentPage}
+          error={error}
+          isInitialLoading={isInitialLoading}
+          isPaginationLoading={isPaginationLoading}
+          isDuplicating={isDuplicating}
+          statistics={statistics}
+          onBulkStatusUpdate={handleBulkStatusUpdate}
+          onStatusUpdate={handleStatusUpdate}
+          onBulkDuplicate={handleBulkDuplicate}
+        />
+      </div>
+
+      {/* {projectsData?.length && pagination ? (
+      <div className="p-7">
           <DashboardProjectView
             projectsData={projectsData}
             pagination={pagination}
@@ -160,7 +185,7 @@ export default function Dashboard() {
         </div>
       ) : (
         <DashboardStartProjectView />
-      )}
+      )} */}
     </div>
   );
 }

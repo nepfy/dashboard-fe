@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
 import { useSignUp } from "@clerk/nextjs";
-import { InfoIcon } from "lucide-react";
 
-import { CheckboxInput } from "#/components/Inputs";
 import MailEnvelope from "#/components/icons/MailEnvelope";
 import { TextField } from "#/components/Inputs";
 import PasswordInput from "#/components/Inputs/PasswordInput";
@@ -26,9 +24,7 @@ type SignUpFormProps = {
   showConfirmPassword: boolean;
   setShowConfirmPassword: (show: boolean) => void;
   termsAccepted: boolean;
-  setTermsAccepted: (accepted: boolean) => void;
   onSubmit: (e: React.FormEvent) => Promise<void>;
-  isFormValid: () => boolean;
   isEmailValid?: boolean;
   isLoaded?: boolean;
   error?: string;
@@ -48,9 +44,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   showConfirmPassword,
   setShowConfirmPassword,
   termsAccepted,
-  setTermsAccepted,
   onSubmit,
-  isFormValid,
   isEmailValid,
   isLoaded,
   error,
@@ -117,7 +111,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 
   return (
     <>
-      <form className="space-y-6 overflow-x-scroll" onSubmit={onSubmit}>
+      <form className="space-y-3 overflow-x-scroll" onSubmit={onSubmit}>
         <div className="space-y-2 relative">
           <MailEnvelope
             className="absolute right-4 bottom-[34px] z-40"
@@ -180,50 +174,13 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
           </div>
         )}
 
-        <div className="flex items-center gap-2">
-          <CheckboxInput
-            id="terms"
-            label={
-              <>
-                Li e concordo com os{" "}
-                <Link href="/termos-de-uso">
-                  <p className="text-[var(--color-primary-light-400)] hover:underline inline-block">
-                    Termos de uso
-                  </p>
-                </Link>
-                .
-              </>
-            }
-            onChange={(e) => setTermsAccepted(e.target.checked)}
-            checked={termsAccepted}
-          />
-        </div>
-
         <button
           type="submit"
-          disabled={!isFormValid()}
-          className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] cursor-pointer ${
-            isFormValid()
-              ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)]"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)]`}
         >
           Criar conta
         </button>
       </form>
-
-      <div className="text-center text-[var(--color-white-neutral-light-500)]">
-        Já possui uma conta?{" "}
-        <Link href="/">
-          <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
-            {!isLoaded ? (
-              <LoaderCircle className="animate-spin" />
-            ) : (
-              "Faça login"
-            )}
-          </p>
-        </Link>
-      </div>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
@@ -236,51 +193,40 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         </div>
       </div>
 
-      <div
-        className="relative flex flex-col justify-end h-[82px]"
-        ref={tooltipRef}
-      >
-        {!termsAccepted && (
-          <InfoIcon
-            size={16}
-            className="mr-0.5 text-[var(--color-white-neutral-light-500)] cursor-help self-end"
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowTooltip(!showTooltip);
-            }}
-          />
-        )}
+      <div className="relative flex flex-col justify-end">
         <button
           disabled={!termsAccepted}
           type="button"
           onClick={handleGoogleSignUp}
-          className={`w-full py-3 px-4
-              rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] 
-              transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4
-              ${
-                termsAccepted
-                  ? "bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] cursor-pointer hover:bg-[var(--color-white-neutral-light-200)] "
-                  : "bg-gray-400 cursor-not-allowed text-[var(--color-white-neutral-light-600)]"
-              }
-              `}
+          className="w-full py-3 px-4 rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] transition-colors flex items-center justify-center gap-2 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] cursor-pointer hover:bg-[var(--color-white-neutral-light-200)]"
         >
           <GoogleLogo />
           Continuar com o Google
         </button>
+      </div>
 
-        {/* Tooltip */}
-        {!termsAccepted && showTooltip && (
-          <div className="absolute bottom-4xl left-1/2 transform -translate-x-1/2 mb-2 sm:w-64 bg-gray-800 text-white text-sm rounded-lg py-4 px-3 z-10 w-[200px]">
-            <div className="text-center">
-              Você precisa aceitar os termos e condições primeiro para habilitar
-              esta opção
-            </div>
-            {/* Tooltip arrow */}
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-          </div>
-        )}
+      <div className="flex justify-center items-center">
+        <p className="text-[10px] text-white-neutral-light-600">
+          Ao criar uma conta, você concorda com os{" "}
+          <Link href="/termos-de-uso">
+            <span className="text-[10px] text-white-neutral-light-600 underline">
+              Termos de uso
+            </span>
+          </Link>
+        </p>
+      </div>
+
+      <div className="text-center text-[var(--color-white-neutral-light-500)]">
+        Já possui uma conta?{" "}
+        <Link href="/">
+          <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
+            {!isLoaded ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              "Faça login"
+            )}
+          </p>
+        </Link>
       </div>
       <div id="clerk-captcha" />
     </>

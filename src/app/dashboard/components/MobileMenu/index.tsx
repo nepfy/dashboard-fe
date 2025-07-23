@@ -103,7 +103,7 @@ export default function MobileMenu({
 
   return (
     <div className="lg:hidden">
-      <div className="fixed inset-0 flex z-40 bg-white-neutral-light-200 border-b border-gray-200">
+      <div className="fixed inset-0 flex z-100 bg-white-neutral-light-200 border-b border-gray-200">
         <div className="flex flex-col w-full">
           <div className="border-b border-gray-200 flex flex-row items-center justify-between h-16 px-8">
             <Link href="/dashboard">
@@ -120,20 +120,28 @@ export default function MobileMenu({
 
           <div className="h-0">
             <nav className="px-2 py-4">
-              <ul className="space-y-1">
+              <ul className="space-y-1 bg-white-neutral-light-200">
                 {menuItems.map((item) => (
                   <li key={item.name}>
-                    <Link
-                      href={item.path}
-                      onClick={() => setIsMobileMenuOpenAction(false)}
-                      className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium  ${
-                        isActive(item.path)
-                          ? "bg-white-neutral-light-100 e0"
-                          : "hover:bg-gray-100"
-                      }`}
-                    >
-                      <span className="mr-2">{item.icon}</span> {item.name}
-                    </Link>
+                    {item.name === "Contratos" ||
+                    item.name === "Calculadora" ? (
+                      <div className="flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-500 font-medium cursor-not-allowed">
+                        <span className="mr-2 opacity-50">{item.icon}</span>
+                        {item.name}
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.path}
+                        onClick={() => setIsMobileMenuOpenAction(false)}
+                        className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium  ${
+                          isActive(item.path)
+                            ? "bg-white-neutral-light-100 e0"
+                            : "hover:bg-gray-100"
+                        }`}
+                      >
+                        <span className="mr-2">{item.icon}</span> {item.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
                 <li>

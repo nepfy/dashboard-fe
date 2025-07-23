@@ -22,7 +22,6 @@ export default function CreateAccount() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
 
   // UI state
   const [showPassword, setShowPassword] = useState(false);
@@ -51,8 +50,7 @@ export default function CreateAccount() {
       password.trim() !== "" &&
       confirmPassword.trim() !== "" &&
       password === confirmPassword &&
-      passwordStrength.strength !== "fraca" &&
-      termsAccepted
+      passwordStrength.strength !== "fraca"
     );
   };
 
@@ -62,13 +60,19 @@ export default function CreateAccount() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isLoaded || !isFormValid()) return;
+    if (!isLoaded) return;
+    if (!isFormValid()) {
+      setError(
+        "Por favor, preencha todos os campos corretamente para criar sua conta."
+      );
+      return;
+    }
 
     try {
       await signUp.create({
         emailAddress,
         password,
-        legalAccepted: termsAccepted,
+        legalAccepted: true,
       });
 
       await signUp.prepareEmailAddressVerification({
@@ -141,11 +145,9 @@ export default function CreateAccount() {
                 setShowPassword={setShowPassword}
                 showConfirmPassword={showConfirmPassword}
                 setShowConfirmPassword={setShowConfirmPassword}
-                termsAccepted={termsAccepted}
-                setTermsAccepted={setTermsAccepted}
-                isFormValid={isFormValid}
                 isEmailValid={isEmailValid}
                 onSubmit={handleSubmit}
+                termsAccepted={true}
                 isLoaded={isLoaded}
                 setError={setError}
                 error={error}

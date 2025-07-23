@@ -24,29 +24,35 @@ export default function Login() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const [error, setError] = useState("");
-
-  const isFormValid = () => {
-    return (
-      emailAddress.trim() !== "" &&
-      validateEmail(emailAddress) &&
-      password.trim() !== ""
-    );
-  };
 
   const isEmailValid =
     emailAddress.trim() === "" || validateEmail(emailAddress);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Check for empty or invalid fields
+    if (
+      emailAddress.trim() === "" ||
+      !validateEmail(emailAddress) ||
+      password.trim() === ""
+    ) {
+      setError(
+        "Por favor, preencha todos os campos corretamente para acessar sua conta."
+      );
+      return;
+    }
     try {
       const signInAttempt = await signIn?.create({
         identifier: emailAddress,
         password,
       });
       if (signInAttempt?.status === "complete") {
-        await setActive?.({ session: signInAttempt?.createdSessionId });
+        await setActive?.({
+          session: signInAttempt?.createdSessionId,
+        });
         router.push("/");
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
@@ -99,7 +105,7 @@ export default function Login() {
           <div className="w-full max-w-[480px] space-y-8">
             <FormHeader title="Entrar" description="Acesse sua conta Nepfy!" />
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-3" onSubmit={handleSubmit}>
               <div className="space-y-2 relative">
                 <MailEnvelope
                   className="absolute right-4 bottom-[34px] z-40"
@@ -137,7 +143,12 @@ export default function Login() {
 
               <div className="flex justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <CheckboxInput label="Lembrar-se da senha" id="terms" />
+                  <CheckboxInput
+                    label="Lembrar-se da senha"
+                    id="rememberMe"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
                 </div>
                 <Link href="/recuperar-conta">
                   <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
@@ -148,12 +159,7 @@ export default function Login() {
 
               <button
                 type="submit"
-                disabled={!isFormValid()}
-                className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] ${
-                  isFormValid()
-                    ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] cursor-pointer"
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
+                className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] cursor-pointer`}
               >
                 Acessar conta
               </button>
@@ -163,15 +169,6 @@ export default function Login() {
                 {error}
               </div>
             )}
-
-            <div className="text-center text-[var(--color-white-neutral-light-500)]">
-              Você é novo aqui?{" "}
-              <Link href="/criar-conta">
-                <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
-                  Criar conta
-                </p>
-              </Link>
-            </div>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -187,11 +184,20 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2 mt-2 sm:mt-4 h-[54px] cursor-pointer"
+              className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2 h-[54px] cursor-pointer"
             >
               <GoogleLogo />
               Fazer login com o Google
             </button>
+
+            <div className="text-center text-[var(--color-white-neutral-light-500)]">
+              Você é novo aqui?{" "}
+              <Link href="/criar-conta">
+                <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
+                  Criar conta
+                </p>
+              </Link>
+            </div>
           </div>
         </div>
         <Footer />

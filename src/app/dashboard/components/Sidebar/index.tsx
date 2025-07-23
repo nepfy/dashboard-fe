@@ -116,16 +116,27 @@ export default function Sidebar() {
           <ul className="space-y-2">
             {mainMenuItems.map((item) => (
               <li key={item.name}>
-                <Link
-                  href={item.path}
-                  className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
-                    isActive(item.path)
-                      ? "bg-white-neutral-light-100 e0 cursor-default"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  <span className="mr-2">{item.icon}</span> {item.name}
-                </Link>
+                {item.name === "Contratos" || item.name === "Calculadora" ? (
+                  <div
+                    className={
+                      "flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-500 font-medium cursor-not-allowed"
+                    }
+                  >
+                    <span className="mr-2 opacity-50">{item.icon}</span>
+                    {item.name}
+                  </div>
+                ) : (
+                  <Link
+                    href={item.path}
+                    className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
+                      isActive(item.path)
+                        ? "bg-white-neutral-light-100 e0 cursor-default"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="mr-2">{item.icon}</span> {item.name}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -135,17 +146,28 @@ export default function Sidebar() {
           <ul className="space-y-2">
             {bottomMenuItems.map((item) => (
               <li key={item.name}>
-                <Link
-                  href={item.path}
-                  className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
-                    isActive(item.path)
-                      ? "bg-white-neutral-light-100 font-medium e0 cursor-default"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.name}
-                </Link>
+                {item.name === "Contratos" || item.name === "Calculadora" ? (
+                  <div
+                    className={
+                      "flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-800 font-medium cursor-not-allowed opacity-60"
+                    }
+                  >
+                    <span className="mr-2">{item.icon}</span>
+                    {item.name}
+                  </div>
+                ) : (
+                  <Link
+                    href={item.path}
+                    className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
+                      isActive(item.path)
+                        ? "bg-white-neutral-light-100 font-medium e0 cursor-default"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="mr-2">{item.icon}</span>
+                    {item.name}
+                  </Link>
+                )}
               </li>
             ))}
             <li>
