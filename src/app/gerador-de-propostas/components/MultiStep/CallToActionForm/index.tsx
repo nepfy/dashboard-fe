@@ -41,10 +41,10 @@ export default function CallToActionForm() {
     setUploadError("");
     clearError();
 
-    // Check file size (350KB max)
-    const maxSize = 350 * 1024; // 350KB in bytes
+    // Check file size (450KB max)
+    const maxSize = 450 * 1024; // 350KB in bytes
     if (file.size > maxSize) {
-      setUploadError("Arquivo muito grande. Tamanho máximo: 350KB.");
+      setUploadError("Arquivo muito grande. Tamanho máximo: 450KB.");
       return;
     }
 
@@ -194,7 +194,7 @@ export default function CallToActionForm() {
               </div>
             </div>
             <div className="text-xs text-white-neutral-light-400 mt-3">
-              Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 350KB
+              Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 450KB
             </div>
 
             {uploadError && (

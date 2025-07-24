@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 
@@ -11,6 +10,8 @@ import AnchorLinkIcon from "#/components/icons/AnchorLinkIcon";
 import Modal from "#/components/Modal";
 import Portal from "#/components/Portal";
 
+import ArchiveIcon from "./ArchiveIcon";
+import DuplicateIcon from "./DuplicateIcon";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 import { getStatusBadge } from "../ProjectsTable/getStatusBadge";
 
@@ -497,18 +498,7 @@ export default function RowEditMenu({
         width="340px"
       >
         <div className="w-full px-2 pt-4 pb-0">
-          <Image
-            src="/images/archive-banner.jpg"
-            width={800}
-            height={400}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
-            alt="image decorativa"
-            priority
-          />
+          <ArchiveIcon />
         </div>
 
         <div className="p-6 mb-2">
@@ -574,18 +564,7 @@ export default function RowEditMenu({
         width="340px"
       >
         <div className="w-full px-2 pt-4 pb-0">
-          <Image
-            src="/images/duplicate-banner.jpg"
-            width={800}
-            height={400}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
-            alt="image decorativa"
-            priority
-          />
+          <DuplicateIcon />
         </div>
 
         <p className="text-white-neutral-light-500 text-sm px-6 py-2 sm:p-6">

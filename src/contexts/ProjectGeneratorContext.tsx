@@ -8,8 +8,9 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { ProposalFormData, TemplateType, Project } from "#/types/project";
+import { ProposalFormData, TemplateType, Project, Plan } from "#/types/project";
 import { useSaveDraft } from "#/hooks/useProjectGenerator/useSaveDraft";
+import flash from "#/app/gerador-de-propostas/constants/flash";
 
 interface ProjectGeneratorContextType {
   formData: ProposalFormData;
@@ -50,21 +51,65 @@ const ProjectGeneratorContext = createContext<
 >(undefined);
 
 const initialFormData: ProposalFormData = {
-  step1: {},
-  step2: {},
-  step3: {},
-  step4: {},
-  step5: {},
-  step6: {},
-  step7: {},
-  step8: {},
-  step9: {},
-  step10: {},
-  step11: {},
-  step12: {},
-  step13: {},
-  step14: {},
-  step15: {},
+  step1: {
+    companyName: flash.step1.companyName,
+    companyEmail: flash.step1.companyEmail,
+    ctaButtonTitle: flash.step1.ctaButtonTitle,
+    pageTitle: flash.step1.pageTitle,
+    pageSubtitle: flash.step1.pageSubtitle,
+    hidePageSubtitle: flash.step1.hidePageSubtitle,
+    services: flash.step1.services?.split(","),
+  },
+  step2: {
+    aboutUsTitle: flash.step2.aboutUsTitle,
+    aboutUsSubtitle1: flash.step2.aboutUsSubtitle1,
+    aboutUsSubtitle2: flash.step2.aboutUsSubtitle2,
+  },
+  step3: {
+    ourTeamSubtitle: flash.step3.ourTeamSubtitle,
+    teamMembers: flash.step3.teamMembers,
+  },
+  step4: {
+    expertiseSubtitle: flash.step4.expertiseSubtitle,
+    expertise: flash.step4.expertise,
+  },
+  step5: {
+    resultsSubtitle: flash.step5.resultsSubtitle,
+    results: flash.step5.results,
+  },
+  step6: {
+    clients: flash.step6.clients,
+  },
+  step7: {
+    processSubtitle: flash.step7.processSubtitle,
+    processSteps: flash.step7.processSteps,
+  },
+  step8: {
+    ctaBackgroundImage: flash.step8.ctaBackgroundImage,
+  },
+  step9: {
+    testimonials: flash.step9.testimonials,
+  },
+  step10: {
+    investmentTitle: flash.step10.investmentTitle,
+  },
+  step11: {
+    includedServices: flash.step11.includedServices,
+  },
+  step12: {
+    plans: flash.step12.plans as Plan[],
+  },
+  step13: {
+    termsConditions: flash.step13.termsConditions,
+  },
+  step14: {
+    faq: flash.step14.faq,
+  },
+  step15: {
+    endMessageTitle: flash.step15.endMessageTitle,
+    endMessageTitle2: flash.step15.endMessageTitle2,
+    endMessageDescription: flash.step15.endMessageDescription,
+  },
   step16: {},
 };
 
@@ -106,23 +151,10 @@ export function ProjectGeneratorProvider({
     }
   }, [currentProjectId, setProjectId]);
 
-  console.log("Context - currentStep:", currentStep);
-  console.log("Context - currentProjectId:", currentProjectId);
-  console.log("Context - mainColor:", formData.step1?.mainColor);
-
-  console.log("Context - currentStep:", currentStep);
-  console.log("Context - mainColor:", formData.step1?.mainColor);
-
   const updateFormData = <T extends keyof ProposalFormData>(
     step: T,
     data: ProposalFormData[T]
   ) => {
-    console.log(
-      "Context - Updating form data for step:",
-      step,
-      "with data:",
-      data
-    );
     setFormData((prev) => ({
       ...prev,
       [step]: { ...prev[step], ...data },
@@ -130,7 +162,6 @@ export function ProjectGeneratorProvider({
   };
 
   const setTemplateType = (template: TemplateType) => {
-    console.log("Context - Setting template type:", template);
     setTemplateTypeState(template);
     setCurrentStep(1);
   };
@@ -155,8 +186,6 @@ export function ProjectGeneratorProvider({
   };
 
   const loadProjectData = async (projectData: Project) => {
-    console.log("Context - Loading project data for editing:", projectData);
-
     if (projectData.id) {
       setCurrentProjectId(projectData.id);
       setIsEditMode(true);
@@ -179,32 +208,25 @@ export function ProjectGeneratorProvider({
   };
 
   const nextStep = () => {
-    console.log("Context - nextStep called, current:", currentStep);
     setCurrentStep((prev) => {
       const newStep = Math.min(prev + 1, 16);
-      console.log("Context - Moving from step", prev, "to step", newStep);
       return newStep;
     });
   };
 
   const prevStep = () => {
-    console.log("Context - prevStep called, current:", currentStep);
     setCurrentStep((prev) => {
       const newStep = Math.max(prev - 1, 0);
-      console.log("Context - Moving from step", prev, "to step", newStep);
       return newStep;
     });
   };
 
   const goToStep = (step: number) => {
-    console.log("Context - goToStep called with step:", step);
     const newStep = Math.max(0, Math.min(step, 16));
-    console.log("Context - Going to step:", newStep);
     setCurrentStep(newStep);
   };
 
   const resetForm = () => {
-    console.log("Context - Resetting form");
     setFormData(initialFormData);
     setCurrentStep(0);
     setTemplateTypeState(null);
@@ -217,8 +239,6 @@ export function ProjectGeneratorProvider({
   };
 
   const importProjectData = (projectData: Project) => {
-    console.log("Context - Importing project data:", projectData);
-
     if (projectData.id) {
       setCurrentProjectId(projectData.id);
     }
@@ -258,7 +278,7 @@ export function ProjectGeneratorProvider({
       hidePageSubtitle: projectData.hidePageSubtitle,
       services: projectData.services
         ? projectData.services.split(",")
-        : undefined,
+        : flash.step1.services?.split(","),
       hideServices: projectData.hideServices,
       hideClientPhoto: projectData.hideClientPhoto,
       clientPhoto: projectData.clientPhoto,
@@ -278,27 +298,44 @@ export function ProjectGeneratorProvider({
     safeUpdate("step3", {
       ourTeamSubtitle: projectData.ourTeamSubtitle,
       hideAboutYourTeamSection: projectData.hideAboutYourTeamSection || false,
-      teamMembers: projectData.teamMembers || [],
+      teamMembers:
+        projectData.teamMembers ||
+        flash.step3.teamMembers.map((member) => ({
+          ...member,
+        })),
     });
 
     // Step 4 - Expertise
     safeUpdate("step4", {
       hideExpertiseSection: projectData.hideExpertiseSection || false,
       expertiseSubtitle: projectData.expertiseSubtitle,
-      expertise: projectData.expertise || [],
+      expertise:
+        projectData.expertise ||
+        flash.step4.expertise.map((item) => ({
+          ...item,
+        })),
     });
 
     // Step 5 - Results
     safeUpdate("step5", {
       hideYourResultsSection: projectData.hideResultsSection || false,
       resultsSubtitle: projectData.resultsSubtitle,
-      results: projectData.results || [],
+      results:
+        projectData.results ||
+        flash.step5.results.map((item, index) => ({
+          ...item,
+          sortOrder: index + 1,
+        })),
     });
 
     // Step 6 - Clients
     safeUpdate("step6", {
       hideClientsSection: projectData.hideClientsSection || false,
-      clients: projectData.clients || [],
+      clients:
+        projectData.clients ||
+        flash.step6.clients.map((item) => ({
+          ...item,
+        })),
     });
 
     // Step 7 - Process
@@ -306,7 +343,11 @@ export function ProjectGeneratorProvider({
       hideProcessSection: projectData.hideProcessSection || false,
       hideProcessSubtitle: projectData.hideProcessSubtitle || false,
       processSubtitle: projectData.processSubtitle,
-      processSteps: projectData.processSteps || [],
+      processSteps:
+        projectData.processSteps ||
+        flash.step7.processSteps.map((item) => ({
+          ...item,
+        })),
     });
 
     // Step 8 - CTA Background
@@ -318,7 +359,11 @@ export function ProjectGeneratorProvider({
     // Step 9 - Testimonials
     safeUpdate("step9", {
       hideTestimonialsSection: projectData.hideTestimonialsSection || false,
-      testimonials: projectData.testimonials || [],
+      testimonials:
+        projectData.testimonials ||
+        flash.step9.testimonials.map((item) => ({
+          ...item,
+        })),
     });
 
     // Step 10 - Investment
@@ -331,19 +376,27 @@ export function ProjectGeneratorProvider({
     safeUpdate("step11", {
       hideIncludedServicesSection:
         projectData.hideIncludedServicesSection || false,
-      includedServices: projectData.includedServices || [],
+      includedServices:
+        projectData.includedServices ||
+        flash.step11.includedServices.map((item) => ({
+          ...item,
+        })),
     });
 
     // Step 12 - Plans
     safeUpdate("step12", {
       hidePlansSection: projectData.hidePlansSection || false,
-      plans: projectData.plans || [],
+      plans: projectData.plans,
     });
 
     // Step 13 - Terms
     safeUpdate("step13", {
       hideTermsSection: projectData.hideTermsSection || false,
-      termsConditions: projectData.termsConditions || [],
+      termsConditions:
+        projectData.termsConditions ||
+        flash.step13.termsConditions.map((item) => ({
+          ...item,
+        })),
     });
 
     // Step 14 - FAQ
@@ -351,7 +404,11 @@ export function ProjectGeneratorProvider({
       hideFaqSection: projectData.hideFaqSection || false,
       hideFaqSubtitle: projectData.hideFaqSubtitle,
       faqSubtitle: projectData.faqSubtitle,
-      faq: projectData.faq || [],
+      faq:
+        projectData.faq ||
+        flash.step14.faq.map((item) => ({
+          ...item,
+        })),
     });
 
     // Step 15 - End message

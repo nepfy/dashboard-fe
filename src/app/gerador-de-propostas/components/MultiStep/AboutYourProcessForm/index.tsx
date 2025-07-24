@@ -95,10 +95,6 @@ export default function AboutYourProcessForm() {
             newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
               index + 1
             } é obrigatório`;
-          } else if (process.stepName.length > 30) {
-            newErrors[`${processPrefix}_stepName`] = `Nome da etapa ${
-              index + 1
-            } deve ter no máximo 30 caracteres`;
           }
 
           // Validate step description
@@ -106,10 +102,6 @@ export default function AboutYourProcessForm() {
             newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
               index + 1
             } é obrigatória`;
-          } else if (process.description.length > 340) {
-            newErrors[`${processPrefix}_description`] = `Descrição da etapa ${
-              index + 1
-            } deve ter no máximo 340 caracteres`;
           }
         });
       }

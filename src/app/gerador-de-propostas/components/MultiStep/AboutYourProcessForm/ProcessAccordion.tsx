@@ -282,7 +282,7 @@ export default function ProcessAccordion({
                     error={getFieldError(index, "stepName")}
                     disabled={disabled}
                     showCharCount
-                    charCountMessage="Recomendado: 25 caracteres"
+                    charCountMessage="Recomendado: 30 caracteres"
                   />
                 </div>
 
@@ -305,7 +305,7 @@ export default function ProcessAccordion({
                     disabled={disabled}
                     autoExpand={true}
                     showCharCount
-                    charCountMessage="Recomendado: 300 caracteres"
+                    charCountMessage="Recomendado: 340 caracteres"
                   />
                 </div>
               </div>

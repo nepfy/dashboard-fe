@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { LoaderCircle } from "lucide-react";
 
 import SelectInput from "#/components/Inputs/SelectInput";
@@ -7,6 +6,8 @@ import Archive from "#/components/icons/Archive";
 import CopyIcon from "#/components/icons/CopyIcon";
 import Modal from "#/components/Modal";
 
+import ArchiveIcon from "./ArchiveIcon";
+import DuplicateIcon from "./DuplicateIcon";
 import { getStatusBadge } from "./getStatusBadge";
 
 const BASE_STYLE = `
@@ -309,25 +310,14 @@ export default function TableBulkEdit({
       <Modal
         isOpen={showArchiveModal}
         onClose={handleArchiveCancel}
-        title="Confirmar Arquivamento"
+        title="Arquivar este item?"
         footer={false}
         closeOnClickOutside={!isArchiving}
         showCloseButton={!isArchiving}
         width="340px"
       >
         <div className="w-full p-3">
-          <Image
-            src="/images/archive-banner.jpg"
-            width={800}
-            height={400}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
-            alt="image decorativa"
-            priority
-          />
+          <ArchiveIcon />
         </div>
 
         <p className="text-white-neutral-light-500 text-sm px-6 py-3 sm:p-6">
@@ -380,18 +370,7 @@ export default function TableBulkEdit({
         width="340px"
       >
         <div className="w-full p-3">
-          <Image
-            src="/images/duplicate-banner.jpg"
-            width={800}
-            height={400}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
-            alt="image decorativa"
-            priority
-          />
+          <DuplicateIcon />
         </div>
 
         <p className="text-white-neutral-light-500 text-sm px-6 py-3 sm:p-6">
