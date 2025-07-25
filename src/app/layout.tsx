@@ -41,6 +41,29 @@ const manrope = localFont({
 export const metadata: Metadata = {
   title: ".Nepfy",
   description: "Faça a gestão das suas propostas de forma simples e elegante.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      {
+        rel: "mask-icon",
+        url: "/safari-pinned-tab.svg",
+        color: "#6A4BDE",
+      },
+    ],
+  },
+  manifest: "/site.webmanifest",
+  other: {
+    "msapplication-TileColor": "#6A4BDE",
+    "msapplication-config": "/browserconfig.xml",
+  },
 };
 
 function isMainDomain(hostname: string): boolean {

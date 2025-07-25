@@ -18,7 +18,7 @@ export default function IntroSection({ data }: IntroSectionProps) {
         data?.services &&
         data?.pageSubtitle && (
           <div className="w-full h-full">
-            <div className="w-full h-full flex flex-col px-6 py-11">
+            <div className="w-full h-full flex flex-col px-8 py-11">
               <Header
                 companyName={data?.companyName}
                 companyEmail={data?.companyEmail}

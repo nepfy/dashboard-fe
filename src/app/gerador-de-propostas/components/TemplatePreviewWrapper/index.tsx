@@ -11,7 +11,6 @@ interface TemplatePreviewWrapperProps {
   showTemplateIndicator?: boolean;
   className?: string;
   style?: React.CSSProperties;
-  gradientOverride?: string;
   colorOverride?: string;
 }
 
@@ -19,16 +18,12 @@ export default function TemplatePreviewWrapper({
   children,
   className = "",
   style = {},
-  gradientOverride,
   colorOverride,
 }: TemplatePreviewWrapperProps) {
   const { templateType, formData } = useProjectGenerator();
 
   const mainColor = colorOverride || formData?.step1?.mainColor || "#4F21A1";
 
-  const backgroundGradient =
-    gradientOverride ||
-    generateTemplateGradient(templateType || "flash", mainColor);
   const templateColors = generateTemplateColors(
     templateType || "flash",
     mainColor
@@ -36,9 +31,8 @@ export default function TemplatePreviewWrapper({
 
   return (
     <div
-      className={`h-full relative ${className}`}
+      className={`h-full relative bg-white-neutral-light-300 ${className}`}
       style={{
-        background: backgroundGradient,
         backdropFilter: "blur(105.34431457519531px)",
         ...style,
       }}

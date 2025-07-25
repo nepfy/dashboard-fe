@@ -3,11 +3,10 @@ import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import IntroSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/IntroSectionPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
+import IntroSectionPreview from "./FlashPreview";
 
-// Helper function to convert form data to CompleteProjectData
 const convertFormDataToCompleteProjectData = (
   formData: ProposalFormData
 ): CompleteProjectData => {
@@ -37,7 +36,6 @@ const convertFormDataToCompleteProjectData = (
     createdAt: new Date(),
     updatedAt: new Date(),
     userName: null,
-    // Add other required fields with default values
     hideAboutUsSection: false,
     aboutUsTitle: null,
     hideAboutUsSubtitle1: false,
@@ -94,13 +92,12 @@ export default function IntroPreview() {
 
   const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-  // If Flash template is selected, render the Flash template section
   if (templateType === "flash") {
     return (
       <>
         <TemplatePreviewWrapper>
-          <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+          <div className="relative w-full h-full">
+            <div className="absolute inset-0 w-full h-screen flex flex-col justify-center items-center px-2">
               <IntroSectionPreview data={completeProjectData} />
             </div>
           </div>

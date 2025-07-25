@@ -46,7 +46,7 @@ export default function ProjectGenerator({
           </div>
         </nav>
 
-        <main className="flex-1 h-full">{children}</main>
+        <main className="flex-1 h-full overflow-hidden">{children}</main>
       </div>
     </ProjectGeneratorProvider>
   );

@@ -3,9 +3,9 @@ import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import BusinessSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/BusinessSectionPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
+import BusinessSectionPreview from "./FlashPreview";
 
 // Helper function to convert form data to CompleteProjectData
 const convertFormDataToCompleteProjectData = (
@@ -100,7 +100,7 @@ export default function AboutBusinessPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className="absolute inset-0 w-full h-full flex justify-center items-center">
               <BusinessSectionPreview data={completeProjectData} />
             </div>
           </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -33,16 +34,19 @@ interface FlashTemplateProps {
 }
 
 export default function FlashTemplate({ data }: FlashTemplateProps) {
+  const lenis = useLenis();
   const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+
   const lenisRef = useRef<LenisRef>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<HTMLDivElement>(null);
   const businessComplementRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
-  const lenis = useLenis();
+  const gradientRef = useRef<HTMLDivElement>(null);
 
   const needsPassword = data?.pagePassword && data.pagePassword.trim() !== "";
+
+  const gradient = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 94.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`;
 
   useEffect(() => {
     if (!needsPassword) {
@@ -76,72 +80,22 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   }, []);
 
   useEffect(() => {
-    if (
-      !introRef.current ||
-      !businessRef.current ||
-      !businessComplementRef.current ||
-      !containerRef.current ||
-      !backgroundRef.current ||
-      !isPasswordCorrect
-    )
-      return;
+    if (!containerRef.current || !gradientRef.current) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          const progress = self.progress;
-
-          const introProgress = Math.min(progress / 0.3, 1);
-          gsap.to(introRef.current, {
-            opacity: 1 - introProgress,
-            y: -introProgress * 150,
-            duration: 0.15,
-            ease: "none",
-          });
-
-          const businessProgress =
-            progress > 0.4 ? Math.min((progress - 0.4) / 0.35, 1) : 0;
-
-          const businessFadeOut =
-            progress > 0.85 ? Math.min((progress - 0.85) / 0.1, 1) : 0;
-          const businessOpacity = businessProgress * (1 - businessFadeOut);
-
-          gsap.to(businessRef.current, {
-            opacity: businessOpacity,
-            y: (1 - businessProgress) * 400 + businessFadeOut,
-            duration: 0.15,
-            ease: "none",
-          });
-
-          const businessComplementProgress =
-            progress > 0.9 ? Math.min((progress - 0.9) / 0.15, 1) : 0;
-          gsap.to(businessComplementRef.current, {
-            opacity: businessComplementProgress,
-            y: (1 - businessComplementProgress) * 400,
-            duration: 0.15,
-            ease: "none",
-          });
-        },
-      },
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: () => {},
     });
 
-    gsap.set(introRef.current, { opacity: 1, y: 0 });
-    gsap.set(businessRef.current, { opacity: 0, y: 100 });
-    gsap.set(businessComplementRef.current, { opacity: 0, y: 100 });
-
     return () => {
-      tl.kill();
+      scrollTrigger.kill();
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, [data?.mainColor, isPasswordCorrect]);
+  }, [gradient, containerRef.current, gradientRef.current]);
 
   if (needsPassword && !isPasswordCorrect) {
     return (
@@ -154,21 +108,22 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
     );
   }
 
-  const initialGradient = `radial-gradient(220% 130% at 10.84% 2.05003%, #000000 10%, #000000 10%, ${data?.mainColor} 45.22%, ${data?.mainColor} 54.9%, ${data?.mainColor} 34.9%, #000000 61.78%)`;
-
   return (
     <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
-      <div
-        ref={backgroundRef}
-        className="font-manrope relative w-screen"
-        style={{
-          background: initialGradient,
-        }}
-      >
+      <div className="font-manrope relative w-screen">
         <div
           ref={containerRef}
-          className="relative w-full h-screen overflow-hidden"
+          className="relative w-full h-screen bg-black overflow-hidden"
         >
+          <div
+            ref={gradientRef}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{
+              borderRadius: "50%",
+              background: gradient,
+              filter: "blur(100px)",
+            }}
+          />
           <div ref={introRef} className="absolute inset-0 w-full h-full">
             <IntroSection data={data} />
           </div>

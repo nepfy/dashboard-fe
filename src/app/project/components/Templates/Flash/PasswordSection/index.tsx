@@ -69,11 +69,11 @@ export default function PasswordSection({
     >
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h2 className="text-white text-2xl font-medium mb-2">
+          <h2 className="text-white-neutral-light-100 text-2xl font-medium mb-2">
             Inserir Senha
           </h2>
 
-          <p className="text-white-neutral-light-400 text-base mb-6">
+          <p className="text-white-neutral-light-100 text-base mb-6 opacity-80">
             Por favor, insira a senha para visualizar a proposta
           </p>
         </div>
