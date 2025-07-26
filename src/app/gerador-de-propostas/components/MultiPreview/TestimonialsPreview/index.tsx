@@ -142,7 +142,7 @@ export default function TestimonialsPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className="absolute inset-0 w-full h-full overflow-y-scroll p-6 flex items-center justify-center">
               <TestimonialsSectionPreview data={completeProjectData} />
             </div>
           </div>

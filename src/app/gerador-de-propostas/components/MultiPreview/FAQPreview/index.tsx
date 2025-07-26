@@ -173,7 +173,7 @@ export default function FAQPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className="w-full h-full overflow-y-scroll flex items-start 2xl:items-center justify-center p-6">
               <FAQSectionPreview data={completeProjectData} />
             </div>
           </div>

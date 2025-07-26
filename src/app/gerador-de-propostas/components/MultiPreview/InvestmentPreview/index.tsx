@@ -143,7 +143,7 @@ export default function InvestmentPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center">
               <InvestmentSectionPreview data={completeProjectData} />
             </div>
           </div>

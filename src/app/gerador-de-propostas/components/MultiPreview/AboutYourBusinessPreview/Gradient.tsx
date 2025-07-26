@@ -32,9 +32,9 @@ export default function Gradient() {
           width="1000"
           height="1000"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -55,9 +55,9 @@ export default function Gradient() {
           gradientTransform="translate(158.249 305.824) rotate(29.7859) scale(978.102 2391.42)"
         >
           <stop />
-          <stop offset="0.342151" stop-color="#200D42" />
-          <stop offset="0.649006" stop-color="#4F21A1" />
-          <stop offset="0.817781" stop-color="#A46EDB" />
+          <stop offset="0.342151" stopColor="#200D42" />
+          <stop offset="0.649006" stopColor="#4F21A1" />
+          <stop offset="0.817781" stopColor="#A46EDB" />
         </radialGradient>
       </defs>
     </svg>

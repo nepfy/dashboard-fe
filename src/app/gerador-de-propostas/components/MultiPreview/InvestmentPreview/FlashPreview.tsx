@@ -6,18 +6,16 @@ interface InvestmentPreviewProps {
 
 export default function InvestmentPreview({ data }: InvestmentPreviewProps) {
   return (
-    <div>
-      <div className="hidden w-[828px] h-[500px] 2xl:w-[1128px] 2xl:h-[600px] relative items-center justify-center">
-        <div className="absolute inset-0 bg-black/50"></div>
-
-        <div className="relative z-10 flex flex-col items-center justify-center w-full px-8 lg:px-0">
-          <div className="border-l-[0.5px] border-l-[#A0A0A0] h-[220px] pl-8 flex flex-col items-start justify-center">
-            <h1 className="text-[#DFD5E1] font-normal text-5xl max-w-[610px] leading-[1.1] mb-8">
-              {data?.investmentTitle}
-            </h1>
-          </div>
-        </div>
-      </div>
+    <div
+      className="w-[828px] min-h-[500px] flex items-center justify-center"
+      style={{
+        background: `linear-gradient(345deg, #000000 0%, #000000 10%, #000000 55%, ${data?.mainColor} 90%)`,
+      }}
+    >
+      <h1 className="text-[#DFD5E1] font-normal text-[41px] leading-[1.1] mb-8 max-w-[630px]">
+        <span className="text-[#A0A0A0] font-medium">Investimento. </span>
+        {data?.investmentTitle}
+      </h1>
     </div>
   );
 }

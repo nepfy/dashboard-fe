@@ -149,7 +149,7 @@ export default function DeliveriesPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className="w-full h-full overflow-y-scroll flex items-start 2xl:items-center justify-center my-2 p-6">
               <DeliverySectionPreview data={completeProjectData} />
             </div>
           </div>

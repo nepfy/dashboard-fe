@@ -1,23 +1,154 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
+
+import { useState, useRef, useEffect } from "react";
 import type { CompleteProjectData } from "#/app/project/types/project";
 
-interface FAQPreviewProps {
+interface FAQSectionProps {
   data?: CompleteProjectData;
 }
 
-export default function FAQPreview({ data }: FAQPreviewProps) {
-  return (
-    <div>
-      <div className="hidden w-[828px] h-[500px] 2xl:w-[1128px] 2xl:h-[600px] relative items-center justify-center">
-        <div className="absolute inset-0 bg-black/50"></div>
+export default function FAQPreview({ data }: FAQSectionProps) {
+  const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
+  const [contentHeights, setContentHeights] = useState<{
+    [key: string]: number;
+  }>({});
+  const contentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-        <div className="relative z-10 flex flex-col items-center justify-center w-full px-8 lg:px-0">
-          <div className="border-l-[0.5px] border-l-[#A0A0A0] h-[220px] pl-8 flex flex-col items-start justify-center">
-            <h1 className="text-[#DFD5E1] font-normal text-5xl max-w-[610px] leading-[1.1] mb-8">
-              {data?.faq?.map((faq) => faq.question).join(", ")}
-            </h1>
+  const handleFaqClick = (faqId: string) => {
+    setExpandedFaq(expandedFaq === faqId ? null : faqId);
+  };
+
+  const calculateDesktopHeights = () => {
+    const heights: { [key: string]: number } = {};
+    data?.faq?.forEach((faq) => {
+      const element = contentRefs.current[faq.id];
+      if (element) {
+        element.style.height = "auto";
+        const height = element.scrollHeight;
+        element.style.height = "";
+        heights[faq.id] = height;
+      }
+    });
+    setContentHeights(heights);
+  };
+
+  const calculateHeights = () => {
+    calculateDesktopHeights();
+  };
+
+  useEffect(() => {
+    if (data?.faq) {
+      const timeout = setTimeout(() => {
+        calculateHeights();
+      }, 0);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [data?.faq]);
+
+  useEffect(() => {
+    if (expandedFaq) {
+      const timeout = setTimeout(() => {
+        calculateHeights();
+      }, 0);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [expandedFaq]);
+
+  return (
+    <>
+      {!data?.hideFaqSection && data?.faq && data?.faq.length > 0 && (
+        <div
+          className="w-full px-15 py-20"
+          style={{
+            background: `linear-gradient(
+            190deg, 
+            #000000 0%,
+            #000000 10%,
+            #000000 20%,
+            #000000 30%,
+            ${data?.mainColor} 40%, 
+            ${data?.mainColor} 50%, 
+            #000000 65%, 
+            #000000 80%, 
+            #000000 90%, 
+            #000000 100%
+            )`,
+          }}
+        >
+          <p className="text-[#DFD5E1] text-5xl">
+            Perguntas <br /> Frequentes
+          </p>
+          <div className="w-full mt-15">
+            {data?.faq.map((faq, index) => {
+              const isExpanded = expandedFaq === faq.id;
+
+              return (
+                <div
+                  key={faq.id}
+                  className="border-b border-gray-300 last:border-b-0 w-full"
+                >
+                  <div className="w-full py-4 px-6">
+                    <div className="flex flex-col items-stretch justify-between mt-5">
+                      <div className="flex items-start mb-1">
+                        <span className="text-[10px] font-semibold text-[#DFD5E1] w-[30%]">
+                          0{index + 1}.
+                        </span>
+
+                        <div className="flex-1 flex justify-start px-2">
+                          <div className="w-full mx-auto">
+                            <p className="text-[10px] font-semibold text-[#DFD5E1] text-left">
+                              {faq.question}
+                            </p>
+
+                            <div
+                              className="w-full overflow-hidden transition-all duration-600 ease-in-out"
+                              style={{
+                                maxHeight:
+                                  isExpanded && faq.answer
+                                    ? `${contentHeights[faq.id] || "auto"}px`
+                                    : "0px",
+                              }}
+                            >
+                              {faq.answer && (
+                                <div
+                                  ref={(el) => {
+                                    contentRefs.current[faq.id] = el;
+                                  }}
+                                  className="py-2"
+                                >
+                                  <p className="text-[#DFD5E1] text-[10px] leading-relaxed">
+                                    {faq.answer}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleFaqClick(faq.id)}
+                          className=" text-left transition-all duration-600 ease-in-out min-w-[4rem] flex justify-end"
+                        >
+                          <span
+                            className={`text-[10px] font-semibold  ${
+                              isExpanded ? "text-[#DFD5E1]" : "text-white"
+                            }`}
+                          >
+                            LEIA
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
