@@ -178,6 +178,16 @@ export default function ClientsAccordion({
   const handleFileChange = async (clientId: string, file: File | null) => {
     if (!file || disabled) return;
 
+    // Validate file size (350KB = 350 * 1024 bytes)
+    const maxSizeInBytes = 350 * 1024;
+    if (file.size > maxSizeInBytes) {
+      setUploadErrors((prev) => ({
+        ...prev,
+        [clientId]: "O arquivo deve ter no máximo 350KB",
+      }));
+      return;
+    }
+
     setUploadErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[clientId];
@@ -463,8 +473,8 @@ export default function ClientsAccordion({
                       </div>
 
                       <div className="text-xs text-white-neutral-light-400 mt-3">
-                        Tipo de arquivo: .jpg, .png ou .webp. Tamanho
-                        recomendado: 100×100px. Tamanho máximo: 5MB
+                        Tipo de arquivo: .jpg ou .png. Tamanho recomendado:
+                        120×80px. Tamanho máximo: 350KB
                       </div>
 
                       {(uploadErrors[client.id] ||

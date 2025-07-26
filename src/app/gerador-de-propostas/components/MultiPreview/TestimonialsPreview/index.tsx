@@ -1,14 +1,12 @@
 import { useState } from "react";
-import Image from "next/image";
 import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import TestimonialsSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/TestimonialsSectionPreview";
+import TestimonialsSectionPreview from "./FlashPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
 
-// Helper function to convert form data to CompleteProjectData
 const convertFormDataToCompleteProjectData = (
   formData: ProposalFormData
 ): CompleteProjectData => {
@@ -139,7 +137,6 @@ export default function TestimonialsPreview() {
 
   const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-  // If Flash template is selected, render the Flash template section
   if (templateType === "flash") {
     return (
       <>
@@ -149,6 +146,13 @@ export default function TestimonialsPreview() {
               <TestimonialsSectionPreview data={completeProjectData} />
             </div>
           </div>
+
+          {formData?.step9?.hideTestimonialsSection && (
+            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+              A seção &quot;Depoimentos&quot; está atualmente oculta da
+              proposta.
+            </div>
+          )}
 
           <button
             onClick={() => setIsPreviewOpen(true)}
@@ -165,74 +169,4 @@ export default function TestimonialsPreview() {
       </>
     );
   }
-
-  // Default preview for other templates
-  return (
-    <TemplatePreviewWrapper>
-      <div className="flex flex-col justify-center items-start h-full p-8">
-        {!formData?.step9?.hideTestimonialsSection && (
-          <>
-            <div className="w-full space-y-8">
-              <div className="text-center mb-12">
-                <h2 className="text-white text-3xl font-bold mb-4 drop-shadow-lg">
-                  Depoimentos
-                </h2>
-              </div>
-
-              <div className="w-full">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {formData?.step9?.testimonials?.map((testimonial) => (
-                    <div key={testimonial.id} className="rounded-lg p-6">
-                      {testimonial.photo && !testimonial.hidePhoto && (
-                        <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden relative">
-                          <Image
-                            src={testimonial.photo}
-                            alt={testimonial.name || "Depoimento"}
-                            fill
-                            className="object-cover"
-                            sizes="96px"
-                          />
-                        </div>
-                      )}
-
-                      <p className="text-white-neutral-light-200 text-center mb-4 italic">
-                        &ldquo;{testimonial.testimonial}&rdquo;
-                      </p>
-
-                      <h3 className="text-xl font-semibold text-white-neutral-light-100 text-center mb-2">
-                        {testimonial.name}
-                      </h3>
-
-                      {testimonial.role && (
-                        <p className="text-white-neutral-light-200 text-center">
-                          {testimonial.role}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {(!formData?.step9?.testimonials ||
-                  formData.step9.testimonials.length === 0) && (
-                  <div className="text-center text-white opacity-75">
-                    <p>Nenhum depoimento adicionado ainda</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {formData?.step9?.hideTestimonialsSection && (
-        <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
-          A seção &quot;Depoimentos&quot; está atualmente oculta da proposta.
-        </div>
-      )}
-
-      <button className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl">
-        <ExpandIcon width="16" height="16" />
-      </button>
-    </TemplatePreviewWrapper>
-  );
 }

@@ -3,11 +3,10 @@ import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import CTASectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/CTASectionPreview";
+import CTASectionPreview from "./FlashPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
 
-// Helper function to convert form data to CompleteProjectData
 const convertFormDataToCompleteProjectData = (
   formData: ProposalFormData
 ): CompleteProjectData => {
@@ -130,16 +129,22 @@ export default function CTAPreview() {
 
   const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-  // If Flash template is selected, render the Flash template section
   if (templateType === "flash") {
     return (
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center p-6">
               <CTASectionPreview data={completeProjectData} />
             </div>
           </div>
+
+          {formData?.step8?.hideCTASection && (
+            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+              A seção &quot;Call to Action&quot; está atualmente oculta da
+              proposta.
+            </div>
+          )}
 
           <button
             onClick={() => setIsPreviewOpen(true)}
@@ -156,41 +161,4 @@ export default function CTAPreview() {
       </>
     );
   }
-
-  // Default preview for other templates
-  return (
-    <TemplatePreviewWrapper>
-      <div className="flex flex-col justify-center items-center h-full p-8">
-        {!formData?.step8?.hideCTASection && (
-          <>
-            <div className="w-full max-w-2xl text-center space-y-8">
-              <div className="mb-12">
-                <h2 className="text-white text-4xl font-bold mb-6 drop-shadow-lg">
-                  {formData?.step1?.pageTitle}
-                </h2>
-              </div>
-
-              <div className="w-full">
-                {formData?.step1?.ctaButtonTitle && (
-                  <button className="bg-white text-gray-900 hover:bg-white/90 transition-all duration-200 px-8 py-4 rounded-lg font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105">
-                    {formData.step1.ctaButtonTitle}
-                  </button>
-                )}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {formData?.step8?.hideCTASection && (
-        <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
-          A seção &quot;Call to Action&quot; está atualmente oculta da proposta.
-        </div>
-      )}
-
-      <button className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl">
-        <ExpandIcon width="16" height="16" />
-      </button>
-    </TemplatePreviewWrapper>
-  );
 }

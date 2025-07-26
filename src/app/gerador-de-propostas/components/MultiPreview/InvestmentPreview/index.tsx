@@ -3,7 +3,7 @@ import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import InvestmentSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/InvestmentSectionPreview";
+import InvestmentSectionPreview from "./FlashPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
 
@@ -138,7 +138,6 @@ export default function InvestmentPreview() {
 
   const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-  // If Flash template is selected, render the Flash template section
   if (templateType === "flash") {
     return (
       <>
@@ -148,6 +147,13 @@ export default function InvestmentPreview() {
               <InvestmentSectionPreview data={completeProjectData} />
             </div>
           </div>
+
+          {formData?.step10?.hideInvestmentSection && (
+            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+              A seção &quot;Investimento&quot; está atualmente oculta da
+              proposta.
+            </div>
+          )}
 
           <button
             onClick={() => setIsPreviewOpen(true)}

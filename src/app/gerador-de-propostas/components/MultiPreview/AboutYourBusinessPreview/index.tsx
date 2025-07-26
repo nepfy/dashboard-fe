@@ -105,6 +105,13 @@ export default function AboutBusinessPreview() {
             </div>
           </div>
 
+          {formData?.step2?.hideAboutUsSection && (
+            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+              A seção &quot;Sobre seu negócios&quot; está atualmente oculta da
+              proposta.
+            </div>
+          )}
+
           <button
             onClick={() => setIsPreviewOpen(true)}
             className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"

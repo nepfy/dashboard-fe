@@ -1,14 +1,12 @@
 import { useState } from "react";
-import Image from "next/image";
 import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import ClientSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/ClientSectionPreview";
+import ClientsPreviewComponent from "./FlashPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
 
-// Helper function to convert form data to CompleteProjectData
 const convertFormDataToCompleteProjectData = (
   formData: ProposalFormData
 ): CompleteProjectData => {
@@ -125,16 +123,24 @@ export default function ClientsPreview() {
 
   const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-  // If Flash template is selected, render the Flash template section
   if (templateType === "flash") {
     return (
       <>
         <TemplatePreviewWrapper>
-          <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
-              <ClientSectionPreview data={completeProjectData} />
+          {!formData?.step6?.hideClientsSection && (
+            <div className="relative w-full h-full overflow-hidden">
+              <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                <ClientsPreviewComponent data={completeProjectData} />
+              </div>
             </div>
-          </div>
+          )}
+
+          {formData?.step6?.hideClientsSection && (
+            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+              A seção &quot;Seus clientes&quot; está atualmente oculta da
+              proposta.
+            </div>
+          )}
 
           <button
             onClick={() => setIsPreviewOpen(true)}
@@ -151,66 +157,4 @@ export default function ClientsPreview() {
       </>
     );
   }
-
-  // Default preview for other templates
-  return (
-    <TemplatePreviewWrapper>
-      <div className="flex flex-col justify-center items-start h-full p-8">
-        {!formData?.step6?.hideClientsSection && (
-          <>
-            <div className="w-full space-y-8">
-              <div className="text-center mb-12">
-                <h2 className="text-white text-3xl font-bold mb-4 drop-shadow-lg">
-                  {formData?.step6?.clientSubtitle}
-                </h2>
-              </div>
-
-              <div className="w-full">
-                <div className="flex items-center justify-center flex-wrap gap-6">
-                  {formData?.step6?.clients?.map((client) => (
-                    <div key={client.id} className="p-4 text-center">
-                      {client.logo && !client.hideLogo && (
-                        <div className="w-32 h-16 mx-auto mb-4 rounded-lg overflow-hidden relative bg-white p-2">
-                          <Image
-                            src={client.logo}
-                            alt={client.name}
-                            fill
-                            className="object-contain"
-                            sizes="128px"
-                          />
-                        </div>
-                      )}
-
-                      {!client.hideClientName && (
-                        <h3 className="text-lg font-semibold text-white-neutral-light-100">
-                          {client.name}
-                        </h3>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {(!formData?.step6?.clients ||
-                  formData.step6.clients.length === 0) && (
-                  <div className="text-center text-white opacity-75">
-                    <p>Nenhum cliente adicionado ainda</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {formData?.step6?.hideClientsSection && (
-        <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
-          A seção &quot;Seus clientes&quot; está atualmente oculta da proposta.
-        </div>
-      )}
-
-      <button className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl">
-        <ExpandIcon width="16" height="16" />
-      </button>
-    </TemplatePreviewWrapper>
-  );
 }

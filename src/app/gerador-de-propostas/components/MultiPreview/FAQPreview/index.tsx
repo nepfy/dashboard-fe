@@ -3,12 +3,10 @@ import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import FAQSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/FAQSectionPreview";
+import FAQSectionPreview from "./FlashPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
-import { ChevronDown } from "lucide-react";
 
-// Helper function to convert form data to CompleteProjectData
 const convertFormDataToCompleteProjectData = (
   formData: ProposalFormData
 ): CompleteProjectData => {
@@ -152,7 +150,6 @@ const convertFormDataToCompleteProjectData = (
     createdAt: new Date(),
     updatedAt: new Date(),
     userName: null,
-    // Add other required fields with default values
     hideFinalMessageSection: false,
     hideFinalMessageSubtitle: false,
     endMessageTitle: null,
@@ -171,7 +168,6 @@ export default function FAQPreview() {
 
   const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-  // If Flash template is selected, render the Flash template section
   if (templateType === "flash") {
     return (
       <>
@@ -181,6 +177,13 @@ export default function FAQPreview() {
               <FAQSectionPreview data={completeProjectData} />
             </div>
           </div>
+
+          {formData?.step14?.hideFaqSection && (
+            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+              A seção &quot;Perguntas Frequentes&quot; está atualmente oculta da
+              proposta.
+            </div>
+          )}
 
           <button
             onClick={() => setIsPreviewOpen(true)}
@@ -197,75 +200,4 @@ export default function FAQPreview() {
       </>
     );
   }
-
-  // Default preview for other templates
-  return (
-    <TemplatePreviewWrapper>
-      <div className="flex flex-col justify-start items-start h-full p-8 overflow-y-scroll">
-        {!formData?.step14?.hideFaqSection && (
-          <div className="w-full space-y-8">
-            {/* FAQ List */}
-            <div className="space-y-4">
-              {formData?.step14?.faq?.map((faq) => (
-                <div
-                  key={faq.id}
-                  className="bg-white/80 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden hover:bg-white/15 transition-all duration-300"
-                >
-                  {/* FAQ Question Header */}
-                  <div className="w-full p-6 text-left flex items-center justify-between">
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white-neutral-light-800 pr-4">
-                          {faq.question}
-                        </h3>
-                      </div>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <ChevronDown
-                        size={20}
-                        className="text-white/70 transition-transform duration-200"
-                      />
-                    </div>
-                  </div>
-
-                  {/* FAQ Answer */}
-                  <div className="px-6 pb-6">
-                    <div className="pl-2">
-                      <div className="bg-white/5 rounded-lg p-4 border-l-4 border-white/30">
-                        <div className="leading-relaxed whitespace-pre-wrap text-white-neutral-light-800">
-                          {faq.answer}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {(!formData?.step14?.faq || formData.step14.faq.length === 0) && (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Nenhuma pergunta adicionada
-                </h3>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Bottom Notification (only when hidden) */}
-      {formData?.step14?.hideFaqSection && (
-        <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
-          A seção &quot;Perguntas Frequentes&quot; está atualmente oculta da
-          proposta.
-        </div>
-      )}
-
-      {/* Expand Button */}
-      <button className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-lg border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl">
-        <ExpandIcon width="16" height="16" />
-      </button>
-    </TemplatePreviewWrapper>
-  );
 }

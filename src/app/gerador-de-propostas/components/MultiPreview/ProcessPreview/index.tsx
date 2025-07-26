@@ -3,12 +3,10 @@ import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
-import ProcessSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/ProcessSectionPreview";
-import ProcessListSectionPreview from "#/app/gerador-de-propostas/components/PreviewModal/Flash/ProcessListSectionPreview";
+import ProcessSectionPreview from "./FlashPreview";
 import type { CompleteProjectData } from "#/app/project/types/project";
 import type { ProposalFormData } from "#/types/project";
 
-// Helper function to convert form data to CompleteProjectData
 const convertFormDataToCompleteProjectData = (
   formData: ProposalFormData
 ): CompleteProjectData => {
@@ -131,17 +129,22 @@ export default function ProcessPreview() {
 
   const completeProjectData = convertFormDataToCompleteProjectData(formData);
 
-  // If Flash template is selected, render the Flash template section
   if (templateType === "flash") {
     return (
       <>
         <TemplatePreviewWrapper>
-          <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+          <div className="relative w-full h-full overflow-y-scroll flex 2xl:items-center justify-center">
+            <div className="absolute inset-0 w-full py-6 flex lg:items-start 2xl:items-center justify-center">
               <ProcessSectionPreview data={completeProjectData} />
-              <ProcessListSectionPreview data={completeProjectData} />
             </div>
           </div>
+
+          {formData?.step7?.hideProcessSection && (
+            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+              A seção &quot;Seu processo&quot; está atualmente oculta da
+              proposta.
+            </div>
+          )}
 
           <button
             onClick={() => setIsPreviewOpen(true)}
@@ -158,66 +161,4 @@ export default function ProcessPreview() {
       </>
     );
   }
-
-  // Default preview for other templates
-  return (
-    <TemplatePreviewWrapper>
-      <div className="flex flex-col justify-center items-start h-full p-8">
-        {!formData?.step7?.hideProcessSection && (
-          <>
-            <div className="w-full space-y-8">
-              <div className="text-center mb-12">
-                {!formData?.step7?.hideProcessSubtitle && (
-                  <h2 className="text-white text-3xl font-bold mb-4 drop-shadow-lg">
-                    {formData?.step7?.processSubtitle}
-                  </h2>
-                )}
-              </div>
-
-              <div className="w-full">
-                <div className="space-y-6">
-                  {formData?.step7?.processSteps?.map((step, index) => (
-                    <div key={step.id} className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-8 h-8 bg-white-neutral-light-100 rounded-full flex items-center justify-center">
-                        <span className="text-gray-900 font-semibold text-sm">
-                          {step.stepCounter || index + 1}
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-white-neutral-light-100 mb-2">
-                          {step.stepName}
-                        </h3>
-                        {step.description && (
-                          <p className="text-white-neutral-light-200 leading-relaxed">
-                            {step.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {(!formData?.step7?.processSteps ||
-                  formData.step7.processSteps.length === 0) && (
-                  <div className="text-center text-white opacity-75">
-                    <p>Nenhum passo do processo adicionado ainda</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {formData?.step7?.hideProcessSection && (
-        <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
-          A seção &quot;Seu processo&quot; está atualmente oculta da proposta.
-        </div>
-      )}
-
-      <button className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl">
-        <ExpandIcon width="16" height="16" />
-      </button>
-    </TemplatePreviewWrapper>
-  );
 }
