@@ -13,7 +13,6 @@ import TitleDescription from "../../TitleDescription";
 import StepProgressIndicator from "../../StepProgressIndicator";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
-// Template field configurations
 interface FieldValidation {
   required?: boolean;
   maxLength?: number;
@@ -48,9 +47,9 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
         "Escreva uma mensagem de agradecimento e próximos passos",
     },
     validation: {
-      endMessageTitle: { maxLength: 50, required: true },
-      endMessageTitle2: { maxLength: 50, required: true },
-      endMessageDescription: { maxLength: 225, required: true },
+      endMessageTitle: { required: true },
+      endMessageTitle2: { required: true },
+      endMessageDescription: { required: true },
       projectValidUntil: { required: true },
     },
   },
@@ -74,9 +73,9 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
         "Escreva uma mensagem de agradecimento e próximos passos",
     },
     validation: {
-      endMessageTitle: { maxLength: 50, required: true },
-      endMessageTitle2: { maxLength: 50, required: true },
-      endMessageDescription: { maxLength: 225, required: true },
+      endMessageTitle: { required: true },
+      endMessageTitle2: { required: true },
+      endMessageDescription: { required: true },
       projectValidUntil: { required: true },
     },
   },
@@ -93,8 +92,8 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
         "Escreva uma mensagem de agradecimento e próximos passos",
     },
     validation: {
-      endMessageTitle: { maxLength: 45, required: true },
-      endMessageDescription: { maxLength: 225, required: true },
+      endMessageTitle: { required: true },
+      endMessageDescription: { required: true },
       projectValidUntil: { required: true },
     },
   },
@@ -118,8 +117,8 @@ const TEMPLATE_FIELD_CONFIG: Record<string, TemplateConfig> = {
       endMessageTitle2: "Digite seu email de contato",
     },
     validation: {
-      endMessageTitle: { maxLength: 50, required: true },
-      endMessageDescription: { maxLength: 225, required: true },
+      endMessageTitle: { required: true },
+      endMessageDescription: { required: true },
       endMessageTitle2: { required: true, isEmail: true },
       projectValidUntil: { required: true },
     },
@@ -143,12 +142,10 @@ export default function FinalMessageForm() {
   const templateConfig =
     TEMPLATE_FIELD_CONFIG[currentTemplate] || TEMPLATE_FIELD_CONFIG.flash;
 
-  // Initialize subtitleVisible based on formData
   const [subtitleVisible, setSubtitleVisible] = useState(
     !formData?.step15?.hideFinalMessageSubtitle
   );
 
-  // Sync subtitleVisible with formData when it changes
   useEffect(() => {
     setSubtitleVisible(!formData?.step15?.hideFinalMessageSubtitle);
   }, [formData?.step15?.hideFinalMessageSubtitle]);
@@ -159,7 +156,7 @@ export default function FinalMessageForm() {
 
   const validateField = (fieldName: string, value: string): string | null => {
     if (!templateConfig.fields.includes(fieldName)) {
-      return null; // Field not required for this template
+      return null;
     }
 
     const fieldValidation = templateConfig.validation[fieldName];
@@ -167,25 +164,17 @@ export default function FinalMessageForm() {
 
     const label = templateConfig.labels[fieldName];
 
-    // Required validation
     if (fieldValidation.required && (!value || !value.trim())) {
       return `O campo '${label}' é obrigatório`;
     }
 
-    // Skip other validations if field is empty (and not required)
     if (!value || !value.trim()) return null;
 
-    // Email validation for Grid template
     if (fieldValidation.isEmail) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value)) {
         return "Por favor, insira um email válido";
       }
-    }
-
-    // Length validations
-    if (fieldValidation.maxLength && value.length > fieldValidation.maxLength) {
-      return `O campo '${label}' deve ter no máximo ${fieldValidation.maxLength} caracteres`;
     }
 
     return null;
@@ -200,7 +189,6 @@ export default function FinalMessageForm() {
       formData?.step15?.hideFinalMessageSubtitle || false;
 
     if (!hideSection) {
-      // Validate each field based on template configuration
       templateConfig.fields.forEach((fieldName) => {
         let fieldValue = "";
         let shouldValidate = true;
@@ -214,7 +202,7 @@ export default function FinalMessageForm() {
             break;
           case "endMessageDescription":
             fieldValue = formData?.step15?.endMessageDescription || "";
-            shouldValidate = !hideFinalMessageSubtitle; // Only validate if subtitle is visible
+            shouldValidate = !hideFinalMessageSubtitle;
             break;
           case "projectValidUntil":
             fieldValue = String(formData?.step15?.projectValidUntil || "");
@@ -323,7 +311,6 @@ export default function FinalMessageForm() {
 
     const label = templateConfig.labels[fieldName];
     const placeholder = templateConfig.placeholders?.[fieldName] || "";
-    const fieldValidation = templateConfig.validation[fieldName];
 
     switch (fieldName) {
       case "endMessageTitle":
@@ -342,10 +329,10 @@ export default function FinalMessageForm() {
               placeholder={placeholder}
               value={formData?.step15?.endMessageTitle || ""}
               onChange={handleFieldChange("endMessageTitle")}
-              maxLength={fieldValidation?.maxLength || 50}
               showCharCount
               error={errors.endMessageTitle}
               disabled={isFormDisabled}
+              charCountMessage="Recomendado: 50 caracteres"
             />
           </div>
         );
@@ -366,10 +353,10 @@ export default function FinalMessageForm() {
               placeholder={placeholder}
               value={formData?.step15?.endMessageTitle2 || ""}
               onChange={handleFieldChange("endMessageTitle2")}
-              maxLength={fieldValidation?.maxLength || 50}
               showCharCount={currentTemplate !== "grid"} // Don't show char count for email field
               error={errors.endMessageTitle2}
               disabled={isFormDisabled}
+              charCountMessage="Recomendado: 50 caracteres"
             />
           </div>
         );
@@ -404,7 +391,6 @@ export default function FinalMessageForm() {
                 placeholder={placeholder}
                 value={formData?.step15?.endMessageDescription || ""}
                 onChange={handleFieldChange("endMessageDescription")}
-                maxLength={fieldValidation?.maxLength || 225}
                 showCharCount
                 rows={4}
                 error={errors.endMessageDescription}
@@ -413,6 +399,7 @@ export default function FinalMessageForm() {
                   display: subtitleVisible ? "block" : "none",
                 }}
                 autoExpand
+                charCountMessage="Recomendado: 50 caracteres"
               />
             )}
           </div>
@@ -481,7 +468,6 @@ export default function FinalMessageForm() {
         )}
 
         <div className={`py-6 ${isFormDisabled ? "opacity-60" : ""}`}>
-          {/* Render fields based on template configuration */}
           {templateConfig.fields.map((fieldName) => renderField(fieldName))}
         </div>
       </div>

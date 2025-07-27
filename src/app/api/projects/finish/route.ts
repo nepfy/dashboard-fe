@@ -127,9 +127,10 @@ export async function POST(request: Request) {
       hideServices: formData.step1?.hideServices || false,
 
       hideAboutUsSection: formData.step2?.hideAboutUsSection || false,
-      aboutUsTitle: formData.step2?.aboutUsTitle,
+      hideAboutUsTitle: formData.step2?.hideAboutUsTitle || false,
       aboutUsSubtitle1: formData.step2?.aboutUsSubtitle1,
       aboutUsSubtitle2: formData.step2?.aboutUsSubtitle2,
+      aboutUsTitle: formData.step2?.aboutUsTitle,
       hideAboutUsSubtitle2: formData.step2?.hideAboutUsSubtitle2 || false,
       hideAboutUsSubtitle1: formData.step2?.hideAboutUsSubtitle1 || false,
 
@@ -260,6 +261,7 @@ export async function POST(request: Request) {
       if (formData.step4.expertise.length > 0) {
         const expertiseToInsert = formData.step4.expertise.map(
           (expertise: Expertise, index: number) => ({
+            hideExpertiseIcon: expertise.hideExpertiseIcon || false,
             projectId: finalProjectId,
             title: expertise.title || "",
             description: expertise.description || "",
@@ -307,6 +309,7 @@ export async function POST(request: Request) {
 
             return {
               projectId: finalProjectId,
+              hidePhoto: result.hidePhoto || false,
               photo: result.photo || null,
               client: result.client || "",
               subtitle: result.subtitle || "",

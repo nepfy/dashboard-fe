@@ -61,6 +61,10 @@ const initialFormData: ProposalFormData = {
     services: flash.step1.services?.split(","),
   },
   step2: {
+    hideAboutUsSection: flash.step2.hideAboutUsSection,
+    hideAboutUsTitle: flash.step2.hideAboutUsTitle,
+    hideAboutUsSubtitle1: flash.step2.hideAboutUsSubtitle1,
+    hideAboutUsSubtitle2: flash.step2.hideAboutUsSubtitle2,
     aboutUsTitle: flash.step2.aboutUsTitle,
     aboutUsSubtitle1: flash.step2.aboutUsSubtitle1,
     aboutUsSubtitle2: flash.step2.aboutUsSubtitle2,
@@ -288,6 +292,7 @@ export function ProjectGeneratorProvider({
     safeUpdate("step2", {
       hideAboutUsSection: projectData.hideAboutUsSection || false,
       aboutUsTitle: projectData.aboutUsTitle,
+      hideAboutUsTitle: projectData.hideAboutUsTitle || false,
       hideAboutUsSubtitle1: projectData.hideAboutUsSubtitle1 || false,
       hideAboutUsSubtitle2: projectData.hideAboutUsSubtitle2 || false,
       aboutUsSubtitle1: projectData.aboutUsSubtitle1,

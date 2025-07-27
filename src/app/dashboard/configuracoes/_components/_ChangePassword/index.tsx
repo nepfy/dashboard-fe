@@ -53,18 +53,18 @@ export default function ChangePassword() {
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-center items-end">
+      <div className="flex flex-col sm:flex-row justify-center items-center">
         <TextField
           label="Senha"
           inputName="password"
           id="password"
           type="text"
-          onChange={() => console.log("password")}
+          onChange={() => {}}
           value="••••••••"
         />
         <button
           onClick={() => setPasswordModal(true)}
-          className="w-full sm:w-[72px] h-[50px] border border-white-neutral-light-300 button-inner bg-white-neutral-light-100 rounded-xs ml-2 px-4 mb-2 cursor-pointer"
+          className="w-full sm:w-[72px] h-[52px] border border-white-neutral-light-300 button-inner bg-white-neutral-light-100 rounded-xs ml-2 px-4 cursor-pointer"
         >
           Editar
         </button>
@@ -86,13 +86,13 @@ export default function ChangePassword() {
             </p>
             <p className="text-white-neutral-light-500 text-sm ">
               Ele será usado para criar um link exclusivo para cada proposta que
-              você enviar, como:
-              <span className="text-primary-light-500 text-sm mb-3">
+              você enviar, como:{" "}
+              <span className="text-primary-light-500 text-sm">
                 usuario-cliente.nepfy.com.
               </span>
             </p>
 
-            <p className="text-white-neutral-light-500 text-sm">
+            <p className="text-white-neutral-light-500 text-sm mt-3">
               Esse é o nome de usuário que você escolheu no momento do cadastro.
             </p>
             <p className="font-bold text-white-neutral-light-500 text-sm mb-3">

@@ -34,6 +34,7 @@ const convertFormDataToCompleteProjectData = (
       : formData?.step1?.services || null,
     hideServices: formData?.step1?.hideServices || false,
     hideAboutUsSection: formData?.step2?.hideAboutUsSection || false,
+    hideAboutUsTitle: formData?.step2?.hideAboutUsTitle || false,
     aboutUsTitle: formData?.step2?.aboutUsTitle || null,
     hideAboutUsSubtitle1: formData?.step2?.hideAboutUsSubtitle1 || false,
     hideAboutUsSubtitle2: formData?.step2?.hideAboutUsSubtitle2 || false,
@@ -179,7 +180,7 @@ export default function FAQPreview() {
           </div>
 
           {formData?.step14?.hideFaqSection && (
-            <div className="absolute bottom-10 left-6 z-50 hidden p-2 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
+            <div className="absolute bottom-10 left-6 z-50 hidden p-6 text-sm bg-yellow-light-25 text-white-neutral-light-100 w-[460px] h-[50px] xl:flex items-center justify-center rounded-[10px] border border-yellow-light-50 shadow-lg">
               A seção &quot;Perguntas Frequentes&quot; está atualmente oculta da
               proposta.
             </div>

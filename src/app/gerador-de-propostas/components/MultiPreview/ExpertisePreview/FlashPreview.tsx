@@ -85,7 +85,7 @@ export default function ExpertiseSectionPreview({
                   className="flex justify-start items-start mb-20 w-full lg:max-w-[200px] 2xl:max-w-[250px]"
                 >
                   <div className="flex flex-col items-start justify-start">
-                    {(item.icon || !item.hideExpertiseIcon) && (
+                    {item.icon && !item.hideExpertiseIcon && (
                       <div className="text-white mb-2">
                         {typeof item.icon === "string"
                           ? renderIcon(item.icon)

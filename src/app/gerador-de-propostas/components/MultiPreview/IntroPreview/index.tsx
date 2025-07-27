@@ -37,6 +37,7 @@ const convertFormDataToCompleteProjectData = (
     updatedAt: new Date(),
     userName: null,
     hideAboutUsSection: false,
+    hideAboutUsTitle: false,
     aboutUsTitle: null,
     hideAboutUsSubtitle1: false,
     hideAboutUsSubtitle2: false,

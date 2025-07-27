@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "hide_about_us_title" boolean DEFAULT false;

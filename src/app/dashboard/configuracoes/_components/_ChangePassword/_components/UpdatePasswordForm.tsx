@@ -85,6 +85,7 @@ export default function UpdatePasswordForm({
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      onCloseAction(false);
     } catch (err) {
       console.error("Erro:", err);
       if (err instanceof Error) {

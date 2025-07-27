@@ -45,11 +45,12 @@ export const projectsTable = pgTable("projects", {
   hideServices: boolean("hide_services").default(false),
 
   hideAboutUsSection: boolean("hide_about_us_section").default(false),
+  hideAboutUsTitle: boolean("hide_about_us_title").default(false),
+  hideAboutUsSubtitle1: boolean("hide_about_us_subtitle_1").default(false),
+  hideAboutUsSubtitle2: boolean("hide_about_us_subtitle_2").default(false),
   aboutUsTitle: varchar("about_us_title", { length: 420 }),
   aboutUsSubtitle1: text("about_us_subtitle_1"),
   aboutUsSubtitle2: text("about_us_subtitle_2"),
-  hideAboutUsSubtitle1: boolean("hide_about_us_subtitle_1").default(false),
-  hideAboutUsSubtitle2: boolean("hide_about_us_subtitle_2").default(false),
 
   hideAboutYourTeamSection: boolean("hide_about_your_team_section").default(
     false
@@ -129,6 +130,7 @@ export const projectExpertiseTable = pgTable("project_expertise", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   sortOrder: integer("sort_order").default(0),
+  hideExpertiseIcon: boolean("hide_expertise_icon").default(false),
   ...timestamps,
 });
 
@@ -138,6 +140,7 @@ export const projectResultsTable = pgTable("project_results", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
+  hidePhoto: boolean("hide_photo").default(false),
   photo: text("photo"), // URL or file path
   client: varchar("client", { length: 255 }),
   subtitle: text("subtitle"),
@@ -153,10 +156,10 @@ export const projectClientsTable = pgTable("project_clients", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
-  logo: text("logo"),
   hideLogo: boolean("hide_logo").default(false),
-  name: varchar("name", { length: 255 }).notNull(),
+  logo: text("logo"),
   hideClientName: boolean("hide_client_name").default(false),
+  name: varchar("name", { length: 255 }).notNull(),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
 });

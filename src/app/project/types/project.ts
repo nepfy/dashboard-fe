@@ -2,6 +2,7 @@ export interface ProjectTeamMember {
   id: string;
   name: string;
   role: string | null;
+
   photo: string | null;
   sortOrder: number | null;
 }
@@ -12,13 +13,13 @@ export interface ProjectExpertise {
   title: string;
   description: string | null;
   sortOrder: number | null;
-  hideExpertiseIcon?: boolean;
+  hideExpertiseIcon?: boolean | null;
 }
 
 export interface ProjectResult {
   id: string;
   photo: string | null;
-  hidePhoto?: boolean;
+  hidePhoto?: boolean | null;
   client: string | null;
   subtitle: string | null;
   investment: string | null;
@@ -114,6 +115,7 @@ export interface CompleteProjectData {
   services: string | null;
   hideServices: boolean | null;
   hideAboutUsSection: boolean | null;
+  hideAboutUsTitle: boolean | null;
   aboutUsTitle: string | null;
   hideAboutUsSubtitle1: boolean | null;
   hideAboutUsSubtitle2: boolean | null;

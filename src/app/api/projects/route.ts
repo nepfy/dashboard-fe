@@ -565,6 +565,7 @@ export async function POST(request: Request) {
         if (expertise.length > 0) {
           const duplicatedExpertise = expertise.map((exp) => ({
             projectId: newProjectId,
+            hideExpertiseIcon: exp.hideExpertiseIcon,
             icon: exp.icon,
             title: exp.title,
             description: exp.description,
@@ -583,6 +584,7 @@ export async function POST(request: Request) {
         if (results.length > 0) {
           const duplicatedResults = results.map((result) => ({
             projectId: newProjectId,
+            hidePhoto: result.hidePhoto,
             photo: result.photo,
             client: result.client,
             subtitle: result.subtitle,

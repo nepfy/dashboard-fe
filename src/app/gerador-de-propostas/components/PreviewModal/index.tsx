@@ -47,6 +47,7 @@ const convertFormDataToCompleteProjectData = (
     hideServices: formData.step1?.hideServices || false,
     hideAboutUsSection: formData.step2?.hideAboutUsSection || false,
     aboutUsTitle: formData.step2?.aboutUsTitle || null,
+    hideAboutUsTitle: formData.step2?.hideAboutUsTitle || false,
     hideAboutUsSubtitle1: formData.step2?.hideAboutUsSubtitle1 || false,
     hideAboutUsSubtitle2: formData.step2?.hideAboutUsSubtitle2 || false,
     aboutUsSubtitle1: formData.step2?.aboutUsSubtitle1 || null,

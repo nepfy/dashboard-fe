@@ -23,7 +23,6 @@ export default function AboutYourExpertiseForm() {
   } = useProjectGenerator();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Check template types to hide subtitle field
   const isEssencialTemplate = templateType?.toLowerCase() === "essencial";
   const isGridTemplate = templateType?.toLowerCase() === "grid";
   const shouldHideSubtitle = isEssencialTemplate || isGridTemplate;
@@ -37,7 +36,6 @@ export default function AboutYourExpertiseForm() {
   };
 
   const handleExpertiseChange = (expertise: Expertise[]) => {
-    // Clear any expertise-related errors when expertise changes
     setErrors((prev) => {
       const newErrors = { ...prev };
       Object.keys(newErrors).forEach((key) => {
@@ -67,50 +65,34 @@ export default function AboutYourExpertiseForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideExpertiseSection) {
-      // Only validate subtitle if it should be visible (not Essencial or Grid template)
       if (!shouldHideSubtitle) {
         if (!expertiseSubtitle.trim()) {
           newErrors.expertiseSubtitle = "O subtítulo é obrigatório";
         }
       }
 
-      // Check if at least one expertise exists
       if (expertiseList.length === 0) {
         newErrors.expertiseList = "Ao menos 1 especialização é requerida";
       } else {
-        // Validate each expertise item
         expertiseList.forEach((expertise: Expertise, index: number) => {
           const expertisePrefix = `expertise_${index}`;
 
-          // Check if icon is required and not hidden
           if (!expertise.hideExpertiseIcon && !expertise.icon) {
             newErrors[`${expertisePrefix}_icon`] = `Ícone da especialização ${
               index + 1
             } é obrigatório`;
           }
 
-          // Validate title
           if (!expertise.title?.trim()) {
             newErrors[`${expertisePrefix}_title`] = `Título da especialização ${
               index + 1
             } é obrigatório`;
-          } else if (expertise.title.length > 30) {
-            newErrors[`${expertisePrefix}_title`] = `Título da especialização ${
-              index + 1
-            } deve ter no máximo 30 caracteres`;
           }
 
-          // Validate description
           if (!expertise.description?.trim()) {
             newErrors[
               `${expertisePrefix}_description`
             ] = `Descrição da especialização ${index + 1} é obrigatória`;
-          } else if (expertise.description.length > 150) {
-            newErrors[
-              `${expertisePrefix}_description`
-            ] = `Descrição da especialização ${
-              index + 1
-            } deve ter no máximo 150 caracteres`;
           }
         });
       }
@@ -143,7 +125,6 @@ export default function AboutYourExpertiseForm() {
 
   const hideSectionChecked = formData?.step4?.hideExpertiseSection || false;
 
-  // Helper function to check if there are any expertise validation errors
   const hasExpertiseErrors = () => {
     return Object.keys(errors).some(
       (key) => key.startsWith("expertise_") || key === "expertiseList"
@@ -189,7 +170,6 @@ export default function AboutYourExpertiseForm() {
         )}
 
         <div className="py-6 space-y-6">
-          {/* Only show subtitle field if not Essencial or Grid template */}
           {!shouldHideSubtitle && (
             <div>
               <label

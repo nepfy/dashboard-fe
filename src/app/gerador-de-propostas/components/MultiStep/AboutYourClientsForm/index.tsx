@@ -86,7 +86,6 @@ export default function AboutYourClientsForm() {
     const newErrors: { [key: string]: string } = {};
 
     if (!hideClientsSection) {
-      // Only validate subtitle if it should be visible (Essencial template)
       if (shouldShowSubtitle) {
         if (!clientSubtitle.trim()) {
           newErrors.clientSubtitle = "O subtítulo é obrigatório";
@@ -99,22 +98,34 @@ export default function AboutYourClientsForm() {
         clients.forEach((client: Client, index: number) => {
           const clientPrefix = `client_${index}`;
 
-          // Validate client name if not hidden
-          if (!client.hideClientName && !client.name?.trim()) {
+          if (
+            !client.hideClientName &&
+            !client.name?.trim() &&
+            !client.hideLogo &&
+            !client.logo
+          ) {
             newErrors[`${clientPrefix}_name`] = `Nome do cliente ${
               index + 1
             } é obrigatório`;
           }
 
-          // Validate logo if not hidden
-          if (!client.hideLogo && !client.logo?.trim()) {
+          if (
+            !client.hideClientName &&
+            !client.name?.trim() &&
+            !client.hideLogo &&
+            !client.logo
+          ) {
             newErrors[`${clientPrefix}_logo`] = `Logo do cliente ${
               index + 1
             } é obrigatório`;
           }
 
-          // If both logo and client name are hidden, show error
-          if (client.hideLogo && client.hideClientName) {
+          if (
+            !client.hideClientName &&
+            !client.name?.trim() &&
+            !client.hideLogo &&
+            !client.logo
+          ) {
             newErrors[`${clientPrefix}_visibility`] = `Cliente ${
               index + 1
             } deve ter pelo menos o logo ou o nome visível`;

@@ -75,15 +75,19 @@ export default function IntroSectionPreview({
                 </div>
 
                 <div className="flex justify-start items-center">
-                  <div className="text-white-neutral-light-100 lg:h-22 2xl:h-40 border-l border-l-[#A0A0A0] pl-4 flex-col justify-end pb-2 font-semibold lg:text-[8px] 2xl:text-[12px] flex w-1/2">
-                    {servicesArray.map((service, index) => (
-                      <p key={index}>{service}</p>
-                    ))}
-                  </div>
+                  {!data?.hideServices && servicesArray.length > 0 && (
+                    <div className="text-white-neutral-light-100 lg:h-22 2xl:h-40 border-l border-l-[#A0A0A0] pl-4 flex-col justify-end pb-2 font-semibold lg:text-[8px] 2xl:text-[12px] flex w-1/2">
+                      {servicesArray.map((service, index) => (
+                        <p key={index}>{service}</p>
+                      ))}
+                    </div>
+                  )}
 
-                  <div className="text-white-neutral-light-100 lg:h-22 2xl:h-40 border-l border-l-[#A0A0A0] pl-4 flex flex-col justify-end pb-2 font-medium lg:text-[10px] 2xl:text-[15px] lg:leading-3 2xl:leading-4 w-1/2 max-w-[220px] 2xl:max-w-[330px]">
-                    {data.pageSubtitle}
-                  </div>
+                  {!data?.hidePageSubtitle && data?.pageSubtitle && (
+                    <div className="text-white-neutral-light-100 lg:h-22 2xl:h-40 border-l border-l-[#A0A0A0] pl-4 flex flex-col justify-end pb-2 font-medium lg:text-[10px] 2xl:text-[15px] lg:leading-3 2xl:leading-4 w-1/2 max-w-[220px] 2xl:max-w-[330px]">
+                      {data.pageSubtitle}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

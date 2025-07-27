@@ -55,6 +55,7 @@ const flash = {
         title: "Branding",
         description:
           "Criamos identidades visuais únicas que comunicam o propósito da sua marca com autenticidade.",
+        hideExpertiseIcon: false,
       },
       {
         id: "2",
@@ -62,6 +63,7 @@ const flash = {
         title: "Design Digital",
         description:
           "Desenvolvemos soluções digitais que aliam inovação e funcionalidade.",
+        hideExpertiseIcon: false,
       },
       {
         id: "3",
@@ -69,6 +71,7 @@ const flash = {
         title: "UI/UX Design",
         description:
           "Projetamos interfaces intuitivas e envolventes, proporcionando uma navegação fluida e agradável.",
+        hideExpertiseIcon: false,
       },
       {
         id: "4",
@@ -76,6 +79,7 @@ const flash = {
         title: "Design para Marketing",
         description:
           "Criamos campanhas visuais impactantes, que fortalecem a presença da sua marca.",
+        hideExpertiseIcon: false,
       },
       {
         id: "5",
@@ -83,6 +87,7 @@ const flash = {
         title: "Design de Embalagem",
         description:
           "Desenvolvemos embalagens que unem estética e praticidade, reforçando sua identidade.",
+        hideExpertiseIcon: false,
       },
       {
         id: "6",
@@ -90,6 +95,7 @@ const flash = {
         title: "Consultoria de Design",
         description:
           "Oferecemos orientações estratégicas para otimizar o design e a comunicação visual.",
+        hideExpertiseIcon: false,
       },
       {
         id: "7",
@@ -97,6 +103,7 @@ const flash = {
         title: "Design de Produto",
         description:
           "Projetamos produtos inovadores e funcionais, com foco na experiência do usuário e no impacto.",
+        hideExpertiseIcon: false,
       },
       {
         id: "8",
@@ -104,6 +111,7 @@ const flash = {
         title: "Fotografia e Vídeo",
         description:
           "Capturamos a essência da sua marca por meio de imagens e vídeos de alta qualidade.",
+        hideExpertiseIcon: false,
       },
     ],
   },
@@ -121,6 +129,7 @@ const flash = {
         roi: "731486.00",
         photo: "/images/templates/flash/placeholder2.png",
         sortOrder: 1,
+        hidePhoto: false,
       },
       {
         id: "2",
@@ -130,6 +139,7 @@ const flash = {
         roi: "600486.00",
         photo: "/images/templates/flash/placeholder2.png",
         sortOrder: 2,
+        hidePhoto: false,
       },
       {
         id: "3",
@@ -139,6 +149,7 @@ const flash = {
         roi: "234555.00",
         photo: "/images/templates/flash/placeholder2.png",
         sortOrder: 3,
+        hidePhoto: false,
       },
     ],
   },

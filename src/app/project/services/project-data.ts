@@ -55,6 +55,7 @@ export const getProjectData = cache(
           hideServices: projectsTable.hideServices,
           hideAboutUsSection: projectsTable.hideAboutUsSection,
           aboutUsTitle: projectsTable.aboutUsTitle,
+          hideAboutUsTitle: projectsTable.hideAboutUsTitle,
           hideAboutUsSubtitle1: projectsTable.hideAboutUsSubtitle1,
           hideAboutUsSubtitle2: projectsTable.hideAboutUsSubtitle2,
           aboutUsSubtitle1: projectsTable.aboutUsSubtitle1,

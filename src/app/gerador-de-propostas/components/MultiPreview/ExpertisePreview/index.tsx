@@ -33,6 +33,7 @@ const convertFormDataToCompleteProjectData = (
       ? formData.step1.services.join(",")
       : formData?.step1?.services || null,
     hideServices: formData?.step1?.hideServices || false,
+    hideAboutUsTitle: formData?.step2?.hideAboutUsTitle || false,
     hideAboutUsSection: formData?.step2?.hideAboutUsSection || false,
     aboutUsTitle: formData?.step2?.aboutUsTitle || null,
     hideAboutUsSubtitle1: formData?.step2?.hideAboutUsSubtitle1 || false,
@@ -62,7 +63,6 @@ const convertFormDataToCompleteProjectData = (
     createdAt: new Date(),
     updatedAt: new Date(),
     userName: null,
-    // Add other required fields with default values
     hideResultsSection: false,
     resultsSubtitle: null,
     results: [],

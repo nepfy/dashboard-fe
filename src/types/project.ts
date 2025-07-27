@@ -128,9 +128,10 @@ export interface Project {
   hideServices?: boolean;
 
   hideAboutUsSection?: boolean;
-  aboutUsTitle?: string;
+  hideAboutUsTitle?: boolean;
   hideAboutUsSubtitle1?: boolean;
   hideAboutUsSubtitle2?: boolean;
+  aboutUsTitle?: string;
   aboutUsSubtitle1?: string;
   aboutUsSubtitle2?: string;
 
