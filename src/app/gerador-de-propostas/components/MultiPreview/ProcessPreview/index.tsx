@@ -134,7 +134,7 @@ export default function ProcessPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-y-scroll flex 2xl:items-center justify-center">
-            <div className="absolute inset-0 w-full py-6 flex lg:items-start 2xl:items-center justify-center">
+            <div className="absolute inset-0 w-full p-6 flex lg:items-start 2xl:items-center justify-center">
               <ProcessSectionPreview data={completeProjectData} />
             </div>
           </div>

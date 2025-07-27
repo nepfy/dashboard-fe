@@ -112,7 +112,7 @@ export default function ExpertisePreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full p-6 overflow-y-scroll flex justify-center items-center pt-80 2xl:pt-0">
+            <div className="absolute inset-0 w-full h-full p-6 overflow-y-scroll flex justify-center items-start 2xl:items-center 2xl:pt-0">
               <ExpertiseSectionPreview data={completeProjectData} />
             </div>
           </div>

@@ -97,7 +97,7 @@ export default function IntroPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full">
-            <div className="absolute inset-0 w-full h-screen flex flex-col justify-center items-center px-2">
+            <div className="absolute inset-0 w-full h-screen flex flex-col justify-center items-center p-6">
               <IntroSectionPreview data={completeProjectData} />
             </div>
           </div>

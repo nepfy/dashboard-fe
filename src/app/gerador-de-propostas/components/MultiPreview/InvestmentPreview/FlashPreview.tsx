@@ -7,7 +7,7 @@ interface InvestmentPreviewProps {
 export default function InvestmentPreview({ data }: InvestmentPreviewProps) {
   return (
     <div
-      className="w-[828px] min-h-[500px] flex items-center justify-center"
+      className="w-full min-h-[500px] flex items-center justify-center p-6"
       style={{
         background: `linear-gradient(345deg, #000000 0%, #000000 10%, #000000 55%, ${data?.mainColor} 90%)`,
       }}

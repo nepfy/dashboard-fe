@@ -1,25 +1,97 @@
+import Marquee from "react-fast-marquee";
+import { formatDateToDDMonYYYY } from "#/helpers/formatDateAndTime";
 import type { CompleteProjectData } from "#/app/project/types/project";
 
-interface FinalMessagePreviewProps {
+interface FinalMessageSectionProps {
   data?: CompleteProjectData;
 }
 
 export default function FinalMessagePreview({
   data,
-}: FinalMessagePreviewProps) {
+}: FinalMessageSectionProps) {
   return (
-    <div>
-      <div className="hidden w-[828px] h-[500px] 2xl:w-[1128px] 2xl:h-[600px] relative items-center justify-center">
-        <div className="absolute inset-0 bg-black/50"></div>
-
-        <div className="relative z-10 flex flex-col items-center justify-center w-full px-8 lg:px-0">
-          <div className="border-l-[0.5px] border-l-[#A0A0A0] h-[220px] pl-8 flex flex-col items-start justify-center">
-            <h1 className="text-[#DFD5E1] font-normal text-5xl max-w-[610px] leading-[1.1] mb-8">
-              {data?.endMessageTitle}
-            </h1>
+    <>
+      {!data?.hideFinalMessageSection && (
+        <div
+          className="w-full pt-20 pb-6"
+          style={{
+            background: `${data?.mainColor}`,
+          }}
+        >
+          <div className="w-full max-w-[1100px]">
+            <div className="flex items-start justify-start border-b-[0.5px] border-b-[#A0A0A0] pb-20 px-8">
+              <div className="w-[30%] 2xl:w-[400px]">
+                <p className="text-[#DFD5E1] text-[10px] font-semibold  max-w-[100px]">
+                  {data?.endMessageTitle}
+                </p>
+              </div>
+              <p className="text-[#DFD5E1] text-[41px] leading-12 max-w-[320px] 2xl:max-w-[350px]">
+                {data?.endMessageTitle2}
+              </p>
+            </div>
           </div>
+
+          {data?.endMessageDescription && !data?.hideFinalMessageSubtitle && (
+            <div className="flex items-center justify-center mt-15 mb-10">
+              <p className="text-[#DFD5E1] text-[10px] font-semibold max-w-[320px]">
+                {data?.endMessageDescription}
+              </p>
+            </div>
+          )}
+          <Marquee speed={100} gradientWidth={0}>
+            <div className="relative w-full">
+              <div className="flex w-fit gap-8 py-8">
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+
+                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
+                  {data?.ctaButtonTitle}
+                </p>
+              </div>
+            </div>
+          </Marquee>
+
+          <p className="text-[#DFD5E1] text-[10px] text-center w-full mb-8 mt-6">
+            Proposta válida até{" "}
+            {data?.projectValidUntil
+              ? formatDateToDDMonYYYY(data?.projectValidUntil.toISOString())
+              : ""}
+          </p>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

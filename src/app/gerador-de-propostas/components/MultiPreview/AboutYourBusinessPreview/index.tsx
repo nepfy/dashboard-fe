@@ -100,7 +100,7 @@ export default function AboutBusinessPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full flex justify-center items-center">
+            <div className="absolute inset-0 w-full h-full flex justify-center items-center p-6">
               <BusinessSectionPreview data={completeProjectData} />
             </div>
           </div>

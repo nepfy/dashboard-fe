@@ -14,7 +14,7 @@ export default function BusinessSectionPreview({
         (data?.aboutUsTitle ||
           data?.aboutUsSubtitle1 ||
           data?.aboutUsSubtitle2) && (
-          <div className="relative w-full h-full flex flex-col justify-end items-end bg-black lg:max-w-[828px] 2xl:max-w-[1000px] lg:max-h-[740px] 2xl:max-h-[1000px] overflow-hidden">
+          <div className="relative w-full h-full flex flex-col justify-end items-end bg-black lg:max-h-[740px] 2xl:max-h-[1000px] overflow-hidden">
             {data?.aboutUsTitle && (
               <div className="flex justify-center items-center w-full lg:pb-30 2xl:pb-50 z-10">
                 <div className="font-medium lg:text-3xl 2xl:text-4xl text-[#DFD5E1] lg:pl-6 2xl:pl-8 lg:max-w-[600px] 2xl:max-w-[800px] lg:h-[200px] 2xl:h-[350px] border-l-[0.5px] border-l-[#A0A0A0] flex items-end">

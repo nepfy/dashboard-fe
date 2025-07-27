@@ -73,8 +73,8 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
         animationFillMode: "forwards",
       }}
     >
-      <div className="relative w-full aspect-[260/184] overflow-hidden">
-        {result?.photo && (
+      {result?.photo && !result?.hidePhoto && (
+        <div className="relative w-full aspect-[260/184] overflow-hidden">
           <div className="relative w-full h-full">
             <Image
               src={result.photo || ""}
@@ -91,8 +91,8 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
               }}
             />
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <div>
         <h3 className="text-[10px] font-medium text-[#DFD5E1]">
           {result.client}
@@ -155,7 +155,7 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
   return (
     <>
       {!data?.hideResultsSection && (
-        <div className="w-full h-[650px] px-3 bg-black flex flex-col justify-center lg:max-w-[828px] 2xl:max-w-[1000px]">
+        <div className="w-full h-[650px] px-3 bg-black flex flex-col justify-center">
           {resultCount > 0 && (
             <div className="flex items-center gap-1 mt-24 mb-4 px-3">
               <div className="bg-white-neutral-light-100 w-2 h-2 rounded-full" />

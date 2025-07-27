@@ -129,7 +129,7 @@ export default function ClientsPreview() {
         <TemplatePreviewWrapper>
           {!formData?.step6?.hideClientsSection && (
             <div className="relative w-full h-full overflow-hidden">
-              <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+              <div className="absolute inset-0 w-full h-full flex items-center justify-center p-6">
                 <ClientsPreviewComponent data={completeProjectData} />
               </div>
             </div>

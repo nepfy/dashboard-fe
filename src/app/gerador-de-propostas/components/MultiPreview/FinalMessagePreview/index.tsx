@@ -18,7 +18,9 @@ const convertFormDataToCompleteProjectData = (
     hideClientPhoto: formData?.step1?.hideClientPhoto || false,
     clientPhoto: formData?.step1?.clientPhoto || null,
     projectSentDate: null,
-    projectValidUntil: null,
+    projectValidUntil: formData?.step15?.projectValidUntil
+      ? new Date(formData.step15.projectValidUntil)
+      : null,
     projectStatus: "",
     projectVisualizationDate: null,
     templateType: formData?.step1?.templateType || null,
@@ -174,7 +176,7 @@ export default function FinalMessagePreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="absolute inset-0 w-full h-full">
+            <div className="absolute inset-0 w-full h-full p-6 flex items-center justify-center">
               <FinalMessageSectionPreview data={completeProjectData} />
             </div>
           </div>

@@ -13,7 +13,7 @@ export default function CTASectionPreview({ data }: CTASectionPreviewProps) {
     <>
       {!data?.hideCTASection && (data?.pageTitle || data?.ctaButtonTitle) && (
         <div
-          className="w-[828px] h-[500px] 2xl:w-[1128px] 2xl:h-[600px] relative flex items-center justify-center"
+          className="w-full h-[500px] 2xl:h-[600px] relative flex items-center justify-center"
           style={{
             backgroundImage: data?.ctaBackgroundImage
               ? `url(${data.ctaBackgroundImage})`

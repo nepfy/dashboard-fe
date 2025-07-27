@@ -136,7 +136,7 @@ export default function TeamSection({ data }: TeamSectionProps) {
     <>
       {!data?.hideAboutYourTeamSection && (
         <div
-          className="w-full lg:max-w-[828px] 2xl:max-w-[1000px] px-6"
+          className="w-full px-6"
           style={{
             background: `linear-gradient(200deg, #000000 0%, #000000 27.11%, #000000 50.59%, ${data?.mainColor} 75.36%)`,
           }}

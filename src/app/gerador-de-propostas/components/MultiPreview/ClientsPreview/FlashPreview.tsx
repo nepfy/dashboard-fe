@@ -8,7 +8,7 @@ interface ClientsPreviewProps {
 
 export default function ClientsPreview({ data }: ClientsPreviewProps) {
   return (
-    <div className="bg-black w-full h-[500px] lg:max-w-[828px] 2xl:max-w-[1000px]">
+    <div className="bg-black w-full h-[500px]">
       <div className="py-8 border-t-[0.5px] border-t-[#A0A0A0] mt-10" />
       <Marquee speed={100} gradientWidth={0}>
         {data?.clients?.map((client) => (

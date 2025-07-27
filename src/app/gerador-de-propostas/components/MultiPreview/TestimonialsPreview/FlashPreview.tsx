@@ -56,7 +56,7 @@ export default function TestimonialsSectionPreview({
     <>
       {!data?.hideTestimonialsSection && (
         <div
-          className="p-6"
+          className="p-6 w-full"
           style={{
             background: `linear-gradient(345deg, #000000 0%, ${data?.mainColor} 2%, #000000 55%, #000000 85.36%)`,
           }}

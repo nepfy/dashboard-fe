@@ -76,7 +76,7 @@ export default function ProcessSectionPreview({
 
   return (
     <div
-      className="max-w-[828px] h-[900px] xl:h-[1100px] overflow-y-scroll"
+      className="h-[900px]"
       style={{ backgroundColor: `${data?.mainColor}` }}
     >
       <div className="w-full p-6 flex items-start relative">

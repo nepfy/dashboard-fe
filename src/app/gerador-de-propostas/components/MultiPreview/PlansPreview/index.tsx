@@ -163,7 +163,7 @@ export default function PlansPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full overflow-hidden">
-            <div className="w-full h-full overflow-y-scroll flex items-start 2xl:items-center justify-center p-3 ">
+            <div className="w-full h-full overflow-y-scroll flex items-start 2xl:items-center justify-center p-6">
               <PlansSectionPreview data={completeProjectData} />
             </div>
           </div>

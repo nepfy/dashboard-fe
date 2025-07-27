@@ -38,7 +38,7 @@ export default function IntroSectionPreview({
         data?.services &&
         data?.pageSubtitle && (
           <div
-            className="w-full h-full lg:max-w-[828px] lg:max-h-[492px] 2xl:max-w-[1000px] 2xl:max-h-[700px]"
+            className="w-full h-full lg:max-h-[492px] 2xl:max-h-[700px]"
             style={{
               background: gradient,
             }}

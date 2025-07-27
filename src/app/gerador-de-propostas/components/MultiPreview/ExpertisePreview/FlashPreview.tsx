@@ -65,19 +65,19 @@ export default function ExpertiseSectionPreview({
     <>
       {!data?.hideExpertiseSection && sortedExpertise.length > 0 && (
         <div
-          className="w-full lg:max-w-[828px] 2xl:max-w-[1000px] flex flex-col justify-center items-start p-20"
+          className="w-full flex flex-col justify-center items-start p-20"
           style={{
             background: `linear-gradient(192deg, ${data?.mainColor} 0%, #000000 27.11%, #000000 50.59%, #000000 85.36%)`,
           }}
         >
-          <p className="text-3xl text-[#DFD5E1] min-h-[220px] border-l-[0.5px] border-l-[#A0A0A0] pl-11 min-w-[500px] max-w-[550px] leading-8">
+          <p className="text-3xl text-[#DFD5E1] min-h-[220px] border-l-[0.5px] border-l-[#A0A0A0] pl-9 2xl:ml-20 min-w-[500px] max-w-[550px] leading-8">
             <span className="text-[#A0A0A0] font-bold">
               Nossa especialização.{" "}
             </span>
             {data?.expertiseSubtitle}
           </p>
 
-          <div className="w-full flex justify-center items-center">
+          <div className="w-full flex justify-center items-center mb-10">
             <div className="w-full max-w-[800px] flex flex-wrap justify-start items-start gap-4 mt-20">
               {sortedExpertise.map((item, index) => (
                 <div

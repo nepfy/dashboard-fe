@@ -3,13 +3,14 @@ import { Eye, EyeOff } from "lucide-react";
 import { TextField } from "#/components/Inputs";
 
 type PasswordInputProps = {
-  label: string;
+  label?: string;
   id: string;
   placeholder: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   showPassword: boolean;
   toggleShowPassword: () => void;
+  disabled?: boolean;
 };
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
@@ -20,6 +21,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   onChange,
   showPassword,
   toggleShowPassword,
+  disabled,
 }) => {
   return (
     <div className="space-y-2 relative">
@@ -44,6 +46,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         placeholder={placeholder}
         onChange={onChange}
         value={value}
+        disabled={disabled}
       />
     </div>
   );
