@@ -80,6 +80,10 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
     return () => gsap.ticker.remove(update);
   }, []);
 
+  gsap.set(introRef.current, { yPercent: 0 });
+  gsap.set(businessRef.current, { opacity: 0 });
+  gsap.set(businessComplementRef.current, { opacity: 0 });
+
   useEffect(() => {
     if (!containerRef.current || !gradientRef.current) return;
 
@@ -91,6 +95,83 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       end: "bottom bottom",
       onUpdate: () => {},
     });
+
+    const introTitle = introRef.current?.querySelector("#intro-title");
+    const introValidity = introRef.current?.querySelector("#intro-validity");
+    const introCompanyName = introRef.current?.querySelector(
+      "#intro-company-name"
+    );
+    const introCompanyEmail = introRef.current?.querySelector(
+      "#intro-company-email"
+    );
+    const introServices = introRef.current?.querySelector("#intro-services");
+    const introPageSubtitle = introRef.current?.querySelector(
+      "#intro-page-subtitle"
+    );
+
+    if (introServices && introPageSubtitle) {
+      gsap.set(introServices, { opacity: 0 });
+      gsap.set(introPageSubtitle, { opacity: 0 });
+
+      gsap.to(introServices, {
+        opacity: 1,
+        duration: 2,
+        ease: "none",
+        delay: 2,
+      });
+
+      gsap.to(introPageSubtitle, {
+        opacity: 1,
+        duration: 2,
+        ease: "none",
+        delay: 2,
+      });
+    }
+
+    if (
+      introTitle &&
+      introValidity &&
+      introCompanyName &&
+      introCompanyEmail &&
+      introServices &&
+      introPageSubtitle
+    ) {
+      gsap.set(introTitle, { yPercent: 200 });
+      gsap.set(introValidity, { yPercent: 400 });
+      gsap.set(introCompanyName, { yPercent: 200, opacity: 0 });
+      gsap.set(introCompanyEmail, { yPercent: 300, opacity: 0 });
+
+      gsap
+        .timeline()
+        .to(introTitle, {
+          yPercent: 0,
+          duration: 3.2,
+          ease: "expo.inOut",
+        })
+        .to(
+          introValidity,
+          {
+            yPercent: 0,
+            duration: 2.8,
+            ease: "expo.inOut",
+          },
+          "-=3"
+        );
+
+      gsap.to(introCompanyName, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 3.2,
+        ease: "expo.inOut",
+      });
+
+      gsap.to(introCompanyEmail, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 3.2,
+        ease: "expo.inOut",
+      });
+    }
 
     return () => {
       scrollTrigger.kill();
@@ -112,16 +193,19 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   return (
     <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
       <div className="relative w-screen">
-        <div ref={containerRef} className="relative w-full">
-          <div ref={introRef} className="w-full h-full">
+        <div ref={containerRef} className="relative w-full h-screen">
+          <div ref={introRef} className="absolute inset-0 w-full h-full">
             <IntroSection data={data} />
           </div>
 
-          <div ref={businessRef} className="w-full h-full">
+          <div ref={businessRef} className="absolute inset-0 w-full h-full">
             <BusinessSection data={data} />
           </div>
 
-          <div ref={businessComplementRef} className="w-full h-full">
+          <div
+            ref={businessComplementRef}
+            className="absolute inset-0 w-full h-full"
+          >
             <BusinessSectionComplement data={data} />
           </div>
           <div
