@@ -6,12 +6,14 @@ export interface IntroSectionProps {
 
 export interface MobileMenuProps {
   ctaButtonTitle?: string;
+  color?: string | null;
 }
 
 export interface HeaderProps {
   companyName?: string | null;
   companyEmail?: string | null;
   ctaButtonTitle?: string | null;
+  color?: string | null;
 }
 
 export interface HeroProps {

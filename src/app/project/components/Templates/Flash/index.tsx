@@ -47,6 +47,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   const needsPassword = data?.pagePassword && data.pagePassword.trim() !== "";
 
   const gradient = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 94.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`;
+  const tempGradient = `radial-gradient(150.7% 150.34% at 100% 80%, ${data?.mainColor} 10.22%, #000000 70%, #000000 40%, #000000 14.9%, #000000 101.78%)`;
 
   useEffect(() => {
     if (!needsPassword) {
@@ -110,34 +111,29 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
 
   return (
     <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
-      <div className="font-manrope relative w-screen">
-        <div
-          ref={containerRef}
-          className="relative w-full h-screen bg-black overflow-hidden"
-        >
-          <div
-            ref={gradientRef}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{
-              borderRadius: "50%",
-              background: gradient,
-              filter: "blur(100px)",
-            }}
-          />
-          <div ref={introRef} className="absolute inset-0 w-full h-full">
+      <div className="relative w-screen">
+        <div ref={containerRef} className="relative w-full">
+          <div ref={introRef} className="w-full h-full">
             <IntroSection data={data} />
           </div>
 
-          <div ref={businessRef} className="absolute inset-0 w-full h-full">
+          <div ref={businessRef} className="w-full h-full">
             <BusinessSection data={data} />
           </div>
 
-          <div
-            ref={businessComplementRef}
-            className="absolute inset-0 w-full h-full"
-          >
+          <div ref={businessComplementRef} className="w-full h-full">
             <BusinessSectionComplement data={data} />
           </div>
+          <div
+            ref={gradientRef}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10"
+            style={{
+              width: "100%",
+              height: "100%",
+              background: tempGradient,
+              // filter: "blur(100px)",
+            }}
+          />
         </div>
       </div>
       <div className="overflow-hidden">
@@ -166,7 +162,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
           <ExpertiseSection data={data} />
         </div>
 
-        <div className="bg-black">
+        <div className="bg-black pb-34">
           <ResultsSection data={data} />
 
           <ClientSection data={data} />
@@ -177,7 +173,9 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
             background: `${data?.mainColor}`,
           }}
         >
-          <ProcessSection data={data} />
+          <div className="w-full max-w-[1440px] mx-auto">
+            <ProcessSection data={data} />
+          </div>
 
           <ProcessListSection data={data} />
         </div>
@@ -199,15 +197,17 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
             )`,
           }}
         >
-          <TestimonialsSection data={data} />
+          <div className="w-full h-full max-w-[1440px] mx-auto">
+            <TestimonialsSection data={data} />
 
-          <InvestmentSection data={data} />
+            <InvestmentSection data={data} />
 
-          <DeliverySection data={data} />
+            <DeliverySection data={data} />
 
-          <PlansSection data={data} />
+            <PlansSection data={data} />
 
-          <TermsSection data={data} />
+            <TermsSection data={data} />
+          </div>
         </div>
 
         <FAQSection data={data} />

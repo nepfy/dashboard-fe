@@ -157,9 +157,9 @@ export default function RowEditMenu({
   const handleCopyLink = async () => {
     try {
       setIsCopyingLink(true);
-      await copyLinkWithCache(projectId);
+      const result = await copyLinkWithCache(projectId);
 
-      const message = copyLinkWithCache.toString().includes("cache")
+      const message = result.fromCache
         ? "Link copiado novamente com sucesso!"
         : "Link copiado com sucesso!";
 
@@ -170,7 +170,7 @@ export default function RowEditMenu({
       }, 3000);
     } catch (error) {
       console.error("Erro ao copiar link:", error);
-      setCopyLinkMessage("Erro ao copiar link. Tente novamente.");
+      setCopyLinkMessage("Erro ao copiar link. URL foi gerada?");
 
       setTimeout(() => {
         setCopyLinkMessage(null);

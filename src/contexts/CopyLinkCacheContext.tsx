@@ -104,6 +104,7 @@ export function useCopyLinkWithCache() {
 
     if (cachedData) {
       console.log("Usando dados do cache para projeto:", projectId);
+      await navigator.clipboard.writeText(cachedData.fullUrl);
       return {
         fullUrl: cachedData.fullUrl,
         fromCache: true,
@@ -133,6 +134,9 @@ export function useCopyLinkWithCache() {
       userName,
       fullUrl,
     });
+
+    // Copiar para clipboard
+    await navigator.clipboard.writeText(fullUrl);
 
     return {
       fullUrl,

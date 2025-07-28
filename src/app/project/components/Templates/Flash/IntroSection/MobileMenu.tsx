@@ -3,33 +3,25 @@ import { X } from "lucide-react";
 
 interface MobileMenuProps {
   ctaButtonTitle?: string | null;
+  color?: string | null;
 }
 
 const MOBILE_MENU_ITEMS = [
-  "Sobre nós",
-  "Time",
-  "Especialização",
-  "Nossos resultados",
-  "Clientes",
-  "Processo",
-  "Depoimentos",
-  "Investimento",
-  "Entregas",
-  "Planos",
-  "Termos e Condições",
-  "Perguntas Frequentes",
+  { label: "Sobre nós", id: "business" },
+  { label: "Time", id: "team" },
+  { label: "Especialização", id: "expertise" },
+  { label: "Nossos resultados", id: "results" },
+  { label: "Clientes", id: "clients" },
+  { label: "Processo", id: "process" },
+  { label: "Depoimentos", id: "testimonial" },
+  { label: "Investimento", id: "investment" },
+  { label: "Entregas", id: "deliveries" },
+  { label: "Planos", id: "plans" },
+  { label: "Termos e Condições", id: "terms" },
+  { label: "Perguntas Frequentes", id: "faq" },
 ];
 
-const ctaButtonClasses =
-  "font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full";
-
-const mobileButtonStyle = {
-  borderRight: "1px solid",
-  borderImageSource: `linear-gradient(0deg, #000000, #000000), radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`,
-  borderImageSlice: 1,
-};
-
-export default function MobileMenu({ ctaButtonTitle }: MobileMenuProps) {
+export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -38,6 +30,40 @@ export default function MobileMenu({ ctaButtonTitle }: MobileMenuProps) {
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const easeInOutCubic = (t: number, b: number, c: number, d: number) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t * t + b;
+    t -= 2;
+    return (c / 2) * (t * t * t + 2) + b;
+  };
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const targetPosition = element.offsetTop;
+      const startPosition = window.pageYOffset;
+      const distance = targetPosition - startPosition;
+      const duration = 2500; // 2.5 seconds for slower scroll
+      let start: number | null = null;
+
+      const animation = (currentTime: number) => {
+        if (start === null) start = currentTime;
+        const timeElapsed = currentTime - start;
+        const run = easeInOutCubic(
+          timeElapsed,
+          startPosition,
+          distance,
+          duration
+        );
+        window.scrollTo(0, run);
+        if (timeElapsed < duration) requestAnimationFrame(animation);
+      };
+
+      requestAnimationFrame(animation);
+    }
+    closeMenu();
   };
 
   return (
@@ -67,9 +93,12 @@ export default function MobileMenu({ ctaButtonTitle }: MobileMenuProps) {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`lg:hidden fixed inset-0 bg-[#4F21A1] z-[9999] overflow-y-auto transition-all duration-500 ease-in-out ${
+        className={`lg:hidden fixed inset-0 z-[9999] overflow-y-auto transition-all duration-500 ease-in-out ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
+        style={{
+          backgroundColor: color || "#000000",
+        }}
       >
         <div
           className={`flex flex-col h-full min-h-screen transition-all duration-500 ease-in-out transform ${
@@ -93,19 +122,17 @@ export default function MobileMenu({ ctaButtonTitle }: MobileMenuProps) {
 
           <div className="flex flex-col items-center space-y-3 px-4 pb-4 flex-1">
             {MOBILE_MENU_ITEMS.map((item) => (
-              <p
-                key={item}
-                className="font-semibold text-lg text-white-neutral-light-100 text-center"
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="font-semibold text-lg text-white-neutral-light-100 text-center hover:text-white/80 transition-colors cursor-pointer"
               >
-                {item}
-              </p>
+                {item.label}
+              </button>
             ))}
 
             <div className="mt-auto pt-4">
-              <button
-                className={`${ctaButtonClasses} p-6`}
-                style={mobileButtonStyle}
-              >
+              <button className="font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full p-6">
                 {ctaButtonTitle}
               </button>
             </div>

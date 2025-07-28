@@ -61,7 +61,7 @@ const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
       }, 2000);
     } catch (error) {
       console.error("Erro ao copiar link:", error);
-      setMessage("Erro ao copiar");
+      setMessage("Erro ao copiar link. URL foi gerada?");
 
       setTimeout(() => {
         setMessage(null);

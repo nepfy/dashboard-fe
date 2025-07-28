@@ -22,10 +22,10 @@ export default function Hero({ pageTitle, createdAt }: HeroProps) {
   return (
     <div className="w-full flex flex-col items-center mt-22 lg:mt-55 mb-20">
       <div>
-        <h1 className="text-white-neutral-light-100 font-normal text-4xl lg:text-7xl max-w-[1120px] lg:leading-8xl">
+        <h1 className="text-[#DFD5E1] font-normal text-4xl lg:text-7xl max-w-[1120px] lg:leading-8xl">
           {pageTitle}
         </h1>
-        <p className="text-[#DFD5E1] font-bold text-xs mt-6">
+        <p className="text-white-neutral-light-100 font-bold text-xs mt-6 opacity-50">
           Proposta {formatCreatedAt()}
         </p>
       </div>

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Marquee from "react-fast-marquee";
 import {
   CompleteProjectData,
   ProjectProcessStep,
@@ -100,9 +101,9 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
   return (
     <>
       {!data?.hideProcessSection && (
-        <div className="w-full p-6 lg:max-w-[70%] mx-auto mt-30 lg:mt-0 mb-20">
+        <div id="process-list" className="w-full p-6 mt-30 lg:mt-0 mb-20">
           {/* Static Process List */}
-          <div className="w-full flex-col flex items-center justify-center mb-12">
+          <div className="w-full lg:max-w-[1300px] mx-auto flex-col flex items-center justify-center mb-12">
             {sortedProcessSteps.map(
               (process: ProjectProcessStep, index: number) => {
                 const isExpanded = expandedStep === process.id;
@@ -111,16 +112,16 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                 return (
                   <div
                     key={process.id}
-                    className="border-b border-gray-300 last:border-b-0 w-full"
+                    className="border-b border-[#A0A0A0] last:border-b-0 w-full"
                   >
                     <div className="w-full py-4 px-6">
                       {/* Desktop Layout */}
                       <div className="hidden lg:flex items-start justify-between mt-5">
-                        <div className="flex items-start space-x-4">
-                          <span className="text-lg font-medium text-white min-w-[3rem]">
+                        <div className="flex items-start xl:space-x-70">
+                          <span className="text-[16px] font-medium text-[#DFD5E1] mr-50">
                             {stepNumber.toString().padStart(2, "0")}.
                           </span>
-                          <span className="text-lg font-medium text-white">
+                          <span className="text-[16px] font-medium text-[#DFD5E1]">
                             {process.stepName}
                           </span>
                         </div>
@@ -139,9 +140,9 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                               ref={(el) => {
                                 contentRefs.current[process.id] = el;
                               }}
-                              className="pb-2" // Add some padding to ensure proper height calculation
+                              className="ml-30 mr-24 pb-2"
                             >
-                              <p className="text-[#A0A0A0] leading-relaxed">
+                              <p className="text-white-neutral-light-100 opacity-50 leading-relaxed">
                                 {process.description}
                               </p>
                             </div>
@@ -154,7 +155,9 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                         >
                           <span
                             className={`text-sm font-semibold ${
-                              isExpanded ? "text-[#DFD5E1]" : "text-white"
+                              isExpanded
+                                ? "text-white-neutral-light-100 opacity-50"
+                                : "text-white"
                             }`}
                           >
                             LEIA
@@ -165,11 +168,11 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                       {/* Mobile Layout */}
                       <div className="lg:hidden">
                         <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center space-x-4">
-                            <span className="text-lg font-medium text-white min-w-[3rem]">
+                          <div className="flex items-center">
+                            <span className="text-[14px] lg:text-lg font-medium text-[#DFD5E1] mr-6 opacity-90">
                               {stepNumber.toString().padStart(2, "0")}.
                             </span>
-                            <span className="text-lg font-medium text-white">
+                            <span className="text-[14px] lg:text-lg font-medium text-[#DFD5E1]">
                               {process.stepName}
                             </span>
                           </div>
@@ -180,7 +183,7 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                           >
                             <span
                               className={`text-sm font-semibold ${
-                                isExpanded ? "text-[#DFD5E1]" : "text-white"
+                                isExpanded ? "text-white" : "text-[#DFD5E1]"
                               }`}
                             >
                               LEIA
@@ -207,7 +210,7 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                               }}
                               className="pb-2" // Add some padding to ensure proper height calculation
                             >
-                              <p className="text-[#A0A0A0] leading-relaxed">
+                              <p className="text-white-neutral-light-100 opacity-50 leading-relaxed">
                                 {process.description}
                               </p>
                             </div>
@@ -224,29 +227,29 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
       )}
 
       {sortedProcessSteps.length >= 2 && (
-        <div className="relative pb-8 w-full">
-          <div className="flex animate-scroll w-fit gap-20">
+        <div className="pb-8 w-full">
+          <Marquee speed={100} gradientWidth={0} autoFill>
             {sortedProcessSteps.map((process: ProjectProcessStep) => {
               return (
                 <p
                   key={`first-${process.id}`}
-                  className="text-9xl font-medium text-black whitespace-nowrap"
+                  className="text-9xl font-medium text-black whitespace-nowrap mb-10 mr-6"
                 >
-                  {process.stepName}
+                  {process.stepName}.
                 </p>
               );
             })}
-          </div>
+          </Marquee>
         </div>
       )}
 
       {sortedProcessSteps.length < 2 && (
-        <div className="flex items-center justify-center gap-20 w-full pb-8">
+        <div className="flex items-center justify-center gap-20 w-full mb-8">
           {sortedProcessSteps.map((process: ProjectProcessStep) => {
             return (
               <p
                 key={process.id}
-                className="text-9xl font-medium text-black whitespace-nowrap"
+                className="text-9xl font-medium text-black whitespace-nowrap mb-6"
               >
                 {process.stepName}
               </p>

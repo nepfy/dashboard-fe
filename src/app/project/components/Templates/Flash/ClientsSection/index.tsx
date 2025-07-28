@@ -1,5 +1,6 @@
-import type { CompleteProjectData } from "#/app/project/types/project";
+import Marquee from "react-fast-marquee";
 import Image from "next/image";
+import type { CompleteProjectData } from "#/app/project/types/project";
 
 interface ClientsSectionProps {
   data?: CompleteProjectData;
@@ -23,97 +24,33 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
 
   return (
     <>
-      {!data?.hideClientsSection && visibleClients.length > 0 && (
-        <div className="w-full overflow-hidden py-8 border-t-[0.5px] border-t-[#A0A0A0] mt-60">
-          {visibleClients.length >= 3 ? (
-            <div className="relative my-20">
-              <div className="flex animate-scroll">
-                <div className="flex items-center gap-4 mx-2">
-                  {visibleClients.map((client) => (
-                    <div
-                      key={`first-${client.id}`}
-                      className="flex-shrink-0 flex items-center justify-center border border-white rounded-full w-[240px] h-[140px] lg:w-[300px] lg:h-[174px]"
-                    >
-                      <Image
-                        src={client.logo}
-                        alt={client.name}
-                        width={120}
-                        height={80}
-                        className="object-contain max-h-36 max-w-24"
-                      />
-                    </div>
-                  ))}
-                </div>
+      {!data?.hideClientsSection && (
+        <div id="clients" className="bg-black w-full h-[500px] pb-34">
+          <div className="py-8 border-t-1 border-t-[#A0A0A0] mt-10 mb-34" />
+          <Marquee speed={100} gradientWidth={0} autoFill>
+            {visibleClients?.map((client) => (
+              <div
+                className="flex items-center justify-center border border-white rounded-full w-[300px] h-[174px] px-24 mr-8"
+                key={client.id}
+              >
+                {client?.logo && !client?.name && !client?.hideLogo ? (
+                  <>
+                    <Image
+                      src={client.logo}
+                      alt={client.name}
+                      width={120}
+                      height={80}
+                      className="object-contain max-h-36 max-w-24"
+                    />
+                  </>
+                ) : null}
 
-                <div className="flex items-center gap-4 mx-2">
-                  {visibleClients.map((client) => (
-                    <div
-                      key={`second-${client.id}`}
-                      className="flex-shrink-0 flex items-center justify-center border border-white rounded-full w-[240px] h-[140px] lg:w-[300px] lg:h-[174px]"
-                    >
-                      <Image
-                        src={client.logo}
-                        alt={client.name}
-                        width={120}
-                        height={80}
-                        className="object-contain max-h-36 max-w-24"
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-4 mx-2">
-                  {visibleClients.map((client) => (
-                    <div
-                      key={`second-${client.id}`}
-                      className="flex-shrink-0 flex items-center justify-center border border-white rounded-full w-[240px] h-[140px] lg:w-[300px] lg:h-[174px]"
-                    >
-                      <Image
-                        src={client.logo}
-                        alt={client.name}
-                        width={120}
-                        height={80}
-                        className="object-contain max-h-36 max-w-24"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-4 mx-2">
-                  {visibleClients.map((client) => (
-                    <div
-                      key={`second-${client.id}`}
-                      className="flex-shrink-0 flex items-center justify-center border border-white rounded-full w-[240px] h-[140px] lg:w-[300px] lg:h-[174px]"
-                    >
-                      <Image
-                        src={client.logo}
-                        alt={client.name}
-                        width={140}
-                        height={30}
-                        className="object-contain max-h-36 max-w-24"
-                      />
-                    </div>
-                  ))}
-                </div>
+                {client?.name && !client?.logo && !client?.hideClientName ? (
+                  <p className="text-white font-bold text-3xl">{client.name}</p>
+                ) : null}
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center space-x-8">
-              {visibleClients.map((client) => (
-                <div
-                  key={client.id}
-                  className="flex items-center justify-center"
-                >
-                  <Image
-                    src={client.logo}
-                    alt={client.name}
-                    width={120}
-                    height={80}
-                    className="object-contain max-h-16 max-w-32"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </Marquee>
         </div>
       )}
     </>

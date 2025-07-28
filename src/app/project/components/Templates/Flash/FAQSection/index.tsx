@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { ArrowDown } from "lucide-react";
 import type { CompleteProjectData } from "#/app/project/types/project";
 
 interface FAQSectionProps {
@@ -87,7 +88,7 @@ export default function FAQSection({ data }: FAQSectionProps) {
   }, [expandedFaq]);
 
   return (
-    <>
+    <div id="faq">
       {!data?.hideFaqSection && data?.faq && data?.faq.length > 0 && (
         <div
           className="w-full px-10 lg:px-30 py-20"
@@ -107,129 +108,148 @@ export default function FAQSection({ data }: FAQSectionProps) {
             )`,
           }}
         >
-          <p className="text-[#DFD5E1] text-4xl lg:text-7xl">
-            Perguntas <br /> Frequentes
-          </p>
-          <div className="w-full mt-30">
-            {data?.faq.map((faq, index) => {
-              const isExpanded = expandedFaq === faq.id;
+          <div className="w-full max-w-[1440px] mx-auto">
+            <p className="text-[#DFD5E1] text-4xl lg:text-7xl">
+              Perguntas <br /> Frequentes
+            </p>
+            <div className="w-full my-30">
+              {data?.faq.map((faq, index) => {
+                const isExpanded = expandedFaq === faq.id;
 
-              return (
-                <div
-                  key={faq.id}
-                  className="border-b border-gray-300 last:border-b-0 w-full"
-                >
-                  <div className="w-full py-4 px-6">
-                    {/* Desktop Layout */}
-                    <div className="hidden lg:flex flex-col items-stretch justify-between mt-5">
-                      <div className="flex items-start mb-4">
-                        <span className="text-lg font-medium text-[#DFD5E1] w-[30%]">
-                          {index + 1}.
-                        </span>
+                return (
+                  <div
+                    key={faq.id}
+                    className="border-b border-[#A0A0A0] last:border-b-0 w-full"
+                  >
+                    <div className="w-full py-4 lg:px-6">
+                      {/* Desktop Layout */}
+                      <div
+                        className="hidden lg:flex flex-col items-stretch justify-between mt-5 cursor-pointer"
+                        onClick={() => handleFaqClick(faq.id)}
+                      >
+                        <div className="flex items-start mb-4">
+                          <span className="text-lg font-medium text-[#DFD5E1] w-[30%]">
+                            0{index + 1}.
+                          </span>
 
-                        <div className="flex-1 flex justify-start px-4">
-                          <div className="w-full mx-auto">
-                            <p className="text-lg font-medium text-[#DFD5E1] text-left">
-                              {faq.question}
-                            </p>
+                          <div className="flex-1 flex justify-start px-4">
+                            <div className="w-full mx-auto">
+                              <p className="text-lg font-medium text-[#DFD5E1] text-left">
+                                {faq.question}
+                              </p>
 
-                            <div
-                              className="w-full overflow-hidden transition-all duration-600 ease-in-out"
-                              style={{
-                                maxHeight:
-                                  isExpanded && faq.answer
-                                    ? `${contentHeights[faq.id] || "auto"}px`
-                                    : "0px",
-                              }}
-                            >
-                              {faq.answer && (
-                                <div
-                                  ref={(el) => {
-                                    contentRefs.current[faq.id] = el;
-                                  }}
-                                  className="pb-2"
-                                >
-                                  <p className="text-[#DFD5E1] leading-relaxed">
-                                    {faq.answer}
-                                  </p>
-                                </div>
-                              )}
+                              <div
+                                className={`w-full max-w-[400px] overflow-hidden transition-all duration-600 ease-in-out
+                                  ${isExpanded && faq.answer ? "mt-10" : "mt-0"}
+                                  `}
+                                style={{
+                                  maxHeight:
+                                    isExpanded && faq.answer
+                                      ? `${contentHeights[faq.id] || "auto"}px`
+                                      : "0px",
+                                }}
+                              >
+                                {faq.answer && (
+                                  <div
+                                    ref={(el) => {
+                                      contentRefs.current[faq.id] = el;
+                                    }}
+                                    className="pb-2"
+                                  >
+                                    <p className="text-white-neutral-light-100 opacity-50 leading-relaxed">
+                                      {faq.answer}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <button
-                          onClick={() => handleFaqClick(faq.id)}
-                          className="text-left transition-all duration-600 ease-in-out min-w-[4rem] flex justify-end"
-                        >
-                          <span
-                            className={`text-sm font-semibold  ${
-                              isExpanded ? "text-[#DFD5E1]" : "text-white"
-                            }`}
+                          <button
+                            onClick={() => handleFaqClick(faq.id)}
+                            className="text-left transition-all duration-600 ease-in-out min-w-[4rem] flex justify-end"
                           >
-                            LEIA
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Mobile Layout */}
-                    <div className="lg:hidden">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-lg font-medium text-[#DFD5E1]">
-                            {index + 1}.
-                          </span>
-                          <span className="text-lg font-medium text-white">
-                            {faq.question}
-                          </span>
+                            <span
+                              className={`text-sm font-semibold flex items-center gap-0.5 ${
+                                isExpanded ? "text-[#DFD5E1]" : "text-white"
+                              }`}
+                            >
+                              <ArrowDown
+                                size={16}
+                                className={`transition-transform duration-300 ${
+                                  isExpanded ? "rotate-180" : ""
+                                }`}
+                              />
+                              LEIA
+                            </span>
+                          </button>
                         </div>
-
-                        <button
-                          onClick={() => handleFaqClick(faq.id)}
-                          className="text-left transition-all duration-600 ease-in-out"
-                        >
-                          <span
-                            className={`text-sm font-semibold ${
-                              isExpanded ? "text-[#DFD5E1]" : "text-white"
-                            }`}
-                          >
-                            LEIA
-                          </span>
-                        </button>
                       </div>
 
-                      {/* Mobile Answer */}
-                      <div
-                        className="overflow-hidden transition-all duration-600 ease-in-out"
-                        style={{
-                          maxHeight:
-                            isExpanded && faq.answer
-                              ? `${mobileContentHeights[faq.id] || "auto"}px`
-                              : "0px",
-                        }}
-                      >
-                        {faq.answer && (
-                          <div
-                            ref={(el) => {
-                              mobileContentRefs.current[faq.id] = el;
-                            }}
-                            className="pb-2"
-                          >
-                            <p className="text-[#A0A0A0] leading-relaxed">
-                              {faq.answer}
-                            </p>
+                      {/* Mobile Layout */}
+                      <div className="lg:hidden">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-start space-x-4">
+                            <span className="text-sm lg:text-base font-medium text-[#DFD5E1]">
+                              0{index + 1}.
+                            </span>
+                            <span className="text-sm lg:text-base font-medium text-[#DFD5E1]">
+                              {faq.question}
+                            </span>
                           </div>
-                        )}
+
+                          <button
+                            onClick={() => handleFaqClick(faq.id)}
+                            className="text-left transition-all duration-600 ease-in-out"
+                          >
+                            <span
+                              className={`text-sm font-semibold flex items-center gap-1 ${
+                                isExpanded ? "text-[#DFD5E1]" : "text-white"
+                              }`}
+                            >
+                              <ArrowDown
+                                size={16}
+                                className={`transition-transform duration-300 ${
+                                  isExpanded ? "rotate-180" : ""
+                                }`}
+                              />
+                              LEIA
+                            </span>
+                          </button>
+                        </div>
+
+                        {/* Mobile Answer */}
+                        <div
+                          className="overflow-hidden transition-all duration-600 ease-in-out"
+                          style={{
+                            maxHeight:
+                              isExpanded && faq.answer
+                                ? `${mobileContentHeights[faq.id] || "auto"}px`
+                                : "0px",
+                          }}
+                        >
+                          {faq.answer && (
+                            <div
+                              ref={(el) => {
+                                mobileContentRefs.current[faq.id] = el;
+                              }}
+                              className="pb-2"
+                            >
+                              <p className="text-[#A0A0A0] text-sm lg:text-base leading-relaxed">
+                                {faq.answer}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

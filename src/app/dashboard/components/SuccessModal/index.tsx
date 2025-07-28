@@ -76,7 +76,7 @@ export default function SuccessModal({
       }, 3000);
     } catch (error) {
       console.error("Erro ao copiar link:", error);
-      setCopyLinkMessage("Erro ao copiar link. Tente novamente.");
+      setCopyLinkMessage("Erro ao copiar link. URL foi gerada?");
 
       setTimeout(() => {
         setCopyLinkMessage(null);

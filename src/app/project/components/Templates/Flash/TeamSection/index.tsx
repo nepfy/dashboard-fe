@@ -22,10 +22,10 @@ function CustomArrowLeft(props: CustomArrowProps) {
   const { onClick } = props;
   return (
     <button
-      className="w-40 h-40 absolute left-20 top-1/2 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-6 cursor-pointer"
+      className="w-10 h-10 absolute left-0 top-40 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center cursor-pointer"
       onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
     >
-      <ArrowLeft size={42} />
+      <ArrowLeft size={14} />
     </button>
   );
 }
@@ -34,10 +34,10 @@ function CustomArrowRight(props: CustomArrowProps) {
   const { onClick } = props;
   return (
     <button
-      className="w-40 h-40 absolute right-20 top-1/2 -translate-y-1/2 text-black z-40 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-6 cursor-pointer"
+      className="w-10 h-10 absolute right-4 top-40 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center cursor-pointer"
       onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
     >
-      <ArrowRight size={42} />
+      <ArrowRight size={14} />
     </button>
   );
 }
@@ -57,7 +57,7 @@ export default function TeamSection({ data }: TeamSectionProps) {
 
   useEffect(() => {
     const checkViewport = () => {
-      const isMobileView = window.innerWidth < 1280;
+      const isMobileView = window.innerWidth < 640;
       setIsMobile(isMobileView);
       if (isMobileView) {
         setVisibleMembers(2);
@@ -76,7 +76,9 @@ export default function TeamSection({ data }: TeamSectionProps) {
   const sliderSettings = {
     dots: false,
     infinite: true,
-    speed: 700,
+    autoplay: true,
+    autoplaySpeed: 1000,
+    speed: 3000,
     slidesToShow: Math.min(3, memberCount),
     slidesToScroll: 1,
     arrows: true,
@@ -103,14 +105,6 @@ export default function TeamSection({ data }: TeamSectionProps) {
               className="object-cover transition-transform duration-300 hover:scale-105"
               quality={95}
               priority={index < 3}
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundBlendMode: "screen",
-                background:
-                  "linear-gradient(135deg, rgba(66, 0, 255, 0) 30%, rgba(66, 0, 255, 0.3) 50%, rgba(97, 0, 255, 0) 80%)",
-              }}
             />
           </div>
         )}
@@ -155,10 +149,7 @@ export default function TeamSection({ data }: TeamSectionProps) {
             <div className="w-full flex justify-center mt-8">
               <button
                 onClick={handleShowMore}
-                className="w-[112px] h-[56px] flex items-center justify-center text-white-neutral-light-100 rounded-full font-semibold text-xs cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  background: `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, ${data?.mainColor} 64.9%, #A46EDB 81.78%)`,
-                }}
+                className="w-[112px] h-[56px] flex items-center justify-center text-white-neutral-light-100 rounded-full font-semibold text-xs cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-black"
               >
                 Mostrar mais
               </button>
@@ -194,10 +185,13 @@ export default function TeamSection({ data }: TeamSectionProps) {
   return (
     <>
       {!data?.hideAboutYourTeamSection && (
-        <div className="w-full pt-50 lg:pt-100 px-6 mb-50 lg:mb-0">
+        <div
+          id="team"
+          className="w-full max-w-[1440px] mx-auto pt-50 lg:pt-100 px-6 lg:px-6 mb-50 lg:mb-0"
+        >
           {data?.ourTeamSubtitle && (
             <div className="w-full flex items-center justify-center mb-50">
-              <h2 className="h-[162px] lg:h-[360px] border-l border-l-[#A0A0A0] pl-10 text-white text-3xl lg:text-7xl max-w-[690px] flex items-end">
+              <h2 className="h-[162px] lg:h-[360px] border-l-[0.5px] border-l-[#A0A0A0] pl-10 text-white text-3xl lg:text-7xl max-w-[690px] flex items-end">
                 {data?.ourTeamSubtitle}
               </h2>
             </div>

@@ -62,40 +62,47 @@ export default function ExpertiseSection({ data }: ExpertiseSectionProps) {
     <>
       {!data?.hideExpertiseSection && (
         <>
-          <div className="w-full flex flex-col justify-center items-center mt-90 px-6">
-            <div className="flex justify-center items-start mb-8 max-w-[600px] lg:max-w-[824px]">
-              <div className="h-[620px] md:h-[400px] lg:h-[600px] flex items-center">
-                <div className="border-l lg:border-l-2 border-l-[#A0A0A0] pl-6 lg:pl-15 h-[415px] md:h-[300px] lg:h-[360px] pt-10" />
+          <div
+            id="expertise"
+            className="w-full flex flex-col justify-start items-start mt-90 px-6"
+          >
+            <div className="w-full max-w-[1240px] mx-auto">
+              <div className="flex justify-center items-start mb-8 max-w-[600px] lg:max-w-[824px]">
+                <div className="h-[450px] md:h-[400px] lg:h-[600px] flex items-center">
+                  <div className="border-l-[0.5px] border-l-[#A0A0A0] pl-4 lg:pl-15 h-[290px] md:h-[300px] lg:h-[360px] pt-10" />
+                </div>
+                <p className="lg:mb-3 font-medium lg:font-semibold text-2xl lg:text-5xl leading-3xl lg:leading-4xl text-white-neutral-light-100 opacity-80">
+                  <span>Nossa especialização. </span>
+                  {data?.expertiseSubtitle}
+                </p>
               </div>
-              <p className="lg:mb-3 font-medium lg:font-semibold text-2xl lg:text-5xl leading-3xl lg:leading-4xl text-[#DFD5E1]">
-                <span className="text-[#A0A0A0]">Nossa especialização. </span>
-                {data?.expertiseSubtitle}
-              </p>
             </div>
 
-            <div className="w-full max-w-[1100px] flex flex-wrap justify-center items-start gap-20 lg:mt-44">
-              {sortedExpertise.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col lg:flex-row justify-start items-start mb-6 w-full lg:max-w-[280px]"
-                >
-                  <div className="flex flex-col items-start justify-start">
-                    {(item.icon || !item.hideExpertiseIcon) && (
-                      <div className="text-white mb-2">
-                        {typeof item.icon === "string"
-                          ? renderIcon(item.icon)
-                          : item.icon}
-                      </div>
-                    )}
-                    <h3 className="text-base font-semibold text-white mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-base text-[#DFD5E1]">
-                      {item.description}
-                    </p>
+            <div className="w-full flex justify-center items-center px-4 lg:px-0">
+              <div className="w-full max-w-[1100px] flex flex-wrap justify-start items-start gap-20 lg:mt-44">
+                {sortedExpertise.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col lg:flex-row justify-start items-start mb-6 w-full max-w-[250px] xl:max-w-[280px]"
+                  >
+                    <div className="flex flex-col items-start justify-start">
+                      {(item.icon || !item.hideExpertiseIcon) && (
+                        <div className="text-white mb-2">
+                          {typeof item.icon === "string"
+                            ? renderIcon(item.icon)
+                            : item.icon}
+                        </div>
+                      )}
+                      <h3 className="text-base font-semibold text-white mb-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-base text-[#DFD5E1]">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </>
