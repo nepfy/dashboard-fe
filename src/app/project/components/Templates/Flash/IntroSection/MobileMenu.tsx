@@ -71,23 +71,17 @@ export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
       {/* Hamburger Button */}
       <button
         onClick={toggleMenu}
-        className="lg:hidden flex flex-col justify-center items-center w-6 h-6 space-y-1 cursor-pointer z-50"
+        className="lg:hidden flex flex-col justify-center items-center w-6 h-6 space-y-1 cursor-pointer z-[99999]"
         aria-label="Toggle menu"
       >
         <span
-          className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300 ${
-            isOpen ? "rotate-45 translate-y-2" : ""
-          }`}
+          className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300`}
         />
         <span
-          className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300 mb-2 mt-1 ${
-            isOpen ? "opacity-0" : ""
-          }`}
+          className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300 mb-2 mt-1`}
         />
         <span
-          className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300 ${
-            isOpen ? "-rotate-45 -translate-y-2" : ""
-          }`}
+          className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300`}
         />
       </button>
 
@@ -100,27 +94,26 @@ export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
           backgroundColor: color || "#000000",
         }}
       >
+        <div className="flex justify-end w-full pt-10 pr-6">
+          <button
+            onClick={closeMenu}
+            className="cursor-pointer hover:bg-white/10 rounded-full transition-colors"
+            aria-label="Close menu"
+          >
+            <X
+              className="text-white-neutral-light-100"
+              size={42}
+              absoluteStrokeWidth={true}
+              strokeWidth={1}
+            />
+          </button>
+        </div>
         <div
-          className={`flex flex-col h-full min-h-screen transition-all duration-500 ease-in-out transform ${
+          className={`flex flex-col justify-start items-center h-full transition-all duration-500 ease-in-out transform ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="flex justify-end w-full py-4 px-4 flex-shrink-0">
-            <button
-              onClick={closeMenu}
-              className="cursor-pointer hover:bg-white/10 rounded-full transition-colors mt-5 p-1"
-              aria-label="Close menu"
-            >
-              <X
-                className="text-white-neutral-light-100"
-                size={32}
-                absoluteStrokeWidth={true}
-                strokeWidth={1}
-              />
-            </button>
-          </div>
-
-          <div className="flex flex-col items-center space-y-3 px-4 pb-4 flex-1">
+          <div className="flex flex-col justify-center items-center space-y-3 pb-4">
             {MOBILE_MENU_ITEMS.map((item) => (
               <button
                 key={item.id}
@@ -132,7 +125,7 @@ export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
             ))}
 
             <div className="mt-auto pt-4">
-              <button className="font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full p-6">
+              <button className="font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full px-6 py-4">
                 {ctaButtonTitle}
               </button>
             </div>

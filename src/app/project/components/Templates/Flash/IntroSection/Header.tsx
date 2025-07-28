@@ -1,11 +1,9 @@
-import MobileMenu from "./MobileMenu";
 import type { HeaderProps } from "./intro-section";
 
 export default function Header({
   companyName,
   companyEmail,
   ctaButtonTitle,
-  color,
 }: HeaderProps) {
   const ctaButtonClasses =
     "font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full";
@@ -24,8 +22,6 @@ export default function Header({
               {ctaButtonTitle}
             </button>
           </div>
-
-          <MobileMenu ctaButtonTitle={ctaButtonTitle} color={color} />
         </div>
       )}
     </>

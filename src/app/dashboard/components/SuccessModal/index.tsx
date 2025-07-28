@@ -155,7 +155,7 @@ export default function SuccessModal({
         )}
 
         <div className="border-t border-t-white-neutral-light-300">
-          <div className="flex flex-col sm:flex-row gap-3 justify-start items-center py-4 px-7">
+          <div className="flex gap-3 justify-start items-center py-4 px-7">
             <button
               type="button"
               onClick={handleCopyLink}

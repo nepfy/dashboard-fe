@@ -29,14 +29,14 @@ export default function PlansSection({ data }: PlansSectionProps) {
     <div id="plans">
       {!data?.hidePlansSection && data?.plans && data.plans.length > 0 && (
         <div className="w-full h-full flex items-start 2xl:items-center justify-center p-3 bg-black mt-50 mb-40">
-          <div className="flex flex-col lg:flex-row gap-3 py-20">
+          <div className="flex flex-col lg:flex-row gap-4 py-20 min-h-[900px]">
             {sortedPlans?.map((plan) => (
               <div
                 key={plan.id}
-                className="border-[0.5px] border-[#A0A0A0] rounded-[32px] p-2 h-full flex flex-col justify-between relative overflow-hidden max-w-[450px] min-h-[600px] mt-4 lg:mt-0"
+                className="border-[0.5px] border-[#A0A0A0] rounded-[32px] p-3 flex flex-col justify-between relative overflow-hidden max-w-[455px] min-h-[600px] mt-4 lg:mt-0"
               >
                 <div
-                  className="py-4 px-3 rounded-[18px] flex flex-col justify-end min-h-[260px]"
+                  className="py-4 px-3 flex flex-col justify-end min-h-[260px] rounded-[32px]"
                   style={{
                     background: plan.isBestOffer
                       ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`
@@ -45,12 +45,12 @@ export default function PlansSection({ data }: PlansSectionProps) {
                 >
                   <div className="h-10 w-full flex items-start justify-end">
                     {plan.isBestOffer && (
-                      <p className="text-[#DFD5E1] font-bold bg-black rounded-[8px] px-2.5 py-2 text-[10px] w-[120px] flex items-center gap-2">
+                      <p className="text-[#DFD5E1] font-bold bg-black rounded-[8px] px-2.5 py-2 text-[14px] w-[144px] h-[37px] flex items-center gap-2">
                         <span>
                           <svg
-                            width="8"
-                            height="8"
-                            viewBox="0 0 10 8"
+                            width="10"
+                            height="10"
+                            viewBox="0 0 10 10"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                           >
@@ -88,9 +88,11 @@ export default function PlansSection({ data }: PlansSectionProps) {
                     {plan.planDetails.map((item, index) => (
                       <li
                         key={index}
-                        className="text-[16px] text-[#DFD5E1] font-medium flex items-center gap-1"
+                        className="text-[16px] text-[#DFD5E1] font-medium flex items-baseline gap-2"
                       >
-                        <Check className="w-3 h-3" />
+                        <span className="w-3 h-2 flex items-start justify-center">
+                          <Check size={14} />
+                        </span>
                         {item.description}
                       </li>
                     ))}

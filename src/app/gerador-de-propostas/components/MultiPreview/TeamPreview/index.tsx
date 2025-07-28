@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ExpandIcon from "#/components/icons/ExpandIcon";
+// import ExpandIcon from "#/components/icons/ExpandIcon";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import TemplatePreviewWrapper from "#/app/gerador-de-propostas/components/TemplatePreviewWrapper";
 import PreviewModal from "#/app/gerador-de-propostas/components/PreviewModal";
@@ -106,7 +106,7 @@ export default function TeamPreview() {
       <>
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full flex justify-center items-center">
-            <div className="absolute w-full flex justify-center items-start p-6 overflow-y-scroll">
+            <div className="w-full flex justify-center items-start p-6 overflow-y-scroll max-w-[1440px]">
               <TeamSectionPreview data={completeProjectData} />
             </div>
           </div>
@@ -118,12 +118,12 @@ export default function TeamPreview() {
             </div>
           )}
 
-          <button
+          {/* <button
             onClick={() => setIsPreviewOpen(true)}
             className="absolute bottom-10 right-6 z-50 hidden bg-white-neutral-light-100 w-[44px] h-[44px] xl:flex items-center justify-center rounded-[10px] border border-white-neutral-light-300 hover:bg-white-neutral-light-300 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <ExpandIcon width="16" height="16" />
-          </button>
+          </button> */}
 
           <PreviewModal
             isPreviewOpen={isPreviewOpen}

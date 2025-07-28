@@ -116,7 +116,10 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                   >
                     <div className="w-full py-4 px-6">
                       {/* Desktop Layout */}
-                      <div className="hidden lg:flex items-start justify-between mt-5">
+                      <div
+                        className="hidden lg:flex items-start justify-between mt-5 cursor-pointer"
+                        onClick={() => handleStepClick(process.id)}
+                      >
                         <div className="flex items-start xl:space-x-70">
                           <span className="text-[16px] font-medium text-[#DFD5E1] mr-50">
                             {stepNumber.toString().padStart(2, "0")}.
@@ -167,7 +170,10 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
 
                       {/* Mobile Layout */}
                       <div className="lg:hidden">
-                        <div className="flex items-center justify-between mb-4">
+                        <div
+                          className="flex items-center justify-between mb-4"
+                          onClick={() => handleStepClick(process.id)}
+                        >
                           <div className="flex items-center">
                             <span className="text-[14px] lg:text-lg font-medium text-[#DFD5E1] mr-6 opacity-90">
                               {stepNumber.toString().padStart(2, "0")}.

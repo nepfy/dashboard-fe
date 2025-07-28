@@ -88,9 +88,11 @@ export default function PlansPreview({ data }: PlansSectionProps) {
                     {plan.planDetails.map((item, index) => (
                       <li
                         key={index}
-                        className="text-[10px] text-[#DFD5E1] font-medium flex items-center gap-1"
+                        className="text-[10px] text-[#DFD5E1] font-medium flex items-baseline gap-2"
                       >
-                        <Check className="w-3 h-3" />
+                        <span className="w-2 h-1 flex items-start justify-center">
+                          <Check size={12} />
+                        </span>
                         {item.description}
                       </li>
                     ))}

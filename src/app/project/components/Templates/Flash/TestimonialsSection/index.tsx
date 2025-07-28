@@ -147,9 +147,9 @@ function MobileTestimonialsSection({
       <div className="w-full flex flex-col items-center justify-center">
         {/* Testimonial Content */}
         <div className="w-full flex flex-col items-center gap-6 min-h-[200px]">
-          <div className="flex-1 w-full px-4">
+          <div className="flex-1 w-full">
             <blockquote
-              className={`text-white text-lg leading-relaxed text-center transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              className={`text-[#DFD5E1] text-lg leading-relaxed transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 isTransitioning
                   ? "opacity-0 transform translate-y-3 scale-95"
                   : "opacity-100 transform translate-y-0 scale-100"

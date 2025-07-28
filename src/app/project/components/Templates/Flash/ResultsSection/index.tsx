@@ -82,7 +82,7 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
     speed: 3000,
     slidesToShow: isMobile ? 1 : Math.min(3, memberCount),
     slidesToScroll: 1,
-    arrows: true,
+    arrows: false,
     nextArrow: <CustomArrowRight />,
     prevArrow: <CustomArrowLeft />,
   };

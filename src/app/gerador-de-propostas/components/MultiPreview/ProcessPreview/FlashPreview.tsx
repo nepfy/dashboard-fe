@@ -83,7 +83,7 @@ export default function ProcessSectionPreview({
         >
           <div className="w-full p-6 flex items-start relative">
             <>
-              {!data?.hideProcessSubtitle && (
+              {!data?.hideProcessSubtitle && data?.processSubtitle && (
                 <div className="absolute top-6 left-10">
                   <p className="text-[#DFD5E1] font-semibold text-[8px] lg:max-w-[170px]">
                     A Jornada. {data?.processSubtitle}
@@ -120,7 +120,12 @@ export default function ProcessSectionPreview({
                                     key={process.id}
                                     className="border-b border-[#A0A0A0] last:border-b-0 w-full"
                                   >
-                                    <div className="w-full py-1 px-6">
+                                    <div
+                                      className="w-full py-1 px-6 cursor-pointer"
+                                      onClick={() =>
+                                        handleStepClick(process.id)
+                                      }
+                                    >
                                       <div className="hidden lg:flex items-start justify-between mt-5">
                                         <div className="flex items-start space-x-16">
                                           <span className="text-[10px] font-medium text-[#DFD5E1] min-w-[3rem]">
@@ -167,7 +172,7 @@ export default function ProcessSectionPreview({
                                           onClick={() =>
                                             handleStepClick(process.id)
                                           }
-                                          className="text-left transition-all duration-600 ease-in-out"
+                                          className="text-left transition-all duration-600 ease-in-out cursor-pointer"
                                         >
                                           <span
                                             className={`text-[10px] font-semibold ${

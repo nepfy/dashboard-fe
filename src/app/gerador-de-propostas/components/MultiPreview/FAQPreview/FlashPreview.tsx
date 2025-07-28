@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { ArrowDown } from "lucide-react";
 import type { CompleteProjectData } from "#/app/project/types/project";
 
 interface FAQSectionProps {
@@ -91,7 +92,10 @@ export default function FAQPreview({ data }: FAQSectionProps) {
                   className="border-b border-gray-300 last:border-b-0 w-full"
                 >
                   <div className="w-full py-4 px-6">
-                    <div className="flex flex-col items-stretch justify-between mt-5">
+                    <div
+                      className="flex flex-col items-stretch justify-between mt-5 cursor-pointer"
+                      onClick={() => handleFaqClick(faq.id)}
+                    >
                       <div className="flex items-start mb-1">
                         <span className="text-[10px] font-semibold text-[#DFD5E1] w-[30%]">
                           0{index + 1}.
@@ -130,13 +134,19 @@ export default function FAQPreview({ data }: FAQSectionProps) {
 
                         <button
                           onClick={() => handleFaqClick(faq.id)}
-                          className=" text-left transition-all duration-600 ease-in-out min-w-[4rem] flex justify-end"
+                          className=" text-left transition-all duration-600 ease-in-out min-w-[4rem] flex justify-end cursor-pointer"
                         >
                           <span
-                            className={`text-[10px] font-semibold  ${
+                            className={`text-[10px] font-semibold flex items-center gap-0.5 ${
                               isExpanded ? "text-[#DFD5E1]" : "text-white"
                             }`}
                           >
+                            <ArrowDown
+                              size={14}
+                              className={`transition-transform duration-300 ${
+                                isExpanded ? "rotate-180" : ""
+                              }`}
+                            />
                             LEIA
                           </span>
                         </button>

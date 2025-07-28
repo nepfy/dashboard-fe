@@ -17,7 +17,10 @@ export default function ServicesFooter({
   return (
     <div className="flex justify-start items-start lg:justify-start lg:items-center flex-col lg:flex-row lg:12 2xl:mt-50 overflow-hidden">
       <div className="flex lg:hidden justify-between items-end w-full order-2 lg:order-1">
-        <div className={`${columnClasses} font-semibold text-sm`}>
+        <div
+          id="intro-services-mobile"
+          className={`${columnClasses} font-semibold text-sm`}
+        >
           {servicesArray.map((service, index) => (
             <p key={index}>{service}</p>
           ))}

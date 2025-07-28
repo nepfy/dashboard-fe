@@ -56,10 +56,12 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
   const sliderSettings = {
     dots: false,
     infinite: true,
-    speed: 700,
+    autoplay: true,
+    autoplaySpeed: 1000,
+    speed: 3000,
     slidesToShow: Math.min(3, resultCount),
     slidesToScroll: 1,
-    arrows: true,
+    arrows: false,
     nextArrow: <CustomArrowRight />,
     prevArrow: <CustomArrowLeft />,
   };

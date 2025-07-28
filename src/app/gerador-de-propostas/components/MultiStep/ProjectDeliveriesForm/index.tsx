@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Eye } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import InfoIcon from "#/components/icons/InfoIcon";
 
@@ -100,13 +100,13 @@ export default function ProjectDeliveriesForm() {
         <div className="mb-6">
           <StepProgressIndicator currentStep={currentStep} />
         </div>
-        <button
+        {/* <button
           type="button"
           onClick={() => {}}
           className="xl:hidden mb-4 w-full p-3 border-1 border-white-neutral-light-300 rounded-[10px] bg-white-neutral-light-100 hover:bg-white-neutral-light-200 transition-colors flex items-center justify-center gap-2 text-white-neutral-light-800 button-inner cursor-pointer"
         >
           <Eye width="18" height="18" /> Pré-visualizar essa seção
-        </button>
+        </button> */}
         <TitleDescription
           title="Entregas incluídas:"
           description="Liste o que será entregue ao longo do projeto"

@@ -275,9 +275,9 @@ export default function TemplateSelection({
   };
 
   return (
-    <div className="w-full lg:h-full lg:flex justify-center items-center xl:items-start lg:px-7 lg:py-4">
+    <div className="w-full lg:h-full lg:flex justify-center items-start xl:items-start lg:px-7 lg:py-4">
       {/* Desktop View */}
-      <div className="hidden lg:flex flex-wrap items-end lg:justify-center xl:justify-start gap-4 max-w-[1100px] h-full xl:h-auto md:mt-90 lg:mt-0 xl:mt-0">
+      <div className="hidden lg:flex flex-wrap items-end lg:justify-center xl:justify-start gap-4 max-w-[1100px] xl:h-auto md:mt-90 lg:mt-0 xl:mt-0">
         {templates.map((template) => (
           <TemplateCard
             key={template.title}

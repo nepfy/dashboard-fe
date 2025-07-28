@@ -18,78 +18,48 @@ export default function FinalMessagePreview({
             background: `${data?.mainColor}`,
           }}
         >
-          <div className="w-full max-w-[1100px]">
-            <div className="flex items-start justify-start border-b-[0.5px] border-b-[#A0A0A0] pb-20 px-8">
-              <div className="w-[30%] 2xl:w-[400px]">
-                <p className="text-[#DFD5E1] text-[10px] font-semibold  max-w-[100px]">
-                  {data?.endMessageTitle}
-                </p>
+          <div className="w-full">
+            <div className="w-full max-w-[1440px] mx-auto flex flex-col justify-center relative">
+              <div className="flex flex-col xl:flex-row items-start justify-start px-14 mt-20">
+                <div className="w-[355px]">
+                  <p className="text-white-neutral-light-100 text-[10px] font-semibold max-w-[100px]">
+                    {data?.endMessageTitle}
+                  </p>
+                </div>
+                <div>
+                  <div className="flex items-start justify-start pt-30 lg:pt-0 pb-10">
+                    <p className="text-white-neutral-light-100 text-5xl max-w-[400px]">
+                      {data?.endMessageTitle2}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <p className="text-[#DFD5E1] text-[41px] leading-12 max-w-[320px] 2xl:max-w-[350px]">
-                {data?.endMessageTitle2}
+              <div className="mx-auto w-[95%] border-b border-b-[#A0A0A0] pb-10" />
+              <div className="flex flex-col xl:flex-row px-14">
+                <div className="w-[350px]" />
+                <div className="mt-30 mb-20">
+                  <p className="text-white-neutral-light-100 text-sm font-semibold max-w-[555px]">
+                    {data?.endMessageDescription}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative w-full">
+              <Marquee speed={100} autoFill>
+                <p className="text-4xl lg:text-7xl font-medium text-white-neutral-light-100 mr-4 pb-10">
+                  {data?.ctaButtonTitle}
+                </p>
+              </Marquee>
+
+              <p className="text-[#DFD5E1] text-[12px] text-center w-full mb-8 mt-6">
+                Proposta válida até{" "}
+                {data?.projectValidUntil
+                  ? formatDateToDDMonYYYY(data?.projectValidUntil.toISOString())
+                  : ""}
               </p>
             </div>
           </div>
-
-          {data?.endMessageDescription && !data?.hideFinalMessageSubtitle && (
-            <div className="flex items-center justify-center mt-15 mb-10">
-              <p className="text-[#DFD5E1] text-[10px] font-semibold max-w-[320px]">
-                {data?.endMessageDescription}
-              </p>
-            </div>
-          )}
-          <Marquee speed={100} gradientWidth={0}>
-            <div className="relative w-full">
-              <div className="flex w-fit gap-8 py-8">
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-
-                <p className="lg:text-7xl font-medium text-[#DFD5E1] whitespace-nowrap">
-                  {data?.ctaButtonTitle}
-                </p>
-              </div>
-            </div>
-          </Marquee>
-
-          <p className="text-[#DFD5E1] text-[10px] text-center w-full mb-8 mt-6">
-            Proposta válida até{" "}
-            {data?.projectValidUntil
-              ? formatDateToDDMonYYYY(data?.projectValidUntil.toISOString())
-              : ""}
-          </p>
         </div>
       )}
     </>

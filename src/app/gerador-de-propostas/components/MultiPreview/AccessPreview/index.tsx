@@ -10,7 +10,7 @@ export default function AccessPreview() {
       {templateType === "flash" && (
         <TemplatePreviewWrapper>
           <div className="relative w-full h-full flex justify-center items-center">
-            <div className="w-full h-full flex justify-center items-center p-6">
+            <div className="w-full h-full flex justify-center items-center p-6 max-w-[1440px]">
               <PasswordSection mainColor={formData?.step1?.mainColor} />
             </div>
           </div>

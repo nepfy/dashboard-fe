@@ -34,7 +34,7 @@ function CustomArrowRight(props: CustomArrowProps) {
   const { onClick } = props;
   return (
     <button
-      className="w-12 h-12 absolute right-0 top-1/2 -translate-y-1/2 text-black z-40 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-2 cursor-pointer"
+      className="w-12 h-12 absolute right-0 top-1/2 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-2 cursor-pointer"
       onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
     >
       <ArrowRight size={18} />
@@ -56,7 +56,9 @@ export default function TeamSection({ data }: TeamSectionProps) {
   const sliderSettings = {
     dots: false,
     infinite: true,
-    speed: 700,
+    autoplay: true,
+    autoplaySpeed: 1000,
+    speed: 3000,
     slidesToShow: Math.min(3, memberCount),
     slidesToScroll: 1,
     arrows: true,

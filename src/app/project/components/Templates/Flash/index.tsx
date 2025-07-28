@@ -28,6 +28,7 @@ import TermsSection from "./TermsSection";
 import FAQSection from "./FAQSection";
 import FinalMessageSection from "./FinalMessageSection";
 import PasswordSection from "./PasswordSection";
+import MobileMenu from "./IntroSection/MobileMenu";
 
 interface FlashTemplateProps {
   data?: CompleteProjectData;
@@ -105,6 +106,9 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       "#intro-company-email"
     );
     const introServices = introRef.current?.querySelector("#intro-services");
+    const introServicesMobile = introRef.current?.querySelector(
+      "#intro-services-mobile"
+    );
     const introPageSubtitle = introRef.current?.querySelector(
       "#intro-page-subtitle"
     );
@@ -112,6 +116,9 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
     if (introServices && introPageSubtitle) {
       gsap.set(introServices, { opacity: 0 });
       gsap.set(introPageSubtitle, { opacity: 0 });
+      if (introServicesMobile) {
+        gsap.set(introServicesMobile, { opacity: 0 });
+      }
 
       gsap.to(introServices, {
         opacity: 1,
@@ -119,6 +126,15 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
         ease: "none",
         delay: 2,
       });
+
+      if (introServicesMobile) {
+        gsap.to(introServicesMobile, {
+          opacity: 1,
+          duration: 2,
+          ease: "none",
+          delay: 2,
+        });
+      }
 
       gsap.to(introPageSubtitle, {
         opacity: 1,
@@ -134,12 +150,13 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       introCompanyName &&
       introCompanyEmail &&
       introServices &&
-      introPageSubtitle
+      introPageSubtitle &&
+      introServicesMobile
     ) {
       gsap.set(introTitle, { yPercent: 200 });
       gsap.set(introValidity, { yPercent: 400 });
-      gsap.set(introCompanyName, { yPercent: 200, opacity: 0 });
-      gsap.set(introCompanyEmail, { yPercent: 300, opacity: 0 });
+      gsap.set(introCompanyName, { yPercent: 100, opacity: 0 });
+      gsap.set(introCompanyEmail, { yPercent: 100, opacity: 0 });
 
       gsap
         .timeline()
@@ -193,6 +210,12 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   return (
     <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
       <div className="relative w-screen">
+        <div className="lg:hidden absolute top-12 right-8 z-[99999]">
+          <MobileMenu
+            ctaButtonTitle={data?.ctaButtonTitle}
+            color={data?.mainColor}
+          />
+        </div>
         <div ref={containerRef} className="relative w-full h-screen">
           <div ref={introRef} className="absolute inset-0 w-full h-full">
             <IntroSection data={data} />

@@ -167,7 +167,7 @@ export default function FAQSection({ data }: FAQSectionProps) {
 
                           <button
                             onClick={() => handleFaqClick(faq.id)}
-                            className="text-left transition-all duration-600 ease-in-out min-w-[4rem] flex justify-end"
+                            className="text-left transition-all duration-600 ease-in-out min-w-[4rem] flex justify-end cursor-pointer"
                           >
                             <span
                               className={`text-sm font-semibold flex items-center gap-0.5 ${
@@ -188,7 +188,10 @@ export default function FAQSection({ data }: FAQSectionProps) {
 
                       {/* Mobile Layout */}
                       <div className="lg:hidden">
-                        <div className="flex items-start justify-between mb-4">
+                        <div
+                          className="flex items-start justify-between mb-4 cursor-pointer"
+                          onClick={() => handleFaqClick(faq.id)}
+                        >
                           <div className="flex items-start space-x-4">
                             <span className="text-sm lg:text-base font-medium text-[#DFD5E1]">
                               0{index + 1}.
