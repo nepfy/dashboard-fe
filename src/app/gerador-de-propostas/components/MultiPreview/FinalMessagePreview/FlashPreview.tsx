@@ -52,7 +52,7 @@ export default function FinalMessagePreview({
                 </p>
               </Marquee>
 
-              <p className="text-[#DFD5E1] text-[12px] text-center w-full mb-8 mt-6">
+              <p className="text-white-neutral-light-100 opacity-50 text-[12px] text-center w-full mb-8 mt-6">
                 Proposta válida até{" "}
                 {data?.projectValidUntil
                   ? formatDateToDDMonYYYY(data?.projectValidUntil.toISOString())

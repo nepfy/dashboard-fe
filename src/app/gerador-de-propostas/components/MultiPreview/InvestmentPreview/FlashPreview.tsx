@@ -14,8 +14,8 @@ export default function InvestmentPreview({ data }: InvestmentPreviewProps) {
             background: `linear-gradient(345deg, #000000 0%, #000000 10%, #000000 55%, ${data?.mainColor} 90%)`,
           }}
         >
-          <h1 className="text-[#DFD5E1] font-normal text-[41px] leading-[1.1] mb-8 max-w-[630px]">
-            <span className="text-[#A0A0A0] font-medium">Investimento. </span>
+          <h1 className="text-white-neutral-light-100 opacity-50 font-normal text-[41px] leading-[1.1] mb-8 max-w-[630px]">
+            <span className="font-medium">Investimento. </span>
             {data?.investmentTitle}
           </h1>
         </div>

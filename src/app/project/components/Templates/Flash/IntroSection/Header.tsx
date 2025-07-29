@@ -4,6 +4,7 @@ export default function Header({
   companyName,
   companyEmail,
   ctaButtonTitle,
+  isSmallHeight = false,
 }: HeaderProps) {
   const ctaButtonClasses =
     "font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full";
@@ -11,8 +12,14 @@ export default function Header({
   return (
     <>
       {companyName && companyEmail && ctaButtonTitle && (
-        <div className="text-white-neutral-light-100 flex justify-between items-center overflow-hidden">
-          <p id="intro-company-name" className="font-semibold text-lg">
+        <div
+          id="intro-header-container"
+          className="text-white-neutral-light-100 flex justify-between items-center overflow-hidden"
+        >
+          <p
+            id="intro-company-name"
+            className={`font-semibold ${isSmallHeight ? "text-sm" : "text-lg"}`}
+          >
             {companyName}
           </p>
 

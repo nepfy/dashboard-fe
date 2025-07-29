@@ -1,7 +1,5 @@
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import Slider from "react-slick";
+import { useState, useEffect } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./TeamSection.css";
@@ -14,36 +12,7 @@ interface TeamSectionProps {
   data?: CompleteProjectData;
 }
 
-interface CustomArrowProps {
-  onClick?: () => void;
-}
-
-function CustomArrowLeft(props: CustomArrowProps) {
-  const { onClick } = props;
-  return (
-    <button
-      className="w-10 h-10 absolute left-0 top-40 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center cursor-pointer"
-      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
-    >
-      <ArrowLeft size={14} />
-    </button>
-  );
-}
-
-function CustomArrowRight(props: CustomArrowProps) {
-  const { onClick } = props;
-  return (
-    <button
-      className="w-10 h-10 absolute right-4 top-40 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center cursor-pointer"
-      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
-    >
-      <ArrowRight size={14} />
-    </button>
-  );
-}
-
 export default function TeamSection({ data }: TeamSectionProps) {
-  const sliderRef = useRef<Slider>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [visibleMembers, setVisibleMembers] = useState(2);
 
@@ -73,19 +42,6 @@ export default function TeamSection({ data }: TeamSectionProps) {
     setVisibleMembers((prev) => Math.min(prev + 2, memberCount));
   };
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 1000,
-    speed: 3000,
-    slidesToShow: Math.min(3, memberCount),
-    slidesToScroll: 1,
-    arrows: true,
-    nextArrow: <CustomArrowRight />,
-    prevArrow: <CustomArrowLeft />,
-  };
-
   const renderMember = (member: ProjectTeamMember, index: number) => (
     <div
       key={member?.id || index}
@@ -111,7 +67,9 @@ export default function TeamSection({ data }: TeamSectionProps) {
       </div>
       <div className="mt-4 text-white">
         <h3 className="text-lg font-semibold">{member?.name}</h3>
-        <p className="text-lg font-medium text-[#A0A0A0]">{member?.role}</p>
+        <p className="text-lg font-medium text-white-neutral-light-100 opacity-50 ">
+          {member?.role}
+        </p>
       </div>
     </div>
   );
@@ -170,14 +128,13 @@ export default function TeamSection({ data }: TeamSectionProps) {
     }
 
     return (
-      <div className="w-full team-slider">
-        <Slider ref={sliderRef} {...sliderSettings} className="relative">
-          {sortedTeamMembers.map((member, index) => (
-            <div key={member?.id || index} className="px-2">
-              {renderMember(member, index)}
-            </div>
-          ))}
-        </Slider>
+      <div
+        className="w-full grid gap-6"
+        style={{
+          gridTemplateColumns: `repeat(${Math.min(memberCount, 3)}, 1fr)`,
+        }}
+      >
+        {sortedTeamMembers.map((member, index) => renderMember(member, index))}
       </div>
     );
   };
@@ -191,7 +148,7 @@ export default function TeamSection({ data }: TeamSectionProps) {
         >
           {data?.ourTeamSubtitle && (
             <div className="w-full flex items-center justify-center mb-50">
-              <h2 className="h-[162px] lg:h-[360px] border-l-[0.5px] border-l-[#A0A0A0] pl-10 text-white text-3xl lg:text-7xl max-w-[690px] flex items-end">
+              <h2 className="h-[162px] lg:h-[360px] border-l-[0.5px] border-l-white-neutral-light-100 pl-10 text-white opacity-50 text-3xl lg:text-7xl max-w-[690px] flex items-end">
                 {data?.ourTeamSubtitle}
               </h2>
             </div>

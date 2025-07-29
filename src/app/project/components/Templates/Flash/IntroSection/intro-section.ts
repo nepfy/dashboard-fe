@@ -14,15 +14,18 @@ export interface HeaderProps {
   companyEmail?: string | null;
   ctaButtonTitle?: string | null;
   color?: string | null;
+  isSmallHeight?: boolean;
 }
 
 export interface HeroProps {
   pageTitle?: string | null;
   createdAt?: Date | string | null;
+  isSmallHeight?: boolean;
 }
 
 export interface ServicesFooterProps {
   services?: string | null;
   pageSubtitle?: string | null;
   ctaButtonTitle?: string | null;
+  isSmallHeight?: boolean;
 }

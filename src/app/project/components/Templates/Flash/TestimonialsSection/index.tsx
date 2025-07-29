@@ -73,7 +73,6 @@ function DesktopTestimonialsSection({
           <div className="hidden md:block h-full bg-[#A0A0A0] w-[0.5px]" />
 
           <div className="min-w-[200px] flex flex-col lg:flex-row items-center xl:items-end gap-4 lg:gap-6">
-            <div className="border-l-[0.5px] border-l-[#A0A0A0] h-[160px]" />
             {currentTestimonialData.photo &&
               !currentTestimonialData.hidePhoto && (
                 <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden flex-shrink-0">
@@ -191,7 +190,7 @@ function MobileTestimonialsSection({
                 </h4>
                 {currentTestimonialData.role && (
                   <p
-                    className={`text-[#A0A0A0] text-sm transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] delay-100 ${
+                    className={`text-white-neutral-light-100 opacity-50 text-sm transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] delay-100 ${
                       isTransitioning
                         ? "opacity-0 transform translate-y-2 scale-98"
                         : "opacity-100 transform translate-y-0 scale-100"

@@ -31,7 +31,9 @@ export default function ClientsPreview({ data }: ClientsPreviewProps) {
                 ) : null}
 
                 {client?.name && !client?.logo && !client?.hideClientName ? (
-                  <p className="text-white font-bold text-3xl">{client.name}</p>
+                  <p className="text-white opacity-50 font-bold text-3xl">
+                    {client.name}
+                  </p>
                 ) : null}
               </div>
             ))}

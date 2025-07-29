@@ -144,7 +144,7 @@ export default function AccountRecovery() {
               <>
                 <div className="space-y-2 relative">
                   <MailEnvelope
-                    className="absolute right-4 bottom-2"
+                    className="absolute right-4 bottom-9 z-50"
                     width="20"
                     height="20"
                   />

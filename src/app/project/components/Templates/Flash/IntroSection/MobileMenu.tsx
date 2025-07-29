@@ -125,7 +125,7 @@ export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
             ))}
 
             <div className="mt-auto pt-4">
-              <button className="font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full px-6 py-4">
+              <button className="font-semibold text-xs text-white-neutral-light-100 opacity-50 bg-black rounded-full px-6 py-4">
                 {ctaButtonTitle}
               </button>
             </div>

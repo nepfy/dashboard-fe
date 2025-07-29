@@ -17,8 +17,11 @@ export default function IntroSection({ data }: IntroSectionProps) {
         data?.createdAt &&
         data?.services &&
         data?.pageSubtitle && (
-          <div id="intro" className="w-full h-full max-w-[1440px] mx-auto">
-            <div className="w-full h-full flex flex-col px-8 py-12">
+          <div
+            id="intro"
+            className="w-full min-h-screen h-full max-w-[1440px] mx-auto"
+          >
+            <div className="w-full h-full flex flex-col px-4 sm:px-8 py-6 sm:py-12">
               <Header
                 companyName={data?.companyName}
                 companyEmail={data?.companyEmail}
@@ -26,7 +29,7 @@ export default function IntroSection({ data }: IntroSectionProps) {
                 color={data?.mainColor}
               />
 
-              <div className="flex-1 flex flex-col justify-center">
+              <div className="flex-1 flex flex-col justify-center min-h-0">
                 <Hero pageTitle={data?.pageTitle} createdAt={data?.createdAt} />
               </div>
 

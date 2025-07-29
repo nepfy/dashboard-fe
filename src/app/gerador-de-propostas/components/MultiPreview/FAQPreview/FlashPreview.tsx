@@ -79,7 +79,7 @@ export default function FAQPreview({ data }: FAQSectionProps) {
             )`,
           }}
         >
-          <p className="text-[#DFD5E1] text-5xl">
+          <p className="text-white-neutral-light-100 opacity-50 text-5xl">
             Perguntas <br /> Frequentes
           </p>
           <div className="w-full mt-15">
@@ -97,13 +97,13 @@ export default function FAQPreview({ data }: FAQSectionProps) {
                       onClick={() => handleFaqClick(faq.id)}
                     >
                       <div className="flex items-start mb-1">
-                        <span className="text-[10px] font-semibold text-[#DFD5E1] w-[30%]">
+                        <span className="text-[10px] font-semibold text-white-neutral-light-100 opacity-50 w-[30%]">
                           0{index + 1}.
                         </span>
 
                         <div className="flex-1 flex justify-start px-2">
                           <div className="w-full mx-auto">
-                            <p className="text-[10px] font-semibold text-[#DFD5E1] text-left">
+                            <p className="text-[10px] font-semibold text-white-neutral-light-100 opacity-50 text-left">
                               {faq.question}
                             </p>
 
@@ -123,7 +123,7 @@ export default function FAQPreview({ data }: FAQSectionProps) {
                                   }}
                                   className="py-2"
                                 >
-                                  <p className="text-[#DFD5E1] text-[10px] leading-relaxed">
+                                  <p className="text-white-neutral-light-100 opacity-50 text-[10px] leading-relaxed">
                                     {faq.answer}
                                   </p>
                                 </div>
