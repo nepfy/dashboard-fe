@@ -1,9 +1,4 @@
 import Image from "next/image";
-import { useRef } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import "./ResultSection.css";
 import type {
   CompleteProjectData,
@@ -14,37 +9,7 @@ interface ResultsSectionProps {
   data?: CompleteProjectData;
 }
 
-interface CustomArrowProps {
-  onClick?: () => void;
-}
-
-function CustomArrowLeft(props: CustomArrowProps) {
-  const { onClick } = props;
-  return (
-    <button
-      className="w-40 h-40 absolute left-20 top-1/2 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-6 cursor-pointer"
-      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
-    >
-      <ArrowLeft size={42} />
-    </button>
-  );
-}
-
-function CustomArrowRight(props: CustomArrowProps) {
-  const { onClick } = props;
-  return (
-    <button
-      className="w-12 h-12 absolute right-0 top-24 -translate-y-1/2 text-black z-40 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-2 cursor-pointer"
-      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
-    >
-      <ArrowRight size={18} />
-    </button>
-  );
-}
-
 export default function ResultsSection({ data }: ResultsSectionProps) {
-  const sliderRef = useRef<Slider>(null);
-
   const results = data?.results || [];
   const sortedResults = [...results].sort((a, b) => {
     const orderA = a.sortOrder ?? 0;
@@ -52,19 +17,6 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
     return orderA - orderB;
   });
   const resultCount = sortedResults.length;
-
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 1000,
-    speed: 3000,
-    slidesToShow: Math.min(3, resultCount),
-    slidesToScroll: 1,
-    arrows: false,
-    nextArrow: <CustomArrowRight />,
-    prevArrow: <CustomArrowLeft />,
-  };
 
   const renderResult = (result: ProjectResult, index: number) => (
     <div
@@ -144,12 +96,13 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
     }
 
     return (
-      <div className="w-full result-slider pb-6">
-        <Slider ref={sliderRef} {...sliderSettings} className="relative">
-          {sortedResults.map((result, index) => (
-            <div key={result?.id || index}>{renderResult(result, index)}</div>
-          ))}
-        </Slider>
+      <div
+        className="w-full grid gap-6 pb-10"
+        style={{
+          gridTemplateColumns: `repeat(${Math.min(resultCount, 3)}, 1fr)`,
+        }}
+      >
+        {sortedResults.map((member, index) => renderResult(member, index))}
       </div>
     );
   };
@@ -157,7 +110,7 @@ export default function ResultsSection({ data }: ResultsSectionProps) {
   return (
     <>
       {!data?.hideResultsSection && (
-        <div className="w-full h-[650px] px-3 bg-black flex flex-col justify-center">
+        <div className="w-full min-h-full px-6 bg-black flex flex-col justify-center">
           {resultCount > 0 && (
             <div className="flex items-center gap-1 mt-24 mb-4 px-3">
               <div className="bg-white-neutral-light-100 w-2 h-2 rounded-full" />

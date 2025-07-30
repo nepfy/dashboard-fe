@@ -81,7 +81,6 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
     return () => gsap.ticker.remove(update);
   }, []);
 
-  // Set initial GSAP states immediately when password is correct
   useEffect(() => {
     if (
       isPasswordCorrect &&
@@ -92,14 +91,11 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       gsap.set(introRef.current, { yPercent: 0 });
       gsap.set(businessRef.current, { opacity: 0 });
       gsap.set(businessComplementRef.current, { opacity: 0, y: -100 });
-
-      // Mark animation as ready after a brief delay to ensure DOM is fully rendered
       setTimeout(() => setIsAnimationReady(true), 50);
     }
   }, [isPasswordCorrect]);
 
   useEffect(() => {
-    // Only run animations if password is correct and page is loaded
     if (!isPasswordCorrect || !containerRef.current || !gradientRef.current)
       return;
 
@@ -117,7 +113,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       }
 
       if (businessComplementRef.current) {
-        totalHeight += window.innerHeight;
+        totalHeight += window.innerHeight * 4.0;
       }
 
       if (window.innerWidth < 640) {
@@ -279,7 +275,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
           businessTitle,
           {
             y: "90%",
-            duration: 1,
+            duration: 0.8,
             ease: "power2.inOut",
           },
           "<"
@@ -295,17 +291,17 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
           "<"
         )
         .to(businessRef.current, {
-          yPercent: window.innerWidth < 768 ? -100 : -55,
+          yPercent: window.innerWidth < 768 ? -100 : -65,
           opacity: 0.6,
-          duration: 1.3,
+          duration: 0.8,
           ease: "power2.inOut",
           delay: window.innerWidth < 768 ? 0.5 : 1,
         })
         .to(
           gradientRef.current,
           {
-            yPercent: window.innerWidth < 768 ? -95 : -120,
-            duration: 1.3,
+            yPercent: window.innerWidth < 768 ? -95 : -125,
+            duration: 0.8,
             ease: "power2.inOut",
           },
           "<"
@@ -315,10 +311,19 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.6,
             ease: "linear",
           },
-          "-=0.5"
+          "<"
+        )
+        .to(
+          businessComplementRef.current,
+          {
+            y: -100,
+            duration: 0.6,
+            ease: "linear",
+          },
+          "+=0.5"
         );
 
       const animationHeight = calculateAnimationHeight();
@@ -385,7 +390,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
 
           <div
             ref={businessComplementRef}
-            className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${
+            className={`absolute inset-0 w-full transition-opacity duration-300 ${
               isPasswordCorrect && isAnimationReady ? "opacity-0" : "opacity-0"
             }`}
           >

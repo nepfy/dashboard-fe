@@ -70,7 +70,7 @@ export default function ExpertiseSectionPreview({
             background: `linear-gradient(192deg, ${data?.mainColor} 0%, #000000 27.11%, #000000 50.59%, #000000 85.36%)`,
           }}
         >
-          <p className="text-3xl text-white-neutral-light-100 opacity-50 min-h-[220px] border-l-[0.5px] border-l-[#A0A0A0] pl-9 2xl:ml-20 min-w-[500px] max-w-[550px] leading-8">
+          <p className="text-3xl text-white-neutral-light-100 min-h-[220px] border-l-[0.5px] border-l-[#A0A0A0] pl-9 2xl:ml-20 min-w-[500px] max-w-[550px] leading-8">
             <span className="font-bold">Nossa especialização. </span>
             {data?.expertiseSubtitle}
           </p>

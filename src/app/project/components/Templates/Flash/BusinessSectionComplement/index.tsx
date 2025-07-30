@@ -12,7 +12,7 @@ export default function BusinessSectionComplement({
       {!data?.hideAboutUsSection && (
         <div
           id="business-complement"
-          className="w-full h-full max-w-[1440px] mx-auto flex flex-col justify-center lg:px-1 xl:pt-100 pb-20 lg:pb-0 overflow-visible"
+          className="w-full h-screen max-w-[1440px] mx-auto flex flex-col justify-center lg:px-1 xl:pt-100 pb-20 overflow-visible"
         >
           <div className="px-6 h-[500px] lg:h-[600px] flex flex-col lg:flex-row justify-between items-start">
             {!data?.hideAboutUsSubtitle1 && (

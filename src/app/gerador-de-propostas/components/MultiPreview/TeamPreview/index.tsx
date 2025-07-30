@@ -105,8 +105,8 @@ export default function TeamPreview() {
     return (
       <>
         <TemplatePreviewWrapper>
-          <div className="relative w-full h-full flex justify-center items-center">
-            <div className="w-full flex justify-center items-start p-6 overflow-y-scroll max-w-[1440px]">
+          <div className="relative w-full h-full flex justify-center items-center overflow-hidden pb-10">
+            <div className="w-full h-full overflow-y-scroll flex justify-center items-start p-6 max-w-[1440px]">
               <TeamSectionPreview data={completeProjectData} />
             </div>
           </div>

@@ -121,12 +121,12 @@ export default function TeamMemberAccordion({
       return newErrors;
     });
 
-    // Check file size (350KB max)
-    const maxSize = 350 * 1024; // 350KB in bytes
+    // Check file size (1MB max)
+    const maxSize = 1024 * 1024; // 1MB in bytes
     if (file.size > maxSize) {
       setUploadErrors((prev) => ({
         ...prev,
-        [memberId]: "Arquivo muito grande. Tamanho máximo: 350KB.",
+        [memberId]: "Arquivo muito grande. Tamanho máximo: 1MB.",
       }));
       return;
     }
@@ -364,7 +364,7 @@ export default function TeamMemberAccordion({
                 </div>
 
                 <div className="text-xs text-white-neutral-light-400 mt-3">
-                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 350KB
+                  Tipo de arquivo: .jpg, .png ou .webp. Tamanho máximo: 1MB
                 </div>
 
                 {/* Show validation error from form */}

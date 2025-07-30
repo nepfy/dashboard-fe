@@ -79,7 +79,7 @@ export default function FAQPreview({ data }: FAQSectionProps) {
             )`,
           }}
         >
-          <p className="text-white-neutral-light-100 opacity-50 text-5xl">
+          <p className="text-white-neutral-light-100 text-5xl">
             Perguntas <br /> Frequentes
           </p>
           <div className="w-full mt-15">
@@ -89,7 +89,7 @@ export default function FAQPreview({ data }: FAQSectionProps) {
               return (
                 <div
                   key={faq.id}
-                  className="border-b border-gray-300 last:border-b-0 w-full"
+                  className="border-b border-white-neutral-light-100/50 last:border-b-0 w-full"
                 >
                   <div className="w-full py-4 px-6">
                     <div
@@ -103,7 +103,7 @@ export default function FAQPreview({ data }: FAQSectionProps) {
 
                         <div className="flex-1 flex justify-start px-2">
                           <div className="w-full mx-auto">
-                            <p className="text-[10px] font-semibold text-white-neutral-light-100 opacity-50 text-left">
+                            <p className="text-[10px] font-semibold text-white-neutral-light-100 text-left">
                               {faq.question}
                             </p>
 

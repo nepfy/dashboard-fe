@@ -1,10 +1,4 @@
 import Image from "next/image";
-import { useRef } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import "./TeamSection.css";
 import type {
   CompleteProjectData,
   ProjectTeamMember,
@@ -14,37 +8,7 @@ interface TeamSectionProps {
   data?: CompleteProjectData;
 }
 
-interface CustomArrowProps {
-  onClick?: () => void;
-}
-
-function CustomArrowLeft(props: CustomArrowProps) {
-  const { onClick } = props;
-  return (
-    <button
-      className="w-40 h-40 absolute left-20 top-1/2 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-6 cursor-pointer"
-      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
-    >
-      <ArrowLeft size={42} />
-    </button>
-  );
-}
-
-function CustomArrowRight(props: CustomArrowProps) {
-  const { onClick } = props;
-  return (
-    <button
-      className="w-12 h-12 absolute right-0 top-1/2 -translate-y-1/2 text-black -z-10 bg-white-neutral-light-100 rounded-full flex items-center justify-center p-2 cursor-pointer"
-      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
-    >
-      <ArrowRight size={18} />
-    </button>
-  );
-}
-
 export default function TeamSection({ data }: TeamSectionProps) {
-  const sliderRef = useRef<Slider>(null);
-
   const teamMembers = data?.teamMembers || [];
   const sortedTeamMembers = [...teamMembers].sort((a, b) => {
     const orderA = a.sortOrder ?? 0;
@@ -52,19 +16,6 @@ export default function TeamSection({ data }: TeamSectionProps) {
     return orderA - orderB;
   });
   const memberCount = sortedTeamMembers.length;
-
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 1000,
-    speed: 3000,
-    slidesToShow: Math.min(3, memberCount),
-    slidesToScroll: 1,
-    arrows: true,
-    nextArrow: <CustomArrowRight />,
-    prevArrow: <CustomArrowLeft />,
-  };
 
   const renderMember = (member: ProjectTeamMember, index: number) => (
     <div
@@ -124,12 +75,13 @@ export default function TeamSection({ data }: TeamSectionProps) {
     }
 
     return (
-      <div className="w-full team-slider pb-6">
-        <Slider ref={sliderRef} {...sliderSettings} className="relative">
-          {sortedTeamMembers.map((member, index) => (
-            <div key={member?.id || index}>{renderMember(member, index)}</div>
-          ))}
-        </Slider>
+      <div
+        className="w-full grid gap-6 pb-10"
+        style={{
+          gridTemplateColumns: `repeat(${Math.min(memberCount, 3)}, 1fr)`,
+        }}
+      >
+        {sortedTeamMembers.map((member, index) => renderMember(member, index))}
       </div>
     );
   };
@@ -138,7 +90,7 @@ export default function TeamSection({ data }: TeamSectionProps) {
     <>
       {!data?.hideAboutYourTeamSection && (
         <div
-          className="w-full px-6"
+          className="w-full min-h-full px-6 flex flex-col justify-center"
           style={{
             background: `linear-gradient(200deg, #000000 0%, #000000 27.11%, #000000 50.59%, ${data?.mainColor} 75.36%)`,
           }}
