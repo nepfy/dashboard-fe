@@ -155,6 +155,7 @@ export interface CompleteProjectData {
   createdAt: Date | null;
   updatedAt: Date | null;
   userName: string | null;
+  userPhone: string | null;
 
   teamMembers: ProjectTeamMember[];
   expertise: ProjectExpertise[];

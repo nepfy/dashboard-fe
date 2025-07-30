@@ -1,17 +1,20 @@
 import type { HeaderProps } from "./intro-section";
+import { formatPhoneForWhatsApp } from "#/helpers";
 
 export default function Header({
   companyName,
   companyEmail,
   ctaButtonTitle,
   isSmallHeight = false,
+  userPhone,
 }: HeaderProps) {
   const ctaButtonClasses =
     "font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full";
 
-  const handleEmailClick = () => {
-    if (companyEmail) {
-      window.location.href = `mailto:${companyEmail}`;
+  const handleWhatsAppClick = () => {
+    const formattedPhone = formatPhoneForWhatsApp(userPhone);
+    if (formattedPhone) {
+      window.open(`https://wa.me/${formattedPhone}`, "_blank");
     }
   };
 
@@ -33,7 +36,7 @@ export default function Header({
             <p className="font-semibold text-sm mr-11">{companyEmail}</p>
             <button
               className={`${ctaButtonClasses} p-5 cursor-pointer`}
-              onClick={handleEmailClick}
+              onClick={handleWhatsAppClick}
             >
               {ctaButtonTitle}
             </button>

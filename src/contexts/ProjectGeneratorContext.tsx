@@ -143,6 +143,23 @@ export function ProjectGeneratorProvider({
     currentProjectId: hookProjectId,
   } = useSaveDraft();
 
+  // Initialize with persisted color from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const persistedColor = localStorage.getItem("flash-mainColor");
+      if (
+        persistedColor &&
+        (!formData.step1?.mainColor ||
+          formData.step1.mainColor !== persistedColor)
+      ) {
+        setFormData((prev) => ({
+          ...prev,
+          step1: { ...prev.step1, mainColor: persistedColor },
+        }));
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (hookProjectId && hookProjectId !== currentProjectId) {
       setCurrentProjectId(hookProjectId);
@@ -159,10 +176,27 @@ export function ProjectGeneratorProvider({
     step: T,
     data: ProposalFormData[T]
   ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [step]: { ...prev[step], ...data },
-    }));
+    setFormData((prev) => {
+      const newFormData = {
+        ...prev,
+        [step]: { ...prev[step], ...data },
+      };
+
+      // Persist mainColor to localStorage when it changes
+      if (
+        step === "step1" &&
+        data &&
+        typeof data === "object" &&
+        "mainColor" in data
+      ) {
+        const mainColor = (data as Project).mainColor;
+        if (mainColor && typeof window !== "undefined") {
+          localStorage.setItem("flash-mainColor", mainColor);
+        }
+      }
+
+      return newFormData;
+    });
   };
 
   const setTemplateType = (template: TemplateType) => {

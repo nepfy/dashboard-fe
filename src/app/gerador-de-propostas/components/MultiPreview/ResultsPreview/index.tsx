@@ -109,6 +109,7 @@ const convertFormDataToCompleteProjectData = (
     pagePassword: null,
     isPublished: false,
     isProposalGenerated: false,
+    userPhone: null, // Will be populated with actual user data in production,
   };
 };
 

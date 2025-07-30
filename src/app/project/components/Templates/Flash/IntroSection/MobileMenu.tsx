@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import { formatPhoneForWhatsApp } from "#/helpers";
 
 interface MobileMenuProps {
   ctaButtonTitle?: string | null;
   color?: string | null;
-  companyEmail?: string | null;
+  userPhone?: string | null;
 }
 
 const MOBILE_MENU_ITEMS = [
@@ -25,7 +26,7 @@ const MOBILE_MENU_ITEMS = [
 export default function MobileMenu({
   ctaButtonTitle,
   color,
-  companyEmail,
+  userPhone,
 }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,9 +38,10 @@ export default function MobileMenu({
     setIsOpen(false);
   };
 
-  const handleEmailClick = () => {
-    if (companyEmail) {
-      window.location.href = `mailto:${companyEmail}`;
+  const handleWhatsAppClick = () => {
+    const formattedPhone = formatPhoneForWhatsApp(userPhone);
+    if (formattedPhone) {
+      window.open(`https://wa.me/${formattedPhone}`, "_blank");
     }
   };
 
@@ -138,7 +140,7 @@ export default function MobileMenu({
             <div className="mt-auto pt-4">
               <button
                 className="font-semibold text-xs text-white-neutral-light-100 opacity-50 bg-black rounded-full px-6 py-4"
-                onClick={handleEmailClick}
+                onClick={handleWhatsAppClick}
               >
                 {ctaButtonTitle}
               </button>

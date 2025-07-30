@@ -30,10 +30,10 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
           <Marquee speed={100} gradientWidth={0} autoFill>
             {visibleClients?.map((client) => (
               <div
-                className="flex items-center justify-center border border-white rounded-full w-[300px] h-[174px] px-24 mr-8"
+                className="flex items-center justify-center border border-[#DFD5E121] rounded-[16px] w-[300px] h-[174px] px-24 mr-8"
                 key={client.id}
               >
-                {client?.logo && !client?.name && !client?.hideLogo ? (
+                {client?.logo && !client?.hideLogo ? (
                   <>
                     <Image
                       src={client.logo}
@@ -43,10 +43,10 @@ export default function ClientsSection({ data }: ClientsSectionProps) {
                       className="object-contain max-h-36 max-w-24"
                     />
                   </>
-                ) : null}
-
-                {client?.name && !client?.logo && !client?.hideClientName ? (
-                  <p className="text-white font-bold text-3xl">{client.name}</p>
+                ) : client?.name && !client?.hideClientName ? (
+                  <p className="text-white opacity-50 font-bold text-3xl">
+                    {client.name}
+                  </p>
                 ) : null}
               </div>
             ))}

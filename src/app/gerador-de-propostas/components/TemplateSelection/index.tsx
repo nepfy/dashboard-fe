@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import Stars from "#/components/icons/Stars";
 import { TemplateType } from "#/types/project";
+import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -93,11 +94,13 @@ const TemplateCard = ({
   selectedColor,
   onColorSelect,
   onSelectTemplate,
+  onPreviewTemplate,
 }: {
   template: Template;
   selectedColor: string;
   onColorSelect: (color: string) => void;
   onSelectTemplate: () => void;
+  onPreviewTemplate: () => void;
 }) => (
   <div className="h-[500px] w-[340px] max-w-full border border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-100">
     {/* Header */}
@@ -142,12 +145,13 @@ const TemplateCard = ({
       >
         Selecionar
       </button>
-      {/* <button
+      <button
         type="button"
         className="w-[105px] h-9 cursor-pointer text-white-neutral-light-800 hover:text-white-neutral-light-600 transition-colors"
+        onClick={onPreviewTemplate}
       >
         Visualizar
-      </button> */}
+      </button>
     </div>
   </div>
 );
@@ -228,13 +232,13 @@ export default function TemplateSelection({
   templates,
   onSelectTemplate,
 }: TemplateSelectionProps) {
+  const { updateFormData } = useProjectGenerator();
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>(
     {}
   );
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef<Slider>(null);
 
-  // Get selected color or default to first color
   const getSelectedColor = (template: Template) => {
     return (
       selectedColors[template.title] || template.colorsList[0] || "#4F21A1"
@@ -243,6 +247,12 @@ export default function TemplateSelection({
 
   const handleColorSelect = (templateTitle: string, color: string) => {
     setSelectedColors((prev) => ({ ...prev, [templateTitle]: color }));
+
+    if (templateTitle === "Flash") {
+      updateFormData("step1", {
+        mainColor: color,
+      });
+    }
   };
 
   const handleSelectTemplate = (template: Template) => {
@@ -251,6 +261,10 @@ export default function TemplateSelection({
       template.title.toLowerCase() as TemplateType,
       selectedColor
     );
+  };
+
+  const handlePreviewTemplate = () => {
+    window.open("/flash", "_blank", "noopener,noreferrer");
   };
 
   // Slider controls
@@ -285,6 +299,7 @@ export default function TemplateSelection({
             selectedColor={getSelectedColor(template)}
             onColorSelect={(color) => handleColorSelect(template.title, color)}
             onSelectTemplate={() => handleSelectTemplate(template)}
+            onPreviewTemplate={handlePreviewTemplate}
           />
         ))}
         <ComingSoonCard />
@@ -303,6 +318,7 @@ export default function TemplateSelection({
                     handleColorSelect(template.title, color)
                   }
                   onSelectTemplate={() => handleSelectTemplate(template)}
+                  onPreviewTemplate={handlePreviewTemplate}
                 />
               </div>
             </div>

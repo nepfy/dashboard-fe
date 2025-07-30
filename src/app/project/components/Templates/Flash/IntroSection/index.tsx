@@ -27,6 +27,7 @@ export default function IntroSection({ data }: IntroSectionProps) {
                 companyEmail={data?.companyEmail}
                 ctaButtonTitle={data?.ctaButtonTitle}
                 color={data?.mainColor}
+                userPhone={data?.userPhone}
               />
 
               <div className="flex-1 flex flex-col justify-center min-h-0">

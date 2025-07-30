@@ -1,4 +1,5 @@
 import type { CompleteProjectData } from "#/app/project/types/project";
+import { formatPhoneForWhatsApp } from "#/helpers";
 
 interface CTASectionProps {
   data?: CompleteProjectData;
@@ -9,9 +10,10 @@ export default function CTASection({ data }: CTASectionProps) {
     return null;
   }
 
-  const handleEmailClick = () => {
-    if (data?.companyEmail) {
-      window.location.href = `mailto:${data.companyEmail}`;
+  const handleWhatsAppClick = () => {
+    const formattedPhone = formatPhoneForWhatsApp(data?.userPhone);
+    if (formattedPhone) {
+      window.open(`https://wa.me/${formattedPhone}`, "_blank");
     }
   };
 
@@ -38,7 +40,7 @@ export default function CTASection({ data }: CTASectionProps) {
           {data?.ctaButtonTitle && (
             <button
               className="px-10 h-[56px] flex items-center justify-center text-white-neutral-light-100 rounded-full font-semibold text-xs cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-black"
-              onClick={handleEmailClick}
+              onClick={handleWhatsAppClick}
             >
               {data?.ctaButtonTitle}
             </button>

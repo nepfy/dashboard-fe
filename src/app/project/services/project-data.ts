@@ -95,6 +95,7 @@ export const getProjectData = cache(
           createdAt: projectsTable.created_at,
           updatedAt: projectsTable.updated_at,
           userName: personUserTable.userName,
+          userPhone: personUserTable.phone,
         })
         .from(projectsTable)
         .innerJoin(
@@ -248,6 +249,7 @@ export const getProjectData = cache(
         plans: plans || [],
         termsConditions: termsConditions || [],
         faq: faq || [],
+        userPhone: project.userPhone,
       };
 
       return completeProjectData;

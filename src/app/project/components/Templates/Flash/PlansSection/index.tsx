@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { formatCurrency } from "#/helpers";
+import { formatCurrency, formatPhoneForWhatsApp } from "#/helpers";
 import type { CompleteProjectData } from "#/app/project/types/project";
 
 interface PlansSectionProps {
@@ -25,9 +25,10 @@ export default function PlansSection({ data }: PlansSectionProps) {
     }
   };
 
-  const handleEmailClick = () => {
-    if (data?.companyEmail) {
-      window.location.href = `mailto:${data.companyEmail}`;
+  const handleWhatsAppClick = () => {
+    const formattedPhone = formatPhoneForWhatsApp(data?.userPhone);
+    if (formattedPhone) {
+      window.open(`https://wa.me/${formattedPhone}`, "_blank");
     }
   };
 
@@ -112,7 +113,7 @@ export default function PlansSection({ data }: PlansSectionProps) {
                       ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`
                       : `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`,
                   }}
-                  onClick={handleEmailClick}
+                  onClick={handleWhatsAppClick}
                 >
                   <div
                     className="absolute inset-[2px] rounded-full"

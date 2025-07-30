@@ -15,6 +15,7 @@ export interface HeaderProps {
   ctaButtonTitle?: string | null;
   color?: string | null;
   isSmallHeight?: boolean;
+  userPhone?: string | null;
 }
 
 export interface HeroProps {

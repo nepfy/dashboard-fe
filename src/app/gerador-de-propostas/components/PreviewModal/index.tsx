@@ -172,6 +172,7 @@ const convertFormDataToCompleteProjectData = (
     createdAt: new Date(),
     updatedAt: new Date(),
     userName: null,
+    userPhone: null, // Will be populated with actual user data in production
   };
 };
 

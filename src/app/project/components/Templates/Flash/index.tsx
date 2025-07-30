@@ -361,7 +361,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
           <MobileMenu
             ctaButtonTitle={data?.ctaButtonTitle}
             color={data?.mainColor}
-            companyEmail={data?.companyEmail}
+            userPhone={data?.userPhone}
           />
         </div>
         <div
