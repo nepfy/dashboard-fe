@@ -38,7 +38,7 @@ export default function FinalMessageSection({
               <div className="flex flex-col xl:flex-row px-14">
                 <div className="w-[445px]" />
                 <div className="mt-30 mb-20">
-                  <p className="text-white-neutral-light-100 text-sm font-semibold max-w-[75%] xl:max-w-[555px]">
+                  <p className="text-white-neutral-light-100 text-sm font-semibold max-w-[78%] xl:max-w-[555px]">
                     {data?.endMessageDescription}
                   </p>
                 </div>

@@ -91,7 +91,7 @@ export default function FAQSection({ data }: FAQSectionProps) {
     <div id="faq">
       {!data?.hideFaqSection && data?.faq && data?.faq.length > 0 && (
         <div
-          className="w-full px-10 lg:px-30 py-20"
+          className="w-full px-10 lg:px-30 py-20 xl:pt-60"
           style={{
             background: `linear-gradient(
             190deg, 

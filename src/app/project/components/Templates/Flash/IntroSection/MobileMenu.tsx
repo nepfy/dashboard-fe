@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 interface MobileMenuProps {
   ctaButtonTitle?: string | null;
   color?: string | null;
+  companyEmail?: string | null;
 }
 
 const MOBILE_MENU_ITEMS = [
@@ -21,7 +22,11 @@ const MOBILE_MENU_ITEMS = [
   { label: "Perguntas Frequentes", id: "faq" },
 ];
 
-export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
+export default function MobileMenu({
+  ctaButtonTitle,
+  color,
+  companyEmail,
+}: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -30,6 +35,12 @@ export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const handleEmailClick = () => {
+    if (companyEmail) {
+      window.location.href = `mailto:${companyEmail}`;
+    }
   };
 
   const easeInOutCubic = (t: number, b: number, c: number, d: number) => {
@@ -94,7 +105,7 @@ export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
           backgroundColor: color || "#000000",
         }}
       >
-        <div className="flex justify-end w-full pt-10 pr-6">
+        <div className="flex justify-end w-full pt-3 pr-6">
           <button
             onClick={closeMenu}
             className="cursor-pointer hover:bg-white/10 rounded-full transition-colors"
@@ -125,7 +136,10 @@ export default function MobileMenu({ ctaButtonTitle, color }: MobileMenuProps) {
             ))}
 
             <div className="mt-auto pt-4">
-              <button className="font-semibold text-xs text-white-neutral-light-100 opacity-50 bg-black rounded-full px-6 py-4">
+              <button
+                className="font-semibold text-xs text-white-neutral-light-100 opacity-50 bg-black rounded-full px-6 py-4"
+                onClick={handleEmailClick}
+              >
                 {ctaButtonTitle}
               </button>
             </div>

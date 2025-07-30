@@ -9,6 +9,12 @@ export default function Header({
   const ctaButtonClasses =
     "font-semibold text-xs text-white-neutral-light-100 bg-black rounded-full";
 
+  const handleEmailClick = () => {
+    if (companyEmail) {
+      window.location.href = `mailto:${companyEmail}`;
+    }
+  };
+
   return (
     <>
       {companyName && companyEmail && ctaButtonTitle && (
@@ -25,7 +31,10 @@ export default function Header({
 
           <div id="intro-company-email" className="hidden lg:flex items-center">
             <p className="font-semibold text-sm mr-11">{companyEmail}</p>
-            <button className={`${ctaButtonClasses} p-5`}>
+            <button
+              className={`${ctaButtonClasses} p-5 cursor-pointer`}
+              onClick={handleEmailClick}
+            >
               {ctaButtonTitle}
             </button>
           </div>

@@ -379,34 +379,42 @@ export default function ExpertiseAccordion({
                     {iconVisible && (
                       <div className="flex items-center justify-center w-full bg-white-neutral-light-100 rounded-2xs py-2">
                         <div className="flex justify-start items-center gap-2 flex-wrap p-6 max-w-[590px]">
-                          {iconOptions.map((iconOption) => (
-                            <button
-                              key={iconOption.id}
-                              type="button"
-                              onClick={() =>
-                                updateExpertise(
-                                  item.id,
-                                  "icon",
-                                  iconOption.name
-                                )
-                              }
-                              disabled={disabled}
-                              className={`flex items-center justify-center rounded-2xs transition-colors col-span-1 ${
-                                disabled
-                                  ? "cursor-not-allowed opacity-60"
-                                  : "cursor-pointer"
-                              } ${
-                                item.icon === iconOption.name
-                                  ? "bg-primary-light-100 border border-primary-light-500"
-                                  : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
-                              }`}
-                              title={
-                                disabled ? "Desabilitado" : iconOption.name
-                              }
-                            >
-                              <span>{iconOption.icon}</span>
-                            </button>
-                          ))}
+                          {iconOptions.map((iconOption) => {
+                            console.log(
+                              "Icon option:",
+                              iconOption.name,
+                              "Selected:",
+                              item.icon === iconOption.name
+                            );
+                            return (
+                              <button
+                                key={iconOption.id}
+                                type="button"
+                                onClick={() =>
+                                  updateExpertise(
+                                    item.id,
+                                    "icon",
+                                    iconOption.name
+                                  )
+                                }
+                                disabled={disabled}
+                                className={`flex items-center justify-center rounded-2xs transition-colors col-span-1 ${
+                                  disabled
+                                    ? "cursor-not-allowed opacity-60"
+                                    : "cursor-pointer"
+                                } ${
+                                  item.icon === iconOption.name
+                                    ? "bg-primary-light-100 border border-primary-light-500"
+                                    : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200"
+                                }`}
+                                title={
+                                  disabled ? "Desabilitado" : iconOption.name
+                                }
+                              >
+                                <span>{iconOption.icon}</span>
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     )}

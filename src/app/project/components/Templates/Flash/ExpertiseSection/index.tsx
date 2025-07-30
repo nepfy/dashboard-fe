@@ -1,24 +1,24 @@
 import type { CompleteProjectData } from "#/app/project/types/project";
-import DiamondIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/DiamondIcon";
-import CircleIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/CircleIcon";
-import BubblesIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/BubblesIcon";
-import ClockIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/ClockIcon";
-import GearIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/GearIcon";
-import HexagonalIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/HexagonalIcon";
-import SwitchIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/SwitchIcon";
-import ThunderIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/ThunderIcon";
-import GlobeIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/GlobeIcon";
-import BellIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/BellIcon";
-import BulbIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/BulbIcon";
-import StarIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/StarIcon";
-import HeartIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/HeartIcon";
-import AwardIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/AwardIcon";
-import CrownIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/CrownIcon";
-import KeyIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/KeyIcon";
-import EyeIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/EyeIcon";
-import FolderIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/FolderIcon";
-import PlayIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/PlayIcon";
-import CubeIcon from "#/app/gerador-de-propostas/components/MultiStep/AboutYourExpertiseForm/iconsList/CubeIcon";
+import DiamondIcon from "./iconsList/DiamondIcon";
+import CircleIcon from "./iconsList/CircleIcon";
+import BubblesIcon from "./iconsList/BubblesIcon";
+import ClockIcon from "./iconsList/ClockIcon";
+import GearIcon from "./iconsList/GearIcon";
+import HexagonalIcon from "./iconsList/HexagonalIcon";
+import SwitchIcon from "./iconsList/SwitchIcon";
+import ThunderIcon from "./iconsList/ThunderIcon";
+import GlobeIcon from "./iconsList/GlobeIcon";
+import BellIcon from "./iconsList/BellIcon";
+import BulbIcon from "./iconsList/BulbIcon";
+import StarIcon from "./iconsList/StarIcon";
+import HeartIcon from "./iconsList/HeartIcon";
+import AwardIcon from "./iconsList/AwardIcon";
+import CrownIcon from "./iconsList/CrownIcon";
+import KeyIcon from "./iconsList/KeyIcon";
+import EyeIcon from "./iconsList/EyeIcon";
+import FolderIcon from "./iconsList/FolderIcon";
+import PlayIcon from "./iconsList/PlayIcon";
+import CubeIcon from "./iconsList/CubeIcon";
 
 const iconMap = {
   DiamondIcon: <DiamondIcon fill="#ffffff" />,
@@ -69,10 +69,10 @@ export default function ExpertiseSection({ data }: ExpertiseSectionProps) {
             <div className="w-full max-w-[1240px] mx-auto">
               <div className="flex justify-center items-start mb-8 max-w-[600px] lg:max-w-[824px]">
                 <div className="h-[450px] md:h-[400px] lg:h-[600px] flex items-center">
-                  <div className="border-l-[0.5px] border-l-[#A0A0A0] pl-4 lg:pl-15 h-[290px] md:h-[300px] lg:h-[360px] pt-10" />
+                  <div className="border-l-[0.5px] border-l-[#A0A0A0] pl-4 lg:pl-15 h-full" />
                 </div>
-                <p className="lg:mb-3 font-medium lg:font-semibold text-2xl lg:text-5xl leading-3xl lg:leading-4xl text-white-neutral-light-100 opacity-80">
-                  <span>Nossa especialização. </span>
+                <p className="font-medium lg:font-semibold text-2xl lg:text-5xl leading-3xl lg:leading-4xl text-white-neutral-light-100">
+                  <span className="opacity-50">Nossa especialização. </span>
                   {data?.expertiseSubtitle}
                 </p>
               </div>

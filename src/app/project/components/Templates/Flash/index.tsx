@@ -37,6 +37,7 @@ interface FlashTemplateProps {
 export default function FlashTemplate({ data }: FlashTemplateProps) {
   const lenis = useLenis();
   const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+  const [isAnimationReady, setIsAnimationReady] = useState(false);
 
   const lenisRef = useRef<LenisRef>(null);
   const introRef = useRef<HTMLDivElement>(null);
@@ -48,7 +49,6 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   const needsPassword = data?.pagePassword && data.pagePassword.trim() !== "";
 
   const gradient = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 94.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`;
-  //const tempGradient = `radial-gradient(150.7% 150.34% at 100% 80%, ${data?.mainColor} 10.22%, #000000 70%, #000000 40%, #000000 14.9%, #000000 101.78%)`;
 
   useEffect(() => {
     if (!needsPassword) {
@@ -81,12 +81,27 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
     return () => gsap.ticker.remove(update);
   }, []);
 
-  gsap.set(introRef.current, { yPercent: 0 });
-  gsap.set(businessRef.current, { opacity: 0 });
-  gsap.set(businessComplementRef.current, { opacity: 0, y: -100 });
+  // Set initial GSAP states immediately when password is correct
+  useEffect(() => {
+    if (
+      isPasswordCorrect &&
+      introRef.current &&
+      businessRef.current &&
+      businessComplementRef.current
+    ) {
+      gsap.set(introRef.current, { yPercent: 0 });
+      gsap.set(businessRef.current, { opacity: 0 });
+      gsap.set(businessComplementRef.current, { opacity: 0, y: -100 });
+
+      // Mark animation as ready after a brief delay to ensure DOM is fully rendered
+      setTimeout(() => setIsAnimationReady(true), 50);
+    }
+  }, [isPasswordCorrect]);
 
   useEffect(() => {
-    if (!containerRef.current || !gradientRef.current) return;
+    // Only run animations if password is correct and page is loaded
+    if (!isPasswordCorrect || !containerRef.current || !gradientRef.current)
+      return;
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -313,7 +328,6 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
         trigger: containerRef.current,
         start: "top top",
         end: `+=${animationHeight}`,
-        markers: true,
         scrub: 2,
         pin: true,
       });
@@ -322,7 +336,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, [gradient, containerRef.current, gradientRef.current]);
+  }, [gradient, containerRef.current, gradientRef.current, isPasswordCorrect]);
 
   if (needsPassword && !isPasswordCorrect) {
     return (
@@ -338,27 +352,42 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   return (
     <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
       <div className="relative w-screen bg-black">
-        <div className="lg:hidden absolute top-12 right-8 z-[99999]">
+        <div className="lg:hidden absolute top-6 right-8 z-[99999]">
           <MobileMenu
             ctaButtonTitle={data?.ctaButtonTitle}
             color={data?.mainColor}
+            companyEmail={data?.companyEmail}
           />
         </div>
         <div
           ref={containerRef}
           className="bg-black relative w-full h-screen overflow-x-hidden"
         >
-          <div ref={introRef} className="absolute inset-0 w-full h-full">
+          <div
+            ref={introRef}
+            className={`absolute inset-0 z-[99999] w-full h-full transition-opacity duration-300 ${
+              isPasswordCorrect && isAnimationReady
+                ? "opacity-100"
+                : "opacity-0"
+            }`}
+          >
             <IntroSection data={data} />
           </div>
 
-          <div ref={businessRef} className="absolute inset-0 w-full h-full">
+          <div
+            ref={businessRef}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${
+              isPasswordCorrect && isAnimationReady ? "opacity-0" : "opacity-0"
+            }`}
+          >
             <BusinessSection data={data} />
           </div>
 
           <div
             ref={businessComplementRef}
-            className="absolute inset-0 w-full h-full"
+            className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${
+              isPasswordCorrect && isAnimationReady ? "opacity-0" : "opacity-0"
+            }`}
           >
             <BusinessSectionComplement data={data} />
           </div>

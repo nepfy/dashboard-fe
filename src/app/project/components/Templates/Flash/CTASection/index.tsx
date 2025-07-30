@@ -9,6 +9,12 @@ export default function CTASection({ data }: CTASectionProps) {
     return null;
   }
 
+  const handleEmailClick = () => {
+    if (data?.companyEmail) {
+      window.location.href = `mailto:${data.companyEmail}`;
+    }
+  };
+
   return (
     <div
       className="w-full min-h-screen relative flex items-center justify-center"
@@ -30,7 +36,10 @@ export default function CTASection({ data }: CTASectionProps) {
           </h1>
 
           {data?.ctaButtonTitle && (
-            <button className="px-10 h-[56px] flex items-center justify-center text-white-neutral-light-100 rounded-full font-semibold text-xs cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-black">
+            <button
+              className="px-10 h-[56px] flex items-center justify-center text-white-neutral-light-100 rounded-full font-semibold text-xs cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-black"
+              onClick={handleEmailClick}
+            >
               {data?.ctaButtonTitle}
             </button>
           )}

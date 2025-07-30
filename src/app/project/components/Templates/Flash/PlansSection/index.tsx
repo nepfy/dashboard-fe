@@ -25,6 +25,12 @@ export default function PlansSection({ data }: PlansSectionProps) {
     }
   };
 
+  const handleEmailClick = () => {
+    if (data?.companyEmail) {
+      window.location.href = `mailto:${data.companyEmail}`;
+    }
+  };
+
   return (
     <div id="plans">
       {!data?.hidePlansSection && data?.plans && data.plans.length > 0 && (
@@ -33,10 +39,10 @@ export default function PlansSection({ data }: PlansSectionProps) {
             {sortedPlans?.map((plan) => (
               <div
                 key={plan.id}
-                className="border-[0.5px] border-[#A0A0A0] rounded-[32px] p-3 flex flex-col justify-between relative overflow-hidden max-w-[455px] min-h-[600px] mt-4 lg:mt-0"
+                className="border-[0.5px] p-2 border-[#A0A0A0]/30 rounded-[32px] flex flex-col justify-between relative overflow-hidden max-w-[455px] min-h-[600px] mt-4 lg:mt-0"
               >
                 <div
-                  className="py-4 px-3 flex flex-col justify-end min-h-[260px] rounded-[32px]"
+                  className="flex flex-col justify-end min-h-[260px] rounded-[32px] p-7"
                   style={{
                     background: plan.isBestOffer
                       ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`
@@ -45,7 +51,7 @@ export default function PlansSection({ data }: PlansSectionProps) {
                 >
                   <div className="h-10 w-full flex items-start justify-end">
                     {plan.isBestOffer && (
-                      <p className="text-[#DFD5E1] font-bold bg-black rounded-[8px] px-2.5 py-2 text-[14px] w-[144px] h-[37px] flex items-center gap-2">
+                      <p className="text-[#DFD5E1] font-bold bg-black rounded-[8px] px-4 py-2 text-[14px] w-[144px] h-[37px] flex items-center gap-2">
                         <span>
                           <svg
                             width="10"
@@ -67,20 +73,21 @@ export default function PlansSection({ data }: PlansSectionProps) {
                   <h2 className="text-[24px] font-bold text-[#DFD5E1] mb-2">
                     {plan.title}
                   </h2>
-                  <p className="text-[16px] text-[#DFD5E1] flex-grow mb-12">
+                  <p className="text-[15px] font-semibold text-[#DFD5E1] flex-grow mb-12">
                     {plan.description}
                   </p>
 
                   <div className="flex items-end">
                     <p className="text-[#DFD5E1] font-medium text-3xl xl:text-5xl">
-                      {plan.price ? formatCurrency(plan.price) : ""}
+                      {plan.price ? formatCurrency(plan.price) : ""}{" "}
                     </p>
-                    <p className="text-[#DFD5E1] font-semibold text-[10px] mb-1">
+                    <p className="text-[#DFD5E1] font-semibold text-[15px] pl-2">
+                      {" "}
                       /{pricePeriodConverter(plan?.pricePeriod || "")}
                     </p>
                   </div>
                 </div>
-                <div className="p-5">
+                <div className="px-8 xl:px-17 py-20">
                   <p className="text-[#DFD5E1] font-medium mb-4 text-[16px]">
                     Incluso
                   </p>
@@ -99,12 +106,13 @@ export default function PlansSection({ data }: PlansSectionProps) {
                   </ul>
                 </div>
                 <button
-                  className="w-full px-6 font-medium rounded-full relative h-[42px] lg:h-[56px] flex items-center justify-center"
+                  className="w-full px-6 font-medium rounded-full relative h-[42px] lg:h-[56px] flex items-center justify-center cursor-pointer"
                   style={{
                     background: plan.isBestOffer
                       ? `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`
                       : `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${data?.mainColor} 104.22%, ${data?.mainColor} 64.9%, ${data?.mainColor} 81.78%)`,
                   }}
+                  onClick={handleEmailClick}
                 >
                   <div
                     className="absolute inset-[2px] rounded-full"

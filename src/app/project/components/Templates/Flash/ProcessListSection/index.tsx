@@ -112,7 +112,7 @@ export default function ProcessListSection({ data }: ProcessListSectionProps) {
                 return (
                   <div
                     key={process.id}
-                    className="border-b border-[#A0A0A0] last:border-b-0 w-full"
+                    className="border-b border-white-neutral-light-100 opacity-50 last:border-b-0 w-full"
                   >
                     <div className="w-full py-4 px-6">
                       {/* Desktop Layout */}
