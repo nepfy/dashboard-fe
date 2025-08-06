@@ -10,10 +10,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/togetherai": "^1.0.1",
     "@clerk/localizations": "^3.13.11",
     "@clerk/nextjs": "^6.12.12",
     "@neondatabase/serverless": "^0.10.4",
     "@vercel/blob": "^1.1.1",
+    "ai": "^5.0.2",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "gsap": "^3.13.0",
@@ -29,6 +31,7 @@
     "stripe": "^18.4.0",
     "svix": "^1.74.1",
     "tailwindcss-animate": "^1.0.7",
+    "together-ai": "^0.21.0",
     "ws": "^8.18.1",
     "zustand": "^5.0.4"
   },
