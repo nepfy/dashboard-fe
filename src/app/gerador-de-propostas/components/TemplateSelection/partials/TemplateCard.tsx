@@ -68,6 +68,9 @@ export const TemplateCard = ({
     className={`h-[500px] w-[340px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 ${
       isSelected ? "border-primary-light-300" : "border-white-neutral-light-300"
     }`}
+    onClick={onSelectTemplate}
+    role="button"
+    tabIndex={0}
   >
     {/* Header */}
     <div className="px-7 py-4">

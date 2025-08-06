@@ -6,7 +6,7 @@ import { ProjectGeneratorProvider } from "#/contexts/ProjectGeneratorContext";
 
 function AIHeader() {
   return (
-    <header className="flex items-center justify-between px-8 h-20 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-10">
+    <header className="flex items-center justify-between px-8 h-20 bg-white border-b border-gray-200">
       <div className="flex items-center gap-3">
         <Link href="/dashboard" className="flex items-center">
           <Logo fill="#1C1A22" />
@@ -32,9 +32,9 @@ export default function NepfyAILayout({
   return (
     <ProjectGeneratorProvider>
       <CopyLinkCacheProvider>
-        <div className="min-h-screen bg-gray-50">
-          <AIHeader />
-          <main className="flex-1 pt-20">{children}</main>
+        <AIHeader />
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+          <main className="flex-1 flex-col gap-8">{children}</main>
         </div>
       </CopyLinkCacheProvider>
     </ProjectGeneratorProvider>

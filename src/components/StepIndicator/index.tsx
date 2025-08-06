@@ -25,7 +25,7 @@ export function StepIndicator({
   const isActive = (step: number) => activeStep === step;
 
   return (
-    <div className="flex items-center justify-center gap-16 absolute top-24 left-0 w-full">
+    <div className="flex items-center justify-center gap-16">
       <div className="flex items-center gap-16">
         {steps.map((step, index) => (
           <div

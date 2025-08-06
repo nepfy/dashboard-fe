@@ -119,7 +119,7 @@ export function SelectTemplate({
 
       {/* Continue Button */}
       {templateType && (
-        <div className="text-center mt-8">
+        <div className="absolute top-0 right-8 text-center mt-8">
           <button
             onClick={() => setCurrentStep(3)}
             className="bg-primary-light-500 hover:bg-primary-light-600 text-white font-medium py-3 px-8 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl cursor-pointer"
