@@ -59,6 +59,7 @@ async function runLLM(
   systemPrompt?: string
 ) {
   const messages: { role: "system" | "user"; content: string }[] = [];
+
   if (systemPrompt) {
     messages.push({ role: "system", content: systemPrompt });
   }
@@ -82,7 +83,7 @@ async function runLLM(
 
 // Sequential Agent Workflow for Proposal Generation
 export class ProposalWorkflow {
-  private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
+  private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"; //
   private steps: WorkflowStep[] = [];
 
   async execute(data: ProposalWorkflowData): Promise<WorkflowResult> {

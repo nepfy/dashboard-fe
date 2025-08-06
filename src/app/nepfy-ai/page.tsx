@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   Plus,
@@ -79,6 +79,7 @@ export default function NepfyAIPage() {
   const [includeFAQ, setIncludeFAQ] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedProposal, setGeneratedProposal] = useState<any>(null);
+  const [showContinueButton, setShowContinueButton] = useState(false);
 
   const {
     updateFormData,
@@ -494,10 +495,6 @@ export default function NepfyAIPage() {
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-4 min-h-screen relative">
-        <StepIndicator
-          activeStep={currentStep}
-          onStepClick={(step) => setCurrentStep(step)}
-        />
         {currentStep === 1 && (
           <StartProposal handleNextStep={() => setCurrentStep(2)} />
         )}
@@ -519,6 +516,22 @@ export default function NepfyAIPage() {
         {currentStep === 5 && renderStep5()}
         {currentStep === 6 && renderStep6()}
       </div>
+
+      {/* Floating Continue Button */}
+      {showContinueButton && (
+        <button
+          onClick={handleContinueClick}
+          disabled={!isContinueEnabled()}
+          className={`fixed bottom-10 right-10 px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg z-50 transform hover:scale-105 ${
+            isContinueEnabled()
+              ? "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-xl"
+              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          <ArrowRight className="w-4 h-4" />
+          {getContinueButtonText()}
+        </button>
+      )}
     </>
   );
 }

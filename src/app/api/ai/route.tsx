@@ -159,14 +159,17 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: {
-        ...result,
-        pageData: {
-          templateType,
-          mainColor,
-          originalServiceId: selectedService,
-        },
-      },
+      data: Object.assign(
+        {},
+        typeof result === "object" && result !== null ? result : {},
+        {
+          pageData: {
+            templateType,
+            mainColor,
+            originalServiceId: selectedService,
+          },
+        }
+      ),
       metadata: {
         service: agentServiceId,
         agent: agent.name,
