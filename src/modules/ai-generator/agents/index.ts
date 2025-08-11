@@ -324,6 +324,24 @@ export function getAgentByService(serviceId: string): AgentConfig | null {
   return serviceAgents[serviceId] || null;
 }
 
+// Import flash agents
+import {
+  getFlashAgentByService,
+  type FlashAgentConfig,
+} from "../templates/flash";
+
+// Combined function to get any agent (flash or generic)
+export function getAnyAgentByService(
+  serviceId: string
+): AgentConfig | FlashAgentConfig | null {
+  // First try flash agents
+  const flashAgent = getFlashAgentByService(serviceId);
+  if (flashAgent) return flashAgent;
+
+  // Fallback to generic agents
+  return getAgentByService(serviceId);
+}
+
 export function generateAgentPrompt(
   agent: AgentConfig,
   companyInfo: string,

@@ -37,23 +37,20 @@ export function CompanyInfo({
         <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-semibold text-purple-600 mb-2">
-              Sobre sua empresa
+              Sobre você ou sua empresa
             </h1>
             <p className="text-gray-600 text-lg">
-              Informações da sua empresa e planos oferecidos.
+              Desde a área de atuação até o que te diferencia no mercado.
             </p>
           </div>
 
           <div className="space-y-6">
             {/* Company Information */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Informações da sua empresa
-              </label>
               <textarea
                 value={companyInfo}
                 onChange={(e) => setCompanyInfo(e.target.value)}
-                placeholder="Descreva sua empresa, experiência, especialidades e diferenciais..."
+                placeholder="Quanto mais detalhes você der, mais personalizada fica a proposta!"
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
               />

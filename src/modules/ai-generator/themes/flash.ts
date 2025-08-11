@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import Together from "together-ai";
 import { getAgentByService, type AgentConfig } from "../agents";
+import { getFlashAgentByService, type FlashAgentConfig } from "./agent";
 
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
@@ -188,7 +189,13 @@ export class FlashTemplateWorkflow {
   private async generateFlashProposal(
     data: FlashTemplateData
   ): Promise<FlashProposal> {
-    const agent = getAgentByService(data.selectedService);
+    // First try to get a flash-specific agent
+    let agent = getFlashAgentByService(data.selectedService);
+
+    // Fallback to generic agent if no flash-specific agent found
+    if (!agent) {
+      agent = getAgentByService(data.selectedService);
+    }
 
     if (!agent) {
       throw new Error(`Agent not found for service: ${data.selectedService}`);
@@ -224,7 +231,7 @@ export class FlashTemplateWorkflow {
 
   private async generateIntroduction(
     data: FlashTemplateData,
-    agent: AgentConfig
+    agent: AgentConfig | FlashAgentConfig
   ) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
@@ -232,6 +239,11 @@ DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
 - Setor: ${agent.sector}
+${
+  "flashSpecific" in agent && agent.flashSpecific
+    ? `- Metodologia FLASH: ${agent.flashSpecific.introductionStyle}`
+    : ""
+}
 
 Crie uma seção de introdução para proposta FLASH. Retorne APENAS um objeto JSON com:
 
@@ -290,7 +302,10 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateAboutUs(data: FlashTemplateData, agent: AgentConfig) {
+  private async generateAboutUs(
+    data: FlashTemplateData,
+    agent: AgentConfig | FlashAgentConfig
+  ) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -298,6 +313,11 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${agent.sector}
 - Empresa: ${data.companyInfo}
+${
+  "flashSpecific" in agent && agent.flashSpecific
+    ? `- Foco FLASH: ${agent.flashSpecific.aboutUsFocus}`
+    : ""
+}
 
 Crie uma seção "Sobre Nós" para proposta FLASH. Retorne APENAS um objeto JSON com:
 
@@ -346,7 +366,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
   private async generateSpecialties(
     data: FlashTemplateData,
-    agent: AgentConfig
+    agent: AgentConfig | FlashAgentConfig
   ) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
@@ -354,6 +374,11 @@ DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
 - Setor: ${agent.sector}
+${
+  "flashSpecific" in agent && agent.flashSpecific
+    ? `- Abordagem FLASH: ${agent.flashSpecific.specialtiesApproach}`
+    : ""
+}
 
 Crie uma seção de especialidades para proposta FLASH. Retorne APENAS um objeto JSON com:
 
@@ -409,11 +434,19 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateSteps(data: FlashTemplateData, agent: AgentConfig) {
+  private async generateSteps(
+    data: FlashTemplateData,
+    agent: AgentConfig | FlashAgentConfig
+  ) {
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
 - Setor: ${agent.sector}
+${
+  "flashSpecific" in agent && agent.flashSpecific
+    ? `- Ênfase FLASH: ${agent.flashSpecific.processEmphasis}`
+    : ""
+}
 
 TAREFA: Crie uma seção de passos do processo para proposta FLASH incluindo:
 
@@ -469,7 +502,7 @@ Formato JSON:
 
   private async generateInvestment(
     data: FlashTemplateData,
-    agent: AgentConfig
+    agent: AgentConfig | FlashAgentConfig
   ) {
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
@@ -477,6 +510,11 @@ Formato JSON:
 - Planos: ${data.selectedPlans.join(", ")}
 - Detalhes: ${data.planDetails}
 - Setor: ${agent.sector}
+${
+  "flashSpecific" in agent && agent.flashSpecific
+    ? `- Estratégia FLASH: ${agent.flashSpecific.investmentStrategy}`
+    : ""
+}
 
 TAREFA: Crie uma seção de investimento para proposta FLASH incluindo:
 
@@ -550,7 +588,10 @@ Formato JSON:
     }
   }
 
-  private async generateTerms(data: FlashTemplateData, agent: AgentConfig) {
+  private async generateTerms(
+    data: FlashTemplateData,
+    agent: AgentConfig | FlashAgentConfig
+  ) {
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
@@ -594,7 +635,10 @@ Formato JSON:
     }
   }
 
-  private async generateFAQ(data: FlashTemplateData, agent: AgentConfig) {
+  private async generateFAQ(
+    data: FlashTemplateData,
+    agent: AgentConfig | FlashAgentConfig
+  ) {
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
@@ -638,7 +682,10 @@ Formato JSON:
     }
   }
 
-  private generateFooter(data: FlashTemplateData, agent: AgentConfig) {
+  private generateFooter(
+    data: FlashTemplateData,
+    agent: AgentConfig | FlashAgentConfig
+  ) {
     return {
       thanks: "Obrigado pela confiança!",
       followUp: "Vamos conversar sobre seu projeto?",
@@ -711,14 +758,14 @@ Formato JSON:
     return response;
   }
 
-  private generateSpecialtiesFromAgent(agent: AgentConfig) {
+  private generateSpecialtiesFromAgent(agent: AgentConfig | FlashAgentConfig) {
     return agent.expertise.slice(0, 9).map((expertise) => ({
       title: expertise,
       description: `Especialização em ${expertise.toLowerCase()} com foco em resultados mensuráveis e qualidade profissional`,
     }));
   }
 
-  private generateStepsFromAgent(agent: AgentConfig) {
+  private generateStepsFromAgent(agent: AgentConfig | FlashAgentConfig) {
     return agent.proposalStructure.slice(0, 5).map((step, index) => ({
       title: step,
       description: `${step}: Etapa fundamental do nosso processo especializado em ${agent.sector.toLowerCase()}, garantindo qualidade e eficiência em cada detalhe do projeto`,
@@ -726,7 +773,7 @@ Formato JSON:
   }
 
   private generateDeliverablesFromAgent(
-    agent: AgentConfig,
+    agent: AgentConfig | FlashAgentConfig,
     projectDescription: string
   ) {
     return agent.commonServices.slice(0, 4).map((service) => ({
@@ -736,7 +783,7 @@ Formato JSON:
   }
 
   private generatePlansFromAgent(
-    agent: AgentConfig,
+    agent: AgentConfig | FlashAgentConfig,
     selectedPlans: string[],
     planDetails: string
   ) {
@@ -773,7 +820,7 @@ Formato JSON:
     ];
   }
 
-  private generateTermsFromAgent(agent: AgentConfig) {
+  private generateTermsFromAgent(agent: AgentConfig | FlashAgentConfig) {
     const pricingTerms = {
       "monthly-retainer":
         "Pagamento mensal recorrente com fidelidade mínima de 6 meses",
@@ -808,7 +855,7 @@ Formato JSON:
     ];
   }
 
-  private generateFAQFromAgent(agent: AgentConfig) {
+  private generateFAQFromAgent(agent: AgentConfig | FlashAgentConfig) {
     const faqTemplates = {
       marketing: [
         {
