@@ -1,7 +1,10 @@
 import assert from "node:assert";
 import Together from "together-ai";
 import { getAgentByService, type AgentConfig } from "../agents";
-import { getFlashAgentByService, type FlashAgentConfig } from "./agent";
+import {
+  getFlashAgentByService,
+  type FlashAgentConfig,
+} from "../templates/flash/agent";
 
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
@@ -759,14 +762,14 @@ Formato JSON:
   }
 
   private generateSpecialtiesFromAgent(agent: AgentConfig | FlashAgentConfig) {
-    return agent.expertise.slice(0, 9).map((expertise) => ({
+    return agent.expertise.slice(0, 9).map((expertise: string) => ({
       title: expertise,
       description: `Especialização em ${expertise.toLowerCase()} com foco em resultados mensuráveis e qualidade profissional`,
     }));
   }
 
   private generateStepsFromAgent(agent: AgentConfig | FlashAgentConfig) {
-    return agent.proposalStructure.slice(0, 5).map((step, index) => ({
+    return agent.proposalStructure.slice(0, 5).map((step: string) => ({
       title: step,
       description: `${step}: Etapa fundamental do nosso processo especializado em ${agent.sector.toLowerCase()}, garantindo qualidade e eficiência em cada detalhe do projeto`,
     }));
@@ -776,7 +779,7 @@ Formato JSON:
     agent: AgentConfig | FlashAgentConfig,
     projectDescription: string
   ) {
-    return agent.commonServices.slice(0, 4).map((service) => ({
+    return agent.commonServices.slice(0, 4).map((service: string) => ({
       title: service,
       description: `${service} desenvolvido com expertise em ${agent.sector.toLowerCase()}, incluindo todas as especificações técnicas e melhores práticas do mercado para garantir resultados superiores`,
     }));
