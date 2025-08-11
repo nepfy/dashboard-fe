@@ -1,5 +1,15 @@
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Camera,
+  Heart,
+  Lightbulb,
+  Monitor,
+  Palette,
+  Ruler,
+} from "lucide-react";
 import { useState } from "react";
+import { StepPagination } from "../pagination";
 
 interface Service {
   id: string;
@@ -7,16 +17,55 @@ interface Service {
   icon: React.ReactNode;
 }
 
+const DEFAULT_SERVICES: Service[] = [
+  {
+    id: "marketing-digital",
+    title: "Marketing digital",
+    icon: <Lightbulb className="w-6 h-6" />,
+  },
+  {
+    id: "designer",
+    title: "Designer",
+    icon: <Palette className="w-6 h-6" />,
+  },
+  {
+    id: "desenvolvedor",
+    title: "Desenvolvedor",
+    icon: <Monitor className="w-6 h-6" />,
+  },
+  {
+    id: "arquiteto",
+    title: "Arquiteto",
+    icon: <Ruler className="w-6 h-6" />,
+  },
+  {
+    id: "fotografo",
+    title: "Fotógrafo",
+    icon: <Camera className="w-6 h-6" />,
+  },
+  {
+    id: "medicos",
+    title: "Médicos",
+    icon: <Heart className="w-6 h-6" />,
+  },
+];
+
 export function ServiceType({
-  services,
-  setCurrentStep,
+  steps,
+  services = DEFAULT_SERVICES,
+  handleNextStep,
+  handlePreviousStep,
   onServiceSelect,
   selectedService: externalSelectedService,
+  currentStep,
 }: {
-  services: Service[];
-  setCurrentStep: (step: number) => void;
+  steps: string[];
+  services?: Service[];
+  currentStep?: string;
   onServiceSelect?: (serviceId: string) => void;
   selectedService?: string | null;
+  handleNextStep: () => void;
+  handlePreviousStep: () => void;
 }) {
   const [internalSelectedService, setInternalSelectedService] = useState<
     string | null
@@ -42,54 +91,50 @@ export function ServiceType({
         {/* Main Card */}
         <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
           {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-purple-600 text-start mb-2">
+          <div className="mb-8 text-start">
+            <h1 className="text-3xl font-semibold text-purple-600 mb-3">
               Serviços
             </h1>
-            <p className="text-black text-start leading-normal">
+            <p className="text-black text-lg leading-relaxed">
               Selecione a melhor opção que se encaixa no seu tipo de trabalho
             </p>
           </div>
 
-          {/* Progress Indicators */}
-          <div className="flex justify-center gap-2 mb-8">
-            <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-            <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-            <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-          </div>
-
-          {/* Services Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
+          {/* Services Grid - 3 columns as shown in the image */}
+          <div className="grid grid-cols-3 gap-6 mb-12">
             {services.map((service) => (
               <div key={service.id} className="relative">
-                {/* Radio Button */}
-                <div className="absolute -top-2 -left-2 z-10">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      selectedService === service.id
-                        ? "border-purple-600 bg-white"
-                        : "border-gray-300 bg-white"
-                    }`}
-                  >
-                    {selectedService === service.id && (
-                      <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                    )}
-                  </div>
-                </div>
-
                 {/* Service Card */}
                 <button
                   onClick={() => handleServiceSelect(service.id)}
-                  className={`w-full p-4 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 ${
+                  className={`w-full p-6 rounded-xl border transition-all duration-200 flex flex-col items-start gap-4 ${
                     selectedService === service.id
-                      ? "border-gray-300 bg-white shadow-sm"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-purple-300 bg-purple-50 shadow-lg"
+                      : "border-gray-200 bg-purple-50/50 hover:border-purple-200 hover:shadow-md"
                   }`}
                 >
-                  <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center">
-                    <div className="text-white">{service.icon}</div>
+                  {/* Radio Button - positioned inside the card at top left */}
+                  <div className="self-start">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        selectedService === service.id
+                          ? "border-blue-500 bg-blue-500"
+                          : "border-gray-300 bg-white"
+                      }`}
+                    >
+                      {selectedService === service.id && (
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      )}
+                    </div>
                   </div>
-                  <span className="text-black font-medium text-center text-sm">
+
+                  {/* Icon with darker purple background */}
+                  <div className="w-16 h-16 bg-purple-700 rounded-xl flex items-center justify-center shadow-md mx-auto">
+                    <div className="text-white text-2xl">{service.icon}</div>
+                  </div>
+
+                  {/* Text label - left aligned */}
+                  <span className="text-gray-700 font-medium text-start text-base w-full">
                     {service.title}
                   </span>
                 </button>
@@ -97,28 +142,12 @@ export function ServiceType({
             ))}
           </div>
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={() => setCurrentStep(2)}
-              className="px-6 py-3 bg-white border border-gray-200 text-black rounded-lg font-medium hover:bg-gray-50 transition-all flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Voltar
-            </button>
-            <button
-              onClick={() => setCurrentStep(4)}
-              disabled={!selectedService}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                selectedService
-                  ? "bg-purple-600 text-white hover:bg-purple-700"
-                  : "bg-gray-200 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              Avançar
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          <StepPagination
+            steps={steps}
+            currentStep={currentStep || "start"}
+            handlePreviousStep={handlePreviousStep}
+            handleNextStep={handleNextStep}
+          />
         </div>
       </div>
     </section>

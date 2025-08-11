@@ -5,7 +5,6 @@ import {
   type AgentConfig,
 } from "#/modules/ai-generator/agents";
 
-// Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
 if (!apiKey) {
   throw new Error("TOGETHER_API_KEY environment variable is required");
@@ -52,7 +51,6 @@ export interface WorkflowResult {
   };
 }
 
-// Helper function to run LLM with TogetherAI
 async function runLLM(
   userPrompt: string,
   model: string,
@@ -70,7 +68,7 @@ async function runLLM(
     model,
     messages,
     temperature: 0.7,
-    max_tokens: 2000, // Reduced for faster responses
+    max_tokens: 2000,
     top_p: 0.9,
     frequency_penalty: 0.1,
     presence_penalty: 0.1,
@@ -81,9 +79,8 @@ async function runLLM(
   return content;
 }
 
-// Sequential Agent Workflow for Proposal Generation
 export class ProposalWorkflow {
-  private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"; //
+  private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
   private steps: WorkflowStep[] = [];
 
   async execute(data: ProposalWorkflowData): Promise<WorkflowResult> {
@@ -95,8 +92,7 @@ export class ProposalWorkflow {
     }
 
     try {
-      // Single-step AI generation for speed
-      const result = await this.runSingleStepGeneration(data, agent);
+      const result = await this.runParallelGeneration(data, agent);
 
       const executionTime = Date.now() - startTime;
 
@@ -115,74 +111,298 @@ export class ProposalWorkflow {
     }
   }
 
-  private async runSingleStepGeneration(
+  private async runParallelGeneration(
     data: ProposalWorkflowData,
     agent: AgentConfig
   ) {
-    const userPrompt = `Crie uma proposta comercial completa e profissional para ${
-      agent.sector
-    }.
+    const tasks = [
+      {
+        id: "content",
+        name: "Conteúdo Principal",
+        description: "Geração do conteúdo principal da proposta",
+        task: () => this.generateContent(data, agent),
+      },
+      {
+        id: "pricing",
+        name: "Precificação",
+        description: "Geração da seção de investimento e preços",
+        task: () => this.generatePricing(data, agent),
+      },
+      {
+        id: "timeline",
+        name: "Cronograma",
+        description: "Geração do cronograma de execução",
+        task: () => this.generateTimeline(data, agent),
+      },
+    ];
 
-DADOS DO PROJETO:
+    if (data.includeTerms) {
+      tasks.push({
+        id: "terms",
+        name: "Termos e Condições",
+        description: "Geração dos termos e condições",
+        task: () => this.generateTerms(data, agent),
+      });
+    }
+
+    if (data.includeFAQ) {
+      tasks.push({
+        id: "faq",
+        name: "Perguntas Frequentes",
+        description: "Geração das perguntas frequentes",
+        task: () => this.generateFAQ(data, agent),
+      });
+    }
+
+    const results = await Promise.allSettled(
+      tasks.map(async (task) => {
+        try {
+          const result = await task.task();
+          return { id: task.id, result, success: true };
+        } catch (error) {
+          console.error(`Task ${task.id} failed:`, error);
+          return { id: task.id, result: null, success: false, error };
+        }
+      })
+    );
+
+    const proposalSections: any = {};
+
+    results.forEach((result, index) => {
+      const task = tasks[index];
+
+      if (result.status === "fulfilled" && result.value.success) {
+        proposalSections[task.id] = result.value.result;
+
+        this.steps.push({
+          id: task.id,
+          name: task.name,
+          description: task.description,
+          agent: agent.name,
+          input: data,
+          output: result.value.result,
+        });
+      } else {
+        const fallbackResult = this.getFallbackForTask(task.id, data, agent);
+        proposalSections[task.id] = fallbackResult;
+
+        this.steps.push({
+          id: task.id,
+          name: task.name,
+          description: `${task.description} (fallback)`,
+          agent: agent.name,
+          input: data,
+          output: fallbackResult,
+        });
+      }
+    });
+
+    return {
+      title: `Proposta ${agent.sector} - ${data.projectName}`,
+      outline: "Proposta gerada em paralelo com múltiplas seções",
+      content:
+        proposalSections.content || this.generateFallbackContent(data, agent),
+      pricing:
+        proposalSections.pricing || this.generateFallbackPricing(data, agent),
+      timeline:
+        proposalSections.timeline || this.generateFallbackTimeline(data, agent),
+      terms:
+        proposalSections.terms ||
+        (data.includeTerms ? this.generateFallbackTerms(data, agent) : ""),
+      faq:
+        proposalSections.faq ||
+        (data.includeFAQ ? this.generateFallbackFAQ(data, agent) : ""),
+    };
+  }
+
+  private async generateContent(
+    data: ProposalWorkflowData,
+    agent: AgentConfig
+  ): Promise<string> {
+    const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
 - Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 - Planos: ${data.selectedPlans.join(", ")}
-- Detalhes dos Planos: ${data.planDetails}
 
-TAREFA: Gere uma proposta completa incluindo:
+TAREFA: Crie uma proposta comercial profissional e persuasiva que inclua:
 
-1. **Título**: Título profissional e impactante
-2. **Apresentação**: Saudação personalizada e apresentação da empresa
-3. **Entendimento**: Demonstração de compreensão do projeto
-4. **Metodologia**: Abordagem especializada para ${agent.sector}
-5. **Serviços**: Detalhamento dos planos com preços realistas
-6. **Cronograma**: Timeline de execução
-7. **Próximos Passos**: Call-to-action claro${
-      data.includeTerms
-        ? "\n8. **Termos e Condições**: Termos específicos do setor"
-        : ""
-    }${data.includeFAQ ? "\n9. **FAQ**: Perguntas frequentes relevantes" : ""}
+1. **Apresentação Personalizada**: Saudação personalizada ao cliente
+2. **Sobre a Empresa**: Apresentação da empresa baseada nos dados fornecidos
+3. **Entendimento do Projeto**: Demonstração de compreensão das necessidades específicas
+4. **Metodologia**: Abordagem especializada para o setor ${agent.sector}
+5. **Serviços Incluídos**: Detalhamento dos planos selecionados
+6. **Resultados Esperados**: Benefícios específicos para este projeto
+7. **Próximos Passos**: Call-to-action claro
 
-Use linguagem persuasiva e profissional específica do setor ${agent.sector}.
-Inclua terminologias: ${agent.keyTerms.join(", ")}.
-Modelo de precificação: ${agent.pricingModel}.
-Serviços comuns: ${agent.commonServices.join(", ")}.
+Use linguagem profissional, persuasiva e específica do setor ${agent.sector}.
+Inclua terminologias técnicas relevantes: ${agent.keyTerms.join(", ")}.
+Foque nos resultados e benefícios para o cliente ${data.clientName}.
 
-Formato: Markdown com seções bem definidas e formatação profissional.
-Seja conciso mas completo.`;
+Formato: Markdown com títulos, listas e formatação profissional.`;
 
     try {
       const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
-
-      const step: WorkflowStep = {
-        id: "single-generation",
-        name: "Geração Completa",
-        description: "Proposta completa gerada em uma única etapa",
-        agent: agent.name,
-        input: data,
-        output: text,
-      };
-
-      this.steps.push(step);
-
-      return {
-        title: `Proposta ${agent.sector} - ${data.projectName}`,
-        outline: "Proposta completa gerada por IA",
-        content: text,
-        pricing: "Incluído no conteúdo principal",
-        timeline: "Incluído no cronograma",
-        terms: data.includeTerms ? "Incluídos na proposta" : "",
-        faq: data.includeFAQ ? "Incluído na proposta" : "",
-      };
+      return text;
     } catch (error) {
-      console.error("Single Step Generation Error:", error);
+      console.error("Content Generation Error:", error);
       throw error;
     }
   }
 
-  // Local proposal generation as fallback with dynamic content
+  private async generatePricing(
+    data: ProposalWorkflowData,
+    agent: AgentConfig
+  ): Promise<string> {
+    const userPrompt = `DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Planos: ${data.selectedPlans.join(", ")}
+- Detalhes: ${data.planDetails}
+- Modelo de Precificação: ${agent.pricingModel}
+
+TAREFA: Crie uma seção de investimento profissional que inclua:
+
+1. **Estrutura de Preços**: Valores realistas para cada plano
+2. **Detalhamento dos Serviços**: O que está incluído em cada plano
+3. **Formas de Pagamento**: Condições de pagamento adequadas ao setor
+4. **Entregáveis**: O que o cliente receberá
+5. **Garantias**: O que está garantido no contrato
+
+Use o modelo de precificação: ${agent.pricingModel}
+Considere os serviços comuns do setor: ${agent.commonServices.join(", ")}
+
+Formato: Markdown com seções claras e valores em destaque.`;
+
+    try {
+      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      return text;
+    } catch (error) {
+      console.error("Pricing Generation Error:", error);
+      throw error;
+    }
+  }
+
+  private async generateTimeline(
+    data: ProposalWorkflowData,
+    agent: AgentConfig
+  ): Promise<string> {
+    const userPrompt = `DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Planos: ${data.selectedPlans.join(", ")}
+- Complexidade: Baseada na descrição do projeto
+
+TAREFA: Crie um cronograma de execução realista que inclua:
+
+1. **Fases do Projeto**: Divisão lógica em etapas
+2. **Duração de Cada Fase**: Prazos realistas
+3. **Entregáveis por Fase**: O que será entregue em cada etapa
+4. **Marcos Importantes**: Pontos de verificação e aprovação
+5. **Considerações Especiais**: Fatores que podem afetar o cronograma
+
+Baseie-se na estrutura típica do setor: ${agent.proposalStructure.join(" → ")}
+
+Formato: Markdown com fases bem definidas e cronograma visual.`;
+
+    try {
+      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      return text;
+    } catch (error) {
+      console.error("Timeline Generation Error:", error);
+      throw error;
+    }
+  }
+
+  private async generateTerms(
+    data: ProposalWorkflowData,
+    agent: AgentConfig
+  ): Promise<string> {
+    const userPrompt = `DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${agent.sector}
+
+TAREFA: Crie termos e condições específicos para ${agent.sector} incluindo:
+
+1. **Prazo de Execução**: Condições de início e conclusão
+2. **Pagamentos**: Formas e condições de pagamento
+3. **Cancelamento**: Políticas de cancelamento
+4. **Confidencialidade**: Proteção de informações
+5. **Propriedade Intelectual**: Direitos sobre o trabalho
+6. **Limitação de Responsabilidade**: Escopo de responsabilidades
+7. **Alterações**: Processo para mudanças no escopo
+8. **Comunicação**: Formas de comunicação e reuniões
+
+Use linguagem clara mas juridicamente adequada para ${agent.sector}.
+Considere as particularidades legais do setor.
+
+Formato: Markdown com seções numeradas e linguagem clara.`;
+
+    try {
+      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      return text;
+    } catch (error) {
+      console.error("Terms Generation Error:", error);
+      throw error;
+    }
+  }
+
+  private async generateFAQ(
+    data: ProposalWorkflowData,
+    agent: AgentConfig
+  ): Promise<string> {
+    const userPrompt = `DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${agent.sector}
+
+TAREFA: Crie perguntas frequentes relevantes para ${agent.sector} incluindo:
+
+1. **Prazos**: Questões sobre tempo de execução
+2. **Pagamentos**: Dúvidas sobre formas de pagamento
+3. **Alterações**: Processo de mudanças no projeto
+4. **Suporte**: Tipos de suporte oferecido
+5. **Resultados**: Expectativas de resultados
+6. **Garantias**: O que está garantido
+7. **Comunicação**: Como funciona o processo de comunicação
+
+Baseie-se nos serviços comuns: ${agent.commonServices.join(", ")}
+Use linguagem clara e direta.
+
+Formato: Markdown com perguntas em negrito e respostas claras.`;
+
+    try {
+      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      return text;
+    } catch (error) {
+      console.error("FAQ Generation Error:", error);
+      throw error;
+    }
+  }
+
+  private getFallbackForTask(
+    taskId: string,
+    data: ProposalWorkflowData,
+    agent: AgentConfig
+  ): string {
+    switch (taskId) {
+      case "content":
+        return this.generateFallbackContent(data, agent);
+      case "pricing":
+        return this.generateFallbackPricing(data, agent);
+      case "timeline":
+        return this.generateFallbackTimeline(data, agent);
+      case "terms":
+        return this.generateFallbackTerms(data, agent);
+      case "faq":
+        return this.generateFallbackFAQ(data, agent);
+      default:
+        return "Conteúdo não disponível";
+    }
+  }
+
   public async generateLocalProposal(
     data: ProposalWorkflowData,
     agent: AgentConfig,
@@ -190,7 +410,6 @@ Seja conciso mas completo.`;
   ): Promise<WorkflowResult> {
     const executionTime = Date.now() - startTime;
 
-    // Generate dynamic content using agent prompts
     const proposal = await this.generateDynamicProposalByService(data, agent);
 
     return {
@@ -218,7 +437,6 @@ Seja conciso mas completo.`;
     data: ProposalWorkflowData,
     agent: AgentConfig
   ) {
-    // Generate dynamic content based on agent expertise and project data
     const content = await this.generateDynamicContent(data, agent);
     const pricing = await this.generateDynamicPricing(data, agent);
     const timeline = await this.generateDynamicTimeline(data, agent);
@@ -407,7 +625,6 @@ Formato: Markdown com perguntas em negrito e respostas claras.`;
     }
   }
 
-  // Fallback methods for when AI generation fails
   private generateFallbackContent(
     data: ProposalWorkflowData,
     agent: AgentConfig
