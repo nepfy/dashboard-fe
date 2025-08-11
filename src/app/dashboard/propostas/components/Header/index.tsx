@@ -3,6 +3,7 @@ import Link from "next/link";
 import DashboardPageHeader from "#/components/DashboardPageHeader";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Archive from "#/components/icons/Archive";
+import { BrainIcon, FeatherIcon } from "lucide-react";
 // import ColumnIcon from "#/components/icons/ColumnIcon";
 
 interface HeaderProps {
@@ -53,6 +54,13 @@ export default function Header({
             </Link>
           )}
 
+          <Link
+            href="/nepfy-ai"
+            className="flex items-center justify-center h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse px-4 gap-2"
+          >
+            <BrainIcon size={20} />
+            <span className="hidden sm:block">Gerar proposta com AI</span>
+          </Link>
           <button
             onClick={handleArchiveToggle}
             className="hidden sm:flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer sm:w-52 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
@@ -60,52 +68,6 @@ export default function Header({
             {getArchiveButtonIcon()}
             <span className="hidden sm:block">{getArchiveButtonText()}</span>
           </button>
-
-          {/* <div className="hidden sm:flex flex-wrap justify-end items-center grow gap-2">
-            <div className="flex items-center justify-center w-[86px] h-[46px] border border-white-neutral-light-300 rounded-2xl">
-              <button
-                onClick={() => setTab("table")}
-                className={`flex items-center justify-center 
-                w-10 h-10 rounded-[var(--radius-s)] cursor-pointer
-              hover:bg-white-neutral-light-200 
-                transition duration-300 ease-in-out
-                active:transform
-                ${
-                  tab === "table"
-                    ? "bg-white-neutral-light-100 e0 text-primary-light-500"
-                    : "bg-transparent"
-                }
-                `}
-              >
-                <ColumnIcon
-                  width="24"
-                  height="24"
-                  fill={tab === "table" ? "#5B32F4" : "#23232C"}
-                />
-              </button>
-
-              <button
-                onClick={() => setTab("kanban")}
-                className={`flex items-center justify-center 
-                  w-10 h-10 rounded-[var(--radius-s)] cursor-pointer
-                hover:bg-white-neutral-light-200 
-                  transition duration-300 ease-in-out
-                  active:transform rotate-90
-                  ${
-                    tab === "kanban"
-                      ? "bg-white-neutral-light-100 e0 text-primary-light-500"
-                      : "bg-transparent"
-                  }
-                  `}
-              >
-                <ColumnIcon
-                  width="24"
-                  height="24"
-                  fill={tab === "kanban" ? "#5B32F4" : "#23232C"}
-                />
-              </button>
-            </div>
-          </div> */}
 
           <div className="flex sm:hidden items-center justify-between w-full mt-2">
             <div className="flex items-center justify-center w-full">

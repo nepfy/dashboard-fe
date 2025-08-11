@@ -1,7 +1,7 @@
 import TemplateSelection from "#/app/gerador-de-propostas/components/TemplateSelection";
 import { TemplateType } from "#/types/project";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
-import { useState } from "react";
+import { useEffect } from "react";
 
 interface TemplateModel {
   id: string;
@@ -88,13 +88,27 @@ const templates: TemplateModel[] = [
 ];
 
 export function SelectTemplate({
-  setCurrentStep,
+  handleNextStep,
+  handlePreviousStep,
 }: {
-  setCurrentStep: (step: number) => void;
+  handleNextStep: () => void;
+  handlePreviousStep: () => void;
   onSelectTemplate: (template: TemplateType, color: string) => void;
 }) {
   const { updateFormData, setTemplateType, templateType } =
     useProjectGenerator();
+
+  // Set "flash" as default selected on mount
+  useEffect(() => {
+    if (!templateType) {
+      setTemplateType("flash");
+      updateFormData("step1", {
+        templateType: "flash",
+        mainColor: templates[0].colorsList[0],
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTemplateSelect = (template: TemplateType, color: string) => {
     setTemplateType(template);
@@ -119,9 +133,9 @@ export function SelectTemplate({
 
       {/* Continue Button */}
       {templateType && (
-        <div className="absolute top-0 right-8 text-center mt-8">
+        <div className="fixed bottom-8 right-8 text-center mt-8">
           <button
-            onClick={() => setCurrentStep(3)}
+            onClick={() => handleNextStep()}
             className="bg-primary-light-500 hover:bg-primary-light-600 text-white font-medium py-3 px-8 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl cursor-pointer"
           >
             Continuar com {templates.find((t) => t.id === templateType)?.title}
