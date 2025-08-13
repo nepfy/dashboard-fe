@@ -71,20 +71,20 @@ const templates: TemplateModel[] = [
   //   ],
   //   preview: "grid-2",
   // },
-  {
-    id: "essencial",
-    title: "Essencial",
-    description: "Design minimalista e elegante, com simplicidade impactante.",
-    colorsList: [
-      "#F0CCE6",
-      "#EBEBEB",
-      "#EEE0BA",
-      "#BCFBD5",
-      "#741E20",
-      "#0A3EF4",
-    ],
-    preview: "essencial",
-  },
+  // {
+  //   id: "essencial",
+  //   title: "Essencial",
+  //   description: "Design minimalista e elegante, com simplicidade impactante.",
+  //   colorsList: [
+  //     "#F0CCE6",
+  //     "#EBEBEB",
+  //     "#EEE0BA",
+  //     "#BCFBD5",
+  //     "#741E20",
+  //     "#0A3EF4",
+  //   ],
+  //   preview: "essencial",
+  // },
 ];
 
 export function SelectTemplate({

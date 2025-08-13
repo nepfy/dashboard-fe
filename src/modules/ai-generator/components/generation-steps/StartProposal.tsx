@@ -7,7 +7,7 @@ export function StartProposal({
   handleNextStep: () => void;
 }) {
   return (
-    <section className="bg-gray-50 flex items-center justify-center p-4">
+    <section className="bg-gray-50 flex items-center justify-center p-4 min-h-screen">
       <div className="w-full max-w-md">
         <div className="gradient-border flex-1 p-[3px] overflow-hidden rounded-[26px] shadow-lg">
           <div className="bg-white rounded-xl p-8 flex flex-col gap-6">
