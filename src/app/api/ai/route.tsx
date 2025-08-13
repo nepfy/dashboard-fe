@@ -9,6 +9,7 @@ import {
   type FlashTemplateData,
 } from "#/modules/ai-generator/themes/flash";
 
+// Maps user-facing service keys to internal agent service IDs
 const serviceMapping: Record<string, string> = {
   "marketing-digital": "marketing",
   designer: "design",
@@ -24,8 +25,8 @@ interface NepfyAIRequestData {
   projectName: string;
   projectDescription: string;
   companyInfo?: string;
-  selectedPlan?: number; // Number of plan options to generate (1, 2, or 3)
-  selectedPlans?: string[]; // Legacy support for array format
+  selectedPlan?: number;
+  selectedPlans?: string[];
   planDetails?: string;
   includeTerms?: boolean;
   includeFAQ?: boolean;
@@ -51,6 +52,7 @@ export async function POST(request: NextRequest) {
       mainColor,
     } = body as NepfyAIRequestData;
 
+    // Validate required fields
     if (
       !selectedService ||
       !clientName ||
@@ -63,6 +65,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Map to internal agent service ID
     const agentServiceId = serviceMapping[selectedService];
     if (!agentServiceId) {
       return NextResponse.json(
@@ -71,6 +74,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get agent for the service
     const agent = getAgentByService(agentServiceId);
     if (!agent) {
       return NextResponse.json(
@@ -79,34 +83,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Use provided company info or generate default
     const defaultCompanyInfo =
       companyInfo || generateDefaultCompanyInfo(agentServiceId);
 
-    // Handle plan generation based on selectedPlan number or selectedPlans array
+    // Determine plans to use
     let defaultPlans: string[];
     if (selectedPlan && typeof selectedPlan === "number") {
-      // Generate specific number of plan options
       defaultPlans = generatePlanOptionsByCount(agentServiceId, selectedPlan);
-      console.log(
-        `Generated ${defaultPlans.length} plans for service ${agentServiceId} based on selectedPlan: ${selectedPlan}`
-      );
     } else if (selectedPlans.length > 0) {
-      // Use provided selectedPlans array (legacy support)
       defaultPlans = selectedPlans;
-      console.log(
-        `Using provided selectedPlans array: ${selectedPlans.join(", ")}`
-      );
     } else {
-      // Generate default plans
       defaultPlans = generateDefaultPlans(agentServiceId);
-      console.log(
-        `Generated default plans for service ${agentServiceId}: ${defaultPlans.join(
-          ", "
-        )}`
-      );
     }
 
-    // Check if this is a flash template request
+    // FLASH TEMPLATE WORKFLOW
     if (templateType === "flash") {
       const flashData: FlashTemplateData = {
         selectedService: agentServiceId,
@@ -125,21 +116,19 @@ export async function POST(request: NextRequest) {
       };
 
       const flashWorkflow = new FlashTemplateWorkflow();
-      let result;
+      let result: any;
       let generationType = "flash-workflow";
 
       try {
+        // 25s timeout for main flash workflow
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error("Flash AI timeout")), 25000);
         });
-
         const flashPromise = flashWorkflow.execute(flashData);
-
         result = await Promise.race([flashPromise, timeoutPromise]);
         generationType = "flash-workflow";
       } catch (flashError) {
-        console.error("Flash Workflow Error:", flashError);
-
+        // Fallback to dynamic generation (15s timeout)
         try {
           const dynamicTimeoutPromise = new Promise((_, reject) => {
             setTimeout(
@@ -147,15 +136,11 @@ export async function POST(request: NextRequest) {
               15000
             );
           });
-
           const dynamicPromise =
             flashWorkflow.generateTemplateProposal(flashData);
-
           result = await Promise.race([dynamicPromise, dynamicTimeoutPromise]);
           generationType = "flash-dynamic-generation";
         } catch (dynamicError) {
-          console.error("Flash Dynamic Generation Error:", dynamicError);
-
           return NextResponse.json(
             {
               error: "Failed to generate flash proposal",
@@ -169,17 +154,14 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        data: Object.assign(
-          {},
-          typeof result === "object" && result !== null ? result : {},
-          {
-            pageData: {
-              templateType,
-              mainColor,
-              originalServiceId: selectedService,
-            },
-          }
-        ),
+        data: {
+          ...(typeof result === "object" && result !== null ? result : {}),
+          pageData: {
+            templateType,
+            mainColor,
+            originalServiceId: selectedService,
+          },
+        },
         metadata: {
           service: agentServiceId,
           agent: agent.name,
@@ -196,7 +178,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Regular proposal workflow for non-flash templates
+    // REGULAR PROPOSAL WORKFLOW
     const workflowData: ProposalWorkflowData = {
       selectedService: agentServiceId,
       companyInfo: defaultCompanyInfo,
@@ -211,21 +193,19 @@ export async function POST(request: NextRequest) {
     };
 
     const workflow = new ProposalWorkflow();
-    let result;
+    let result: any;
     let generationType = "ai-workflow";
 
     try {
+      // 25s timeout for main AI workflow
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error("AI timeout")), 25000);
       });
-
       const aiPromise = workflow.execute(workflowData);
-
       result = await Promise.race([aiPromise, timeoutPromise]);
       generationType = "ai-workflow";
     } catch (aiError) {
-      console.error("AI Workflow Error:", aiError);
-
+      // Fallback to local/dynamic generation (15s timeout)
       try {
         const dynamicTimeoutPromise = new Promise((_, reject) => {
           setTimeout(
@@ -233,18 +213,14 @@ export async function POST(request: NextRequest) {
             15000
           );
         });
-
         const dynamicPromise = workflow.generateLocalProposal(
           workflowData,
           agent,
           Date.now()
         );
-
         result = await Promise.race([dynamicPromise, dynamicTimeoutPromise]);
         generationType = "dynamic-generation";
       } catch (dynamicError) {
-        console.error("Dynamic Generation Error:", dynamicError);
-
         return NextResponse.json(
           {
             error: "Failed to generate proposal",
@@ -258,17 +234,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: Object.assign(
-        {},
-        typeof result === "object" && result !== null ? result : {},
-        {
-          pageData: {
-            templateType,
-            mainColor,
-            originalServiceId: selectedService,
-          },
-        }
-      ),
+      data: {
+        ...(typeof result === "object" && result !== null ? result : {}),
+        pageData: {
+          templateType,
+          mainColor,
+          originalServiceId: selectedService,
+        },
+      },
       metadata: {
         service: agentServiceId,
         agent: agent.name,
@@ -284,8 +257,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("AI Route Error:", error);
-
     return NextResponse.json(
       {
         error: "Internal server error",
@@ -303,7 +274,6 @@ export async function GET(request: NextRequest) {
 
     if (service) {
       const agentServiceId = serviceMapping[service] || service;
-
       const agent = getAgentByService(agentServiceId);
       if (!agent) {
         return NextResponse.json(
@@ -311,7 +281,6 @@ export async function GET(request: NextRequest) {
           { status: 404 }
         );
       }
-
       return NextResponse.json({
         success: true,
         data: {
@@ -331,8 +300,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("AI Route Error:", error);
-
     return NextResponse.json(
       {
         error: "Internal server error",
@@ -398,7 +365,6 @@ function generateDefaultPlanDetails(
   serviceId: string,
   plans?: string[]
 ): string {
-  // If plans are provided, generate dynamic plan details
   if (plans && plans.length > 0) {
     const planNames = plans.map(
       (plan) => plan.charAt(0).toUpperCase() + plan.slice(1)
@@ -411,7 +377,6 @@ function generateDefaultPlanDetails(
       .join(". ")}.`;
   }
 
-  // Fallback to static templates
   const planDetailsTemplates = {
     marketing:
       "Plano Basic: Gestão de redes sociais + Google Ads. Plano Premium: Estratégia completa incluindo SEO, email marketing e automação.",
@@ -472,7 +437,6 @@ function generatePlanOptionsByCount(
 
   const servicePlans = planTemplates[serviceId as keyof typeof planTemplates];
   if (!servicePlans) {
-    // Fallback to marketing plans if service not found
     return (
       planTemplates.marketing[
         Math.min(planCount, 3) as keyof typeof planTemplates.marketing
@@ -480,7 +444,6 @@ function generatePlanOptionsByCount(
     );
   }
 
-  // Ensure planCount is between 1 and 3
   const validPlanCount = Math.max(1, Math.min(planCount, 3));
   return (
     servicePlans[validPlanCount as keyof typeof servicePlans] || servicePlans[1]
