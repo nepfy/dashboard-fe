@@ -1,71 +1,59 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  Camera,
-  Heart,
-  Lightbulb,
-  Monitor,
-  Palette,
-  Ruler,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
-import { StepPagination } from "../pagination";
 
 interface Service {
   id: string;
   title: string;
-  icon: React.ReactNode;
+  imageSrc: string;
 }
 
 const DEFAULT_SERVICES: Service[] = [
   {
     id: "marketing-digital",
     title: "Marketing digital",
-    icon: <Lightbulb className="w-6 h-6" />,
+    imageSrc: "/images/ai-generator/services/marketing-digital.png",
   },
   {
     id: "designer",
     title: "Designer",
-    icon: <Palette className="w-6 h-6" />,
+    imageSrc: "/images/ai-generator/services/designer.png",
   },
   {
     id: "desenvolvedor",
     title: "Desenvolvedor",
-    icon: <Monitor className="w-6 h-6" />,
+    imageSrc: "/images/ai-generator/services/developer.png",
   },
   {
     id: "arquiteto",
     title: "Arquiteto",
-    icon: <Ruler className="w-6 h-6" />,
+    imageSrc: "/images/ai-generator/services/architect.png",
   },
   {
     id: "fotografo",
     title: "Fotógrafo",
-    icon: <Camera className="w-6 h-6" />,
+    imageSrc: "/images/ai-generator/services/photographer.png",
   },
   {
     id: "medicos",
-    title: "Médicos",
-    icon: <Heart className="w-6 h-6" />,
+    title: "Médico",
+    imageSrc: "/images/ai-generator/services/doctor.png",
   },
 ];
 
 export function ServiceType({
-  steps,
   services = DEFAULT_SERVICES,
-  handleNextStep,
-  handlePreviousStep,
   onServiceSelect,
   selectedService: externalSelectedService,
-  currentStep,
+
+  handleBack,
+  handleNext,
 }: {
-  steps: string[];
   services?: Service[];
-  currentStep?: string;
   onServiceSelect?: (serviceId: string) => void;
   selectedService?: string | null;
-  handleNextStep: () => void;
-  handlePreviousStep: () => void;
+  handleBack?: () => void;
+  handleNext?: () => void;
 }) {
   const [internalSelectedService, setInternalSelectedService] = useState<
     string | null
@@ -87,67 +75,117 @@ export function ServiceType({
 
   return (
     <section className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full">
-        {/* Main Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-          {/* Header */}
-          <div className="mb-8 text-start">
-            <h1 className="text-3xl font-semibold text-purple-600 mb-3">
-              Serviços
-            </h1>
-            <p className="text-black text-lg leading-relaxed">
-              Selecione a melhor opção que se encaixa no seu tipo de trabalho
-            </p>
-          </div>
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-[0_8px_32px_0_rgba(108,79,249,0.12)] p-0 border border-white/20">
+        {/* Header */}
+        <div className="px-8 pt-8 pb-2 text-start">
+          <h1 className="text-2xl font-semibold text-[#6C4FF9] mb-2 font-satoshi">
+            Serviços
+          </h1>
+          <p className="text-[#23232C] text-sm leading-relaxed font-satoshi opacity-80">
+            Selecione a melhor opção que se encaixa no seu tipo de trabalho
+          </p>
+        </div>
 
-          {/* Services Grid - 3 columns as shown in the image */}
-          <div className="grid grid-cols-3 gap-6 mb-12">
-            {services.map((service) => (
-              <div key={service.id} className="relative">
-                {/* Service Card */}
-                <button
-                  onClick={() => handleServiceSelect(service.id)}
-                  className={`w-full p-6 rounded-xl border transition-all duration-200 flex flex-col items-start gap-4 ${
-                    selectedService === service.id
-                      ? "border-purple-300 bg-purple-50 shadow-lg"
-                      : "border-gray-200 bg-purple-50/50 hover:border-purple-200 hover:shadow-md"
+        {/* Services Grid - 3 columns */}
+        <div className="grid grid-cols-3 gap-10 p-8">
+          {services.map((service) => {
+            const isSelected = selectedService === service.id;
+
+            return (
+              <label
+                key={service.id}
+                className={`flex flex-col items-start w-full cursor-pointer group relative`}
+              >
+                <div className="flex justify-start w-full absolute -top-8 -left-3 z-10 pointer-events-none">
+                  <div className="flex justify-start w-full absolute top-3 left-3 z-10 pointer-events-none">
+                    <span
+                      className={`block w-4 h-4 rounded-full border-2 transition-all duration-200
+                      ${
+                        isSelected
+                          ? "border-[#6C4FF9] bg-white"
+                          : "border-[#C9C9D9] bg-white"
+                      }
+                    `}
+                    >
+                      {isSelected && (
+                        <span className="block w-2 h-2 m-auto mt-[2px] rounded-full bg-[#6C4FF9]" />
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <input
+                  type="radio"
+                  name="service"
+                  value={service.id}
+                  checked={isSelected}
+                  onChange={() => handleServiceSelect(service.id)}
+                  className="sr-only"
+                />
+                <div
+                  className={`w-full aspect-[1.3/1] rounded-xl flex flex-col items-center justify-center transition-all duration-200 relative
+                    ${
+                      isSelected
+                        ? "shadow-[0_2px_12px_0_rgba(108,79,249,0.12)]"
+                        : " hover:border-[#B7AFFF] shadow-[0_2px_12px_0_rgba(108,79,249,0.08)]"
+                    }
+                  `}
+                >
+                  <Image
+                    src={service.imageSrc}
+                    alt={service.title}
+                    width={100}
+                    height={100}
+                    className="object-contain w-full"
+                    style={
+                      isSelected
+                        ? {
+                            filter:
+                              "drop-shadow(0 1px 3px rgba(108,79,249,0.3))",
+                          }
+                        : {}
+                    }
+                  />
+                </div>
+                <span
+                  className={`mt-1 text-center text-sm font-satoshi transition-all duration-200 ${
+                    isSelected
+                      ? "text-[#6C4FF9] font-medium"
+                      : "text-0 font-normal"
                   }`}
                 >
-                  {/* Radio Button - positioned inside the card at top left */}
-                  <div className="self-start">
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        selectedService === service.id
-                          ? "border-blue-500 bg-blue-500"
-                          : "border-gray-300 bg-white"
-                      }`}
-                    >
-                      {selectedService === service.id && (
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
-                      )}
-                    </div>
-                  </div>
+                  {service.title}
+                </span>
+              </label>
+            );
+          })}
+        </div>
 
-                  {/* Icon with darker purple background */}
-                  <div className="w-16 h-16 bg-purple-700 rounded-xl flex items-center justify-center shadow-md mx-auto">
-                    <div className="text-white text-2xl">{service.icon}</div>
-                  </div>
+        {/* Buttons */}
+        <div className="border-t border-gray-200 mx-4">
+          <div className="w-full flex items-center gap-4 py-4">
+            <button
+              onClick={handleBack}
+              className="cursor-pointer flex items-center justify-start gap-2 px-6 py-3 text-gray-600 hover:text-gray-800 transition-all duration-200 hover:bg-gray-50 rounded-lg group"
+            >
+              <ArrowLeft
+                size={16}
+                className="group-hover:-translate-x-1 transition-transform duration-200"
+              />
+              Voltar
+            </button>
 
-                  {/* Text label - left aligned */}
-                  <span className="text-gray-700 font-medium text-start text-base w-full">
-                    {service.title}
-                  </span>
-                </button>
-              </div>
-            ))}
+            <button
+              onClick={handleNext}
+              disabled={!selectedService}
+              className={`py-3 px-8 font-medium rounded-lg transition-all duration-200 cursor-pointer ${
+                !selectedService
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105"
+              }`}
+            >
+              Avançar
+            </button>
           </div>
-
-          <StepPagination
-            steps={steps}
-            currentStep={currentStep || "start"}
-            handlePreviousStep={handlePreviousStep}
-            handleNextStep={handleNextStep}
-          />
         </div>
       </div>
     </section>

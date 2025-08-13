@@ -24,7 +24,8 @@ interface NepfyAIRequestData {
   projectName: string;
   projectDescription: string;
   companyInfo?: string;
-  selectedPlans?: string[];
+  selectedPlan?: number; // Number of plan options to generate (1, 2, or 3)
+  selectedPlans?: string[]; // Legacy support for array format
   planDetails?: string;
   includeTerms?: boolean;
   includeFAQ?: boolean;
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
       projectName,
       projectDescription,
       companyInfo,
+      selectedPlan,
       selectedPlans = [],
       planDetails = "",
       includeTerms = false,
@@ -80,10 +82,29 @@ export async function POST(request: NextRequest) {
     const defaultCompanyInfo =
       companyInfo || generateDefaultCompanyInfo(agentServiceId);
 
-    const defaultPlans =
-      selectedPlans.length > 0
-        ? selectedPlans
-        : generateDefaultPlans(agentServiceId);
+    // Handle plan generation based on selectedPlan number or selectedPlans array
+    let defaultPlans: string[];
+    if (selectedPlan && typeof selectedPlan === "number") {
+      // Generate specific number of plan options
+      defaultPlans = generatePlanOptionsByCount(agentServiceId, selectedPlan);
+      console.log(
+        `Generated ${defaultPlans.length} plans for service ${agentServiceId} based on selectedPlan: ${selectedPlan}`
+      );
+    } else if (selectedPlans.length > 0) {
+      // Use provided selectedPlans array (legacy support)
+      defaultPlans = selectedPlans;
+      console.log(
+        `Using provided selectedPlans array: ${selectedPlans.join(", ")}`
+      );
+    } else {
+      // Generate default plans
+      defaultPlans = generateDefaultPlans(agentServiceId);
+      console.log(
+        `Generated default plans for service ${agentServiceId}: ${defaultPlans.join(
+          ", "
+        )}`
+      );
+    }
 
     // Check if this is a flash template request
     if (templateType === "flash") {
@@ -94,7 +115,9 @@ export async function POST(request: NextRequest) {
         projectName,
         projectDescription,
         selectedPlans: defaultPlans,
-        planDetails: planDetails || generateDefaultPlanDetails(agentServiceId),
+        planDetails:
+          planDetails ||
+          generateDefaultPlanDetails(agentServiceId, defaultPlans),
         includeTerms,
         includeFAQ,
         templateType: "flash",
@@ -163,6 +186,12 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
           mappedFrom: selectedService,
           generationType,
+          planCount: defaultPlans.length,
+          planGenerationMethod: selectedPlan
+            ? `count-${selectedPlan}`
+            : selectedPlans.length > 0
+            ? "array"
+            : "default",
         },
       });
     }
@@ -175,7 +204,8 @@ export async function POST(request: NextRequest) {
       projectName,
       projectDescription,
       selectedPlans: defaultPlans,
-      planDetails: planDetails || generateDefaultPlanDetails(agentServiceId),
+      planDetails:
+        planDetails || generateDefaultPlanDetails(agentServiceId, defaultPlans),
       includeTerms,
       includeFAQ,
     };
@@ -245,6 +275,12 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString(),
         mappedFrom: selectedService,
         generationType,
+        planCount: defaultPlans.length,
+        planGenerationMethod: selectedPlan
+          ? `count-${selectedPlan}`
+          : selectedPlans.length > 0
+          ? "array"
+          : "default",
       },
     });
   } catch (error) {
@@ -358,7 +394,24 @@ function generateDefaultPlans(serviceId: string): string[] {
   );
 }
 
-function generateDefaultPlanDetails(serviceId: string): string {
+function generateDefaultPlanDetails(
+  serviceId: string,
+  plans?: string[]
+): string {
+  // If plans are provided, generate dynamic plan details
+  if (plans && plans.length > 0) {
+    const planNames = plans.map(
+      (plan) => plan.charAt(0).toUpperCase() + plan.slice(1)
+    );
+    return `Planos ${planNames.join(", ")}: ${planNames
+      .map(
+        (plan) =>
+          `Plano ${plan} com serviços personalizados e estratégias otimizadas para seu negócio`
+      )
+      .join(". ")}.`;
+  }
+
+  // Fallback to static templates
   const planDetailsTemplates = {
     marketing:
       "Plano Basic: Gestão de redes sociais + Google Ads. Plano Premium: Estratégia completa incluindo SEO, email marketing e automação.",
@@ -377,5 +430,59 @@ function generateDefaultPlanDetails(serviceId: string): string {
   return (
     planDetailsTemplates[serviceId as keyof typeof planDetailsTemplates] ||
     "Planos personalizados conforme necessidade do projeto."
+  );
+}
+
+function generatePlanOptionsByCount(
+  serviceId: string,
+  planCount: number
+): string[] {
+  const planTemplates = {
+    marketing: {
+      1: ["basic"],
+      2: ["basic", "premium"],
+      3: ["basic", "premium", "enterprise"],
+    },
+    design: {
+      1: ["logo"],
+      2: ["logo", "complete"],
+      3: ["logo", "complete", "premium"],
+    },
+    development: {
+      1: ["web-app"],
+      2: ["web-app", "mobile-app"],
+      3: ["web-app", "mobile-app", "full-stack"],
+    },
+    architecture: {
+      1: ["project"],
+      2: ["project", "complete"],
+      3: ["project", "complete", "premium"],
+    },
+    photography: {
+      1: ["session"],
+      2: ["session", "package"],
+      3: ["session", "package", "premium"],
+    },
+    medical: {
+      1: ["consultation"],
+      2: ["consultation", "checkup"],
+      3: ["consultation", "checkup", "premium"],
+    },
+  };
+
+  const servicePlans = planTemplates[serviceId as keyof typeof planTemplates];
+  if (!servicePlans) {
+    // Fallback to marketing plans if service not found
+    return (
+      planTemplates.marketing[
+        Math.min(planCount, 3) as keyof typeof planTemplates.marketing
+      ] || ["basic"]
+    );
+  }
+
+  // Ensure planCount is between 1 and 3
+  const validPlanCount = Math.max(1, Math.min(planCount, 3));
+  return (
+    servicePlans[validPlanCount as keyof typeof servicePlans] || servicePlans[1]
   );
 }

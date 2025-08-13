@@ -65,7 +65,7 @@ export const TemplateCard = ({
   isSelected,
 }: TemplateCardProps) => (
   <div
-    className={`h-[500px] w-[340px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 ${
+    className={`h-[500px] w-[340px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 px-1 cursor-pointer ${
       isSelected ? "border-primary-light-300" : "border-white-neutral-light-300"
     }`}
     onClick={onSelectTemplate}
