@@ -96,22 +96,21 @@ export function ServiceType({
                 key={service.id}
                 className={`flex flex-col items-start w-full cursor-pointer group relative`}
               >
-                <div className="flex justify-start w-full absolute -top-8 -left-3 z-10 pointer-events-none">
-                  <div className="flex justify-start w-full absolute top-3 left-3 z-10 pointer-events-none">
-                    <span
-                      className={`block w-4 h-4 rounded-full border-2 transition-all duration-200
+                {/* Custom radio button at the top-left corner */}
+                <div className="flex justify-start w-full absolute top-3 left-3 z-10 pointer-events-none">
+                  <span
+                    className={`block w-4 h-4 rounded-full border-2 transition-all duration-200
                       ${
                         isSelected
                           ? "border-[#6C4FF9] bg-white"
                           : "border-[#C9C9D9] bg-white"
                       }
                     `}
-                    >
-                      {isSelected && (
-                        <span className="block w-2 h-2 m-auto mt-[2px] rounded-full bg-[#6C4FF9]" />
-                      )}
-                    </span>
-                  </div>
+                  >
+                    {isSelected && (
+                      <span className="block w-2 h-2 m-auto mt-[2px] rounded-full bg-[#6C4FF9]" />
+                    )}
+                  </span>
                 </div>
                 <input
                   type="radio"
@@ -122,11 +121,11 @@ export function ServiceType({
                   className="sr-only"
                 />
                 <div
-                  className={`w-full aspect-[1.3/1] rounded-xl flex flex-col items-center justify-center transition-all duration-200 relative
+                  className={`w-full aspect-[1.3/1] rounded-xl flex flex-col items-center justify-center border transition-all duration-200 relative
                     ${
                       isSelected
-                        ? "shadow-[0_2px_12px_0_rgba(108,79,249,0.12)]"
-                        : " hover:border-[#B7AFFF] shadow-[0_2px_12px_0_rgba(108,79,249,0.08)]"
+                        ? "border-[#6C4FF9] bg-gradient-to-br from-[#F6F5FF] to-[#EDEBFF] shadow-[0_4px_20px_0_rgba(108,79,249,0.15)]"
+                        : "border-[#E6E6F0] bg-gradient-to-br from-[#F6F5FF] to-[#EDEBFF] hover:border-[#B7AFFF] hover:shadow-[0_4px_16px_0_rgba(108,79,249,0.12)] shadow-[0_2px_8px_0_rgba(108,79,249,0.08)]"
                     }
                   `}
                 >
@@ -135,7 +134,7 @@ export function ServiceType({
                     alt={service.title}
                     width={100}
                     height={100}
-                    className="object-contain w-full"
+                    className="object-contain w-full h-full p-4"
                     style={
                       isSelected
                         ? {
@@ -147,10 +146,10 @@ export function ServiceType({
                   />
                 </div>
                 <span
-                  className={`mt-1 text-center text-sm font-satoshi transition-all duration-200 ${
+                  className={`mt-3 text-center text-sm font-satoshi transition-all duration-200 ${
                     isSelected
                       ? "text-[#6C4FF9] font-medium"
-                      : "text-0 font-normal"
+                      : "text-[#6C4FF9] font-normal"
                   }`}
                 >
                   {service.title}

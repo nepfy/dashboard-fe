@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Check, Eye, EyeOff, Calendar } from "lucide-react";
 
 import QuestionIcon from "#/components/icons/QuestionIcon";
 import InfoIcon from "#/components/icons/InfoIcon";
@@ -21,6 +21,7 @@ interface PasswordValidation {
 interface FormErrors {
   pageUrl?: string;
   pagePassword?: string;
+  pageValidity?: string;
   general?: string;
 }
 
@@ -45,6 +46,7 @@ export default function AccessForm() {
   const [modals, setModals] = useState({
     password: false,
     url: false,
+    validity: false,
   });
   const [ui, setUI] = useState({
     isMobile: false,
@@ -254,39 +256,41 @@ export default function AccessForm() {
 
   return (
     <div className="h-full flex flex-col justify-between">
-      <FormContent
-        pageUrl={pageUrl}
-        pagePassword={pagePassword}
-        userName={userName}
-        isEditMode={isEditMode}
-        isMobile={ui.isMobile}
-        isLoadingUserName={ui.isLoadingUserName}
-        showPassword={ui.showPassword}
-        errors={errors}
-        passwordValidation={passwordValidation}
-        onUrlChange={handleUrlChange}
-        onPasswordChange={handlePasswordChange}
-        onTogglePassword={togglePasswordVisibility}
-        onToggleUrlModal={() => toggleModal("url")}
-        onTogglePasswordModal={() => toggleModal("password")}
-        originalPageUrl={originalPageUrl}
-      />
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-[0_8px_32px_0_rgba(108,79,249,0.12)] p-0 border border-white/20">
+        <FormContent
+          pageUrl={pageUrl}
+          pagePassword={pagePassword}
+          userName={userName}
+          isEditMode={isEditMode}
+          isMobile={ui.isMobile}
+          isLoadingUserName={ui.isLoadingUserName}
+          showPassword={ui.showPassword}
+          errors={errors}
+          passwordValidation={passwordValidation}
+          onUrlChange={handleUrlChange}
+          onPasswordChange={handlePasswordChange}
+          onTogglePassword={togglePasswordVisibility}
+          onToggleUrlModal={() => toggleModal("url")}
+          onTogglePasswordModal={() => toggleModal("password")}
+          originalPageUrl={originalPageUrl}
+        />
 
-      <FormFooter
-        isFinishing={ui.isFinishing}
-        isFormValid={isFormValid}
-        hasErrors={Object.keys(errors).length > 0}
-        onBack={handleBack}
-        onFinish={handleFinish}
-        errors={errors}
-      />
+        <FormFooter
+          isFinishing={ui.isFinishing}
+          isFormValid={isFormValid}
+          hasErrors={Object.keys(errors).length > 0}
+          onBack={handleBack}
+          onFinish={handleFinish}
+          errors={errors}
+        />
 
-      <FormModals
-        modals={modals}
-        userName={userName}
-        onToggleUrlModal={() => toggleModal("url")}
-        onTogglePasswordModal={() => toggleModal("password")}
-      />
+        <FormModals
+          modals={modals}
+          userName={userName}
+          onToggleUrlModal={() => toggleModal("url")}
+          onTogglePasswordModal={() => toggleModal("password")}
+        />
+      </div>
     </div>
   );
 }
@@ -392,7 +396,7 @@ function URLSection({
   const isFieldDisabled = isEditMode && originalPageUrl.length > 0;
 
   return (
-    <div className="mt-6 space-y-4 flex items-start justify-between gap-2 max-w-[560px] relative">
+    <div className="mt-6 space-y-4 flex items-start justify-between gap-2 min-w-[500px] relative">
       <div className="w-full">
         <p
           className="text-white-neutral-light-800 text-sm p-2 rounded-3xs font-medium flex justify-between items-center mb-2"

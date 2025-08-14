@@ -116,74 +116,83 @@ export default function NepfyAIPage() {
 
   return (
     <>
-      {currentStep === "start" && (
-        <StartProposal
-          handleNextStep={() => setCurrentStep("template_selection")}
-        />
-      )}
-      {currentStep === "template_selection" && (
-        <SelectTemplate
-          handleNextStep={() => setCurrentStep("service_selection")}
-          handlePreviousStep={() => setCurrentStep("start")}
-          onSelectTemplate={handleTemplateSelect}
-        />
-      )}
-      {currentStep === "service_selection" && (
-        <ServiceType
-          onServiceSelect={handleServiceSelect}
-          selectedService={selectedService}
-          handleBack={() => setCurrentStep("template_selection")}
-          handleNext={() => setCurrentStep("company_info")}
-        />
-      )}
-      {currentStep === "company_info" && (
-        <CompanyInfo
-          companyInfo={companyInfo}
-          setCompanyInfo={setCompanyInfo}
-          handleBack={() => setCurrentStep("service_selection")}
-          handleNext={() => setCurrentStep("client_details")}
-        />
-      )}
-      {currentStep === "client_details" && (
-        <ClientInfo
-          clientData={{
-            companyName: formData.step1?.companyName || "",
-            projectName,
-            projectDescription,
-            clientName,
-          }}
-          setClientData={({ clientName, projectName, projectDescription }) => {
-            setClientName(clientName);
-            setProjectName(projectName);
-            setProjectDescription(projectDescription);
-          }}
-          handleBack={() => setCurrentStep("company_info")}
-          handleNext={() => setCurrentStep("pricing_step")}
-        />
-      )}
-      {currentStep === "pricing_step" && (
-        <PricingStep
-          selectedPlan={selectedPlan || 1}
-          handlePlanSelect={setSelectedPlan}
-          handleBack={() => setCurrentStep("client_details")}
-          handleNext={() => setCurrentStep("faq_step")}
-        />
-      )}
-      {currentStep === "faq_step" && (
-        <FAQStep
-          handleNext={({ includeTerms, includeFAQ }) => {
-            handleGenerateProposal({ includeTerms, includeFAQ });
-          }}
-          handleBack={() => setCurrentStep("pricing_step")}
-        />
-      )}
-      {currentStep === "generated_proposal" && (
-        <GenerateProposal
-          isGenerating={isGenerating}
-          generatedProposal={generatedProposal}
-          setCurrentStep={setCurrentStep}
-        />
-      )}
+      {(() => {
+        const stepMap: Record<string, React.ReactNode> = {
+          start: (
+            <StartProposal
+              handleNextStep={() => setCurrentStep("template_selection")}
+            />
+          ),
+          template_selection: (
+            <SelectTemplate
+              handleNextStep={() => setCurrentStep("service_selection")}
+              handlePreviousStep={() => setCurrentStep("start")}
+              onSelectTemplate={handleTemplateSelect}
+            />
+          ),
+          service_selection: (
+            <ServiceType
+              onServiceSelect={handleServiceSelect}
+              selectedService={selectedService}
+              handleBack={() => setCurrentStep("template_selection")}
+              handleNext={() => setCurrentStep("company_info")}
+            />
+          ),
+          company_info: (
+            <CompanyInfo
+              companyInfo={companyInfo}
+              setCompanyInfo={setCompanyInfo}
+              handleBack={() => setCurrentStep("service_selection")}
+              handleNext={() => setCurrentStep("client_details")}
+            />
+          ),
+          client_details: (
+            <ClientInfo
+              clientData={{
+                companyName: formData.step1?.companyName || "",
+                projectName,
+                projectDescription,
+                clientName,
+              }}
+              setClientData={({
+                clientName,
+                projectName,
+                projectDescription,
+              }) => {
+                setClientName(clientName);
+                setProjectName(projectName);
+                setProjectDescription(projectDescription);
+              }}
+              handleBack={() => setCurrentStep("company_info")}
+              handleNext={() => setCurrentStep("pricing_step")}
+            />
+          ),
+          pricing_step: (
+            <PricingStep
+              selectedPlan={selectedPlan || 1}
+              handlePlanSelect={setSelectedPlan}
+              handleBack={() => setCurrentStep("client_details")}
+              handleNext={() => setCurrentStep("faq_step")}
+            />
+          ),
+          faq_step: (
+            <FAQStep
+              handleNext={({ includeTerms, includeFAQ }) => {
+                handleGenerateProposal({ includeTerms, includeFAQ });
+              }}
+              handleBack={() => setCurrentStep("pricing_step")}
+            />
+          ),
+          generated_proposal: (
+            <GenerateProposal
+              isGenerating={isGenerating}
+              generatedProposal={generatedProposal}
+              setCurrentStep={setCurrentStep}
+            />
+          ),
+        };
+        return stepMap[currentStep] || null;
+      })()}
     </>
   );
 }
