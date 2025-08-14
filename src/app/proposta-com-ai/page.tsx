@@ -125,8 +125,6 @@ export default function NepfyAIPage() {
           template_selection: (
             <SelectTemplate
               handleNextStep={() => setCurrentStep("service_selection")}
-              handlePreviousStep={() => setCurrentStep("start")}
-              onSelectTemplate={handleTemplateSelect}
             />
           ),
           service_selection: (
