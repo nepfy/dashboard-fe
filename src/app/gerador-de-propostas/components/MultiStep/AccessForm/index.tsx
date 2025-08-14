@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, Eye, EyeOff, Calendar } from "lucide-react";
+import { ArrowLeft, Check, Eye, EyeOff } from "lucide-react";
 
 import QuestionIcon from "#/components/icons/QuestionIcon";
 import InfoIcon from "#/components/icons/InfoIcon";

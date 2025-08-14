@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { TextAreaField } from "#/components/Inputs";
-import { ArrowLeft, InfoIcon } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export function CompanyInfo({
   handleNext,

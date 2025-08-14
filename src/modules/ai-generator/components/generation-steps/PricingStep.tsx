@@ -22,14 +22,6 @@ export function PricingStep({
     { id: 3, dots: 3 },
   ];
 
-  const handleAdvance = () => {
-    if (selectedPlan === 1) {
-      setShowInfoModal(true);
-    } else {
-      handleNext();
-    }
-  };
-
   const renderDots = (count: number) => {
     return (
       <div className="flex items-center justify-center gap-2">

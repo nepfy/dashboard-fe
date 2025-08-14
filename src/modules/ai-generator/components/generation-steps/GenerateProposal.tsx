@@ -5,7 +5,7 @@ export function GenerateProposal({
   generatedProposal,
 }: {
   isGenerating: boolean;
-  generatedProposal: any;
+  generatedProposal: Record<string, unknown> | null | undefined;
   setCurrentStep: (step: string) => void;
 }) {
   console.log({ generatedProposal });
@@ -16,10 +16,6 @@ export function GenerateProposal({
 
   if (!generatedProposal) {
     return <div>Nenhuma proposta gerada</div>;
-  }
-
-  if (generatedProposal.error) {
-    return <div>Erro ao gerar proposta: {generatedProposal.error}</div>;
   }
 
   if (generatedProposal) {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import DashboardPageHeader from "#/components/DashboardPageHeader";
 import PlusIcon from "#/components/icons/PlusIcon";
 import Archive from "#/components/icons/Archive";
-import { BrainIcon, FeatherIcon } from "lucide-react";
+import { BrainIcon } from "lucide-react";
 // import ColumnIcon from "#/components/icons/ColumnIcon";
 
 interface HeaderProps {
@@ -55,7 +55,7 @@ export default function Header({
           )}
 
           <Link
-            href="/nepfy-ai"
+            href="/proposta-com-ia"
             className="flex items-center justify-center h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse px-4 gap-2"
           >
             <BrainIcon size={20} />
