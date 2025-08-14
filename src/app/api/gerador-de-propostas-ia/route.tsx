@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   ProposalWorkflow,
+  WorkflowResult,
   type ProposalWorkflowData,
 } from "#/lib/ai/parallel-workflow";
 import { getAgentByService } from "#/modules/ai-generator/agents";
 import {
   FlashTemplateWorkflow,
   type FlashTemplateData,
+  FlashWorkflowResult,
 } from "#/modules/ai-generator/themes/flash";
 
-// Maps user-facing service keys to internal agent service IDs
 const serviceMapping: Record<string, string> = {
   "marketing-digital": "marketing",
   designer: "design",
@@ -33,6 +34,8 @@ interface NepfyAIRequestData {
   templateType?: string;
   mainColor?: string;
 }
+
+type ProposalResult = FlashWorkflowResult | WorkflowResult;
 
 export async function POST(request: NextRequest) {
   try {
@@ -116,21 +119,21 @@ export async function POST(request: NextRequest) {
       };
 
       const flashWorkflow = new FlashTemplateWorkflow();
-      let result: any;
+      let result: ProposalResult;
       let generationType = "flash-workflow";
 
       try {
         // 25s timeout for main flash workflow
-        const timeoutPromise = new Promise((_, reject) => {
+        const timeoutPromise = new Promise<never>((_, reject) => {
           setTimeout(() => reject(new Error("Flash AI timeout")), 25000);
         });
         const flashPromise = flashWorkflow.execute(flashData);
         result = await Promise.race([flashPromise, timeoutPromise]);
         generationType = "flash-workflow";
-      } catch (flashError) {
+      } catch {
         // Fallback to dynamic generation (15s timeout)
         try {
-          const dynamicTimeoutPromise = new Promise((_, reject) => {
+          const dynamicTimeoutPromise = new Promise<never>((_, reject) => {
             setTimeout(
               () => reject(new Error("Flash dynamic generation timeout")),
               15000
@@ -140,7 +143,7 @@ export async function POST(request: NextRequest) {
             flashWorkflow.generateTemplateProposal(flashData);
           result = await Promise.race([dynamicPromise, dynamicTimeoutPromise]);
           generationType = "flash-dynamic-generation";
-        } catch (dynamicError) {
+        } catch {
           return NextResponse.json(
             {
               error: "Failed to generate flash proposal",
@@ -193,21 +196,21 @@ export async function POST(request: NextRequest) {
     };
 
     const workflow = new ProposalWorkflow();
-    let result: any;
+    let result: ProposalResult;
     let generationType = "ai-workflow";
 
     try {
       // 25s timeout for main AI workflow
-      const timeoutPromise = new Promise((_, reject) => {
+      const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error("AI timeout")), 25000);
       });
       const aiPromise = workflow.execute(workflowData);
       result = await Promise.race([aiPromise, timeoutPromise]);
       generationType = "ai-workflow";
-    } catch (aiError) {
+    } catch {
       // Fallback to local/dynamic generation (15s timeout)
       try {
-        const dynamicTimeoutPromise = new Promise((_, reject) => {
+        const dynamicTimeoutPromise = new Promise<never>((_, reject) => {
           setTimeout(
             () => reject(new Error("Dynamic generation timeout")),
             15000
@@ -220,7 +223,7 @@ export async function POST(request: NextRequest) {
         );
         result = await Promise.race([dynamicPromise, dynamicTimeoutPromise]);
         generationType = "dynamic-generation";
-      } catch (dynamicError) {
+      } catch {
         return NextResponse.json(
           {
             error: "Failed to generate proposal",

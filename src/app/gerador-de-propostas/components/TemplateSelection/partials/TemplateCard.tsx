@@ -1,4 +1,3 @@
-import { TemplateType } from "#/types/project";
 import Image from "next/image";
 import { ColorPicker } from "./ColorPicker";
 

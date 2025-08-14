@@ -1,5 +1,11 @@
 export interface AgentConfig {
-  selectedService: "marketing" | "design";
+  selectedService:
+    | "marketing"
+    | "design"
+    | "development"
+    | "architecture"
+    | "photography"
+    | "medical";
   id: string;
   name: string;
   sector: string;
@@ -11,8 +17,9 @@ export interface AgentConfig {
   keyTerms: string[];
 }
 
-export const serviceAgents: Record<string, any> = {
+export const serviceAgents: Record<string, AgentConfig> = {
   marketing: {
+    selectedService: "marketing",
     id: "marketing-agent",
     name: "Especialista em Marketing Digital",
     sector: "Marketing Digital",
@@ -74,15 +81,13 @@ Seja objetivo, criativo e mantenha o foco em gerar valor, confiança e facilitar
     ],
     pricingModel: "monthly-retainer",
     proposalStructure: [
-      [
-        "Introdução: Título (100c) – Frase de impacto, imperativa, sem nome do cliente.",
-        "Sobre Nós: Título Principal (140c), Título Secundário (95c), 2 Legendas para Fotos (125c cada), Marquee (60c), Parágrafo Principal (155c), Parágrafo Complementar 1 (350c), Parágrafo Complementar 2 (220c).",
-        "Especialidades: Tagline (30c), Título (130c), Tópicos (até 9, Título 30c, Descrição 90c).",
-        "Planos e Investimentos: Título 1 (65c), Título 2 (90c), 3 Planos (Nome 25c, Descrição 70c, Valor 11c, até 8 itens de 35c cada).",
-        "Termos e Condições: Título (30c), Descrição (120c) para cada termo.",
-        "Perguntas Frequentes: Pergunta (125c), Resposta (225c), até 10 pares.",
-        "Footer: Call to Action (90c), frase curta e persuasiva para incentivar o fechamento.",
-      ],
+      "Introdução: Título (100c) – Frase de impacto, imperativa, sem nome do cliente.",
+      "Sobre Nós: Título Principal (140c), Título Secundário (95c), 2 Legendas para Fotos (125c cada), Marquee (60c), Parágrafo Principal (155c), Parágrafo Complementar 1 (350c), Parágrafo Complementar 2 (220c).",
+      "Especialidades: Tagline (30c), Título (130c), Tópicos (até 9, Título 30c, Descrição 90c).",
+      "Planos e Investimentos: Título 1 (65c), Título 2 (90c), 3 Planos (Nome 25c, Descrição 70c, Valor 11c, até 8 itens de 35c cada).",
+      "Termos e Condições: Título (30c), Descrição (120c) para cada termo.",
+      "Perguntas Frequentes: Pergunta (125c), Resposta (225c), até 10 pares.",
+      "Footer: Call to Action (90c), frase curta e persuasiva para incentivar o fechamento.",
     ],
     keyTerms: [
       "ROI",
@@ -97,6 +102,7 @@ Seja objetivo, criativo e mantenha o foco em gerar valor, confiança e facilitar
   },
 
   design: {
+    selectedService: "design",
     id: "design-agent",
     name: "Especialista em Design",
     sector: "Design e Identidade Visual",
@@ -141,6 +147,7 @@ Seja objetivo, criativo e mantenha o foco em gerar valor, confiança e facilitar
   },
 
   development: {
+    selectedService: "development",
     id: "development-agent",
     name: "Especialista em Desenvolvimento",
     sector: "Desenvolvimento de Software",
@@ -186,6 +193,7 @@ Seja objetivo, criativo e mantenha o foco em gerar valor, confiança e facilitar
   },
 
   architecture: {
+    selectedService: "architecture",
     id: "architecture-agent",
     name: "Especialista em Arquitetura",
     sector: "Arquitetura e Design de Espaços",
@@ -231,6 +239,7 @@ Seja objetivo, criativo e mantenha o foco em gerar valor, confiança e facilitar
   },
 
   photography: {
+    selectedService: "photography",
     id: "photography-agent",
     name: "Especialista em Fotografia",
     sector: "Fotografia Profissional",
@@ -276,6 +285,7 @@ Seja objetivo, criativo e mantenha o foco em gerar valor, confiança e facilitar
   },
 
   medical: {
+    selectedService: "medical",
     id: "medical-agent",
     name: "Especialista em Serviços Médicos",
     sector: "Área da Saúde",

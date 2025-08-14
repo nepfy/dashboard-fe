@@ -197,7 +197,12 @@ export class FlashTemplateWorkflow {
 
     // Fallback to generic agent if no flash-specific agent found
     if (!agent) {
-      agent = getAgentByService(data.selectedService);
+      agent = getAgentByService(
+        data.selectedService
+      ) as unknown as FlashAgentConfig;
+      if (!agent) {
+        throw new Error(`Agent not found for service: ${data.selectedService}`);
+      }
     }
 
     if (!agent) {
@@ -228,7 +233,7 @@ export class FlashTemplateWorkflow {
       investment,
       ...(terms && { terms }),
       ...(faq && { faq }),
-      footer: this.generateFooter(data, agent),
+      footer: this.generateFooter(data),
     };
   }
 
@@ -559,15 +564,8 @@ Formato JSON:
         // Fallback to default values if JSON parsing fails
         return {
           title: `Investimento Personalizado para ${data.projectName}`,
-          deliverables: this.generateDeliverablesFromAgent(
-            agent,
-            data.projectDescription
-          ),
-          plans: this.generatePlansFromAgent(
-            agent,
-            data.selectedPlans,
-            data.planDetails
-          ),
+          deliverables: this.generateDeliverablesFromAgent(agent),
+          plans: this.generatePlansFromAgent(agent),
         };
       }
 
@@ -575,15 +573,8 @@ Formato JSON:
         title:
           parsed.title || `Investimento Personalizado para ${data.projectName}`,
         deliverables:
-          parsed.deliverables ||
-          this.generateDeliverablesFromAgent(agent, data.projectDescription),
-        plans:
-          parsed.plans ||
-          this.generatePlansFromAgent(
-            agent,
-            data.selectedPlans,
-            data.planDetails
-          ),
+          parsed.deliverables || this.generateDeliverablesFromAgent(agent),
+        plans: parsed.plans || this.generatePlansFromAgent(agent),
       };
     } catch (error) {
       console.error("Investment Generation Error:", error);
@@ -685,10 +676,7 @@ Formato JSON:
     }
   }
 
-  private generateFooter(
-    data: FlashTemplateData,
-    agent: AgentConfig | FlashAgentConfig
-  ) {
+  private generateFooter(data: FlashTemplateData) {
     return {
       thanks: "Obrigado pela confiança!",
       followUp: "Vamos conversar sobre seu projeto?",
@@ -727,8 +715,8 @@ Formato JSON:
 
       // Extract JSON from the response if it's wrapped in text
       return this.extractJSONFromResponse(content);
-    } catch (error: any) {
-      if (error.status === 429) {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message.includes("429")) {
         // Rate limit exceeded - wait and retry once
         await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait 3 seconds
 
@@ -775,21 +763,14 @@ Formato JSON:
     }));
   }
 
-  private generateDeliverablesFromAgent(
-    agent: AgentConfig | FlashAgentConfig,
-    projectDescription: string
-  ) {
+  private generateDeliverablesFromAgent(agent: AgentConfig | FlashAgentConfig) {
     return agent.commonServices.slice(0, 4).map((service: string) => ({
       title: service,
       description: `${service} desenvolvido com expertise em ${agent.sector.toLowerCase()}, incluindo todas as especificações técnicas e melhores práticas do mercado para garantir resultados superiores`,
     }));
   }
 
-  private generatePlansFromAgent(
-    agent: AgentConfig | FlashAgentConfig,
-    selectedPlans: string[],
-    planDetails: string
-  ) {
+  private generatePlansFromAgent(agent: AgentConfig | FlashAgentConfig) {
     const pricingMap = {
       "monthly-retainer": { basic: "R$ 2.500/mês", premium: "R$ 4.500/mês" },
       "project-based": { basic: "R$ 3.500", premium: "R$ 6.500" },
@@ -891,8 +872,7 @@ Formato JSON:
       ],
     };
 
-    const serviceFaq =
-      faqTemplates[agent.selectedService as keyof typeof faqTemplates];
+    const serviceFaq = faqTemplates[agent.sector as keyof typeof faqTemplates];
 
     if (serviceFaq) {
       return serviceFaq;

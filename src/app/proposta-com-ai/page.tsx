@@ -24,10 +24,11 @@ export default function NepfyAIPage() {
   const [projectDescription, setProjectDescription] = useState("");
   const [companyInfo, setCompanyInfo] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
-  const [planDetails, setPlanDetails] = useState("");
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedProposal, setGeneratedProposal] = useState<any>(null);
+  const [generatedProposal, setGeneratedProposal] = useState<
+    Record<string, unknown> | null | undefined
+  >(null);
 
   const { updateFormData, setTemplateType, templateType, formData } =
     useProjectGenerator();
@@ -70,7 +71,6 @@ export default function NepfyAIPage() {
       projectDescription,
       companyInfo,
       selectedPlan,
-      planDetails,
       includeTerms,
       includeFAQ,
       templateType,
@@ -78,7 +78,7 @@ export default function NepfyAIPage() {
     });
 
     try {
-      const response = await fetch("/api/ai", {
+      const response = await fetch("/api/gerador-de-propostas-ia", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +90,6 @@ export default function NepfyAIPage() {
           projectDescription,
           companyInfo,
           selectedPlan,
-          planDetails,
           includeTerms,
           includeFAQ,
           templateType,

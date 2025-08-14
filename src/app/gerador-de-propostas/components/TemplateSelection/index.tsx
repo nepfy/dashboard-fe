@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import Slider from "react-slick";
 
 import { TemplateType } from "#/types/project";

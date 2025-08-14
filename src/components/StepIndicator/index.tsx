@@ -1,5 +1,3 @@
-import { User } from "lucide-react";
-
 export function StepIndicator({
   activeStep,
   onStepClick,

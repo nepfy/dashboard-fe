@@ -89,11 +89,8 @@ const templates: TemplateModel[] = [
 
 export function SelectTemplate({
   handleNextStep,
-  handlePreviousStep,
 }: {
   handleNextStep: () => void;
-  handlePreviousStep: () => void;
-  onSelectTemplate: (template: TemplateType, color: string) => void;
 }) {
   const { updateFormData, setTemplateType, templateType } =
     useProjectGenerator();

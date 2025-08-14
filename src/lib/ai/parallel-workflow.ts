@@ -17,8 +17,8 @@ export interface WorkflowStep {
   name: string;
   description: string;
   agent: string;
-  input: any;
-  output: any;
+  input: ProposalWorkflowData;
+  output: string;
 }
 
 export interface ProposalWorkflowData {
@@ -166,13 +166,13 @@ export class ProposalWorkflow {
       })
     );
 
-    const proposalSections: any = {};
+    const proposalSections: Record<string, string> = {};
 
     results.forEach((result, index) => {
       const task = tasks[index];
 
       if (result.status === "fulfilled" && result.value.success) {
-        proposalSections[task.id] = result.value.result;
+        proposalSections[task.id] = result.value.result || "";
 
         this.steps.push({
           id: task.id,
@@ -180,7 +180,7 @@ export class ProposalWorkflow {
           description: task.description,
           agent: agent.name,
           input: data,
-          output: result.value.result,
+          output: result.value.result || "",
         });
       } else {
         const fallbackResult = this.getFallbackForTask(task.id, data, agent);
@@ -523,7 +523,7 @@ Formato: Markdown com seções claras e valores em destaque.`;
       return text;
     } catch (error) {
       console.error("Dynamic Pricing Generation Error:", error);
-      return this.generateFallbackPricing(data, agent);
+      return this.generateFallbackPricing();
     }
   }
 
@@ -554,7 +554,7 @@ Formato: Markdown com fases bem definidas e cronograma visual.`;
       return text;
     } catch (error) {
       console.error("Dynamic Timeline Generation Error:", error);
-      return this.generateFallbackTimeline(data, agent);
+      return this.generateFallbackTimeline();
     }
   }
 
@@ -588,7 +588,7 @@ Formato: Markdown com seções numeradas e linguagem clara.`;
       return text;
     } catch (error) {
       console.error("Dynamic Terms Generation Error:", error);
-      return this.generateFallbackTerms(data, agent);
+      return this.generateFallbackTerms();
     }
   }
 
@@ -621,7 +621,7 @@ Formato: Markdown com perguntas em negrito e respostas claras.`;
       return text;
     } catch (error) {
       console.error("Dynamic FAQ Generation Error:", error);
-      return this.generateFallbackFAQ(data, agent);
+      return this.generateFallbackFAQ();
     }
   }
 
@@ -679,10 +679,7 @@ Atenciosamente,
 Equipe ${agent.sector}`;
   }
 
-  private generateFallbackPricing(
-    data: ProposalWorkflowData,
-    agent: AgentConfig
-  ): string {
+  private generateFallbackPricing(): string {
     return `## Investimento
 
 **Plano Básico**: R$ 2.500
@@ -706,10 +703,7 @@ Equipe ${agent.sector}`;
 - Garantia de qualidade`;
   }
 
-  private generateFallbackTimeline(
-    data: ProposalWorkflowData,
-    agent: AgentConfig
-  ): string {
+  private generateFallbackTimeline(): string {
     return `## Cronograma de Execução
 
 **Fase 1 - Planejamento (1 semana)**
@@ -733,10 +727,7 @@ Equipe ${agent.sector}`;
 - Garantia de qualidade`;
   }
 
-  private generateFallbackTerms(
-    data: ProposalWorkflowData,
-    agent: AgentConfig
-  ): string {
+  private generateFallbackTerms(): string {
     return `## Termos e Condições
 
 1. **Prazo**: O projeto terá início após aprovação e pagamento inicial.
@@ -754,10 +745,7 @@ Equipe ${agent.sector}`;
 7. **Comunicação**: Reuniões semanais para acompanhamento.`;
   }
 
-  private generateFallbackFAQ(
-    data: ProposalWorkflowData,
-    agent: AgentConfig
-  ): string {
+  private generateFallbackFAQ(): string {
     return `## Perguntas Frequentes
 
 **Q: Quanto tempo leva para concluir o projeto?**
