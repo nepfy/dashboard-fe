@@ -33,14 +33,6 @@ export default function NepfyAIPage() {
   const { updateFormData, setTemplateType, templateType, formData } =
     useProjectGenerator();
 
-  const handleTemplateSelect = (template: TemplateType, color: string) => {
-    setTemplateType(template);
-    updateFormData("step1", {
-      templateType: template,
-      mainColor: color,
-    });
-  };
-
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId);
   };
