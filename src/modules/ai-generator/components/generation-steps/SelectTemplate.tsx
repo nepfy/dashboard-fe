@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import TemplateSelection from "#/app/gerador-de-propostas/components/TemplateSelection";
 import { TemplateType } from "#/types/project";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
@@ -89,13 +90,14 @@ const templates: TemplateModel[] = [
 
 export function SelectTemplate({
   handleNextStep,
+  handleBack,
 }: {
   handleNextStep: () => void;
+  handleBack?: () => void;
 }) {
   const { updateFormData, setTemplateType, templateType } =
     useProjectGenerator();
 
-  // Set "flash" as default selected on mount
   useEffect(() => {
     if (!templateType) {
       setTemplateType("flash");
@@ -117,8 +119,8 @@ export function SelectTemplate({
 
   return (
     <>
-      <div className="h-full w-full md:flex flex-col justify-center overflow-y-scroll">
-        <h2 className="text-neutral-light-600 text-[24px] text-center font-medium py-4 lg:pt-12 pb-6">
+      <div className="h-full w-full md:flex flex-col justify-center overflow-y-scroll pb-6">
+        <h2 className="text-neutral-light-600 text-[24px] text-center font-medium py-4 px-6 sm:px-0 lg:pt-10 pb-0">
           Escolha o modelo da sua proposta
         </h2>
         <TemplateSelection
@@ -130,10 +132,17 @@ export function SelectTemplate({
 
       {/* Continue Button */}
       {templateType && (
-        <div className="fixed bottom-8 right-8 text-center mt-8">
+        <div className="fixed w-full bottom-0 flex justify-center items-center gap-4 sm:justify-start mt-8 px-6 py-3 sm:py-6 border-t border-white-neutral-light-300 bg-white-neutral-light-200">
+          <button
+            onClick={handleBack}
+            className="cursor-pointer button-inner border border-white-neutral-light-300 flex items-center justify-start gap-2 px-6 py-3 text-white-neutral-light-900 hover:text-gray-800 transition-all duration-200 bg-white-neutral-light-100 hover:bg-white-neutral-light-200 rounded-[10px] group"
+          >
+            <ArrowLeft size={16} />
+            Voltar
+          </button>
           <button
             onClick={() => handleNextStep()}
-            className="bg-primary-light-500 hover:bg-primary-light-600 text-white font-medium py-3 px-8 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl cursor-pointer"
+            className="px-6 py-3.5 bg-gradient-to-br from-primary-light-300 to-primary-light-500 via-primary-light-500 hover:from-primary-light-600 hover:to-primary-light-400 text-white text-sm font-medium rounded-[10px] flex justify-center items-center gap-1 transition-all duration-200 transform shadow-lg hover:shadow-xl cursor-pointer"
           >
             Continuar com {templates.find((t) => t.id === templateType)?.title}
           </button>

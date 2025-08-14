@@ -54,11 +54,20 @@ export default function TemplateSelection({
     );
   };
 
-  const handlePreviewTemplate = () => {
-    window.open("/flash", "_blank", "noopener,noreferrer");
+  const handlePreviewTemplate = (templateName: string) => {
+    if (templateName === "flash") {
+      window.open("/flash", "_blank", "noopener,noreferrer");
+    }
+
+    if (templateName === "prime") {
+      window.open("/prime", "_blank", "noopener,noreferrer");
+    }
+
+    if (templateName === "grid") {
+      window.open("/grid", "_blank", "noopener,noreferrer");
+    }
   };
 
-  // Slider controls
   const nextSlide = () => sliderRef.current?.slickNext();
   const prevSlide = () => sliderRef.current?.slickPrev();
   const goToSlide = (index: number) => sliderRef.current?.slickGoTo(index);
@@ -89,7 +98,9 @@ export default function TemplateSelection({
             selectedColor={getSelectedColor(template)}
             onColorSelect={(color) => handleColorSelect(template.title, color)}
             onSelectTemplate={() => handleSelectTemplate(template)}
-            onPreviewTemplate={handlePreviewTemplate}
+            onPreviewTemplate={() =>
+              handlePreviewTemplate(template.title.toLowerCase())
+            }
             isSelected={
               template.title.toLowerCase() === templateType?.toLowerCase()
             }
@@ -103,7 +114,7 @@ export default function TemplateSelection({
         <Slider ref={sliderRef} {...sliderSettings}>
           {templates.map((template) => (
             <div key={template.title} className="px-4 shadow-lg">
-              <div className="mx-auto flex justify-center items-center hover:scale-105 transition-all duration-300">
+              <div className="mx-auto flex justify-center items-center">
                 <TemplateCard
                   template={template}
                   selectedColor={getSelectedColor(template)}
@@ -111,7 +122,9 @@ export default function TemplateSelection({
                     handleColorSelect(template.title, color)
                   }
                   onSelectTemplate={() => handleSelectTemplate(template)}
-                  onPreviewTemplate={handlePreviewTemplate}
+                  onPreviewTemplate={() =>
+                    handlePreviewTemplate(template.title.toLowerCase())
+                  }
                   isSelected={template.title === templateType}
                 />
               </div>
