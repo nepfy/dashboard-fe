@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Stripe } from "stripe";
 import { clerkClient } from "@clerk/nextjs/server";
-import { ClerkStripeSyncService } from "#/lib/services/clerk-stripe-sync";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 export const dynamic = "force-dynamic";
 
-// Helper: Attach subscription to user in Clerk (unsafeMetadata) - DEPRECATED
-// Use ClerkStripeSyncService.syncSubscriptionToClerkAndDB instead
+// Helper: Attach subscription to user in Clerk (unsafeMetadata)
 async function attachSubscriptionToUser({
   userId,
   subscription,
@@ -25,11 +23,7 @@ async function attachSubscriptionToUser({
     unsafeMetadata: {
       ...user.unsafeMetadata,
       stripe: {
-        ...(typeof user.unsafeMetadata === "object" &&
-        user.unsafeMetadata !== null &&
-        "stripe" in user.unsafeMetadata
-          ? (user.unsafeMetadata as { stripe?: object }).stripe
-          : {}),
+        ...((user.unsafeMetadata as any)?.stripe || {}),
         subscriptionId: subscription.id,
         subscriptionType:
           subscriptionType ||
@@ -48,7 +42,7 @@ async function handleSubscriptionScheduleUpdated(event: Stripe.Event) {
     const subscriptionScheduleUpdated = event.data
       .object as Stripe.SubscriptionSchedule;
     const previousAttributes = event.data.previous_attributes as {
-      phases?: Array<unknown>;
+      phases?: Array<any>;
     };
 
     if (previousAttributes && previousAttributes.phases) {
@@ -76,17 +70,12 @@ async function handleSubscriptionScheduleUpdated(event: Stripe.Event) {
     console.log(
       `Subscription schedule updated for customer ID: ${subscriptionScheduleUpdated.customer}`
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating user metadata:", error);
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "errors" in error &&
-      (error as { errors?: unknown }).errors
-    ) {
+    if (error.errors) {
       console.error(
         "Clerk error details:",
-        JSON.stringify((error as { errors: unknown }).errors, null, 2)
+        JSON.stringify(error.errors, null, 2)
       );
     }
     throw error;
@@ -115,27 +104,22 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
       throw new Error("User not found");
     }
 
-    // Use the new sync service for better data consistency
-    await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
-      user.id,
-      subscriptionUpdated as any,
-      subscriptionUpdated.metadata?.subscription_type
-    );
+    // Attach subscription to user (unsafeMetadata)
+    await attachSubscriptionToUser({
+      userId: user.id,
+      subscription: subscriptionUpdated,
+      subscriptionType: subscriptionUpdated.metadata?.subscription_type,
+    });
 
     console.log(
       `Subscription updated for customer ID: ${subscriptionUpdated.customer}`
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error handling subscription event:", error);
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "errors" in error &&
-      (error as { errors?: unknown }).errors
-    ) {
+    if (error.errors) {
       console.error(
         "Clerk error details:",
-        JSON.stringify((error as { errors: unknown }).errors, null, 2)
+        JSON.stringify(error.errors, null, 2)
       );
     }
     throw error;
@@ -144,67 +128,34 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
 
 async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   try {
-    console.log("Starting checkout session completed handler...");
-
     const session = event.data.object as Stripe.Checkout.Session;
-    console.log("Session data:", {
-      id: session.id,
-      customer: session.customer,
-      subscription: session.subscription,
-      customer_email: session.customer_email,
-    });
+    const customer = await stripe.customers.retrieve(
+      session.customer as string
+    );
 
-    // Try to get customer from session first
-    let customerEmail = session.customer_email;
-    const customerId = session.customer;
-
-    if (!customerEmail && customerId) {
-      console.log("No customer email in session, fetching from customer ID...");
-      const customer = await stripe.customers.retrieve(customerId as string);
-
-      if ("deleted" in customer) {
-        throw new Error("Customer was deleted");
-      }
-
-      customerEmail = customer.email;
-      console.log("Customer email from Stripe:", customerEmail);
+    if ("deleted" in customer) {
+      throw new Error("Customer was deleted");
     }
 
-    if (!customerEmail) {
-      throw new Error("No customer email found in session or customer data");
-    }
+    const email = customer.email;
 
-    console.log("Looking up user in Clerk with email:", customerEmail);
     const clerk = await clerkClient();
 
     const clerkUser = await clerk.users.getUserList({
-      emailAddress: [customerEmail],
+      emailAddress: [email as string],
     });
-
-    console.log("Clerk user lookup result:", {
-      found: clerkUser.data.length > 0,
-      userId: clerkUser.data[0]?.id,
-    });
-
-    if (!clerkUser.data[0]) {
-      throw new Error(`User not found in Clerk with email: ${customerEmail}`);
-    }
 
     const user = clerkUser.data[0];
-    console.log("Found user in Clerk:", user.id);
 
-    if (!session.subscription) {
-      throw new Error("No subscription ID in checkout session");
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    console.log("Retrieving subscription from Stripe...");
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
-    console.log("Subscription retrieved:", subscription.id);
 
     // Attach userId to subscription metadata in Stripe
-    console.log("Updating subscription metadata with user ID...");
     await stripe.subscriptions.update(subscription.id, {
       metadata: {
         ...subscription.metadata,
@@ -212,26 +163,25 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
       },
     });
 
-    // Use the new sync service for better data consistency
-    await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
-      user.id,
-      subscription as any,
-      subscription.metadata?.subscription_type
-    );
+    // Attach subscription to user (unsafeMetadata)
+    await attachSubscriptionToUser({
+      userId: user.id,
+      subscription,
+      subscriptionType: subscription.metadata?.subscription_type,
+    });
 
-    console.log(
-      `Checkout session completed successfully for customer ID: ${customerId}`
-    );
-  } catch (error) {
-    console.error("Error in handleCheckoutSessionCompleted:", error);
-
-    // Log more details about the error
-    if (error instanceof Error) {
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
+    console.log(`Checkout session completed for customer ID: ${customer.id}`);
+  } catch (error: any) {
+    console.error("Error handling checkout session completed:", error);
+    if (error.message === "A valid resource ID is required.") {
+      console.error("Error: A valid resource ID is required.");
     }
-
-    // Re-throw the error to be handled by the main webhook handler
+    if (error.errors) {
+      console.error(
+        "Clerk error details:",
+        JSON.stringify(error.errors, null, 2)
+      );
+    }
     throw error;
   }
 }
@@ -377,12 +327,12 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
 
           console.log("Final subscription status:", finalSubscription.status);
 
-          // Use the new sync service for better data consistency
-          await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
+          // Attach subscription to user (unsafeMetadata)
+          await attachSubscriptionToUser({
             userId,
-            finalSubscription as any,
-            subscriptionType
-          );
+            subscription: finalSubscription,
+            subscriptionType,
+          });
 
           console.log("Mobile payment processed successfully");
         } else {
@@ -392,7 +342,7 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
             subscription.status === "past_due"
           ) {
             // Attach payment method if not already attached
-            let defaultPaymentMethod: string | null = null;
+            let defaultPaymentMethod = null;
             try {
               if (paymentIntent.payment_method) {
                 await stripe.paymentMethods.attach(
@@ -404,8 +354,6 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
                 defaultPaymentMethod = paymentIntent.payment_method as string;
               }
             } catch (attachError) {
-              console.log({ attachError });
-
               const customer = await stripe.customers.retrieve(
                 subscription.customer as string
               );
@@ -418,10 +366,7 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
               }
             }
 
-            const updateData: {
-              collection_method: Stripe.Subscription.CollectionMethod;
-              default_payment_method?: string;
-            } = {
+            const updateData: any = {
               collection_method: "charge_automatically",
             };
             if (defaultPaymentMethod) {
@@ -477,12 +422,12 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
             subscriptionId
           );
 
-          // Use the new sync service for better data consistency
-          await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
+          // Attach subscription to user (unsafeMetadata)
+          await attachSubscriptionToUser({
             userId,
-            finalSubscription as any,
-            subscriptionType
-          );
+            subscription: finalSubscription,
+            subscriptionType,
+          });
 
           console.log("Payment and subscription attached to user successfully");
         }
@@ -493,7 +438,7 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
         );
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in handlePaymentIntentSucceeded:", error);
     throw error;
   }
@@ -503,21 +448,17 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
   try {
     const invoice = event.data.object as Stripe.Invoice;
 
-    const subscriptionId =
-      typeof (invoice as unknown as { subscription?: string }).subscription ===
-      "string"
-        ? (invoice as unknown as { subscription: string }).subscription
-        : undefined;
-
     console.log("Invoice Payment Succeeded:", {
       invoiceId: invoice.id,
-      subscriptionId: subscriptionId,
+      subscriptionId: (invoice as any).subscription,
       status: invoice.status,
       amount_paid: invoice.amount_paid,
     });
 
-    if (subscriptionId) {
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    if ((invoice as any).subscription) {
+      const subscription = await stripe.subscriptions.retrieve(
+        (invoice as any).subscription as string
+      );
 
       console.log("Subscription from invoice:", {
         subscriptionId: subscription.id,
@@ -531,17 +472,17 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
         const subscriptionType =
           subscription.metadata.subscription_type || "monthly";
 
-        // Use the new sync service for better data consistency
-        await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
+        // Attach subscription to user (unsafeMetadata)
+        await attachSubscriptionToUser({
           userId,
-          subscription as any,
-          subscriptionType
-        );
+          subscription,
+          subscriptionType,
+        });
 
         console.log("User metadata updated for payment");
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in handleInvoicePaymentSucceeded:", error);
     throw error;
   }
@@ -568,74 +509,45 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let event: Stripe.Event;
-
   try {
-    console.log("Processing Stripe webhook...");
-
-    event = stripe.webhooks.constructEvent(
+    const event = stripe.webhooks.constructEvent(
       await req.text(),
       stripeSignature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
 
-    console.log("Webhook event type:", event.type);
-    console.log("Webhook event ID:", event.id);
-
     switch (event.type) {
       case "subscription_schedule.updated":
-        console.log("Handling subscription_schedule.updated...");
         await handleSubscriptionScheduleUpdated(event);
         break;
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
-        console.log("Handling subscription event...");
         await handleSubscriptionEvent(event);
         break;
       case "checkout.session.completed":
-        console.log("Handling checkout.session.completed...");
         await handleCheckoutSessionCompleted(event);
         break;
       case "payment_intent.succeeded":
-        console.log("Handling payment_intent.succeeded...");
         await handlePaymentIntentSucceeded(event);
         break;
       case "invoice.payment_succeeded":
-        console.log("Handling invoice.payment_succeeded...");
         await handleInvoicePaymentSucceeded(event);
         break;
       default:
-        console.log("Unhandled event type:", event.type);
         break;
     }
 
-    console.log("Webhook processed successfully");
     return NextResponse.json({ status: 200, message: "success" });
-  } catch (error) {
-    console.error("Webhook processing failed:", error);
-
-    // Log detailed error information
-    if (error instanceof Error) {
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
-    }
-
-    // Return a more specific error response
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
-    const statusCode =
-      error instanceof Error && error.message.includes("User not found")
-        ? 404
-        : 500;
-
+  } catch (error: any) {
     return NextResponse.json(
       {
-        error: errorMessage,
-        timestamp: new Date().toISOString(),
-        eventId: "unknown",
+        error: error.message || "An error occurred processing the webhook",
+        clerkTraceId: error.clerkTraceId,
       },
-      { status: statusCode }
+      {
+        status: error.status || 400,
+      }
     );
   }
 }
