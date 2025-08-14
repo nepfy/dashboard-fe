@@ -74,8 +74,6 @@ export function generateThemeCSS(
   config: BaseThemeConfig,
   customColors?: Record<string, string>
 ): string {
-  const colors = { ...config.colorPalette, ...customColors };
-
   return `
     :root {
       --primary-color: ${

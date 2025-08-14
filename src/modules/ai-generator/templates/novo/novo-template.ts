@@ -24,7 +24,7 @@ export interface NovoSection extends BaseSection {
 export interface NovoProposal extends BaseProposal {
   // TODO: Define Novo-specific proposal structure
   // This will be implemented when the Novo template is ready
-  novo: true;
+  novo: true; // eslint-disable-line @typescript-eslint/no-unused-vars
 }
 
 export const novoTemplateConfig = {
@@ -59,9 +59,7 @@ export const novoTemplateConfig = {
 };
 
 // Placeholder functions for future implementation
-export function validateNovoCharacterLimits(
-  proposal: Partial<NovoProposal>
-): Record<string, boolean> {
+export function validateNovoCharacterLimits(): Record<string, boolean> {
   // TODO: Implement when Novo template is ready
   return {};
 }
