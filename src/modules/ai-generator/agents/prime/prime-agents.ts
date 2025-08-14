@@ -2,6 +2,62 @@ import { PrimeAgentConfig, ServiceType } from "../base/types";
 import { baseServiceAgents } from "../base/base-agents";
 
 export const primeServiceAgents: Record<string, PrimeAgentConfig> = {
+  "Prime - Marketing Digital": {
+    ...baseServiceAgents["marketing-digital"],
+    id: "prime-marketing-digital-agent",
+    name: "Especialista em Marketing Digital Prime",
+    sector: "Marketing Digital",
+    systemPrompt: `${baseServiceAgents["marketing-digital"].systemPrompt}
+
+Metodologia PRIME: Marketing premium com foco em estratégias personalizadas, resultados excepcionais e ROI superior, garantindo crescimento sustentável e presença digital dominante.`,
+    expertise: [
+      "SEO e SEM Premium",
+      "Redes Sociais Avançadas",
+      "Email Marketing Premium",
+      "Marketing de Conteúdo Exclusivo",
+      "Analytics e Métricas Avançadas",
+      "Automação de Marketing Premium",
+      "Campanhas Pagas Premium (Google Ads, Facebook Ads)",
+      "Inbound Marketing Avançado",
+    ],
+    commonServices: [
+      "Gestão de Redes Sociais Premium",
+      "Campanhas de Google Ads Premium",
+      "SEO - Otimização para Buscadores Premium",
+      "Email Marketing Automation Premium",
+      "Criação de Conteúdo Exclusivo",
+      "Analytics e Relatórios Avançados",
+    ],
+    proposalStructure: [
+      "Análise de Mercado Premium",
+      "Estratégia de Marketing Personalizada",
+      "Execução Premium das Campanhas",
+      "Monitoramento e Otimização Avançada",
+      "Relatórios e Análise Premium",
+    ],
+    keyTerms: [
+      "ROI Premium",
+      "CTR Otimizado",
+      "CPC Eficiente",
+      "Conversão Superior",
+      "Engajamento Premium",
+      "Alcance Qualificado",
+      "Impressões Otimizadas",
+      "Lead Premium",
+    ],
+    primeSpecific: {
+      introductionStyle:
+        "Foco em marketing premium com estratégias personalizadas e resultados excepcionais",
+      aboutUsFocus:
+        "Especialistas em marketing premium que combinam estratégia com execução superior",
+      specialtiesApproach:
+        "Metodologia premium para marketing digital de alto impacto",
+      processEmphasis:
+        "Processo estratégico detalhado para entrega de resultados premium",
+      investmentStrategy:
+        "Investimento em marketing premium com retorno superior e crescimento sustentável",
+    },
+  },
   "Prime - Arquiteto": {
     ...baseServiceAgents.architecture,
     id: "prime-architect-agent",
@@ -347,6 +403,11 @@ Metodologia PRIME: Atendimento médico premium com foco em cuidado personalizado
 export function getPrimeAgentByService(
   service: ServiceType
 ): PrimeAgentConfig | null {
+  // Handle special case for marketing-digital
+  if (service === "marketing-digital") {
+    return primeServiceAgents["Prime - Marketing Digital"] || null;
+  }
+
   const primeAgentKey = `Prime - ${
     service.charAt(0).toUpperCase() + service.slice(1)
   }`;

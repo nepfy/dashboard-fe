@@ -2,6 +2,62 @@ import { FlashAgentConfig, ServiceType } from "../base/types";
 import { baseServiceAgents } from "../base/base-agents";
 
 export const flashServiceAgents: Record<string, FlashAgentConfig> = {
+  "Flash - Marketing Digital": {
+    ...baseServiceAgents["marketing-digital"],
+    id: "flash-marketing-digital-agent",
+    name: "Especialista em Marketing Digital Flash",
+    sector: "Marketing Digital",
+    systemPrompt: `${baseServiceAgents["marketing-digital"].systemPrompt}
+
+Metodologia FLASH: Marketing ágil e eficiente com foco em resultados rápidos, estratégias otimizadas e ROI imediato, garantindo crescimento acelerado e presença digital impactante.`,
+    expertise: [
+      "SEO e SEM Flash",
+      "Redes Sociais Rápidas",
+      "Email Marketing Express",
+      "Marketing de Conteúdo Flash",
+      "Analytics e Métricas Rápidas",
+      "Automação de Marketing Express",
+      "Campanhas Pagas Flash (Google Ads, Facebook Ads)",
+      "Inbound Marketing Rápido",
+    ],
+    commonServices: [
+      "Gestão de Redes Sociais Flash",
+      "Campanhas de Google Ads Express",
+      "SEO - Otimização para Buscadores Flash",
+      "Email Marketing Automation Express",
+      "Criação de Conteúdo Rápida",
+      "Analytics e Relatórios Flash",
+    ],
+    proposalStructure: [
+      "Análise de Mercado Flash",
+      "Estratégia de Marketing Rápida",
+      "Execução Flash das Campanhas",
+      "Monitoramento e Otimização Rápida",
+      "Relatórios e Análise Flash",
+    ],
+    keyTerms: [
+      "ROI Flash",
+      "CTR Rápido",
+      "CPC Eficiente",
+      "Conversão Rápida",
+      "Engajamento Flash",
+      "Alcance Rápido",
+      "Impressões Flash",
+      "Lead Express",
+    ],
+    flashSpecific: {
+      introductionStyle:
+        "Foco em marketing rápido com estratégias ágeis e resultados imediatos",
+      aboutUsFocus:
+        "Especialistas em marketing flash que combinam velocidade com estratégia",
+      specialtiesApproach:
+        "Metodologia ágil para marketing digital de impacto rápido",
+      processEmphasis:
+        "Processo estratégico otimizado para entrega rápida de resultados",
+      investmentStrategy:
+        "Investimento em marketing flash com retorno rápido e crescimento acelerado",
+    },
+  },
   "Flash - Arquiteto": {
     ...baseServiceAgents.architecture,
     id: "flash-architect-agent",
@@ -347,6 +403,11 @@ Metodologia FLASH: Atendimento médico rápido e eficiente com foco em cuidado �
 export function getFlashAgentByService(
   service: ServiceType
 ): FlashAgentConfig | null {
+  // Handle special case for marketing-digital
+  if (service === "marketing-digital") {
+    return flashServiceAgents["Flash - Marketing Digital"] || null;
+  }
+
   const flashAgentKey = `Flash - ${
     service.charAt(0).toUpperCase() + service.slice(1)
   }`;

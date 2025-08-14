@@ -105,18 +105,16 @@ export interface PrimeWorkflowResult {
 }
 
 export class PrimeTemplateWorkflow {
-  private agent: PrimeAgentConfig | AgentConfig | null = null;
+  private agent: BaseAgentConfig | null = null;
   private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
 
   async execute(data: PrimeThemeData): Promise<PrimeWorkflowResult> {
-    // Get the appropriate agent
-    this.agent = getPrimeAgentByService(data.selectedService);
+    // Get the appropriate agent using the new unified function
+    this.agent = getAgentByServiceAndTemplate(data.selectedService, "prime");
     if (!this.agent) {
-      this.agent = getAgentByService(data.selectedService);
-    }
-
-    if (!this.agent) {
-      throw new Error(`No agent found for service: ${data.selectedService}`);
+      throw new Error(
+        `No agent found for service: ${data.selectedService} and template: prime`
+      );
     }
 
     try {
@@ -140,14 +138,12 @@ export class PrimeTemplateWorkflow {
   }
 
   async generateTemplateProposal(data: PrimeThemeData): Promise<PrimeProposal> {
-    // Get the appropriate agent
-    this.agent = getPrimeAgentByService(data.selectedService);
+    // Get the appropriate agent using the new unified function
+    this.agent = getAgentByServiceAndTemplate(data.selectedService, "prime");
     if (!this.agent) {
-      this.agent = getAgentByService(data.selectedService);
-    }
-
-    if (!this.agent) {
-      throw new Error(`No agent found for service: ${data.selectedService}`);
+      throw new Error(
+        `No agent found for service: ${data.selectedService} and template: prime`
+      );
     }
 
     try {
@@ -197,7 +193,9 @@ DADOS DO PROJETO:
 - Setor: ${this.agent?.sector}
 ${
   "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.introductionStyle}`
+    ? `- Metodologia PRIME: ${
+        (this.agent as any).primeSpecific.introductionStyle
+      }`
     : ""
 }
 

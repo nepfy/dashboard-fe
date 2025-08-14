@@ -1,5 +1,10 @@
-import { BaseTemplateData, BaseProposal, BaseSection, baseTemplateConfig } from '../base/base-template';
-import { TemplateType } from '../../agents/base/types';
+import {
+  BaseTemplateData,
+  BaseProposal,
+  BaseSection,
+  baseTemplateConfig,
+} from "../base/base-template";
+import { TemplateType } from "../../agents/base/types";
 
 export interface PrimeTemplateData extends BaseTemplateData {
   templateType: "prime";
@@ -78,7 +83,7 @@ export interface PrimeProposal extends BaseProposal {
   faq?: Array<{
     question: string; // 100 chars
     answer: string; // 280 chars
-  }>);
+  }>;
 
   // Footer
   footer: {
@@ -90,7 +95,8 @@ export interface PrimeProposal extends BaseProposal {
 export const primeTemplateConfig = {
   ...baseTemplateConfig,
   name: "Prime Template",
-  description: "Template premium com funcionalidades avançadas e personalização superior",
+  description:
+    "Template premium com funcionalidades avançadas e personalização superior",
   features: [
     ...baseTemplateConfig.features,
     "Estilização premium",
@@ -98,28 +104,30 @@ export const primeTemplateConfig = {
     "Suporte prioritário",
     "Seções exclusivas",
     "Validação rigorosa de caracteres",
-    "Preview em alta qualidade"
+    "Preview em alta qualidade",
   ],
   limitations: [
     "Complexidade aumentada",
     "Tempo de configuração maior",
-    "Requer mais recursos"
+    "Requer mais recursos",
   ],
   recommendedFor: [
     "Propostas de alto valor",
     "Projetos complexos",
     "Clientes premium",
-    "Apresentações executivas"
+    "Apresentações executivas",
   ],
   notRecommendedFor: [
     "Propostas simples",
     "Projetos com prazo muito curto",
-    "Orçamentos limitados"
-  ]
+    "Orçamentos limitados",
+  ],
 };
 
 // Prime-specific utility functions
-export function validatePrimeCharacterLimits(proposal: Partial<PrimeProposal>): Record<string, boolean> {
+export function validatePrimeCharacterLimits(
+  proposal: Partial<PrimeProposal>
+): Record<string, boolean> {
   const validations: Record<string, boolean> = {};
 
   if (proposal.introduction?.title) {
@@ -127,7 +135,8 @@ export function validatePrimeCharacterLimits(proposal: Partial<PrimeProposal>): 
   }
 
   if (proposal.introduction?.subtitle) {
-    validations.introductionSubtitle = proposal.introduction.subtitle.length <= 100;
+    validations.introductionSubtitle =
+      proposal.introduction.subtitle.length <= 100;
   }
 
   if (proposal.aboutUs?.title) {
@@ -172,30 +181,30 @@ export function getPrimeTemplateDefaults(): Partial<PrimeProposal> {
       subtitle: "",
       services: [],
       validity: "30 dias",
-      buttonText: "Solicitar Proposta"
+      buttonText: "Solicitar Proposta",
     },
     aboutUs: {
       title: "",
       supportText: "",
-      subtitle: ""
+      subtitle: "",
     },
     specialties: {
       title: "Nossas Especialidades",
-      topics: []
+      topics: [],
     },
     steps: {
       introduction: "",
       title: "Nosso Processo",
-      topics: []
+      topics: [],
     },
     investment: {
       title: "",
       deliverables: [],
-      plans: []
+      plans: [],
     },
     footer: {
       callToAction: "",
-      contactInfo: ""
-    }
+      contactInfo: "",
+    },
   };
 }
