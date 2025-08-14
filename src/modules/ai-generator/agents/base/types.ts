@@ -34,6 +34,7 @@ export type AgentConfig = BaseAgentConfig | PrimeAgentConfig | FlashAgentConfig;
 
 export type ServiceType =
   | "marketing"
+  | "marketing-digital"
   | "design"
   | "development"
   | "architecture"
