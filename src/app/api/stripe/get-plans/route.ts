@@ -13,13 +13,14 @@ export async function GET() {
 
     const plans = prices.data.map((price) => ({
       id: price.id,
-      name: (price.product as Stripe.Product).name,
+      title: (price.product as Stripe.Product).name,
       description: (price.product as Stripe.Product).description,
-      unitAmount: price.unit_amount,
+      price: price.unit_amount,
       currency: price.currency,
       interval: price.recurring?.interval,
-      marketing_list: (price.product as Stripe.Product).metadata.marketing_list,
+      features: (price.product as Stripe.Product).marketing_features,
       credits: (price.product as Stripe.Product).metadata.credits,
+      buttonTitle: (price.product as Stripe.Product).metadata.buttonTitle,
     }));
 
     return NextResponse.json(plans);
