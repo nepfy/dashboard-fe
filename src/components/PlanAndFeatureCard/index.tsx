@@ -6,11 +6,14 @@ import Slider from "react-slick";
 import type { Settings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 interface Plan {
   id: number;
   title: string;
-  features: string[];
+  features: { name: string }[];
   credits: number;
   price: string;
   buttonTitle: string;
@@ -23,6 +26,10 @@ interface PlanAndFeatureCardProps {
 }
 
 const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const router = useRouter();
+
   const cardClassName = (plan: Plan) =>
     `rounded-[var(--radius-m)] h-[520px] md:max-h-[580px] md:h-[580px] lg:max-h-[500px] lg:h-[500px] xl:h-[460px] xl:max-h-[460px] w-full sm:w-[416px] border border-[var(--color-white-neutral-light-300)] mx-4 sm:mx-2 p-[3px] ${
       plan?.highlight && "gradient-border"
@@ -45,14 +52,16 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
             </div>
 
             <div>
-              {plan.features.map((feature) => (
-                <div className="flex items-center gap-2 mb-4" key={feature}>
-                  <Checkbox />
-                  <p className="text-sm text-white-neutral-light-900">
-                    {feature}
-                  </p>
-                </div>
-              ))}
+              {plan.features.map(
+                ({ name }: { name: string }, index: number) => (
+                  <div className="flex items-center gap-2 mb-4" key={index}>
+                    <Checkbox />
+                    <p className="text-sm text-white-neutral-light-900">
+                      {name}
+                    </p>
+                  </div>
+                )
+              )}
 
               <div className="flex items-center gap-2 mt-6">
                 <Sparkle />
@@ -64,7 +73,14 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
 
             <div className="flex items-center gap-2 mt-24">
               <p className="md:text-2xl lg:text-3xl text-white-neutral-light-800">
-                {plan.price}
+                {plan.price !== undefined
+                  ? (Number(plan.price) / 100).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : ""}
                 <span className="text-sm text-white-neutral-light-800">
                   {" "}
                   / mês
@@ -100,9 +116,33 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
           font-medium 
           hover:cursor-pointer
           transition-colors 
-          button-inner-light"
+          button-inner-light text-center"
+            onClick={async () => {
+              setIsLoading(true);
+              setSelectedPlan(plan);
+
+              const checkoutSession = await fetch(
+                "http://localhost:3000/api/stripe/create-checkout-session",
+                {
+                  method: "POST",
+                  body: JSON.stringify({ priceId: plan.id }),
+                }
+              );
+              const { session } = await checkoutSession.json();
+
+              if (session.url) {
+                window.open(session.url, "_blank");
+                setIsLoading(false);
+              }
+            }}
           >
-            {plan?.buttonTitle}
+            {isLoading && selectedPlan?.id === plan.id ? (
+              <div className="flex items-center justify-center w-full">
+                <LoaderCircle className="animate-spin text-center" />
+              </div>
+            ) : (
+              plan?.buttonTitle
+            )}
           </button>
         )}
       </div>
@@ -137,7 +177,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
 
       {/* Desktop Layout */}
       <div className="hidden sm:flex flex-row justify-around items-center w-full">
-        {plans.map((plan) => renderCard(plan))}
+        {plans.map((plan) => renderCard(plan)).reverse()}
       </div>
     </>
   );
