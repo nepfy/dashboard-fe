@@ -1,5 +1,9 @@
 import Together from "together-ai";
-import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
+import {
+  getAgentByServiceAndTemplate,
+  type BaseAgentConfig,
+  FlashAgentConfig,
+} from "../agents";
 import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 
@@ -213,7 +217,9 @@ DADOS DO PROJETO:
 - Setor: ${agent.sector}
 ${
   "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${(agent as any).flashSpecific.introductionStyle}`
+    ? `- Metodologia FLASH: ${
+        (agent as FlashAgentConfig).flashSpecific.introductionStyle
+      }`
     : ""
 }
 
@@ -283,7 +289,9 @@ DADOS DO PROJETO:
 - Setor: ${agent.sector}
 ${
   "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${(agent as any).flashSpecific.aboutUsFocus}`
+    ? `- Metodologia FLASH: ${
+        (agent as FlashAgentConfig).flashSpecific.aboutUsFocus
+      }`
     : ""
 }
 
@@ -333,7 +341,9 @@ DADOS DO PROJETO:
 - Setor: ${agent.sector}
 ${
   "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${(agent as any).flashSpecific.specialtiesApproach}`
+    ? `- Metodologia FLASH: ${
+        (agent as FlashAgentConfig).flashSpecific.specialtiesApproach
+      }`
     : ""
 }
 
@@ -399,7 +409,9 @@ DADOS DO PROJETO:
 - Setor: ${agent.sector}
 ${
   "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${(agent as any).flashSpecific.processEmphasis}`
+    ? `- Metodologia FLASH: ${
+        (agent as FlashAgentConfig).flashSpecific.processEmphasis
+      }`
     : ""
 }
 
@@ -469,7 +481,9 @@ DADOS DO PROJETO:
 - Setor: ${agent.sector}
 ${
   "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${(agent as any).flashSpecific.investmentStrategy}`
+    ? `- Metodologia FLASH: ${
+        (agent as FlashAgentConfig).flashSpecific.investmentStrategy
+      }`
     : ""
 }
 
@@ -650,7 +664,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private generateFooter(_data: FlashThemeData): FlashFooterSection {
+  private generateFooter(): FlashFooterSection {
     return {
       thanks: "Obrigado pela confiança!",
       followUp: "Vamos começar agora?",
