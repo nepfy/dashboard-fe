@@ -26,6 +26,7 @@
     "react-fast-marquee": "^1.6.5",
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1",
+    "stripe": "^18.4.0",
     "tailwindcss-animate": "^1.0.7",
     "ws": "^8.18.1",
     "zustand": "^5.0.4"
