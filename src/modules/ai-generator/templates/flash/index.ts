@@ -1,11 +1,3 @@
-export * from "./agent";
+export * from "./flash-template";
 export * from "./constants";
-
-// Re-export the main flash agents for easy access
-export {
-  flashServiceAgents,
-  getFlashAgentByService,
-  generateFlashAgentPrompt,
-} from "./agent";
-
-export type { FlashAgentConfig } from "./agent";
+export * from "./agent";

@@ -1,10 +1,8 @@
 import assert from "node:assert";
 import Together from "together-ai";
-import { getAgentByService, type AgentConfig } from "../agents";
-import {
-  getPrimeAgentByService,
-  type PrimeAgentConfig,
-} from "../templates/prime/agent";
+import { getAgentByServiceAndTemplate, type ServiceType } from "../agents";
+import { PrimeProposal } from "../templates/prime/prime-template";
+import { BaseThemeData, baseThemeConfig } from "./base-theme";
 
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
@@ -14,29 +12,16 @@ if (!apiKey) {
 
 const client = new Together({ apiKey });
 
-export interface PrimeTemplateData {
-  selectedService: string;
-  companyInfo: string;
-  clientName: string;
-  projectName: string;
-  projectDescription: string;
-  selectedPlans: string[];
-  planDetails: string;
-  includeTerms: boolean;
-  includeFAQ: boolean;
+export interface PrimeThemeData extends BaseThemeData {
   templateType: "prime";
-  mainColor?: string;
+  primeFeatures?: {
+    premiumStyling: boolean;
+    advancedCustomization: boolean;
+    prioritySupport: boolean;
+  };
 }
 
-export interface PrimeSection {
-  id: string;
-  name: string;
-  content: string;
-  editable: boolean;
-  aiGenerated: boolean;
-  characterLimit?: number;
-  visible: boolean;
-}
+// Prime-specific section interface extends base section
 
 export interface PrimeProposal {
   // Introduction Section
@@ -123,7 +108,7 @@ export class PrimeTemplateWorkflow {
   private agent: PrimeAgentConfig | AgentConfig | null = null;
   private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
 
-  async execute(data: PrimeTemplateData): Promise<PrimeWorkflowResult> {
+  async execute(data: PrimeThemeData): Promise<PrimeWorkflowResult> {
     // Get the appropriate agent
     this.agent = getPrimeAgentByService(data.selectedService);
     if (!this.agent) {
@@ -154,9 +139,7 @@ export class PrimeTemplateWorkflow {
     }
   }
 
-  async generateTemplateProposal(
-    data: PrimeTemplateData
-  ): Promise<PrimeProposal> {
+  async generateTemplateProposal(data: PrimeThemeData): Promise<PrimeProposal> {
     // Get the appropriate agent
     this.agent = getPrimeAgentByService(data.selectedService);
     if (!this.agent) {
@@ -205,7 +188,7 @@ export class PrimeTemplateWorkflow {
     }
   }
 
-  private async generateIntroduction(data: PrimeTemplateData) {
+  private async generateIntroduction(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -304,7 +287,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateAboutUs(data: PrimeTemplateData) {
+  private async generateAboutUs(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -363,7 +346,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateSpecialties(data: PrimeTemplateData) {
+  private async generateSpecialties(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -423,7 +406,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateProcessSteps(data: PrimeTemplateData) {
+  private async generateProcessSteps(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -491,7 +474,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateInvestment(data: PrimeTemplateData) {
+  private async generateInvestment(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -566,7 +549,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateTerms(data: PrimeTemplateData) {
+  private async generateTerms(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -717,7 +700,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     ];
   }
 
-  private async generateFAQ(data: PrimeTemplateData) {
+  private async generateFAQ(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -847,7 +830,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateFooter(data: PrimeTemplateData) {
+  private async generateFooter(data: PrimeThemeData) {
     const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:

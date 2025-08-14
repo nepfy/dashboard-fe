@@ -1,10 +1,11 @@
 import assert from "node:assert";
 import Together from "together-ai";
-import { getAgentByService, type AgentConfig } from "../agents";
+import { getAgentByServiceAndTemplate, type ServiceType } from "../agents";
 import {
-  getFlashAgentByService,
-  type FlashAgentConfig,
-} from "../templates/flash/agent";
+  FlashProposal,
+  FlashTemplateData,
+} from "../templates/flash/flash-template";
+import { BaseThemeData, baseThemeConfig } from "./base-theme";
 
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
@@ -14,105 +15,22 @@ if (!apiKey) {
 
 const client = new Together({ apiKey });
 
-export interface FlashTemplateData {
-  selectedService: string;
-  companyInfo: string;
-  clientName: string;
-  projectName: string;
-  projectDescription: string;
-  selectedPlans: string[];
-  planDetails: string;
-  includeTerms: boolean;
-  includeFAQ: boolean;
+export interface FlashThemeData extends BaseThemeData {
   templateType: "flash";
-  mainColor?: string;
-}
-
-export interface FlashSection {
-  id: string;
-  name: string;
-  content: string;
-  editable: boolean;
-  aiGenerated: boolean;
-  characterLimit?: number;
-  visible: boolean;
-}
-
-export interface FlashProposal {
-  // Introduction Section
-  introduction: {
-    title: string; // 60 chars, AI-generated
-    subtitle: string; // 100 chars, AI-generated
-    services: string[]; // 4 max, 30 chars each, AI-generated
-    validity: string; // Not editable
-    buttonText: string; // 20 chars, no AI
-  };
-
-  // About Us Section
-  aboutUs: {
-    title: string; // 155 chars, AI-generated
-    supportText: string; // 70 chars, AI-generated
-    subtitle: string; // 250 chars, AI-generated
-  };
-
-  // Specialties Section
-  specialties: {
-    title: string; // 40 chars, AI-generated
-    topics: Array<{
-      title: string; // 50 chars
-      description: string; // 100 chars
-    }>; // 9 max
-  };
-
-  // Process Steps Section
-  steps: {
-    introduction: string; // 100 chars, AI-generated
-    title: string; // Fixed, not editable
-    topics: Array<{
-      title: string; // 40 chars
-      description: string; // 240 chars
-    }>; // 5 max, AI-generated
-  };
-
-  // Investment Section
-  investment: {
-    title: string; // 85 chars, AI-generated
-    deliverables: Array<{
-      title: string; // 30 chars
-      description: string; // 330 chars
-    }>;
-    plans: Array<{
-      title: string; // 20 chars
-      description: string; // 95 chars
-      value: string; // 11 chars
-      topics: string[]; // 6 max, 45 chars each
-    }>; // 3 max, AI-generated
-  };
-
-  // Terms and Conditions (optional)
-  terms?: Array<{
-    title: string; // 30 chars
-    description: string; // 180 chars
-  }>;
-
-  // FAQ (optional)
-  faq?: Array<{
-    question: string; // 100 chars
-    answer: string; // 300 chars
-  }>;
-
-  // Footer
-  footer: {
-    thanks: string; // 30 chars, no AI
-    followUp: string; // 35 chars, AI-generated
-    disclaimer: string; // 330 chars, AI-generated
-    validity: string; // Not editable
+  flashFeatures?: {
+    rapidDelivery: boolean;
+    streamlinedProcess: boolean;
+    quickCustomization: boolean;
   };
 }
+
+// Flash-specific section interface extends base section
+
+// Flash proposal interface extends base proposal
 
 export interface FlashWorkflowResult {
   finalProposal: FlashProposal;
-  sections: FlashSection[];
+  sections: any[]; // TODO: Use proper section type
   metadata: {
     totalSections: number;
     executionTime: number;
@@ -125,7 +43,7 @@ export interface FlashWorkflowResult {
 
 export class FlashTemplateWorkflow {
   private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
-  private sections: FlashSection[] = [];
+  private sections: any[] = []; // TODO: Use proper section type
   private fallbackUsed = false;
 
   async execute(data: FlashTemplateData): Promise<FlashWorkflowResult> {
@@ -190,23 +108,14 @@ export class FlashTemplateWorkflow {
   }
 
   private async generateFlashProposal(
-    data: FlashTemplateData
+    data: FlashThemeData
   ): Promise<FlashProposal> {
-    // First try to get a flash-specific agent
-    let agent = getFlashAgentByService(data.selectedService);
-
-    // Fallback to generic agent if no flash-specific agent found
+    // Get the appropriate agent
+    const agent = getAgentByServiceAndTemplate(data.selectedService, "flash");
     if (!agent) {
-      agent = getAgentByService(
-        data.selectedService
-      ) as unknown as FlashAgentConfig;
-      if (!agent) {
-        throw new Error(`Agent not found for service: ${data.selectedService}`);
-      }
-    }
-
-    if (!agent) {
-      throw new Error(`Agent not found for service: ${data.selectedService}`);
+      throw new Error(
+        `No agent found for service: ${data.selectedService} and template: flash`
+      );
     }
 
     // Generate all sections in parallel for better performance
