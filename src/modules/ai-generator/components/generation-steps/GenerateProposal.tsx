@@ -24,7 +24,7 @@ export function GenerateProposal({
 
   if (generatedProposal) {
     return (
-      <div className="flex min-h-screen items-center justify-center relative">
+      <div className="flex min-h-[calc(100vh-100px)] items-center justify-center relative">
         <AccessForm />
       </div>
     );
