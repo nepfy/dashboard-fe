@@ -1,15 +1,11 @@
-import assert from "node:assert";
 import Together from "together-ai";
-import {
-  getAgentByServiceAndTemplate,
-  type ServiceType,
-  type BaseAgentConfig,
-} from "../agents";
+import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
 import { FlashProposal } from "../templates/flash/flash-template";
-import { BaseThemeData, baseThemeConfig } from "./base-theme";
+import { BaseThemeData } from "./base-theme";
 
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
+
 if (!apiKey) {
   throw new Error("TOGETHER_API_KEY environment variable is required");
 }
@@ -25,10 +21,95 @@ export interface FlashThemeData extends BaseThemeData {
   };
 }
 
+// Section types for better type safety
+export interface FlashIntroductionSection {
+  title: string;
+  subtitle: string;
+  services: string[];
+  validity: string;
+  buttonText: string;
+}
+
+export interface FlashAboutUsSection {
+  title: string;
+  supportText: string;
+  subtitle: string;
+}
+
+export interface FlashSpecialtyTopic {
+  title: string;
+  description: string;
+}
+
+export interface FlashSpecialtiesSection {
+  title: string;
+  topics: FlashSpecialtyTopic[];
+}
+
+export interface FlashStepTopic {
+  title: string;
+  description: string;
+}
+
+export interface FlashStepsSection {
+  introduction: string;
+  title: string;
+  topics: FlashStepTopic[];
+}
+
+export interface FlashDeliverable {
+  title: string;
+  description: string;
+}
+
+export interface FlashPlan {
+  title: string;
+  description: string;
+  value: string;
+  topics: string[];
+}
+
+export interface FlashInvestmentSection {
+  title: string;
+  deliverables: FlashDeliverable[];
+  plans: FlashPlan[];
+}
+
+export interface FlashTerm {
+  title: string;
+  description: string;
+}
+
+export type FlashTermsSection = FlashTerm[];
+
+export interface FlashFAQItem {
+  question: string;
+  answer: string;
+}
+
+export type FlashFAQSection = FlashFAQItem[];
+
+export interface FlashFooterSection {
+  thanks: string;
+  followUp: string;
+  disclaimer: string;
+  validity: string;
+}
+
+export type FlashSection =
+  | FlashIntroductionSection
+  | FlashAboutUsSection
+  | FlashSpecialtiesSection
+  | FlashStepsSection
+  | FlashInvestmentSection
+  | FlashTermsSection
+  | FlashFAQSection
+  | FlashFooterSection;
+
 // Flash proposal interface extends base proposal
 export interface FlashWorkflowResult {
   finalProposal: FlashProposal;
-  sections: any[]; // TODO: Use proper section type
+  sections: FlashSection[];
   metadata: {
     totalSections: number;
     executionTime: number;
@@ -41,7 +122,7 @@ export interface FlashWorkflowResult {
 
 export class FlashTemplateWorkflow {
   private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
-  private sections: any[] = []; // TODO: Use proper section type
+  private sections: FlashSection[] = [];
   private fallbackUsed = false;
 
   async execute(data: FlashThemeData): Promise<FlashWorkflowResult> {
@@ -96,6 +177,18 @@ export class FlashTemplateWorkflow {
           : Promise.resolve(undefined),
       ]);
 
+    // Collect sections for metadata
+    this.sections = [
+      introduction,
+      aboutUs,
+      specialties,
+      steps,
+      investment,
+      ...(terms ? [terms] : []),
+      ...(faq ? [faq] : []),
+      this.generateFooter(data),
+    ].filter(Boolean) as FlashSection[];
+
     return {
       introduction,
       aboutUs,
@@ -111,7 +204,7 @@ export class FlashTemplateWorkflow {
   private async generateIntroduction(
     data: FlashThemeData,
     agent: BaseAgentConfig
-  ) {
+  ): Promise<FlashIntroductionSection> {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -146,7 +239,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed;
+      let parsed: FlashIntroductionSection;
 
       try {
         parsed = JSON.parse(response);
@@ -178,7 +271,10 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateAboutUs(data: FlashThemeData, agent: BaseAgentConfig) {
+  private async generateAboutUs(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashAboutUsSection> {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -203,7 +299,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed;
+      let parsed: FlashAboutUsSection;
 
       try {
         parsed = JSON.parse(response);
@@ -228,7 +324,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
   private async generateSpecialties(
     data: FlashThemeData,
     agent: BaseAgentConfig
-  ) {
+  ): Promise<FlashSpecialtiesSection> {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -261,7 +357,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed;
+      let parsed: FlashSpecialtiesSection;
 
       try {
         parsed = JSON.parse(response);
@@ -291,7 +387,10 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateSteps(data: FlashThemeData, agent: BaseAgentConfig) {
+  private async generateSteps(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashStepsSection> {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -325,7 +424,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed;
+      let parsed: FlashStepsSection;
 
       try {
         parsed = JSON.parse(response);
@@ -361,7 +460,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
   private async generateInvestment(
     data: FlashThemeData,
     agent: BaseAgentConfig
-  ) {
+  ): Promise<FlashInvestmentSection> {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -398,7 +497,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed;
+      let parsed: FlashInvestmentSection;
 
       try {
         parsed = JSON.parse(response);
@@ -438,7 +537,10 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateTerms(data: FlashThemeData, agent: BaseAgentConfig) {
+  private async generateTerms(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashTermsSection> {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -463,7 +565,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed;
+      let parsed: FlashTermsSection;
 
       try {
         parsed = JSON.parse(response);
@@ -491,7 +593,10 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private async generateFAQ(data: FlashThemeData, agent: BaseAgentConfig) {
+  private async generateFAQ(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashFAQSection> {
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -516,7 +621,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed;
+      let parsed: FlashFAQSection;
 
       try {
         parsed = JSON.parse(response);
@@ -545,7 +650,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private generateFooter(data: FlashThemeData) {
+  private generateFooter(_data: FlashThemeData): FlashFooterSection {
     return {
       thanks: "Obrigado pela confiança!",
       followUp: "Vamos começar agora?",

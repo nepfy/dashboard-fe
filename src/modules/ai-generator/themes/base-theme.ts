@@ -1,5 +1,4 @@
 import { ServiceType, TemplateType } from "../agents/base/types";
-import { BaseTemplateData } from "../templates/base/base-template";
 
 export interface BaseThemeData {
   selectedService: ServiceType;
@@ -79,12 +78,24 @@ export function generateThemeCSS(
 
   return `
     :root {
-      --primary-color: ${colors.primary || colors[5]};
-      --secondary-color: ${colors.secondary || colors[6]};
-      --accent-color: ${colors.accent || colors[7]};
-      --text-color: ${colors.text || colors[3]};
-      --background-color: ${colors.background || colors[0]};
-      --border-color: ${colors.border || colors[1]};
+      --primary-color: ${
+        (customColors && customColors.primary) || config.colorPalette[5]
+      };
+      --secondary-color: ${
+        (customColors && customColors.secondary) || config.colorPalette[6]
+      };
+      --accent-color: ${
+        (customColors && customColors.accent) || config.colorPalette[7]
+      };
+      --text-color: ${
+        (customColors && customColors.text) || config.colorPalette[3]
+      };
+      --background-color: ${
+        (customColors && customColors.background) || config.colorPalette[0]
+      };
+      --border-color: ${
+        (customColors && customColors.border) || config.colorPalette[1]
+      };
       
       --font-family-primary: ${config.typography.primary};
       --font-family-secondary: ${config.typography.secondary};
