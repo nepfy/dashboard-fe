@@ -403,13 +403,22 @@ Metodologia FLASH: Atendimento médico rápido e eficiente com foco em cuidado �
 export function getFlashAgentByService(
   service: ServiceType
 ): FlashAgentConfig | null {
+  console.log("Debug - getFlashAgentByService called with:", service);
+  console.log("Debug - Available flash agents:", Object.keys(flashServiceAgents));
+  console.log("Debug - baseServiceAgents keys:", Object.keys(baseServiceAgents));
+  
   // Handle special case for marketing-digital
   if (service === "marketing-digital") {
-    return flashServiceAgents["Flash - Marketing Digital"] || null;
+    const agent = flashServiceAgents["Flash - Marketing Digital"];
+    console.log("Debug - Found Flash - Marketing Digital agent:", agent);
+    return agent || null;
   }
 
   const flashAgentKey = `Flash - ${
     service.charAt(0).toUpperCase() + service.slice(1)
   }`;
-  return flashServiceAgents[flashAgentKey] || null;
+  console.log("Debug - Looking for flash agent key:", flashAgentKey);
+  const agent = flashServiceAgents[flashAgentKey];
+  console.log("Debug - Found agent for key:", flashAgentKey, agent);
+  return agent || null;
 }

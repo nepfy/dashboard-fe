@@ -28,16 +28,24 @@ export function getAgentByServiceAndTemplate(
   service: ServiceType,
   template: TemplateType
 ): BaseAgentConfig | null {
+  console.log("Debug - getAgentByServiceAndTemplate called with:", { service, template });
+  
   switch (template) {
     case "prime":
-      return getPrimeAgentByService(service);
+      const primeAgent = getPrimeAgentByService(service);
+      console.log("Debug - Prime agent result:", primeAgent);
+      return primeAgent;
     case "flash":
-      return getFlashAgentByService(service);
+      const flashAgent = getFlashAgentByService(service);
+      console.log("Debug - Flash agent result:", flashAgent);
+      return flashAgent;
     case "novo":
       // TODO: Implement when novo template is ready
       return null;
     default:
-      return getAgentByService(service);
+      const baseAgent = getAgentByService(service);
+      console.log("Debug - Base agent result:", baseAgent);
+      return baseAgent;
   }
 }
 
