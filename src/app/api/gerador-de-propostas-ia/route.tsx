@@ -10,6 +10,11 @@ import {
   type FlashTemplateData,
   FlashWorkflowResult,
 } from "#/modules/ai-generator/themes/flash";
+import {
+  PrimeTemplateWorkflow,
+  type PrimeTemplateData,
+  PrimeWorkflowResult,
+} from "#/modules/ai-generator/themes/prime";
 
 const serviceMapping: Record<string, string> = {
   "marketing-digital": "marketing",
@@ -35,7 +40,10 @@ interface NepfyAIRequestData {
   mainColor?: string;
 }
 
-type ProposalResult = FlashWorkflowResult | WorkflowResult;
+type ProposalResult =
+  | FlashWorkflowResult
+  | PrimeWorkflowResult
+  | WorkflowResult;
 
 export async function POST(request: NextRequest) {
   try {
@@ -148,6 +156,101 @@ export async function POST(request: NextRequest) {
             {
               error: "Failed to generate flash proposal",
               details: "Both flash AI workflow and dynamic generation failed",
+              generationType: "failed",
+            },
+            { status: 500 }
+          );
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...(typeof result === "object" && result !== null ? result : {}),
+          pageData: {
+            templateType,
+            mainColor,
+            originalServiceId: selectedService,
+          },
+        },
+        metadata: {
+          service: agentServiceId,
+          agent: agent.name,
+          timestamp: new Date().toISOString(),
+          mappedFrom: selectedService,
+          generationType,
+          planCount: defaultPlans.length,
+          planGenerationMethod: selectedPlan
+            ? `count-${selectedPlan}`
+            : selectedPlans.length > 0
+            ? "array"
+            : "default",
+        },
+      });
+    }
+
+    // PRIME TEMPLATE WORKFLOW
+    if (templateType === "prime") {
+      const primeData: PrimeTemplateData = {
+        selectedService: agentServiceId,
+        companyInfo: defaultCompanyInfo,
+        clientName,
+        projectName,
+        projectDescription,
+        selectedPlans: defaultPlans,
+        planDetails:
+          planDetails ||
+          generateDefaultPlanDetails(agentServiceId, defaultPlans),
+        includeTerms,
+        includeFAQ,
+        templateType: "prime",
+        mainColor,
+      };
+
+      const primeWorkflow = new PrimeTemplateWorkflow();
+      let result: PrimeWorkflowResult;
+      let generationType = "prime-workflow";
+
+      try {
+        // 25s timeout for main prime workflow
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error("Prime AI timeout")), 25000);
+        });
+        const primePromise = primeWorkflow.execute(primeData);
+        result = await Promise.race([primePromise, timeoutPromise]);
+        generationType = "prime-workflow";
+      } catch {
+        // Fallback to dynamic generation (15s timeout)
+        try {
+          const dynamicTimeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(
+              () => reject(new Error("Prime dynamic generation timeout")),
+              15000
+            );
+          });
+          const dynamicPromise =
+            primeWorkflow.generateTemplateProposal(primeData);
+          const proposal = await Promise.race([
+            dynamicPromise,
+            dynamicTimeoutPromise,
+          ]);
+          result = {
+            success: true,
+            templateType: "prime",
+            data: proposal,
+            metadata: {
+              service: agentServiceId,
+              agent: agent.name,
+              timestamp: new Date().toISOString(),
+              generationType: "prime-dynamic-generation",
+            },
+          };
+          generationType = "prime-dynamic-generation";
+        } catch {
+          return NextResponse.json(
+            {
+              error: "Failed to generate prime proposal",
+              details: "Both prime AI workflow and dynamic generation failed",
               generationType: "failed",
             },
             { status: 500 }

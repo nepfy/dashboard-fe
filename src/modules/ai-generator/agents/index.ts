@@ -340,13 +340,23 @@ import {
   type FlashAgentConfig,
 } from "../templates/flash";
 
-// Combined function to get any agent (flash or generic)
+// Import prime agents
+import {
+  getPrimeAgentByService,
+  type PrimeAgentConfig,
+} from "../templates/prime";
+
+// Combined function to get any agent (flash, prime, or generic)
 export function getAnyAgentByService(
   serviceId: string
-): AgentConfig | FlashAgentConfig | null {
+): AgentConfig | FlashAgentConfig | PrimeAgentConfig | null {
   // First try flash agents
   const flashAgent = getFlashAgentByService(serviceId);
   if (flashAgent) return flashAgent;
+
+  // Then try prime agents
+  const primeAgent = getPrimeAgentByService(serviceId);
+  if (primeAgent) return primeAgent;
 
   // Fallback to generic agents
   return getAgentByService(serviceId);
