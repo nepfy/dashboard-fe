@@ -1,5 +1,9 @@
-import { BaseTemplateData, BaseProposal, BaseSection, baseTemplateConfig } from '../base/base-template';
-import { TemplateType } from '../../agents/base/types';
+import {
+  BaseTemplateData,
+  BaseProposal,
+  BaseSection,
+  baseTemplateConfig,
+} from "../base/base-template";
 
 export interface FlashTemplateData extends BaseTemplateData {
   templateType: "flash";
@@ -78,7 +82,7 @@ export interface FlashProposal extends BaseProposal {
   faq?: Array<{
     question: string; // 100 chars
     answer: string; // 280 chars
-  }>);
+  }>;
 
   // Footer
   footer: {
@@ -98,28 +102,30 @@ export const flashTemplateConfig = {
     "Customização ágil",
     "Seções otimizadas",
     "Validação eficiente",
-    "Preview instantâneo"
+    "Preview instantâneo",
   ],
   limitations: [
     "Funcionalidades limitadas",
     "Personalização básica",
-    "Recursos reduzidos"
+    "Recursos reduzidos",
   ],
   recommendedFor: [
     "Propostas urgentes",
     "Projetos simples",
     "Prazos curtos",
-    "Testes rápidos"
+    "Testes rápidos",
   ],
   notRecommendedFor: [
     "Propostas complexas",
     "Projetos de alto valor",
-    "Necessidades de personalização avançada"
-  ]
+    "Necessidades de personalização avançada",
+  ],
 };
 
 // Flash-specific utility functions
-export function validateFlashCharacterLimits(proposal: Partial<FlashProposal>): Record<string, boolean> {
+export function validateFlashCharacterLimits(
+  proposal: Partial<FlashProposal>
+): Record<string, boolean> {
   const validations: Record<string, boolean> = {};
 
   if (proposal.introduction?.title) {
@@ -127,7 +133,8 @@ export function validateFlashCharacterLimits(proposal: Partial<FlashProposal>): 
   }
 
   if (proposal.introduction?.subtitle) {
-    validations.introductionSubtitle = proposal.introduction.subtitle.length <= 100;
+    validations.introductionSubtitle =
+      proposal.introduction.subtitle.length <= 100;
   }
 
   if (proposal.aboutUs?.title) {
@@ -172,31 +179,31 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
       subtitle: "",
       services: [],
       validity: "15 dias",
-      buttonText: "Solicitar Proposta"
+      buttonText: "Solicitar Proposta",
     },
     aboutUs: {
       title: "",
       supportText: "",
-      subtitle: ""
+      subtitle: "",
     },
     specialties: {
       title: "Nossas Especialidades",
-      topics: []
+      topics: [],
     },
     steps: {
       introduction: "",
       title: "Nosso Processo",
-      topics: []
+      topics: [],
     },
     investment: {
       title: "",
       deliverables: [],
-      plans: []
+      plans: [],
     },
     footer: {
       callToAction: "",
-      contactInfo: ""
-    }
+      contactInfo: "",
+    },
   };
 }
 
@@ -208,43 +215,68 @@ export function generateFlashProposalOutline(): Partial<FlashProposal> {
       subtitle: "Solução eficiente para seu projeto",
       services: ["Desenvolvimento", "Design", "Marketing"],
       validity: "15 dias",
-      buttonText: "Aprovar Agora"
+      buttonText: "Aprovar Agora",
     },
     aboutUs: {
       title: "Especialistas em Soluções Rápidas",
       supportText: "Suporte 24/7",
-      subtitle: "Equipe experiente focada em resultados rápidos e eficientes"
+      subtitle: "Equipe experiente focada em resultados rápidos e eficientes",
     },
     specialties: {
       title: "Especialidades Flash",
       topics: [
         { title: "Entrega Rápida", description: "Resultados em tempo recorde" },
-        { title: "Qualidade Garantida", description: "Padrões elevados mantidos" },
-        { title: "Suporte Contínuo", description: "Acompanhamento completo" }
-      ]
+        {
+          title: "Qualidade Garantida",
+          description: "Padrões elevados mantidos",
+        },
+        { title: "Suporte Contínuo", description: "Acompanhamento completo" },
+      ],
     },
     steps: {
       introduction: "Processo otimizado para máxima eficiência",
       title: "Processo Flash",
       topics: [
-        { title: "Briefing Rápido", description: "Coleta de informações essenciais em tempo recorde" },
-        { title: "Desenvolvimento Ágil", description: "Execução com metodologias ágeis e eficientes" },
-        { title: "Entrega Express", description: "Resultado final entregue no prazo prometido" }
-      ]
+        {
+          title: "Briefing Rápido",
+          description: "Coleta de informações essenciais em tempo recorde",
+        },
+        {
+          title: "Desenvolvimento Ágil",
+          description: "Execução com metodologias ágeis e eficientes",
+        },
+        {
+          title: "Entrega Express",
+          description: "Resultado final entregue no prazo prometido",
+        },
+      ],
     },
     investment: {
       title: "Investimento Flash",
       deliverables: [
-        { title: "Projeto Completo", description: "Solução completa entregue no prazo estabelecido" }
+        {
+          title: "Projeto Completo",
+          description: "Solução completa entregue no prazo estabelecido",
+        },
       ],
       plans: [
-        { title: "Flash Básico", description: "Solução essencial com entrega rápida", value: "R$ 999", topics: ["Entrega em 7 dias", "Suporte básico", "Revisões limitadas"] },
-        { title: "Flash Pro", description: "Solução completa com suporte premium", value: "R$ 1.999", topics: ["Entrega em 5 dias", "Suporte 24/7", "Revisões ilimitadas"] }
-      ]
+        {
+          title: "Flash Básico",
+          description: "Solução essencial com entrega rápida",
+          value: "R$ 999",
+          topics: ["Entrega em 7 dias", "Suporte básico", "Revisões limitadas"],
+        },
+        {
+          title: "Flash Pro",
+          description: "Solução completa com suporte premium",
+          value: "R$ 1.999",
+          topics: ["Entrega em 5 dias", "Suporte 24/7", "Revisões ilimitadas"],
+        },
+      ],
     },
     footer: {
       callToAction: "Aproveite a velocidade Flash!",
-      contactInfo: "Entre em contato agora para começar seu projeto"
-    }
+      contactInfo: "Entre em contato agora para começar seu projeto",
+    },
   };
 }

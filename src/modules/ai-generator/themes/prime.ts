@@ -1,8 +1,7 @@
 import assert from "node:assert";
 import Together from "together-ai";
-import { getAgentByServiceAndTemplate, type ServiceType } from "../agents";
-import { PrimeProposal } from "../templates/prime/prime-template";
-import { BaseThemeData, baseThemeConfig } from "./base-theme";
+import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
+import { BaseThemeData } from "./base-theme";
 
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
@@ -194,7 +193,8 @@ DADOS DO PROJETO:
 ${
   "primeSpecific" in this.agent && this.agent.primeSpecific
     ? `- Metodologia PRIME: ${
-        (this.agent as any).primeSpecific.introductionStyle
+        (this.agent as { primeSpecific: { introductionStyle: string } })
+          .primeSpecific.introductionStyle
       }`
     : ""
 }
@@ -671,6 +671,7 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
         },
       ];
     }
+    // The following return is unreachable, but left for completeness.
     return [
       {
         title: "Qualidade Premium",

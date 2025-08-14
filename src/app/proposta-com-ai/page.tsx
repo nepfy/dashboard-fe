@@ -7,7 +7,6 @@ import {
   SelectTemplate,
 } from "#/modules/ai-generator/components/generation-steps";
 
-import { TemplateType } from "#/types/project";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { ServiceType } from "#/modules/ai-generator/components/generation-steps/ServiceType";
 import { ClientInfo } from "#/modules/ai-generator/components/generation-steps/ClientInfo";
@@ -30,8 +29,7 @@ export default function NepfyAIPage() {
     Record<string, unknown> | null | undefined
   >(null);
 
-  const { updateFormData, setTemplateType, templateType, formData } =
-    useProjectGenerator();
+  const { templateType, formData } = useProjectGenerator();
 
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId);

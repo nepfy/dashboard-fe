@@ -4,7 +4,6 @@ import {
   BaseSection,
   baseTemplateConfig,
 } from "../base/base-template";
-import { TemplateType } from "../../agents/base/types";
 
 export interface PrimeTemplateData extends BaseTemplateData {
   templateType: "prime";

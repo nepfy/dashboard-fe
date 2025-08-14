@@ -4,7 +4,6 @@ import {
   BaseSection,
   baseTemplateConfig,
 } from "../base/base-template";
-import { TemplateType } from "../../agents/base/types";
 
 export interface NovoTemplateData extends BaseTemplateData {
   templateType: "novo";
@@ -25,6 +24,7 @@ export interface NovoSection extends BaseSection {
 export interface NovoProposal extends BaseProposal {
   // TODO: Define Novo-specific proposal structure
   // This will be implemented when the Novo template is ready
+  novo: true;
 }
 
 export const novoTemplateConfig = {
