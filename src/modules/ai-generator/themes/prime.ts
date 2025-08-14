@@ -121,6 +121,7 @@ export interface PrimeWorkflowResult {
 
 export class PrimeTemplateWorkflow {
   private agent: PrimeAgentConfig | AgentConfig | null = null;
+  private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
 
   async execute(data: PrimeTemplateData): Promise<PrimeWorkflowResult> {
     // Get the appropriate agent
@@ -205,490 +206,698 @@ export class PrimeTemplateWorkflow {
   }
 
   private async generateIntroduction(data: PrimeTemplateData) {
-    const prompt = `Generate an introduction section for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.introductionStyle}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
+Crie uma seção de introdução para proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate the following fields with PRIME template focus on premium quality and attention to detail:
+{
+  "title": "Título focado no projeto com qualidade premium (máximo 60 caracteres)",
+  "subtitle": "Subtítulo personalizado para ${
+    data.clientName
+  } com foco em excelência (máximo 100 caracteres)",
+  "services": ["${this.agent?.commonServices[0] || "Serviço Premium 1"}", "${
+      this.agent?.commonServices[1] || "Serviço Premium 2"
+    }", "${this.agent?.commonServices[2] || "Serviço Premium 3"}", "${
+      this.agent?.commonServices[3] || "Serviço Premium 4"
+    }"],
+  "validity": "${new Date(
+    Date.now() + 30 * 24 * 60 * 60 * 1000
+  ).toLocaleDateString("pt-BR")}",
+  "buttonText": "Iniciar Projeto Premium"
+}
 
-1. Title (max 60 characters): Compelling headline that emphasizes premium quality
-2. Subtitle (max 100 characters): Supporting text that highlights excellence and expertise
-3. Services (max 4 services, 30 chars each): Key services offered with premium positioning
-4. Button Text (max 20 characters): Call-to-action button text
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-Focus on PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default values if JSON parsing fails
+        return {
+          title: `${this.agent?.sector} Premium para ${data.projectName}`,
+          subtitle: `Proposta premium personalizada para ${data.clientName}`,
+          services: this.agent?.commonServices.slice(0, 4) || [
+            "Serviço Premium 1",
+            "Serviço Premium 2",
+            "Serviço Premium 3",
+            "Serviço Premium 4",
+          ],
+          validity: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+          ).toLocaleDateString("pt-BR"),
+          buttonText: "Iniciar Projeto Premium",
+        };
+      }
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
-
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
-
-${prompt}
-
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the introduction section for your PRIME template proposal with a focus on premium quality and attention to detail:
-
-**Title:** ${data.projectName} - Soluções Premium de Excelência
-
-**Subtitle:** Transformamos sua visão em realidade com qualidade excepcional e atenção aos detalhes
-
-**Services:**
-- Design Premium
-- Desenvolvimento Avançado
-- Estratégia Personalizada
-- Resultados Excepcionais
-
-**Button Text:** Iniciar Projeto Premium
-
-<|eot_id|>`,
-      max_tokens: 500,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    // Extract the generated content
-    const titleMatch = content.match(/\*\*Title:\*\* (.+)/);
-    const subtitleMatch = content.match(/\*\*Subtitle:\*\* (.+)/);
-    const servicesMatch = content.match(
-      /\*\*Services:\*\*([\s\S]*?)(?=\*\*|$)/
-    );
-    const buttonMatch = content.match(/\*\*Button Text:\*\* (.+)/);
-
-    return {
-      title: titleMatch?.[1]?.trim() || "Soluções Premium de Excelência",
-      subtitle:
-        subtitleMatch?.[1]?.trim() ||
-        "Transformamos sua visão em realidade com qualidade excepcional",
-      services: this.extractServices(servicesMatch?.[1] || ""),
-      validity: "Válido por 30 dias",
-      buttonText: buttonMatch?.[1]?.trim() || "Iniciar Projeto Premium",
-    };
+      return {
+        title:
+          parsed.title ||
+          `${this.agent?.sector} Premium para ${data.projectName}`,
+        subtitle:
+          parsed.subtitle ||
+          `Proposta premium personalizada para ${data.clientName}`,
+        services: parsed.services ||
+          this.agent?.commonServices.slice(0, 4) || [
+            "Serviço Premium 1",
+            "Serviço Premium 2",
+            "Serviço Premium 3",
+            "Serviço Premium 4",
+          ],
+        validity:
+          parsed.validity ||
+          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(
+            "pt-BR"
+          ),
+        buttonText: parsed.buttonText || "Iniciar Projeto Premium",
+      };
+    } catch (error) {
+      console.error("Error generating introduction:", error);
+      // Fallback to default values
+      return {
+        title: `${this.agent?.sector} Premium para ${data.projectName}`,
+        subtitle: `Proposta premium personalizada para ${data.clientName}`,
+        services: this.agent?.commonServices.slice(0, 4) || [
+          "Serviço Premium 1",
+          "Serviço Premium 2",
+          "Serviço Premium 3",
+          "Serviço Premium 4",
+        ],
+        validity: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString("pt-BR"),
+        buttonText: "Iniciar Projeto Premium",
+      };
+    }
   }
 
   private async generateAboutUs(data: PrimeTemplateData) {
-    const prompt = `Generate an About Us section for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.aboutUsFocus}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
+Crie uma seção "Sobre Nós" para proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate the following fields with PRIME template focus on premium quality and attention to detail:
+{
+  "title": "Título principal enfatizando expertise premium (máximo 155 caracteres)",
+  "supportText": "Texto de apoio breve (máximo 70 caracteres)",
+  "subtitle": "Descrição detalhada da abordagem premium (máximo 250 caracteres)"
+}
 
-1. Title (max 155 characters): Main title emphasizing premium expertise
-2. Support Text (max 70 characters): Brief supporting statement
-3. Subtitle (max 250 characters): Detailed description of premium approach
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-Focus on PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default values if JSON parsing fails
+        return {
+          title: `Somos especialistas em entregar soluções premium com atenção excepcional aos detalhes`,
+          supportText: `Qualidade superior em cada projeto`,
+          subtitle: `Nossa metodologia PRIME garante resultados excepcionais através de processos detalhados, materiais de alta qualidade e acabamentos superiores. Transformamos sua visão em realidade com excelência técnica e criatividade inovadora.`,
+        };
+      }
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
-
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
-
-${prompt}
-
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the About Us section for your PRIME template proposal:
-
-**Title:** Somos especialistas em entregar soluções premium com atenção excepcional aos detalhes
-
-**Support Text:** Qualidade superior em cada projeto
-
-**Subtitle:** Nossa metodologia PRIME garante resultados excepcionais através de processos detalhados, materiais de alta qualidade e acabamentos superiores. Transformamos sua visão em realidade com excelência técnica e criatividade inovadora.
-
-<|eot_id|>`,
-      max_tokens: 500,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    const titleMatch = content.match(/\*\*Title:\*\* (.+)/);
-    const supportMatch = content.match(/\*\*Support Text:\*\* (.+)/);
-    const subtitleMatch = content.match(/\*\*Subtitle:\*\* (.+)/);
-
-    return {
-      title:
-        titleMatch?.[1]?.trim() ||
-        "Somos especialistas em entregar soluções premium com atenção excepcional aos detalhes",
-      supportText:
-        supportMatch?.[1]?.trim() || "Qualidade superior em cada projeto",
-      subtitle:
-        subtitleMatch?.[1]?.trim() ||
-        "Nossa metodologia PRIME garante resultados excepcionais através de processos detalhados e materiais de alta qualidade",
-    };
+      return {
+        title:
+          parsed.title ||
+          `Somos especialistas em entregar soluções premium com atenção excepcional aos detalhes`,
+        supportText: parsed.supportText || `Qualidade superior em cada projeto`,
+        subtitle:
+          parsed.subtitle ||
+          `Nossa metodologia PRIME garante resultados excepcionais através de processos detalhados, materiais de alta qualidade e acabamentos superiores. Transformamos sua visão em realidade com excelência técnica e criatividade inovadora.`,
+      };
+    } catch (error) {
+      console.error("Error generating about us:", error);
+      // Fallback to default values
+      return {
+        title: `Somos especialistas em entregar soluções premium com atenção excepcional aos detalhes`,
+        supportText: `Qualidade superior em cada projeto`,
+        subtitle: `Nossa metodologia PRIME garante resultados excepcionais através de processos detalhados, materiais de alta qualidade e acabamentos superiores. Transformamos sua visão em realidade com excelência técnica e criatividade inovadora.`,
+      };
+    }
   }
 
   private async generateSpecialties(data: PrimeTemplateData) {
-    const prompt = `Generate a Specialties section for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.specialtiesApproach}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
+Crie uma seção de especialidades para proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate up to 9 specialties with:
-- Title (max 50 characters): Specialty name
-- Description (max 100 characters): Brief description
+{
+  "title": "Título da seção de especialidades (máximo 40 caracteres)",
+  "specialties": [
+    {
+      "title": "Nome da especialidade (máximo 50 caracteres)",
+      "description": "Descrição da especialidade (máximo 100 caracteres)"
+    }
+  ]
+}
 
-Focus on PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+Gere até 9 especialidades baseadas no setor ${
+      this.agent?.sector
+    } com foco em qualidade premium e atenção aos detalhes.
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default values if JSON parsing fails
+        return {
+          title: "Especialidades Premium",
+          topics: this.generateSpecialtiesFromAgent(),
+        };
+      }
 
-${prompt}
-
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the Specialties section for your PRIME template proposal:
-
-**Title:** Especialidades Premium
-
-**Specialties:**
-1. **Design Exclusivo** - Criação de identidades visuais únicas e memoráveis
-2. **Desenvolvimento Avançado** - Soluções técnicas robustas e escaláveis
-3. **Estratégia Personalizada** - Abordagens customizadas para cada projeto
-4. **Qualidade Superior** - Padrões excepcionais em todos os entregáveis
-5. **Atenção aos Detalhes** - Cuidado meticuloso em cada elemento
-6. **Resultados Excepcionais** - Desfechos que superam expectativas
-7. **Inovação Constante** - Tecnologias e metodologias de ponta
-8. **Suporte Premium** - Acompanhamento contínuo e personalizado
-
-<|eot_id|>`,
-      max_tokens: 800,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    const titleMatch = content.match(/\*\*Title:\*\* (.+)/);
-    const specialtiesMatch = content.match(
-      /\*\*Specialties:\*\*([\s\S]*?)(?=\*\*|$)/
-    );
-
-    const specialties = this.extractSpecialties(specialtiesMatch?.[1] || "");
-
-    return {
-      title: titleMatch?.[1]?.trim() || "Especialidades Premium",
-      topics: specialties,
-    };
+      return {
+        title: parsed.title || "Especialidades Premium",
+        topics: parsed.specialties || this.generateSpecialtiesFromAgent(),
+      };
+    } catch (error) {
+      console.error("Error generating specialties:", error);
+      // Fallback to default values
+      return {
+        title: "Especialidades Premium",
+        topics: this.generateSpecialtiesFromAgent(),
+      };
+    }
   }
 
   private async generateProcessSteps(data: PrimeTemplateData) {
-    const prompt = `Generate Process Steps section for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.processEmphasis}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
+Crie uma seção de processo para proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate up to 5 process steps with:
-- Title (max 40 characters): Step name
-- Description (max 240 characters): Detailed description
+{
+  "introduction": "Introdução sobre a metodologia PRIME (máximo 100 caracteres)",
+  "title": "Título da seção de processo (máximo 40 caracteres)",
+  "steps": [
+    {
+      "title": "Nome da etapa (máximo 40 caracteres)",
+      "description": "Descrição da etapa (máximo 240 caracteres)"
+    }
+  ]
+}
 
-Focus on PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+Gere até 5 etapas baseadas no setor ${
+      this.agent?.sector
+    } com foco em qualidade premium e atenção aos detalhes.
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default values if JSON parsing fails
+        return {
+          introduction:
+            "Nossa metodologia PRIME garante excelência em cada etapa",
+          title: "Nosso Processo Premium",
+          topics: this.generateStepsFromAgent(),
+        };
+      }
 
-${prompt}
-
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the Process Steps section for your PRIME template proposal:
-
-**Introduction:** Nossa metodologia PRIME garante excelência em cada etapa
-
-**Steps:**
-1. **Descoberta Premium** - Análise profunda das necessidades e objetivos do projeto
-2. **Planejamento Estratégico** - Estratégia detalhada com foco em qualidade superior
-3. **Execução Excepcional** - Desenvolvimento com atenção meticulosa aos detalhes
-4. **Revisão e Refinamento** - Processo de qualidade para garantir perfeição
-5. **Entrega e Acompanhamento** - Suporte contínuo e personalizado
-
-<|eot_id|>`,
-      max_tokens: 800,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    const introMatch = content.match(/\*\*Introduction:\*\* (.+)/);
-    const stepsMatch = content.match(/\*\*Steps:\*\*([\s\S]*?)(?=\*\*|$)/);
-
-    const steps = this.extractProcessSteps(stepsMatch?.[1] || "");
-
-    return {
-      introduction:
-        introMatch?.[1]?.trim() ||
-        "Nossa metodologia PRIME garante excelência em cada etapa",
-      title: "Nosso Processo Premium",
-      topics: steps,
-    };
+      return {
+        introduction:
+          parsed.introduction ||
+          "Nossa metodologia PRIME garante excelência em cada etapa",
+        title: parsed.title || "Nosso Processo Premium",
+        topics: parsed.steps || this.generateStepsFromAgent(),
+      };
+    } catch (error) {
+      console.error("Error generating process steps:", error);
+      // Fallback to default values
+      return {
+        introduction:
+          "Nossa metodologia PRIME garante excelência em cada etapa",
+        title: "Nosso Processo Premium",
+        topics: this.generateStepsFromAgent(),
+      };
+    }
   }
 
   private async generateInvestment(data: PrimeTemplateData) {
-    const prompt = `Generate Investment section for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+- Planos Selecionados: ${data.selectedPlans.join(", ")}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.investmentStrategy}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
-Selected Plans: ${data.selectedPlans.join(", ")}
-Plan Details: ${data.planDetails}
+Crie uma seção de investimento para proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate:
-1. Title (max 85 characters): Investment section title
-2. Deliverables (up to 3): Premium deliverables with titles and descriptions
-3. Plans (up to 3): Premium plans with titles, descriptions, values, and topics
+{
+  "title": "Título da seção de investimento (máximo 85 caracteres)",
+  "deliverables": [
+    {
+      "title": "Nome do entregável (máximo 30 caracteres)",
+      "description": "Descrição do entregável (máximo 330 caracteres)"
+    }
+  ],
+  "plans": [
+    {
+      "title": "Nome do plano (máximo 20 caracteres)",
+      "description": "Descrição do plano (máximo 95 caracteres)",
+      "value": "Valor do plano (máximo 11 caracteres)",
+      "topics": ["Tópico 1", "Tópico 2", "Tópico 3", "Tópico 4"]
+    }
+  ]
+}
 
-Focus on PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+Gere até 3 entregáveis e até 3 planos baseados no setor ${
+      this.agent?.sector
+    } com foco em qualidade premium e atenção aos detalhes.
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default values if JSON parsing fails
+        return {
+          title: "Investimento em Qualidade Premium e Resultados Excepcionais",
+          deliverables: this.generateDeliverablesFromAgent(),
+          plans: this.generatePlansFromAgent(),
+        };
+      }
 
-${prompt}
-
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the Investment section for your PRIME template proposal:
-
-**Title:** Investimento em Qualidade Premium e Resultados Excepcionais
-
-**Deliverables:**
-1. **Solução Premium Completa** - Entrega integral com qualidade superior e atenção aos detalhes
-2. **Suporte Contínuo** - Acompanhamento personalizado e ajustes conforme necessário
-3. **Garantia de Qualidade** - Compromisso com resultados que superam expectativas
-
-**Plans:**
-1. **Plano Essencial Premium** - Soluções básicas com qualidade superior (R$ 2.890)
-2. **Plano Executivo Premium** - Soluções intermediárias com atenção aos detalhes (R$ 5.740)
-3. **Plano Premium Completo** - Soluções avançadas com excelência excepcional (R$ 10.140)
-
-<|eot_id|>`,
-      max_tokens: 800,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    const titleMatch = content.match(/\*\*Title:\*\* (.+)/);
-    const deliverablesMatch = content.match(
-      /\*\*Deliverables:\*\*([\s\S]*?)(?=\*\*|$)/
-    );
-    const plansMatch = content.match(/\*\*Plans:\*\*([\s\S]*?)(?=\*\*|$)/);
-
-    return {
-      title:
-        titleMatch?.[1]?.trim() ||
-        "Investimento em Qualidade Premium e Resultados Excepcionais",
-      deliverables: this.extractDeliverables(deliverablesMatch?.[1] || ""),
-      plans: this.extractPlans(plansMatch?.[1] || ""),
-    };
+      return {
+        title:
+          parsed.title ||
+          "Investimento em Qualidade Premium e Resultados Excepcionais",
+        deliverables:
+          parsed.deliverables || this.generateDeliverablesFromAgent(),
+        plans: parsed.plans || this.generatePlansFromAgent(),
+      };
+    } catch (error) {
+      console.error("Error generating investment:", error);
+      // Fallback to default values
+      return {
+        title: "Investimento em Qualidade Premium e Resultados Excepcionais",
+        deliverables: this.generateDeliverablesFromAgent(),
+        plans: this.generatePlansFromAgent(),
+      };
+    }
   }
 
   private async generateTerms(data: PrimeTemplateData) {
-    const prompt = `Generate Terms and Conditions for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.processEmphasis}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
+Crie termos e condições para proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate up to 5 terms with:
-- Title (max 30 characters): Term name
-- Description (max 180 characters): Detailed description
+{
+  "terms": [
+    {
+      "title": "Nome do termo (máximo 30 caracteres)",
+      "description": "Descrição do termo (máximo 180 caracteres)"
+    }
+  ]
+}
 
-Focus on PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+Gere até 5 termos baseados no setor ${
+      this.agent?.sector
+    } com foco em qualidade premium e atenção aos detalhes.
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default values if JSON parsing fails
+        return [
+          {
+            title: "Qualidade Premium",
+            description:
+              "Compromisso com padrões excepcionais e resultados superiores",
+          },
+          {
+            title: "Atenção aos Detalhes",
+            description:
+              "Cuidado meticuloso em cada elemento e processo do projeto",
+          },
+          {
+            title: "Prazo de Entrega",
+            description:
+              "Cronograma detalhado respeitado com qualidade premium",
+          },
+          {
+            title: "Suporte Contínuo",
+            description:
+              "Acompanhamento personalizado e ajustes conforme necessário",
+          },
+          {
+            title: "Garantia de Satisfação",
+            description: "Compromisso com resultados que superam expectativas",
+          },
+        ];
+      }
 
-${prompt}
-
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the Terms and Conditions for your PRIME template proposal:
-
-**Terms:**
-1. **Qualidade Premium** - Compromisso com padrões excepcionais
-2. **Atenção aos Detalhes** - Cuidado meticuloso em cada elemento
-3. **Prazo de Entrega** - Cronograma detalhado e respeitado
-4. **Suporte Contínuo** - Acompanhamento personalizado
-5. **Garantia de Satisfação** - Resultados que superam expectativas
-
-<|eot_id|>`,
-      max_tokens: 600,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    const termsMatch = content.match(/\*\*Terms:\*\*([\s\S]*?)(?=\*\*|$)/);
-
-    return this.extractTerms(termsMatch?.[1] || "");
+      return (
+        parsed.terms || [
+          {
+            title: "Qualidade Premium",
+            description:
+              "Compromisso com padrões excepcionais e resultados superiores",
+          },
+          {
+            title: "Atenção aos Detalhes",
+            description:
+              "Cuidado meticuloso em cada elemento e processo do projeto",
+          },
+          {
+            title: "Prazo de Entrega",
+            description:
+              "Cronograma detalhado respeitado com qualidade premium",
+          },
+          {
+            title: "Suporte Contínuo",
+            description:
+              "Acompanhamento personalizado e ajustes conforme necessário",
+          },
+          {
+            title: "Garantia de Satisfação",
+            description: "Compromisso com resultados que superam expectativas",
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Error generating terms:", error);
+      // Fallback to default values
+      return [
+        {
+          title: "Qualidade Premium",
+          description:
+            "Compromisso com padrões excepcionais e resultados superiores",
+        },
+        {
+          title: "Atenção aos Detalhes",
+          description:
+            "Cuidado meticuloso em cada elemento e processo do projeto",
+        },
+        {
+          title: "Prazo de Entrega",
+          description: "Cronograma detalhado respeitado com qualidade premium",
+        },
+        {
+          title: "Suporte Contínuo",
+          description:
+            "Acompanhamento personalizado e ajustes conforme necessário",
+        },
+        {
+          title: "Garantia de Satisfação",
+          description: "Compromisso com resultados que superam expectativas",
+        },
+      ];
+    }
+    return [
+      {
+        title: "Qualidade Premium",
+        description:
+          "Compromisso com padrões excepcionais e resultados superiores",
+      },
+      {
+        title: "Atenção aos Detalhes",
+        description:
+          "Cuidado meticuloso em cada elemento e processo do projeto",
+      },
+      {
+        title: "Prazo de Entrega",
+        description: "Cronograma detalhado e respeitado com qualidade premium",
+      },
+      {
+        title: "Suporte Contínuo",
+        description:
+          "Acompanhamento personalizado e ajustes conforme necessário",
+      },
+      {
+        title: "Garantia de Satisfação",
+        description: "Compromisso com resultados que superam expectativas",
+      },
+    ];
   }
 
   private async generateFAQ(data: PrimeTemplateData) {
-    const prompt = `Generate FAQ section for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.processEmphasis}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
+Crie perguntas frequentes para proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate up to 5 FAQ items with:
-- Question (max 100 characters): Common question
-- Answer (max 200 characters): Detailed answer
+{
+  "faq": [
+    {
+      "question": "Pergunta frequente (máximo 100 caracteres)",
+      "answer": "Resposta da pergunta (máximo 200 caracteres)"
+    }
+  ]
+}
 
-Focus on PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+Gere até 5 perguntas frequentes baseadas no setor ${
+      this.agent?.sector
+    } com foco em qualidade premium e atenção aos detalhes.
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default values if JSON parsing fails
+        return [
+          {
+            question: "O que diferencia a metodologia PRIME?",
+            answer:
+              "Foco em qualidade premium, atenção aos detalhes e resultados excepcionais que superam expectativas",
+          },
+          {
+            question: "Como garantem a qualidade superior?",
+            answer:
+              "Processos detalhados, materiais de alta qualidade e acabamentos superiores em cada etapa do projeto",
+          },
+          {
+            question: "Qual o prazo de entrega?",
+            answer:
+              "Cronograma detalhado respeitado com qualidade premium e atenção aos detalhes",
+          },
+          {
+            question: "Oferecem suporte contínuo?",
+            answer:
+              "Acompanhamento personalizado e ajustes conforme necessário para garantir satisfação total",
+          },
+          {
+            question: "Qual a garantia de satisfação?",
+            answer:
+              "Compromisso com resultados que superam expectativas e qualidade premium em todos os entregáveis",
+          },
+        ];
+      }
 
-${prompt}
-
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the FAQ section for your PRIME template proposal:
-
-**FAQ:**
-1. **Q: O que diferencia a metodologia PRIME?** - A: Foco em qualidade premium, atenção aos detalhes e resultados excepcionais
-2. **Q: Como garantem a qualidade superior?** - A: Processos detalhados, materiais de alta qualidade e acabamentos superiores
-3. **Q: Qual o prazo de entrega?** - A: Cronograma detalhado respeitado com qualidade premium
-4. **Q: Oferecem suporte contínuo?** - A: Acompanhamento personalizado e ajustes conforme necessário
-5. **Q: Qual a garantia de satisfação?** - A: Compromisso com resultados que superam expectativas
-
-<|eot_id|>`,
-      max_tokens: 800,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    const faqMatch = content.match(/\*\*FAQ:\*\*([\s\S]*?)(?=\*\*|$)/);
-
-    return this.extractFAQ(faqMatch?.[1] || "");
+      return (
+        parsed.faq || [
+          {
+            question: "O que diferencia a metodologia PRIME?",
+            answer:
+              "Foco em qualidade premium, atenção aos detalhes e resultados excepcionais que superam expectativas",
+          },
+          {
+            question: "Como garantem a qualidade superior?",
+            answer:
+              "Processos detalhados, materiais de alta qualidade e acabamentos superiores em cada etapa do projeto",
+          },
+          {
+            question: "Qual o prazo de entrega?",
+            answer:
+              "Cronograma detalhado respeitado com qualidade premium e atenção aos detalhes",
+          },
+          {
+            question: "Oferecem suporte contínuo?",
+            answer:
+              "Acompanhamento personalizado e ajustes conforme necessário para garantir satisfação total",
+          },
+          {
+            question: "Qual a garantia de satisfação?",
+            answer:
+              "Compromisso com resultados que superam expectativas e qualidade premium em todos os entregáveis",
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Error generating FAQ:", error);
+      // Fallback to default values
+      return [
+        {
+          question: "O que diferencia a metodologia PRIME?",
+          answer:
+            "Foco em qualidade premium, atenção aos detalhes e resultados excepcionais que superam expectativas",
+        },
+        {
+          question: "Como garantem a qualidade superior?",
+          answer:
+            "Processos detalhados, materiais de alta qualidade e acabamentos superiores em cada etapa do projeto",
+        },
+        {
+          question: "Qual o prazo de entrega?",
+          answer:
+            "Cronograma detalhado respeitado com qualidade premium e atenção aos detalhes",
+        },
+        {
+          question: "Oferecem suporte contínuo?",
+          answer:
+            "Acompanhamento personalizado e ajustes conforme necessário para garantir satisfação total",
+        },
+        {
+          question: "Qual a garantia de satisfação?",
+          answer:
+            "Compromisso com resultados que superam expectativas e qualidade premium em todos os entregáveis",
+        },
+      ];
+    }
   }
 
   private async generateFooter(data: PrimeTemplateData) {
-    const prompt = `Generate Footer section for a PRIME template proposal.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
 
-${this.agent?.systemPrompt || ""}
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Setor: ${this.agent?.sector}
+${
+  "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${this.agent.primeSpecific.investmentStrategy}`
+    : ""
+}
 
-Company Info: ${data.companyInfo}
-Client Name: ${data.clientName}
-Project Name: ${data.projectName}
-Project Description: ${data.projectDescription}
+Crie um call-to-action para o footer da proposta PRIME. Retorne APENAS um objeto JSON com:
 
-Generate a call-to-action (max 80 characters) that emphasizes PRIME methodology: premium quality, attention to detail, and exceptional results.`;
+{
+  "callToAction": "Texto do call-to-action (máximo 80 caracteres)"
+}
 
-    const response = await client.inference({
-      model: "meta-llama/Llama-3.1-8B-Instruct",
-      prompt: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+O call-to-action deve enfatizar a metodologia PRIME: qualidade premium, atenção aos detalhes e resultados excepcionais.
 
-You are an expert proposal writer specializing in PRIME template proposals. Focus on premium quality, attention to detail, and exceptional results.
+IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
-<|eot_id|>
-<|start_header_id|>user<|end_header_id|>
+    try {
+      const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
+      let parsed;
 
-${prompt}
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        // Fallback to default value if JSON parsing fails
+        return {
+          callToAction:
+            "Transforme sua visão em realidade com qualidade premium e resultados excepcionais",
+        };
+      }
 
-<|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>
-
-I'll generate the Footer section for your PRIME template proposal:
-
-**Call to Action:** Transforme sua visão em realidade com qualidade premium e resultados excepcionais
-
-<|eot_id|>`,
-      max_tokens: 200,
-      temperature: 0.7,
-      top_p: 0.9,
-    });
-
-    const content = response.output?.choices?.[0]?.text || "";
-
-    const ctaMatch = content.match(/\*\*Call to Action:\*\* (.+)/);
-
-    return {
-      callToAction:
-        ctaMatch?.[1]?.trim() ||
-        "Transforme sua visão em realidade com qualidade premium",
-    };
+      return {
+        callToAction:
+          parsed.callToAction ||
+          "Transforme sua visão em realidade com qualidade premium e resultados excepcionais",
+      };
+    } catch (error) {
+      console.error("Error generating footer:", error);
+      // Fallback to default value
+      return {
+        callToAction:
+          "Transforme sua visão em realidade com qualidade premium e resultados excepcionais",
+      };
+    }
   }
 
   // Helper methods for extracting content
@@ -935,5 +1144,138 @@ I'll generate the Footer section for your PRIME template proposal:
               "Foco em qualidade premium, atenção aos detalhes e resultados excepcionais",
           },
         ];
+  }
+
+  private async runLLM(
+    userPrompt: string,
+    systemPrompt?: string
+  ): Promise<string> {
+    const messages: { role: "system" | "user"; content: string }[] = [];
+
+    if (systemPrompt) {
+      messages.push({ role: "system", content: systemPrompt });
+    }
+
+    messages.push({ role: "user", content: userPrompt });
+
+    try {
+      const response = await client.chat.completions.create({
+        model: this.model,
+        messages,
+        temperature: 0.3, // Lower temperature for more consistent JSON output
+        max_tokens: 3000, // Increased for comprehensive responses
+        top_p: 0.9,
+        frequency_penalty: 0.1,
+        presence_penalty: 0.1,
+      });
+
+      const content = response.choices[0].message?.content;
+      assert(typeof content === "string");
+
+      // Extract JSON from the response if it's wrapped in text
+      return this.extractJSONFromResponse(content);
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message.includes("429")) {
+        // Rate limit exceeded - wait and retry once
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait 3 seconds
+
+        const retryResponse = await client.chat.completions.create({
+          model: this.model,
+          messages,
+          temperature: 0.3,
+          max_tokens: 3000,
+          top_p: 0.9,
+          frequency_penalty: 0.1,
+          presence_penalty: 0.1,
+        });
+
+        const retryContent = retryResponse.choices[0].message?.content;
+        assert(typeof retryContent === "string");
+        return this.extractJSONFromResponse(retryContent);
+      }
+      throw error;
+    }
+  }
+
+  private extractJSONFromResponse(response: string): string {
+    // Try to find JSON in the response
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return jsonMatch[0];
+    }
+
+    // If no JSON found, return the original response
+    return response;
+  }
+
+  private generateSpecialtiesFromAgent() {
+    if (!this.agent) return [];
+
+    return this.agent.expertise.slice(0, 9).map((expertise: string) => ({
+      title: expertise,
+      description: `Especialização premium em ${expertise.toLowerCase()} com foco em qualidade excepcional e resultados superiores`,
+    }));
+  }
+
+  private generateStepsFromAgent() {
+    if (!this.agent) return [];
+
+    return this.agent.proposalStructure.slice(0, 5).map((step: string) => ({
+      title: step,
+      description: `${step}: Etapa fundamental do nosso processo premium especializado em ${this.agent?.sector.toLowerCase()}, garantindo qualidade excepcional e atenção aos detalhes em cada etapa do projeto`,
+    }));
+  }
+
+  private generateDeliverablesFromAgent() {
+    if (!this.agent) return [];
+
+    return this.agent.commonServices.slice(0, 4).map((service: string) => ({
+      title: service,
+      description: `${service} desenvolvido com expertise premium em ${this.agent?.sector.toLowerCase()}, incluindo todas as especificações técnicas e melhores práticas do mercado para garantir resultados excepcionais`,
+    }));
+  }
+
+  private generatePlansFromAgent() {
+    if (!this.agent) return [];
+
+    const pricingMap = {
+      "monthly-retainer": { basic: "R$ 3.500/mês", premium: "R$ 6.500/mês" },
+      "project-based": { basic: "R$ 4.500", premium: "R$ 8.500" },
+      "hourly-or-project": { basic: "R$ 5.500", premium: "R$ 9.500" },
+      "project-percentage": { basic: "R$ 6.500", premium: "R$ 11.000" },
+      "session-based": { basic: "R$ 2.500", premium: "R$ 4.800" },
+      "consultation-based": { basic: "R$ 500", premium: "R$ 800" },
+    };
+
+    const pricing =
+      pricingMap[this.agent.pricingModel as keyof typeof pricingMap] ||
+      pricingMap["project-based"];
+
+    return [
+      {
+        title: "Plano Essencial Premium",
+        description:
+          "Soluções básicas com qualidade premium e atenção aos detalhes",
+        value: pricing.basic,
+        topics: [
+          "Qualidade Premium",
+          "Atenção aos Detalhes",
+          "Suporte Básico",
+          "Resultados Garantidos",
+        ],
+      },
+      {
+        title: "Plano Executivo Premium",
+        description:
+          "Soluções intermediárias com qualidade superior e acompanhamento personalizado",
+        value: pricing.premium,
+        topics: [
+          "Qualidade Superior",
+          "Acompanhamento Personalizado",
+          "Suporte Premium",
+          "Resultados Excepcionais",
+        ],
+      },
+    ];
   }
 }
