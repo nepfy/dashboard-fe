@@ -135,3 +135,22 @@ export const serviceMapping: Record<string, string> = {
   fotografo: "photography",
   medicos: "medical",
 };
+
+// Template-specific service mapping for flash and prime templates
+export const flashServiceMapping: Record<string, string> = {
+  "marketing-digital": "Flash - Marketing Digital",
+  designer: "Flash - Designer",
+  desenvolvedor: "Flash - Desenvolvedor",
+  arquiteto: "Flash - Arquiteto",
+  fotografo: "Flash - Fotógrafo",
+  medicos: "Flash - Médico",
+};
+
+export const primeServiceMapping: Record<string, string> = {
+  "marketing-digital": "Prime - Marketing Digital",
+  designer: "Prime - Designer",
+  desenvolvedor: "Prime - Desenvolvedor",
+  arquiteto: "Prime - Arquiteto",
+  fotografo: "Prime - Fotógrafo",
+  medicos: "Prime - Médico",
+};

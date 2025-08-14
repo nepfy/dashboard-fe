@@ -157,8 +157,12 @@ export class FlashTemplateWorkflow {
   private async generateFlashProposal(
     data: FlashThemeData
   ): Promise<FlashProposal> {
+    console.log("Debug - generateFlashProposal called with:", data);
+
     // Get the appropriate agent
     const agent = getAgentByServiceAndTemplate(data.selectedService, "flash");
+    console.log("Debug - Agent lookup result:", agent);
+
     if (!agent) {
       throw new Error(
         `No agent found for service: ${data.selectedService} and template: flash`
