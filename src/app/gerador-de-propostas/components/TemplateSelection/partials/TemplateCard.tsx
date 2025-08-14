@@ -64,11 +64,9 @@ export const TemplateCard = ({
   isSelected,
 }: TemplateCardProps) => (
   <div
-    className={`h-[500px] w-[340px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 px-1 cursor-pointer ${
+    className={`h-[500px] w-[340px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 px-1 ${
       isSelected ? "border-primary-light-300" : "border-white-neutral-light-300"
     }`}
-    onClick={onSelectTemplate}
-    role="button"
     tabIndex={0}
   >
     {/* Header */}
@@ -108,7 +106,13 @@ export const TemplateCard = ({
     <div className="border-t border-white-neutral-light-300 flex items-center gap-4 p-5">
       <button
         type="button"
-        className="w-[105px] h-9 border border-white-neutral-light-300 bg-white-neutral-light-100 rounded-xs flex items-center justify-center cursor-pointer hover:bg-white-neutral-light-200 transition-colors"
+        className={`w-[105px] h-9 border border-white-neutral-light-300 rounded-xs flex items-center justify-center cursor-pointer hover:bg-white-neutral-light-200 transition-colors
+          ${
+            isSelected
+              ? "bg-white-neutral-light-200"
+              : "bg-white-neutral-light-100"
+          }
+          `}
         onClick={onSelectTemplate}
       >
         Selecionar
