@@ -1,7 +1,7 @@
-import { UserResource } from "@clerk/types";
-
-export function useStripeCustom(user?: UserResource) {
-  const { publicMetadata } = user || {};
+export function useStripeCustom() {
+  // For now, return null as userPlan until Stripe integration is complete
+  // This will be replaced with real user data from webhooks
+  const userPlan = null;
 
   const fetchPlans = async () => {
     try {
@@ -22,11 +22,8 @@ export function useStripeCustom(user?: UserResource) {
       const response = await fetch("/api/stripe/subscription", {
         method: "POST",
         body: JSON.stringify({
-          subscriptionId: (
-            publicMetadata?.stripe as { subscriptionId?: string }
-          )?.subscriptionId,
-          customerId: (publicMetadata?.stripe as { customerId?: string })
-            ?.customerId,
+          subscriptionId: null,
+          customerId: null,
         }),
       });
 
@@ -38,8 +35,6 @@ export function useStripeCustom(user?: UserResource) {
       console.error("Failed to load pricing plans:", err);
     }
   };
-
-  const userPlan = user && user.unsafeMetadata.priceId;
 
   return {
     userPlan,
