@@ -351,7 +351,7 @@ export function Subscription() {
           </h2>
 
           {/* Only show billing info if user has a paid plan */}
-          {userPlan && typeof userPlan === "string" && userPlan.length > 0 ? (
+          {userPlan ? (
             <>
               {/* Current Billing Cycle */}
               <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
