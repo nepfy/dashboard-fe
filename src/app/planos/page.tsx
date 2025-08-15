@@ -1,5 +1,4 @@
 import PlanAndFeatureCard from "#/components/PlanAndFeatureCard";
-import { Plan } from "#/types/project";
 
 export default async function PlansPage() {
   const plansResponse = await fetch(

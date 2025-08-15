@@ -23,7 +23,11 @@ async function attachSubscriptionToUser({
     unsafeMetadata: {
       ...user.unsafeMetadata,
       stripe: {
-        ...((user.unsafeMetadata as any)?.stripe || {}),
+        ...(typeof user.unsafeMetadata === "object" &&
+        user.unsafeMetadata !== null &&
+        "stripe" in user.unsafeMetadata
+          ? (user.unsafeMetadata as { stripe?: object }).stripe
+          : {}),
         subscriptionId: subscription.id,
         subscriptionType:
           subscriptionType ||
@@ -42,12 +46,14 @@ async function handleSubscriptionScheduleUpdated(event: Stripe.Event) {
     const subscriptionScheduleUpdated = event.data
       .object as Stripe.SubscriptionSchedule;
     const previousAttributes = event.data.previous_attributes as {
-      phases?: Array<any>;
+      phases?: Array<unknown>;
     };
 
     if (previousAttributes && previousAttributes.phases) {
       console.log(
-        `Previous subscription schedule status: ${previousAttributes.phases[0] || "N/A"}`
+        `Previous subscription schedule status: ${
+          previousAttributes.phases[0] || "N/A"
+        }`
       );
     }
 
@@ -68,12 +74,17 @@ async function handleSubscriptionScheduleUpdated(event: Stripe.Event) {
     console.log(
       `Subscription schedule updated for customer ID: ${subscriptionScheduleUpdated.customer}`
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating user metadata:", error);
-    if (error.errors) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "errors" in error &&
+      (error as { errors?: unknown }).errors
+    ) {
       console.error(
         "Clerk error details:",
-        JSON.stringify(error.errors, null, 2)
+        JSON.stringify((error as { errors: unknown }).errors, null, 2)
       );
     }
     throw error;
@@ -112,12 +123,17 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
     console.log(
       `Subscription updated for customer ID: ${subscriptionUpdated.customer}`
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error handling subscription event:", error);
-    if (error.errors) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "errors" in error &&
+      (error as { errors?: unknown }).errors
+    ) {
       console.error(
         "Clerk error details:",
-        JSON.stringify(error.errors, null, 2)
+        JSON.stringify((error as { errors: unknown }).errors, null, 2)
       );
     }
     throw error;
@@ -169,15 +185,26 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
     });
 
     console.log(`Checkout session completed for customer ID: ${customer.id}`);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error handling checkout session completed:", error);
-    if (error.message === "A valid resource ID is required.") {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "message" in error &&
+      (error as { message?: string }).message ===
+        "A valid resource ID is required."
+    ) {
       console.error("Error: A valid resource ID is required.");
     }
-    if (error.errors) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "errors" in error &&
+      (error as { errors?: unknown }).errors
+    ) {
       console.error(
         "Clerk error details:",
-        JSON.stringify(error.errors, null, 2)
+        JSON.stringify((error as { errors: unknown }).errors, null, 2)
       );
     }
     throw error;
@@ -203,8 +230,9 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
 
     if (subscriptionId && userId) {
       try {
-        const subscription =
-          await stripe.subscriptions.retrieve(subscriptionId);
+        const subscription = await stripe.subscriptions.retrieve(
+          subscriptionId
+        );
         console.log(
           "Subscription status before processing:",
           subscription.status
@@ -318,8 +346,9 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
           }
 
           // Always fetch the latest subscription state
-          const finalSubscription =
-            await stripe.subscriptions.retrieve(subscriptionId);
+          const finalSubscription = await stripe.subscriptions.retrieve(
+            subscriptionId
+          );
 
           console.log("Final subscription status:", finalSubscription.status);
 
@@ -338,7 +367,7 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
             subscription.status === "past_due"
           ) {
             // Attach payment method if not already attached
-            let defaultPaymentMethod = null;
+            let defaultPaymentMethod: string | null = null;
             try {
               if (paymentIntent.payment_method) {
                 await stripe.paymentMethods.attach(
@@ -350,6 +379,8 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
                 defaultPaymentMethod = paymentIntent.payment_method as string;
               }
             } catch (attachError) {
+              console.log({ attachError });
+
               const customer = await stripe.customers.retrieve(
                 subscription.customer as string
               );
@@ -362,7 +393,10 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
               }
             }
 
-            const updateData: any = {
+            const updateData: {
+              collection_method: Stripe.Subscription.CollectionMethod;
+              default_payment_method?: string;
+            } = {
               collection_method: "charge_automatically",
             };
             if (defaultPaymentMethod) {
@@ -414,8 +448,9 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
           }
 
           // Always fetch the latest subscription state
-          const finalSubscription =
-            await stripe.subscriptions.retrieve(subscriptionId);
+          const finalSubscription = await stripe.subscriptions.retrieve(
+            subscriptionId
+          );
 
           // Attach subscription to user (unsafeMetadata)
           await attachSubscriptionToUser({
@@ -433,7 +468,7 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
         );
       }
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in handlePaymentIntentSucceeded:", error);
     throw error;
   }
@@ -443,17 +478,21 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
   try {
     const invoice = event.data.object as Stripe.Invoice;
 
+    const subscriptionId =
+      typeof (invoice as unknown as { subscription?: string }).subscription ===
+      "string"
+        ? (invoice as unknown as { subscription: string }).subscription
+        : undefined;
+
     console.log("Invoice Payment Succeeded:", {
       invoiceId: invoice.id,
-      subscriptionId: (invoice as any).subscription,
+      subscriptionId: subscriptionId,
       status: invoice.status,
       amount_paid: invoice.amount_paid,
     });
 
-    if ((invoice as any).subscription) {
-      const subscription = await stripe.subscriptions.retrieve(
-        (invoice as any).subscription as string
-      );
+    if (subscriptionId) {
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
       console.log("Subscription from invoice:", {
         subscriptionId: subscription.id,
@@ -477,7 +516,7 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
         console.log("User metadata updated for payment");
       }
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in handleInvoicePaymentSucceeded:", error);
     throw error;
   }
@@ -534,14 +573,29 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ status: 200, message: "success" });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       {
-        error: error.message || "An error occurred processing the webhook",
-        clerkTraceId: error.clerkTraceId,
+        error:
+          typeof error === "object" &&
+          error !== null &&
+          "message" in error &&
+          (error as { message?: string }).message
+            ? (error as { message: string }).message
+            : "An error occurred processing the webhook",
+        clerkTraceId:
+          typeof error === "object" && error !== null && "clerkTraceId" in error
+            ? (error as { clerkTraceId?: string }).clerkTraceId
+            : undefined,
       },
       {
-        status: error.status || 400,
+        status:
+          typeof error === "object" &&
+          error !== null &&
+          "status" in error &&
+          typeof (error as { status?: number }).status === "number"
+            ? (error as { status: number }).status
+            : 400,
       }
     );
   }

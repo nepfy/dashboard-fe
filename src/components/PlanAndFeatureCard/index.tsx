@@ -6,7 +6,7 @@ import Slider from "react-slick";
 import type { Settings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 
@@ -28,7 +28,6 @@ interface PlanAndFeatureCardProps {
 const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const router = useRouter();
 
   const cardClassName = (plan: Plan) =>
     `rounded-[var(--radius-m)] h-[520px] md:max-h-[580px] md:h-[580px] lg:max-h-[500px] lg:h-[500px] xl:h-[460px] xl:max-h-[460px] w-full sm:w-[416px] border border-[var(--color-white-neutral-light-300)] mx-4 sm:mx-2 p-[3px] ${
