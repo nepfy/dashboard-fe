@@ -142,34 +142,67 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
 
 async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   try {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const customer = await stripe.customers.retrieve(
-      session.customer as string
-    );
+    console.log("Starting checkout session completed handler...");
 
-    if ("deleted" in customer) {
-      throw new Error("Customer was deleted");
+    const session = event.data.object as Stripe.Checkout.Session;
+    console.log("Session data:", {
+      id: session.id,
+      customer: session.customer,
+      subscription: session.subscription,
+      customer_email: session.customer_email,
+    });
+
+    // Try to get customer from session first
+    let customerEmail = session.customer_email;
+    const customerId = session.customer;
+
+    if (!customerEmail && customerId) {
+      console.log("No customer email in session, fetching from customer ID...");
+      const customer = await stripe.customers.retrieve(customerId as string);
+
+      if ("deleted" in customer) {
+        throw new Error("Customer was deleted");
+      }
+
+      customerEmail = customer.email;
+      console.log("Customer email from Stripe:", customerEmail);
     }
 
-    const email = customer.email;
+    if (!customerEmail) {
+      throw new Error("No customer email found in session or customer data");
+    }
 
+    console.log("Looking up user in Clerk with email:", customerEmail);
     const clerk = await clerkClient();
 
     const clerkUser = await clerk.users.getUserList({
-      emailAddress: [email as string],
+      emailAddress: [customerEmail],
     });
 
-    const user = clerkUser.data[0];
+    console.log("Clerk user lookup result:", {
+      found: clerkUser.data.length > 0,
+      userId: clerkUser.data[0]?.id,
+    });
 
-    if (!user) {
-      throw new Error("User not found");
+    if (!clerkUser.data[0]) {
+      throw new Error(`User not found in Clerk with email: ${customerEmail}`);
     }
 
+    const user = clerkUser.data[0];
+    console.log("Found user in Clerk:", user.id);
+
+    if (!session.subscription) {
+      throw new Error("No subscription ID in checkout session");
+    }
+
+    console.log("Retrieving subscription from Stripe...");
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
+    console.log("Subscription retrieved:", subscription.id);
 
     // Attach userId to subscription metadata in Stripe
+    console.log("Updating subscription metadata with user ID...");
     await stripe.subscriptions.update(subscription.id, {
       metadata: {
         ...subscription.metadata,
@@ -178,35 +211,26 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
     });
 
     // Attach subscription to user (unsafeMetadata)
+    console.log("Attaching subscription to user metadata...");
     await attachSubscriptionToUser({
       userId: user.id,
       subscription,
       subscriptionType: subscription.metadata?.subscription_type,
     });
 
-    console.log(`Checkout session completed for customer ID: ${customer.id}`);
+    console.log(
+      `Checkout session completed successfully for customer ID: ${customerId}`
+    );
   } catch (error) {
-    console.error("Error handling checkout session completed:", error);
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "message" in error &&
-      (error as { message?: string }).message ===
-        "A valid resource ID is required."
-    ) {
-      console.error("Error: A valid resource ID is required.");
+    console.error("Error in handleCheckoutSessionCompleted:", error);
+
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
     }
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "errors" in error &&
-      (error as { errors?: unknown }).errors
-    ) {
-      console.error(
-        "Clerk error details:",
-        JSON.stringify((error as { errors: unknown }).errors, null, 2)
-      );
-    }
+
+    // Re-throw the error to be handled by the main webhook handler
     throw error;
   }
 }
@@ -543,60 +567,74 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  let event: Stripe.Event;
+
   try {
-    const event = stripe.webhooks.constructEvent(
+    console.log("Processing Stripe webhook...");
+
+    event = stripe.webhooks.constructEvent(
       await req.text(),
       stripeSignature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
 
+    console.log("Webhook event type:", event.type);
+    console.log("Webhook event ID:", event.id);
+
     switch (event.type) {
       case "subscription_schedule.updated":
+        console.log("Handling subscription_schedule.updated...");
         await handleSubscriptionScheduleUpdated(event);
         break;
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
+        console.log("Handling subscription event...");
         await handleSubscriptionEvent(event);
         break;
       case "checkout.session.completed":
+        console.log("Handling checkout.session.completed...");
         await handleCheckoutSessionCompleted(event);
         break;
       case "payment_intent.succeeded":
+        console.log("Handling payment_intent.succeeded...");
         await handlePaymentIntentSucceeded(event);
         break;
       case "invoice.payment_succeeded":
+        console.log("Handling invoice.payment_succeeded...");
         await handleInvoicePaymentSucceeded(event);
         break;
       default:
+        console.log("Unhandled event type:", event.type);
         break;
     }
 
+    console.log("Webhook processed successfully");
     return NextResponse.json({ status: 200, message: "success" });
   } catch (error) {
+    console.error("Webhook processing failed:", error);
+
+    // Log detailed error information
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+
+    // Return a more specific error response
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    const statusCode =
+      error instanceof Error && error.message.includes("User not found")
+        ? 404
+        : 500;
+
     return NextResponse.json(
       {
-        error:
-          typeof error === "object" &&
-          error !== null &&
-          "message" in error &&
-          (error as { message?: string }).message
-            ? (error as { message: string }).message
-            : "An error occurred processing the webhook",
-        clerkTraceId:
-          typeof error === "object" && error !== null && "clerkTraceId" in error
-            ? (error as { clerkTraceId?: string }).clerkTraceId
-            : undefined,
+        error: errorMessage,
+        timestamp: new Date().toISOString(),
+        eventId: "unknown",
       },
-      {
-        status:
-          typeof error === "object" &&
-          error !== null &&
-          "status" in error &&
-          typeof (error as { status?: number }).status === "number"
-            ? (error as { status: number }).status
-            : 400,
-      }
+      { status: statusCode }
     );
   }
 }
