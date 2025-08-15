@@ -13,21 +13,12 @@ type Plan = {
   buttonTitle?: string;
 };
 
-type PaymentMethod = {
-  id: string;
-  brand: string;
-  last4: string;
-  exp_month: number;
-  exp_year: number;
-};
-
 export function Subscription() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly"
   );
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const { userPlan } = useStripeCustom();
 
@@ -39,7 +30,7 @@ export function Subscription() {
       setLoading(true);
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/api/stripe/get-plans`
+          `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/get-plans`
         );
         const data = await res.json();
         setPlans(data || []);
@@ -61,24 +52,15 @@ export function Subscription() {
       const freePlan = plans.find((p) => !p.price || p.price === 0);
       setCurrentPlanId(freePlan?.id || null);
     } else {
-      setCurrentPlanId((userPlan as any)?.id || "plan_basic");
+      setCurrentPlanId(typeof userPlan === "string" ? userPlan : "plan_basic");
     }
-    setPaymentMethods([
-      {
-        id: "pm_1",
-        brand: "visa",
-        last4: "0000",
-        exp_month: 12,
-        exp_year: 2026,
-      },
-    ]);
   }, [userPlan, plans]);
 
   const handleSwitchPlan = async (planId: string) => {
     try {
       // Call the checkout API to create a new session
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/api/stripe/create-checkout-session`,
+        `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/create-checkout-session`,
         {
           method: "POST",
           headers: {
@@ -123,7 +105,7 @@ export function Subscription() {
     });
   };
 
-  const getPlanInterval = (plan: Plan) => {
+  const getPlanInterval = () => {
     if (billingCycle === "yearly") {
       return "/ano";
     }
@@ -221,7 +203,7 @@ export function Subscription() {
                     {getPlanPrice(plan)}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {getPlanInterval(plan)}
+                    {getPlanInterval()}
                   </div>
                 </div>
               </div>
@@ -369,7 +351,7 @@ export function Subscription() {
           </h2>
 
           {/* Only show billing info if user has a paid plan */}
-          {userPlan && typeof userPlan === "string" && userPlan.length > 0 && (
+          {userPlan && typeof userPlan === "string" && userPlan.length > 0 ? (
             <>
               {/* Current Billing Cycle */}
               <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
@@ -418,12 +400,8 @@ export function Subscription() {
                 </div>
               </div>
             </>
-          )}
-
-          {/* Show message for free plan users */}
-          {(!userPlan ||
-            typeof userPlan !== "string" ||
-            userPlan.length === 0) && (
+          ) : (
+            /* Show message for free plan users */
             <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Plano Gratuito
