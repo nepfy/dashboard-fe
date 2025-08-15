@@ -38,7 +38,9 @@ export function Subscription() {
     async function fetchPlans() {
       setLoading(true);
       try {
-        const res = await fetch("/api/stripe/get-plans");
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/api/stripe/get-plans`
+        );
         const data = await res.json();
         setPlans(data || []);
       } catch (e) {
@@ -72,10 +74,36 @@ export function Subscription() {
     ]);
   }, [userPlan, plans]);
 
-  const handleSwitchPlan = (planId: string) => {
-    // TODO: Implement plan switch logic
-    setCurrentPlanId(planId);
-    alert(`Plano alterado para ${planId}`);
+  const handleSwitchPlan = async (planId: string) => {
+    try {
+      // Call the checkout API to create a new session
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/api/stripe/create-checkout-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ priceId: planId }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session");
+      }
+
+      const { session } = await response.json();
+
+      if (session?.url) {
+        // Open checkout in new tab
+        window.open(session.url, "_blank");
+      } else {
+        throw new Error("No checkout URL received");
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      alert("Erro ao criar sessão de checkout. Tente novamente.");
+    }
   };
 
   const handleEditPaymentMethod = () => {
@@ -132,13 +160,13 @@ export function Subscription() {
   return (
     <div className="mx-auto px-4 py-8">
       {/* Billing Cycle Toggle */}
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-start mb-8">
         <div className="bg-gray-100 rounded-lg p-1 flex">
           <button
             onClick={() => setBillingCycle("monthly")}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               billingCycle === "monthly"
-                ? "bg-white text-orange-600 shadow-sm"
+                ? "bg-white text-[#815ffd] shadow-sm"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -148,7 +176,7 @@ export function Subscription() {
             onClick={() => setBillingCycle("yearly")}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               billingCycle === "yearly"
-                ? "bg-white text-orange-600 shadow-sm"
+                ? "bg-white text-[#815ffd] shadow-sm"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -325,7 +353,7 @@ export function Subscription() {
                 className={`w-full px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   isButtonDisabled(plan)
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-[#ac99f3] hover:text-white cursor-pointer"
                 }`}
               >
                 {getButtonText(plan)}
@@ -340,50 +368,75 @@ export function Subscription() {
             Informações de Cobrança
           </h2>
 
-          {/* Current Billing Cycle */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Ciclo de Cobrança Atual
-            </h3>
-            <div className="mb-4">
-              <p className="text-sm text-gray-600">
-                Próxima data de emissão da fatura: 14 de Ago, 2025
-              </p>
-            </div>
-
-            {/* Payment Method */}
-            <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">VISA</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    Desconhecido
+          {/* Only show billing info if user has a paid plan */}
+          {userPlan && typeof userPlan === "string" && userPlan.length > 0 && (
+            <>
+              {/* Current Billing Cycle */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Ciclo de Cobrança Atual
+                </h3>
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600">
+                    Próxima data de emissão da fatura: 14 de Ago, 2025
                   </p>
-                  <p className="text-xs text-gray-500">terminando em 0000</p>
+                </div>
+
+                {/* Payment Method */}
+                <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">VISA</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        Desconhecido
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        terminando em 0000
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleEditPaymentMethod}
+                    className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+                  >
+                    Editar
+                  </button>
                 </div>
               </div>
-              <button
-                onClick={handleEditPaymentMethod}
-                className="text-sm text-gray-600 hover:text-gray-900 font-medium"
-              >
-                Editar
-              </button>
-            </div>
-          </div>
 
-          {/* Past Bills */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Faturas Anteriores
-            </h3>
-            <div className="text-center py-8">
-              <p className="text-gray-500 text-sm">
-                Nenhuma fatura anterior disponível
-              </p>
+              {/* Past Bills */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Faturas Anteriores
+                </h3>
+                <div className="text-center py-8">
+                  <p className="text-gray-500 text-sm">
+                    Nenhuma fatura anterior disponível
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Show message for free plan users */}
+          {(!userPlan ||
+            typeof userPlan !== "string" ||
+            userPlan.length === 0) && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Plano Gratuito
+              </h3>
+              <div className="text-center py-8">
+                <p className="text-gray-500 text-sm">
+                  Você está usando o plano gratuito. Para acessar recursos
+                  avançados e gerenciar cobranças, faça upgrade para um plano
+                  pago.
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
