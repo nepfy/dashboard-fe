@@ -6,6 +6,7 @@ import {
 } from "./onboarding";
 import { plansTable } from "./plans";
 import { projectsTable } from "./projects";
+import { subscriptionsTable } from "./subscriptions";
 
 export {
   personUserTable,
@@ -15,4 +16,5 @@ export {
   usedBeforeSourceTable,
   plansTable,
   projectsTable,
+  subscriptionsTable,
 };
