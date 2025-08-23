@@ -28,6 +28,8 @@ export default function NepfyAIPage() {
   const [generatedProposal, setGeneratedProposal] = useState<
     Record<string, unknown> | null | undefined
   >(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string>("");
 
   const { templateType, formData } = useProjectGenerator();
 
@@ -103,6 +105,49 @@ export default function NepfyAIPage() {
     }
   };
 
+  const handleSaveProposal = async () => {
+    if (!generatedProposal) {
+      setSaveMessage("Nenhuma proposta para salvar");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage("");
+
+    try {
+      const response = await fetch("/api/gerador-de-propostas-ia/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          proposalData: generatedProposal,
+          templateType: templateType || "flash",
+          mainColor: formData.step1?.mainColor || "#3B82F6",
+          clientName,
+          projectName,
+          projectDescription,
+          companyInfo,
+          selectedService,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSaveMessage("✅ Proposta salva com sucesso! ID: " + result.data.id);
+        // Opcional: redirecionar para o dashboard ou mostrar link para editar
+      } else {
+        setSaveMessage("❌ Erro ao salvar: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error saving proposal:", error);
+      setSaveMessage("❌ Erro ao salvar proposta. Tente novamente.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <>
       {(() => {
@@ -172,11 +217,40 @@ export default function NepfyAIPage() {
             />
           ),
           generated_proposal: (
-            <GenerateProposal
-              isGenerating={isGenerating}
-              generatedProposal={generatedProposal}
-              setCurrentStep={setCurrentStep}
-            />
+            <div className="flex flex-col items-center justify-center gap-4 p-6">
+              <GenerateProposal
+                isGenerating={isGenerating}
+                generatedProposal={generatedProposal}
+              />
+              
+              {/* Botão de Salvar */}
+              {generatedProposal && !isGenerating && (
+                <div className="flex flex-col items-center gap-4 mt-6">
+                  <button
+                    onClick={handleSaveProposal}
+                    disabled={isSaving}
+                    className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isSaving ? "Salvando..." : "💾 Salvar Proposta"}
+                  </button>
+                  
+                  {saveMessage && (
+                    <div className={`text-sm ${
+                      saveMessage.includes("✅") ? "text-green-600" : "text-red-600"
+                    }`}>
+                      {saveMessage}
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={() => setCurrentStep("start")}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  >
+                    ← Gerar Nova Proposta
+                  </button>
+                </div>
+              )}
+            </div>
           ),
         };
         return stepMap[currentStep] || null;
