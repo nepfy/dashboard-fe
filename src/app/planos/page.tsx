@@ -2,13 +2,13 @@ import PlanAndFeatureCard from "#/components/PlanAndFeatureCard";
 
 export default async function PlansPage() {
   const plansResponse = await fetch(
-    "http://localhost:3000/api/stripe/get-plans"
+    `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/get-plans`
   );
   const plansData = (await plansResponse.json()) || [];
   console.log(plansData);
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center">
+    <div>
       <section className="mt-22 sm:mt-0 px-4 text-center">
         <h1 className="text-4xl text-[var(--color-white-neutral-light-800)] mb-4 font-medium">
           Escolha seu plano
@@ -24,6 +24,6 @@ export default async function PlansPage() {
           <PlanAndFeatureCard plans={plansData} />
         </div>
       </section>
-    </main>
+    </div>
   );
 }

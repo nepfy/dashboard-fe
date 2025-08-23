@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import { Stripe } from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -11,17 +11,21 @@ export async function GET() {
       type: "recurring",
     });
 
-    const plans = prices.data.map((price) => ({
-      id: price.id,
-      title: (price.product as Stripe.Product).name,
-      description: (price.product as Stripe.Product).description,
-      price: price.unit_amount,
-      currency: price.currency,
-      interval: price.recurring?.interval,
-      features: (price.product as Stripe.Product).marketing_features,
-      credits: (price.product as Stripe.Product).metadata.credits,
-      buttonTitle: (price.product as Stripe.Product).metadata.buttonTitle,
-    }));
+    const plans = prices.data.map((price) => {
+      const product = price.product as Stripe.Product;
+
+      return {
+        id: price.id,
+        title: product.name || "Plano",
+        description: product.description || "",
+        price: price.unit_amount || 0,
+        currency: price.currency || "brl",
+        interval: price.recurring?.interval || "month",
+        features: product.marketing_features || [],
+        credits: product.metadata?.credits || "0",
+        buttonTitle: product.metadata?.buttonTitle || "Assinar",
+      };
+    });
 
     return NextResponse.json(plans);
   } catch (error) {

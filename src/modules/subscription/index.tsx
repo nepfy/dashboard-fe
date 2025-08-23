@@ -1,5 +1,9 @@
+"use client";
+
 import { useStripeCustom } from "#/hooks/use-stripe";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 type Plan = {
   id: string;
@@ -20,9 +24,17 @@ export function Subscription() {
     "monthly"
   );
   const [loading, setLoading] = useState(true);
-  const { userPlan } = useStripeCustom();
+  const {
+    userPlan,
+    subscriptionStatus,
+    subscriptionActive,
+    customerId,
+    isLoaded,
+  } = useStripeCustom();
+  const { user } = useUser();
+  // const router = useRouter();
 
-  console.log({ userPlan });
+  console.log({ user: user?.unsafeMetadata.stripe });
 
   // Fetch plans from API
   useEffect(() => {
@@ -35,7 +47,6 @@ export function Subscription() {
         const data = await res.json();
         setPlans(data || []);
       } catch (e) {
-        console.log({ e });
         setPlans([]);
       } finally {
         setLoading(false);
@@ -44,21 +55,22 @@ export function Subscription() {
     fetchPlans();
   }, []);
 
-  // Fetch current subscription info (mocked for now)
+  // Set current plan based on user's subscription
   useEffect(() => {
-    // TODO: Replace with real API call
-    // If no userPlan, set currentPlanId to the free plan
+    if (!isLoaded) return; // Wait for Clerk data to load
+
     if (!userPlan) {
+      // If no userPlan, set currentPlanId to the free plan
       const freePlan = plans.find((p) => !p.price || p.price === 0);
       setCurrentPlanId(freePlan?.id || null);
     } else {
-      setCurrentPlanId(typeof userPlan === "string" ? userPlan : "plan_basic");
+      // If userPlan exists, set it as current
+      setCurrentPlanId(userPlan);
     }
-  }, [userPlan, plans]);
+  }, [userPlan, plans, isLoaded]);
 
   const handleSwitchPlan = async (planId: string) => {
     try {
-      // Call the checkout API to create a new session
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/create-checkout-session`,
         {
@@ -77,28 +89,23 @@ export function Subscription() {
       const { session } = await response.json();
 
       if (session?.url) {
-        // Open checkout in new tab
         window.open(session.url, "_blank");
       } else {
         throw new Error("No checkout URL received");
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error);
       alert("Erro ao criar sessão de checkout. Tente novamente.");
     }
   };
 
   const handleEditPaymentMethod = () => {
-    // TODO: Implement edit payment method logic
     alert("Editar método de pagamento");
   };
 
   const getPlanPrice = (plan: Plan) => {
     if (!plan.price) return "Grátis";
-
     const basePrice = plan.price / 100;
-    const finalPrice = billingCycle === "yearly" ? basePrice * 0.8 : basePrice; // 20% discount for yearly
-
+    const finalPrice = billingCycle === "yearly" ? basePrice * 0.8 : basePrice;
     return finalPrice.toLocaleString("pt-BR", {
       style: "currency",
       currency: plan.currency.toUpperCase(),
@@ -112,11 +119,16 @@ export function Subscription() {
     return "/mês";
   };
 
+  // Check if a plan is currently active for the user
   const isActivePlan = (plan: Plan) => {
+    if (!isLoaded) return false; // Wait for Clerk data to load
+
     if (!userPlan) {
-      // If no userPlan, the free plan is considered active
+      // If no userPlan, check if this is the free plan
       return !plan.price || plan.price === 0;
     }
+
+    // If userPlan exists, check if this plan matches the current subscription
     return plan.id === currentPlanId;
   };
 
@@ -131,7 +143,7 @@ export function Subscription() {
     return isActivePlan(plan);
   };
 
-  if (loading) {
+  if (loading || !isLoaded) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center">Carregando...</div>
@@ -141,6 +153,45 @@ export function Subscription() {
 
   return (
     <div className="mx-auto px-4 py-8">
+      {/* Debug Section */}
+      <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <h3 className="text-lg font-medium text-yellow-800 mb-2">Debug Info</h3>
+        <div className="space-y-2 text-sm text-yellow-700">
+          <p>
+            <strong>User Plan:</strong> {userPlan || "null"}
+          </p>
+          <p>
+            <strong>Subscription Status:</strong> {subscriptionStatus || "null"}
+          </p>
+          <p>
+            <strong>Subscription Active:</strong>{" "}
+            {subscriptionActive ? "true" : "false"}
+          </p>
+          <p>
+            <strong>Customer ID:</strong> {customerId || "null"}
+          </p>
+          <p>
+            <strong>Is Loaded:</strong> {isLoaded ? "true" : "false"}
+          </p>
+        </div>
+        <button
+          onClick={async () => {
+            try {
+              const response = await fetch("/api/user-account");
+              const data = await response.json();
+              console.log("API Response:", data);
+              alert("Check console for API response");
+            } catch (error) {
+              console.error("API Error:", error);
+              alert("API Error - check console");
+            }
+          }}
+          className="mt-2 px-4 py-2 bg-yellow-600 text-white rounded-md text-sm hover:bg-yellow-700"
+        >
+          Test API
+        </button>
+      </div>
+
       {/* Billing Cycle Toggle */}
       <div className="flex justify-start mb-8">
         <div className="bg-gray-100 rounded-lg p-1 flex">
