@@ -16,8 +16,10 @@ import FormHeader from "#/app/onboarding/components/FormHeader";
 import GoogleLogo from "#/components/icons/GoogleLogo";
 import PasswordInput from "#/components/Inputs/PasswordInput";
 import MailEnvelope from "#/components/icons/MailEnvelope";
+import { Loader2 } from "lucide-react";
 
 export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
   const { signIn, setActive, isLoaded: clerkLoaded } = useSignIn();
   const router = useRouter();
 
@@ -45,6 +47,7 @@ export default function Login() {
       return;
     }
     try {
+      setIsLoading(true);
       const signInAttempt = await signIn?.create({
         identifier: emailAddress,
         password,
@@ -92,6 +95,8 @@ export default function Login() {
       ) {
         setError("Ocorreu um erro ao conectar com Google. Tente novamente.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -160,8 +165,15 @@ export default function Login() {
               <button
                 type="submit"
                 className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] cursor-pointer`}
+                disabled={!isEmailValid || !password.trim()}
               >
-                Acessar conta
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="animate-spin self-center" />
+                  </div>
+                ) : (
+                  "Acessar conta"
+                )}{" "}
               </button>
             </form>
             {error && (
