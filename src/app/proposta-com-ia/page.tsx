@@ -16,13 +16,13 @@ import { PricingStep } from "#/modules/ai-generator/components/generation-steps/
 import { FAQStep } from "#/modules/ai-generator/components/generation-steps/FAQ";
 
 // Componente para mostrar o resumo dos dados
-function DataSummary({ 
-  selectedService, 
-  clientName, 
-  projectName, 
-  projectDescription, 
-  companyInfo, 
-  selectedPlan 
+function DataSummary({
+  selectedService,
+  clientName,
+  projectName,
+  projectDescription,
+  companyInfo,
+  selectedPlan,
 }: {
   selectedService: string | null;
   clientName: string;
@@ -31,42 +31,56 @@ function DataSummary({
   companyInfo: string;
   selectedPlan: number | null;
 }) {
-  if (!selectedService && !clientName && !projectName && !projectDescription && !companyInfo) {
+  if (
+    !selectedService &&
+    !clientName &&
+    !projectName &&
+    !projectDescription &&
+    !companyInfo
+  ) {
     return null;
   }
 
   return (
     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-      <h3 className="text-sm font-medium text-blue-800 mb-2">📋 Resumo dos Dados</h3>
+      <h3 className="text-sm font-medium text-blue-800 mb-2">
+        📋 Resumo dos Dados
+      </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
         {selectedService && (
           <div>
-            <span className="font-medium text-blue-700">Serviço:</span> {selectedService}
+            <span className="font-medium text-blue-700">Serviço:</span>{" "}
+            {selectedService}
           </div>
         )}
         {clientName && (
           <div>
-            <span className="font-medium text-blue-700">Cliente:</span> {clientName}
+            <span className="font-medium text-blue-700">Cliente:</span>{" "}
+            {clientName}
           </div>
         )}
         {projectName && (
           <div>
-            <span className="font-medium text-blue-700">Projeto:</span> {projectName}
+            <span className="font-medium text-blue-700">Projeto:</span>{" "}
+            {projectName}
           </div>
         )}
         {projectDescription && (
           <div>
-            <span className="font-medium text-blue-700">Descrição:</span> {projectDescription.substring(0, 50)}...
+            <span className="font-medium text-blue-700">Descrição:</span>{" "}
+            {projectDescription.substring(0, 50)}...
           </div>
         )}
         {companyInfo && (
           <div>
-            <span className="font-medium text-blue-700">Empresa:</span> {companyInfo}
+            <span className="font-medium text-blue-700">Empresa:</span>{" "}
+            {companyInfo}
           </div>
         )}
         {selectedPlan && (
           <div>
-            <span className="font-medium text-blue-700">Plano:</span> {selectedPlan}
+            <span className="font-medium text-blue-700">Plano:</span>{" "}
+            {selectedPlan}
           </div>
         )}
       </div>
@@ -87,12 +101,14 @@ function StepProgress({ currentStep }: { currentStep: string }) {
     { key: "generated_proposal", label: "Proposta", icon: "📄" },
   ];
 
-  const currentIndex = steps.findIndex(step => step.key === currentStep);
+  const currentIndex = steps.findIndex((step) => step.key === currentStep);
 
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-medium text-gray-800">Progresso da Geração</h2>
+        <h2 className="text-lg font-medium text-gray-800">
+          Progresso da Geração
+        </h2>
         <span className="text-sm text-gray-500">
           Etapa {currentIndex + 1} de {steps.length}
         </span>
@@ -277,14 +293,14 @@ export default function NepfyAIPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="mx-auto p-6">
         {/* Header com Progresso */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             Gerador de Propostas com IA
           </h1>
           <StepProgress currentStep={currentStep} />
-          
+
           {/* Resumo dos dados (exceto na primeira etapa) */}
           {currentStep !== "start" && (
             <DataSummary
@@ -385,7 +401,7 @@ export default function NepfyAIPage() {
                   isGenerating={isGenerating}
                   generatedProposal={generatedProposal}
                 />
-                
+
                 {/* Botões de Ação */}
                 {generatedProposal && !isGenerating && (
                   <div className="flex flex-col items-center gap-4 mt-6">
@@ -397,16 +413,20 @@ export default function NepfyAIPage() {
                     >
                       {isSaving ? "Salvando..." : "💾 Salvar Proposta"}
                     </button>
-                    
+
                     {/* Mensagem de Status */}
                     {saveMessage && (
-                      <div className={`text-sm ${
-                        saveMessage.includes("✅") ? "text-green-600" : "text-red-600"
-                      }`}>
+                      <div
+                        className={`text-sm ${
+                          saveMessage.includes("✅")
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
                         {saveMessage}
                       </div>
                     )}
-                    
+
                     {/* Botões de Edição */}
                     <div className="flex flex-col sm:flex-row gap-3 mt-4">
                       <button
@@ -415,7 +435,7 @@ export default function NepfyAIPage() {
                       >
                         🔄 Regenerar Proposta
                       </button>
-                      
+
                       <button
                         onClick={handleEditPrompt}
                         className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
@@ -423,7 +443,7 @@ export default function NepfyAIPage() {
                         ✏️ Editar Dados do Prompt
                       </button>
                     </div>
-                    
+
                     {/* Botão para Nova Proposta */}
                     <button
                       onClick={() => {
