@@ -6,7 +6,6 @@ export function GenerateProposal({
 }: {
   isGenerating: boolean;
   generatedProposal: Record<string, unknown> | null | undefined;
-  setCurrentStep: (step: string) => void;
 }) {
   const [activeTab, setActiveTab] = useState<string>("preview");
 
@@ -44,9 +43,7 @@ export function GenerateProposal({
           <h2 className="text-xl font-medium text-gray-800 mb-2">
             Nenhuma proposta gerada
           </h2>
-          <p className="text-gray-600">
-            Volte e gere uma proposta primeiro
-          </p>
+          <p className="text-gray-600">Volte e gere uma proposta primeiro</p>
         </div>
       </div>
     );
@@ -54,26 +51,27 @@ export function GenerateProposal({
 
   // Extract key sections from the generated proposal
   const getSectionData = (sectionName: string) => {
-    if (!generatedProposal || typeof generatedProposal !== 'object') return null;
-    
+    if (!generatedProposal || typeof generatedProposal !== "object")
+      return null;
+
     const data = (generatedProposal as Record<string, unknown>)[sectionName];
     if (Array.isArray(data)) return data;
-    if (data && typeof data === 'object') return data;
+    if (data && typeof data === "object") return data;
     return null;
   };
 
-  const introduction = getSectionData('introduction');
-  const aboutUs = getSectionData('aboutUs');
-  const specialties = getSectionData('specialties');
-  const steps = getSectionData('steps');
-  const investment = getSectionData('investment');
-  const plans = getSectionData('plans');
-  const terms = getSectionData('terms');
-  const faq = getSectionData('faq');
+  const introduction = getSectionData("introduction");
+  const aboutUs = getSectionData("aboutUs");
+  const specialties = getSectionData("specialties");
+  const steps = getSectionData("steps");
+  const investment = getSectionData("investment");
+  const plans = getSectionData("plans");
+  const terms = getSectionData("terms");
+  const faq = getSectionData("faq");
 
   return (
     <div className="min-h-[calc(100vh-100px)] p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">
             Proposta Gerada com IA
@@ -114,23 +112,36 @@ export function GenerateProposal({
             {introduction && (
               <div className="border-b pb-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                  {safeString((introduction as Record<string, unknown>).title, "Introdução")}
+                  {safeString(
+                    (introduction as Record<string, unknown>).title,
+                    "Introdução"
+                  )}
                 </h2>
                 {(introduction as Record<string, unknown>).subtitle && (
-                  <p className="text-gray-600 mb-3">{safeString((introduction as Record<string, unknown>).subtitle)}</p>
+                  <p className="text-gray-600 mb-3">
+                    {safeString(
+                      (introduction as Record<string, unknown>).subtitle
+                    )}
+                  </p>
                 )}
-                {(introduction as Record<string, unknown>).services && Array.isArray((introduction as Record<string, unknown>).services) && (
-                  <div className="flex flex-wrap gap-2">
-                    {((introduction as Record<string, unknown>).services as unknown[]).map((service: unknown, index: number) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
-                      >
-                        {safeString(service)}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                {(introduction as Record<string, unknown>).services &&
+                  Array.isArray(
+                    (introduction as Record<string, unknown>).services
+                  ) && (
+                    <div className="flex flex-wrap gap-2">
+                      {(
+                        (introduction as Record<string, unknown>)
+                          .services as unknown[]
+                      ).map((service: unknown, index: number) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                        >
+                          {safeString(service)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
               </div>
             )}
 
@@ -138,82 +149,132 @@ export function GenerateProposal({
             {aboutUs && (
               <div className="border-b pb-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                  {safeString((aboutUs as Record<string, unknown>).title, "Sobre Nós")}
+                  {safeString(
+                    (aboutUs as Record<string, unknown>).title,
+                    "Sobre Nós"
+                  )}
                 </h2>
                 {(aboutUs as Record<string, unknown>).subtitle && (
-                  <p className="text-gray-600">{safeString((aboutUs as Record<string, unknown>).subtitle)}</p>
+                  <p className="text-gray-600">
+                    {safeString((aboutUs as Record<string, unknown>).subtitle)}
+                  </p>
                 )}
               </div>
             )}
 
             {/* Specialties */}
-            {specialties && (specialties as Record<string, unknown>).topics && Array.isArray((specialties as Record<string, unknown>).topics) && (
-              <div className="border-b pb-4">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                  {safeString((specialties as Record<string, unknown>).title, "Especialidades")}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {((specialties as Record<string, unknown>).topics as unknown[]).map((topic: unknown, index: number) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                      <h3 className="font-medium text-gray-800 mb-1">
-                        {safeString((topic as Record<string, unknown>).title)}
-                      </h3>
-                      {(topic as Record<string, unknown>).description && (
-                        <p className="text-sm text-gray-600">{safeString((topic as Record<string, unknown>).description)}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Process Steps */}
-            {steps && (steps as Record<string, unknown>).topics && Array.isArray((steps as Record<string, unknown>).topics) && (
-              <div className="border-b pb-4">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                  {safeString((steps as Record<string, unknown>).title, "Processo")}
-                </h2>
-                <div className="space-y-3">
-                  {((steps as Record<string, unknown>).topics as unknown[]).map((step: unknown, index: number) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-gray-800">
-                          {safeString((step as Record<string, unknown>).title)}
+            {specialties &&
+              (specialties as Record<string, unknown>).topics &&
+              Array.isArray(
+                (specialties as Record<string, unknown>).topics
+              ) && (
+                <div className="border-b pb-4">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                    {safeString(
+                      (specialties as Record<string, unknown>).title,
+                      "Especialidades"
+                    )}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(
+                      (specialties as Record<string, unknown>)
+                        .topics as unknown[]
+                    ).map((topic: unknown, index: number) => (
+                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                        <h3 className="font-medium text-gray-800 mb-1">
+                          {safeString((topic as Record<string, unknown>).title)}
                         </h3>
-                        {(step as Record<string, unknown>).description && (
-                          <p className="text-sm text-gray-600">{safeString((step as Record<string, unknown>).description)}</p>
+                        {(topic as Record<string, unknown>).description && (
+                          <p className="text-sm text-gray-600">
+                            {safeString(
+                              (topic as Record<string, unknown>).description
+                            )}
+                          </p>
                         )}
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+            {/* Process Steps */}
+            {steps &&
+              (steps as Record<string, unknown>).topics &&
+              Array.isArray((steps as Record<string, unknown>).topics) && (
+                <div className="border-b pb-4">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                    {safeString(
+                      (steps as Record<string, unknown>).title,
+                      "Processo"
+                    )}
+                  </h2>
+                  <div className="space-y-3">
+                    {(
+                      (steps as Record<string, unknown>).topics as unknown[]
+                    ).map((step: unknown, index: number) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-800">
+                            {safeString(
+                              (step as Record<string, unknown>).title
+                            )}
+                          </h3>
+                          {(step as Record<string, unknown>).description && (
+                            <p className="text-sm text-gray-600">
+                              {safeString(
+                                (step as Record<string, unknown>).description
+                              )}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
             {/* Investment & Plans */}
             {investment && (
               <div className="border-b pb-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                  {safeString((investment as Record<string, unknown>).title, "Investimento")}
+                  {safeString(
+                    (investment as Record<string, unknown>).title,
+                    "Investimento"
+                  )}
                 </h2>
                 {plans && Array.isArray(plans) && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {(plans as unknown[]).map((plan: unknown, index: number) => (
-                      <div key={index} className="bg-gray-50 p-4 rounded-lg border">
-                        <h3 className="font-medium text-gray-800 mb-2">
-                          {safeString((plan as Record<string, unknown>).title)}
-                        </h3>
-                        {(plan as Record<string, unknown>).description && (
-                          <p className="text-sm text-gray-600 mb-2">{safeString((plan as Record<string, unknown>).description)}</p>
-                        )}
-                        {(plan as Record<string, unknown>).value && (
-                          <p className="text-lg font-bold text-blue-600">{safeString((plan as Record<string, unknown>).value)}</p>
-                        )}
-                      </div>
-                    ))}
+                    {(plans as unknown[]).map(
+                      (plan: unknown, index: number) => (
+                        <div
+                          key={index}
+                          className="bg-gray-50 p-4 rounded-lg border"
+                        >
+                          <h3 className="font-medium text-gray-800 mb-2">
+                            {safeString(
+                              (plan as Record<string, unknown>).title
+                            )}
+                          </h3>
+                          {(plan as Record<string, unknown>).description && (
+                            <p className="text-sm text-gray-600 mb-2">
+                              {safeString(
+                                (plan as Record<string, unknown>).description
+                              )}
+                            </p>
+                          )}
+                          {(plan as Record<string, unknown>).value && (
+                            <p className="text-lg font-bold text-blue-600">
+                              {safeString(
+                                (plan as Record<string, unknown>).value
+                              )}
+                            </p>
+                          )}
+                        </div>
+                      )
+                    )}
                   </div>
                 )}
               </div>
@@ -233,7 +294,11 @@ export function GenerateProposal({
                           {safeString((term as Record<string, unknown>).title)}
                         </h3>
                       )}
-                      <p className="text-sm text-gray-600">{safeString((term as Record<string, unknown>).description)}</p>
+                      <p className="text-sm text-gray-600">
+                        {safeString(
+                          (term as Record<string, unknown>).description
+                        )}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -252,7 +317,9 @@ export function GenerateProposal({
                       <h3 className="font-medium text-gray-800 mb-1">
                         {safeString((item as Record<string, unknown>).question)}
                       </h3>
-                      <p className="text-sm text-gray-600">{safeString((item as Record<string, unknown>).answer)}</p>
+                      <p className="text-sm text-gray-600">
+                        {safeString((item as Record<string, unknown>).answer)}
+                      </p>
                     </div>
                   ))}
                 </div>
