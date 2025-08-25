@@ -4,6 +4,7 @@ import {
   getAgentByService,
   type AgentConfig,
 } from "#/modules/ai-generator/agents";
+import { ServiceType } from "#/modules/ai-generator/agents/base/types";
 
 const apiKey = process.env.TOGETHER_API_KEY;
 if (!apiKey) {
@@ -85,7 +86,7 @@ export class ProposalWorkflow {
 
   async execute(data: ProposalWorkflowData): Promise<WorkflowResult> {
     const startTime = Date.now();
-    const agent = getAgentByService(data.selectedService);
+    const agent = getAgentByService(data.selectedService as ServiceType);
 
     if (!agent) {
       throw new Error(`Agent not found for service: ${data.selectedService}`);
@@ -202,16 +203,14 @@ export class ProposalWorkflow {
       outline: "Proposta gerada em paralelo com múltiplas seções",
       content:
         proposalSections.content || this.generateFallbackContent(data, agent),
-      pricing:
-        proposalSections.pricing || this.generateFallbackPricing(data, agent),
-      timeline:
-        proposalSections.timeline || this.generateFallbackTimeline(data, agent),
+      pricing: proposalSections.pricing || this.generateFallbackPricing(),
+      timeline: proposalSections.timeline || this.generateFallbackTimeline(),
       terms:
         proposalSections.terms ||
-        (data.includeTerms ? this.generateFallbackTerms(data, agent) : ""),
+        (data.includeTerms ? this.generateFallbackTerms() : ""),
       faq:
         proposalSections.faq ||
-        (data.includeFAQ ? this.generateFallbackFAQ(data, agent) : ""),
+        (data.includeFAQ ? this.generateFallbackFAQ() : ""),
     };
   }
 
@@ -391,13 +390,13 @@ Formato: Markdown com perguntas em negrito e respostas claras.`;
       case "content":
         return this.generateFallbackContent(data, agent);
       case "pricing":
-        return this.generateFallbackPricing(data, agent);
+        return this.generateFallbackPricing();
       case "timeline":
-        return this.generateFallbackTimeline(data, agent);
+        return this.generateFallbackTimeline();
       case "terms":
-        return this.generateFallbackTerms(data, agent);
+        return this.generateFallbackTerms();
       case "faq":
-        return this.generateFallbackFAQ(data, agent);
+        return this.generateFallbackFAQ();
       default:
         return "Conteúdo não disponível";
     }
