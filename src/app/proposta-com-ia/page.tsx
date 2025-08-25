@@ -15,6 +15,119 @@ import { GenerateProposal } from "#/modules/ai-generator/components/generation-s
 import { PricingStep } from "#/modules/ai-generator/components/generation-steps/PricingStep";
 import { FAQStep } from "#/modules/ai-generator/components/generation-steps/FAQ";
 
+// Componente para mostrar o resumo dos dados
+function DataSummary({ 
+  selectedService, 
+  clientName, 
+  projectName, 
+  projectDescription, 
+  companyInfo, 
+  selectedPlan 
+}: {
+  selectedService: string | null;
+  clientName: string;
+  projectName: string;
+  projectDescription: string;
+  companyInfo: string;
+  selectedPlan: number | null;
+}) {
+  if (!selectedService && !clientName && !projectName && !projectDescription && !companyInfo) {
+    return null;
+  }
+
+  return (
+    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+      <h3 className="text-sm font-medium text-blue-800 mb-2">📋 Resumo dos Dados</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+        {selectedService && (
+          <div>
+            <span className="font-medium text-blue-700">Serviço:</span> {selectedService}
+          </div>
+        )}
+        {clientName && (
+          <div>
+            <span className="font-medium text-blue-700">Cliente:</span> {clientName}
+          </div>
+        )}
+        {projectName && (
+          <div>
+            <span className="font-medium text-blue-700">Projeto:</span> {projectName}
+          </div>
+        )}
+        {projectDescription && (
+          <div>
+            <span className="font-medium text-blue-700">Descrição:</span> {projectDescription.substring(0, 50)}...
+          </div>
+        )}
+        {companyInfo && (
+          <div>
+            <span className="font-medium text-blue-700">Empresa:</span> {companyInfo}
+          </div>
+        )}
+        {selectedPlan && (
+          <div>
+            <span className="font-medium text-blue-700">Plano:</span> {selectedPlan}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Componente para mostrar o progresso das etapas
+function StepProgress({ currentStep }: { currentStep: string }) {
+  const steps = [
+    { key: "start", label: "Início", icon: "🚀" },
+    { key: "template_selection", label: "Template", icon: "🎨" },
+    { key: "service_selection", label: "Serviço", icon: "⚙️" },
+    { key: "company_info", label: "Empresa", icon: "🏢" },
+    { key: "client_details", label: "Cliente", icon: "👤" },
+    { key: "pricing_step", label: "Preços", icon: "💰" },
+    { key: "faq_step", label: "Configurações", icon: "⚙️" },
+    { key: "generated_proposal", label: "Proposta", icon: "📄" },
+  ];
+
+  const currentIndex = steps.findIndex(step => step.key === currentStep);
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-medium text-gray-800">Progresso da Geração</h2>
+        <span className="text-sm text-gray-500">
+          Etapa {currentIndex + 1} de {steps.length}
+        </span>
+      </div>
+      <div className="flex items-center space-x-2">
+        {steps.map((step, index) => (
+          <div key={step.key} className="flex items-center">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                index <= currentIndex
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-500"
+              }`}
+            >
+              {index < currentIndex ? "✓" : step.icon}
+            </div>
+            {index < steps.length - 1 && (
+              <div
+                className={`w-12 h-1 ${
+                  index < currentIndex ? "bg-blue-500" : "bg-gray-200"
+                }`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="text-center mt-2">
+        <span className="text-sm text-gray-600">
+          {steps[currentIndex]?.label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function NepfyAIPage() {
   const [currentStep, setCurrentStep] = useState<string>("start");
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -148,113 +261,194 @@ export default function NepfyAIPage() {
     }
   };
 
+  const handleEditPrompt = () => {
+    // Volta para a primeira etapa para editar os dados
+    setCurrentStep("start");
+    setGeneratedProposal(null);
+    setSaveMessage("");
+  };
+
+  const handleRegenerateProposal = () => {
+    // Volta para a etapa de FAQ para regenerar com os mesmos dados
+    setCurrentStep("faq_step");
+    setGeneratedProposal(null);
+    setSaveMessage("");
+  };
+
   return (
-    <>
-      {(() => {
-        const stepMap: Record<string, React.ReactNode> = {
-          start: (
-            <StartProposal
-              handleNextStep={() => setCurrentStep("template_selection")}
-            />
-          ),
-          template_selection: (
-            <SelectTemplate
-              handleNextStep={() => setCurrentStep("service_selection")}
-              handleBack={() => setCurrentStep("start")}
-            />
-          ),
-          service_selection: (
-            <ServiceType
-              onServiceSelect={handleServiceSelect}
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto p-6">
+        {/* Header com Progresso */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+            Gerador de Propostas com IA
+          </h1>
+          <StepProgress currentStep={currentStep} />
+          
+          {/* Resumo dos dados (exceto na primeira etapa) */}
+          {currentStep !== "start" && (
+            <DataSummary
               selectedService={selectedService}
-              handleBack={() => setCurrentStep("template_selection")}
-              handleNext={() => setCurrentStep("company_info")}
-            />
-          ),
-          company_info: (
-            <CompanyInfo
+              clientName={clientName}
+              projectName={projectName}
+              projectDescription={projectDescription}
               companyInfo={companyInfo}
-              setCompanyInfo={setCompanyInfo}
-              handleBack={() => setCurrentStep("service_selection")}
-              handleNext={() => setCurrentStep("client_details")}
+              selectedPlan={selectedPlan}
             />
-          ),
-          client_details: (
-            <ClientInfo
-              clientData={{
-                companyName: formData.step1?.companyName || "",
-                projectName,
-                projectDescription,
-                clientName,
-              }}
-              setClientData={({
-                clientName,
-                projectName,
-                projectDescription,
-              }) => {
-                setClientName(clientName);
-                setProjectName(projectName);
-                setProjectDescription(projectDescription);
-              }}
-              handleBack={() => setCurrentStep("company_info")}
-              handleNext={() => setCurrentStep("pricing_step")}
-            />
-          ),
-          pricing_step: (
-            <PricingStep
-              selectedPlan={selectedPlan || 1}
-              handlePlanSelect={setSelectedPlan}
-              handleBack={() => setCurrentStep("client_details")}
-              handleNext={() => setCurrentStep("faq_step")}
-            />
-          ),
-          faq_step: (
-            <FAQStep
-              handleNext={({ includeTerms, includeFAQ }) => {
-                handleGenerateProposal({ includeTerms, includeFAQ });
-              }}
-              handleBack={() => setCurrentStep("pricing_step")}
-            />
-          ),
-          generated_proposal: (
-            <div className="flex flex-col items-center justify-center gap-4 p-6">
-              <GenerateProposal
-                isGenerating={isGenerating}
-                generatedProposal={generatedProposal}
-              />
-              
-              {/* Botão de Salvar */}
-              {generatedProposal && !isGenerating && (
-                <div className="flex flex-col items-center gap-4 mt-6">
-                  <button
-                    onClick={handleSaveProposal}
-                    disabled={isSaving}
-                    className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {isSaving ? "Salvando..." : "💾 Salvar Proposta"}
-                  </button>
-                  
-                  {saveMessage && (
-                    <div className={`text-sm ${
-                      saveMessage.includes("✅") ? "text-green-600" : "text-red-600"
-                    }`}>
-                      {saveMessage}
+          )}
+        </div>
+
+        {/* Conteúdo das Etapas */}
+        {(() => {
+          const stepMap: Record<string, React.ReactNode> = {
+            start: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <StartProposal
+                  handleNextStep={() => setCurrentStep("template_selection")}
+                />
+              </div>
+            ),
+            template_selection: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <SelectTemplate
+                  handleNextStep={() => setCurrentStep("service_selection")}
+                  handleBack={() => setCurrentStep("start")}
+                />
+              </div>
+            ),
+            service_selection: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <ServiceType
+                  onServiceSelect={handleServiceSelect}
+                  selectedService={selectedService}
+                  handleBack={() => setCurrentStep("template_selection")}
+                  handleNext={() => setCurrentStep("company_info")}
+                />
+              </div>
+            ),
+            company_info: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <CompanyInfo
+                  companyInfo={companyInfo}
+                  setCompanyInfo={setCompanyInfo}
+                  handleBack={() => setCurrentStep("service_selection")}
+                  handleNext={() => setCurrentStep("client_details")}
+                />
+              </div>
+            ),
+            client_details: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <ClientInfo
+                  clientData={{
+                    companyName: formData.step1?.companyName || "",
+                    projectName,
+                    projectDescription,
+                    clientName,
+                  }}
+                  setClientData={({
+                    clientName,
+                    projectName,
+                    projectDescription,
+                  }) => {
+                    setClientName(clientName);
+                    setProjectName(projectName);
+                    setProjectDescription(projectDescription);
+                  }}
+                  handleBack={() => setCurrentStep("company_info")}
+                  handleNext={() => setCurrentStep("pricing_step")}
+                />
+              </div>
+            ),
+            pricing_step: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <PricingStep
+                  selectedPlan={selectedPlan || 1}
+                  handlePlanSelect={setSelectedPlan}
+                  handleBack={() => setCurrentStep("client_details")}
+                  handleNext={() => setCurrentStep("faq_step")}
+                />
+              </div>
+            ),
+            faq_step: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <FAQStep
+                  handleNext={({ includeTerms, includeFAQ }) => {
+                    handleGenerateProposal({ includeTerms, includeFAQ });
+                  }}
+                  handleBack={() => setCurrentStep("pricing_step")}
+                />
+              </div>
+            ),
+            generated_proposal: (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <GenerateProposal
+                  isGenerating={isGenerating}
+                  generatedProposal={generatedProposal}
+                />
+                
+                {/* Botões de Ação */}
+                {generatedProposal && !isGenerating && (
+                  <div className="flex flex-col items-center gap-4 mt-6">
+                    {/* Botão de Salvar */}
+                    <button
+                      onClick={handleSaveProposal}
+                      disabled={isSaving}
+                      className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {isSaving ? "Salvando..." : "💾 Salvar Proposta"}
+                    </button>
+                    
+                    {/* Mensagem de Status */}
+                    {saveMessage && (
+                      <div className={`text-sm ${
+                        saveMessage.includes("✅") ? "text-green-600" : "text-red-600"
+                      }`}>
+                        {saveMessage}
+                      </div>
+                    )}
+                    
+                    {/* Botões de Edição */}
+                    <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                      <button
+                        onClick={handleRegenerateProposal}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        🔄 Regenerar Proposta
+                      </button>
+                      
+                      <button
+                        onClick={handleEditPrompt}
+                        className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                      >
+                        ✏️ Editar Dados do Prompt
+                      </button>
                     </div>
-                  )}
-                  
-                  <button
-                    onClick={() => setCurrentStep("start")}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-                  >
-                    ← Gerar Nova Proposta
-                  </button>
-                </div>
-              )}
-            </div>
-          ),
-        };
-        return stepMap[currentStep] || null;
-      })()}
-    </>
+                    
+                    {/* Botão para Nova Proposta */}
+                    <button
+                      onClick={() => {
+                        setCurrentStep("start");
+                        setGeneratedProposal(null);
+                        setSaveMessage("");
+                        setSelectedService(null);
+                        setClientName("");
+                        setProjectName("");
+                        setProjectDescription("");
+                        setCompanyInfo("");
+                        setSelectedPlan(null);
+                      }}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    >
+                      ← Nova Proposta
+                    </button>
+                  </div>
+                )}
+              </div>
+            ),
+          };
+          return stepMap[currentStep] || null;
+        })()}
+      </div>
+    </div>
   );
 }
