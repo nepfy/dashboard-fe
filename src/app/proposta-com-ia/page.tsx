@@ -173,12 +173,22 @@ export default function NepfyAIPage() {
     includeTerms: boolean;
     includeFAQ: boolean;
   }) => {
+    console.log("Debug - handleGenerateProposal validation:", {
+      selectedService: !!selectedService,
+      clientName: !!clientName,
+      projectName: !!projectName,
+      projectDescription: !!projectDescription,
+      clientNameValue: clientName,
+      projectNameValue: projectName,
+    });
+
     if (
       !selectedService ||
       !clientName ||
       !projectName ||
       !projectDescription
     ) {
+      console.log("Debug - Validation failed in handleGenerateProposal");
       return;
     }
 
@@ -199,7 +209,7 @@ export default function NepfyAIPage() {
     });
 
     try {
-      const response = await fetch("/api/gerador-de-propostas-ia", {
+      const response = await fetch("/api/projects/ai-generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -244,20 +254,19 @@ export default function NepfyAIPage() {
     setSaveMessage("");
 
     try {
-      const response = await fetch("/api/gerador-de-propostas-ia/save", {
+      const response = await fetch("/api/projects/ai-generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          proposalData: generatedProposal,
-          templateType: templateType || "flash",
-          mainColor: formData.step1?.mainColor || "#3B82F6",
+          selectedService,
           clientName,
           projectName,
           projectDescription,
           companyInfo,
-          selectedService,
+          templateType: templateType || "flash",
+          mainColor: formData.step1?.mainColor || "#3B82F6",
         }),
       });
 
@@ -292,101 +301,74 @@ export default function NepfyAIPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50 flex flex-1 items-center justify-center min-h-[calc(100vh-250px)]">
       <div className="mx-auto p-6">
-        {/* Header com Progresso */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            Gerador de Propostas com IA
-          </h1>
-          <StepProgress currentStep={currentStep} />
-
-          {/* Resumo dos dados (exceto na primeira etapa) */}
-          {currentStep !== "start" && (
-            <DataSummary
-              selectedService={selectedService}
-              clientName={clientName}
-              projectName={projectName}
-              projectDescription={projectDescription}
-              companyInfo={companyInfo}
-              selectedPlan={selectedPlan}
-            />
-          )}
-        </div>
-
         {/* Conteúdo das Etapas */}
         {(() => {
           const stepMap: Record<string, React.ReactNode> = {
             start: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <StartProposal
-                  handleNextStep={() => setCurrentStep("template_selection")}
-                />
-              </div>
+              <StartProposal
+                handleNextStep={() => setCurrentStep("template_selection")}
+              />
             ),
             template_selection: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <SelectTemplate
-                  handleNextStep={() => setCurrentStep("service_selection")}
-                  handleBack={() => setCurrentStep("start")}
-                />
-              </div>
+              <SelectTemplate
+                handleNextStep={() => setCurrentStep("service_selection")}
+                handleBack={() => setCurrentStep("start")}
+              />
             ),
             service_selection: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <ServiceType
-                  onServiceSelect={handleServiceSelect}
-                  selectedService={selectedService}
-                  handleBack={() => setCurrentStep("template_selection")}
-                  handleNext={() => setCurrentStep("company_info")}
-                />
-              </div>
+              <ServiceType
+                onServiceSelect={handleServiceSelect}
+                selectedService={selectedService}
+                handleBack={() => setCurrentStep("template_selection")}
+                handleNext={() => setCurrentStep("company_info")}
+              />
             ),
             company_info: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <CompanyInfo
-                  companyInfo={companyInfo}
-                  setCompanyInfo={setCompanyInfo}
-                  handleBack={() => setCurrentStep("service_selection")}
-                  handleNext={() => setCurrentStep("client_details")}
-                />
-              </div>
+              <CompanyInfo
+                companyInfo={companyInfo}
+                setCompanyInfo={setCompanyInfo}
+                handleBack={() => setCurrentStep("service_selection")}
+                handleNext={() => setCurrentStep("client_details")}
+              />
             ),
             client_details: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <ClientInfo
-                  clientData={{
-                    companyName: formData.step1?.companyName || "",
+              <ClientInfo
+                clientData={{
+                  companyName: formData.step1?.companyName || "",
+                  projectName,
+                  projectDescription,
+                  clientName,
+                }}
+                setClientData={({
+                  clientName,
+                  projectName,
+                  projectDescription,
+                }) => {
+                  console.log("Debug - setClientData called with:", {
+                    clientName,
                     projectName,
                     projectDescription,
-                    clientName,
-                  }}
-                  setClientData={({
-                    clientName,
-                    projectName,
-                    projectDescription,
-                  }) => {
-                    setClientName(clientName);
-                    setProjectName(projectName);
-                    setProjectDescription(projectDescription);
-                  }}
-                  handleBack={() => setCurrentStep("company_info")}
-                  handleNext={() => setCurrentStep("pricing_step")}
-                />
-              </div>
+                  });
+                  setClientName(clientName);
+                  setProjectName(projectName);
+                  setProjectDescription(projectDescription);
+                }}
+                handleBack={() => setCurrentStep("company_info")}
+                handleNext={() => setCurrentStep("pricing_step")}
+              />
             ),
             pricing_step: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <PricingStep
-                  selectedPlan={selectedPlan || 1}
-                  handlePlanSelect={setSelectedPlan}
-                  handleBack={() => setCurrentStep("client_details")}
-                  handleNext={() => setCurrentStep("faq_step")}
-                />
-              </div>
+              <PricingStep
+                selectedPlan={selectedPlan || 1}
+                handlePlanSelect={setSelectedPlan}
+                handleBack={() => setCurrentStep("client_details")}
+                handleNext={() => setCurrentStep("faq_step")}
+              />
             ),
             faq_step: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-lg shadow-sm  p-6">
                 <FAQStep
                   handleNext={({ includeTerms, includeFAQ }) => {
                     handleGenerateProposal({ includeTerms, includeFAQ });
