@@ -9,7 +9,11 @@ export function GenerateProposal({
 }) {
   const [activeTab, setActiveTab] = useState<string>("preview");
 
-  console.log({ generatedProposal });
+  console.log("Debug - Generated Proposal:", { generatedProposal });
+  console.log(
+    "Debug - Final Proposal:",
+    (generatedProposal as Record<string, unknown>)?.finalProposal
+  );
 
   // Helper function to safely convert values to string
   const safeString = (value: unknown, defaultValue = ""): string => {
@@ -54,6 +58,16 @@ export function GenerateProposal({
     if (!generatedProposal || typeof generatedProposal !== "object")
       return null;
 
+    // Check if data is in finalProposal (Flash/Prime templates)
+    const finalProposal = (generatedProposal as Record<string, unknown>)
+      .finalProposal;
+    if (finalProposal && typeof finalProposal === "object") {
+      const data = (finalProposal as Record<string, unknown>)[sectionName];
+      if (Array.isArray(data)) return data;
+      if (data && typeof data === "object") return data;
+    }
+
+    // Fallback to direct access (regular templates)
     const data = (generatedProposal as Record<string, unknown>)[sectionName];
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return data;

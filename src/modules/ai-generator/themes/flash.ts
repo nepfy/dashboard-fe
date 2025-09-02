@@ -1,9 +1,5 @@
 import Together from "together-ai";
-import {
-  getAgentByServiceAndTemplate,
-  type BaseAgentConfig,
-  FlashAgentConfig,
-} from "../agents";
+import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
 import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 
@@ -218,22 +214,19 @@ export class FlashTemplateWorkflow {
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Descrição do Projeto: ${data.projectDescription}
+- Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
-${
-  "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${
-        (agent as FlashAgentConfig).flashSpecific.introductionStyle
-      }`
-    : ""
-}
 
-Crie uma seção de introdução para proposta FLASH. Retorne APENAS um objeto JSON com:
+Crie uma seção de introdução personalizada para este projeto específico. Use as informações reais fornecidas acima. Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título focado no projeto (máximo 60 caracteres)",
+  "title": "Título focado no projeto específico de ${
+    data.clientName
+  } (máximo 60 caracteres)",
   "subtitle": "Subtítulo personalizado para ${
     data.clientName
-  } (máximo 100 caracteres)",
+  } baseado no projeto ${data.projectName} (máximo 100 caracteres)",
   "services": ["${agent.commonServices[0] || "Serviço 1"}", "${
       agent.commonServices[1] || "Serviço 2"
     }", "${agent.commonServices[2] || "Serviço 3"}", "${
@@ -245,7 +238,11 @@ Crie uma seção de introdução para proposta FLASH. Retorne APENAS um objeto J
   "buttonText": "Iniciar Projeto"
 }
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+IMPORTANTE: 
+- Use os dados reais do cliente e projeto fornecidos
+- NÃO mencione "metodologia FLASH" ou termos genéricos
+- Personalize o conteúdo para ${data.clientName} e ${data.projectName}
+- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -290,24 +287,23 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Descrição do Projeto: ${data.projectDescription}
+- Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
-${
-  "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${
-        (agent as FlashAgentConfig).flashSpecific.aboutUsFocus
-      }`
-    : ""
-}
 
-Crie uma seção "Sobre Nós" para proposta FLASH. Retorne APENAS um objeto JSON com:
+Crie uma seção "Sobre Nós" personalizada baseada nas informações reais da empresa fornecida. Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título sobre a empresa (máximo 155 caracteres)",
-  "supportText": "Texto de suporte (máximo 70 caracteres)",
-  "subtitle": "Subtítulo detalhado (máximo 250 caracteres)"
+  "title": "Título sobre a empresa ${data.companyInfo} (máximo 155 caracteres)",
+  "supportText": "Texto de suporte específico para ${data.clientName} (máximo 70 caracteres)",
+  "subtitle": "Subtítulo detalhado sobre como a empresa ${data.companyInfo} pode ajudar ${data.clientName} com ${data.projectName} (máximo 250 caracteres)"
 }
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+IMPORTANTE: 
+- Use as informações reais da empresa fornecida: ${data.companyInfo}
+- Personalize para o cliente específico: ${data.clientName}
+- NÃO mencione "metodologia FLASH" ou termos genéricos
+- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -342,32 +338,31 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Descrição do Projeto: ${data.projectDescription}
+- Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
-${
-  "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${
-        (agent as FlashAgentConfig).flashSpecific.specialtiesApproach
-      }`
-    : ""
-}
 
-Crie uma seção "Especialidades" para proposta FLASH. Retorne APENAS um objeto JSON com:
+Crie uma seção "Especialidades" personalizada baseada nas necessidades específicas do projeto ${data.projectName} para ${data.clientName}. Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título das especialidades (máximo 40 caracteres)",
+  "title": "Título das especialidades relevantes para ${data.projectName} (máximo 40 caracteres)",
   "topics": [
     {
-      "title": "Especialidade 1 (máximo 50 caracteres)",
-      "description": "Descrição da especialidade 1 (máximo 100 caracteres)"
+      "title": "Especialidade 1 específica para ${data.clientName} (máximo 50 caracteres)",
+      "description": "Descrição da especialidade 1 aplicada ao projeto ${data.projectName} (máximo 100 caracteres)"
     },
     {
-      "title": "Especialidade 2 (máximo 50 caracteres)",
-      "description": "Descrição da especialidade 2 (máximo 100 caracteres)"
+      "title": "Especialidade 2 específica para ${data.clientName} (máximo 50 caracteres)",
+      "description": "Descrição da especialidade 2 aplicada ao projeto ${data.projectName} (máximo 100 caracteres)"
     }
   ]
 }
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+IMPORTANTE: 
+- Use as informações específicas do projeto: ${data.projectDescription}
+- Personalize para o cliente: ${data.clientName}
+- NÃO mencione "metodologia FLASH" ou termos genéricos
+- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -410,33 +405,32 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Descrição do Projeto: ${data.projectDescription}
+- Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
-${
-  "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${
-        (agent as FlashAgentConfig).flashSpecific.processEmphasis
-      }`
-    : ""
-}
 
-Crie uma seção "Processo" para proposta FLASH. Retorne APENAS um objeto JSON com:
+Crie uma seção "Processo" personalizada para o projeto ${data.projectName} de ${data.clientName}. Retorne APENAS um objeto JSON com:
 
 {
-  "introduction": "Introdução ao processo (máximo 100 caracteres)",
-  "title": "Nosso Processo Flash",
+  "introduction": "Introdução ao processo específico para ${data.projectName} (máximo 100 caracteres)",
+  "title": "Nosso Processo",
   "topics": [
     {
-      "title": "Etapa 1 (máximo 40 caracteres)",
-      "description": "Descrição da etapa 1 (máximo 240 caracteres)"
+      "title": "Etapa 1 específica para ${data.clientName} (máximo 40 caracteres)",
+      "description": "Descrição da etapa 1 aplicada ao projeto ${data.projectName} (máximo 240 caracteres)"
     },
     {
-      "title": "Etapa 2 (máximo 40 caracteres)",
-      "description": "Descrição da etapa 2 (máximo 240 caracteres)"
+      "title": "Etapa 2 específica para ${data.clientName} (máximo 40 caracteres)",
+      "description": "Descrição da etapa 2 aplicada ao projeto ${data.projectName} (máximo 240 caracteres)"
     }
   ]
 }
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+IMPORTANTE: 
+- Use as informações específicas do projeto: ${data.projectDescription}
+- Personalize para o cliente: ${data.clientName}
+- NÃO mencione "metodologia FLASH" ou termos genéricos
+- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -482,36 +476,47 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Descrição do Projeto: ${data.projectDescription}
+- Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
-${
-  "flashSpecific" in agent && agent.flashSpecific
-    ? `- Metodologia FLASH: ${
-        (agent as FlashAgentConfig).flashSpecific.investmentStrategy
-      }`
-    : ""
-}
+- Planos Selecionados: ${data.selectedPlans.join(", ")}
 
-Crie uma seção "Investimento" para proposta FLASH. Retorne APENAS um objeto JSON com:
+Crie uma seção "Investimento" personalizada para o projeto ${
+      data.projectName
+    } de ${data.clientName}. Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título da seção de investimento (máximo 85 caracteres)",
+  "title": "Título da seção de investimento para ${
+    data.projectName
+  } (máximo 85 caracteres)",
   "deliverables": [
     {
-      "title": "Entrega 1 (máximo 30 caracteres)",
-      "description": "Descrição da entrega 1 (máximo 330 caracteres)"
+      "title": "Entrega 1 específica para ${
+        data.clientName
+      } (máximo 30 caracteres)",
+      "description": "Descrição da entrega 1 aplicada ao projeto ${
+        data.projectName
+      } (máximo 330 caracteres)"
     }
   ],
   "plans": [
     {
-      "title": "Plano Flash (máximo 20 caracteres)",
-      "description": "Descrição do plano (máximo 95 caracteres)",
+      "title": "Plano 1 para ${data.clientName} (máximo 20 caracteres)",
+      "description": "Descrição do plano específico para ${
+        data.projectName
+      } (máximo 95 caracteres)",
       "value": "R$ 999",
-      "topics": ["Benefício 1", "Benefício 2", "Benefício 3"]
+      "topics": ["Benefício 1 específico", "Benefício 2 específico", "Benefício 3 específico"]
     }
   ]
 }
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+IMPORTANTE: 
+- Use as informações específicas do projeto: ${data.projectDescription}
+- Personalize para o cliente: ${data.clientName}
+- Use os planos selecionados: ${data.selectedPlans.join(", ")}
+- NÃO mencione "metodologia FLASH" ou termos genéricos
+- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -564,22 +569,28 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Descrição do Projeto: ${data.projectDescription}
+- Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
 
-Crie termos e condições para proposta FLASH. Retorne APENAS um array JSON com:
+Crie termos e condições personalizados para o projeto ${data.projectName} de ${data.clientName}. Retorne APENAS um array JSON com:
 
 [
   {
-    "title": "Prazo de Entrega (máximo 30 caracteres)",
-    "description": "Descrição do prazo (máximo 180 caracteres)"
+    "title": "Prazo de Entrega para ${data.projectName} (máximo 30 caracteres)",
+    "description": "Descrição do prazo específico para ${data.clientName} (máximo 180 caracteres)"
   },
   {
     "title": "Forma de Pagamento (máximo 30 caracteres)",
-    "description": "Descrição do pagamento (máximo 180 caracteres)"
+    "description": "Descrição do pagamento específico para ${data.projectName} (máximo 180 caracteres)"
   }
 ]
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+IMPORTANTE: 
+- Use as informações específicas do projeto: ${data.projectDescription}
+- Personalize para o cliente: ${data.clientName}
+- NÃO mencione "metodologia FLASH" ou termos genéricos
+- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -620,22 +631,28 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Descrição do Projeto: ${data.projectDescription}
+- Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
 
-Crie perguntas frequentes para proposta FLASH. Retorne APENAS um array JSON com:
+Crie perguntas frequentes personalizadas para o projeto ${data.projectName} de ${data.clientName}. Retorne APENAS um array JSON com:
 
 [
   {
-    "question": "Pergunta 1 (máximo 100 caracteres)",
-    "answer": "Resposta 1 (máximo 280 caracteres)"
+    "question": "Pergunta 1 específica para ${data.projectName} (máximo 100 caracteres)",
+    "answer": "Resposta 1 personalizada para ${data.clientName} (máximo 280 caracteres)"
   },
   {
-    "question": "Pergunta 2 (máximo 100 caracteres)",
-    "answer": "Resposta 2 (máximo 280 caracteres)"
+    "question": "Pergunta 2 específica para ${data.projectName} (máximo 100 caracteres)",
+    "answer": "Resposta 2 personalizada para ${data.clientName} (máximo 280 caracteres)"
   }
 ]
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+IMPORTANTE: 
+- Use as informações específicas do projeto: ${data.projectDescription}
+- Personalize para o cliente: ${data.clientName}
+- NÃO mencione "metodologia FLASH" ou termos genéricos
+- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -668,12 +685,11 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     }
   }
 
-  private generateFooter(): FlashFooterSection {
+  private generateFooter(data: FlashThemeData): FlashFooterSection {
     return {
       thanks: "Obrigado pela confiança!",
       followUp: "Vamos começar agora?",
-      disclaimer:
-        "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com a velocidade e qualidade Flash.",
+      disclaimer: `Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto ${data.projectName} para ${data.clientName}.`,
       validity: new Date(
         Date.now() + 15 * 24 * 60 * 60 * 1000
       ).toLocaleDateString("pt-BR"),

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 import {
   StartProposal,
@@ -14,137 +15,22 @@ import { CompanyInfo } from "#/modules/ai-generator/components/generation-steps/
 import { GenerateProposal } from "#/modules/ai-generator/components/generation-steps/GenerateProposal";
 import { PricingStep } from "#/modules/ai-generator/components/generation-steps/PricingStep";
 import { FAQStep } from "#/modules/ai-generator/components/generation-steps/FAQ";
+import EditSaveBottomBar from "#/components/EditSaveBottomBar";
 
-// Componente para mostrar o resumo dos dados
-function DataSummary({
-  selectedService,
-  clientName,
-  projectName,
-  projectDescription,
-  companyInfo,
-  selectedPlan,
-}: {
-  selectedService: string | null;
-  clientName: string;
-  projectName: string;
-  projectDescription: string;
-  companyInfo: string;
-  selectedPlan: number | null;
-}) {
-  if (
-    !selectedService &&
-    !clientName &&
-    !projectName &&
-    !projectDescription &&
-    !companyInfo
-  ) {
-    return null;
-  }
+// Componente para mostrar o resumo dos dados (não usado no modo de edição)
 
-  return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-      <h3 className="text-sm font-medium text-blue-800 mb-2">
-        📋 Resumo dos Dados
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-        {selectedService && (
-          <div>
-            <span className="font-medium text-blue-700">Serviço:</span>{" "}
-            {selectedService}
-          </div>
-        )}
-        {clientName && (
-          <div>
-            <span className="font-medium text-blue-700">Cliente:</span>{" "}
-            {clientName}
-          </div>
-        )}
-        {projectName && (
-          <div>
-            <span className="font-medium text-blue-700">Projeto:</span>{" "}
-            {projectName}
-          </div>
-        )}
-        {projectDescription && (
-          <div>
-            <span className="font-medium text-blue-700">Descrição:</span>{" "}
-            {projectDescription.substring(0, 50)}...
-          </div>
-        )}
-        {companyInfo && (
-          <div>
-            <span className="font-medium text-blue-700">Empresa:</span>{" "}
-            {companyInfo}
-          </div>
-        )}
-        {selectedPlan && (
-          <div>
-            <span className="font-medium text-blue-700">Plano:</span>{" "}
-            {selectedPlan}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// Componente para mostrar o progresso das etapas
-function StepProgress({ currentStep }: { currentStep: string }) {
-  const steps = [
-    { key: "start", label: "Início", icon: "🚀" },
-    { key: "template_selection", label: "Template", icon: "🎨" },
-    { key: "service_selection", label: "Serviço", icon: "⚙️" },
-    { key: "company_info", label: "Empresa", icon: "🏢" },
-    { key: "client_details", label: "Cliente", icon: "👤" },
-    { key: "pricing_step", label: "Preços", icon: "💰" },
-    { key: "faq_step", label: "Configurações", icon: "⚙️" },
-    { key: "generated_proposal", label: "Proposta", icon: "📄" },
-  ];
-
-  const currentIndex = steps.findIndex((step) => step.key === currentStep);
-
-  return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-medium text-gray-800">
-          Progresso da Geração
-        </h2>
-        <span className="text-sm text-gray-500">
-          Etapa {currentIndex + 1} de {steps.length}
-        </span>
-      </div>
-      <div className="flex items-center space-x-2">
-        {steps.map((step, index) => (
-          <div key={step.key} className="flex items-center">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                index <= currentIndex
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-500"
-              }`}
-            >
-              {index < currentIndex ? "✓" : step.icon}
-            </div>
-            {index < steps.length - 1 && (
-              <div
-                className={`w-12 h-1 ${
-                  index < currentIndex ? "bg-blue-500" : "bg-gray-200"
-                }`}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-      <div className="text-center mt-2">
-        <span className="text-sm text-gray-600">
-          {steps[currentIndex]?.label}
-        </span>
-      </div>
-    </div>
-  );
-}
+// Componente para mostrar o progresso das etapas (não usado no modo de edição)
 
 export default function NepfyAIPage() {
+  const searchParams = useSearchParams();
+  const {
+    templateType,
+    formData,
+    updateFormData,
+    setTemplateType,
+    loadProjectData,
+  } = useProjectGenerator();
+
   const [currentStep, setCurrentStep] = useState<string>("start");
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [clientName, setClientName] = useState("");
@@ -158,9 +44,79 @@ export default function NepfyAIPage() {
     Record<string, unknown> | null | undefined
   >(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<string>("");
+  const [saveMessage, setSaveMessage] = useState("");
 
-  const { templateType, formData } = useProjectGenerator();
+  // Edit mode states
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+  const [hasLoadedEdit, setHasLoadedEdit] = useState(false);
+
+  // Load project data for editing
+  useEffect(() => {
+    const editId = searchParams?.get("editId");
+
+    if (!editId || hasLoadedEdit) {
+      return;
+    }
+
+    console.log("Debug - Loading project for editing:", editId);
+
+    const loadEditData = async () => {
+      try {
+        setIsLoadingEdit(true);
+
+        const response = await fetch(`/api/projects/${editId}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const projectData = result.data;
+
+          // Set project ID
+          setCurrentProjectId(editId);
+
+          // Load data into form
+          if (projectData.clientName) setClientName(projectData.clientName);
+          if (projectData.projectName) setProjectName(projectData.projectName);
+          if (projectData.projectDescription)
+            setProjectDescription(projectData.projectDescription);
+          if (projectData.companyName) setCompanyInfo(projectData.companyName);
+          if (projectData.templateType)
+            setTemplateType(projectData.templateType);
+          if (projectData.mainColor) {
+            updateFormData("step1", { mainColor: projectData.mainColor });
+          }
+
+          // Load into ProjectGenerator context
+          loadProjectData(projectData);
+
+          setHasLoadedEdit(true);
+          setIsEditMode(true);
+
+          // Go to FAQ step for regeneration if we have data
+          if (projectData.templateType) {
+            setCurrentStep("faq_step");
+          }
+        } else {
+          console.error("Erro ao carregar dados da proposta:", result.error);
+          setIsLoadingEdit(false);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados da proposta:", error);
+        setIsLoadingEdit(false);
+      }
+    };
+
+    loadEditData();
+  }, [
+    searchParams,
+    hasLoadedEdit,
+    loadProjectData,
+    setTemplateType,
+    updateFormData,
+  ]);
+
+  // No need to track changes for edit mode - just allow regeneration
 
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId);
@@ -274,7 +230,9 @@ export default function NepfyAIPage() {
 
       if (result.success) {
         setSaveMessage("✅ Proposta salva com sucesso! ID: " + result.data.id);
-        // Opcional: redirecionar para o dashboard ou mostrar link para editar
+        // Set project ID for edit mode
+        setCurrentProjectId(result.data.id);
+        setIsEditMode(true);
       } else {
         setSaveMessage("❌ Erro ao salvar: " + result.error);
       }
@@ -284,6 +242,60 @@ export default function NepfyAIPage() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Edit mode functions - simplified for regeneration flow
+  const handleEdit = () => {
+    setIsEditMode(true);
+    setCurrentStep("faq_step");
+  };
+
+  const handleSaveChanges = async () => {
+    if (!currentProjectId) {
+      setSaveMessage("❌ Nenhum projeto para salvar");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage("");
+
+    try {
+      const response = await fetch(`/api/projects/${currentProjectId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          clientName,
+          projectName,
+          projectDescription,
+          companyName: companyInfo,
+          templateType,
+          mainColor: formData.step1?.mainColor || "#3B82F6",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSaveMessage("✅ Alterações salvas com sucesso!");
+        // Go to FAQ step to regenerate proposal
+        setCurrentStep("faq_step");
+      } else {
+        setSaveMessage("❌ Erro ao salvar: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error saving changes:", error);
+      setSaveMessage("❌ Erro ao salvar alterações. Tente novamente.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+    // Go back to generated proposal view
+    setCurrentStep("generated_proposal");
   };
 
   const handleEditPrompt = () => {
@@ -300,9 +312,34 @@ export default function NepfyAIPage() {
     setSaveMessage("");
   };
 
+  // Show loading state for edit mode
+  if (isLoadingEdit) {
+    return (
+      <div className="bg-gray-50 flex flex-1 items-center justify-center min-h-[calc(100vh-250px)]">
+        <div className="mx-auto p-6 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando projeto para edição...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-50 flex flex-1 items-center justify-center min-h-[calc(100vh-250px)]">
       <div className="mx-auto p-6">
+        {/* Header for edit mode */}
+        {isEditMode && currentProjectId && (
+          <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+            <h1 className="text-xl font-bold text-gray-800 mb-2">
+              ✏️ Editando Proposta
+            </h1>
+            <p className="text-gray-600 text-sm">
+              Cliente: <span className="font-medium">{clientName}</span> |
+              Projeto: <span className="font-medium">{projectName}</span>
+            </p>
+          </div>
+        )}
+
         {/* Conteúdo das Etapas */}
         {(() => {
           const stepMap: Record<string, React.ReactNode> = {
@@ -368,17 +405,40 @@ export default function NepfyAIPage() {
               />
             ),
             faq_step: (
-              <div className="bg-white rounded-lg shadow-sm  p-6">
+              <div>
                 <FAQStep
                   handleNext={({ includeTerms, includeFAQ }) => {
                     handleGenerateProposal({ includeTerms, includeFAQ });
                   }}
                   handleBack={() => setCurrentStep("pricing_step")}
                 />
+
+                {/* Show edit mode info */}
+                {isEditMode && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                    <h3 className="text-sm font-medium text-blue-800 mb-2">
+                      ✏️ Modo de Edição
+                    </h3>
+                    <p className="text-sm text-blue-700 mb-2">
+                      Você está editando a proposta:{" "}
+                      <strong>{projectName}</strong> para{" "}
+                      <strong>{clientName}</strong>
+                    </p>
+                    <p className="text-sm text-blue-700">
+                      Clique em &quot;Gerar Proposta&quot; para re-gerar com os
+                      dados atualizados.
+                    </p>
+                    {currentProjectId && (
+                      <p className="text-xs text-blue-600 mt-2">
+                        ID do Projeto: {currentProjectId}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             ),
             generated_proposal: (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="">
                 <GenerateProposal
                   isGenerating={isGenerating}
                   generatedProposal={generatedProposal}
@@ -387,14 +447,16 @@ export default function NepfyAIPage() {
                 {/* Botões de Ação */}
                 {generatedProposal && !isGenerating && (
                   <div className="flex flex-col items-center gap-4 mt-6">
-                    {/* Botão de Salvar */}
-                    <button
-                      onClick={handleSaveProposal}
-                      disabled={isSaving}
-                      className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {isSaving ? "Salvando..." : "💾 Salvar Proposta"}
-                    </button>
+                    {/* Botão de Salvar (only for new proposals) */}
+                    {!isEditMode && (
+                      <button
+                        onClick={handleSaveProposal}
+                        disabled={isSaving}
+                        className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {isSaving ? "Salvando..." : "💾 Salvar Proposta"}
+                      </button>
+                    )}
 
                     {/* Mensagem de Status */}
                     {saveMessage && (
@@ -418,12 +480,21 @@ export default function NepfyAIPage() {
                         🔄 Regenerar Proposta
                       </button>
 
-                      <button
-                        onClick={handleEditPrompt}
-                        className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-                      >
-                        ✏️ Editar Dados do Prompt
-                      </button>
+                      {!isEditMode ? (
+                        <button
+                          onClick={handleEditPrompt}
+                          className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                        >
+                          ✏️ Editar Dados do Prompt
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleEdit}
+                          className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                        >
+                          ✏️ Editar Dados
+                        </button>
+                      )}
                     </div>
 
                     {/* Botão para Nova Proposta */}
@@ -438,6 +509,8 @@ export default function NepfyAIPage() {
                         setProjectDescription("");
                         setCompanyInfo("");
                         setSelectedPlan(null);
+                        setIsEditMode(false);
+                        setCurrentProjectId(null);
                       }}
                       className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
                     >
@@ -451,6 +524,18 @@ export default function NepfyAIPage() {
           return stepMap[currentStep] || null;
         })()}
       </div>
+
+      {/* Edit Save Bottom Bar for edit mode */}
+      {isEditMode && currentProjectId && (
+        <EditSaveBottomBar
+          isEditing={isEditMode}
+          onEdit={handleEdit}
+          onSave={handleSaveChanges}
+          onCancel={handleCancelEdit}
+          isLoading={isSaving}
+          hasChanges={false} // Always allow saving in edit mode
+        />
+      )}
     </div>
   );
 }

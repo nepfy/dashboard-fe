@@ -46,7 +46,7 @@ export function ClientInfo({
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 justify-center items-center gap-10 font-satoshi">
-      <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-8 self-center w-full max-w-[55%]">
+      <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-8 self-center">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3">
