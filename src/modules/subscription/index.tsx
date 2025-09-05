@@ -154,43 +154,6 @@ export function Subscription() {
   return (
     <div className="mx-auto px-4 py-8">
       {/* Debug Section */}
-      <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <h3 className="text-lg font-medium text-yellow-800 mb-2">Debug Info</h3>
-        <div className="space-y-2 text-sm text-yellow-700">
-          <p>
-            <strong>User Plan:</strong> {userPlan || "null"}
-          </p>
-          <p>
-            <strong>Subscription Status:</strong> {subscriptionStatus || "null"}
-          </p>
-          <p>
-            <strong>Subscription Active:</strong>{" "}
-            {subscriptionActive ? "true" : "false"}
-          </p>
-          <p>
-            <strong>Customer ID:</strong> {customerId || "null"}
-          </p>
-          <p>
-            <strong>Is Loaded:</strong> {isLoaded ? "true" : "false"}
-          </p>
-        </div>
-        <button
-          onClick={async () => {
-            try {
-              const response = await fetch("/api/user-account");
-              const data = await response.json();
-              console.log("API Response:", data);
-              alert("Check console for API response");
-            } catch (error) {
-              console.error("API Error:", error);
-              alert("API Error - check console");
-            }
-          }}
-          className="mt-2 px-4 py-2 bg-yellow-600 text-white rounded-md text-sm hover:bg-yellow-700"
-        >
-          Test API
-        </button>
-      </div>
 
       {/* Billing Cycle Toggle */}
       <div className="flex justify-start mb-8">
