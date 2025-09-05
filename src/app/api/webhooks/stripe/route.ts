@@ -1,47 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Stripe } from "stripe";
 import { clerkClient } from "@clerk/nextjs/server";
-import { ClerkStripeSyncService } from "#/lib/services/clerk-stripe-sync";
+import {
+  ClerkStripeSyncService,
+  SubscriptionData,
+} from "#/lib/services/clerk-stripe-sync";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 export const dynamic = "force-dynamic";
-
-// Helper: Attach subscription to user in Clerk (unsafeMetadata) - DEPRECATED
-// Use ClerkStripeSyncService.syncSubscriptionToClerkAndDB instead
-async function attachSubscriptionToUser({
-  userId,
-  subscription,
-  subscriptionType,
-}: {
-  userId: string;
-  subscription: Stripe.Subscription;
-  subscriptionType?: string;
-}) {
-  const clerk = await clerkClient();
-  const user = await clerk.users.getUser(userId);
-
-  await clerk.users.updateUserMetadata(userId, {
-    unsafeMetadata: {
-      ...user.unsafeMetadata,
-      stripe: {
-        ...(typeof user.unsafeMetadata === "object" &&
-        user.unsafeMetadata !== null &&
-        "stripe" in user.unsafeMetadata
-          ? (user.unsafeMetadata as { stripe?: object }).stripe
-          : {}),
-        subscriptionId: subscription.id,
-        subscriptionType:
-          subscriptionType ||
-          (subscription.metadata?.subscription_type ?? "monthly"),
-        subscriptionActive: subscription.status === "active",
-        subscriptionDate: new Date().toISOString(),
-        customerId: subscription.customer,
-        status: subscription.status,
-      },
-    },
-  });
-}
 
 async function handleSubscriptionScheduleUpdated(event: Stripe.Event) {
   try {
@@ -118,7 +85,7 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
     // Use the new sync service for better data consistency
     await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
       user.id,
-      subscriptionUpdated as any,
+      subscriptionUpdated as unknown as SubscriptionData,
       subscriptionUpdated.metadata?.subscription_type
     );
 
@@ -215,7 +182,7 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
     // Use the new sync service for better data consistency
     await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
       user.id,
-      subscription as any,
+      subscription as unknown as SubscriptionData,
       subscription.metadata?.subscription_type
     );
 
@@ -380,7 +347,7 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
           // Use the new sync service for better data consistency
           await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
             userId,
-            finalSubscription as any,
+            finalSubscription as unknown as SubscriptionData,
             subscriptionType
           );
 
@@ -480,7 +447,7 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
           // Use the new sync service for better data consistency
           await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
             userId,
-            finalSubscription as any,
+            finalSubscription as unknown as SubscriptionData,
             subscriptionType
           );
 
@@ -534,7 +501,7 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
         // Use the new sync service for better data consistency
         await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
           userId,
-          subscription as any,
+          subscription as unknown as SubscriptionData,
           subscriptionType
         );
 
