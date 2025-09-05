@@ -121,7 +121,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
               setSelectedPlan(plan);
 
               const checkoutSession = await fetch(
-                "http://localhost:3000/api/stripe/create-checkout-session",
+                `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/create-checkout-session`,
                 {
                   method: "POST",
                   body: JSON.stringify({ priceId: plan.id }),
