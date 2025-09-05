@@ -1,7 +1,37 @@
+import { useUser } from "@clerk/nextjs";
+
+// Define the structure of Stripe metadata in Clerk user metadata
+interface StripeMetadata {
+  subscriptionId?: string;
+  subscriptionType?: string;
+  subscriptionActive?: boolean;
+  subscriptionDate?: string;
+  customerId?: string;
+  status?: string;
+  currentPeriodStart?: string;
+  currentPeriodEnd?: string;
+  cancelAtPeriodEnd?: boolean;
+  canceledAt?: string | null;
+  trialStart?: string | null;
+  trialEnd?: string | null;
+}
+
+interface UserMetadata {
+  stripe?: StripeMetadata;
+}
+
 export function useStripeCustom() {
-  // For now, return null as userPlan until Stripe integration is complete
-  // This will be replaced with real user data from webhooks
-  const userPlan = null;
+  const { user, isLoaded } = useUser();
+
+  // Get user's Stripe subscription data from Clerk metadata
+  const userPlan =
+    (user?.unsafeMetadata as UserMetadata)?.stripe?.subscriptionId || null;
+  const subscriptionStatus =
+    (user?.unsafeMetadata as UserMetadata)?.stripe?.status || null;
+  const subscriptionActive =
+    (user?.unsafeMetadata as UserMetadata)?.stripe?.subscriptionActive || false;
+  const customerId =
+    (user?.unsafeMetadata as UserMetadata)?.stripe?.customerId || null;
 
   const fetchPlans = async () => {
     try {
@@ -22,8 +52,8 @@ export function useStripeCustom() {
       const response = await fetch("/api/stripe/subscription", {
         method: "POST",
         body: JSON.stringify({
-          subscriptionId: null,
-          customerId: null,
+          subscriptionId: userPlan,
+          customerId: customerId,
         }),
       });
 
@@ -38,6 +68,10 @@ export function useStripeCustom() {
 
   return {
     userPlan,
+    subscriptionStatus,
+    subscriptionActive,
+    customerId,
+    isLoaded,
     fetchPlans,
     fetchSubscription,
   };

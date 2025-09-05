@@ -76,12 +76,18 @@ export default function ProjectsView({
         </p>
 
         <div className="flex flex-wrap items-start gap-2">
-          <Link href="/gerador-de-propostas">
+          <Link href="/proposta-com-ia">
             <div className="flex items-center justify-center w-38 h-[36px] gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
               <PlusIcon fill="#FFFFFF" />
               Criar proposta
             </div>
           </Link>
+          {/* <Link href="/proposta-com-ia">
+            <div className="flex items-center justify-center h-[36px] gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-300 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse px-2">
+              <PlusIcon fill="#FFFFFF" />
+              Criar proposta com IA
+            </div>
+          </Link> */}
 
           <Link href="/dashboard/propostas">
             <div className="w-[100px] h-[36px] flex items-center justify-center text-white-neutral-light-900 text-sm font-medium rounded-[var(--radius-s)] cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-400 border border-white-neutral-light-300 button-inner">

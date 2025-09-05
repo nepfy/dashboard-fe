@@ -141,7 +141,7 @@ export default function DashboardProjectView({
         </p>
 
         <div className="w-full flex items-center justify-start gap-2 flex-wrap">
-          <Link href="/gerador-de-propostas" className={BUTTON_CLASS}>
+          <Link href="/dashboard/propostas" className={BUTTON_CLASS}>
             <Sparkle width="18" height="18" fill="#1C1A22" />
             Criar Propostas
           </Link>

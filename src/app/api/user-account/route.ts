@@ -1,4 +1,3 @@
-// src/app/api/user-account/route.ts
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { personUserTable, companyUserTable } from "#/lib/db/schema/users";
@@ -47,6 +46,9 @@ export async function GET() {
     const userData = {
       ...personData[0],
       companyData: companyData.length > 0 ? companyData[0] : null,
+      unsafeMetadata: user.unsafeMetadata,
+      publicMetadata: user.publicMetadata,
+      stripe: user.unsafeMetadata?.stripe || null,
     };
 
     return NextResponse.json({ success: true, data: userData });
@@ -133,6 +135,9 @@ export async function PUT(request: Request) {
     const result = {
       ...updatedUser[0],
       companyData: updatedCompany.length > 0 ? updatedCompany[0] : null,
+      unsafeMetadata: user.unsafeMetadata,
+      publicMetadata: user.publicMetadata,
+      stripe: user.unsafeMetadata?.stripe || null,
     };
 
     return NextResponse.json({ success: true, data: result });
