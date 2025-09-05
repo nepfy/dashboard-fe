@@ -227,9 +227,12 @@ export default function NepfyAIPage() {
       });
 
       const result = await response.json();
+      console.log("result", result);
 
       if (result.success) {
-        setSaveMessage("✅ Proposta salva com sucesso! ID: " + result.data.id);
+        setSaveMessage(
+          "✅ Proposta salva com sucesso! ID: " + result?.metadata?.projectId
+        );
         // Set project ID for edit mode
         setCurrentProjectId(result.data.id);
         setIsEditMode(true);
