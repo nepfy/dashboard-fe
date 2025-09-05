@@ -24,7 +24,7 @@ export interface NovoSection extends BaseSection {
 export interface NovoProposal extends BaseProposal {
   // TODO: Define Novo-specific proposal structure
   // This will be implemented when the Novo template is ready
-  novo: true; // eslint-disable-line @typescript-eslint/no-unused-vars
+  novo: true;
 }
 
 export const novoTemplateConfig = {

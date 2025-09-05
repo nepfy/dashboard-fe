@@ -94,6 +94,8 @@ export interface FlashFooterSection {
   followUp: string;
   disclaimer: string;
   validity: string;
+  callToAction: string;
+  contactInfo: string;
 }
 
 export type FlashSection =
@@ -693,6 +695,8 @@ IMPORTANTE:
       validity: new Date(
         Date.now() + 15 * 24 * 60 * 60 * 1000
       ).toLocaleDateString("pt-BR"),
+      callToAction: "Iniciar Projeto",
+      contactInfo: "Entre em contato para mais detalhes",
     };
   }
 

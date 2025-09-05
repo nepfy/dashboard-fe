@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
-import { CopyLinkCacheProvider } from "#/contexts/CopyLinkCacheContext";
 import Link from "next/link";
 
 export default function DashboardLayout({
@@ -15,17 +14,16 @@ export default function DashboardLayout({
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (isLoaded && user) {
-  //     // Example: Assume subscription status is stored in user.publicMetadata.hasActiveSubscription
-  //     const hasActiveSubscription = user?.publicMetadata?.hasActiveSubscription;
+  useEffect(() => {
+    if (isLoaded && user) {
+      const hasActiveSubscription = user?.publicMetadata?.hasActiveSubscription;
 
-  //     if (!hasActiveSubscription) {
-  //       router.push("/planos"); // Redirect to pricing/plans page
-  //     }
-  //     // Optionally, you can add onboarding logic here as well if needed
-  //   }
-  // }, [user, isLoaded, router]);
+      if (!hasActiveSubscription) {
+        router.push("/planos"); // Redirect to pricing/plans page
+      }
+      // Optionally, you can add onboarding logic here as well if needed
+    }
+  }, [user, isLoaded, router]);
 
   return (
     <div className="flex flex-col bg-gray-50 relative w-full min-h-screen">

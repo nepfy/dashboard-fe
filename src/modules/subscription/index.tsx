@@ -2,7 +2,6 @@
 
 import { useStripeCustom } from "#/hooks/use-stripe";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
 type Plan = {
@@ -24,13 +23,7 @@ export function Subscription() {
     "monthly"
   );
   const [loading, setLoading] = useState(true);
-  const {
-    userPlan,
-    subscriptionStatus,
-    subscriptionActive,
-    customerId,
-    isLoaded,
-  } = useStripeCustom();
+  const { userPlan, isLoaded } = useStripeCustom();
   const { user } = useUser();
   // const router = useRouter();
 
@@ -47,6 +40,7 @@ export function Subscription() {
         const data = await res.json();
         setPlans(data || []);
       } catch (e) {
+        console.error("Failed to fetch plans:", e);
         setPlans([]);
       } finally {
         setLoading(false);
@@ -94,6 +88,7 @@ export function Subscription() {
         throw new Error("No checkout URL received");
       }
     } catch (error) {
+      console.error("Failed to create checkout session:", error);
       alert("Erro ao criar sessão de checkout. Tente novamente.");
     }
   };

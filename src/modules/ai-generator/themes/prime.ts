@@ -191,7 +191,7 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
     ? `- Metodologia PRIME: ${
         (this.agent as { primeSpecific: { introductionStyle: string } })
           .primeSpecific.introductionStyle
@@ -293,8 +293,11 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.aboutUsFocus}`
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${
+        (this.agent as { primeSpecific: { aboutUsFocus: string } })
+          .primeSpecific.aboutUsFocus
+      }`
     : ""
 }
 
@@ -352,8 +355,11 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.specialtiesApproach}`
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${
+        (this.agent as { primeSpecific: { specialtiesApproach: string } })
+          .primeSpecific.specialtiesApproach
+      }`
     : ""
 }
 
@@ -412,8 +418,11 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.processEmphasis}`
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${
+        (this.agent as { primeSpecific: { processEmphasis: string } })
+          .primeSpecific.processEmphasis
+      }`
     : ""
 }
 
@@ -481,8 +490,11 @@ DADOS DO PROJETO:
 - Setor: ${this.agent?.sector}
 - Planos Selecionados: ${data.selectedPlans.join(", ")}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.investmentStrategy}`
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${
+        (this.agent as { primeSpecific: { investmentStrategy: string } })
+          .primeSpecific.investmentStrategy
+      }`
     : ""
 }
 
@@ -555,8 +567,11 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.processEmphasis}`
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${
+        (this.agent as { primeSpecific: { processEmphasis: string } })
+          .primeSpecific.processEmphasis
+      }`
     : ""
 }
 
@@ -707,8 +722,11 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.processEmphasis}`
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${
+        (this.agent as { primeSpecific: { processEmphasis: string } })
+          .primeSpecific.processEmphasis
+      }`
     : ""
 }
 
@@ -837,8 +855,11 @@ DADOS DO PROJETO:
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
 ${
-  "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${this.agent.primeSpecific.investmentStrategy}`
+  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
+    ? `- Metodologia PRIME: ${
+        (this.agent as { primeSpecific: { investmentStrategy: string } })
+          .primeSpecific.investmentStrategy
+      }`
     : ""
 }
 

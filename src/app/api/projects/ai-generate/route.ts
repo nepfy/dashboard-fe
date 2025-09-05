@@ -10,7 +10,7 @@ import {
   primeServiceMapping,
 } from "#/modules/ai-generator/utils";
 import { db } from "#/lib/db";
-import { eq } from "drizzle-orm";
+import { eq } from "drizzle-orm/expressions";
 import {
   projectsTable,
   projectTeamMembersTable,
@@ -337,39 +337,53 @@ async function createProjectFromAIResult(
   }
 
   // Create plans if available
-  if (aiResult.plans && Array.isArray(aiResult.plans)) {
-    const plansData = aiResult.plans.map((plan, index: number) => ({
+  if (
+    (aiResult as Record<string, unknown>).plans &&
+    Array.isArray((aiResult as Record<string, unknown>).plans)
+  ) {
+    const plansData = (
+      (aiResult as Record<string, unknown>).plans as Array<
+        Record<string, unknown>
+      >
+    ).map((plan: Record<string, unknown>, index: number) => ({
       projectId,
-      title: plan.title || `Plano ${index + 1}`,
-      description: plan.description || "",
-      price: plan.price || null,
-      pricePeriod: plan.pricePeriod || "one-time",
-      isBestOffer: plan.isBestOffer || false,
-      ctaButtonTitle: plan.ctaButtonTitle || "Começar Agora",
+      title: (plan.title as string) || `Plano ${index + 1}`,
+      description: (plan.description as string) || "",
+      price: (plan.price as string) || null,
+      pricePeriod: (plan.pricePeriod as string) || "one-time",
+      isBestOffer: (plan.isBestOffer as boolean) || false,
+      ctaButtonTitle: (plan.ctaButtonTitle as string) || "Começar Agora",
       sortOrder: index,
       created_at: new Date(),
       updated_at: new Date(),
     }));
 
     if (plansData.length > 0) {
-      const [insertedPlans] = await db
+      const insertedPlans = await db
         .insert(projectPlansTable)
         .values(plansData)
         .returning();
 
       // Create plan details if available
-      if (aiResult.planDetails && Array.isArray(aiResult.planDetails)) {
+      if (
+        (aiResult as Record<string, unknown>).planDetails &&
+        Array.isArray((aiResult as Record<string, unknown>).planDetails)
+      ) {
         for (let i = 0; i < insertedPlans.length; i++) {
           const plan = insertedPlans[i];
-          const planDetail = aiResult.planDetails[i];
+          const planDetail = (
+            (aiResult as Record<string, unknown>).planDetails as Array<
+              Record<string, unknown>
+            >
+          )[i];
 
           if (
             planDetail &&
             planDetail.features &&
             Array.isArray(planDetail.features)
           ) {
-            const planDetailsData = planDetail.features.map(
-              (feature, index: number) => ({
+            const planDetailsData = (planDetail.features as Array<string>).map(
+              (feature: string, index: number) => ({
                 planId: plan.id,
                 description: feature || "",
                 sortOrder: index,
@@ -390,13 +404,17 @@ async function createProjectFromAIResult(
   // Create terms and conditions if available
   if (
     requestData.includeTerms &&
-    aiResult.terms &&
-    Array.isArray(aiResult.terms)
+    (aiResult as Record<string, unknown>).terms &&
+    Array.isArray((aiResult as Record<string, unknown>).terms)
   ) {
-    const termsData = aiResult.terms.map((term, index: number) => ({
+    const termsData = (
+      (aiResult as Record<string, unknown>).terms as Array<
+        Record<string, unknown>
+      >
+    ).map((term: Record<string, unknown>, index: number) => ({
       projectId,
-      title: term.title || `Termo ${index + 1}`,
-      description: term.description || "",
+      title: (term.title as string) || `Termo ${index + 1}`,
+      description: (term.description as string) || "",
       sortOrder: index,
       created_at: new Date(),
       updated_at: new Date(),
@@ -408,11 +426,19 @@ async function createProjectFromAIResult(
   }
 
   // Create FAQ if available
-  if (requestData.includeFAQ && aiResult.faq && Array.isArray(aiResult.faq)) {
-    const faqData = aiResult.faq.map((faqItem, index: number) => ({
+  if (
+    requestData.includeFAQ &&
+    (aiResult as Record<string, unknown>).faq &&
+    Array.isArray((aiResult as Record<string, unknown>).faq)
+  ) {
+    const faqData = (
+      (aiResult as Record<string, unknown>).faq as Array<
+        Record<string, unknown>
+      >
+    ).map((faqItem: Record<string, unknown>, index: number) => ({
       projectId,
-      question: faqItem.question || `Pergunta ${index + 1}`,
-      answer: faqItem.answer || "",
+      question: (faqItem.question as string) || `Pergunta ${index + 1}`,
+      answer: (faqItem.answer as string) || "",
       sortOrder: index,
       created_at: new Date(),
       updated_at: new Date(),

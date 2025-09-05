@@ -1,11 +1,10 @@
-// src/app/api/user-account/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -16,8 +15,8 @@ export async function GET(req: NextRequest) {
         userId: user.id,
         unsafeMetadata: user.unsafeMetadata,
         publicMetadata: user.publicMetadata,
-        stripe: user.unsafeMetadata?.stripe || null
-      }
+        stripe: user.unsafeMetadata?.stripe || null,
+      },
     });
   } catch (error) {
     console.error("Error fetching user account:", error);

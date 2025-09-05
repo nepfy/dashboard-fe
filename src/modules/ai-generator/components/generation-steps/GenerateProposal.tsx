@@ -15,7 +15,6 @@ export function GenerateProposal({
     (generatedProposal as Record<string, unknown>)?.finalProposal
   );
 
-  // Helper function to safely convert values to string
   const safeString = (value: unknown, defaultValue = ""): string => {
     if (value === null || value === undefined) return defaultValue;
     if (typeof value === "string") return value;
@@ -53,12 +52,10 @@ export function GenerateProposal({
     );
   }
 
-  // Extract key sections from the generated proposal
   const getSectionData = (sectionName: string) => {
     if (!generatedProposal || typeof generatedProposal !== "object")
       return null;
 
-    // Check if data is in finalProposal (Flash/Prime templates)
     const finalProposal = (generatedProposal as Record<string, unknown>)
       .finalProposal;
     if (finalProposal && typeof finalProposal === "object") {
@@ -67,7 +64,6 @@ export function GenerateProposal({
       if (data && typeof data === "object") return data;
     }
 
-    // Fallback to direct access (regular templates)
     const data = (generatedProposal as Record<string, unknown>)[sectionName];
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return data;
@@ -95,7 +91,6 @@ export function GenerateProposal({
           </p>
         </div>
 
-        {/* Tabs */}
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6">
           <button
             onClick={() => setActiveTab("preview")}
@@ -119,10 +114,8 @@ export function GenerateProposal({
           </button>
         </div>
 
-        {/* Content */}
         {activeTab === "preview" ? (
           <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
-            {/* Introduction */}
             {introduction && (
               <div className="border-b pb-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
@@ -131,14 +124,16 @@ export function GenerateProposal({
                     "Introdução"
                   )}
                 </h2>
-                {(introduction as Record<string, unknown>).subtitle && (
+                {Boolean(
+                  (introduction as Record<string, unknown>).subtitle
+                ) && (
                   <p className="text-gray-600 mb-3">
                     {safeString(
                       (introduction as Record<string, unknown>).subtitle
                     )}
                   </p>
                 )}
-                {(introduction as Record<string, unknown>).services &&
+                {Boolean((introduction as Record<string, unknown>).services) &&
                   Array.isArray(
                     (introduction as Record<string, unknown>).services
                   ) && (
@@ -159,8 +154,7 @@ export function GenerateProposal({
               </div>
             )}
 
-            {/* About Us */}
-            {aboutUs && (
+            {Boolean(aboutUs) && (
               <div className="border-b pb-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
                   {safeString(
@@ -168,7 +162,7 @@ export function GenerateProposal({
                     "Sobre Nós"
                   )}
                 </h2>
-                {(aboutUs as Record<string, unknown>).subtitle && (
+                {Boolean((aboutUs as Record<string, unknown>).subtitle) && (
                   <p className="text-gray-600">
                     {safeString((aboutUs as Record<string, unknown>).subtitle)}
                   </p>
@@ -176,9 +170,8 @@ export function GenerateProposal({
               </div>
             )}
 
-            {/* Specialties */}
-            {specialties &&
-              (specialties as Record<string, unknown>).topics &&
+            {Boolean(specialties) &&
+              (specialties as Record<string, React.ReactNode>).topics &&
               Array.isArray(
                 (specialties as Record<string, unknown>).topics
               ) && (
@@ -198,7 +191,9 @@ export function GenerateProposal({
                         <h3 className="font-medium text-gray-800 mb-1">
                           {safeString((topic as Record<string, unknown>).title)}
                         </h3>
-                        {(topic as Record<string, unknown>).description && (
+                        {Boolean(
+                          (topic as Record<string, unknown>).description
+                        ) && (
                           <p className="text-sm text-gray-600">
                             {safeString(
                               (topic as Record<string, unknown>).description
@@ -211,9 +206,8 @@ export function GenerateProposal({
                 </div>
               )}
 
-            {/* Process Steps */}
             {steps &&
-              (steps as Record<string, unknown>).topics &&
+              (steps as Record<string, React.ReactNode>).topics &&
               Array.isArray((steps as Record<string, unknown>).topics) && (
                 <div className="border-b pb-4">
                   <h2 className="text-xl font-semibold text-gray-800 mb-3">
@@ -236,7 +230,9 @@ export function GenerateProposal({
                               (step as Record<string, unknown>).title
                             )}
                           </h3>
-                          {(step as Record<string, unknown>).description && (
+                          {Boolean(
+                            (step as Record<string, unknown>).description
+                          ) && (
                             <p className="text-sm text-gray-600">
                               {safeString(
                                 (step as Record<string, unknown>).description
@@ -250,7 +246,6 @@ export function GenerateProposal({
                 </div>
               )}
 
-            {/* Investment & Plans */}
             {investment && (
               <div className="border-b pb-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
@@ -272,14 +267,16 @@ export function GenerateProposal({
                               (plan as Record<string, unknown>).title
                             )}
                           </h3>
-                          {(plan as Record<string, unknown>).description && (
+                          {Boolean(
+                            (plan as Record<string, unknown>).description
+                          ) && (
                             <p className="text-sm text-gray-600 mb-2">
                               {safeString(
                                 (plan as Record<string, unknown>).description
                               )}
                             </p>
                           )}
-                          {(plan as Record<string, unknown>).value && (
+                          {Boolean((plan as Record<string, unknown>).value) && (
                             <p className="text-lg font-bold text-blue-600">
                               {safeString(
                                 (plan as Record<string, unknown>).value
@@ -294,7 +291,6 @@ export function GenerateProposal({
               </div>
             )}
 
-            {/* Terms */}
             {terms && Array.isArray(terms) && (
               <div className="border-b pb-4">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
@@ -303,7 +299,7 @@ export function GenerateProposal({
                 <div className="space-y-3">
                   {(terms as unknown[]).map((term: unknown, index: number) => (
                     <div key={index}>
-                      {(term as Record<string, unknown>).title && (
+                      {Boolean((term as Record<string, unknown>).title) && (
                         <h3 className="font-medium text-gray-800 mb-1">
                           {safeString((term as Record<string, unknown>).title)}
                         </h3>
@@ -319,7 +315,6 @@ export function GenerateProposal({
               </div>
             )}
 
-            {/* FAQ */}
             {faq && Array.isArray(faq) && (
               <div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">
