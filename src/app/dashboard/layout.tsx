@@ -18,13 +18,12 @@ export default function DashboardLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    if (isLoaded && !user) {
       router.push("/login");
+      return;
     }
 
     if (isLoaded && user?.unsafeMetadata.stripe) {
-      console.log({ user: user?.unsafeMetadata.stripe });
-      // Example: Assume subscription status is stored in user.unsafeMetadata.stripe.hasActiveSubscription
       const hasActiveSubscription = (
         user?.unsafeMetadata.stripe as { subscriptionActive?: boolean }
       )?.subscriptionActive;
@@ -34,9 +33,20 @@ export default function DashboardLayout({
       if (!hasActiveSubscription) {
         router.push("/planos"); // Redirect to pricing/plans page
       }
-      // Optionally, you can add onboarding logic here as well if needed
     }
   }, [user, isLoaded, router]);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--color-primary-light-400)]"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <CopyLinkCacheProvider>
