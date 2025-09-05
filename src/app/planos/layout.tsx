@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
 import { CopyLinkCacheProvider } from "#/contexts/CopyLinkCacheContext";
+import Link from "next/link";
 
 export default function DashboardLayout({
   children,
@@ -30,7 +31,9 @@ export default function DashboardLayout({
     <div className="flex flex-col bg-gray-50 relative w-full min-h-screen">
       <header className="p-4 md:p-6 justify-start">
         <div className="flex items-center justify-between max-w-6xl">
-          <div className="text-xl font-bold text-gray-900">.nepfy</div>
+          <Link href="/">
+            <div className="text-xl font-bold text-gray-900">.nepfy</div>
+          </Link>
           <button className="md:hidden">
             <div className="w-6 h-6 flex flex-col justify-center space-y-1">
               <div className="w-full h-0.5 bg-gray-600"></div>
