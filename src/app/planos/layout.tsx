@@ -16,12 +16,13 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (isLoaded && user) {
-      const hasActiveSubscription = user?.publicMetadata?.hasActiveSubscription;
+      const hasActiveSubscription = (
+        user?.unsafeMetadata.stripe as { subscriptionActive?: boolean }
+      )?.subscriptionActive;
 
-      if (!hasActiveSubscription) {
-        router.push("/planos"); // Redirect to pricing/plans page
+      if (hasActiveSubscription) {
+        router.push("/dashboard");
       }
-      // Optionally, you can add onboarding logic here as well if needed
     }
   }, [user, isLoaded, router]);
 
