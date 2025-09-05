@@ -1,8 +1,8 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { Stripe } from "stripe";
 import { db } from "#/lib/db";
-import { subscriptionsTable, personUserTable } from "#/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { subscriptionsTable } from "#/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -10,7 +10,7 @@ export interface SubscriptionData {
   id: string;
   status: string;
   customer: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   current_period_start: number;
   current_period_end: number;
   cancel_at_period_end: boolean;
@@ -30,12 +30,18 @@ export class ClerkStripeSyncService {
   ) {
     try {
       // 1. Update Clerk metadata
-      await this.updateClerkSubscriptionMetadata(userId, subscription, subscriptionType);
-      
+      await this.updateClerkSubscriptionMetadata(
+        userId,
+        subscription,
+        subscriptionType
+      );
+
       // 2. Update local database
       await this.upsertSubscriptionInDB(userId, subscription, subscriptionType);
-      
-      console.log(`Successfully synced subscription ${subscription.id} for user ${userId}`);
+
+      console.log(
+        `Successfully synced subscription ${subscription.id} for user ${userId}`
+      );
     } catch (error) {
       console.error("Error syncing subscription:", error);
       throw error;
@@ -60,17 +66,30 @@ export class ClerkStripeSyncService {
         ? (user.unsafeMetadata as { stripe?: object }).stripe
         : {}),
       subscriptionId: subscription.id,
-      subscriptionType: subscriptionType || subscription.metadata?.subscription_type || "monthly",
+      subscriptionType:
+        (subscriptionType as string) ||
+        (subscription.metadata?.subscription_type as string) ||
+        "monthly",
       subscriptionActive: subscription.status === "active",
       subscriptionDate: new Date().toISOString(),
       customerId: subscription.customer,
       status: subscription.status,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000).toISOString(),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+      currentPeriodStart: new Date(
+        subscription.current_period_start * 1000
+      ).toISOString(),
+      currentPeriodEnd: new Date(
+        subscription.current_period_end * 1000
+      ).toISOString(),
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : null,
-      trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000).toISOString() : null,
-      trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
+      canceledAt: subscription.canceled_at
+        ? new Date(subscription.canceled_at * 1000).toISOString()
+        : null,
+      trialStart: subscription.trial_start
+        ? new Date(subscription.trial_start * 1000).toISOString()
+        : null,
+      trialEnd: subscription.trial_end
+        ? new Date(subscription.trial_end * 1000).toISOString()
+        : null,
     };
 
     await clerk.users.updateUserMetadata(userId, {
@@ -94,13 +113,22 @@ export class ClerkStripeSyncService {
       stripeSubscriptionId: subscription.id,
       stripeCustomerId: subscription.customer,
       status: subscription.status,
-      subscriptionType: subscriptionType || subscription.metadata?.subscription_type || "monthly",
+      subscriptionType:
+        (subscriptionType as string) ||
+        (subscription.metadata?.subscription_type as string) ||
+        "monthly",
       currentPeriodStart: new Date(subscription.current_period_start * 1000),
       currentPeriodEnd: new Date(subscription.current_period_end * 1000),
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
-      trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
-      trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+      canceledAt: subscription.canceled_at
+        ? new Date(subscription.canceled_at * 1000)
+        : null,
+      trialStart: subscription.trial_start
+        ? new Date(subscription.trial_start * 1000)
+        : null,
+      trialEnd: subscription.trial_end
+        ? new Date(subscription.trial_end * 1000)
+        : null,
       metadata: JSON.stringify(subscription.metadata),
       updatedAt: new Date(),
     };
@@ -134,9 +162,11 @@ export class ClerkStripeSyncService {
     try {
       const clerk = await clerkClient();
       const user = await clerk.users.getUser(userId);
-      
+
       // Get user's primary email
-      const primaryEmail = user.emailAddresses.find(email => email.id === user.primaryEmailAddressId);
+      const primaryEmail = user.emailAddresses.find(
+        (email) => email.id === user.primaryEmailAddressId
+      );
       if (!primaryEmail) {
         throw new Error("No primary email found for user");
       }
@@ -236,11 +266,16 @@ export class ClerkStripeSyncService {
 
       // Get updated subscription data
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      
-      // Sync the cancellation to both systems
-      await this.syncSubscriptionToClerkAndDB(userId, subscription as SubscriptionData);
 
-      console.log(`Successfully canceled subscription ${subscriptionId} for user ${userId}`);
+      // Sync the cancellation to both systems
+      await this.syncSubscriptionToClerkAndDB(
+        userId,
+        subscription as unknown as SubscriptionData
+      );
+
+      console.log(
+        `Successfully canceled subscription ${subscriptionId} for user ${userId}`
+      );
     } catch (error) {
       console.error("Error canceling subscription:", error);
       throw error;
@@ -259,11 +294,16 @@ export class ClerkStripeSyncService {
 
       // Get updated subscription data
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      
-      // Sync the reactivation to both systems
-      await this.syncSubscriptionToClerkAndDB(userId, subscription as SubscriptionData);
 
-      console.log(`Successfully reactivated subscription ${subscriptionId} for user ${userId}`);
+      // Sync the reactivation to both systems
+      await this.syncSubscriptionToClerkAndDB(
+        userId,
+        subscription as unknown as SubscriptionData
+      );
+
+      console.log(
+        `Successfully reactivated subscription ${subscriptionId} for user ${userId}`
+      );
     } catch (error) {
       console.error("Error reactivating subscription:", error);
       throw error;

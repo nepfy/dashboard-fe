@@ -76,8 +76,6 @@ export async function POST(req: Request) {
   }
 
   if (eventType === "user.deleted") {
-    const { id } = evt.data;
-
     try {
       // Note: We don't delete Stripe customers when users are deleted from Clerk
       // This is to preserve billing history and prevent data loss
