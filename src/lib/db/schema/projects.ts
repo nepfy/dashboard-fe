@@ -18,16 +18,16 @@ export const projectsTable = pgTable("projects", {
     .notNull()
     .references(() => personUserTable.id),
 
-  projectName: varchar("project_name", { length: 255 }).notNull(),
+  projectName: text("project_name").notNull(),
   hideClientName: boolean("hide_client_name").default(false),
-  clientName: varchar("client_name", { length: 255 }).notNull(),
+  clientName: text("client_name").notNull(),
   hideClientPhoto: boolean("hide_client_photo").default(false),
   clientPhoto: text("client_photo"),
   projectSentDate: timestamp("project_sent_date", { mode: "date" }),
   projectValidUntil: timestamp("project_valid_until", {
     mode: "date",
   }),
-  projectStatus: varchar("project_status", { length: 255 }).notNull(),
+  projectStatus: text("project_status").notNull(),
   projectVisualizationDate: timestamp("project_visualization_date", {
     mode: "date",
   }),
@@ -35,10 +35,10 @@ export const projectsTable = pgTable("projects", {
   templateType: varchar("template_type", { length: 50 }),
 
   mainColor: varchar("main_color", { length: 7 }),
-  companyName: varchar("company_name", { length: 255 }),
-  companyEmail: varchar("company_email", { length: 255 }),
+  companyName: text("company_name"),
+  companyEmail: text("company_email"),
   ctaButtonTitle: varchar("cta_button_title", { length: 100 }),
-  pageTitle: varchar("page_title", { length: 255 }),
+  pageTitle: text("page_title"),
   pageSubtitle: text("page_subtitle"),
   hidePageSubtitle: boolean("hide_page_subtitle").default(false),
   services: text("services"),
@@ -76,7 +76,7 @@ export const projectsTable = pgTable("projects", {
   hideTestimonialsSection: boolean("hide_testimonials_section").default(false),
 
   hideInvestmentSection: boolean("hide_investment_section").default(false),
-  investmentTitle: varchar("investment_title", { length: 255 }),
+  investmentTitle: text("investment_title"),
 
   hideIncludedServicesSection: boolean(
     "hide_included_services_section"
@@ -88,14 +88,14 @@ export const projectsTable = pgTable("projects", {
 
   hideFaqSection: boolean("hide_faq_section").default(false),
   hideFaqSubtitle: boolean("hide_faq_subtitle").default(false),
-  faqSubtitle: varchar("faq_subtitle", { length: 255 }),
+  faqSubtitle: text("faq_subtitle"),
 
   hideFinalMessageSection: boolean("hide_final_message_section").default(false),
   hideFinalMessageSubtitle: boolean("hide_final_message_subtitle").default(
     false
   ),
-  endMessageTitle: varchar("end_message_title", { length: 255 }),
-  endMessageTitle2: varchar("end_message_title_2", { length: 255 }),
+  endMessageTitle: text("end_message_title"),
+  endMessageTitle2: text("end_message_title_2"),
   endMessageDescription: text("end_message_description"),
 
   projectUrl: varchar("project_url", { length: 255 }), // Just the project part, not full URL
@@ -113,8 +113,8 @@ export const projectTeamMembersTable = pgTable("project_team_members", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
-  name: varchar("name", { length: 255 }).notNull(),
-  role: varchar("role", { length: 255 }),
+  name: text("name").notNull(),
+  role: text("role"),
   photo: text("photo"), // URL or file path
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
@@ -127,7 +127,7 @@ export const projectExpertiseTable = pgTable("project_expertise", {
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
   icon: text("icon"), // URL, file path, or icon name
-  title: varchar("title", { length: 255 }).notNull(),
+  title: text("title").notNull(),
   description: text("description"),
   sortOrder: integer("sort_order").default(0),
   hideExpertiseIcon: boolean("hide_expertise_icon").default(false),
@@ -142,7 +142,7 @@ export const projectResultsTable = pgTable("project_results", {
     .references(() => projectsTable.id, { onDelete: "cascade" }),
   hidePhoto: boolean("hide_photo").default(false),
   photo: text("photo"), // URL or file path
-  client: varchar("client", { length: 255 }),
+  client: text("client"),
   subtitle: text("subtitle"),
   investment: decimal("investment", { precision: 15, scale: 2 }),
   roi: decimal("roi", { precision: 10, scale: 2 }),
@@ -159,7 +159,7 @@ export const projectClientsTable = pgTable("project_clients", {
   hideLogo: boolean("hide_logo").default(false),
   logo: text("logo"),
   hideClientName: boolean("hide_client_name").default(false),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: text("name").notNull(),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
 });
@@ -171,7 +171,7 @@ export const projectProcessStepsTable = pgTable("project_process_steps", {
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
   stepCounter: integer("step_counter").notNull(),
-  stepName: varchar("step_name", { length: 255 }).notNull(),
+  stepName: text("step_name").notNull(),
   description: text("description"),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
@@ -184,8 +184,8 @@ export const projectTestimonialsTable = pgTable("project_testimonials", {
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
   testimonial: text("testimonial").notNull(),
-  name: varchar("name", { length: 255 }).notNull(),
-  role: varchar("role", { length: 255 }),
+  name: text("name").notNull(),
+  role: text("role"),
   photo: text("photo"), // URL or file path
   sortOrder: integer("sort_order").default(0),
   hidePhoto: boolean("hide_photo").default(false),
@@ -198,7 +198,7 @@ export const projectServicesTable = pgTable("project_services", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
-  title: varchar("title", { length: 255 }).notNull(),
+  title: text("title").notNull(),
   description: text("description"),
   sortOrder: integer("sort_order").default(0),
   ...timestamps,
@@ -210,7 +210,7 @@ export const projectPlansTable = pgTable("project_plans", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projectsTable.id, { onDelete: "cascade" }),
-  title: varchar("title", { length: 255 }).notNull(),
+  title: text("title").notNull(),
   description: text("description"),
   isBestOffer: boolean("is_best_offer").default(false),
   price: decimal("price", { precision: 15, scale: 2 }),

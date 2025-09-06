@@ -239,6 +239,13 @@
       "when": 1753641718848,
       "tag": "0033_grey_ted_forrester",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1757181016485,
+      "tag": "0034_soft_lady_deathstrike",
+      "breakpoints": true
     }
   ]
 }
