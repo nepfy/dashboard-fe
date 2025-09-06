@@ -541,10 +541,12 @@ export async function POST(request: NextRequest) {
     let originalServiceId: string;
 
     if (templateType === "flash") {
-      agentServiceId = flashServiceMapping[selectedService] || selectedService;
+      // For flash, use base service mapping first, then agent lookup will handle "Flash - X" naming
+      agentServiceId = serviceMapping[selectedService] || selectedService;
       originalServiceId = selectedService; // Keep original for template workflows
     } else if (templateType === "prime") {
-      agentServiceId = primeServiceMapping[selectedService] || selectedService;
+      // For prime, use base service mapping first, then agent lookup will handle "Prime - X" naming
+      agentServiceId = serviceMapping[selectedService] || selectedService;
       originalServiceId = selectedService; // Keep original for template workflows
     } else {
       agentServiceId = serviceMapping[selectedService] || selectedService;
@@ -596,7 +598,7 @@ export async function POST(request: NextRequest) {
         "#/modules/ai-generator/themes/flash"
       );
       const flashData = {
-        selectedService: originalServiceId as ServiceType,
+        selectedService: agentServiceId as ServiceType, // Use mapped service ID instead of originalServiceId
         companyInfo: defaultCompanyInfo,
         clientName,
         projectName,
@@ -604,7 +606,7 @@ export async function POST(request: NextRequest) {
         selectedPlans: defaultPlans,
         planDetails:
           planDetails ||
-          generateDefaultPlanDetails(originalServiceId, defaultPlans),
+          generateDefaultPlanDetails(agentServiceId, defaultPlans), // Also use mapped service ID here
         includeTerms,
         includeFAQ,
         templateType: "flash" as const,
@@ -655,7 +657,7 @@ export async function POST(request: NextRequest) {
         "#/modules/ai-generator/themes/prime"
       );
       const primeData = {
-        selectedService: originalServiceId as ServiceType,
+        selectedService: agentServiceId as ServiceType, // Use mapped service ID instead of originalServiceId
         companyInfo: defaultCompanyInfo,
         clientName,
         projectName,
@@ -663,7 +665,7 @@ export async function POST(request: NextRequest) {
         selectedPlans: defaultPlans,
         planDetails:
           planDetails ||
-          generateDefaultPlanDetails(originalServiceId, defaultPlans),
+          generateDefaultPlanDetails(agentServiceId, defaultPlans), // Also use mapped service ID here
         includeTerms,
         includeFAQ,
         templateType: "prime" as const,

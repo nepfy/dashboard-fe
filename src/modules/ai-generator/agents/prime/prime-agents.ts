@@ -408,8 +408,22 @@ export function getPrimeAgentByService(
     return primeServiceAgents["Prime - Marketing Digital"] || null;
   }
 
-  const primeAgentKey = `Prime - ${
-    service.charAt(0).toUpperCase() + service.slice(1)
-  }`;
+  // Map service types to their Portuguese names in the primeServiceAgents
+  const serviceNameMapping: Record<ServiceType, string> = {
+    marketing: "Marketing Digital",
+    "marketing-digital": "Marketing Digital", // Already handled above
+    design: "Designer",
+    development: "Desenvolvedor",
+    architecture: "Arquiteto",
+    photography: "Fotógrafo",
+    medical: "Médico",
+  };
+
+  const portugueseName = serviceNameMapping[service];
+  if (!portugueseName) {
+    return null;
+  }
+
+  const primeAgentKey = `Prime - ${portugueseName}`;
   return primeServiceAgents[primeAgentKey] || null;
 }

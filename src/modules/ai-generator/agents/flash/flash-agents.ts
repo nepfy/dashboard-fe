@@ -404,9 +404,15 @@ export function getFlashAgentByService(
   service: ServiceType
 ): FlashAgentConfig | null {
   console.log("Debug - getFlashAgentByService called with:", service);
-  console.log("Debug - Available flash agents:", Object.keys(flashServiceAgents));
-  console.log("Debug - baseServiceAgents keys:", Object.keys(baseServiceAgents));
-  
+  console.log(
+    "Debug - Available flash agents:",
+    Object.keys(flashServiceAgents)
+  );
+  console.log(
+    "Debug - baseServiceAgents keys:",
+    Object.keys(baseServiceAgents)
+  );
+
   // Handle special case for marketing-digital
   if (service === "marketing-digital") {
     const agent = flashServiceAgents["Flash - Marketing Digital"];
@@ -414,9 +420,23 @@ export function getFlashAgentByService(
     return agent || null;
   }
 
-  const flashAgentKey = `Flash - ${
-    service.charAt(0).toUpperCase() + service.slice(1)
-  }`;
+  // Map service types to their Portuguese names in the flashServiceAgents
+  const serviceNameMapping: Record<ServiceType, string> = {
+    marketing: "Marketing Digital",
+    "marketing-digital": "Marketing Digital", // Already handled above
+    design: "Designer",
+    development: "Desenvolvedor",
+    architecture: "Arquiteto",
+    photography: "Fotógrafo",
+    medical: "Médico",
+  };
+
+  const portugueseName = serviceNameMapping[service];
+  if (!portugueseName) {
+    return null;
+  }
+
+  const flashAgentKey = `Flash - ${portugueseName}`;
   console.log("Debug - Looking for flash agent key:", flashAgentKey);
   const agent = flashServiceAgents[flashAgentKey];
   console.log("Debug - Found agent for key:", flashAgentKey, agent);

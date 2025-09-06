@@ -340,7 +340,7 @@ export function GenerateProposal({
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Dados da Proposta (JSON)
             </h3>
-            <pre className="bg-gray-50 p-4 rounded-lg overflow-auto text-sm">
+            <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-hidden break-words whitespace-pre-wrap">
               {JSON.stringify(generatedProposal, null, 2)}
             </pre>
           </div>
