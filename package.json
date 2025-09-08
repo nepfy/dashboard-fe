@@ -7,7 +7,9 @@
     "build": "next build",
     "migrations": "npx drizzle-kit generate",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate-agents": "npx tsx src/scripts/migrate-agents-to-db.ts",
+    "check-migration": "npx tsx -e \"import('./src/modules/ai-generator/agents/index-database.js').then(m => m.checkMigrationStatus()).then(console.log)\""
   },
   "dependencies": {
     "@ai-sdk/togetherai": "^1.0.1",

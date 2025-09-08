@@ -1,0 +1,163 @@
+{
+  "name": "Agents Management",
+  "description": "Interface para gerenciar configurações dos agentes de IA",
+  "queries": [
+    {
+      "name": "getAllAgents",
+      "type": "sql",
+      "query": "SELECT * FROM agents WHERE is_active = true ORDER BY service_type, name",
+      "description": "Busca todos os agentes ativos"
+    },
+    {
+      "name": "getAgentById",
+      "type": "sql", 
+      "query": "SELECT * FROM agents WHERE id = {{agentId}} AND is_active = true",
+      "description": "Busca agente específico por ID"
+    },
+    {
+      "name": "getAgentTemplates",
+      "type": "sql",
+      "query": "SELECT at.*, a.name as agent_name FROM agent_templates at JOIN agents a ON at.agent_id = a.id WHERE at.is_active = true ORDER BY a.service_type, at.template_type",
+      "description": "Busca todas as configurações de template dos agentes"
+    },
+    {
+      "name": "getServiceTypes",
+      "type": "sql",
+      "query": "SELECT * FROM service_types WHERE is_active = true ORDER BY name",
+      "description": "Busca tipos de serviço disponíveis"
+    },
+    {
+      "name": "getTemplateTypes", 
+      "type": "sql",
+      "query": "SELECT * FROM template_types WHERE is_active = true ORDER BY name",
+      "description": "Busca tipos de template disponíveis"
+    },
+    {
+      "name": "createAgent",
+      "type": "sql",
+      "query": "INSERT INTO agents (id, name, sector, service_type, system_prompt, expertise, common_services, pricing_model, proposal_structure, key_terms) VALUES ({{id}}, {{name}}, {{sector}}, {{service_type}}, {{system_prompt}}, {{expertise}}, {{common_services}}, {{pricing_model}}, {{proposal_structure}}, {{key_terms}})",
+      "description": "Cria novo agente"
+    },
+    {
+      "name": "updateAgent",
+      "type": "sql", 
+      "query": "UPDATE agents SET name = {{name}}, sector = {{sector}}, system_prompt = {{system_prompt}}, expertise = {{expertise}}, common_services = {{common_services}}, pricing_model = {{pricing_model}}, proposal_structure = {{proposal_structure}}, key_terms = {{key_terms}}, updated_at = CURRENT_TIMESTAMP WHERE id = {{id}}",
+      "description": "Atualiza agente existente"
+    },
+    {
+      "name": "createAgentTemplate",
+      "type": "sql",
+      "query": "INSERT INTO agent_templates (id, agent_id, template_type, introduction_style, about_us_focus, specialties_approach, process_emphasis, investment_strategy) VALUES ({{id}}, {{agent_id}}, {{template_type}}, {{introduction_style}}, {{about_us_focus}}, {{specialties_approach}}, {{process_emphasis}}, {{investment_strategy}})",
+      "description": "Cria configuração de template para agente"
+    },
+    {
+      "name": "updateAgentTemplate",
+      "type": "sql",
+      "query": "UPDATE agent_templates SET introduction_style = {{introduction_style}}, about_us_focus = {{about_us_focus}}, specialties_approach = {{specialties_approach}}, process_emphasis = {{process_emphasis}}, investment_strategy = {{investment_strategy}}, updated_at = CURRENT_TIMESTAMP WHERE id = {{id}}",
+      "description": "Atualiza configuração de template"
+    },
+    {
+      "name": "deactivateAgent",
+      "type": "sql",
+      "query": "UPDATE agents SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = {{id}}",
+      "description": "Desativa agente"
+    },
+    {
+      "name": "deactivateAgentTemplate", 
+      "type": "sql",
+      "query": "UPDATE agent_templates SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = {{id}}",
+      "description": "Desativa configuração de template"
+    }
+  ],
+  "components": [
+    {
+      "type": "table",
+      "name": "agentsTable",
+      "dataSource": "getAllAgents",
+      "columns": [
+        {"key": "id", "label": "ID", "width": 200},
+        {"key": "name", "label": "Nome", "width": 250},
+        {"key": "sector", "label": "Setor", "width": 150},
+        {"key": "service_type", "label": "Tipo de Serviço", "width": 150},
+        {"key": "pricing_model", "label": "Modelo de Preço", "width": 150},
+        {"key": "created_at", "label": "Criado em", "width": 150},
+        {"key": "updated_at", "label": "Atualizado em", "width": 150}
+      ],
+      "actions": [
+        {"type": "edit", "label": "Editar"},
+        {"type": "delete", "label": "Desativar"}
+      ]
+    },
+    {
+      "type": "form",
+      "name": "agentForm",
+      "fields": [
+        {"name": "id", "label": "ID", "type": "text", "required": true, "placeholder": "ex: marketing-base-agent"},
+        {"name": "name", "label": "Nome", "type": "text", "required": true},
+        {"name": "sector", "label": "Setor", "type": "text", "required": true},
+        {"name": "service_type", "label": "Tipo de Serviço", "type": "select", "options": "getServiceTypes", "required": true},
+        {"name": "system_prompt", "label": "System Prompt", "type": "textarea", "required": true, "rows": 10},
+        {"name": "expertise", "label": "Expertise", "type": "json", "required": true},
+        {"name": "common_services", "label": "Serviços Comuns", "type": "json", "required": true},
+        {"name": "pricing_model", "label": "Modelo de Preço", "type": "text", "required": true},
+        {"name": "proposal_structure", "label": "Estrutura da Proposta", "type": "json", "required": true},
+        {"name": "key_terms", "label": "Termos-chave", "type": "json", "required": true}
+      ],
+      "actions": [
+        {"type": "save", "label": "Salvar Agente", "query": "createAgent"},
+        {"type": "update", "label": "Atualizar Agente", "query": "updateAgent"}
+      ]
+    },
+    {
+      "type": "table",
+      "name": "templatesTable", 
+      "dataSource": "getAgentTemplates",
+      "columns": [
+        {"key": "agent_name", "label": "Agente", "width": 200},
+        {"key": "template_type", "label": "Template", "width": 100},
+        {"key": "introduction_style", "label": "Estilo de Introdução", "width": 200},
+        {"key": "about_us_focus", "label": "Foco Sobre Nós", "width": 200},
+        {"key": "specialties_approach", "label": "Abordagem Especialidades", "width": 200},
+        {"key": "process_emphasis", "label": "Ênfase do Processo", "width": 200},
+        {"key": "investment_strategy", "label": "Estratégia de Investimento", "width": 200}
+      ],
+      "actions": [
+        {"type": "edit", "label": "Editar Template"}
+      ]
+    },
+    {
+      "type": "form",
+      "name": "templateForm",
+      "fields": [
+        {"name": "agent_id", "label": "Agente", "type": "select", "options": "getAllAgents", "required": true},
+        {"name": "template_type", "label": "Tipo de Template", "type": "select", "options": "getTemplateTypes", "required": true},
+        {"name": "introduction_style", "label": "Estilo de Introdução", "type": "textarea", "rows": 3},
+        {"name": "about_us_focus", "label": "Foco Sobre Nós", "type": "textarea", "rows": 3},
+        {"name": "specialties_approach", "label": "Abordagem Especialidades", "type": "textarea", "rows": 3},
+        {"name": "process_emphasis", "label": "Ênfase do Processo", "type": "textarea", "rows": 3},
+        {"name": "investment_strategy", "label": "Estratégia de Investimento", "type": "textarea", "rows": 3}
+      ],
+      "actions": [
+        {"type": "save", "label": "Salvar Template", "query": "createAgentTemplate"},
+        {"type": "update", "label": "Atualizar Template", "query": "updateAgentTemplate"}
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "Agents Overview",
+      "description": "Visão geral de todos os agentes",
+      "components": ["agentsTable", "agentForm"]
+    },
+    {
+      "name": "Templates Management", 
+      "description": "Gerenciamento de templates específicos",
+      "components": ["templatesTable", "templateForm"]
+    },
+    {
+      "name": "Agent Editor",
+      "description": "Editor detalhado de agente específico",
+      "components": ["agentForm", "templateForm"]
+    }
+  ]
+}
