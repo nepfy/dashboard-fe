@@ -1,10 +1,13 @@
 import assert from "node:assert";
 import Together from "together-ai";
 import {
-  getAgentByService,
+  getAgentByServiceAndTemplate,
   type AgentConfig,
 } from "#/modules/ai-generator/agents";
-import { ServiceType } from "#/modules/ai-generator/agents/base/types";
+import {
+  ServiceType,
+  TemplateType,
+} from "#/modules/ai-generator/agents/base/types";
 
 const apiKey = process.env.TOGETHER_API_KEY;
 if (!apiKey) {
@@ -32,6 +35,8 @@ export interface ProposalWorkflowData {
   planDetails: string;
   includeTerms: boolean;
   includeFAQ: boolean;
+  templateType?: TemplateType;
+  contextHistory?: Array<{ role: "user" | "assistant"; content: string }>;
 }
 
 export interface WorkflowResult {
@@ -55,12 +60,20 @@ export interface WorkflowResult {
 async function runLLM(
   userPrompt: string,
   model: string,
-  systemPrompt?: string
+  systemPrompt?: string,
+  contextHistory?: Array<{ role: "user" | "assistant"; content: string }>
 ) {
-  const messages: { role: "system" | "user"; content: string }[] = [];
+  const messages: { role: "system" | "user" | "assistant"; content: string }[] =
+    [];
 
   if (systemPrompt) {
     messages.push({ role: "system", content: systemPrompt });
+  }
+
+  // Add context history (last 3 messages) if provided
+  if (contextHistory && contextHistory.length > 0) {
+    const recentContext = contextHistory.slice(-3); // Last 3 messages
+    messages.push(...recentContext);
   }
 
   messages.push({ role: "user", content: userPrompt });
@@ -86,10 +99,16 @@ export class ProposalWorkflow {
 
   async execute(data: ProposalWorkflowData): Promise<WorkflowResult> {
     const startTime = Date.now();
-    const agent = getAgentByService(data.selectedService as ServiceType);
+    const template = data.templateType || "flash";
+    const agent = getAgentByServiceAndTemplate(
+      data.selectedService as ServiceType,
+      template
+    );
 
     if (!agent) {
-      throw new Error(`Agent not found for service: ${data.selectedService}`);
+      throw new Error(
+        `Agent not found for service: ${data.selectedService} and template: ${template}`
+      );
     }
 
     try {
@@ -242,7 +261,12 @@ Foque nos resultados e benefícios para o cliente ${data.clientName}.
 Formato: Markdown com títulos, listas e formatação profissional.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Content Generation Error:", error);
@@ -275,7 +299,12 @@ Considere os serviços comuns do setor: ${agent.commonServices.join(", ")}
 Formato: Markdown com seções claras e valores em destaque.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Pricing Generation Error:", error);
@@ -306,7 +335,12 @@ Baseie-se na estrutura típica do setor: ${agent.proposalStructure.join(" → ")
 Formato: Markdown com fases bem definidas e cronograma visual.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Timeline Generation Error:", error);
@@ -340,7 +374,12 @@ Considere as particularidades legais do setor.
 Formato: Markdown com seções numeradas e linguagem clara.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Terms Generation Error:", error);
@@ -373,7 +412,12 @@ Use linguagem clara e direta.
 Formato: Markdown com perguntas em negrito e respostas claras.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("FAQ Generation Error:", error);
@@ -485,7 +529,12 @@ Foque nos resultados e benefícios para o cliente ${data.clientName}.
 Formato: Markdown com títulos, listas e formatação profissional.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Dynamic Content Generation Error:", error);
@@ -518,7 +567,12 @@ Considere os serviços comuns do setor: ${agent.commonServices.join(", ")}
 Formato: Markdown com seções claras e valores em destaque.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Dynamic Pricing Generation Error:", error);
@@ -549,7 +603,12 @@ Baseie-se na estrutura típica do setor: ${agent.proposalStructure.join(" → ")
 Formato: Markdown com fases bem definidas e cronograma visual.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Dynamic Timeline Generation Error:", error);
@@ -583,7 +642,12 @@ Considere as particularidades legais do setor.
 Formato: Markdown com seções numeradas e linguagem clara.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Dynamic Terms Generation Error:", error);
@@ -616,7 +680,12 @@ Use linguagem clara e direta.
 Formato: Markdown com perguntas em negrito e respostas claras.`;
 
     try {
-      const text = await runLLM(userPrompt, this.model, agent.systemPrompt);
+      const text = await runLLM(
+        userPrompt,
+        this.model,
+        agent.systemPrompt,
+        data.contextHistory
+      );
       return text;
     } catch (error) {
       console.error("Dynamic FAQ Generation Error:", error);

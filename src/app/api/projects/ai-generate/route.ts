@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { WorkflowResult } from "#/lib/ai/parallel-workflow";
-import { getAgentByService, ServiceType } from "#/modules/ai-generator/agents";
+import {
+  getAgentByService,
+  ServiceType,
+  TemplateType,
+} from "#/modules/ai-generator/agents";
 import { FlashWorkflowResult } from "#/modules/ai-generator/themes/flash";
 import { PrimeWorkflowResult } from "#/modules/ai-generator/themes/prime";
 import {
@@ -725,6 +729,7 @@ export async function POST(request: NextRequest) {
           generateDefaultPlanDetails(agentServiceId, defaultPlans),
         includeTerms,
         includeFAQ,
+        templateType: templateType as TemplateType,
       };
 
       const workflow = new ProposalWorkflow();
