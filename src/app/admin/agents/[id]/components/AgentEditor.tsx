@@ -197,7 +197,7 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
       </div>
 
       {/* Conteúdo Principal */}
-      <div className="max-w-4xl">
+      <div className="max-w-full">
         <AgentForm agent={editedAgent} onChange={handleChange} />
       </div>
     </div>
