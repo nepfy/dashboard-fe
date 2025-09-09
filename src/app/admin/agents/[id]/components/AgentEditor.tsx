@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
 import AgentForm from "./AgentForm";
-import AgentPreview from "./AgentPreview";
 
 interface AgentEditorProps {
   agent: DatabaseAgentConfig;
@@ -198,16 +197,8 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
       </div>
 
       {/* Conteúdo Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Formulário */}
-        <div className="space-y-6">
-          <AgentForm agent={editedAgent} onChange={handleChange} />
-        </div>
-
-        {/* Preview */}
-        <div className="space-y-6">
-          <AgentPreview agent={editedAgent} />
-        </div>
+      <div className="max-w-4xl">
+        <AgentForm agent={editedAgent} onChange={handleChange} />
       </div>
     </div>
   );
