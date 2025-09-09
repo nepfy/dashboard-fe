@@ -7,6 +7,7 @@ const isPublicRoute = createRouteMatcher([
   "/recuperar-conta(.*)",
   "/termos-de-uso(.*)",
   "/project(.*)",
+  "/admin(.*)", // Temporário para desenvolvimento
 ]);
 
 function isMainDomain(hostname: string): boolean {

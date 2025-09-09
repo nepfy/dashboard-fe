@@ -100,7 +100,7 @@ export class ProposalWorkflow {
   async execute(data: ProposalWorkflowData): Promise<WorkflowResult> {
     const startTime = Date.now();
     const template = data.templateType || "flash";
-    const agent = getAgentByServiceAndTemplate(
+    const agent = await getAgentByServiceAndTemplate(
       data.selectedService as ServiceType,
       template
     );

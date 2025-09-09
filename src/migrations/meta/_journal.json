@@ -246,6 +246,13 @@
       "when": 1757181016485,
       "tag": "0034_soft_lady_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1757362730392,
+      "tag": "0035_reflective_strong_guy",
+      "breakpoints": true
     }
   ]
 }

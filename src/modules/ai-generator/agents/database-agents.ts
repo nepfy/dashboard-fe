@@ -6,6 +6,13 @@ import {
   PrimeAgentConfig,
   FlashAgentConfig,
 } from "./base/types";
+import {
+  agentsTable,
+  agentTemplatesTable,
+  serviceTypesTable,
+  templateTypesTable,
+} from "#/lib/db/schema/agents";
+import { eq, and } from "drizzle-orm";
 
 // Database-based agent management
 // This replaces the file-based agent configuration
@@ -51,53 +58,55 @@ export async function getAgentByServiceAndTemplate(
     }
 
     // Get base agent data
-    const agentResult = await db.execute(
-      `
-      SELECT * FROM agents 
-      WHERE id = ? AND is_active = true
-    `,
-      [agentId]
-    );
+    const agentResult = await db
+      .select()
+      .from(agentsTable)
+      .where(and(eq(agentsTable.id, agentId), eq(agentsTable.isActive, true)))
+      .limit(1);
 
-    if (!agentResult.rows || agentResult.rows.length === 0) {
+    if (!agentResult || agentResult.length === 0) {
       console.log("Debug - No agent found for ID:", agentId);
       return null;
     }
 
-    const agentData = agentResult.rows[0] as any;
+    const agentData = agentResult[0];
 
     // Parse JSON fields
     const agent: DatabaseAgentConfig = {
       id: agentData.id,
       name: agentData.name,
       sector: agentData.sector,
-      systemPrompt: agentData.system_prompt,
-      expertise: JSON.parse(agentData.expertise),
-      commonServices: JSON.parse(agentData.common_services),
-      pricingModel: agentData.pricing_model,
-      proposalStructure: JSON.parse(agentData.proposal_structure),
-      keyTerms: JSON.parse(agentData.key_terms),
+      systemPrompt: agentData.systemPrompt,
+      expertise: agentData.expertise as string[],
+      commonServices: agentData.commonServices as string[],
+      pricingModel: agentData.pricingModel,
+      proposalStructure: agentData.proposalStructure as string[],
+      keyTerms: agentData.keyTerms as string[],
     };
 
     // Get template-specific data if template is not default
     if (template !== "base") {
-      const templateResult = await db.execute(
-        `
-        SELECT * FROM agent_templates 
-        WHERE agent_id = ? AND template_type = ? AND is_active = true
-      `,
-        [agentId, template]
-      );
+      const templateResult = await db
+        .select()
+        .from(agentTemplatesTable)
+        .where(
+          and(
+            eq(agentTemplatesTable.agentId, agentId),
+            eq(agentTemplatesTable.templateType, template),
+            eq(agentTemplatesTable.isActive, true)
+          )
+        )
+        .limit(1);
 
-      if (templateResult.rows && templateResult.rows.length > 0) {
-        const templateData = templateResult.rows[0] as any;
+      if (templateResult && templateResult.length > 0) {
+        const templateData = templateResult[0];
 
         const templateSpecific = {
-          introductionStyle: templateData.introduction_style,
-          aboutUsFocus: templateData.about_us_focus,
-          specialtiesApproach: templateData.specialties_approach,
-          processEmphasis: templateData.process_emphasis,
-          investmentStrategy: templateData.investment_strategy,
+          introductionStyle: templateData.introductionStyle,
+          aboutUsFocus: templateData.aboutUsFocus,
+          specialtiesApproach: templateData.specialtiesApproach,
+          processEmphasis: templateData.processEmphasis,
+          investmentStrategy: templateData.investmentStrategy,
         };
 
         if (template === "flash") {
