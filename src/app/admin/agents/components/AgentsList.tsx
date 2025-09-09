@@ -1,10 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  getAgentsByTemplate,
-  getAvailableTemplates,
-} from "#/modules/ai-generator/agents";
 import { BaseAgentConfig } from "#/modules/ai-generator/agents/base/types";
 
 export default function AgentsList() {
@@ -16,17 +12,14 @@ export default function AgentsList() {
     async function loadAgents() {
       try {
         setLoading(true);
-        const availableTemplates = await getAvailableTemplates();
-
-        // Carregar agentes de todos os templates
-        const allAgents: Record<string, BaseAgentConfig> = {};
-
-        for (const template of availableTemplates) {
-          const templateAgents = await getAgentsByTemplate(template);
-          Object.assign(allAgents, templateAgents);
+        
+        const response = await fetch("/api/admin/agents");
+        if (!response.ok) {
+          throw new Error("Failed to fetch agents");
         }
-
-        setAgents(allAgents);
+        
+        const data = await response.json();
+        setAgents(data.agents);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Erro ao carregar agentes"
