@@ -21,7 +21,12 @@ export async function GET(request: NextRequest) {
 
       for (const templateType of availableTemplates) {
         const templateAgents = await getAgentsByTemplate(templateType);
-        Object.assign(allAgents, templateAgents);
+        
+        // Use template-specific keys to avoid overwriting
+        for (const [serviceType, agent] of Object.entries(templateAgents)) {
+          const key = `${serviceType}-${templateType}`;
+          allAgents[key] = agent;
+        }
       }
 
       return NextResponse.json({ agents: allAgents });
