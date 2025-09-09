@@ -4,14 +4,14 @@ import { agentsTable } from "#/lib/db/schema/agents";
 import { eq } from "drizzle-orm";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const agentId = params.id;
+    const { id: agentId } = await params;
     const body = await request.json();
 
     // Validar dados básicos
@@ -28,12 +28,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .set({
         name: body.name,
         sector: body.sector,
-        system_prompt: body.systemPrompt,
+        systemPrompt: body.systemPrompt,
         expertise: body.expertise || [],
-        common_services: body.commonServices || [],
-        proposal_structure: body.proposalStructure || [],
-        key_terms: body.keyTerms || [],
-        pricing_model: body.pricingModel,
+        commonServices: body.commonServices || [],
+        proposalStructure: body.proposalStructure || [],
+        keyTerms: body.keyTerms || [],
+        pricingModel: body.pricingModel,
         updated_at: new Date(),
       })
       .where(eq(agentsTable.id, agentId))
@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const agentId = params.id;
+    const { id: agentId } = await params;
 
     const agent = await db
       .select()

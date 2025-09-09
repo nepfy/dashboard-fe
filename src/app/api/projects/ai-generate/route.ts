@@ -566,7 +566,7 @@ export async function POST(request: NextRequest) {
       primeServiceMapping: primeServiceMapping[selectedService],
     });
 
-    const agent = getAgentByService(agentServiceId as ServiceType);
+    const agent = await getAgentByService(agentServiceId as ServiceType);
 
     if (!agent) {
       return NextResponse.json(

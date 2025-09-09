@@ -123,8 +123,8 @@ export async function checkMigrationStatus(): Promise<{
       "SELECT COUNT(*) as count FROM agent_templates WHERE is_active = true"
     );
 
-    const agentCount = agentResult.rows?.[0]?.count || 0;
-    const templateCount = templateResult.rows?.[0]?.count || 0;
+    const agentCount = Number(agentResult.rows?.[0]?.count) || 0;
+    const templateCount = Number(templateResult.rows?.[0]?.count) || 0;
 
     return {
       isMigrated: agentCount > 0,

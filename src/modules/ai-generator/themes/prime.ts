@@ -109,7 +109,10 @@ export class PrimeTemplateWorkflow {
 
   async execute(data: PrimeThemeData): Promise<PrimeWorkflowResult> {
     // Get the appropriate agent using the new unified function
-    this.agent = await getAgentByServiceAndTemplate(data.selectedService, "prime");
+    this.agent = await getAgentByServiceAndTemplate(
+      data.selectedService,
+      "prime"
+    );
     if (!this.agent) {
       throw new Error(
         `No agent found for service: ${data.selectedService} and template: prime`
@@ -138,7 +141,10 @@ export class PrimeTemplateWorkflow {
 
   async generateTemplateProposal(data: PrimeThemeData): Promise<PrimeProposal> {
     // Get the appropriate agent using the new unified function
-    this.agent = getAgentByServiceAndTemplate(data.selectedService, "prime");
+    this.agent = await getAgentByServiceAndTemplate(
+      data.selectedService,
+      "prime"
+    );
     if (!this.agent) {
       throw new Error(
         `No agent found for service: ${data.selectedService} and template: prime`

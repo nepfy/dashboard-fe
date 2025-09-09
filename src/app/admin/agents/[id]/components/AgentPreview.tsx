@@ -1,9 +1,9 @@
 "use client";
 
-import { BaseAgentConfig } from "#/modules/ai-generator/agents/base/types";
+import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
 
 interface AgentPreviewProps {
-  agent: BaseAgentConfig;
+  agent: DatabaseAgentConfig;
 }
 
 export default function AgentPreview({ agent }: AgentPreviewProps) {
@@ -255,4 +255,3 @@ export default function AgentPreview({ agent }: AgentPreviewProps) {
     </div>
   );
 }
-

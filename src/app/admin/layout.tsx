@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Admin - Nepfy",
@@ -22,12 +23,12 @@ export default function AdminLayout({
               </h1>
             </div>
             <nav className="flex space-x-8">
-              <a
+              <Link
                 href="/admin/agents"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Agentes
-              </a>
+              </Link>
               <a
                 href="/admin/templates"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
@@ -50,4 +51,3 @@ export default function AdminLayout({
     </div>
   );
 }
-

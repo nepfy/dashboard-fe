@@ -1,16 +1,21 @@
 import { notFound } from "next/navigation";
 import { getAgentByServiceAndTemplate } from "#/modules/ai-generator/agents";
+import {
+  ServiceType,
+  TemplateType,
+} from "#/modules/ai-generator/agents/base/types";
 import AgentEditor from "./components/AgentEditor";
 
 interface AgentPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function AgentPage({ params }: AgentPageProps) {
   // Extrair service e template do ID (ex: "marketing-flash-agent" -> service: "marketing", template: "flash")
-  const idParts = params.id.split("-");
+  const { id } = await params;
+  const idParts = id.split("-");
   const template = idParts[idParts.length - 2]; // "flash", "prime", "base"
   const service = idParts.slice(0, -2).join("-"); // "marketing", "marketing-digital", etc.
 
@@ -20,8 +25,8 @@ export default async function AgentPage({ params }: AgentPageProps) {
 
   try {
     const agent = await getAgentByServiceAndTemplate(
-      service as any,
-      template as any
+      service as ServiceType,
+      template as TemplateType
     );
 
     if (!agent) {
@@ -34,4 +39,3 @@ export default async function AgentPage({ params }: AgentPageProps) {
     notFound();
   }
 }
-

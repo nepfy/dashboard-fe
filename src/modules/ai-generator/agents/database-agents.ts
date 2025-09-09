@@ -1,17 +1,6 @@
 import { db } from "#/lib/db";
-import {
-  BaseAgentConfig,
-  ServiceType,
-  TemplateType,
-  PrimeAgentConfig,
-  FlashAgentConfig,
-} from "./base/types";
-import {
-  agentsTable,
-  agentTemplatesTable,
-  serviceTypesTable,
-  templateTypesTable,
-} from "#/lib/db/schema/agents";
+import { BaseAgentConfig, ServiceType, TemplateType } from "./base/types";
+import { agentsTable, agentTemplatesTable } from "#/lib/db/schema/agents";
 import { eq, and } from "drizzle-orm";
 
 // Database-based agent management
@@ -102,11 +91,11 @@ export async function getAgentByServiceAndTemplate(
         const templateData = templateResult[0];
 
         const templateSpecific = {
-          introductionStyle: templateData.introductionStyle,
-          aboutUsFocus: templateData.aboutUsFocus,
-          specialtiesApproach: templateData.specialtiesApproach,
-          processEmphasis: templateData.processEmphasis,
-          investmentStrategy: templateData.investmentStrategy,
+          introductionStyle: templateData.introductionStyle || "",
+          aboutUsFocus: templateData.aboutUsFocus || "",
+          specialtiesApproach: templateData.specialtiesApproach || "",
+          processEmphasis: templateData.processEmphasis || "",
+          investmentStrategy: templateData.investmentStrategy || "",
         };
 
         if (template === "flash") {
@@ -170,7 +159,11 @@ export async function getAvailableServices(): Promise<ServiceType[]> {
       ORDER BY service_type
     `);
 
-    return result.rows?.map((row: any) => row.service_type) || [];
+    return (
+      result.rows?.map(
+        (row: Record<string, unknown>) => row.service_type as ServiceType
+      ) || []
+    );
   } catch (error) {
     console.error("Error getting available services from database:", error);
     return [];
@@ -188,25 +181,28 @@ export async function getAvailableTemplates(): Promise<TemplateType[]> {
       ORDER BY id
     `);
 
-    return result.rows?.map((row: any) => row.id) || [];
+    return (
+      result.rows?.map(
+        (row: Record<string, unknown>) => row.id as TemplateType
+      ) || []
+    );
   } catch (error) {
     console.error("Error getting available templates from database:", error);
-    return ["prime", "flash", "novo"];
+    return ["prime", "flash", "grid"];
   }
 }
 
 /**
  * Check if a template is available in database
  */
-export async function isTemplateAvailable(template: TemplateType): boolean {
+export async function isTemplateAvailable(
+  template: TemplateType
+): Promise<boolean> {
   try {
-    const result = await db.execute(
-      `
+    const result = await db.execute(`
       SELECT id FROM template_types 
-      WHERE id = ? AND is_active = true
-    `,
-      [template]
-    );
+      WHERE id = '${template}' AND is_active = true
+    `);
 
     return result.rows && result.rows.length > 0;
   } catch (error) {
@@ -218,16 +214,15 @@ export async function isTemplateAvailable(template: TemplateType): boolean {
 /**
  * Check if a service is available in database
  */
-export async function isServiceAvailable(service: ServiceType): boolean {
+export async function isServiceAvailable(
+  service: ServiceType
+): Promise<boolean> {
   try {
-    const result = await db.execute(
-      `
+    const result = await db.execute(`
       SELECT id FROM agents 
-      WHERE service_type = ? AND is_active = true
+      WHERE service_type = '${service}' AND is_active = true
       LIMIT 1
-    `,
-      [service]
-    );
+    `);
 
     return result.rows && result.rows.length > 0;
   } catch (error) {
@@ -245,37 +240,34 @@ export async function upsertAgent(
   try {
     const agentId = `${agent.serviceType}-base-agent`;
 
-    await db.execute(
-      `
+    await db.execute(`
       INSERT INTO agents (
         id, name, sector, service_type, system_prompt, 
         expertise, common_services, pricing_model, 
         proposal_structure, key_terms
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        name = VALUES(name),
-        sector = VALUES(sector),
-        system_prompt = VALUES(system_prompt),
-        expertise = VALUES(expertise),
-        common_services = VALUES(common_services),
-        pricing_model = VALUES(pricing_model),
-        proposal_structure = VALUES(proposal_structure),
-        key_terms = VALUES(key_terms),
+      ) VALUES (
+        '${agentId}', 
+        '${agent.name}', 
+        '${agent.sector}', 
+        '${agent.serviceType}', 
+        '${agent.systemPrompt.replace(/'/g, "''")}', 
+        '${JSON.stringify(agent.expertise).replace(/'/g, "''")}', 
+        '${JSON.stringify(agent.commonServices).replace(/'/g, "''")}', 
+        '${agent.pricingModel}', 
+        '${JSON.stringify(agent.proposalStructure).replace(/'/g, "''")}', 
+        '${JSON.stringify(agent.keyTerms).replace(/'/g, "''")}'
+      )
+      ON CONFLICT (id) DO UPDATE SET
+        name = EXCLUDED.name,
+        sector = EXCLUDED.sector,
+        system_prompt = EXCLUDED.system_prompt,
+        expertise = EXCLUDED.expertise,
+        common_services = EXCLUDED.common_services,
+        pricing_model = EXCLUDED.pricing_model,
+        proposal_structure = EXCLUDED.proposal_structure,
+        key_terms = EXCLUDED.key_terms,
         updated_at = CURRENT_TIMESTAMP
-    `,
-      [
-        agentId,
-        agent.name,
-        agent.sector,
-        agent.serviceType,
-        agent.systemPrompt,
-        JSON.stringify(agent.expertise),
-        JSON.stringify(agent.commonServices),
-        agent.pricingModel,
-        JSON.stringify(agent.proposalStructure),
-        JSON.stringify(agent.keyTerms),
-      ]
-    );
+    `);
 
     return agentId;
   } catch (error) {
@@ -301,32 +293,49 @@ export async function upsertAgentTemplate(
   try {
     const templateId = `${agentId}-${templateType}`;
 
-    await db.execute(
-      `
+    await db.execute(`
       INSERT INTO agent_templates (
         id, agent_id, template_type, introduction_style,
         about_us_focus, specialties_approach, process_emphasis,
         investment_strategy
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        introduction_style = VALUES(introduction_style),
-        about_us_focus = VALUES(about_us_focus),
-        specialties_approach = VALUES(specialties_approach),
-        process_emphasis = VALUES(process_emphasis),
-        investment_strategy = VALUES(investment_strategy),
+      ) VALUES (
+        '${templateId}', 
+        '${agentId}', 
+        '${templateType}', 
+        ${
+          templateConfig.introductionStyle
+            ? `'${templateConfig.introductionStyle.replace(/'/g, "''")}'`
+            : "NULL"
+        }, 
+        ${
+          templateConfig.aboutUsFocus
+            ? `'${templateConfig.aboutUsFocus.replace(/'/g, "''")}'`
+            : "NULL"
+        }, 
+        ${
+          templateConfig.specialtiesApproach
+            ? `'${templateConfig.specialtiesApproach.replace(/'/g, "''")}'`
+            : "NULL"
+        }, 
+        ${
+          templateConfig.processEmphasis
+            ? `'${templateConfig.processEmphasis.replace(/'/g, "''")}'`
+            : "NULL"
+        }, 
+        ${
+          templateConfig.investmentStrategy
+            ? `'${templateConfig.investmentStrategy.replace(/'/g, "''")}'`
+            : "NULL"
+        }
+      )
+      ON CONFLICT (id) DO UPDATE SET
+        introduction_style = EXCLUDED.introduction_style,
+        about_us_focus = EXCLUDED.about_us_focus,
+        specialties_approach = EXCLUDED.specialties_approach,
+        process_emphasis = EXCLUDED.process_emphasis,
+        investment_strategy = EXCLUDED.investment_strategy,
         updated_at = CURRENT_TIMESTAMP
-    `,
-      [
-        templateId,
-        agentId,
-        templateType,
-        templateConfig.introductionStyle || null,
-        templateConfig.aboutUsFocus || null,
-        templateConfig.specialtiesApproach || null,
-        templateConfig.processEmphasis || null,
-        templateConfig.investmentStrategy || null,
-      ]
-    );
+    `);
   } catch (error) {
     console.error("Error upserting agent template:", error);
     throw error;
@@ -339,18 +348,19 @@ async function getBaseAgentIds(): Promise<string[]> {
     SELECT id FROM agents 
     WHERE id LIKE '%-base-agent' AND is_active = true
   `);
-  return result.rows?.map((row: any) => row.id) || [];
+  return (
+    result.rows?.map((row: Record<string, unknown>) => row.id as string) || []
+  );
 }
 
 async function getTemplateAgentIds(template: TemplateType): Promise<string[]> {
-  const result = await db.execute(
-    `
+  const result = await db.execute(`
     SELECT id FROM agents 
-    WHERE id LIKE ? AND is_active = true
-  `,
-    [`%-${template}-agent`]
+    WHERE id LIKE '%-${template}-agent' AND is_active = true
+  `);
+  return (
+    result.rows?.map((row: Record<string, unknown>) => row.id as string) || []
   );
-  return result.rows?.map((row: any) => row.id) || [];
 }
 
 function extractServiceTypeFromId(agentId: string): string {

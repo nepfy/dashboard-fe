@@ -31,5 +31,5 @@
     "src/pages/500.tsx",
     "src/app/gerador-de-propostas/components/SaveDraftButton"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/scripts/**/*"]
 }

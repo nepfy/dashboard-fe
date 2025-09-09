@@ -1,18 +1,13 @@
 "use client";
 
-import { BaseAgentConfig } from "#/modules/ai-generator/agents/base/types";
+import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
 
 interface AgentFormProps {
-  agent: BaseAgentConfig;
-  onChange: (field: string, value: any) => void;
+  agent: DatabaseAgentConfig;
+  onChange: (field: string, value: string | string[]) => void;
 }
 
 export default function AgentForm({ agent, onChange }: AgentFormProps) {
-  const handleArrayChange = (field: string, value: string) => {
-    const items = value.split("\n").filter((item) => item.trim() !== "");
-    onChange(field, items);
-  };
-
   const handleArrayAdd = (field: string, currentValue: string[]) => {
     onChange(field, [...currentValue, ""]);
   };
@@ -443,4 +438,3 @@ export default function AgentForm({ agent, onChange }: AgentFormProps) {
     </div>
   );
 }
-

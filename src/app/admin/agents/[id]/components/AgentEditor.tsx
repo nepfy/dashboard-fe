@@ -1,40 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { BaseAgentConfig } from "#/modules/ai-generator/agents/base/types";
+import { useState, useEffect, useCallback } from "react";
+import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
 import AgentForm from "./AgentForm";
 import AgentPreview from "./AgentPreview";
 
 interface AgentEditorProps {
-  agent: BaseAgentConfig;
+  agent: DatabaseAgentConfig;
 }
 
 export default function AgentEditor({ agent }: AgentEditorProps) {
-  const [editedAgent, setEditedAgent] = useState<BaseAgentConfig>(agent);
+  const [editedAgent, setEditedAgent] = useState<DatabaseAgentConfig>(agent);
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<
     "idle" | "saving" | "saved" | "error"
   >("idle");
 
-  // Detectar mudanças
-  useEffect(() => {
-    const hasChanges = JSON.stringify(editedAgent) !== JSON.stringify(agent);
-    setHasChanges(hasChanges);
-  }, [editedAgent, agent]);
-
-  // Auto-save após 2 segundos de inatividade
-  useEffect(() => {
-    if (!hasChanges) return;
-
-    const timeoutId = setTimeout(() => {
-      handleSave();
-    }, 2000);
-
-    return () => clearTimeout(timeoutId);
-  }, [editedAgent, hasChanges]);
-
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!hasChanges) return;
 
     setIsSaving(true);
@@ -64,9 +47,26 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [hasChanges, agent.id, editedAgent]);
 
-  const handleChange = (field: string, value: any) => {
+  // Detectar mudanças
+  useEffect(() => {
+    const hasChanges = JSON.stringify(editedAgent) !== JSON.stringify(agent);
+    setHasChanges(hasChanges);
+  }, [editedAgent, agent]);
+
+  // Auto-save após 2 segundos de inatividade
+  useEffect(() => {
+    if (!hasChanges) return;
+
+    const timeoutId = setTimeout(() => {
+      handleSave();
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, [editedAgent, hasChanges, handleSave]);
+
+  const handleChange = (field: string, value: string | string[]) => {
     setEditedAgent((prev) => ({
       ...prev,
       [field]: value,

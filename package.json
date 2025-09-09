@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "next lint",
     "migrate-agents": "npx tsx src/scripts/migrate-agents-to-db.ts",
-    "check-migration": "npx tsx -e \"import('./src/modules/ai-generator/agents/index-database.js').then(m => m.checkMigrationStatus()).then(console.log)\""
+    "check-migration": "npx tsx src/scripts/check-migration.ts",
+    "verify-agents": "npx tsx src/scripts/verify-migration-completeness.ts",
+    "list-db-agents": "npx tsx src/scripts/check-db-agents.ts",
+    "test-db-agents": "npx tsx src/scripts/test-database-agents.ts"
   },
   "dependencies": {
     "@ai-sdk/togetherai": "^1.0.1",

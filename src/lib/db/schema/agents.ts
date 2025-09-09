@@ -1,13 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  text,
-  timestamp,
-  boolean,
-  json,
-  primaryKey,
-} from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, boolean, json } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { timestamps } from "#/lib/db/schema/helpers/columns.helpers";
 

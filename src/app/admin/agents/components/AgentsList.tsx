@@ -9,7 +9,6 @@ import { BaseAgentConfig } from "#/modules/ai-generator/agents/base/types";
 
 export default function AgentsList() {
   const [agents, setAgents] = useState<Record<string, BaseAgentConfig>>({});
-  const [templates, setTemplates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,13 +17,12 @@ export default function AgentsList() {
       try {
         setLoading(true);
         const availableTemplates = await getAvailableTemplates();
-        setTemplates(availableTemplates);
 
         // Carregar agentes de todos os templates
         const allAgents: Record<string, BaseAgentConfig> = {};
 
         for (const template of availableTemplates) {
-          const templateAgents = await getAgentsByTemplate(template as any);
+          const templateAgents = await getAgentsByTemplate(template);
           Object.assign(allAgents, templateAgents);
         }
 

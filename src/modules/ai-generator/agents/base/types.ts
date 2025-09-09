@@ -41,4 +41,4 @@ export type ServiceType =
   | "photography"
   | "medical";
 
-export type TemplateType = "prime" | "flash" | "grid" | "base";
+export type TemplateType = "prime" | "flash" | "grid" | "base" | "novo";

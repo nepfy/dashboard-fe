@@ -158,7 +158,10 @@ export class FlashTemplateWorkflow {
     console.log("Debug - generateFlashProposal called with:", data);
 
     // Get the appropriate agent
-    const agent = getAgentByServiceAndTemplate(data.selectedService, "flash");
+    const agent = await getAgentByServiceAndTemplate(
+      data.selectedService,
+      "flash"
+    );
     console.log("Debug - Agent lookup result:", agent);
 
     if (!agent) {
