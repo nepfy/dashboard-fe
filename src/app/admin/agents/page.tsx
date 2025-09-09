@@ -1,8 +1,6 @@
 import { Suspense } from "react";
-import AgentsTabs from "./components/AgentsTabs";
 import AgentsFilters from "./components/AgentsFilters";
 import AgentsDataLoader from "./components/AgentsDataLoader";
-import AgentsSummary from "./components/AgentsSummary";
 import AgentsSummaryLoader from "./components/AgentsSummaryLoader";
 
 export default function AgentsPage() {

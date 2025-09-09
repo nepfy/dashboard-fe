@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BaseAgentConfig } from "#/modules/ai-generator/agents/base/types";
 
 interface AgentsTabsProps {
