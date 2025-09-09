@@ -1,6 +1,9 @@
 import { Suspense } from "react";
-import AgentsList from "./components/AgentsList";
+import AgentsTabs from "./components/AgentsTabs";
 import AgentsFilters from "./components/AgentsFilters";
+import AgentsDataLoader from "./components/AgentsDataLoader";
+import AgentsSummary from "./components/AgentsSummary";
+import AgentsSummaryLoader from "./components/AgentsSummaryLoader";
 
 export default function AgentsPage() {
   return (
@@ -38,10 +41,30 @@ export default function AgentsPage() {
         </div>
       </div>
 
+      {/* Resumo dos Agentes */}
+      <Suspense
+        fallback={
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-gray-200 rounded-lg h-20"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      >
+        <AgentsSummaryLoader />
+      </Suspense>
+
       {/* Filtros */}
       <AgentsFilters />
 
-      {/* Lista de Agentes */}
+      {/* Tabs de Agentes */}
       <Suspense
         fallback={
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
@@ -58,7 +81,7 @@ export default function AgentsPage() {
           </div>
         }
       >
-        <AgentsList />
+        <AgentsDataLoader />
       </Suspense>
     </div>
   );

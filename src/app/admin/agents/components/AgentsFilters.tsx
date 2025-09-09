@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 
-export default function AgentsFilters() {
+interface AgentsFiltersProps {
+  onFiltersChange?: (filters: {
+    search: string;
+    template: string;
+    service: string;
+    status: string;
+  }) => void;
+}
+
+export default function AgentsFilters({ onFiltersChange }: AgentsFiltersProps) {
   const [filters, setFilters] = useState({
     search: "",
     template: "all",
@@ -11,10 +20,12 @@ export default function AgentsFilters() {
   });
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [key]: value,
-    }));
+    };
+    setFilters(newFilters);
+    onFiltersChange?.(newFilters);
   };
 
   return (
