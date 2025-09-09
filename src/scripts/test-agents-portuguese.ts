@@ -13,7 +13,6 @@ async function testAgentsPortuguese() {
         template: "flash",
         name: "Marketing Digital Flash",
       },
-      { service: "marketing", template: "flash", name: "Marketing Flash" },
       { service: "design", template: "flash", name: "Design Flash" },
       { service: "fotógrafo", template: "flash", name: "Fotógrafo Flash" },
       {

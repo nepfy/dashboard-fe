@@ -5,15 +5,15 @@ async function testDatabaseAgents() {
 
   try {
     // Test base agent
-    console.log("\n📋 Testing base agent (marketing):");
-    const baseAgent = await getAgentByServiceAndTemplate("marketing", "base");
+    console.log("\n📋 Testing base agent (marketing-digital):");
+    const baseAgent = await getAgentByServiceAndTemplate("marketing-digital", "base");
     console.log(`✅ Base agent found: ${baseAgent?.name}`);
     console.log(`   Sector: ${baseAgent?.sector}`);
     console.log(`   Services: ${baseAgent?.commonServices.length} services`);
 
     // Test flash agent
-    console.log("\n⚡ Testing flash agent (marketing):");
-    const flashAgent = await getAgentByServiceAndTemplate("marketing", "flash");
+    console.log("\n⚡ Testing flash agent (marketing-digital):");
+    const flashAgent = await getAgentByServiceAndTemplate("marketing-digital", "flash");
     console.log(`✅ Flash agent found: ${flashAgent?.name}`);
     console.log(
       `   Has flash specific: ${flashAgent?.flashSpecific ? "Yes" : "No"}`
@@ -28,8 +28,8 @@ async function testDatabaseAgents() {
     }
 
     // Test prime agent
-    console.log("\n👑 Testing prime agent (marketing):");
-    const primeAgent = await getAgentByServiceAndTemplate("marketing", "prime");
+    console.log("\n👑 Testing prime agent (marketing-digital):");
+    const primeAgent = await getAgentByServiceAndTemplate("marketing-digital", "prime");
     console.log(`✅ Prime agent found: ${primeAgent?.name}`);
     console.log(
       `   Has prime specific: ${primeAgent?.primeSpecific ? "Yes" : "No"}`

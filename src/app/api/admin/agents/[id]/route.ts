@@ -85,3 +85,33 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  try {
+    const { id: agentId } = await params;
+
+    const deletedAgent = await db
+      .delete(agentsTable)
+      .where(eq(agentsTable.id, agentId))
+      .returning();
+
+    if (deletedAgent.length === 0) {
+      return NextResponse.json(
+        { error: "Agente não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Agente removido com sucesso",
+      agent: deletedAgent[0],
+    });
+  } catch (error) {
+    console.error("Error deleting agent:", error);
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
+  }
+}

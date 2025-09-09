@@ -1,6 +1,6 @@
 export function generateDefaultCompanyInfo(serviceId: string): string {
   const companyTemplates = {
-    marketing:
+    "marketing-digital":
       "Somos uma agência de marketing digital especializada em crescimento de negócios online. Com anos de experiência, ajudamos empresas a aumentar suas vendas através de estratégias digitais personalizadas. Nossa equipe é composta por especialistas em SEO, Google Ads, redes sociais e automação de marketing.",
     design:
       "Studio de design criativo focado em criar identidades visuais impactantes. Especializamos em branding, design de websites e material gráfico para startups e empresas em crescimento. Nossa missão é transformar ideias em experiências visuais memoráveis.",
@@ -16,13 +16,13 @@ export function generateDefaultCompanyInfo(serviceId: string): string {
 
   return (
     companyTemplates[serviceId as keyof typeof companyTemplates] ||
-    companyTemplates.marketing
+    companyTemplates["marketing-digital"]
   );
 }
 
 export function generateDefaultPlans(serviceId: string): string[] {
   const planTemplates = {
-    marketing: ["basic", "premium"],
+    "marketing-digital": ["basic", "premium"],
     design: ["logo", "complete"],
     development: ["web-app", "mobile-app"],
     architecture: ["project", "complete"],
@@ -55,7 +55,7 @@ export function generateDefaultPlanDetails(
   }
 
   const planDetailsTemplates = {
-    marketing:
+    "marketing-digital":
       "Plano Basic: Gestão de redes sociais + Google Ads. Plano Premium: Estratégia completa incluindo SEO, email marketing e automação.",
     design:
       "Plano Logo: Criação de logotipo e aplicações básicas. Plano Complete: Identidade visual completa com manual de marca e material gráfico.",
@@ -80,7 +80,7 @@ export function generatePlanOptionsByCount(
   planCount: number
 ): string[] {
   const planTemplates = {
-    marketing: {
+    "marketing-digital": {
       1: ["basic"],
       2: ["basic", "premium"],
       3: ["basic", "premium", "enterprise"],
@@ -115,8 +115,8 @@ export function generatePlanOptionsByCount(
   const servicePlans = planTemplates[serviceId as keyof typeof planTemplates];
   if (!servicePlans) {
     return (
-      planTemplates.marketing[
-        Math.min(planCount, 3) as keyof typeof planTemplates.marketing
+      planTemplates["marketing-digital"][
+        Math.min(planCount, 3) as keyof typeof planTemplates["marketing-digital"]
       ] || ["basic"]
     );
   }
@@ -128,7 +128,7 @@ export function generatePlanOptionsByCount(
 }
 
 export const serviceMapping: Record<string, string> = {
-  "marketing-digital": "marketing",
+  "marketing-digital": "marketing-digital",
   designer: "design",
   desenvolvedor: "development",
   arquiteto: "architecture",

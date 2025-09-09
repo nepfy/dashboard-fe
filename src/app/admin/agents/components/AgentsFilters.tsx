@@ -98,7 +98,6 @@ export default function AgentsFilters() {
               onChange={(e) => handleFilterChange("service", e.target.value)}
             >
               <option value="all">Todos os serviços</option>
-              <option value="marketing">Marketing</option>
               <option value="marketing-digital">Marketing Digital</option>
               <option value="design">Design</option>
               <option value="development">Desenvolvimento</option>

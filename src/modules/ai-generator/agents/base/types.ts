@@ -33,7 +33,6 @@ export interface FlashAgentConfig extends BaseAgentConfig {
 export type AgentConfig = BaseAgentConfig | PrimeAgentConfig | FlashAgentConfig;
 
 export type ServiceType =
-  | "marketing"
   | "marketing-digital"
   | "design"
   | "development"

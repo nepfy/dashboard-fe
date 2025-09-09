@@ -153,7 +153,7 @@ export function validateThemeData(data: BaseThemeData): boolean {
 
 export function getThemeDefaults(): Partial<BaseThemeData> {
   return {
-    selectedService: "marketing",
+    selectedService: "marketing-digital",
     companyInfo: "",
     clientName: "",
     projectName: "",
