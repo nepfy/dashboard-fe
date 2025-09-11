@@ -1,0 +1,219 @@
+{
+  "agent": {
+    "id": "fotógrafo-prime-agent",
+    "name": "Especialista em Fotografia Prime",
+    "sector": "Fotografia e Produção Visual",
+    "template": "prime"
+  },
+  "testData": {
+    "companyInfo": "Atelier Fotográfico Premium - Estúdio especializado em fotografia de alto padrão para marcas de luxo e eventos exclusivos. Nossa metodologia PRIME combina arte, técnica e storytelling para criar imagens impactantes e memoráveis.",
+    "clientName": "Gabriel Souza",
+    "projectName": "Campanha Premium de Marca",
+    "projectDescription": "Produção fotográfica completa para campanha de marca de joias de luxo, incluindo fotos de produtos, lifestyle, retratos executivos e material para redes sociais, site e catálogo premium.",
+    "selectedPlans": [
+      "Básico",
+      "Intermediário",
+      "Avançado"
+    ],
+    "planDetails": "Fotografia premium que gera visibilidade excepcional e valor comercial",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#DC2626"
+  },
+  "proposal": {
+    "success": true,
+    "templateType": "prime",
+    "data": {
+      "introduction": {
+        "title": "Campanha Premium de Marca: Imagens que Valem",
+        "subtitle": "Desenvolvendo uma estratégia visual de alta qualidade para Gabriel Souza",
+        "services": [
+          "Fotografia de Eventos Premium",
+          "Ensaio Pessoal",
+          "Fotografia Corporativa",
+          "Produção Social Media"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto Premium"
+      },
+      "aboutUs": {
+        "title": "Especialistas em Fotografia Premium que Criam Histórias Visuais",
+        "supportText": "Transformando momentos em memórias eternas",
+        "subtitle": "Nossa abordagem premium combina técnica e arte visual superior para criar conteúdo inovador e impactante. Com nossa equipe de especialistas, você pode esperar resultados de alta qualidade e uma experiência única."
+      },
+      "specialties": {
+        "title": "Especialidades PRIME",
+        "topics": [
+          {
+            "title": "Fotografia de Alta Qualidade",
+            "description": "Capturamos momentos inesquecíveis com câmeras de alta definição e técnicas de iluminação avançadas."
+          },
+          {
+            "title": "Produção Visual de Alto Padrão",
+            "description": "Crie experiências imersivas com conteúdo visual de alta qualidade, projetado para impactar e engajar."
+          },
+          {
+            "title": "Direção de Arte Fotográfica",
+            "description": "Desenvolvemos conceitos criativos e direção de arte personalizada para projetos fotográficos de alto padrão."
+          },
+          {
+            "title": "Storytelling Visual",
+            "description": "Contamos histórias emocionantes através da fotografia, capturando a essência do seu projeto ou marca."
+          },
+          {
+            "title": "Edição e Tratamento de Imagens",
+            "description": "Transformamos suas fotos em obras de arte perfeitas, com técnicas de edição avançadas e tratamento de imagens."
+          },
+          {
+            "title": "Fotografia de Eventos",
+            "description": "Capturamos momentos inesquecíveis em eventos especiais, como casamentos, aniversários e lançamentos."
+          },
+          {
+            "title": "Fotografia Corporativa",
+            "description": "Crie uma imagem profissional e consistente para sua empresa com fotografia corporativa de alta qualidade."
+          },
+          {
+            "title": "Produção de Conteúdo Visual",
+            "description": "Desenvolvemos conteúdo visual atraente e engajador para redes sociais, sites e outros canais digitais."
+          },
+          {
+            "title": "Consultoria de Fotografia",
+            "description": "Oferecemos consultoria personalizada para ajudar a melhorar a qualidade da sua fotografia e alcançar seus objetivos."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Processo artístico detalhado para entrega de fotografia premium com qualidade excepcional",
+        "title": "Processo PRIME",
+        "topics": [
+          {
+            "title": "Definição do Conceito",
+            "description": "Reunião com o cliente para entender os objetivos e necessidades da campanha, definição do conceito e direção artística"
+          },
+          {
+            "title": "Planejamento e Preparação",
+            "description": "Elaboração do plano de trabalho, seleção de locais, modelos e equipamentos, preparação de cenários e iluminação"
+          },
+          {
+            "title": "Fotografia e Produção",
+            "description": "Realização da fotografia, captura de imagens de alta qualidade, atenção aos detalhes e direção artística"
+          },
+          {
+            "title": "Edição e Pós-Produção",
+            "description": "Edição das imagens, correção de cores e iluminação, adição de elementos visuais e finalização da produção"
+          },
+          {
+            "title": "Revisão e Aprovação",
+            "description": "Revisão das imagens com o cliente, aprovação final e entrega dos arquivos"
+          }
+        ]
+      },
+      "investment": {
+        "title": "Investimento em Memórias Visuais Únicas",
+        "deliverables": [
+          {
+            "title": "Fotografia Premium",
+            "description": "Receba fotos de alta qualidade, editadas e personalizadas para destacar sua marca"
+          },
+          {
+            "title": "Cronograma de Produção",
+            "description": "Obtenha um cronograma detalhado da produção, garantindo que tudo esteja pronto no prazo estabelecido"
+          },
+          {
+            "title": "Relatório de Desempenho",
+            "description": "Receba um relatório de desempenho detalhado, mostrando os resultados alcançados e as metas atingidas"
+          }
+        ],
+        "plans": [
+          {
+            "title": "Básico",
+            "description": "Receba 10 fotos premium, cronograma de produção e relatório de desempenho",
+            "value": "R$ 5.000",
+            "topics": [
+              "Fotografia de produto",
+              "Fotografia de equipe",
+              "Fotografia de evento"
+            ]
+          },
+          {
+            "title": "Intermediário",
+            "description": "Receba 20 fotos premium, cronograma de produção, relatório de desempenho e 1 sessão de fotografia",
+            "value": "R$ 10.000",
+            "topics": [
+              "Fotografia de produto",
+              "Fotografia de equipe",
+              "Fotografia de evento",
+              "Sessão de fotografia"
+            ]
+          },
+          {
+            "title": "Avançado",
+            "description": "Receba 30 fotos premium, cronograma de produção, relatório de desempenho, 2 sessões de fotografia e análise de dados",
+            "value": "R$ 20.000",
+            "topics": [
+              "Fotografia de produto",
+              "Fotografia de equipe",
+              "Fotografia de evento",
+              "Sessão de fotografia",
+              "Análise de dados"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Prazo de Entrega",
+          "description": "O prazo de entrega máximo é de 30 dias após a confirmação do projeto."
+        },
+        {
+          "title": "Direitos Autorais",
+          "description": "Os direitos autorais da obra fotográfica permanecem com a empresa PRIME."
+        },
+        {
+          "title": "Revisão e Aprovação",
+          "description": "O cliente tem direito a uma revisão e aprovação final da obra fotográfica."
+        },
+        {
+          "title": "Garantia de Qualidade",
+          "description": "A empresa PRIME garante a qualidade excepcional da obra fotográfica."
+        },
+        {
+          "title": "Cancelamento do Projeto",
+          "description": "O cliente pode cancelar o projeto até 7 dias após a assinatura do contrato."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o processo de criação de imagens premium?",
+          "answer": "Nossa equipe de profissionais experientes trabalha em estreita colaboração para garantir que cada imagem seja criada com atenção aos detalhes e qualidade excepcional."
+        },
+        {
+          "question": "Como vocês garantem a qualidade das imagens?",
+          "answer": "Nossa equipe utiliza equipamentos de última geração e técnicas de produção avançadas para garantir que as imagens sejam de alta qualidade e atendam às necessidades do cliente."
+        },
+        {
+          "question": "O que é o processo de revisão e aprovação das imagens?",
+          "answer": "Nossa equipe trabalha em estreita colaboração com o cliente para garantir que as imagens sejam aprovadas e atendam às necessidades do projeto."
+        },
+        {
+          "question": "Como vocês lidam com prazos apertados?",
+          "answer": "Nossa equipe é experiente em lidar com prazos apertados e trabalha em estreita colaboração com o cliente para garantir que as imagens sejam entregues no prazo estabelecido."
+        },
+        {
+          "question": "O que é o suporte pós-venda?",
+          "answer": "Nossa equipe oferece suporte pós-venda para garantir que o cliente esteja satisfeito com as imagens e que qualquer problema seja resolvido rapidamente."
+        }
+      ],
+      "footer": {
+        "callToAction": "Desenvolva sua marca com memórias visuais únicas"
+      }
+    },
+    "metadata": {
+      "service": "fotógrafo",
+      "agent": "Especialista em Fotografia Prime",
+      "timestamp": "2025-09-09T20:10:53.922Z",
+      "generationType": "prime-workflow"
+    }
+  },
+  "generatedAt": "2025-09-09T20:10:53.922Z"
+}

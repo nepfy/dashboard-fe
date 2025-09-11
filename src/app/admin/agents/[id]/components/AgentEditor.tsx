@@ -19,6 +19,16 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
   const handleSave = useCallback(async () => {
     if (!hasChanges) return;
 
+    console.log("Debug - AgentEditor handleSave called with:", {
+      hasChanges,
+      agentId: agent.id,
+      editedAgent: {
+        name: editedAgent.name,
+        systemPrompt: editedAgent.systemPrompt?.substring(0, 100) + "...",
+        sector: editedAgent.sector,
+      },
+    });
+
     setIsSaving(true);
     setSaveStatus("saving");
 
@@ -31,12 +41,26 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
         body: JSON.stringify(editedAgent),
       });
 
+      console.log("Debug - API response status:", response.status);
+
       if (!response.ok) {
-        throw new Error("Erro ao salvar agente");
+        const errorData = await response.json();
+        console.error("Debug - API error response:", errorData);
+        throw new Error(
+          `Erro ao salvar agente: ${errorData.error || response.statusText}`
+        );
       }
+
+      const responseData = await response.json();
+      console.log("Debug - API success response:", responseData);
 
       setSaveStatus("saved");
       setHasChanges(false);
+
+      // Forçar revalidação da página para mostrar as mudanças
+      if (typeof window !== "undefined") {
+        window.location.reload();
+      }
 
       // Reset status após 3 segundos
       setTimeout(() => setSaveStatus("idle"), 3000);

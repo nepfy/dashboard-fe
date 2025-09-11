@@ -1,0 +1,280 @@
+{
+  "agent": {
+    "id": "médico-flash-agent",
+    "name": "Especialista em Serviços Médicos Flash",
+    "sector": "Saúde e Bem-estar",
+    "template": "flash"
+  },
+  "testData": {
+    "companyInfo": "Clínica Saúde Total - Especializada em atendimento personalizado e de qualidade. Oferecemos consultas, exames diagnósticos e procedimentos com foco na saúde e bem-estar dos pacientes. Nossa equipe médica é altamente qualificada e experiente.",
+    "clientName": "Roberto Lima",
+    "projectName": "Check-up Executivo",
+    "projectDescription": "Programa completo de check-up executivo para empresário de 45 anos, incluindo consultas especializadas, exames laboratoriais, cardiológicos e orientações para estilo de vida saudável.",
+    "selectedPlans": [
+      "Consultation",
+      "Checkup",
+      "Premium"
+    ],
+    "planDetails": "Cuidado médico que promove saúde, autoestima e qualidade de vida",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#06B6D4"
+  },
+  "proposal": {
+    "finalProposal": {
+      "introduction": {
+        "title": "Check-up Executivo para Você",
+        "subtitle": "Nossa equipe de especialistas em saúde desenvolveu um programa personalizado para atender às suas necessidades e alcançar um estilo de vida saudável.",
+        "services": [
+          "Consulta Médica Personalizada",
+          "Exame Laboratorial Completo",
+          "Consultoria Nutricional e Estilo de Vida",
+          "Acompanhamento Clínico e Orientação"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Agendar Consulta"
+      },
+      "aboutUs": {
+        "title": "Clínica Saúde Total: Atendimento Personalizado e Qualidade",
+        "supportText": "Equipe Médica Experiente e Qualificada",
+        "subtitle": "Nossa equipe médica altamente qualificada e experiente está aqui para ajudar Roberto Lima a alcançar seus objetivos de saúde com o programa de check-up executivo. Com foco na saúde e bem-estar, oferecemos consultas, exames diagnósticos e procedimentos personalizados para atender às suas necessidades únicas."
+      },
+      "specialties": {
+        "title": "Saúde Executiva",
+        "topics": [
+          {
+            "title": "Check-up Compreensivo",
+            "description": "Consultas especializadas e exames laboratoriais para avaliar saúde geral, detectar doenças precocemente e orientar para estilo de vida saudável."
+          },
+          {
+            "title": "Cardiologia Preventiva",
+            "description": "Exames cardiológicos personalizados para empresários de 45 anos, visando detectar problemas cardíacos e prevenir doenças cardiovasculares."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Realizamos um programa integral de avaliação e orientação para Roberto Lima, focado em sua saúde e bem-estar.",
+        "title": "Nosso Processo",
+        "topics": [
+          {
+            "title": "Conscientização e Avaliação Inicial",
+            "description": "Recebemos Roberto Lima e realizamos uma entrevista detalhada para entender suas necessidades e objetivos. Em seguida, nossa equipe médica realiza uma avaliação inicial para identificar áreas prioritárias de atenção."
+          },
+          {
+            "title": "Consultas Especializadas e Exames Laboratoriais",
+            "description": "Nossa equipe especializada realiza consultas médicas personalizadas e executa exames laboratoriais e cardiológicos para uma avaliação detalhada da saúde de Roberto Lima. Esses exames são fundamentais para identificar potenciais problemas e desenvolver um plano de tratamento adequado."
+          }
+        ]
+      },
+      "investment": {
+        "title": "Investimento em Saúde Total",
+        "deliverables": [
+          {
+            "title": "Relatório Completo de Check-up",
+            "description": "Obtenha um relatório detalhado das suas análises laboratoriais, cardiológicas e consultas especializadas, além de orientações personalizadas para melhorar seu estilo de vida saudável."
+          },
+          {
+            "title": "Consultas Especializadas",
+            "description": "Beneficie-se de consultas especializadas com nossos médicos altamente qualificados e experientes, para abordar todas as suas preocupações de saúde."
+          },
+          {
+            "title": "Exames Laboratoriais e Cardiológicos",
+            "description": "Realize exames laboratoriais e cardiológicos completos, fornecendo uma visão clara da sua saúde atual e ajudando a identificar potenciais problemas de saúde antes que eles se tornem críticos."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Consulta",
+            "description": "Benefício de uma consulta especializada com nosso médico",
+            "value": "R$ 299",
+            "topics": [
+              "Benefício de avaliação geral de saúde",
+              "Recomendações personalizadas para melhorar seu estilo de vida saudável"
+            ]
+          },
+          {
+            "title": "Checkup",
+            "description": "Benefício de um programa completo de check-up executivo",
+            "value": "R$ 499",
+            "topics": [
+              "Relatório completo de check-up",
+              "Consultas especializadas",
+              "Exames laboratoriais e cardiológicos"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Benefício de um pacote completo de serviços de saúde e bem-estar",
+            "value": "R$ 999",
+            "topics": [
+              "Programa completo de check-up executivo",
+              "Consultas especializadas",
+              "Exames laboratoriais e cardiológicos",
+              "Orientações personalizadas para estilo de vida saudável"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Prazo de Entrega para Check-up Executivo",
+          "description": "O programa completo de check-up executivo para Roberto Lima será realizado dentro de 15 dias úteis após a assinatura do contrato."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "O pagamento do Check-up Executivo poderá ser realizado via boleto bancário, cartão de crédito ou depósito bancário, com parcelamento em até 3 vezes."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o objetivo principal do Check-up Executivo?",
+          "answer": "O Check-up Executivo visa avaliar a saúde geral do Sr. Roberto Lima, detectar potenciais problemas de saúde e fornecer orientações para melhorar seu estilo de vida e prevenir doenças crônicas."
+        },
+        {
+          "question": "Quais são os exames realizados durante o Check-up Executivo?",
+          "answer": "Durante o Check-up Executivo, Sr. Roberto Lima fará consultas especializadas, exames laboratoriais e cardiológicos, além de receber orientações para estilo de vida saudável."
+        }
+      ],
+      "footer": {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Check-up Executivo para Roberto Lima.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    },
+    "sections": [
+      {
+        "title": "Check-up Executivo para Você",
+        "subtitle": "Nossa equipe de especialistas em saúde desenvolveu um programa personalizado para atender às suas necessidades e alcançar um estilo de vida saudável.",
+        "services": [
+          "Consulta Médica Personalizada",
+          "Exame Laboratorial Completo",
+          "Consultoria Nutricional e Estilo de Vida",
+          "Acompanhamento Clínico e Orientação"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Agendar Consulta"
+      },
+      {
+        "title": "Clínica Saúde Total: Atendimento Personalizado e Qualidade",
+        "supportText": "Equipe Médica Experiente e Qualificada",
+        "subtitle": "Nossa equipe médica altamente qualificada e experiente está aqui para ajudar Roberto Lima a alcançar seus objetivos de saúde com o programa de check-up executivo. Com foco na saúde e bem-estar, oferecemos consultas, exames diagnósticos e procedimentos personalizados para atender às suas necessidades únicas."
+      },
+      {
+        "title": "Saúde Executiva",
+        "topics": [
+          {
+            "title": "Check-up Compreensivo",
+            "description": "Consultas especializadas e exames laboratoriais para avaliar saúde geral, detectar doenças precocemente e orientar para estilo de vida saudável."
+          },
+          {
+            "title": "Cardiologia Preventiva",
+            "description": "Exames cardiológicos personalizados para empresários de 45 anos, visando detectar problemas cardíacos e prevenir doenças cardiovasculares."
+          }
+        ]
+      },
+      {
+        "introduction": "Realizamos um programa integral de avaliação e orientação para Roberto Lima, focado em sua saúde e bem-estar.",
+        "title": "Nosso Processo",
+        "topics": [
+          {
+            "title": "Conscientização e Avaliação Inicial",
+            "description": "Recebemos Roberto Lima e realizamos uma entrevista detalhada para entender suas necessidades e objetivos. Em seguida, nossa equipe médica realiza uma avaliação inicial para identificar áreas prioritárias de atenção."
+          },
+          {
+            "title": "Consultas Especializadas e Exames Laboratoriais",
+            "description": "Nossa equipe especializada realiza consultas médicas personalizadas e executa exames laboratoriais e cardiológicos para uma avaliação detalhada da saúde de Roberto Lima. Esses exames são fundamentais para identificar potenciais problemas e desenvolver um plano de tratamento adequado."
+          }
+        ]
+      },
+      {
+        "title": "Investimento em Saúde Total",
+        "deliverables": [
+          {
+            "title": "Relatório Completo de Check-up",
+            "description": "Obtenha um relatório detalhado das suas análises laboratoriais, cardiológicas e consultas especializadas, além de orientações personalizadas para melhorar seu estilo de vida saudável."
+          },
+          {
+            "title": "Consultas Especializadas",
+            "description": "Beneficie-se de consultas especializadas com nossos médicos altamente qualificados e experientes, para abordar todas as suas preocupações de saúde."
+          },
+          {
+            "title": "Exames Laboratoriais e Cardiológicos",
+            "description": "Realize exames laboratoriais e cardiológicos completos, fornecendo uma visão clara da sua saúde atual e ajudando a identificar potenciais problemas de saúde antes que eles se tornem críticos."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Consulta",
+            "description": "Benefício de uma consulta especializada com nosso médico",
+            "value": "R$ 299",
+            "topics": [
+              "Benefício de avaliação geral de saúde",
+              "Recomendações personalizadas para melhorar seu estilo de vida saudável"
+            ]
+          },
+          {
+            "title": "Checkup",
+            "description": "Benefício de um programa completo de check-up executivo",
+            "value": "R$ 499",
+            "topics": [
+              "Relatório completo de check-up",
+              "Consultas especializadas",
+              "Exames laboratoriais e cardiológicos"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Benefício de um pacote completo de serviços de saúde e bem-estar",
+            "value": "R$ 999",
+            "topics": [
+              "Programa completo de check-up executivo",
+              "Consultas especializadas",
+              "Exames laboratoriais e cardiológicos",
+              "Orientações personalizadas para estilo de vida saudável"
+            ]
+          }
+        ]
+      },
+      [
+        {
+          "title": "Prazo de Entrega para Check-up Executivo",
+          "description": "O programa completo de check-up executivo para Roberto Lima será realizado dentro de 15 dias úteis após a assinatura do contrato."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "O pagamento do Check-up Executivo poderá ser realizado via boleto bancário, cartão de crédito ou depósito bancário, com parcelamento em até 3 vezes."
+        }
+      ],
+      [
+        {
+          "question": "Qual é o objetivo principal do Check-up Executivo?",
+          "answer": "O Check-up Executivo visa avaliar a saúde geral do Sr. Roberto Lima, detectar potenciais problemas de saúde e fornecer orientações para melhorar seu estilo de vida e prevenir doenças crônicas."
+        },
+        {
+          "question": "Quais são os exames realizados durante o Check-up Executivo?",
+          "answer": "Durante o Check-up Executivo, Sr. Roberto Lima fará consultas especializadas, exames laboratoriais e cardiológicos, além de receber orientações para estilo de vida saudável."
+        }
+      ],
+      {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Check-up Executivo para Roberto Lima.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    ],
+    "metadata": {
+      "totalSections": 8,
+      "executionTime": 3690,
+      "model": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      "templateType": "flash",
+      "aiGenerated": true,
+      "fallbackUsed": false
+    }
+  },
+  "generatedAt": "2025-09-09T20:10:18.336Z"
+}

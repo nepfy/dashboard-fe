@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { WorkflowResult } from "#/lib/ai/parallel-workflow";
 import {
-  getAgentByService,
+  getAgentByServiceAndTemplate,
   ServiceType,
   TemplateType,
 } from "#/modules/ai-generator/agents";
@@ -566,13 +566,17 @@ export async function POST(request: NextRequest) {
       primeServiceMapping: primeServiceMapping[selectedService],
     });
 
-    const agent = await getAgentByService(agentServiceId as ServiceType);
+    // Get agent based on template type
+    const agent = await getAgentByServiceAndTemplate(
+      agentServiceId as ServiceType,
+      templateType as TemplateType
+    );
 
     if (!agent) {
       return NextResponse.json(
         {
           error: "Service not found",
-          details: `No agent found for service: ${selectedService}`,
+          details: `No agent found for service: ${selectedService} and template: ${templateType}`,
         },
         { status: 404 }
       );

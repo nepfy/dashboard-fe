@@ -14,8 +14,23 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id: agentId } = await params;
     const body = await request.json();
 
+    console.log("Debug - PUT /api/admin/agents/[id] called with:", {
+      agentId,
+      body: {
+        name: body.name,
+        sector: body.sector,
+        systemPrompt: body.systemPrompt?.substring(0, 100) + "...",
+        expertise: body.expertise,
+        commonServices: body.commonServices,
+        proposalStructure: body.proposalStructure,
+        keyTerms: body.keyTerms,
+        pricingModel: body.pricingModel,
+      },
+    });
+
     // Validar dados básicos
     if (!body.name || !body.sector) {
+      console.log("Debug - Validation failed: missing name or sector");
       return NextResponse.json(
         { error: "Nome e setor são obrigatórios" },
         { status: 400 }
@@ -23,6 +38,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Atualizar agente no banco
+    console.log("Debug - Updating agent in database...");
     const updatedAgent = await db
       .update(agentsTable)
       .set({
@@ -39,13 +55,28 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .where(eq(agentsTable.id, agentId))
       .returning();
 
+    console.log("Debug - Database update result:", {
+      updatedCount: updatedAgent.length,
+      updatedAgent: updatedAgent[0]
+        ? {
+            id: updatedAgent[0].id,
+            name: updatedAgent[0].name,
+            systemPrompt:
+              updatedAgent[0].systemPrompt?.substring(0, 100) + "...",
+            updated_at: updatedAgent[0].updated_at,
+          }
+        : null,
+    });
+
     if (updatedAgent.length === 0) {
+      console.log("Debug - No agent found with ID:", agentId);
       return NextResponse.json(
         { error: "Agente não encontrado" },
         { status: 404 }
       );
     }
 
+    console.log("Debug - Agent updated successfully");
     return NextResponse.json({
       success: true,
       agent: updatedAgent[0],

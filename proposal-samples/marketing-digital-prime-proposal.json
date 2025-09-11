@@ -1,0 +1,214 @@
+{
+  "agent": {
+    "id": "marketing-digital-prime-agent",
+    "name": "Especialista em Marketing Digital Prime",
+    "sector": "Marketing e Vendas Digitais",
+    "template": "prime"
+  },
+  "testData": {
+    "companyInfo": "Agência Premium Digital - Líderes em estratégias de marketing digital premium com metodologia exclusiva. Especializamos em campanhas de alto impacto, automação avançada e crescimento sustentável para empresas de médio e grande porte.",
+    "clientName": "Patricia Oliveira",
+    "projectName": "Estratégia Premium de Marketing Digital",
+    "projectDescription": "Desenvolvimento de estratégia premium de marketing digital para rede de clínicas estéticas, incluindo posicionamento de marca, campanhas multicanal, automação avançada e análise de performance com foco em conversão e ROI superior.",
+    "selectedPlans": [
+      "Básico",
+      "Intermediário",
+      "Avançado"
+    ],
+    "planDetails": "Estratégias premium que garantem crescimento sustentável e presença digital dominante",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#7C3AED"
+  },
+  "proposal": {
+    "success": true,
+    "templateType": "prime",
+    "data": {
+      "introduction": {
+        "title": "Estratégia Premium de Marketing Digital",
+        "subtitle": "Transforme sua presença digital com soluções personalizadas e resultados excepcionais",
+        "services": [
+          "Gestão de Tráfego Premium",
+          "SEO e Conteúdo",
+          "Funil de Vendas",
+          "Redes Sociais"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto Premium"
+      },
+      "aboutUs": {
+        "title": "Especialistas em Marketing Premium, Transformando Negócios com Excelência",
+        "supportText": "Desenvolvendo estratégias personalizadas para resultados excepcionais",
+        "subtitle": "Nossa equipe de especialistas em marketing premium combina habilidades avançadas com uma abordagem inovadora para criar soluções customizadas que atendam às necessidades únicas de cada cliente. Com uma combinação de análise detalhada e execução superior, garantimos que nossos clientes alcancem objetivos ambiciosos e superem expectativas."
+      },
+      "specialties": {
+        "title": "Especialidades PRIME",
+        "topics": [
+          {
+            "title": "Gestão de Tráfego Pago",
+            "description": "Desenvolvemos estratégias de tráfego pago personalizadas para aumentar a visibilidade e o engajamento dos clientes."
+          },
+          {
+            "title": "Otimização de Buscas",
+            "description": "Melhoramos a posição do site nos resultados de busca, aumentando a visibilidade e a credibilidade da marca."
+          },
+          {
+            "title": "Marketing de Conteúdo",
+            "description": "Criamos conteúdo de alta qualidade que ressoa com o público-alvo, aumentando a engajamento e a conversão."
+          },
+          {
+            "title": "Redes Sociais",
+            "description": "Desenvolvemos estratégias de marketing nas redes sociais para aumentar a visibilidade e a engajamento dos clientes."
+          },
+          {
+            "title": "Email Marketing",
+            "description": "Criamos campanhas de email personalizadas para aumentar a conversão e a fidelidade dos clientes."
+          },
+          {
+            "title": "Análise de Dados",
+            "description": "Analisamos os dados para entender melhor o comportamento do público-alvo e melhorar as estratégias de marketing."
+          },
+          {
+            "title": "Automatização de Processos",
+            "description": "Implementamos soluções de automatização para melhorar a eficiência e a produtividade das equipes."
+          },
+          {
+            "title": "Desenvolvimento de Sites",
+            "description": "Criamos sites personalizados e responsivos para melhorar a experiência do usuário e aumentar a conversão."
+          },
+          {
+            "title": "Criação de Conteúdo de Qualidade",
+            "description": "Desenvolvemos conteúdo de alta qualidade que ressoa com o público-alvo e aumenta a engajamento e a conversão."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Desenvolvemos estratégias premium para impulsionar suas vendas digitais.",
+        "title": "Processo PRIME",
+        "topics": [
+          {
+            "title": "Análise de Necessidades",
+            "description": "Identificamos os pontos fracos e fortes do seu negócio, definindo objetivos claros e alcançáveis."
+          },
+          {
+            "title": "Desenvolvimento de Estratégia",
+            "description": "Criamos um plano personalizado para impulsionar suas vendas digitais, com foco em qualidade premium e atenção aos detalhes."
+          },
+          {
+            "title": "Implementação e Execução",
+            "description": "Executamos a estratégia desenvolvida, garantindo a entrega de resultados premium e a atenção aos detalhes."
+          },
+          {
+            "title": "Monitoramento e Ajustes",
+            "description": "Monitoramos os resultados e ajustamos a estratégia conforme necessário, garantindo a maximização dos resultados."
+          },
+          {
+            "title": "Evalução e Relatório",
+            "description": "Realizamos uma avaliação detalhada dos resultados alcançados e fornecemos um relatório completo sobre o desempenho do projeto."
+          }
+        ]
+      },
+      "investment": {
+        "title": "Investimento em Marketing Digital Premium",
+        "deliverables": [
+          {
+            "title": "Análise de Competência",
+            "description": "Análise detalhada da concorrência, identificando oportunidades e ameaças para o negócio"
+          },
+          {
+            "title": "Criação de Conteúdo Premium",
+            "description": "Desenvolvimento de conteúdo de alta qualidade, alinhado com a estratégia de marketing e vendas digitais"
+          },
+          {
+            "title": "Otimização de Campanhas Pago",
+            "description": "Otimização contínua de campanhas pago para maximizar o retorno sobre investimento"
+          }
+        ],
+        "plans": [
+          {
+            "title": "Básico",
+            "description": "Análise de competência e criação de conteúdo premium",
+            "value": "R$ 2.500,00",
+            "topics": [
+              "Análise de competência",
+              "Criação de conteúdo premium"
+            ]
+          },
+          {
+            "title": "Intermediário",
+            "description": "Otimização de campanhas pago e análise de competência",
+            "value": "R$ 5.000,00",
+            "topics": [
+              "Otimização de campanhas pago",
+              "Análise de competência"
+            ]
+          },
+          {
+            "title": "Avançado",
+            "description": "Criação de conteúdo premium, otimização de campanhas pago e análise de competência",
+            "value": "R$ 10.000,00",
+            "topics": [
+              "Criação de conteúdo premium",
+              "Otimização de campanhas pago",
+              "Análise de competência"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Prazo de Entrega",
+          "description": "O prazo de entrega dos serviços será de 30 dias a partir da data de assinatura do contrato, podendo ser ajustado mediante acordo mútuo entre as partes."
+        },
+        {
+          "title": "Pagamento",
+          "description": "O pagamento dos serviços será realizado em 3 parcelas, sendo a primeira parcela de 30% do valor total no ato da assinatura do contrato, e as parcelas restantes de 35% e 35% nos dias 15 e 30 do mês subsequente, respectivamente."
+        },
+        {
+          "title": "Cancelamento",
+          "description": "O contrato pode ser cancelado por qualquer das partes com antecedência de 15 dias, mediante notificação por escrito. Em caso de cancelamento, o cliente será responsável pelo pagamento da parcela já realizada."
+        },
+        {
+          "title": "Direitos Autorais",
+          "description": "Os direitos autorais sobre os materiais criados durante o projeto serão de propriedade do cliente, desde que seja realizado o pagamento integral do valor total do contrato."
+        },
+        {
+          "title": "Responsabilidades",
+          "description": "O cliente é responsável por fornecer informações precisas e atualizadas sobre seu negócio e objetivos, bem como por colaborar ativamente durante o projeto. A empresa se reserva o direito de cancelar o contrato em caso de falta de colaboração ou informações inverídicas."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o processo de entrega de resultados premium?",
+          "answer": "Nossa metodologia PRIME garante um processo estratégico detalhado e personalizado para cada cliente, garantindo resultados de alta qualidade e atenção aos detalhes."
+        },
+        {
+          "question": "Como vocês garantem a qualidade dos serviços?",
+          "answer": "Nossa equipe de especialistas em marketing digital é treinada para entregar resultados premium, com foco em inovação, criatividade e atenção aos detalhes."
+        },
+        {
+          "question": "O que é o suporte ao cliente?",
+          "answer": "Nossa equipe está disponível para esclarecer dúvidas e realizar ajustes, garantindo que nossos clientes sejam satisfeitos com os resultados entregues."
+        },
+        {
+          "question": "Como vocês medem o sucesso dos projetos?",
+          "answer": "Nossa equipe utiliza indicadores de desempenho personalizados para medir o sucesso dos projetos e garantir que os objetivos sejam alcançados."
+        },
+        {
+          "question": "O que acontece se eu cancelar o projeto?",
+          "answer": "Nossa política de cancelamento é transparente e justa, garantindo que nossos clientes sejam respeitados e que os pagamentos sejam reembolsados de acordo com as condições estabelecidas."
+        }
+      ],
+      "footer": {
+        "callToAction": "Conheça a diferença da qualidade premium com PRIME"
+      }
+    },
+    "metadata": {
+      "service": "marketing-digital",
+      "agent": "Especialista em Marketing Digital Prime",
+      "timestamp": "2025-09-09T20:10:25.195Z",
+      "generationType": "prime-workflow"
+    }
+  },
+  "generatedAt": "2025-09-09T20:10:25.196Z"
+}

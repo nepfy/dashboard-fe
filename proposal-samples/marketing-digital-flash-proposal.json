@@ -1,0 +1,332 @@
+{
+  "agent": {
+    "id": "marketing-digital-flash-agent",
+    "name": "Especialista em Marketing Digital Flash",
+    "sector": "Marketing e Vendas Digitais",
+    "template": "flash"
+  },
+  "testData": {
+    "companyInfo": "Agência Digital Inovadora - Especialistas em crescimento de negócios online com 5 anos de experiência. Nossa equipe é composta por especialistas em SEO, Google Ads, redes sociais e automação de marketing, ajudando empresas a aumentar suas vendas através de estratégias digitais personalizadas.",
+    "clientName": "Maria Silva",
+    "projectName": "Estratégia de Marketing Digital Completa",
+    "projectDescription": "Desenvolvimento de estratégia completa de marketing digital para e-commerce de moda feminina, incluindo SEO, Google Ads, gestão de redes sociais e automação de email marketing para aumentar vendas e engajamento.",
+    "selectedPlans": [
+      "Básico",
+      "Premium",
+      "Enterprise"
+    ],
+    "planDetails": "Planos personalizados para crescimento acelerado com foco em ROI e resultados mensuráveis",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#3B82F6"
+  },
+  "proposal": {
+    "finalProposal": {
+      "introduction": {
+        "title": "Aumente Vendas Online Com Nossa Estratégia",
+        "subtitle": "Desenvolvemos uma estratégia de marketing digital completa para seu e-commerce de moda feminina, aumentando vendas e engajamento.",
+        "services": [
+          "Gestão de Tráfego Pago",
+          "SEO e Contenido",
+          "Funil de Vendas",
+          "Redes Sociais"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto"
+      },
+      "aboutUs": {
+        "title": "Agência Digital Inovadora - Crescimento Online com 5 Anos de Experiência",
+        "supportText": "Soluções Personalizadas para Sucesso de Negócios",
+        "subtitle": "Nossa equipe de especialistas em SEO, Google Ads, redes sociais e automação de marketing está aqui para ajudar Maria Silva a desenvolver uma Estratégia de Marketing Digital Completa que aumente suas vendas e engajamento, aproveitando nossas 5 anos de experiência em crescimento de negócios online"
+      },
+      "specialties": {
+        "title": "Marketing Digital para Moda",
+        "topics": [
+          {
+            "title": "SEO para E-commerce de Moda Feminina",
+            "description": "Melhoramos a visibilidade do site do e-commerce de moda feminina na busca orgânica, aumentando as chances de conversão."
+          },
+          {
+            "title": "Gestão de Redes Sociais para Marca de Moda",
+            "description": "Criamos e executamos estratégias de marketing nas redes sociais para aumentar a visibilidade da marca de moda e engajar com o público-alvo."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Desenvolvemos uma estratégia digital personalizada para aumentar vendas e engajamento",
+        "title": "Nosso Processo",
+        "topics": [
+          {
+            "title": "Análise Competitiva",
+            "description": "Realizamos uma análise detalhada do mercado e concorrência para entender melhor as necessidades de Maria Silva e definir objetivos claros"
+          },
+          {
+            "title": "Elaboração de Conteúdo",
+            "description": "Criamos conteúdo atraente e relevante para as redes sociais e site de Maria Silva, alinhado às necessidades do público-alvo e objetivos do projeto"
+          },
+          {
+            "title": "Configuração de Campanhas",
+            "description": "Configuramos campanhas de SEO e Google Ads para alcançar o público-alvo e aumentar a visibilidade e vendas de Maria Silva"
+          },
+          {
+            "title": "Monitoramento e Ajuste",
+            "description": "Monitoremos continuamente o progresso das campanhas e ajustamos a estratégia conforme necessário para garantir o máximo de resultado possível"
+          }
+        ]
+      },
+      "investment": {
+        "title": "Estratégia de Marketing Digital Completa",
+        "deliverables": [
+          {
+            "title": "Análise Competitiva",
+            "description": "Identificação das principais competidoras do e-commerce de moda feminina, mapeamento dos seus canais digitais e estratégias de marketing."
+          },
+          {
+            "title": "Criatividade e Conteúdo",
+            "description": "Desenvolvimento de conteúdo visual e textual para redes sociais, emails e campanhas publicitárias, alinhados com a identidade da marca e objetivos do projeto."
+          },
+          {
+            "title": "Automatização de Email Marketing",
+            "description": "Configuração de fluxos de email marketing automatizados para aumentar a engajamento e converter leads em compras."
+          },
+          {
+            "title": "Gestão de Redes Sociais",
+            "description": "Administração das redes sociais da marca, incluindo publicação de conteúdo, monitoramento de interações e otimização de perfis."
+          },
+          {
+            "title": "SEO e Positioning",
+            "description": "Otimização do site para motores de busca, incluindo keywords, meta tags e estrutura de página, para melhorar a visibilidade e posição nos resultados de pesquisa."
+          },
+          {
+            "title": "Google Ads e Campanhas Publicitárias",
+            "description": "Desenvolvimento e execução de campanhas publicitárias no Google Ads, alinhadas com os objetivos do projeto e orçamento definido."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Básico",
+            "description": "Plano inicial que inclui análise competitiva, criatividade e conteúdo, automatização de email marketing e gestão de redes sociais.",
+            "value": "R$ 1.499",
+            "topics": [
+              "Análise Competitiva",
+              "Criatividade e Conteúdo",
+              "Automatização de Email Marketing"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Plano intermediate que inclui todos os recursos do Plano Básico, além de SEO e positionning, e gestão de Google Ads.",
+            "value": "R$ 2.999",
+            "topics": [
+              "Análise Competitiva",
+              "Criatividade e Conteúdo",
+              "Automatização de Email Marketing",
+              "SEO e Positioning",
+              "Gestão de Google Ads"
+            ]
+          },
+          {
+            "title": "Enterprise",
+            "description": "Plano avançado que inclui todos os recursos do Plano Premium, além de campanhas publicitárias personalizadas e otimização contínua do site.",
+            "value": "R$ 4.999",
+            "topics": [
+              "Análise Competitiva",
+              "Criatividade e Conteúdo",
+              "Automatização de Email Marketing",
+              "SEO e Positioning",
+              "Gestão de Google Ads",
+              "Campanhas Publicitárias Personalizadas",
+              "Otimização Contínua do Site"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Prazo de Entrega",
+          "description": "Será concluída dentro de 120 dias após aceitação do orçamento, incluindo entregas para SEO, Google Ads, redes sociais e automação de email marketing personalizadas para e-commerce de moda feminina de Maria Silva."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "Pagamento será realizado em 3 parcelas mensais, após aprovação do orçamento inicial, mediante depósito bancário ou transferência eletrônica, com fatura emitida para Maria Silva"
+        }
+      ],
+      "faq": [
+        {
+          "question": "Como a estratégia de marketing digital completa ajudará a aumentar minhas vendas no e-commerce?",
+          "answer": "Nossa estratégia completa abrange SEO, Google Ads, gestão de redes sociais e automação de email marketing, tudo projetado para alcançar seus objetivos de vendas e engajamento no seu e-commerce de moda feminina."
+        },
+        {
+          "question": "Qual é o cronograma aproximado para implementar e começar a ver resultados com a estratégia de marketing digital completa?",
+          "answer": "Em geral, nossas estratégias completas levam cerca de 3 a 6 meses para produzir resultados significativos, dependendo dos objetivos e do escopo do projeto. Nossos especialistas trabalharão em estreita colaboração com você para definir e alcançar metas específicas."
+        }
+      ],
+      "footer": {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Estratégia de Marketing Digital Completa para Maria Silva.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    },
+    "sections": [
+      {
+        "title": "Aumente Vendas Online Com Nossa Estratégia",
+        "subtitle": "Desenvolvemos uma estratégia de marketing digital completa para seu e-commerce de moda feminina, aumentando vendas e engajamento.",
+        "services": [
+          "Gestão de Tráfego Pago",
+          "SEO e Contenido",
+          "Funil de Vendas",
+          "Redes Sociais"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto"
+      },
+      {
+        "title": "Agência Digital Inovadora - Crescimento Online com 5 Anos de Experiência",
+        "supportText": "Soluções Personalizadas para Sucesso de Negócios",
+        "subtitle": "Nossa equipe de especialistas em SEO, Google Ads, redes sociais e automação de marketing está aqui para ajudar Maria Silva a desenvolver uma Estratégia de Marketing Digital Completa que aumente suas vendas e engajamento, aproveitando nossas 5 anos de experiência em crescimento de negócios online"
+      },
+      {
+        "title": "Marketing Digital para Moda",
+        "topics": [
+          {
+            "title": "SEO para E-commerce de Moda Feminina",
+            "description": "Melhoramos a visibilidade do site do e-commerce de moda feminina na busca orgânica, aumentando as chances de conversão."
+          },
+          {
+            "title": "Gestão de Redes Sociais para Marca de Moda",
+            "description": "Criamos e executamos estratégias de marketing nas redes sociais para aumentar a visibilidade da marca de moda e engajar com o público-alvo."
+          }
+        ]
+      },
+      {
+        "introduction": "Desenvolvemos uma estratégia digital personalizada para aumentar vendas e engajamento",
+        "title": "Nosso Processo",
+        "topics": [
+          {
+            "title": "Análise Competitiva",
+            "description": "Realizamos uma análise detalhada do mercado e concorrência para entender melhor as necessidades de Maria Silva e definir objetivos claros"
+          },
+          {
+            "title": "Elaboração de Conteúdo",
+            "description": "Criamos conteúdo atraente e relevante para as redes sociais e site de Maria Silva, alinhado às necessidades do público-alvo e objetivos do projeto"
+          },
+          {
+            "title": "Configuração de Campanhas",
+            "description": "Configuramos campanhas de SEO e Google Ads para alcançar o público-alvo e aumentar a visibilidade e vendas de Maria Silva"
+          },
+          {
+            "title": "Monitoramento e Ajuste",
+            "description": "Monitoremos continuamente o progresso das campanhas e ajustamos a estratégia conforme necessário para garantir o máximo de resultado possível"
+          }
+        ]
+      },
+      {
+        "title": "Estratégia de Marketing Digital Completa",
+        "deliverables": [
+          {
+            "title": "Análise Competitiva",
+            "description": "Identificação das principais competidoras do e-commerce de moda feminina, mapeamento dos seus canais digitais e estratégias de marketing."
+          },
+          {
+            "title": "Criatividade e Conteúdo",
+            "description": "Desenvolvimento de conteúdo visual e textual para redes sociais, emails e campanhas publicitárias, alinhados com a identidade da marca e objetivos do projeto."
+          },
+          {
+            "title": "Automatização de Email Marketing",
+            "description": "Configuração de fluxos de email marketing automatizados para aumentar a engajamento e converter leads em compras."
+          },
+          {
+            "title": "Gestão de Redes Sociais",
+            "description": "Administração das redes sociais da marca, incluindo publicação de conteúdo, monitoramento de interações e otimização de perfis."
+          },
+          {
+            "title": "SEO e Positioning",
+            "description": "Otimização do site para motores de busca, incluindo keywords, meta tags e estrutura de página, para melhorar a visibilidade e posição nos resultados de pesquisa."
+          },
+          {
+            "title": "Google Ads e Campanhas Publicitárias",
+            "description": "Desenvolvimento e execução de campanhas publicitárias no Google Ads, alinhadas com os objetivos do projeto e orçamento definido."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Básico",
+            "description": "Plano inicial que inclui análise competitiva, criatividade e conteúdo, automatização de email marketing e gestão de redes sociais.",
+            "value": "R$ 1.499",
+            "topics": [
+              "Análise Competitiva",
+              "Criatividade e Conteúdo",
+              "Automatização de Email Marketing"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Plano intermediate que inclui todos os recursos do Plano Básico, além de SEO e positionning, e gestão de Google Ads.",
+            "value": "R$ 2.999",
+            "topics": [
+              "Análise Competitiva",
+              "Criatividade e Conteúdo",
+              "Automatização de Email Marketing",
+              "SEO e Positioning",
+              "Gestão de Google Ads"
+            ]
+          },
+          {
+            "title": "Enterprise",
+            "description": "Plano avançado que inclui todos os recursos do Plano Premium, além de campanhas publicitárias personalizadas e otimização contínua do site.",
+            "value": "R$ 4.999",
+            "topics": [
+              "Análise Competitiva",
+              "Criatividade e Conteúdo",
+              "Automatização de Email Marketing",
+              "SEO e Positioning",
+              "Gestão de Google Ads",
+              "Campanhas Publicitárias Personalizadas",
+              "Otimização Contínua do Site"
+            ]
+          }
+        ]
+      },
+      [
+        {
+          "title": "Prazo de Entrega",
+          "description": "Será concluída dentro de 120 dias após aceitação do orçamento, incluindo entregas para SEO, Google Ads, redes sociais e automação de email marketing personalizadas para e-commerce de moda feminina de Maria Silva."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "Pagamento será realizado em 3 parcelas mensais, após aprovação do orçamento inicial, mediante depósito bancário ou transferência eletrônica, com fatura emitida para Maria Silva"
+        }
+      ],
+      [
+        {
+          "question": "Como a estratégia de marketing digital completa ajudará a aumentar minhas vendas no e-commerce?",
+          "answer": "Nossa estratégia completa abrange SEO, Google Ads, gestão de redes sociais e automação de email marketing, tudo projetado para alcançar seus objetivos de vendas e engajamento no seu e-commerce de moda feminina."
+        },
+        {
+          "question": "Qual é o cronograma aproximado para implementar e começar a ver resultados com a estratégia de marketing digital completa?",
+          "answer": "Em geral, nossas estratégias completas levam cerca de 3 a 6 meses para produzir resultados significativos, dependendo dos objetivos e do escopo do projeto. Nossos especialistas trabalharão em estreita colaboração com você para definir e alcançar metas específicas."
+        }
+      ],
+      {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Estratégia de Marketing Digital Completa para Maria Silva.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    ],
+    "metadata": {
+      "totalSections": 8,
+      "executionTime": 4554,
+      "model": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      "templateType": "flash",
+      "aiGenerated": true,
+      "fallbackUsed": false
+    }
+  },
+  "generatedAt": "2025-09-09T20:09:39.032Z"
+}

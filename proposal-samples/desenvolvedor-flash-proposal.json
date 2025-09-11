@@ -1,0 +1,376 @@
+{
+  "agent": {
+    "id": "desenvolvedor-flash-agent",
+    "name": "Especialista em Desenvolvimento Flash",
+    "sector": "Tecnologia e Desenvolvimento",
+    "template": "flash"
+  },
+  "testData": {
+    "companyInfo": "Tech Solutions Pro - Empresa de desenvolvimento de software especializada em aplicações web e mobile. Utilizamos tecnologias modernas como React, Node.js e React Native para criar soluções escaláveis e eficientes.",
+    "clientName": "Ana Costa",
+    "projectName": "Plataforma E-commerce",
+    "projectDescription": "Desenvolvimento de plataforma e-commerce completa com sistema de pagamentos, gestão de estoque, painel administrativo e aplicativo mobile para varejo de produtos naturais.",
+    "selectedPlans": [
+      "Web App",
+      "Mobile App",
+      "Full Stack"
+    ],
+    "planDetails": "Soluções tecnológicas que geram eficiência, escalabilidade e lucro",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#10B981"
+  },
+  "proposal": {
+    "finalProposal": {
+      "introduction": {
+        "title": "Plataforma E-commerce Personalizada",
+        "subtitle": "Desenvolvemos uma solução de ponta para o seu negócio de produtos naturais, com sistema de pagamentos, gestão de estoque e aplicativo móvel.",
+        "services": [
+          "Desenvolvimento Web Integrado",
+          "App Mobile Customizado",
+          "Sistema de Gestão de Estoque",
+          "Integração de Pagamentos Seguros"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Inicie seu Negócio Online Agora"
+      },
+      "aboutUs": {
+        "title": "Tech Solutions Pro: Desenvolvendo Soluções Web e Mobile de Alto Nível",
+        "supportText": "Experiência em tecnologia para impulsionar seus negócios.",
+        "subtitle": "Nossa equipe especializada em desenvolvimento de software utiliza tecnologias como React, Node.js e React Native para criar plataformas e-commerce escaláveis e eficientes, como a sua Plataforma E-commerce, projetada para atender às necessidades únicas de Ana Costa."
+      },
+      "specialties": {
+        "title": "Desenvolvimento Web e Mobile",
+        "topics": [
+          {
+            "title": "Sistemas de Pagamentos Integrados",
+            "description": "Desenvolvemos soluções de pagamentos seguras e escaláveis para plataformas e-commerce, permitindo a realização de compras online com facilidade."
+          },
+          {
+            "title": "Gestão de Estoque e Inventario",
+            "description": "Implementamos sistemas de gestão de estoque e inventario para plataformas e-commerce, possibilitando a visualização e controle de produtos em tempo real."
+          },
+          {
+            "title": "Desenvolvimento de Aplicativos Móveis",
+            "description": "Criamos aplicativos móveis nativos para plataformas e-commerce, permitindo que os clientes tenham acesso fácil e seguro a seus produtos e serviços."
+          },
+          {
+            "title": "Segurança e Integração de Sistemas",
+            "description": "Implementamos medidas de segurança robustas e integramos sistemas para proteger dados e garantir a confiabilidade dos sistemas de e-commerce."
+          },
+          {
+            "title": "Experiência do Usuário Aprimorada",
+            "description": "Desenvolvemos interfaces intuitivas e personalizadas para melhorar a experiência do usuário nos sites e aplicativos de e-commerce."
+          },
+          {
+            "title": "Gestão de Catálogos e Produtos",
+            "description": "Implementamos sistemas de gestão de catálogos e produtos para plataformas e-commerce, permitindo a fácil atualização e manutenção de produtos e preços."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Desenvolvemos uma plataforma e-commerce personalizada para Ana Costa",
+        "title": "Desenvolvimento Ágil e Escalável",
+        "topics": [
+          {
+            "title": "Análise de Requisitos",
+            "description": "Reunimos-se com Ana Costa para entender suas necessidades e definirmos o escopo do projeto. Identificamos as funcionalidades essenciais para a plataforma e-commerce, incluindo sistema de pagamentos, gestão de estoque e painel administrativo."
+          },
+          {
+            "title": "Design e Prototipação",
+            "description": "Criamos um design intuitivo e agradável para a plataforma e-commerce, considerando as necessidades dos usuários finais. Realizamos prototipagens para garantir que as funcionalidades estejam alinhadas com as expectativas de Ana Costa."
+          }
+        ]
+      },
+      "investment": {
+        "title": "Desenvolvimento de Plataforma E-commerce Completa",
+        "deliverables": [
+          {
+            "title": "Sistema de Pagamentos Integrado",
+            "description": "Implementaremos sistema de pagamentos seguro e escalável para aceitar várias formas de pagamento, garantindo uma experiência de compra fluida e segura para os clientes."
+          },
+          {
+            "title": "Gestão de Estoques Eficiente",
+            "description": "Desenvolveremos sistema de gestão de estoques para gerenciar produtos, categorias e quantidades, permitindo que você tenha controle total sobre suas operações."
+          },
+          {
+            "title": "Painel Administrativo Centralizado",
+            "description": "Criaremos painel administrativo intuitivo e personalizado para que você possa gerenciar todos os aspectos da plataforma, incluindo relatórios, análises e configurações."
+          },
+          {
+            "title": "Aplicativo Mobile para Varejo",
+            "description": "Desenvolveremos aplicativo móvel nativo para Android e iOS, permitindo que seus clientes comprarem produtos naturalmente em qualquer lugar e a qualquer momento."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Básico",
+            "description": "Desenvolvimento da plataforma e-commerce básica com sistema de pagamentos e gestão de estoque.",
+            "value": "R$ 999",
+            "topics": [
+              "Sistema de pagamentos",
+              "Gestão de estoque",
+              "Suporte técnico"
+            ]
+          },
+          {
+            "title": "Intermediário",
+            "description": "Desenvolvimento da plataforma e-commerce intermediária com painel administrativo e aplicativo mobile básico.",
+            "value": "R$ 2.499",
+            "topics": [
+              "Painel administrativo",
+              "Aplicativo mobile básico",
+              "Análise de dados"
+            ]
+          },
+          {
+            "title": "Avançado",
+            "description": "Desenvolvimento da plataforma e-commerce avançada com todos os recursos mencionados anteriormente e personalização total.",
+            "value": "R$ 4.999",
+            "topics": [
+              "Personalização total",
+              "Integração com redes sociais",
+              "Suporte premium"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Entrega da Plataforma E-commerce",
+          "description": "Nossa equipe trabalhará intensivamente para entregar a plataforma e-commerce completa dentro de 120 dias após assinatura do contrato."
+        },
+        {
+          "title": "Pagamento das Fases do Projeto",
+          "description": "Ana Costa poderá pagar 30% do valor total do projeto à assinatura do contrato, 40% após a entrega da plataforma em ambiente de teste e 30% após a finalização dos testes de aceitação."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o prazo de entrega para a Plataforma E-commerce?",
+          "answer": "Nossa equipe de desenvolvedores trabalhará intensamente para entregar a plataforma dentro dos prazos estabelecidos, garantindo que atenda às suas necessidades e expectativas."
+        },
+        {
+          "question": "Como a plataforma será atualizada e mantida após a entrega?",
+          "answer": "Oferecemos manutenção e atualizações regulares da plataforma, garantindo que ela continue a atender às suas necessidades e seja compatível com as últimas tecnologias e tendências do mercado."
+        },
+        {
+          "question": "Posso personalizar a plataforma para meus produtos naturais?",
+          "answer": "Sim, podemos personalizar a plataforma para que atenda especificamente às suas necessidades e produtos, incluindo a criação de catálogos e características únicas para seus produtos naturais."
+        },
+        {
+          "question": "Qual é o custo de desenvolvimento e manutenção da plataforma?",
+          "answer": "Nosso modelo de preços é transparente e competitivo, oferecendo diferentes planos e opções para atender às suas necessidades e orçamento, sem surpresas ou cobranças adicionais."
+        },
+        {
+          "question": "Qual é o tempo de resposta para questões e problemas técnicos?",
+          "answer": "Nossa equipe está disponível para responder a questões e resolver problemas técnicos rapidamente, garantindo que você tenha acesso à ajuda e suporte necessário para operar a plataforma com sucesso."
+        },
+        {
+          "question": "Como a plataforma será integrada com meus sistemas existentes?",
+          "answer": "Podemos integrar a plataforma com seus sistemas existentes, garantindo que haja fluxo contínuo de dados e informações, e minimizando a necessidade de entrada manual de dados."
+        },
+        {
+          "question": "Qual é a segurança da informação da plataforma?",
+          "answer": "A segurança da informação é nossa prioridade, utilizando técnicas e práticas de segurança avançadas para proteger a plataforma e os dados dos usuários, garantindo que eles estejam sempre seguros e protegidos."
+        },
+        {
+          "question": "Posso fazer alterações na plataforma após a entrega?",
+          "answer": "Sim, podemos realizar alterações e melhorias na plataforma após a entrega, garantindo que ela continue a atender às suas necessidades e mudanças nos requisitos do negócio."
+        },
+        {
+          "question": "Quais são as oportunidades de expansão da plataforma?",
+          "answer": "A plataforma foi projetada para ser escalável e flexível, permitindo que você expanda a plataforma para novos mercados, produtos e serviços, sem precisar de grandes recursos ou investimentos adicionais."
+        }
+      ],
+      "footer": {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Plataforma E-commerce para Ana Costa.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    },
+    "sections": [
+      {
+        "title": "Plataforma E-commerce Personalizada",
+        "subtitle": "Desenvolvemos uma solução de ponta para o seu negócio de produtos naturais, com sistema de pagamentos, gestão de estoque e aplicativo móvel.",
+        "services": [
+          "Desenvolvimento Web Integrado",
+          "App Mobile Customizado",
+          "Sistema de Gestão de Estoque",
+          "Integração de Pagamentos Seguros"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Inicie seu Negócio Online Agora"
+      },
+      {
+        "title": "Tech Solutions Pro: Desenvolvendo Soluções Web e Mobile de Alto Nível",
+        "supportText": "Experiência em tecnologia para impulsionar seus negócios.",
+        "subtitle": "Nossa equipe especializada em desenvolvimento de software utiliza tecnologias como React, Node.js e React Native para criar plataformas e-commerce escaláveis e eficientes, como a sua Plataforma E-commerce, projetada para atender às necessidades únicas de Ana Costa."
+      },
+      {
+        "title": "Desenvolvimento Web e Mobile",
+        "topics": [
+          {
+            "title": "Sistemas de Pagamentos Integrados",
+            "description": "Desenvolvemos soluções de pagamentos seguras e escaláveis para plataformas e-commerce, permitindo a realização de compras online com facilidade."
+          },
+          {
+            "title": "Gestão de Estoque e Inventario",
+            "description": "Implementamos sistemas de gestão de estoque e inventario para plataformas e-commerce, possibilitando a visualização e controle de produtos em tempo real."
+          },
+          {
+            "title": "Desenvolvimento de Aplicativos Móveis",
+            "description": "Criamos aplicativos móveis nativos para plataformas e-commerce, permitindo que os clientes tenham acesso fácil e seguro a seus produtos e serviços."
+          },
+          {
+            "title": "Segurança e Integração de Sistemas",
+            "description": "Implementamos medidas de segurança robustas e integramos sistemas para proteger dados e garantir a confiabilidade dos sistemas de e-commerce."
+          },
+          {
+            "title": "Experiência do Usuário Aprimorada",
+            "description": "Desenvolvemos interfaces intuitivas e personalizadas para melhorar a experiência do usuário nos sites e aplicativos de e-commerce."
+          },
+          {
+            "title": "Gestão de Catálogos e Produtos",
+            "description": "Implementamos sistemas de gestão de catálogos e produtos para plataformas e-commerce, permitindo a fácil atualização e manutenção de produtos e preços."
+          }
+        ]
+      },
+      {
+        "introduction": "Desenvolvemos uma plataforma e-commerce personalizada para Ana Costa",
+        "title": "Desenvolvimento Ágil e Escalável",
+        "topics": [
+          {
+            "title": "Análise de Requisitos",
+            "description": "Reunimos-se com Ana Costa para entender suas necessidades e definirmos o escopo do projeto. Identificamos as funcionalidades essenciais para a plataforma e-commerce, incluindo sistema de pagamentos, gestão de estoque e painel administrativo."
+          },
+          {
+            "title": "Design e Prototipação",
+            "description": "Criamos um design intuitivo e agradável para a plataforma e-commerce, considerando as necessidades dos usuários finais. Realizamos prototipagens para garantir que as funcionalidades estejam alinhadas com as expectativas de Ana Costa."
+          }
+        ]
+      },
+      {
+        "title": "Desenvolvimento de Plataforma E-commerce Completa",
+        "deliverables": [
+          {
+            "title": "Sistema de Pagamentos Integrado",
+            "description": "Implementaremos sistema de pagamentos seguro e escalável para aceitar várias formas de pagamento, garantindo uma experiência de compra fluida e segura para os clientes."
+          },
+          {
+            "title": "Gestão de Estoques Eficiente",
+            "description": "Desenvolveremos sistema de gestão de estoques para gerenciar produtos, categorias e quantidades, permitindo que você tenha controle total sobre suas operações."
+          },
+          {
+            "title": "Painel Administrativo Centralizado",
+            "description": "Criaremos painel administrativo intuitivo e personalizado para que você possa gerenciar todos os aspectos da plataforma, incluindo relatórios, análises e configurações."
+          },
+          {
+            "title": "Aplicativo Mobile para Varejo",
+            "description": "Desenvolveremos aplicativo móvel nativo para Android e iOS, permitindo que seus clientes comprarem produtos naturalmente em qualquer lugar e a qualquer momento."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Básico",
+            "description": "Desenvolvimento da plataforma e-commerce básica com sistema de pagamentos e gestão de estoque.",
+            "value": "R$ 999",
+            "topics": [
+              "Sistema de pagamentos",
+              "Gestão de estoque",
+              "Suporte técnico"
+            ]
+          },
+          {
+            "title": "Intermediário",
+            "description": "Desenvolvimento da plataforma e-commerce intermediária com painel administrativo e aplicativo mobile básico.",
+            "value": "R$ 2.499",
+            "topics": [
+              "Painel administrativo",
+              "Aplicativo mobile básico",
+              "Análise de dados"
+            ]
+          },
+          {
+            "title": "Avançado",
+            "description": "Desenvolvimento da plataforma e-commerce avançada com todos os recursos mencionados anteriormente e personalização total.",
+            "value": "R$ 4.999",
+            "topics": [
+              "Personalização total",
+              "Integração com redes sociais",
+              "Suporte premium"
+            ]
+          }
+        ]
+      },
+      [
+        {
+          "title": "Entrega da Plataforma E-commerce",
+          "description": "Nossa equipe trabalhará intensivamente para entregar a plataforma e-commerce completa dentro de 120 dias após assinatura do contrato."
+        },
+        {
+          "title": "Pagamento das Fases do Projeto",
+          "description": "Ana Costa poderá pagar 30% do valor total do projeto à assinatura do contrato, 40% após a entrega da plataforma em ambiente de teste e 30% após a finalização dos testes de aceitação."
+        }
+      ],
+      [
+        {
+          "question": "Qual é o prazo de entrega para a Plataforma E-commerce?",
+          "answer": "Nossa equipe de desenvolvedores trabalhará intensamente para entregar a plataforma dentro dos prazos estabelecidos, garantindo que atenda às suas necessidades e expectativas."
+        },
+        {
+          "question": "Como a plataforma será atualizada e mantida após a entrega?",
+          "answer": "Oferecemos manutenção e atualizações regulares da plataforma, garantindo que ela continue a atender às suas necessidades e seja compatível com as últimas tecnologias e tendências do mercado."
+        },
+        {
+          "question": "Posso personalizar a plataforma para meus produtos naturais?",
+          "answer": "Sim, podemos personalizar a plataforma para que atenda especificamente às suas necessidades e produtos, incluindo a criação de catálogos e características únicas para seus produtos naturais."
+        },
+        {
+          "question": "Qual é o custo de desenvolvimento e manutenção da plataforma?",
+          "answer": "Nosso modelo de preços é transparente e competitivo, oferecendo diferentes planos e opções para atender às suas necessidades e orçamento, sem surpresas ou cobranças adicionais."
+        },
+        {
+          "question": "Qual é o tempo de resposta para questões e problemas técnicos?",
+          "answer": "Nossa equipe está disponível para responder a questões e resolver problemas técnicos rapidamente, garantindo que você tenha acesso à ajuda e suporte necessário para operar a plataforma com sucesso."
+        },
+        {
+          "question": "Como a plataforma será integrada com meus sistemas existentes?",
+          "answer": "Podemos integrar a plataforma com seus sistemas existentes, garantindo que haja fluxo contínuo de dados e informações, e minimizando a necessidade de entrada manual de dados."
+        },
+        {
+          "question": "Qual é a segurança da informação da plataforma?",
+          "answer": "A segurança da informação é nossa prioridade, utilizando técnicas e práticas de segurança avançadas para proteger a plataforma e os dados dos usuários, garantindo que eles estejam sempre seguros e protegidos."
+        },
+        {
+          "question": "Posso fazer alterações na plataforma após a entrega?",
+          "answer": "Sim, podemos realizar alterações e melhorias na plataforma após a entrega, garantindo que ela continue a atender às suas necessidades e mudanças nos requisitos do negócio."
+        },
+        {
+          "question": "Quais são as oportunidades de expansão da plataforma?",
+          "answer": "A plataforma foi projetada para ser escalável e flexível, permitindo que você expanda a plataforma para novos mercados, produtos e serviços, sem precisar de grandes recursos ou investimentos adicionais."
+        }
+      ],
+      {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Plataforma E-commerce para Ana Costa.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    ],
+    "metadata": {
+      "totalSections": 8,
+      "executionTime": 11141,
+      "model": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      "templateType": "flash",
+      "aiGenerated": true,
+      "fallbackUsed": false
+    }
+  },
+  "generatedAt": "2025-09-09T20:09:57.813Z"
+}

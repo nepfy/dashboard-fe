@@ -1,0 +1,348 @@
+{
+  "agent": {
+    "id": "designer-flash-agent",
+    "name": "Especialista em Design Flash",
+    "sector": "Design e Comunicação Visual",
+    "template": "flash"
+  },
+  "testData": {
+    "companyInfo": "Studio Criativo Design - Especialistas em identidade visual e branding para startups e empresas em crescimento. Nossa missão é transformar ideias em experiências visuais memoráveis através de design estratégico e criativo.",
+    "clientName": "João Santos",
+    "projectName": "Identidade Visual Completa",
+    "projectDescription": "Criação de identidade visual completa para startup de tecnologia, incluindo logo, paleta de cores, tipografia, material gráfico e manual de marca para estabelecer presença visual forte no mercado.",
+    "selectedPlans": [
+      "Logo",
+      "Complete",
+      "Premium"
+    ],
+    "planDetails": "Soluções de design que fortalecem marcas e geram resultados duradouros",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#8B5CF6"
+  },
+  "proposal": {
+    "finalProposal": {
+      "introduction": {
+        "title": "Transforme sua Startup",
+        "subtitle": "Crie uma presença visual forte no mercado com nossa identidade visual completa",
+        "services": [
+          "Identidade Visual Completa",
+          "Branding Completo",
+          "Design de UX/UI",
+          "Material Gráfico"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto"
+      },
+      "aboutUs": {
+        "title": "Studio Criativo Design: Transformando Ideias em Experiências Visuais",
+        "supportText": "Transformando startups e empresas em crescimento.",
+        "subtitle": "Com expertise em identidade visual e branding, nossa equipe está aqui para ajudar João Santos a estabelecer uma presença visual forte no mercado com a Identidade Visual Completa."
+      },
+      "specialties": {
+        "title": "Identidade Visual Profissional",
+        "topics": [
+          {
+            "title": "Criação de Logotipo Inovador",
+            "description": "Desenvolvimento de logotipos únicos e memoráveis para startups de tecnologia, equilibrando originalidade e coerência com a marca."
+          },
+          {
+            "title": "Paleta de Cores e Tipografia",
+            "description": "Elaboração de paletes de cores e seleção de tipografias que refletem a personalidade e os valores da startup de tecnologia, fortalecendo a identidade visual."
+          },
+          {
+            "title": "Material Gráfico e Manual de Marca",
+            "description": "Criação de materiais gráficos consistentes e um manual de marca que oriente a equipe sobre a utilização correta da identidade visual, estabelecendo uma presença visual forte no mercado."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Transformamos a identidade visual de João Santos em uma marca inovadora",
+        "title": "Nossa Abordagem Estratégica",
+        "topics": [
+          {
+            "title": "Análise de Marca",
+            "description": "Entendemos a essência da startup de tecnologia de João Santos e identificamos oportunidades para criar uma identidade visual única"
+          },
+          {
+            "title": "Design de Identidade Visual",
+            "description": "Criamos um conjunto coerente de elementos visuais, incluindo logo, paleta de cores, tipografia e material gráfico, para estabelecer uma presença visual forte no mercado"
+          }
+        ]
+      },
+      "investment": {
+        "title": "Identidade Visuais Transformadoras para Sucesso",
+        "deliverables": [
+          {
+            "title": "Logo Empresarial Impactante",
+            "description": "Desenvolvimento de um logo único e memorável para João Santos, que comunica a essência da startup de tecnologia"
+          },
+          {
+            "title": "Paleta de Cores e Tipografia",
+            "description": "Definição de uma paleta de cores e tipografia coerentes com a marca, garantindo uma presença visual uniforme nos materiais gráficos"
+          },
+          {
+            "title": "Material Gráfico Completo",
+            "description": "Criação de materiais gráficos personalizados, incluindo cartões de visita, folhetos e banners, para fortalecer a imagem da marca"
+          },
+          {
+            "title": "Manual de Marca",
+            "description": "Elaboração de um manual de marca detalhado, fornecendo orientações para o uso correto dos elementos visuais da marca"
+          },
+          {
+            "title": "Guia de Uso das Ferramentas",
+            "description": "Desenvolvimento de um guia de uso das ferramentas de design e marketing, ajudando João Santos a manter a consistência da marca"
+          },
+          {
+            "title": "Revisão e Ajustes",
+            "description": "Inclusão de revisões e ajustes finais, garantindo que a identidade visual seja perfeita e atenda às necessidades de João Santos"
+          }
+        ],
+        "plans": [
+          {
+            "title": "Logo",
+            "description": "Desenvolvimento de um logo empresarial impactante e único",
+            "value": "R$ 499",
+            "topics": [
+              "Criação de logo único",
+              "Paleta de cores básica",
+              "Tipografia simples"
+            ]
+          },
+          {
+            "title": "Complete",
+            "description": "Desenvolvimento de uma identidade visual completa, incluindo logo, paleta de cores, tipografia e material gráfico",
+            "value": "R$ 1.299",
+            "topics": [
+              "Criação de logo único",
+              "Paleta de cores completa",
+              "Tipografia personalizada",
+              "Materiais gráficos",
+              "Manual de marca"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Desenvolvimento de uma identidade visual premium, incluindo tudo do plano completo, mais guia de uso das ferramentas e revisão final",
+            "value": "R$ 2.499",
+            "topics": [
+              "Criação de logo único",
+              "Paleta de cores completa",
+              "Tipografia personalizada",
+              "Materiais gráficos",
+              "Manual de marca",
+              "Guia de uso das ferramentas",
+              "Revisão final"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Prazo de Entrega para Identidade Visual Completa",
+          "description": "Entregar documento final completo em até 15 dias úteis após aprovação dos rascunhos finais, considerando feedbacks contínuos de João Santos."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "Pagamento à vista no momento da assinatura do contrato, ou parcelado em até 3 vezes iguais, com 30% de depósito inicial e 70% no prazo de 7 dias corridos após a data de assinatura."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o custo total do pacote de identidade visual completa?",
+          "answer": "O valor total do pacote de identidade visual completa é de R$15.000,00, que inclui logo, paleta de cores, tipografia, material gráfico e manual de marca."
+        },
+        {
+          "question": "Quantos dias de entrega podem eu esperar após a aprovação dos conceitos?",
+          "answer": "Depois de aprovar os conceitos, podemos entregar a identidade visual completa dentro de 7 a 10 dias úteis, dependendo da complexidade do projeto."
+        },
+        {
+          "question": "Posso alterar os planos de identidade visual completa após assinar o contrato?",
+          "answer": "Sim, é possível alterar os planos após assinar o contrato, mas é necessário comunicar essas mudanças antes da entrega final do projeto."
+        },
+        {
+          "question": "Quem é o contato principal durante todo o processo de criação da identidade visual completa?",
+          "answer": "João Santos será o nosso contato principal durante todo o processo de criação da identidade visual completa, garantindo uma comunicação eficaz e transparente."
+        },
+        {
+          "question": "Como posso pagar o projeto de identidade visual completa?",
+          "answer": "É possível pagar o projeto de identidade visual completa mediante depósito bancário ou transferência online, conforme acordado com nossa equipe."
+        }
+      ],
+      "footer": {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Identidade Visual Completa para João Santos.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    },
+    "sections": [
+      {
+        "title": "Transforme sua Startup",
+        "subtitle": "Crie uma presença visual forte no mercado com nossa identidade visual completa",
+        "services": [
+          "Identidade Visual Completa",
+          "Branding Completo",
+          "Design de UX/UI",
+          "Material Gráfico"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto"
+      },
+      {
+        "title": "Studio Criativo Design: Transformando Ideias em Experiências Visuais",
+        "supportText": "Transformando startups e empresas em crescimento.",
+        "subtitle": "Com expertise em identidade visual e branding, nossa equipe está aqui para ajudar João Santos a estabelecer uma presença visual forte no mercado com a Identidade Visual Completa."
+      },
+      {
+        "title": "Identidade Visual Profissional",
+        "topics": [
+          {
+            "title": "Criação de Logotipo Inovador",
+            "description": "Desenvolvimento de logotipos únicos e memoráveis para startups de tecnologia, equilibrando originalidade e coerência com a marca."
+          },
+          {
+            "title": "Paleta de Cores e Tipografia",
+            "description": "Elaboração de paletes de cores e seleção de tipografias que refletem a personalidade e os valores da startup de tecnologia, fortalecendo a identidade visual."
+          },
+          {
+            "title": "Material Gráfico e Manual de Marca",
+            "description": "Criação de materiais gráficos consistentes e um manual de marca que oriente a equipe sobre a utilização correta da identidade visual, estabelecendo uma presença visual forte no mercado."
+          }
+        ]
+      },
+      {
+        "introduction": "Transformamos a identidade visual de João Santos em uma marca inovadora",
+        "title": "Nossa Abordagem Estratégica",
+        "topics": [
+          {
+            "title": "Análise de Marca",
+            "description": "Entendemos a essência da startup de tecnologia de João Santos e identificamos oportunidades para criar uma identidade visual única"
+          },
+          {
+            "title": "Design de Identidade Visual",
+            "description": "Criamos um conjunto coerente de elementos visuais, incluindo logo, paleta de cores, tipografia e material gráfico, para estabelecer uma presença visual forte no mercado"
+          }
+        ]
+      },
+      {
+        "title": "Identidade Visuais Transformadoras para Sucesso",
+        "deliverables": [
+          {
+            "title": "Logo Empresarial Impactante",
+            "description": "Desenvolvimento de um logo único e memorável para João Santos, que comunica a essência da startup de tecnologia"
+          },
+          {
+            "title": "Paleta de Cores e Tipografia",
+            "description": "Definição de uma paleta de cores e tipografia coerentes com a marca, garantindo uma presença visual uniforme nos materiais gráficos"
+          },
+          {
+            "title": "Material Gráfico Completo",
+            "description": "Criação de materiais gráficos personalizados, incluindo cartões de visita, folhetos e banners, para fortalecer a imagem da marca"
+          },
+          {
+            "title": "Manual de Marca",
+            "description": "Elaboração de um manual de marca detalhado, fornecendo orientações para o uso correto dos elementos visuais da marca"
+          },
+          {
+            "title": "Guia de Uso das Ferramentas",
+            "description": "Desenvolvimento de um guia de uso das ferramentas de design e marketing, ajudando João Santos a manter a consistência da marca"
+          },
+          {
+            "title": "Revisão e Ajustes",
+            "description": "Inclusão de revisões e ajustes finais, garantindo que a identidade visual seja perfeita e atenda às necessidades de João Santos"
+          }
+        ],
+        "plans": [
+          {
+            "title": "Logo",
+            "description": "Desenvolvimento de um logo empresarial impactante e único",
+            "value": "R$ 499",
+            "topics": [
+              "Criação de logo único",
+              "Paleta de cores básica",
+              "Tipografia simples"
+            ]
+          },
+          {
+            "title": "Complete",
+            "description": "Desenvolvimento de uma identidade visual completa, incluindo logo, paleta de cores, tipografia e material gráfico",
+            "value": "R$ 1.299",
+            "topics": [
+              "Criação de logo único",
+              "Paleta de cores completa",
+              "Tipografia personalizada",
+              "Materiais gráficos",
+              "Manual de marca"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Desenvolvimento de uma identidade visual premium, incluindo tudo do plano completo, mais guia de uso das ferramentas e revisão final",
+            "value": "R$ 2.499",
+            "topics": [
+              "Criação de logo único",
+              "Paleta de cores completa",
+              "Tipografia personalizada",
+              "Materiais gráficos",
+              "Manual de marca",
+              "Guia de uso das ferramentas",
+              "Revisão final"
+            ]
+          }
+        ]
+      },
+      [
+        {
+          "title": "Prazo de Entrega para Identidade Visual Completa",
+          "description": "Entregar documento final completo em até 15 dias úteis após aprovação dos rascunhos finais, considerando feedbacks contínuos de João Santos."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "Pagamento à vista no momento da assinatura do contrato, ou parcelado em até 3 vezes iguais, com 30% de depósito inicial e 70% no prazo de 7 dias corridos após a data de assinatura."
+        }
+      ],
+      [
+        {
+          "question": "Qual é o custo total do pacote de identidade visual completa?",
+          "answer": "O valor total do pacote de identidade visual completa é de R$15.000,00, que inclui logo, paleta de cores, tipografia, material gráfico e manual de marca."
+        },
+        {
+          "question": "Quantos dias de entrega podem eu esperar após a aprovação dos conceitos?",
+          "answer": "Depois de aprovar os conceitos, podemos entregar a identidade visual completa dentro de 7 a 10 dias úteis, dependendo da complexidade do projeto."
+        },
+        {
+          "question": "Posso alterar os planos de identidade visual completa após assinar o contrato?",
+          "answer": "Sim, é possível alterar os planos após assinar o contrato, mas é necessário comunicar essas mudanças antes da entrega final do projeto."
+        },
+        {
+          "question": "Quem é o contato principal durante todo o processo de criação da identidade visual completa?",
+          "answer": "João Santos será o nosso contato principal durante todo o processo de criação da identidade visual completa, garantindo uma comunicação eficaz e transparente."
+        },
+        {
+          "question": "Como posso pagar o projeto de identidade visual completa?",
+          "answer": "É possível pagar o projeto de identidade visual completa mediante depósito bancário ou transferência online, conforme acordado com nossa equipe."
+        }
+      ],
+      {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Identidade Visual Completa para João Santos.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    ],
+    "metadata": {
+      "totalSections": 8,
+      "executionTime": 4953,
+      "model": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      "templateType": "flash",
+      "aiGenerated": true,
+      "fallbackUsed": false
+    }
+  },
+  "generatedAt": "2025-09-09T20:09:45.343Z"
+}

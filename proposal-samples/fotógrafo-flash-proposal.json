@@ -1,0 +1,292 @@
+{
+  "agent": {
+    "id": "fotógrafo-flash-agent",
+    "name": "Especialista em Fotografia Flash",
+    "sector": "Fotografia e Produção Visual",
+    "template": "flash"
+  },
+  "testData": {
+    "companyInfo": "Estúdio Fotográfico Profissional - Especialistas em fotografia corporativa, de produtos, eventos e retratos. Nossa equipe utiliza equipamentos de alta qualidade e técnicas avançadas de pós-produção para capturar momentos únicos.",
+    "clientName": "Lucia Ferreira",
+    "projectName": "Sessão Corporativa",
+    "projectDescription": "Sessão fotográfica corporativa para equipe executiva de 15 pessoas, incluindo retratos individuais, fotos de grupo e imagens para site institucional e materiais de marketing.",
+    "selectedPlans": [
+      "Session",
+      "Package",
+      "Premium"
+    ],
+    "planDetails": "Fotografia que gera visibilidade, lucro e memórias afetivas duradouras",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#EF4444"
+  },
+  "proposal": {
+    "finalProposal": {
+      "introduction": {
+        "title": "Capturando Sucesso",
+        "subtitle": "Uma sessão fotográfica corporativa única para Lucia Ferreira e sua equipe executiva",
+        "services": [
+          "Fotografia Corporativa",
+          "Ensaio Pessoal",
+          "Fotografia de Grupo",
+          "Produção Social Media"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto"
+      },
+      "aboutUs": {
+        "title": "Capturando Momentos Únicos com Profissionalismo e Arte",
+        "supportText": "Experiência com equipes executivas desde 2010",
+        "subtitle": "Nossa equipe experiente e qualificada está preparada para capturar a essência da sua equipe executiva em nossa sessão corporativa. Com equipamentos de alta qualidade e técnicas avançadas de pós-produção, podemos oferecer imagens inovadoras e memoráveis que refletem a personalidade e o carisma da sua empresa."
+      },
+      "specialties": {
+        "title": "Fotografia Corporativa Personalizada",
+        "topics": [
+          {
+            "title": "Retratos Individuais de Excelência",
+            "description": "Capturamos a essência de cada membro da equipe executiva através de retratos individuais de alta qualidade, personalizados para refletir a identidade da empresa."
+          },
+          {
+            "title": "Fotos de Grupo Elegantes",
+            "description": "Nossas equipes experientes capturam a dinâmica e a colaboração da equipe executiva em fotos de grupo elegantes e inspiradoras, ideais para uso em site institucional e materiais de marketing."
+          },
+          {
+            "title": "Imagens para Site Institucional e Marketing",
+            "description": "Nossa equipe de fotógrafos experientes captura imagens altamente profissionais para uso em site institucional e materiais de marketing, ajudando a fortalecer a presença da empresa no mercado."
+          },
+          {
+            "title": "Atendimento Personalizado para Equipe Executiva",
+            "description": "Oferecemos atendimento personalizado e flexível para atender às necessidades específicas da equipe executiva de Lucia Ferreira, garantindo que as imagens sejam perfeitas para seus propósitos."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Capturando a essência da equipe executiva de Lucia Ferreira através de retratos individuais e fotos de grupo.",
+        "title": "Nosso Processo",
+        "topics": [
+          {
+            "title": "Planejamento e Revisão de Conteúdo",
+            "description": "Trabalhamos com Lucia Ferreira para entender os objetivos e preferências da sessão, incluindo a seleção de locais, roupas e cenários que refletem a personalidade da equipe."
+          },
+          {
+            "title": "Execução da Sessão Fotográfica",
+            "description": "Nossa equipe experiente liderada por Lucia Ferreira conduzirá a sessão, capturando retratos individuais, fotos de grupo e imagens para uso em site institucional e materiais de marketing."
+          }
+        ]
+      },
+      "investment": {
+        "title": "Capturando Momentos Únicos",
+        "deliverables": [
+          {
+            "title": "Fotos de Grupo e Individuais",
+            "description": "Receba 15 fotos de grupo e 15 retratos individuais de alta qualidade para uso em site institucional e materiais de marketing."
+          },
+          {
+            "title": "Imagens para Site e Marketing",
+            "description": "Obtenha imagens personalizadas para uso em site institucional, materiais de marketing e outras plataformas digitais."
+          },
+          {
+            "title": "Arquivos Digitais e Editados",
+            "description": "Recém editados e preparados para uso em diferentes mídias e formatos."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Session",
+            "description": "Capte momentos únicos da equipe executiva de Lucia Ferreira.",
+            "value": "R$ 1.499",
+            "topics": [
+              "Fotos de grupo e individuais",
+              "Assessoria de estilo e direção",
+              "Edição e postagem das imagens"
+            ]
+          },
+          {
+            "title": "Package",
+            "description": "Obtenha todas as imagens necessárias para uso em site e marketing, além de fotos adicionais para uso futuro.",
+            "value": "R$ 2.999",
+            "topics": [
+              "Todos os benefícios do Session + Arquivos digitais e editados",
+              "Materiais de marketing personalizados"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Ama-se como uma obra de arte. Obtenha tudo o que precisamos para um site e marketing de alta qualidade.",
+            "value": "R$ 4.999",
+            "topics": [
+              "Todos os benefícios do Package + Direção de arte e design",
+              "Produção de conteúdo visual adicionais"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Prazo de Entrega para Sessão Corporativa",
+          "description": "Nossa equipe trabalhará arduamente para entregar as imagens da sessão corporativa de Lucia Ferreira em até 7 dias corridos após a realização da sessão."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "Lucia Ferreira poderá pagar o valor total da sessão corporativa por meio de depósito bancário ou transferência online, sendo necessário o pagamento à vista dentro de 3 dias corridos após a data de contrato."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quantas fotos serão entregues após a sessão?",
+          "answer": "Serão entregues cerca de 200 fotos editadas e selecionadas pela nossa equipe, incluindo retratos individuais, fotos de grupo e imagens para uso em mídias sociais."
+        },
+        {
+          "question": "Como você garante a privacidade das imagens dos nossos colaboradores?",
+          "answer": "Garantimos a privacidade das imagens dos seus colaboradores, apenas compartilhando-as após obtenção de consentimento explícito e assinatura de um termo de liberação de direitos autorais."
+        }
+      ],
+      "footer": {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Sessão Corporativa para Lucia Ferreira.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    },
+    "sections": [
+      {
+        "title": "Capturando Sucesso",
+        "subtitle": "Uma sessão fotográfica corporativa única para Lucia Ferreira e sua equipe executiva",
+        "services": [
+          "Fotografia Corporativa",
+          "Ensaio Pessoal",
+          "Fotografia de Grupo",
+          "Produção Social Media"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto"
+      },
+      {
+        "title": "Capturando Momentos Únicos com Profissionalismo e Arte",
+        "supportText": "Experiência com equipes executivas desde 2010",
+        "subtitle": "Nossa equipe experiente e qualificada está preparada para capturar a essência da sua equipe executiva em nossa sessão corporativa. Com equipamentos de alta qualidade e técnicas avançadas de pós-produção, podemos oferecer imagens inovadoras e memoráveis que refletem a personalidade e o carisma da sua empresa."
+      },
+      {
+        "title": "Fotografia Corporativa Personalizada",
+        "topics": [
+          {
+            "title": "Retratos Individuais de Excelência",
+            "description": "Capturamos a essência de cada membro da equipe executiva através de retratos individuais de alta qualidade, personalizados para refletir a identidade da empresa."
+          },
+          {
+            "title": "Fotos de Grupo Elegantes",
+            "description": "Nossas equipes experientes capturam a dinâmica e a colaboração da equipe executiva em fotos de grupo elegantes e inspiradoras, ideais para uso em site institucional e materiais de marketing."
+          },
+          {
+            "title": "Imagens para Site Institucional e Marketing",
+            "description": "Nossa equipe de fotógrafos experientes captura imagens altamente profissionais para uso em site institucional e materiais de marketing, ajudando a fortalecer a presença da empresa no mercado."
+          },
+          {
+            "title": "Atendimento Personalizado para Equipe Executiva",
+            "description": "Oferecemos atendimento personalizado e flexível para atender às necessidades específicas da equipe executiva de Lucia Ferreira, garantindo que as imagens sejam perfeitas para seus propósitos."
+          }
+        ]
+      },
+      {
+        "introduction": "Capturando a essência da equipe executiva de Lucia Ferreira através de retratos individuais e fotos de grupo.",
+        "title": "Nosso Processo",
+        "topics": [
+          {
+            "title": "Planejamento e Revisão de Conteúdo",
+            "description": "Trabalhamos com Lucia Ferreira para entender os objetivos e preferências da sessão, incluindo a seleção de locais, roupas e cenários que refletem a personalidade da equipe."
+          },
+          {
+            "title": "Execução da Sessão Fotográfica",
+            "description": "Nossa equipe experiente liderada por Lucia Ferreira conduzirá a sessão, capturando retratos individuais, fotos de grupo e imagens para uso em site institucional e materiais de marketing."
+          }
+        ]
+      },
+      {
+        "title": "Capturando Momentos Únicos",
+        "deliverables": [
+          {
+            "title": "Fotos de Grupo e Individuais",
+            "description": "Receba 15 fotos de grupo e 15 retratos individuais de alta qualidade para uso em site institucional e materiais de marketing."
+          },
+          {
+            "title": "Imagens para Site e Marketing",
+            "description": "Obtenha imagens personalizadas para uso em site institucional, materiais de marketing e outras plataformas digitais."
+          },
+          {
+            "title": "Arquivos Digitais e Editados",
+            "description": "Recém editados e preparados para uso em diferentes mídias e formatos."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Session",
+            "description": "Capte momentos únicos da equipe executiva de Lucia Ferreira.",
+            "value": "R$ 1.499",
+            "topics": [
+              "Fotos de grupo e individuais",
+              "Assessoria de estilo e direção",
+              "Edição e postagem das imagens"
+            ]
+          },
+          {
+            "title": "Package",
+            "description": "Obtenha todas as imagens necessárias para uso em site e marketing, além de fotos adicionais para uso futuro.",
+            "value": "R$ 2.999",
+            "topics": [
+              "Todos os benefícios do Session + Arquivos digitais e editados",
+              "Materiais de marketing personalizados"
+            ]
+          },
+          {
+            "title": "Premium",
+            "description": "Ama-se como uma obra de arte. Obtenha tudo o que precisamos para um site e marketing de alta qualidade.",
+            "value": "R$ 4.999",
+            "topics": [
+              "Todos os benefícios do Package + Direção de arte e design",
+              "Produção de conteúdo visual adicionais"
+            ]
+          }
+        ]
+      },
+      [
+        {
+          "title": "Prazo de Entrega para Sessão Corporativa",
+          "description": "Nossa equipe trabalhará arduamente para entregar as imagens da sessão corporativa de Lucia Ferreira em até 7 dias corridos após a realização da sessão."
+        },
+        {
+          "title": "Forma de Pagamento",
+          "description": "Lucia Ferreira poderá pagar o valor total da sessão corporativa por meio de depósito bancário ou transferência online, sendo necessário o pagamento à vista dentro de 3 dias corridos após a data de contrato."
+        }
+      ],
+      [
+        {
+          "question": "Quantas fotos serão entregues após a sessão?",
+          "answer": "Serão entregues cerca de 200 fotos editadas e selecionadas pela nossa equipe, incluindo retratos individuais, fotos de grupo e imagens para uso em mídias sociais."
+        },
+        {
+          "question": "Como você garante a privacidade das imagens dos nossos colaboradores?",
+          "answer": "Garantimos a privacidade das imagens dos seus colaboradores, apenas compartilhando-as após obtenção de consentimento explícito e assinatura de um termo de liberação de direitos autorais."
+        }
+      ],
+      {
+        "thanks": "Obrigado pela confiança!",
+        "followUp": "Vamos começar agora?",
+        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Sessão Corporativa para Lucia Ferreira.",
+        "validity": "24/09/2025",
+        "callToAction": "Iniciar Projeto",
+        "contactInfo": "Entre em contato para mais detalhes"
+      }
+    ],
+    "metadata": {
+      "totalSections": 8,
+      "executionTime": 6006,
+      "model": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      "templateType": "flash",
+      "aiGenerated": true,
+      "fallbackUsed": false
+    }
+  },
+  "generatedAt": "2025-09-09T20:10:13.291Z"
+}

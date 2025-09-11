@@ -1,0 +1,219 @@
+{
+  "agent": {
+    "id": "designer-prime-agent",
+    "name": "Especialista em Design Prime",
+    "sector": "Design e Comunicação Visual",
+    "template": "prime"
+  },
+  "testData": {
+    "companyInfo": "Design Studio Premium - Atelier de design especializado em identidades visuais exclusivas e projetos de alto padrão. Nossa metodologia PRIME combina criatividade, estratégia e inovação para criar marcas memoráveis e impactantes.",
+    "clientName": "Fernando Alves",
+    "projectName": "Rebranding Premium",
+    "projectDescription": "Rebranding completo para holding empresarial com 8 empresas, incluindo identidade visual unificada, sistema de design, aplicações corporativas, manual de marca e estratégia de implementação em todos os touchpoints.",
+    "selectedPlans": [
+      "Básico",
+      "Intermediário",
+      "Avançado"
+    ],
+    "planDetails": "Design premium que gera reconhecimento, valorização e lucro excepcional",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#A855F7"
+  },
+  "proposal": {
+    "success": true,
+    "templateType": "prime",
+    "data": {
+      "introduction": {
+        "title": "Rebranding Premium para Fernando Alves",
+        "subtitle": "Transforme sua marca com design premium e criatividade excepcional",
+        "services": [
+          "Identidade Visual Premium",
+          "Branding Completo",
+          "Design de UX/UI",
+          "Material Gráfico"
+        ],
+        "validity": "09/10/2025",
+        "buttonText": "Iniciar Projeto Premium"
+      },
+      "aboutUs": {
+        "title": "Especialistas em design premium que criam experiências visuais inovadoras",
+        "supportText": "Combinando criatividade com qualidade visual superior",
+        "subtitle": "Nossa abordagem premium é baseada em uma equipe de especialistas experientes que trabalham em estreita colaboração para criar soluções de design inovadoras e eficazes que atendam às necessidades únicas de cada cliente"
+      },
+      "specialties": {
+        "title": "Especialidades PRIME",
+        "topics": [
+          {
+            "title": "Design Gráfico Premium",
+            "description": "Criação de identidade visual única e experiência visual consistente para marcas de alto padrão."
+          },
+          {
+            "title": "Comunicação Visual Estratégica",
+            "description": "Desenvolvimento de estratégias de comunicação visual eficazes para alcançar objetivos de marketing e negócios."
+          },
+          {
+            "title": "Direção de Arte e Design Digital",
+            "description": "Criação de conteúdo visual atraente e engajador para plataformas digitais e mídias sociais."
+          },
+          {
+            "title": "Branding e Identidade Visual",
+            "description": "Desenvolvimento de marcas e identidade visual única para empresas e organizações de alto padrão."
+          },
+          {
+            "title": "Experiência do Usuário (UX) Premium",
+            "description": "Desenvolvimento de soluções de UX personalizadas para melhorar a experiência do usuário em plataformas digitais."
+          },
+          {
+            "title": "Design de Web e Aplicativos",
+            "description": "Criação de soluções de design de web e aplicativos móveis personalizadas para empresas e organizações."
+          },
+          {
+            "title": "Ilustração e Design de Imagem",
+            "description": "Criação de ilustrações e designs de imagem personalizados para uso em marcas, publicidade e mídias sociais."
+          },
+          {
+            "title": "Edição de Vídeo e Fotografia",
+            "description": "Criação de conteúdo de vídeo e fotografia atraente e profissional para uso em marcas, publicidade e mídias sociais."
+          },
+          {
+            "title": "Estratégia de Controle de Marca",
+            "description": "Desenvolvimento de estratégias de controle de marca eficazes para proteger a identidade visual e reputação da marca."
+          }
+        ]
+      },
+      "steps": {
+        "introduction": "Processo criativo detalhado para entrega de design premium com qualidade excepcional",
+        "title": "Etapas do Processo PRIME",
+        "topics": [
+          {
+            "title": "Definição do Escopo",
+            "description": "Análise detalhada das necessidades e objetivos do projeto, identificando os principais desafios e oportunidades."
+          },
+          {
+            "title": "Desenvolvimento de Conceitos",
+            "description": "Criação de conceitos inovadores e atraentes que atendam às necessidades do projeto, com foco em qualidade e originalidade."
+          },
+          {
+            "title": "Design e Prototipagem",
+            "description": "Desenvolvimento de designs visuais premium e prototipagem de soluções inovadoras, com atenção aos detalhes e qualidade excepcional."
+          },
+          {
+            "title": "Teste e Avaliação",
+            "description": "Avaliação e teste das soluções desenvolvidas, garantindo que atendam às necessidades e expectativas do cliente."
+          },
+          {
+            "title": "Implementação e Entrega",
+            "description": "Implementação das soluções desenvolvidas e entrega dos resultados finais, com atenção ao detalhe e qualidade excepcional."
+          }
+        ]
+      },
+      "investment": {
+        "title": "Investimento em Design Premium",
+        "deliverables": [
+          {
+            "title": "Identidade Visual Personalizada",
+            "description": "Desenvolvimento de uma identidade visual única e coerente para sua marca, incluindo logotipo, cores e tipografia."
+          },
+          {
+            "title": "Guia de Uso da Identidade Visual",
+            "description": "Documentação detalhada sobre o uso correto da identidade visual, incluindo exemplos de aplicação em diferentes mídias."
+          },
+          {
+            "title": "Plano de Marketing Visual",
+            "description": "Estratégia de marketing visual para implementar a identidade visual e alcançar os objetivos da marca."
+          }
+        ],
+        "plans": [
+          {
+            "title": "Básico",
+            "description": "Desenvolvimento de identidade visual personalizada e guia de uso.",
+            "value": "R$ 5.000",
+            "topics": [
+              "Logotipo",
+              "Cores",
+              "Tipografia"
+            ]
+          },
+          {
+            "title": "Intermediário",
+            "description": "Desenvolvimento de identidade visual personalizada, guia de uso e plano de marketing visual.",
+            "value": "R$ 10.000",
+            "topics": [
+              "Logotipo",
+              "Cores",
+              "Tipografia",
+              "Plano de Marketing"
+            ]
+          },
+          {
+            "title": "Avançado",
+            "description": "Desenvolvimento de identidade visual personalizada, guia de uso, plano de marketing visual e reunião de feedback com o cliente.",
+            "value": "R$ 15.000",
+            "topics": [
+              "Logotipo",
+              "Cores",
+              "Tipografia",
+              "Plano de Marketing",
+              "Reunião de Feedback"
+            ]
+          }
+        ]
+      },
+      "terms": [
+        {
+          "title": "Prazos de Entrega",
+          "description": "O prazo de entrega máximo é de 30 dias corridos, contados a partir da data de assinatura do contrato."
+        },
+        {
+          "title": "Pagamento",
+          "description": "O pagamento deve ser feito em até 7 dias após a data de fatura, mediante depósito bancário ou transferência eletrônica."
+        },
+        {
+          "title": "Direitos Autorais",
+          "description": "Os direitos autorais sobre os trabalhos criados pertencem à empresa PRIME, exceto quando expressamente acordado em contrário."
+        },
+        {
+          "title": "Responsabilidade",
+          "description": "A empresa PRIME não se responsabiliza por danos ou perdas resultantes de erros ou omissões do cliente."
+        },
+        {
+          "title": "Garantia",
+          "description": "A empresa PRIME oferece garantia de satisfação com os trabalhos criados, com prazo de validade de 30 dias após a entrega."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é o processo criativo detalhado utilizado no Rebranding Premium?",
+          "answer": "O Processo PRIME é um método personalizado para entrega de design premium com qualidade excepcional, focado em atenção aos detalhes e resultados inovadores."
+        },
+        {
+          "question": "Como você garante a qualidade excepcional nos projetos de design?",
+          "answer": "Nossa equipe de especialistas em design e comunicação visual trabalha em estreita colaboração com o cliente para garantir que todos os detalhes sejam atendidos e que o projeto atinja os objetivos desejados."
+        },
+        {
+          "question": "O que é o Rebranding Premium e como ele pode ajudar minha empresa?",
+          "answer": "O Rebranding Premium é um serviço de rebranding personalizado que ajuda as empresas a criar uma identidade visual única e memorável, aumentando a visibilidade e a credibilidade da marca."
+        },
+        {
+          "question": "Como você trabalha com os clientes para entender suas necessidades e objetivos?",
+          "answer": "Nossa equipe utiliza uma abordagem personalizada e colaborativa para entender as necessidades e objetivos do cliente, garantindo que todos os detalhes sejam atendidos e que o projeto atinja os objetivos desejados."
+        },
+        {
+          "question": "O que é o prazo de entrega para os projetos de design e como você garante que eles sejam entregues no prazo estabelecido?",
+          "answer": "Nossa equipe trabalha em estreita colaboração com o cliente para estabelecer prazos realistas e garantir que os projetos sejam entregues no prazo estabelecido, sem comprometer a qualidade excepcional."
+        }
+      ],
+      "footer": {
+        "callToAction": "Transforme sua marca com design premium e resultados excepcionais"
+      }
+    },
+    "metadata": {
+      "service": "designer",
+      "agent": "Especialista em Design Prime",
+      "timestamp": "2025-09-09T20:10:33.794Z",
+      "generationType": "prime-workflow"
+    }
+  },
+  "generatedAt": "2025-09-09T20:10:33.794Z"
+}
