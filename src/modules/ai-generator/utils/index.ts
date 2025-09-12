@@ -116,7 +116,10 @@ export function generatePlanOptionsByCount(
   if (!servicePlans) {
     return (
       planTemplates["marketing-digital"][
-        Math.min(planCount, 3) as keyof typeof planTemplates["marketing-digital"]
+        Math.min(
+          planCount,
+          3
+        ) as keyof (typeof planTemplates)["marketing-digital"]
       ] || ["basic"]
     );
   }
@@ -133,6 +136,7 @@ export const serviceMapping: Record<string, string> = {
   desenvolvedor: "development",
   arquiteto: "architecture",
   fotografo: "photography",
+  fotógrafo: "photography", // Support both with and without accent
   medicos: "medical",
 };
 
@@ -143,6 +147,7 @@ export const flashServiceMapping: Record<string, string> = {
   desenvolvedor: "Flash - Desenvolvedor",
   arquiteto: "Flash - Arquiteto",
   fotografo: "Flash - Fotógrafo",
+  fotógrafo: "Flash - Fotógrafo", // Support both with and without accent
   medicos: "Flash - Médico",
 };
 
@@ -152,5 +157,6 @@ export const primeServiceMapping: Record<string, string> = {
   desenvolvedor: "Prime - Desenvolvedor",
   arquiteto: "Prime - Arquiteto",
   fotografo: "Prime - Fotógrafo",
+  fotógrafo: "Prime - Fotógrafo", // Support both with and without accent
   medicos: "Prime - Médico",
 };
