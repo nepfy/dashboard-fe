@@ -287,28 +287,55 @@ IMPORTANTE:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashAboutUsSection> {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
+    // Generate unique prompt variations to avoid repetitive responses
+    const promptVariations = [
+      `Crie uma seção "Sobre Nós" única e personalizada para ${data.companyInfo} no projeto ${data.projectName} de ${data.clientName}.`,
+      `Desenvolva uma apresentação exclusiva da ${data.companyInfo} focada no projeto ${data.projectName} para ${data.clientName}.`,
+      `Elabore uma seção "Sobre Nós" diferenciada destacando como ${data.companyInfo} pode transformar o projeto ${data.projectName} de ${data.clientName}.`,
+      `Construa uma apresentação personalizada da ${data.companyInfo} especificamente para o desafio ${data.projectName} de ${data.clientName}.`,
+    ];
 
-DADOS DO PROJETO:
+    const selectedVariation =
+      promptVariations[Math.floor(Math.random() * promptVariations.length)];
+
+    const userPrompt = `${selectedVariation}
+
+CONTEXTO ESPECÍFICO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Descrição do Projeto: ${data.projectDescription}
+- Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
+- Expertise: ${agent.expertise.join(", ")}
+- Serviços: ${agent.commonServices.join(", ")}
 
-Crie uma seção "Sobre Nós" personalizada baseada nas informações reais da empresa fornecida. Retorne APENAS um objeto JSON com:
+OBJETIVO: Criar conteúdo único, específico e persuasivo que conecte ${
+      data.companyInfo
+    } com as necessidades reais de ${data.clientName} no projeto ${
+      data.projectName
+    }.
+
+Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título sobre a empresa ${data.companyInfo} (máximo 155 caracteres)",
-  "supportText": "Texto de suporte específico para ${data.clientName} (máximo 70 caracteres)",
-  "subtitle": "Subtítulo detalhado sobre como a empresa ${data.companyInfo} pode ajudar ${data.clientName} com ${data.projectName} (máximo 250 caracteres)"
+  "title": "Título específico sobre ${data.companyInfo} e ${
+      data.projectName
+    } (máximo 155 caracteres)",
+  "supportText": "Frase de apoio única para ${
+    data.clientName
+  } (máximo 70 caracteres)",
+  "subtitle": "Descrição detalhada de como ${data.companyInfo} resolve ${
+      data.projectName
+    } para ${data.clientName} (máximo 250 caracteres)"
 }
 
-IMPORTANTE: 
-- Use as informações reais da empresa fornecida: ${data.companyInfo}
-- Personalize para o cliente específico: ${data.clientName}
-- NÃO mencione "metodologia FLASH" ou termos genéricos
-- Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+DIRETRIZES:
+- Seja específico sobre ${data.projectName} e ${data.clientName}
+- Evite frases genéricas como "somos especialistas" ou "nossa equipe"
+- Use linguagem natural e persuasiva
+- Destaque benefícios concretos e resultados mensuráveis
+- Crie conexão emocional e comercial
+- Responda APENAS com o JSON, sem explicações.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -316,6 +343,17 @@ IMPORTANTE:
 
       try {
         parsed = JSON.parse(response);
+
+        // Validate and trim character limits
+        if (parsed.title && parsed.title.length > 155) {
+          parsed.title = parsed.title.substring(0, 152) + "...";
+        }
+        if (parsed.supportText && parsed.supportText.length > 70) {
+          parsed.supportText = parsed.supportText.substring(0, 67) + "...";
+        }
+        if (parsed.subtitle && parsed.subtitle.length > 250) {
+          parsed.subtitle = parsed.subtitle.substring(0, 247) + "...";
+        }
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         this.fallbackUsed = true;
@@ -708,18 +746,31 @@ IMPORTANTE:
     systemPrompt: string
   ): Promise<string> {
     try {
+      // Log para debug - verificar se o system prompt está sendo aplicado
+      console.log("🔍 Flash LLM Debug:");
+      console.log(
+        "- System Prompt (primeiros 100 chars):",
+        systemPrompt.substring(0, 100) + "..."
+      );
+      console.log(
+        "- User Prompt (primeiros 100 chars):",
+        userPrompt.substring(0, 100) + "..."
+      );
+
       const response = await client.chat.completions.create({
         model: this.model,
-        max_tokens: 1000,
-        temperature: 0.7,
-        top_p: 0.9,
-        top_k: 50,
-        repetition_penalty: 1.1,
-        stop: ["```", "```json", "```JSON"],
+        max_tokens: 1500,
+        temperature: 0.8, // Increased for more creativity
+        top_p: 0.95, // Increased for more diversity
+        top_k: 40, // Reduced for more focused responses
+        repetition_penalty: 1.2, // Increased to reduce repetition
+        frequency_penalty: 0.3, // Added to reduce repetitive phrases
+        presence_penalty: 0.2, // Added to encourage new topics
+        stop: ["```", "```json", "```JSON", "\n\n\n"],
         messages: [
           {
             role: "system",
-            content: systemPrompt,
+            content: `${systemPrompt}\n\nIMPORTANTE: Seja criativo, específico e evite frases genéricas. Use português correto e linguagem natural.`,
           },
           {
             role: "user",
@@ -728,7 +779,13 @@ IMPORTANTE:
         ],
       });
 
-      return response.choices[0]?.message?.content || "";
+      const result = response.choices[0]?.message?.content || "";
+      console.log(
+        "- Response (primeiros 100 chars):",
+        result.substring(0, 100) + "..."
+      );
+
+      return result;
     } catch (error) {
       console.error("LLM API Error:", error);
       throw new Error("Failed to generate content with AI");

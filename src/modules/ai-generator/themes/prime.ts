@@ -292,30 +292,62 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
   }
 
   private async generateAboutUs(data: PrimeThemeData) {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
+    // Generate unique prompt variations to avoid repetitive responses
+    const promptVariations = [
+      `Elabore uma seção "Sobre Nós" premium e exclusiva para ${this.agent?.name} no projeto ${data.projectName} de ${data.clientName}.`,
+      `Desenvolva uma apresentação sofisticada da ${this.agent?.name} focada na excelência do projeto ${data.projectName} para ${data.clientName}.`,
+      `Crie uma seção "Sobre Nós" diferenciada destacando como ${this.agent?.name} eleva o projeto ${data.projectName} de ${data.clientName} a um novo patamar.`,
+      `Construa uma apresentação premium da ${this.agent?.name} especificamente para o desafio ${data.projectName} de ${data.clientName}.`,
+    ];
 
-DADOS DO PROJETO:
+    const selectedVariation =
+      promptVariations[Math.floor(Math.random() * promptVariations.length)];
+
+    const userPrompt = `${selectedVariation}
+
+CONTEXTO ESPECÍFICO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
+- Empresa: ${this.agent?.name}
 - Setor: ${this.agent?.sector}
+- Expertise: ${this.agent?.expertise.join(", ")}
+- Serviços: ${this.agent?.commonServices.join(", ")}
 ${
   this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${
+    ? `- Foco PRIME: ${
         (this.agent as { primeSpecific: { aboutUsFocus: string } })
           .primeSpecific.aboutUsFocus
       }`
     : ""
 }
 
-Crie uma seção "Sobre Nós" para proposta PRIME. Retorne APENAS um objeto JSON com:
+OBJETIVO: Criar conteúdo premium, sofisticado e persuasivo que conecte ${
+      this.agent?.name
+    } com as necessidades específicas de ${data.clientName} no projeto ${
+      data.projectName
+    }.
+
+Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título principal enfatizando expertise premium (máximo 155 caracteres)",
-  "supportText": "Texto de apoio breve (máximo 70 caracteres)",
-  "subtitle": "Descrição detalhada da abordagem premium (máximo 250 caracteres)"
+  "title": "Título sofisticado sobre ${this.agent?.name} e ${
+      data.projectName
+    } (máximo 155 caracteres)",
+  "supportText": "Frase de apoio premium única para ${
+    data.clientName
+  } (máximo 70 caracteres)",
+  "subtitle": "Descrição detalhada da abordagem premium de ${
+    this.agent?.name
+  } para ${data.projectName} (máximo 250 caracteres)"
 }
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+DIRETRIZES:
+- Seja específico sobre ${data.projectName} e ${data.clientName}
+- Use linguagem sofisticada e elegante
+- Destaque qualidade premium e resultados excepcionais
+- Evite frases genéricas como "somos especialistas" ou "nossa equipe"
+- Crie conexão emocional e comercial de alto nível
+- Responda APENAS com o JSON, sem explicações.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -323,6 +355,17 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
 
       try {
         parsed = JSON.parse(response);
+
+        // Validate and trim character limits
+        if (parsed.title && parsed.title.length > 155) {
+          parsed.title = parsed.title.substring(0, 152) + "...";
+        }
+        if (parsed.supportText && parsed.supportText.length > 70) {
+          parsed.supportText = parsed.supportText.substring(0, 67) + "...";
+        }
+        if (parsed.subtitle && parsed.subtitle.length > 250) {
+          parsed.subtitle = parsed.subtitle.substring(0, 247) + "...";
+        }
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         // Fallback to default values if JSON parsing fails
@@ -1162,7 +1205,21 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
     const messages: { role: "system" | "user"; content: string }[] = [];
 
     if (systemPrompt) {
-      messages.push({ role: "system", content: systemPrompt });
+      // Log para debug - verificar se o system prompt está sendo aplicado
+      console.log("🔍 Prime LLM Debug:");
+      console.log(
+        "- System Prompt (primeiros 100 chars):",
+        systemPrompt.substring(0, 100) + "..."
+      );
+      console.log(
+        "- User Prompt (primeiros 100 chars):",
+        userPrompt.substring(0, 100) + "..."
+      );
+
+      messages.push({
+        role: "system",
+        content: `${systemPrompt}\n\nIMPORTANTE: Seja criativo, específico e evite frases genéricas. Use português correto e linguagem natural.`,
+      });
     }
 
     messages.push({ role: "user", content: userPrompt });
@@ -1171,14 +1228,21 @@ IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
       const response = await client.chat.completions.create({
         model: this.model,
         messages,
-        temperature: 0.3, // Lower temperature for more consistent JSON output
-        max_tokens: 3000, // Increased for comprehensive responses
-        top_p: 0.9,
-        frequency_penalty: 0.1,
-        presence_penalty: 0.1,
+        temperature: 0.7, // Increased for more creativity while maintaining structure
+        max_tokens: 2000, // Balanced for comprehensive responses
+        top_p: 0.95, // Increased for more diversity
+        top_k: 40, // Reduced for more focused responses
+        repetition_penalty: 1.2, // Increased to reduce repetition
+        frequency_penalty: 0.3, // Increased to reduce repetitive phrases
+        presence_penalty: 0.2, // Added to encourage new topics
+        stop: ["```", "```json", "```JSON", "\n\n\n"],
       });
 
       const content = response.choices[0].message?.content;
+      console.log(
+        "- Response (primeiros 100 chars):",
+        content?.substring(0, 100) + "..."
+      );
       assert(typeof content === "string");
 
       // Extract JSON from the response if it's wrapped in text
