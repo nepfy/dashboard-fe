@@ -223,7 +223,17 @@ Crie uma seção de introdução para proposta PRIME. Retorne APENAS um objeto J
   "buttonText": "Iniciar Projeto Premium"
 }
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS PARA JSON VÁLIDO:
+- Use APENAS aspas duplas (") para strings
+- Escape quebras de linha com \\n
+- Escape aspas dentro de strings com \\"
+- NÃO use vírgulas no final de arrays ou objetos
+- NÃO inclua propriedades extras como "_id", "__v"
+- Valores monetários: "R$ 1.999,90" (sem unicode)
+- Nomes de propriedades exatamente como especificado
+- Teste o JSON antes de retornar
+
+IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -347,7 +357,7 @@ DIRETRIZES:
 - Destaque qualidade premium e resultados excepcionais
 - Evite frases genéricas como "somos especialistas" ou "nossa equipe"
 - Crie conexão emocional e comercial de alto nível
-- Responda APENAS com o JSON, sem explicações.`;
+- Responda APENAS com o JSON válido, sem explicações.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -428,7 +438,17 @@ Gere até 9 especialidades baseadas no setor ${
       this.agent?.sector
     } com foco em qualidade premium e atenção aos detalhes.
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS PARA JSON VÁLIDO:
+- Use APENAS aspas duplas (") para strings
+- Escape quebras de linha com \\n
+- Escape aspas dentro de strings com \\"
+- NÃO use vírgulas no final de arrays ou objetos
+- NÃO inclua propriedades extras como "_id", "__v"
+- Valores monetários: "R$ 1.999,90" (sem unicode)
+- Nomes de propriedades exatamente como especificado
+- Teste o JSON antes de retornar
+
+IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -492,7 +512,17 @@ Gere até 5 etapas baseadas no setor ${
       this.agent?.sector
     } com foco em qualidade premium e atenção aos detalhes.
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS PARA JSON VÁLIDO:
+- Use APENAS aspas duplas (") para strings
+- Escape quebras de linha com \\n
+- Escape aspas dentro de strings com \\"
+- NÃO use vírgulas no final de arrays ou objetos
+- NÃO inclua propriedades extras como "_id", "__v"
+- Valores monetários: "R$ 1.999,90" (sem unicode)
+- Nomes de propriedades exatamente como especificado
+- Teste o JSON antes de retornar
+
+IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -571,7 +601,17 @@ Gere até 3 entregáveis e até 3 planos baseados no setor ${
       this.agent?.sector
     } com foco em qualidade premium e atenção aos detalhes.
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS PARA JSON VÁLIDO:
+- Use APENAS aspas duplas (") para strings
+- Escape quebras de linha com \\n
+- Escape aspas dentro de strings com \\"
+- NÃO use vírgulas no final de arrays ou objetos
+- NÃO inclua propriedades extras como "_id", "__v"
+- Valores monetários: "R$ 1.999,90" (sem unicode)
+- Nomes de propriedades exatamente como especificado
+- Teste o JSON antes de retornar
+
+IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -639,7 +679,17 @@ Gere até 5 termos baseados no setor ${
       this.agent?.sector
     } com foco em qualidade premium e atenção aos detalhes.
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS PARA JSON VÁLIDO:
+- Use APENAS aspas duplas (") para strings
+- Escape quebras de linha com \\n
+- Escape aspas dentro de strings com \\"
+- NÃO use vírgulas no final de arrays ou objetos
+- NÃO inclua propriedades extras como "_id", "__v"
+- Valores monetários: "R$ 1.999,90" (sem unicode)
+- Nomes de propriedades exatamente como especificado
+- Teste o JSON antes de retornar
+
+IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -794,7 +844,17 @@ Gere até 5 perguntas frequentes baseadas no setor ${
       this.agent?.sector
     } com foco em qualidade premium e atenção aos detalhes.
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS PARA JSON VÁLIDO:
+- Use APENAS aspas duplas (") para strings
+- Escape quebras de linha com \\n
+- Escape aspas dentro de strings com \\"
+- NÃO use vírgulas no final de arrays ou objetos
+- NÃO inclua propriedades extras como "_id", "__v"
+- Valores monetários: "R$ 1.999,90" (sem unicode)
+- Nomes de propriedades exatamente como especificado
+- Teste o JSON antes de retornar
+
+IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -920,7 +980,17 @@ Crie um call-to-action para o footer da proposta PRIME. Retorne APENAS um objeto
 
 O call-to-action deve enfatizar a metodologia PRIME: qualidade premium, atenção aos detalhes e resultados excepcionais.
 
-IMPORTANTE: Responda APENAS com o JSON, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS PARA JSON VÁLIDO:
+- Use APENAS aspas duplas (") para strings
+- Escape quebras de linha com \\n
+- Escape aspas dentro de strings com \\"
+- NÃO use vírgulas no final de arrays ou objetos
+- NÃO inclua propriedades extras como "_id", "__v"
+- Valores monetários: "R$ 1.999,90" (sem unicode)
+- Nomes de propriedades exatamente como especificado
+- Teste o JSON antes de retornar
+
+IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
