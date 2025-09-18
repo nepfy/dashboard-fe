@@ -1279,7 +1279,7 @@ IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adici
         max_tokens: 2000,
         top_p: 0.95, // High diversity
         frequency_penalty: 0.4, // Reduce repetitive phrases
-        presence_penalty: 0.3 // Encourage topic diversity
+        presence_penalty: 0.3, // Encourage topic diversity
         stop: ["```", "```json", "```JSON", "\n\n\n"],
       });
 
