@@ -407,48 +407,25 @@ DIRETRIZES:
   }
 
   private async generateSpecialties(data: PrimeThemeData) {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
-
-DADOS DO PROJETO:
+    const userPrompt = `PROJETO PREMIUM:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
 - Setor: ${this.agent?.sector}
-${
-  this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
-    ? `- Metodologia PRIME: ${
-        (this.agent as { primeSpecific: { specialtiesApproach: string } })
-          .primeSpecific.specialtiesApproach
-      }`
-    : ""
-}
 
-Crie uma seção de especialidades para proposta PRIME. Retorne APENAS um objeto JSON com:
+Crie especialidades premium personalizadas para este cliente específico.
 
+Retorne JSON:
 {
-  "title": "Título da seção de especialidades (máximo 40 caracteres)",
+  "title": "Título das especialidades (40 chars)",
   "specialties": [
     {
-      "title": "Nome da especialidade (máximo 50 caracteres)",
-      "description": "Descrição da especialidade (máximo 100 caracteres)"
+      "title": "Especialidade premium (50 chars)",
+      "description": "Benefício para o projeto (100 chars)"
     }
   ]
 }
 
-Gere até 9 especialidades baseadas no setor ${
-      this.agent?.sector
-    } com foco em qualidade premium e atenção aos detalhes.
-
-REGRAS CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- Escape quebras de linha com \\n
-- Escape aspas dentro de strings com \\"
-- NÃO use vírgulas no final de arrays ou objetos
-- NÃO inclua propriedades extras como "_id", "__v"
-- Valores monetários: "R$ 1.999,90" (sem unicode)
-- Nomes de propriedades exatamente como especificado
-- Teste o JSON antes de retornar
-
-IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
+Foque em qualidade premium e benefícios reais para ${data.clientName}.`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -1288,7 +1265,7 @@ IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adici
 
       messages.push({
         role: "system",
-        content: `${systemPrompt}\n\nIMPORTANTE: Seja criativo, específico e evite frases genéricas. Use português correto e linguagem natural.`,
+        content: systemPrompt,
       });
     }
 
@@ -1298,13 +1275,11 @@ IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adici
       const response = await client.chat.completions.create({
         model: this.model,
         messages,
-        temperature: 0.7, // Increased for more creativity while maintaining structure
-        max_tokens: 2000, // Balanced for comprehensive responses
-        top_p: 0.95, // Increased for more diversity
-        top_k: 40, // Reduced for more focused responses
-        repetition_penalty: 1.2, // Increased to reduce repetition
-        frequency_penalty: 0.3, // Increased to reduce repetitive phrases
-        presence_penalty: 0.2, // Added to encourage new topics
+        temperature: 0.9, // High creativity for natural language
+        max_tokens: 2000,
+        top_p: 0.95, // High diversity
+        frequency_penalty: 0.4, // Reduce repetitive phrases
+        presence_penalty: 0.3 // Encourage topic diversity
         stop: ["```", "```json", "```JSON", "\n\n\n"],
       });
 

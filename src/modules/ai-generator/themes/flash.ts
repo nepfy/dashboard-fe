@@ -214,24 +214,22 @@ export class FlashTemplateWorkflow {
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashIntroductionSection> {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
-
-DADOS DO PROJETO:
+    const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Descrição do Projeto: ${data.projectDescription}
+- Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
-- Setor: ${agent.sector}
 
-Crie uma seção de introdução personalizada para este projeto específico. Use as informações reais fornecidas acima. Retorne APENAS um objeto JSON com:
+Crie uma introdução impactante e personalizada para este projeto específico. 
 
+Retorne APENAS um JSON válido com:
 {
-  "title": "Título focado no projeto específico de ${
+  "title": "Título focado no projeto de ${
     data.clientName
   } (máximo 60 caracteres)",
-  "subtitle": "Subtítulo personalizado para ${
-    data.clientName
-  } baseado no projeto ${data.projectName} (máximo 100 caracteres)",
+  "subtitle": "Subtítulo personalizado baseado no ${
+    data.projectName
+  } (máximo 100 caracteres)",
   "services": ["${agent.commonServices[0] || "Serviço 1"}", "${
       agent.commonServices[1] || "Serviço 2"
     }", "${agent.commonServices[2] || "Serviço 3"}", "${
@@ -243,21 +241,7 @@ Crie uma seção de introdução personalizada para este projeto específico. Us
   "buttonText": "Iniciar Projeto"
 }
 
-REGRAS CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- Escape quebras de linha com \\n
-- Escape aspas dentro de strings com \\"
-- NÃO use vírgulas no final de arrays ou objetos
-- NÃO inclua propriedades extras como "_id", "__v"
-- Valores monetários: "R$ 1.999,90" (sem unicode)
-- Nomes de propriedades exatamente como especificado
-- Teste o JSON antes de retornar
-
-IMPORTANTE: 
-- Use os dados reais do cliente e projeto fornecidos
-- NÃO mencione "metodologia FLASH" ou termos genéricos
-- Personalize o conteúdo para ${data.clientName} e ${data.projectName}
-- Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
+Foque na linguagem natural e envolvente, evite jargões técnicos desnecessários.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -396,46 +380,26 @@ DIRETRIZES:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashSpecialtiesSection> {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
-
-DADOS DO PROJETO:
+    const userPrompt = `PROJETO ESPECÍFICO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Descrição do Projeto: ${data.projectDescription}
+- Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
-- Setor: ${agent.sector}
 
-Crie uma seção "Especialidades" personalizada baseada nas necessidades específicas do projeto ${data.projectName} para ${data.clientName}. Retorne APENAS um objeto JSON com:
+Crie especialidades personalizadas para este projeto específico.
 
+Retorne JSON com:
 {
-  "title": "Título das especialidades relevantes para ${data.projectName} (máximo 40 caracteres)",
+  "title": "Título das especialidades para ${data.projectName} (40 chars)",
   "topics": [
     {
-      "title": "Especialidade 1 específica para ${data.clientName} (máximo 50 caracteres)",
-      "description": "Descrição da especialidade 1 aplicada ao projeto ${data.projectName} (máximo 100 caracteres)"
-    },
-    {
-      "title": "Especialidade 2 específica para ${data.clientName} (máximo 50 caracteres)",
-      "description": "Descrição da especialidade 2 aplicada ao projeto ${data.projectName} (máximo 100 caracteres)"
+      "title": "Especialidade específica (50 chars)",
+      "description": "Como ajuda o projeto ${data.projectName} (100 chars)"
     }
   ]
 }
 
-REGRAS CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- Escape quebras de linha com \\n
-- Escape aspas dentro de strings com \\"
-- NÃO use vírgulas no final de arrays ou objetos
-- NÃO inclua propriedades extras como "_id", "__v"
-- Valores monetários: "R$ 1.999,90" (sem unicode)
-- Nomes de propriedades exatamente como especificado
-- Teste o JSON antes de retornar
-
-IMPORTANTE: 
-- Use as informações específicas do projeto: ${data.projectDescription}
-- Personalize para o cliente: ${data.clientName}
-- NÃO mencione "metodologia FLASH" ou termos genéricos
-- Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
+Foque em benefícios reais e linguagem natural, evite termos genéricos.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -830,17 +794,15 @@ IMPORTANTE:
       const response = await client.chat.completions.create({
         model: this.model,
         max_tokens: 1500,
-        temperature: 0.8, // Increased for more creativity
-        top_p: 0.95, // Increased for more diversity
-        top_k: 40, // Reduced for more focused responses
-        repetition_penalty: 1.2, // Increased to reduce repetition
-        frequency_penalty: 0.3, // Added to reduce repetitive phrases
-        presence_penalty: 0.2, // Added to encourage new topics
+        temperature: 0.9, // High creativity for natural language
+        top_p: 0.95, // High diversity
+        frequency_penalty: 0.4, // Reduce repetitive phrases
+        presence_penalty: 0.3, // Encourage topic diversity
         stop: ["```", "```json", "```JSON", "\n\n\n"],
         messages: [
           {
             role: "system",
-            content: `${systemPrompt}\n\nIMPORTANTE: Seja criativo, específico e evite frases genéricas. Use português correto e linguagem natural.`,
+            content: systemPrompt,
           },
           {
             role: "user",
