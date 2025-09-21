@@ -132,12 +132,13 @@ export function generatePlanOptionsByCount(
 
 export const serviceMapping: Record<string, string> = {
   "marketing-digital": "marketing-digital",
-  designer: "design",
-  desenvolvedor: "development",
-  arquiteto: "architecture",
-  fotografo: "photography",
-  fotógrafo: "photography", // Support both with and without accent
-  medicos: "medical",
+  designer: "designer", // Keep original name since agents exist as designer-*-agent
+  desenvolvedor: "desenvolvedor", // Keep original name since agents exist as desenvolvedor-*-agent
+  arquiteto: "arquiteto", // Keep original name since agents exist as arquiteto-*-agent
+  fotografo: "fotógrafo", // Map to fotógrafo since agents exist as fotógrafo-*-agent
+  fotógrafo: "fotógrafo", // Support both with and without accent
+  medico: "médico", // Map to médico since agents exist as médico-*-agent
+  medicos: "médico", // Alternative name
 };
 
 // Template-specific service mapping for flash and prime templates
