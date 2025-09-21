@@ -107,9 +107,8 @@ export function Subscription() {
     if (billingInfo?.hasActiveSubscription && billingInfo.currentPlan) {
       // User has an active subscription, find matching plan
       const matchingPlan = plans.find((plan) => {
-        const planPrice = billingCycle === "monthly" ? plan.price : plan.yearlyPrice;
         // Match by price and interval
-        return planPrice > 0 && (
+        return plan.price > 0 && (
           (billingCycle === "monthly" && plan.interval === "month") ||
           (billingCycle === "yearly" && plan.interval === "year")
         );
@@ -162,8 +161,8 @@ export function Subscription() {
   const getPlanPrice = (plan: Plan) => {
     if (!plan.price) return "Grátis";
     const basePrice = plan.price / 100;
-    const finalPrice = billingCycle === "yearly" ? basePrice * 0.8 : basePrice;
-    return finalPrice.toLocaleString("pt-BR", {
+    // For now, just return the base price since we don't have yearly pricing
+    return basePrice.toLocaleString("pt-BR", {
       style: "currency",
       currency: plan.currency.toUpperCase(),
     });

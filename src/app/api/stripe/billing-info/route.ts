@@ -4,6 +4,15 @@ import { Stripe } from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+interface StripeSubscriptionData {
+  id: string;
+  status: string;
+  current_period_start: number;
+  current_period_end: number;
+  cancel_at_period_end: boolean;
+  default_payment_method?: Stripe.PaymentMethod | string;
+}
+
 export async function GET() {
   try {
     const user = await currentUser();
@@ -54,49 +63,38 @@ export async function GET() {
       });
     }
 
-    // Get payment methods
-    const paymentMethods = await stripe.paymentMethods.list({
-      customer: customerId,
-      type: "card",
-    });
-
-    let defaultPaymentMethod = null;
-    if (paymentMethods.data.length > 0) {
-      const pm = paymentMethods.data[0];
-      defaultPaymentMethod = {
-        id: pm.id,
-        brand: pm.card?.brand || "unknown",
-        last4: pm.card?.last4 || "0000",
-        expMonth: pm.card?.exp_month,
-        expYear: pm.card?.exp_year,
-      };
-    }
 
     // Get active subscription
-    let currentSubscription = null;
-    let nextBillingDate = null;
+    let currentSubscription: StripeSubscriptionData | null = null;
+    let nextBillingDate: Date | null = null;
     
     if (stripeMetadata.subscriptionId && stripeMetadata.subscriptionActive) {
       try {
-        const subscription = await stripe.subscriptions.retrieve(
-          stripeMetadata.subscriptionId
-        );
-        
-        currentSubscription = {
-          id: subscription.id,
-          status: subscription.status,
-          currentPeriodStart: subscription.current_period_start,
-          currentPeriodEnd: subscription.current_period_end,
-          cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        };
+        currentSubscription = await stripe.subscriptions.retrieve(
+          stripeMetadata.subscriptionId,
+          { expand: ["default_payment_method"] }
+        ) as unknown as StripeSubscriptionData;
 
         // Calculate next billing date
-        if (subscription.status === "active") {
-          nextBillingDate = new Date(subscription.current_period_end * 1000);
+        if (currentSubscription.status === "active") {
+          nextBillingDate = new Date(currentSubscription.current_period_end * 1000);
         }
       } catch (error) {
         console.error("Error fetching subscription:", error);
       }
+    }
+
+    // Get payment method from subscription
+    let paymentMethod = null;
+    if (currentSubscription?.default_payment_method) {
+      const pm = currentSubscription.default_payment_method as Stripe.PaymentMethod;
+      paymentMethod = {
+        id: pm.id,
+        brand: pm.card?.brand || "unknown",
+        last4: pm.card?.last4 || "0000",
+        expMonth: pm.card?.exp_month || 0,
+        expYear: pm.card?.exp_year || 0,
+      };
     }
 
     // Get invoices
@@ -123,16 +121,17 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: {
-        hasActiveSubscription: stripeMetadata.subscriptionActive || false,
-        currentPlan: currentSubscription,
-        paymentMethod: defaultPaymentMethod,
+        hasActiveSubscription: currentSubscription?.status === "active" || false,
+        currentPlan: currentSubscription ? {
+          id: currentSubscription.id,
+          status: currentSubscription.status,
+          currentPeriodStart: currentSubscription.current_period_start,
+          currentPeriodEnd: currentSubscription.current_period_end,
+          cancelAtPeriodEnd: currentSubscription.cancel_at_period_end,
+        } : null,
+        paymentMethod,
         nextBillingDate,
         invoices: formattedInvoices,
-        customer: {
-          id: customer.id,
-          email: customer.email,
-          name: customer.name,
-        },
       },
     });
   } catch (error) {
