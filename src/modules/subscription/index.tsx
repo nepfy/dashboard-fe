@@ -449,11 +449,18 @@ export function Subscription() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
                   Ciclo de Cobrança Atual
                 </h3>
-                <div className="mb-4">
-                  <p className="text-sm text-gray-600">
-                    Próxima data de emissão da fatura: 14 de Ago, 2025
-                  </p>
-                </div>
+                {billingInfo?.nextBillingDate && (
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600">
+                      Próxima data de emissão da fatura:{" "}
+                      {billingInfo.nextBillingDate.toLocaleDateString("pt-BR", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                )}
 
                 {/* Payment Method */}
                 <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
@@ -465,7 +472,7 @@ export function Subscription() {
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 capitalize">
                         {billingInfo?.paymentMethod?.brand || "Desconhecido"}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -476,7 +483,7 @@ export function Subscription() {
                   </div>
                   <button
                     onClick={handleEditPaymentMethod}
-                    className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+                    className="text-sm text-gray-600 hover:text-gray-900 font-medium cursor-pointer"
                   >
                     Editar
                   </button>
@@ -528,7 +535,7 @@ export function Subscription() {
                               onClick={() =>
                                 window.open(invoice.pdfUrl!, "_blank")
                               }
-                              className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                              className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
                             >
                               PDF
                             </button>
