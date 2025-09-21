@@ -16,6 +16,35 @@ type Plan = {
   buttonTitle?: string;
 };
 
+interface BillingInfo {
+  hasActiveSubscription: boolean;
+  currentPlan: {
+    id: string;
+    status: string;
+    currentPeriodStart: number;
+    currentPeriodEnd: number;
+    cancelAtPeriodEnd: boolean;
+  } | null;
+  paymentMethod: {
+    id: string;
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+  } | null;
+  nextBillingDate: Date | null;
+  invoices: Array<{
+    id: string;
+    number: string;
+    status: string;
+    amountPaid: number;
+    currency: string;
+    created: Date;
+    paidAt: Date | null;
+    pdfUrl: string | null;
+  }>;
+}
+
 export function Subscription() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
@@ -23,11 +52,32 @@ export function Subscription() {
     "monthly"
   );
   const [loading, setLoading] = useState(true);
+  const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(null);
+  const [billingLoading, setBillingLoading] = useState(true);
   const { userPlan, isLoaded } = useStripeCustom();
   const { user } = useUser();
   // const router = useRouter();
 
   console.log({ user: user?.unsafeMetadata.stripe });
+
+  // Fetch billing info from API
+  useEffect(() => {
+    async function fetchBillingInfo() {
+      setBillingLoading(true);
+      try {
+        const res = await fetch('/api/stripe/billing-info');
+        const data = await res.json();
+        if (data.success) {
+          setBillingInfo(data.data);
+        }
+      } catch (e) {
+        console.error("Failed to fetch billing info:", e);
+      } finally {
+        setBillingLoading(false);
+      }
+    }
+    fetchBillingInfo();
+  }, []);
 
   // Fetch plans from API
   useEffect(() => {
@@ -51,17 +101,29 @@ export function Subscription() {
 
   // Set current plan based on user's subscription
   useEffect(() => {
-    if (!isLoaded) return; // Wait for Clerk data to load
+    if (!isLoaded || billingLoading) return; // Wait for both Clerk and billing data to load
 
-    if (!userPlan) {
-      // If no userPlan, set currentPlanId to the free plan
+    // Use billing info to determine current plan
+    if (billingInfo?.hasActiveSubscription && billingInfo.currentPlan) {
+      // User has an active subscription, find matching plan
+      const matchingPlan = plans.find((plan) => {
+        const planPrice = billingCycle === "monthly" ? plan.price : plan.yearlyPrice;
+        // Match by price and interval
+        return planPrice > 0 && (
+          (billingCycle === "monthly" && plan.interval === "month") ||
+          (billingCycle === "yearly" && plan.interval === "year")
+        );
+      });
+
+      if (matchingPlan) {
+        setCurrentPlanId(matchingPlan.id);
+      }
+    } else {
+      // No active subscription, set to free plan
       const freePlan = plans.find((p) => !p.price || p.price === 0);
       setCurrentPlanId(freePlan?.id || null);
-    } else {
-      // If userPlan exists, set it as current
-      setCurrentPlanId(userPlan);
     }
-  }, [userPlan, plans, isLoaded]);
+  }, [userPlan, plans, isLoaded, billingLoading, billingInfo, billingCycle]);
 
   const handleSwitchPlan = async (planId: string) => {
     try {
@@ -116,15 +178,16 @@ export function Subscription() {
 
   // Check if a plan is currently active for the user
   const isActivePlan = (plan: Plan) => {
-    if (!isLoaded) return false; // Wait for Clerk data to load
+    if (!isLoaded || billingLoading) return false; // Wait for both Clerk and billing data to load
 
-    if (!userPlan) {
-      // If no userPlan, check if this is the free plan
+    // Use billing info to determine active plan
+    if (billingInfo?.hasActiveSubscription) {
+      // User has active subscription, check if this plan matches
+      return plan.id === currentPlanId;
+    } else {
+      // No active subscription, check if this is the free plan
       return !plan.price || plan.price === 0;
     }
-
-    // If userPlan exists, check if this plan matches the current subscription
-    return plan.id === currentPlanId;
   };
 
   const getButtonText = (plan: Plan) => {
@@ -377,14 +440,16 @@ export function Subscription() {
                 <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">VISA</span>
+                      <span className="text-white text-xs font-bold">
+                        {billingInfo?.paymentMethod?.brand?.toUpperCase() || 'VISA'}
+                      </span>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        Desconhecido
+                        {billingInfo?.paymentMethod?.brand || 'Desconhecido'}
                       </p>
                       <p className="text-xs text-gray-500">
-                        terminando em 0000
+                        terminando em {billingInfo?.paymentMethod?.last4 || '0000'}
                       </p>
                     </div>
                   </div>
@@ -402,11 +467,39 @@ export function Subscription() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
                   Faturas Anteriores
                 </h3>
-                <div className="text-center py-8">
-                  <p className="text-gray-500 text-sm">
-                    Nenhuma fatura anterior disponível
-                  </p>
-                </div>
+                {billingInfo?.invoices && billingInfo.invoices.length > 0 ? (
+                  <div className="space-y-3">
+                    {billingInfo.invoices.map((invoice, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            Fatura #{invoice.id}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(invoice.created).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-gray-900">
+                            {invoice.amountPaid.toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: invoice.currency.toUpperCase()
+                            })}
+                          </p>
+                          <p className={`text-xs ${invoice.paidAt ? 'text-green-600' : 'text-red-600'}`}>
+                            {invoice.paidAt ? 'Pago' : 'Pendente'}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 text-sm">
+                      Nenhuma fatura anterior disponível
+                    </p>
+                  </div>
+                )}
               </div>
             </>
           ) : (
