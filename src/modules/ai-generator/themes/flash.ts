@@ -220,6 +220,8 @@ export class FlashTemplateWorkflow {
 - Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 
+Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
+
 Crie uma introdução impactante e personalizada para este projeto específico. 
 
 Retorne APENAS um JSON válido com:
@@ -293,6 +295,8 @@ Foque na linguagem natural e envolvente, evite jargões técnicos desnecessário
       promptVariations[Math.floor(Math.random() * promptVariations.length)];
 
     const userPrompt = `${selectedVariation}
+
+Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 CONTEXTO ESPECÍFICO:
 - Cliente: ${data.clientName}
@@ -386,7 +390,7 @@ DIRETRIZES:
 - Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 
-Crie especialidades personalizadas para este projeto específico.
+Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 Retorne JSON com:
 {
