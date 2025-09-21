@@ -65,7 +65,7 @@ export function Subscription() {
     async function fetchBillingInfo() {
       setBillingLoading(true);
       try {
-        const res = await fetch('/api/stripe/billing-info');
+        const res = await fetch("/api/stripe/billing-info");
         const data = await res.json();
         if (data.success) {
           setBillingInfo(data.data);
@@ -108,9 +108,10 @@ export function Subscription() {
       // User has an active subscription, find matching plan
       const matchingPlan = plans.find((plan) => {
         // Match by price and interval
-        return plan.price > 0 && (
-          (billingCycle === "monthly" && plan.interval === "month") ||
-          (billingCycle === "yearly" && plan.interval === "year")
+        return (
+          plan.price > 0 &&
+          ((billingCycle === "monthly" && plan.interval === "month") ||
+            (billingCycle === "yearly" && plan.interval === "year"))
         );
       });
 
@@ -154,15 +155,34 @@ export function Subscription() {
     }
   };
 
-  const handleEditPaymentMethod = () => {
-    alert("Editar método de pagamento");
+  const handleEditPaymentMethod = async () => {
+    try {
+      const response = await fetch("/api/stripe/create-portal-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.url) {
+        window.open(data.url, "_blank");
+      } else {
+        alert("Erro ao abrir portal de pagamento. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Error opening payment portal:", error);
+      alert("Erro ao abrir portal de pagamento. Tente novamente.");
+    }
   };
 
   const getPlanPrice = (plan: Plan) => {
     if (!plan.price) return "Grátis";
     const basePrice = plan.price / 100;
-    // For now, just return the base price since we don't have yearly pricing
-    return basePrice.toLocaleString("pt-BR", {
+    const yearlyPrice = basePrice * 12 * 0.8; // 20% discount for yearly
+    const finalPrice = billingCycle === "yearly" ? yearlyPrice : basePrice;
+    return finalPrice.toLocaleString("pt-BR", {
       style: "currency",
       currency: plan.currency.toUpperCase(),
     });
@@ -438,17 +458,19 @@ export function Subscription() {
                 {/* Payment Method */}
                 <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">
-                        {billingInfo?.paymentMethod?.brand?.toUpperCase() || 'VISA'}
+                    <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">
+                        {billingInfo?.paymentMethod?.brand?.toUpperCase() ||
+                          "VISA"}
                       </span>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {billingInfo?.paymentMethod?.brand || 'Desconhecido'}
+                        {billingInfo?.paymentMethod?.brand || "Desconhecido"}
                       </p>
                       <p className="text-xs text-gray-500">
-                        terminando em {billingInfo?.paymentMethod?.last4 || '0000'}
+                        terminando em{" "}
+                        {billingInfo?.paymentMethod?.last4 || "0000"}
                       </p>
                     </div>
                   </div>
@@ -469,25 +491,48 @@ export function Subscription() {
                 {billingInfo?.invoices && billingInfo.invoices.length > 0 ? (
                   <div className="space-y-3">
                     {billingInfo.invoices.map((invoice, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
                             Fatura #{invoice.id}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {new Date(invoice.created).toLocaleDateString('pt-BR')}
+                            {new Date(invoice.created).toLocaleDateString(
+                              "pt-BR"
+                            )}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-gray-900">
-                            {invoice.amountPaid.toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: invoice.currency.toUpperCase()
-                            })}
-                          </p>
-                          <p className={`text-xs ${invoice.paidAt ? 'text-green-600' : 'text-red-600'}`}>
-                            {invoice.paidAt ? 'Pago' : 'Pendente'}
-                          </p>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className="text-sm font-medium text-gray-900">
+                              {invoice.amountPaid.toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: invoice.currency.toUpperCase(),
+                              })}
+                            </p>
+                            <p
+                              className={`text-xs ${
+                                invoice.paidAt
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {invoice.paidAt ? "Pago" : "Pendente"}
+                            </p>
+                          </div>
+                          {invoice.pdfUrl && (
+                            <button
+                              onClick={() =>
+                                window.open(invoice.pdfUrl!, "_blank")
+                              }
+                              className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                            >
+                              PDF
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
