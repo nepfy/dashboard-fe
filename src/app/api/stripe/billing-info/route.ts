@@ -107,8 +107,8 @@ export async function GET() {
       id: invoice.id,
       number: invoice.number,
       status: invoice.status,
-      amountPaid: invoice.amount_paid,
-      amountDue: invoice.amount_due,
+      amountPaid: invoice.amount_paid / 100, // Convert from cents to currency units
+      amountDue: invoice.amount_due / 100, // Convert from cents to currency units
       currency: invoice.currency,
       created: new Date(invoice.created * 1000),
       paidAt: invoice.status_transitions?.paid_at 
