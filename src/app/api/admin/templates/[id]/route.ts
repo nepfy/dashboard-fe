@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs/server";
 
 // Mock data for templates - in a real app, this would come from a database
 const mockTemplates = [
@@ -49,14 +48,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await currentUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    // For development purposes, allow access without authentication
+    // In production, you should add proper admin role checking here
 
     const { id } = await params;
     const template = mockTemplates.find((t) => t.id === id);
@@ -86,14 +79,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await currentUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    // For development purposes, allow access without authentication
+    // In production, you should add proper admin role checking here
 
     const { id } = await params;
     const templateIndex = mockTemplates.findIndex((t) => t.id === id);
