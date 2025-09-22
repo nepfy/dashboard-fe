@@ -47,7 +47,7 @@ export async function GET() {
   try {
     // For development purposes, allow access without authentication
     // In production, you should add proper admin role checking here
-    
+
     return NextResponse.json({
       success: true,
       data: mockTemplates,
