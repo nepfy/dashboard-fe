@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 
 interface Template {
   id: string;
@@ -38,7 +37,7 @@ export default function AdminTemplatesPage() {
       } else {
         setError(data.error || "Erro ao carregar templates");
       }
-    } catch (err) {
+    } catch {
       setError("Erro de conexão");
     } finally {
       setLoading(false);
@@ -71,7 +70,7 @@ export default function AdminTemplatesPage() {
       } else {
         setError(data.error || "Erro ao salvar template");
       }
-    } catch (err) {
+    } catch {
       setError("Erro de conexão");
     }
   };
@@ -91,7 +90,7 @@ export default function AdminTemplatesPage() {
       } else {
         setError(data.error || "Erro ao excluir template");
       }
-    } catch (err) {
+    } catch {
       setError("Erro de conexão");
     }
   };
@@ -119,7 +118,7 @@ export default function AdminTemplatesPage() {
       } else {
         setError(data.error || "Erro ao atualizar status");
       }
-    } catch (err) {
+    } catch {
       setError("Erro de conexão");
     }
   };
@@ -407,7 +406,10 @@ function TemplateModal({
               <select
                 value={formData.type}
                 onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value as any })
+                  setFormData({
+                    ...formData,
+                    type: e.target.value as Template["type"],
+                  })
                 }
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
