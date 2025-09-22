@@ -29,18 +29,18 @@ export default function AdminLayout({
               >
                 Agentes
               </Link>
-              <a
+              <Link
                 href="/admin/templates"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Templates
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/admin/analytics"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Analytics
-              </a>
+              </Link>
             </nav>
           </div>
         </div>
