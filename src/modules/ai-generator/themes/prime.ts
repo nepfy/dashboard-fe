@@ -190,11 +190,15 @@ export class PrimeTemplateWorkflow {
   }
 
   private async generateIntroduction(data: PrimeThemeData) {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais PRIME. Responda APENAS com JSON válido, sem texto adicional.
+    // Normalize project name to prevent CAPS leakage
+    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
+    
+    const userPrompt = `Você é um especialista em criação de propostas comerciais premium. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
+- Projeto: ${normalizedProjectName}
 - Setor: ${this.agent?.sector}
 ${
   this.agent && "primeSpecific" in this.agent && this.agent.primeSpecific
@@ -205,13 +209,13 @@ ${
     : ""
 }
 
-Crie uma seção de introdução para proposta PRIME. Retorne APENAS um objeto JSON com:
+Crie uma seção de introdução para proposta premium. Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título focado no projeto com qualidade premium (máximo 60 caracteres)",
+  "title": "Título focado no projeto com qualidade premium",
   "subtitle": "Subtítulo personalizado para ${
     data.clientName
-  } com foco em excelência (máximo 100 caracteres)",
+  } com foco em excelência",
   "services": ["${this.agent?.commonServices[0] || "Serviço Premium 1"}", "${
       this.agent?.commonServices[1] || "Serviço Premium 2"
     }", "${this.agent?.commonServices[2] || "Serviço Premium 3"}", "${
@@ -222,6 +226,14 @@ Crie uma seção de introdução para proposta PRIME. Retorne APENAS um objeto J
   ).toLocaleDateString("pt-BR")}",
   "buttonText": "Iniciar Projeto Premium"
 }
+
+IMPORTANTE: 
+- Título deve ter no máximo 60 caracteres
+- Subtítulo deve ter no máximo 100 caracteres  
+- Cada serviço deve ter no máximo 30 caracteres
+- Use linguagem persuasiva e gatilhos mentais
+- Escreva em primeira pessoa, evitando nomes específicos
+- Foque em benefícios e resultados excepcionais
 
 REGRAS CRÍTICAS PARA JSON VÁLIDO:
 - Use APENAS aspas duplas (") para strings
@@ -241,6 +253,32 @@ IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adici
 
       try {
         parsed = JSON.parse(response);
+        
+        // Clean and validate the response
+        const { cleanAIResponse } = await import('../utils/text-validation');
+        
+        // Clean meta instructions and template names
+        parsed.title = cleanAIResponse(parsed.title || '');
+        parsed.subtitle = cleanAIResponse(parsed.subtitle || '');
+        parsed.services = (parsed.services || []).map((service: string) => cleanAIResponse(service));
+        
+        // Validate character limits
+        if (parsed.title && parsed.title.length > 60) {
+          parsed.title = parsed.title.substring(0, 57) + '...';
+        }
+        if (parsed.subtitle && parsed.subtitle.length > 100) {
+          parsed.subtitle = parsed.subtitle.substring(0, 97) + '...';
+        }
+        parsed.services = parsed.services.map((service: string) => 
+          service.length > 30 ? service.substring(0, 27) + '...' : service
+        );
+        
+        // Ensure we have exactly 4 services
+        while (parsed.services.length < 4) {
+          parsed.services.push(`Serviço Premium ${parsed.services.length + 1}`);
+        }
+        parsed.services = parsed.services.slice(0, 4);
+        
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         // Fallback to default values if JSON parsing fails
@@ -340,16 +378,23 @@ OBJETIVO: Criar conteúdo premium, sofisticado e persuasivo que conecte ${
 Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título sofisticado sobre ${this.agent?.name} e ${
+  "title": "Título sofisticado sobre nossa empresa e ${
       data.projectName
-    } (máximo 155 caracteres)",
+    }",
   "supportText": "Frase de apoio premium única para ${
     data.clientName
-  } (máximo 70 caracteres)",
-  "subtitle": "Descrição detalhada da abordagem premium de ${
-    this.agent?.name
-  } para ${data.projectName} (máximo 250 caracteres)"
+  }",
+  "subtitle": "Descrição detalhada da nossa abordagem premium para ${data.projectName}"
 }
+
+IMPORTANTE:
+- Título deve ter no máximo 155 caracteres
+- SupportText deve ter no máximo 70 caracteres  
+- Subtítulo deve ter no máximo 250 caracteres
+- Use linguagem sofisticada e elegante
+- Destaque qualidade premium e resultados excepcionais
+- Evite frases genéricas como "somos especialistas"
+- Crie conexão emocional e comercial de alto nível
 
 DIRETRIZES:
 - Seja específico sobre ${data.projectName} e ${data.clientName}
@@ -416,16 +461,22 @@ Crie especialidades premium personalizadas para este cliente específico.
 
 Retorne JSON:
 {
-  "title": "Título das especialidades (40 chars)",
+  "title": "Título das especialidades",
   "specialties": [
     {
-      "title": "Especialidade premium (50 chars)",
-      "description": "Benefício para o projeto (100 chars)"
+      "title": "Especialidade premium",
+      "description": "Benefício para o projeto"
     }
   ]
 }
 
-Foque em qualidade premium e benefícios reais para ${data.clientName}.`;
+IMPORTANTE:
+- Título deve ter no máximo 40 caracteres
+- Cada especialidade title deve ter no máximo 50 caracteres
+- Cada descrição deve ter no máximo 100 caracteres
+- Gere exatamente 9 especialidades baseadas na expertise do agente
+- Foque em qualidade premium e benefícios reais para ${data.clientName}
+- Use linguagem persuasiva e específica do setor`;
 
     try {
       const response = await this.runLLM(userPrompt, this.agent?.systemPrompt);
@@ -472,22 +523,28 @@ ${
     : ""
 }
 
-Crie uma seção de processo para proposta PRIME. Retorne APENAS um objeto JSON com:
+Crie uma seção de processo para proposta premium. Retorne APENAS um objeto JSON com:
 
 {
-  "introduction": "Introdução sobre a metodologia PRIME (máximo 100 caracteres)",
-  "title": "Título da seção de processo (máximo 40 caracteres)",
+  "introduction": "Introdução sobre nossa metodologia premium",
+  "title": "Título da seção de processo",
   "steps": [
     {
-      "title": "Nome da etapa (máximo 40 caracteres)",
-      "description": "Descrição da etapa (máximo 240 caracteres)"
+      "title": "Nome da etapa",
+      "description": "Descrição da etapa"
     }
   ]
 }
 
-Gere até 5 etapas baseadas no setor ${
-      this.agent?.sector
-    } com foco em qualidade premium e atenção aos detalhes.
+IMPORTANTE:
+- Introduction deve ter no máximo 100 caracteres
+- Title deve ter no máximo 40 caracteres
+- Cada step title deve ter no máximo 40 caracteres
+- Cada step description deve ter no máximo 240 caracteres
+- Gere exatamente 5 etapas baseadas no setor ${this.agent?.sector}
+- Foque em qualidade premium e atenção aos detalhes
+- Use linguagem persuasiva e específica do setor
+- Evite mencionar "metodologia PRIME" ou termos genéricos
 
 REGRAS CRÍTICAS PARA JSON VÁLIDO:
 - Use APENAS aspas duplas (") para strings
@@ -554,29 +611,37 @@ ${
     : ""
 }
 
-Crie uma seção de investimento para proposta PRIME. Retorne APENAS um objeto JSON com:
+Crie uma seção de investimento para proposta premium. Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título da seção de investimento (máximo 85 caracteres)",
+  "title": "Título da seção de investimento",
   "deliverables": [
     {
-      "title": "Nome do entregável (máximo 30 caracteres)",
-      "description": "Descrição do entregável (máximo 330 caracteres)"
+      "title": "Nome do entregável",
+      "description": "Descrição do entregável"
     }
   ],
   "plans": [
     {
-      "title": "Nome do plano (máximo 20 caracteres)",
-      "description": "Descrição do plano (máximo 95 caracteres)",
-      "value": "Valor do plano (máximo 11 caracteres)",
+      "title": "Nome do plano",
+      "description": "Descrição do plano",
+      "value": "Valor do plano",
       "topics": ["Tópico 1", "Tópico 2", "Tópico 3", "Tópico 4"]
     }
   ]
 }
 
-Gere até 3 entregáveis e até 3 planos baseados no setor ${
-      this.agent?.sector
-    } com foco em qualidade premium e atenção aos detalhes.
+IMPORTANTE:
+- Title deve ter no máximo 85 caracteres
+- Cada deliverable title deve ter no máximo 30 caracteres
+- Cada deliverable description deve ter no máximo 330 caracteres
+- Cada plan title deve ter no máximo 20 caracteres
+- Cada plan description deve ter no máximo 95 caracteres
+- Cada plan value deve ter no máximo 11 caracteres
+- Cada topic deve ter no máximo 45 caracteres
+- Gere exatamente 3 entregáveis e 3 planos baseados no setor ${this.agent?.sector}
+- Foque em qualidade premium e atenção aos detalhes
+- Use linguagem persuasiva e específica do setor
 
 REGRAS CRÍTICAS PARA JSON VÁLIDO:
 - Use APENAS aspas duplas (") para strings

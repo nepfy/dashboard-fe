@@ -283,12 +283,16 @@ Foque na linguagem natural e envolvente, evite jargões técnicos desnecessário
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashAboutUsSection> {
+    // Normalize project name to prevent CAPS leakage
+    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
+    
     // Generate unique prompt variations to avoid repetitive responses
     const promptVariations = [
-      `Crie uma seção "Sobre Nós" única e personalizada para ${data.companyInfo} no projeto ${data.projectName} de ${data.clientName}.`,
-      `Desenvolva uma apresentação exclusiva da ${data.companyInfo} focada no projeto ${data.projectName} para ${data.clientName}.`,
-      `Elabore uma seção "Sobre Nós" diferenciada destacando como ${data.companyInfo} pode transformar o projeto ${data.projectName} de ${data.clientName}.`,
-      `Construa uma apresentação personalizada da ${data.companyInfo} especificamente para o desafio ${data.projectName} de ${data.clientName}.`,
+      `Crie uma seção "Sobre Nós" única e personalizada para nossa empresa no projeto ${normalizedProjectName} de ${data.clientName}.`,
+      `Desenvolva uma apresentação exclusiva da nossa empresa focada no projeto ${normalizedProjectName} para ${data.clientName}.`,
+      `Elabore uma seção "Sobre Nós" diferenciada destacando como nossa empresa pode transformar o projeto ${normalizedProjectName} de ${data.clientName}.`,
+      `Construa uma apresentação personalizada da nossa empresa especificamente para o desafio ${normalizedProjectName} de ${data.clientName}.`,
     ];
 
     const selectedVariation =
@@ -300,32 +304,31 @@ Você é um especialista em criação de propostas comerciais. Responda APENAS c
 
 CONTEXTO ESPECÍFICO:
 - Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
+- Projeto: ${normalizedProjectName}
 - Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
 - Expertise: ${agent.expertise.join(", ")}
 - Serviços: ${agent.commonServices.join(", ")}
 
-OBJETIVO: Criar conteúdo único, específico e persuasivo que conecte ${
-      data.companyInfo
-    } com as necessidades reais de ${data.clientName} no projeto ${
-      data.projectName
-    }.
+OBJETIVO: Criar conteúdo único, específico e persuasivo que conecte nossa empresa com as necessidades reais de ${data.clientName} no projeto ${normalizedProjectName}.
 
 Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título específico sobre ${data.companyInfo} e ${
-      data.projectName
-    } (máximo 155 caracteres)",
-  "supportText": "Frase de apoio única para ${
-    data.clientName
-  } (máximo 70 caracteres)",
-  "subtitle": "Descrição detalhada de como ${data.companyInfo} resolve ${
-      data.projectName
-    } para ${data.clientName} (máximo 250 caracteres)"
+  "title": "Título específico sobre nossa empresa e ${normalizedProjectName}",
+  "supportText": "Frase de apoio única para ${data.clientName}",
+  "subtitle": "Descrição detalhada de como resolvemos ${normalizedProjectName} para ${data.clientName}"
 }
+
+IMPORTANTE:
+- Título deve ter no máximo 155 caracteres
+- SupportText deve ter no máximo 70 caracteres
+- Subtítulo deve ter no máximo 250 caracteres
+- Use linguagem natural e persuasiva
+- Destaque benefícios concretos e resultados mensuráveis
+- Evite frases genéricas como "somos especialistas"
+- Crie conexão emocional e comercial
 
 REGRAS CRÍTICAS PARA JSON VÁLIDO:
 - Use APENAS aspas duplas (") para strings
@@ -384,9 +387,13 @@ DIRETRIZES:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashSpecialtiesSection> {
+    // Normalize project name to prevent CAPS leakage
+    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
+    
     const userPrompt = `PROJETO ESPECÍFICO:
 - Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
+- Projeto: ${normalizedProjectName}
 - Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 
@@ -394,16 +401,23 @@ Você é um especialista em criação de propostas comerciais. Responda APENAS c
 
 Retorne JSON com:
 {
-  "title": "Título das especialidades para ${data.projectName} (40 chars)",
+  "title": "Título das especialidades para ${normalizedProjectName}",
   "topics": [
     {
-      "title": "Especialidade específica (50 chars)",
-      "description": "Como ajuda o projeto ${data.projectName} (100 chars)"
+      "title": "Especialidade específica",
+      "description": "Como ajuda o projeto ${normalizedProjectName}"
     }
   ]
 }
 
-Foque em benefícios reais e linguagem natural, evite termos genéricos.`;
+IMPORTANTE:
+- Título deve ter no máximo 40 caracteres
+- Cada especialidade title deve ter no máximo 50 caracteres
+- Cada descrição deve ter no máximo 100 caracteres
+- Gere exatamente 9 especialidades baseadas na expertise do agente
+- Foque em benefícios reais e linguagem natural
+- Evite termos genéricos e mencione "metodologia Flash"
+- Use linguagem persuasiva e específica do setor`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -441,31 +455,45 @@ Foque em benefícios reais e linguagem natural, evite termos genéricos.`;
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashStepsSection> {
+    // Normalize project name to prevent CAPS leakage
+    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
+    
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
+- Projeto: ${normalizedProjectName}
 - Descrição do Projeto: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
 
-Crie uma seção "Processo" personalizada para o projeto ${data.projectName} de ${data.clientName}. Retorne APENAS um objeto JSON com:
+Crie uma seção "Processo" personalizada para o projeto ${normalizedProjectName} de ${data.clientName}. Retorne APENAS um objeto JSON com:
 
 {
-  "introduction": "Introdução ao processo específico para ${data.projectName} (máximo 100 caracteres)",
+  "introduction": "Introdução ao processo específico para ${normalizedProjectName}",
   "title": "Nosso Processo",
   "topics": [
     {
-      "title": "Etapa 1 específica para ${data.clientName} (máximo 40 caracteres)",
-      "description": "Descrição da etapa 1 aplicada ao projeto ${data.projectName} (máximo 240 caracteres)"
+      "title": "Etapa 1 específica para ${data.clientName}",
+      "description": "Descrição da etapa 1 aplicada ao projeto ${normalizedProjectName}"
     },
     {
-      "title": "Etapa 2 específica para ${data.clientName} (máximo 40 caracteres)",
-      "description": "Descrição da etapa 2 aplicada ao projeto ${data.projectName} (máximo 240 caracteres)"
+      "title": "Etapa 2 específica para ${data.clientName}",
+      "description": "Descrição da etapa 2 aplicada ao projeto ${normalizedProjectName}"
     }
   ]
 }
+
+IMPORTANTE:
+- Introduction deve ter no máximo 100 caracteres
+- Cada step title deve ter no máximo 40 caracteres
+- Cada step description deve ter no máximo 240 caracteres
+- Gere exatamente 5 etapas baseadas no setor ${agent.sector}
+- Use as informações específicas do projeto: ${data.projectDescription}
+- Personalize para o cliente: ${data.clientName}
+- NÃO mencione "metodologia Flash" ou termos genéricos
+- Use linguagem persuasiva e específica do setor
 
 REGRAS CRÍTICAS PARA JSON VÁLIDO:
 - Use APENAS aspas duplas (") para strings
