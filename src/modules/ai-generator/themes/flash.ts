@@ -3,6 +3,60 @@ import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
 import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 
+function ensureCondition(condition: boolean, message: string): void {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+function ensureString(value: unknown, field: string): string {
+  ensureCondition(typeof value === "string", `${field} must be a string`);
+  return value as string;
+}
+
+function ensureExactLength(
+  value: unknown,
+  expected: number,
+  field: string
+): string {
+  const str = ensureString(value, field);
+  ensureCondition(
+    str.length === expected,
+    `${field} must have exactly ${expected} characters. Received ${str.length}.`
+  );
+  return str;
+}
+
+function ensureMaxLength(value: unknown, max: number, field: string): string {
+  const str = ensureString(value, field);
+  ensureCondition(
+    str.length > 0 && str.length <= max,
+    `${field} must have between 1 and ${max} characters. Received ${str.length}.`
+  );
+  return str;
+}
+
+function ensureArray<T>(value: unknown, field: string): T[] {
+  ensureCondition(Array.isArray(value), `${field} must be an array`);
+  return value as T[];
+}
+
+function ensureLengthBetween<T>(
+  array: T[],
+  min: number,
+  max: number,
+  field: string
+): void {
+  ensureCondition(
+    array.length >= min && array.length <= max,
+    `${field} must contain between ${min} and ${max} items. Received ${array.length}.`
+  );
+}
+
+function ensureMatchesRegex(value: string, regex: RegExp, field: string): void {
+  ensureCondition(regex.test(value), `${field} is invalid`);
+}
+
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
 
@@ -268,39 +322,29 @@ REGRAS CRÍTICAS:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed: FlashIntroductionSection;
+      const parsed = JSON.parse(response) as FlashIntroductionSection;
 
-      try {
-        parsed = JSON.parse(response);
-        parsed.title = parsed.title?.slice(0, 60) || "";
-        parsed.subtitle = parsed.subtitle?.slice(0, 100) || "";
-        parsed.services = (parsed.services || [])
-          .slice(0, 4)
-          .map((service: string) => service.slice(0, 30));
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError, "Response:", response);
-        this.fallbackUsed = true;
-        return {
-          title: "Transformamos decisões em crescimento constante colaborativo",
-          subtitle:
-            "Integramos estratégia, execução e análise para multiplicar lucro, consolidar presença e fortalecer resultados mensuráveis",
-          services: [
-            "Campanhas com foco em lucro    ",
-            "Gestão integrada de canais     ",
-            "Conteúdo orientado a valor     ",
-            "Análises estratégicas contínua",
-          ],
-          validity: new Date(
-            Date.now() + 30 * 24 * 60 * 60 * 1000
-          ).toLocaleDateString("pt-BR"),
-          buttonText: "Iniciar Projeto",
-        };
-      }
+      ensureExactLength(parsed.title, 60, "introduction.title");
+      ensureExactLength(parsed.subtitle, 100, "introduction.subtitle");
+      ensureCondition(
+        Array.isArray(parsed.services) && parsed.services.length === 4,
+        "introduction.services must contain exactly 4 items"
+      );
+      parsed.services.forEach((service, index) =>
+        ensureExactLength(service, 30, `introduction.services[${index}]`)
+      );
+      ensureCondition(
+        Boolean(parsed.validity),
+        "introduction.validity missing"
+      );
+      ensureCondition(
+        Boolean(parsed.buttonText),
+        "introduction.buttonText missing"
+      );
 
       return parsed;
     } catch (error) {
       console.error("Flash Introduction Generation Error:", error);
-      this.fallbackUsed = true;
       throw error;
     }
   }
@@ -356,45 +400,15 @@ REGRAS CRÍTICAS:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed: FlashAboutUsSection;
+      const parsed = JSON.parse(response) as FlashAboutUsSection;
 
-      try {
-        parsed = JSON.parse(response);
-
-        if (parsed.title && parsed.title.length !== 155) {
-          parsed.title = parsed.title
-            .slice(0, 155)
-            .padEnd(155, " ")
-            .slice(0, 155);
-        }
-        if (parsed.supportText && parsed.supportText.length !== 70) {
-          parsed.supportText = parsed.supportText
-            .slice(0, 70)
-            .padEnd(70, " ")
-            .slice(0, 70);
-        }
-        if (parsed.subtitle && parsed.subtitle.length !== 250) {
-          parsed.subtitle = parsed.subtitle
-            .slice(0, 250)
-            .padEnd(250, " ")
-            .slice(0, 250);
-        }
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError, "Response:", response);
-        this.fallbackUsed = true;
-        return {
-          title:
-            "Construímos parcerias duradouras que elevam ideias a resultados consistentes, fortalecendo valor, confiança e lucro sustentável",
-          supportText: "Confiança diária que aproxima decisões               ",
-          subtitle:
-            "Transformamos contextos complexos em jornadas lucrativas ao combinar estratégia, criatividade e execução ajustada ao ritmo do seu negócio, garantindo impacto contínuo e previsível",
-        };
-      }
+      ensureExactLength(parsed.title, 155, "aboutUs.title");
+      ensureExactLength(parsed.supportText, 70, "aboutUs.supportText");
+      ensureExactLength(parsed.subtitle, 250, "aboutUs.subtitle");
 
       return parsed;
     } catch (error) {
       console.error("Flash About Us Generation Error:", error);
-      this.fallbackUsed = true;
       throw error;
     }
   }
@@ -437,39 +451,31 @@ IMPORTANTE:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed: FlashSpecialtiesSection;
+      const parsed = JSON.parse(response) as FlashSpecialtiesSection;
 
-      try {
-        parsed = JSON.parse(response);
-        parsed.title = parsed.title?.slice(0, 140) || "";
-        parsed.topics = (parsed.topics || []).map(
-          (topic: FlashSpecialtyTopic) => ({
-            title: topic.title.slice(0, 50),
-            description: topic.description.slice(0, 100),
-          })
+      ensureExactLength(parsed.title, 140, "specialties.title");
+      ensureCondition(
+        Array.isArray(parsed.topics) &&
+          parsed.topics.length >= 6 &&
+          parsed.topics.length <= 9,
+        "specialties.topics must contain between 6 and 9 items"
+      );
+      parsed.topics.forEach((topic, index) => {
+        ensureExactLength(
+          topic.title,
+          50,
+          `specialties.topics[${index}].title`
         );
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError, "Response:", response);
-        this.fallbackUsed = true;
-        return {
-          title: "Especialidades Flash",
-          topics: [
-            {
-              title: "Entrega Rápida",
-              description: "Resultados em tempo recorde com qualidade superior",
-            },
-            {
-              title: "Processo Otimizado",
-              description: "Metodologia ágil para máxima eficiência",
-            },
-          ],
-        };
-      }
+        ensureExactLength(
+          topic.description,
+          100,
+          `specialties.topics[${index}].description`
+        );
+      });
 
       return parsed;
     } catch (error) {
       console.error("Flash Specialties Generation Error:", error);
-      this.fallbackUsed = true;
       throw error;
     }
   }
@@ -515,58 +521,26 @@ IMPORTANTE:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed: FlashStepsSection;
+      const parsed = JSON.parse(response) as FlashStepsSection;
 
-      try {
-        parsed = JSON.parse(response);
-        parsed.introduction = parsed.introduction?.slice(0, 100) || "";
-        parsed.topics = (parsed.topics || [])
-          .slice(0, 5)
-          .map((topic: FlashStepTopic) => ({
-            title: topic.title.slice(0, 40),
-            description: topic.description.slice(0, 240),
-          }));
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError, "Response:", response);
-        this.fallbackUsed = true;
-        return {
-          introduction:
-            "Guiamos cada etapa com clareza para acelerar resultados sem perder consistência",
-          title: "Nosso Processo",
-          topics: [
-            {
-              title: "Descobrindo oportunidades",
-              description:
-                "Investigamos contexto, objetivos e metas para estruturar decisões orientadas a lucro e impacto sustentável.",
-            },
-            {
-              title: "Desenhando estratégias",
-              description:
-                "Construímos um plano integrado com metas, prazos e métricas claras, alinhado aos resultados desejados.",
-            },
-            {
-              title: "Executando com foco",
-              description:
-                "Ativamos iniciativas de alto impacto com monitoramento constante para garantir evolução contínua.",
-            },
-            {
-              title: "Medindo resultados",
-              description:
-                "Avaliamos indicadores de lucro, engajamento e expansão para otimizar decisões e reforçar ganhos.",
-            },
-            {
-              title: "Evoluindo continuamente",
-              description:
-                "Aprimoramos entregas com ciclos de melhoria que mantêm crescimento sustentável e previsível.",
-            },
-          ],
-        };
-      }
+      ensureExactLength(parsed.introduction, 100, "steps.introduction");
+      ensureExactLength(parsed.title, 12, "steps.title");
+      ensureCondition(
+        Array.isArray(parsed.topics) && parsed.topics.length === 5,
+        "steps.topics must contain exactly 5 items"
+      );
+      parsed.topics.forEach((topic, index) => {
+        ensureExactLength(topic.title, 40, `steps.topics[${index}].title`);
+        ensureExactLength(
+          topic.description,
+          240,
+          `steps.topics[${index}].description`
+        );
+      });
 
       return parsed;
     } catch (error) {
       console.error("Flash Steps Generation Error:", error);
-      this.fallbackUsed = true;
       throw error;
     }
   }
@@ -628,66 +602,55 @@ IMPORTANTE:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed: FlashInvestmentSection;
+      const parsed = JSON.parse(response) as FlashInvestmentSection;
 
-      try {
-        parsed = JSON.parse(response);
-        parsed.title = parsed.title?.slice(0, 85) || "";
-        parsed.deliverables = (parsed.deliverables || []).map(
-          (deliverable: FlashDeliverable) => ({
-            title: deliverable.title.slice(0, 30),
-            description: deliverable.description.slice(0, 330),
-          })
+      ensureExactLength(parsed.title, 85, "investment.title");
+      ensureCondition(
+        Array.isArray(parsed.deliverables) && parsed.deliverables.length > 0,
+        "investment.deliverables must include at least one item"
+      );
+      parsed.deliverables.forEach((deliverable, index) => {
+        ensureCondition(
+          Boolean(deliverable.title),
+          `investment.deliverables[${index}].title missing`
         );
-        parsed.plans = (parsed.plans || []).map((plan: FlashPlan) => ({
-          title: plan.title.slice(0, 20),
-          description: plan.description.slice(0, 95),
-          value: plan.value.slice(0, 11),
-          topics: (plan.topics || []).map((topic: string) =>
-            topic.slice(0, 45)
-          ),
-        }));
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError, "Response:", response);
-        this.fallbackUsed = true;
-        return {
-          title:
-            "Investir agora garante crescimento escalável, previsível e centrado em lucro real com entregas mensuráveis",
-          deliverables: [
-            {
-              title: "Projeto Completo",
-              description:
-                "Solução completa entregue no prazo estabelecido com qualidade superior e metodologia Flash",
-            },
-          ].map((deliverable) => ({
-            title: deliverable.title.slice(0, 30),
-            description: deliverable.description.slice(0, 330),
-          })),
-          plans: [
-            {
-              title: "Flash Básico",
-              description:
-                "Solução essencial com entrega rápida e qualidade garantida",
-              value: "R$ 999",
-              topics: [
-                "Entrega em 7 dias",
-                "Suporte básico",
-                "Revisões limitadas",
-              ],
-            },
-          ].map((plan) => ({
-            title: plan.title.slice(0, 20),
-            description: plan.description.slice(0, 95),
-            value: plan.value.slice(0, 11),
-            topics: plan.topics.map((topic) => topic.slice(0, 45)),
-          })),
-        };
-      }
+        ensureCondition(
+          Boolean(deliverable.description),
+          `investment.deliverables[${index}].description missing`
+        );
+      });
+      ensureCondition(
+        Array.isArray(parsed.plans) && parsed.plans.length > 0,
+        "investment.plans must include at least one item"
+      );
+      parsed.plans.forEach((plan, index) => {
+        ensureExactLength(plan.title, 20, `investment.plans[${index}].title`);
+        ensureExactLength(
+          plan.description,
+          95,
+          `investment.plans[${index}].description`
+        );
+        ensureCondition(
+          Boolean(plan.value),
+          `investment.plans[${index}].value missing`
+        );
+        ensureCondition(
+          Array.isArray(plan.topics) &&
+            plan.topics.length >= 3 &&
+            plan.topics.length <= 6,
+          `investment.plans[${index}].topics must contain 3 to 6 items`
+        );
+        plan.topics.forEach((topic, topicIndex) =>
+          ensureCondition(
+            topic.length <= 45,
+            `investment.plans[${index}].topics[${topicIndex}] must have up to 45 characters`
+          )
+        );
+      });
 
       return parsed;
     } catch (error) {
       console.error("Flash Investment Generation Error:", error);
-      this.fallbackUsed = true;
       throw error;
     }
   }
@@ -736,30 +699,11 @@ IMPORTANTE:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed: FlashTermsSection;
-
-      try {
-        parsed = JSON.parse(response);
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError, "Response:", response);
-        this.fallbackUsed = true;
-        return [
-          {
-            title: "Prazo de Entrega",
-            description:
-              "Entrega em até 15 dias úteis após aprovação e pagamento inicial",
-          },
-          {
-            title: "Forma de Pagamento",
-            description: "50% na aprovação e 50% na entrega final",
-          },
-        ];
-      }
+      const parsed = JSON.parse(response) as FlashTermsSection;
 
       return parsed;
     } catch (error) {
       console.error("Flash Terms Generation Error:", error);
-      this.fallbackUsed = true;
       throw error;
     }
   }
@@ -793,56 +737,21 @@ REGRAS CRÍTICAS:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      let parsed: FlashFAQSection;
+      const parsed = JSON.parse(response) as FlashFAQSection;
 
-      try {
-        parsed = JSON.parse(response);
-        parsed = (parsed || []).slice(0, 10).map((faqItem: FlashFaqItem) => ({
-          question: faqItem.question.slice(0, 100),
-          answer: faqItem.answer.slice(0, 300),
-        }));
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError, "Response:", response);
-        this.fallbackUsed = true;
-        return [
-          {
-            question:
-              "Como garantimos que cada etapa avance com clareza e previsibilidade?",
-            answer:
-              "Mantemos acompanhamento diário, relatórios objetivos e ciclos de ajustes contínuos que asseguram confiança, rapidez nas decisões e evolução alinhada ao crescimento sustentável que você busca.",
-          },
-          {
-            question:
-              "Qual suporte oferecemos depois da implementação inicial?",
-            answer:
-              "Seguimos lado a lado com você, oferecendo abertura total para ajustes, novos testes e otimizações constantes, garantindo evolução consistente e segurança para ampliar resultados com tranquilidade.",
-          },
-        ].map((item) => ({
-          question: item.question.slice(0, 100),
-          answer: item.answer.slice(0, 300),
-        }));
-      }
+      ensureCondition(
+        Array.isArray(parsed) && parsed.length === 10,
+        "faq must contain exactly 10 items"
+      );
+      parsed.forEach((item, index) => {
+        ensureExactLength(item.question, 100, `faq[${index}].question`);
+        ensureExactLength(item.answer, 300, `faq[${index}].answer`);
+      });
 
       return parsed;
     } catch (error) {
       console.error("Flash FAQ Generation Error:", error);
-      this.fallbackUsed = true;
-      return [
-        {
-          question:
-            "Como garantimos que cada etapa avance com clareza e previsibilidade?",
-          answer:
-            "Mantemos acompanhamento diário, relatórios objetivos e ciclos de ajustes contínuos que asseguram confiança, rapidez nas decisões e evolução alinhada ao crescimento sustentável que você busca.",
-        },
-        {
-          question: "Qual suporte oferecemos depois da implementação inicial?",
-          answer:
-            "Seguimos lado a lado com você, oferecendo abertura total para ajustes, novos testes e otimizações constantes, garantindo evolução consistente e segurança para ampliar resultados com tranquilidade.",
-        },
-      ].map((item) => ({
-        question: item.question.slice(0, 100),
-        answer: item.answer.slice(0, 300),
-      }));
+      throw error;
     }
   }
 
@@ -865,14 +774,13 @@ Retorne:
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashTeamSection;
-      parsed.title = parsed.title?.slice(0, 55) || "";
+
+      ensureExactLength(parsed.title, 55, "team.title");
+
       return parsed;
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
-      this.fallbackUsed = true;
-      return {
-        title: "Crescemos lado a lado fortalecendo evoluções constantes",
-      };
+      throw error;
     }
   }
 
@@ -896,24 +804,22 @@ Retorne:
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashScopeSection;
-      parsed.content = parsed.content?.slice(0, 350) || "";
+
+      ensureExactLength(parsed.content, 350, "scope.content");
+
       return parsed;
     } catch (error) {
       console.error("Flash Scope Generation Error:", error);
-      this.fallbackUsed = true;
-      return {
-        content:
-          "Integramos diagnóstico, estratégia, execução e otimização em fluxo contínuo, assegurando previsibilidade, crescimento sustentável e lucro consistente com entregas alinhadas ao investimento e à visão estratégica do projeto",
-      };
+      throw error;
     }
   }
 
   private generateFooter(data: FlashThemeData): FlashFooterSection {
+    console.log("Flash footer generated for", data.projectName);
     return {
-      callToAction: "Transforme crescimento com nossa equipe agora",
-      disclaimer:
-        "Estamos aqui para acompanhar cada passo com atenção, empatia e velocidade, garantindo suporte contínuo, clareza em cada decisão e disponibilidade imediata para ajustes que mantenham o crescimento sustentável da sua empresa",
-    };
+      callToAction: "",
+      disclaimer: "",
+    } as FlashFooterSection;
   }
 
   private async runLLM(

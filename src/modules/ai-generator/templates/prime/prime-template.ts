@@ -24,70 +24,81 @@ export interface PrimeSection extends BaseSection {
 export interface PrimeProposal extends BaseProposal {
   // Introduction Section
   introduction: {
-    title: string; // 60 chars, AI-generated
-    subtitle: string; // 100 chars, AI-generated
-    services: string[]; // 4 max, 30 chars each, AI-generated
+    title: string; // exactly 60 chars, AI-generated
+    subtitle: string; // exactly 100 chars, AI-generated
+    services: string[]; // exactly 4, 30 chars each, AI-generated
     validity: string; // Not editable
     buttonText: string; // 20 chars, no AI
   };
 
   // About Us Section
   aboutUs: {
-    title: string; // 155 chars, AI-generated
-    supportText: string; // 70 chars, AI-generated
-    subtitle: string; // 250 chars, AI-generated
+    title: string; // exactly 155 chars, AI-generated
+    supportText: string; // exactly 70 chars, AI-generated
+    subtitle: string; // exactly 250 chars, AI-generated
+  };
+
+  // Team Section
+  team: {
+    title: string; // exactly 60 chars, AI-generated
+    subtitle: string; // exactly 120 chars, AI-generated
   };
 
   // Specialties Section
   specialties: {
-    title: string; // 40 chars, AI-generated
+    title: string; // exactly 180 chars, AI-generated
     topics: Array<{
-      title: string; // 50 chars
-      description: string; // 100 chars
-    }>; // 9 max
+      title: string; // exactly 60 chars
+      description: string; // exactly 140 chars
+    }>; // 9 topics
   };
 
   // Process Steps Section
   steps: {
-    introduction: string; // 100 chars, AI-generated
-    title: string; // Fixed, not editable
+    introduction: string; // exactly 120 chars, AI-generated
+    title: string; // exactly 50 chars, not editable
     topics: Array<{
-      title: string; // 40 chars
-      description: string; // 240 chars
-    }>; // 5 max, AI-generated
+      title: string; // exactly 45 chars
+      description: string; // exactly 260 chars
+    }>; // 6 topics
+  };
+
+  // Project Scope Section
+  scope: {
+    content: string; // exactly 400 chars
   };
 
   // Investment Section
   investment: {
-    title: string; // 85 chars, AI-generated
+    title: string; // exactly 95 chars, AI-generated
     deliverables: Array<{
-      title: string; // 30 chars
-      description: string; // 330 chars
+      title: string; // exactly 35 chars
+      description: string; // exactly 350 chars
     }>;
     plans: Array<{
-      title: string; // 20 chars
-      description: string; // 95 chars
-      value: string; // 11 chars
-      topics: string[]; // 6 max, 45 chars each
-    }>; // 3 max, AI-generated
+      title: string; // exactly 25 chars
+      description: string; // exactly 110 chars
+      value: string; // format R$X.XXX (<= 11 chars)
+      topics: string[]; // 4-6 items, each <= 50 chars
+    }>; // 3 plans
   };
 
   // Terms and Conditions (optional)
   terms?: Array<{
-    title: string; // 30 chars
-    description: string; // 180 chars
+    title: string; // exactly 35 chars
+    description: string; // exactly 200 chars
   }>;
 
-  // FAQ (optional)
-  faq?: Array<{
-    question: string; // 100 chars
-    answer: string; // 280 chars
-  }>;
+  // FAQ (mandatory)
+  faq: Array<{
+    question: string; // exactly 120 chars
+    answer: string; // exactly 320 chars
+  }>; // 8 items
 
   // Footer
   footer: {
-    callToAction: string; // 80 chars, AI-generated
-    contactInfo: string; // 120 chars, editable
+    callToAction: string; // exactly 60 chars, AI-generated
+    contactInfo: string; // exactly 150 chars, editable
   };
 }
 
@@ -130,44 +141,118 @@ export function validatePrimeCharacterLimits(
   const validations: Record<string, boolean> = {};
 
   if (proposal.introduction?.title) {
-    validations.introductionTitle = proposal.introduction.title.length <= 60;
+    validations.introductionTitle = proposal.introduction.title.length === 60;
   }
 
   if (proposal.introduction?.subtitle) {
     validations.introductionSubtitle =
-      proposal.introduction.subtitle.length <= 100;
+      proposal.introduction.subtitle.length === 100;
+  }
+
+  if (proposal.introduction?.services) {
+    validations.introductionServices =
+      proposal.introduction.services.length === 4 &&
+      proposal.introduction.services.every((service) => service.length === 30);
   }
 
   if (proposal.aboutUs?.title) {
-    validations.aboutUsTitle = proposal.aboutUs.title.length <= 155;
+    validations.aboutUsTitle = proposal.aboutUs.title.length === 155;
   }
 
   if (proposal.aboutUs?.supportText) {
-    validations.aboutUsSupportText = proposal.aboutUs.supportText.length <= 70;
+    validations.aboutUsSupportText = proposal.aboutUs.supportText.length === 70;
   }
 
   if (proposal.aboutUs?.subtitle) {
-    validations.aboutUsSubtitle = proposal.aboutUs.subtitle.length <= 250;
+    validations.aboutUsSubtitle = proposal.aboutUs.subtitle.length === 250;
+  }
+
+  if (proposal.team?.title) {
+    validations.teamTitle = proposal.team.title.length === 60;
+  }
+
+  if (proposal.team?.subtitle) {
+    validations.teamSubtitle = proposal.team.subtitle.length === 120;
   }
 
   if (proposal.specialties?.title) {
-    validations.specialtiesTitle = proposal.specialties.title.length <= 40;
+    validations.specialtiesTitle = proposal.specialties.title.length === 180;
+  }
+
+  if (proposal.specialties?.topics) {
+    validations.specialtiesTopics =
+      proposal.specialties.topics.length === 9 &&
+      proposal.specialties.topics.every(
+        (topic) => topic.title.length === 60 && topic.description.length === 140
+      );
   }
 
   if (proposal.steps?.introduction) {
-    validations.stepsIntroduction = proposal.steps.introduction.length <= 100;
+    validations.stepsIntroduction = proposal.steps.introduction.length === 120;
+  }
+
+  if (proposal.steps?.title) {
+    validations.stepsTitle = proposal.steps.title.length === 50;
+  }
+
+  if (proposal.steps?.topics) {
+    validations.stepsTopics =
+      proposal.steps.topics.length === 6 &&
+      proposal.steps.topics.every(
+        (topic) => topic.title.length === 45 && topic.description.length === 260
+      );
+  }
+
+  if (proposal.scope?.content) {
+    validations.scopeContent = proposal.scope.content.length === 400;
   }
 
   if (proposal.investment?.title) {
-    validations.investmentTitle = proposal.investment.title.length <= 85;
+    validations.investmentTitle = proposal.investment.title.length === 95;
+  }
+
+  if (proposal.investment?.deliverables) {
+    validations.investmentDeliverables = proposal.investment.deliverables.every(
+      (deliverable) =>
+        deliverable.title.length === 35 &&
+        deliverable.description.length === 350
+    );
+  }
+
+  if (proposal.investment?.plans) {
+    validations.investmentPlans =
+      proposal.investment.plans.length === 3 &&
+      proposal.investment.plans.every(
+        (plan) =>
+          plan.title.length === 25 &&
+          plan.description.length === 110 &&
+          plan.value.length <= 11 &&
+          plan.topics.length >= 4 &&
+          plan.topics.length <= 6 &&
+          plan.topics.every((topic) => topic.length <= 50)
+      );
+  }
+
+  if (proposal.terms) {
+    validations.terms = proposal.terms.every(
+      (term) => term.title.length === 35 && term.description.length === 200
+    );
+  }
+
+  if (proposal.faq) {
+    validations.faq =
+      proposal.faq.length === 8 &&
+      proposal.faq.every(
+        (item) => item.question.length === 120 && item.answer.length === 320
+      );
   }
 
   if (proposal.footer?.callToAction) {
-    validations.footerCallToAction = proposal.footer.callToAction.length <= 80;
+    validations.footerCallToAction = proposal.footer.callToAction.length === 60;
   }
 
   if (proposal.footer?.contactInfo) {
-    validations.footerContactInfo = proposal.footer.contactInfo.length <= 120;
+    validations.footerContactInfo = proposal.footer.contactInfo.length === 150;
   }
 
   return validations;
@@ -187,6 +272,10 @@ export function getPrimeTemplateDefaults(): Partial<PrimeProposal> {
       supportText: "",
       subtitle: "",
     },
+    team: {
+      title: "",
+      subtitle: "",
+    },
     specialties: {
       title: "Nossas Especialidades",
       topics: [],
@@ -196,11 +285,15 @@ export function getPrimeTemplateDefaults(): Partial<PrimeProposal> {
       title: "Nosso Processo",
       topics: [],
     },
+    scope: {
+      content: "",
+    },
     investment: {
       title: "",
       deliverables: [],
       plans: [],
     },
+    faq: [],
     footer: {
       callToAction: "",
       contactInfo: "",
