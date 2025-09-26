@@ -36,6 +36,10 @@ export interface FlashAboutUsSection {
   subtitle: string;
 }
 
+export interface FlashTeamSection {
+  title: string;
+}
+
 export interface FlashSpecialtyTopic {
   title: string;
   description: string;
@@ -55,6 +59,10 @@ export interface FlashStepsSection {
   introduction: string;
   title: string;
   topics: FlashStepTopic[];
+}
+
+export interface FlashScopeSection {
+  content: string;
 }
 
 export interface FlashDeliverable {
@@ -82,27 +90,25 @@ export interface FlashTerm {
 
 export type FlashTermsSection = FlashTerm[];
 
-export interface FlashFAQItem {
+export interface FlashFaqItem {
   question: string;
   answer: string;
 }
 
-export type FlashFAQSection = FlashFAQItem[];
+export type FlashFAQSection = FlashFaqItem[];
 
 export interface FlashFooterSection {
-  thanks: string;
-  followUp: string;
-  disclaimer: string;
-  validity: string;
   callToAction: string;
-  contactInfo: string;
+  disclaimer: string;
 }
 
 export type FlashSection =
   | FlashIntroductionSection
   | FlashAboutUsSection
+  | FlashTeamSection
   | FlashSpecialtiesSection
   | FlashStepsSection
+  | FlashScopeSection
   | FlashInvestmentSection
   | FlashTermsSection
   | FlashFAQSection
@@ -171,41 +177,54 @@ export class FlashTemplateWorkflow {
     }
 
     // Generate all sections in parallel for better performance
-    const [introduction, aboutUs, specialties, steps, investment, terms, faq] =
-      await Promise.all([
-        this.generateIntroduction(data, agent),
-        this.generateAboutUs(data, agent),
-        this.generateSpecialties(data, agent),
-        this.generateSteps(data, agent),
-        this.generateInvestment(data, agent),
-        data.includeTerms
-          ? this.generateTerms(data, agent)
-          : Promise.resolve(undefined),
-        data.includeFAQ
-          ? this.generateFAQ(data, agent)
-          : Promise.resolve(undefined),
-      ]);
+    const [
+      introduction,
+      aboutUs,
+      team,
+      specialties,
+      steps,
+      scope,
+      investment,
+      terms,
+      faq,
+    ] = await Promise.all([
+      this.generateIntroduction(data, agent),
+      this.generateAboutUs(data, agent),
+      this.generateTeam(data, agent),
+      this.generateSpecialties(data, agent),
+      this.generateSteps(data, agent),
+      this.generateScope(data, agent),
+      this.generateInvestment(data, agent),
+      data.includeTerms
+        ? this.generateTerms(data, agent)
+        : Promise.resolve(undefined),
+      this.generateFAQ(data, agent),
+    ]);
 
     // Collect sections for metadata
     this.sections = [
       introduction,
       aboutUs,
+      team,
       specialties,
       steps,
+      scope,
       investment,
       ...(terms ? [terms] : []),
-      ...(faq ? [faq] : []),
+      faq,
       this.generateFooter(data),
     ].filter(Boolean) as FlashSection[];
 
     return {
       introduction,
       aboutUs,
+      team,
       specialties,
       steps,
+      scope,
       investment,
       ...(terms && { terms }),
-      ...(faq && { faq }),
+      faq,
       footer: this.generateFooter(data),
     };
   }
@@ -222,28 +241,30 @@ export class FlashTemplateWorkflow {
 
 Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
-Crie uma introdução impactante e personalizada para este projeto específico. 
+Crie uma introdução impactante e personalizada para este projeto específico seguindo rigorosamente os limites de caracteres.
 
 Retorne APENAS um JSON válido com:
 {
-  "title": "Título focado no projeto de ${
-    data.clientName
-  } (máximo 60 caracteres)",
-  "subtitle": "Subtítulo personalizado baseado no ${
-    data.projectName
-  } (máximo 100 caracteres)",
-  "services": ["${agent.commonServices[0] || "Serviço 1"}", "${
-      agent.commonServices[1] || "Serviço 2"
-    }", "${agent.commonServices[2] || "Serviço 3"}", "${
-      agent.commonServices[3] || "Serviço 4"
-    }"],
+  "title": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres",
+  "subtitle": "Frase sobre benefício, transformação e lucro com exatamente 100 caracteres",
+  "services": [
+    "Serviço 1 com exatamente 30 caracteres",
+    "Serviço 2 com exatamente 30 caracteres",
+    "Serviço 3 com exatamente 30 caracteres",
+    "Serviço 4 com exatamente 30 caracteres"
+  ],
   "validity": "${new Date(
     Date.now() + 30 * 24 * 60 * 60 * 1000
   ).toLocaleDateString("pt-BR")}",
   "buttonText": "Iniciar Projeto"
 }
 
-Foque na linguagem natural e envolvente, evite jargões técnicos desnecessários.`;
+REGRAS CRÍTICAS:
+- Cada serviço deve ter exatamente 30 caracteres
+- NÃO mencione cliente, nome da empresa ou template
+- Use linguagem natural, ativa e positiva
+- Mantenha coerência com o setor ${agent.sector}
+- Responda APENAS com JSON válido.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -251,23 +272,28 @@ Foque na linguagem natural e envolvente, evite jargões técnicos desnecessário
 
       try {
         parsed = JSON.parse(response);
+        parsed.title = parsed.title?.slice(0, 60) || "";
+        parsed.subtitle = parsed.subtitle?.slice(0, 100) || "";
+        parsed.services = (parsed.services || [])
+          .slice(0, 4)
+          .map((service: string) => service.slice(0, 30));
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         this.fallbackUsed = true;
-        // Fallback to default values if JSON parsing fails
         return {
-          title: `${agent.sector} Flash para ${data.projectName}`,
-          subtitle: `Proposta flash personalizada para ${data.clientName}`,
-          services: agent.commonServices.slice(0, 4) || [
-            "Serviço 1",
-            "Serviço 2",
-            "Serviço 3",
-            "Serviço 4",
+          title: "Transformamos decisões em crescimento constante colaborativo",
+          subtitle:
+            "Integramos estratégia, execução e análise para multiplicar lucro, consolidar presença e fortalecer resultados mensuráveis",
+          services: [
+            "Campanhas com foco em lucro    ",
+            "Gestão integrada de canais     ",
+            "Conteúdo orientado a valor     ",
+            "Análises estratégicas contínua",
           ],
           validity: new Date(
             Date.now() + 30 * 24 * 60 * 60 * 1000
           ).toLocaleDateString("pt-BR"),
-          buttonText: "Iniciar Projeto Flash",
+          buttonText: "Iniciar Projeto",
         };
       }
 
@@ -284,9 +310,11 @@ Foque na linguagem natural e envolvente, evite jargões técnicos desnecessário
     agent: BaseAgentConfig
   ): Promise<FlashAboutUsSection> {
     // Normalize project name to prevent CAPS leakage
-    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const { cleanProjectNameForProposal } = await import(
+      "../utils/project-name-handler"
+    );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
-    
+
     // Generate unique prompt variations to avoid repetitive responses
     const promptVariations = [
       `Crie uma seção "Sobre Nós" única e personalizada para nossa empresa no projeto ${normalizedProjectName} de ${data.clientName}.`,
@@ -311,42 +339,20 @@ CONTEXTO ESPECÍFICO:
 - Expertise: ${agent.expertise.join(", ")}
 - Serviços: ${agent.commonServices.join(", ")}
 
-OBJETIVO: Criar conteúdo único, específico e persuasivo que conecte nossa empresa com as necessidades reais de ${data.clientName} no projeto ${normalizedProjectName}.
+OBJETIVO: Criar conteúdo único, específico e persuasivo que conecte nossa empresa com as necessidades reais do cliente.
 
 Retorne APENAS um objeto JSON com:
-
 {
-  "title": "Título específico sobre nossa empresa e ${normalizedProjectName}",
-  "supportText": "Frase de apoio única para ${data.clientName}",
-  "subtitle": "Descrição detalhada de como resolvemos ${normalizedProjectName} para ${data.clientName}"
+  "title": "Frase com transformação, valor e lucro, exatamente 155 caracteres",
+  "supportText": "Frase de apoio que gera proximidade, exatamente 70 caracteres",
+  "subtitle": "Descrição que evidencie impacto positivo sem citar cliente, exatamente 250 caracteres"
 }
 
-IMPORTANTE:
-- Título deve ter no máximo 155 caracteres
-- SupportText deve ter no máximo 70 caracteres
-- Subtítulo deve ter no máximo 250 caracteres
-- Use linguagem natural e persuasiva
-- Destaque benefícios concretos e resultados mensuráveis
-- Evite frases genéricas como "somos especialistas"
-- Crie conexão emocional e comercial
-
-REGRAS CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- Escape quebras de linha com \\n
-- Escape aspas dentro de strings com \\"
-- NÃO use vírgulas no final de arrays ou objetos
-- NÃO inclua propriedades extras como "_id", "__v"
-- Valores monetários: "R$ 1.999,90" (sem unicode)
-- Nomes de propriedades exatamente como especificado
-- Teste o JSON antes de retornar
-
-DIRETRIZES:
-- Seja específico sobre ${data.projectName} e ${data.clientName}
-- Evite frases genéricas como "somos especialistas" ou "nossa equipe"
-- Use linguagem natural e persuasiva
-- Destaque benefícios concretos e resultados mensuráveis
-- Crie conexão emocional e comercial
-- Responda APENAS com o JSON válido, sem explicações.`;
+REGRAS CRÍTICAS:
+- Proibido citar cliente ou empresa nominalmente
+- Foque em transformação, impacto e lucro
+- Use linguagem natural, próxima e confiante
+- Responda APENAS com o JSON válido.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -355,23 +361,33 @@ DIRETRIZES:
       try {
         parsed = JSON.parse(response);
 
-        // Validate and trim character limits
-        if (parsed.title && parsed.title.length > 155) {
-          parsed.title = parsed.title.substring(0, 152) + "...";
+        if (parsed.title && parsed.title.length !== 155) {
+          parsed.title = parsed.title
+            .slice(0, 155)
+            .padEnd(155, " ")
+            .slice(0, 155);
         }
-        if (parsed.supportText && parsed.supportText.length > 70) {
-          parsed.supportText = parsed.supportText.substring(0, 67) + "...";
+        if (parsed.supportText && parsed.supportText.length !== 70) {
+          parsed.supportText = parsed.supportText
+            .slice(0, 70)
+            .padEnd(70, " ")
+            .slice(0, 70);
         }
-        if (parsed.subtitle && parsed.subtitle.length > 250) {
-          parsed.subtitle = parsed.subtitle.substring(0, 247) + "...";
+        if (parsed.subtitle && parsed.subtitle.length !== 250) {
+          parsed.subtitle = parsed.subtitle
+            .slice(0, 250)
+            .padEnd(250, " ")
+            .slice(0, 250);
         }
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         this.fallbackUsed = true;
         return {
-          title: `Especialistas em ${agent.sector} com Metodologia Flash`,
-          supportText: "Entrega rápida e eficiente",
-          subtitle: `Equipe experiente focada em resultados rápidos e eficientes para ${data.clientName}`,
+          title:
+            "Construímos parcerias duradouras que elevam ideias a resultados consistentes, fortalecendo valor, confiança e lucro sustentável",
+          supportText: "Confiança diária que aproxima decisões               ",
+          subtitle:
+            "Transformamos contextos complexos em jornadas lucrativas ao combinar estratégia, criatividade e execução ajustada ao ritmo do seu negócio, garantindo impacto contínuo e previsível",
         };
       }
 
@@ -388,9 +404,11 @@ DIRETRIZES:
     agent: BaseAgentConfig
   ): Promise<FlashSpecialtiesSection> {
     // Normalize project name to prevent CAPS leakage
-    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const { cleanProjectNameForProposal } = await import(
+      "../utils/project-name-handler"
+    );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
-    
+
     const userPrompt = `PROJETO ESPECÍFICO:
 - Cliente: ${data.clientName}
 - Projeto: ${normalizedProjectName}
@@ -401,23 +419,21 @@ Você é um especialista em criação de propostas comerciais. Responda APENAS c
 
 Retorne JSON com:
 {
-  "title": "Título das especialidades para ${normalizedProjectName}",
+  "title": "Título com autoridade e resultados, exatamente 140 caracteres",
   "topics": [
     {
-      "title": "Especialidade específica",
-      "description": "Como ajuda o projeto ${normalizedProjectName}"
+      "title": "Especialidade específica com exatamente 50 caracteres",
+      "description": "Como ajuda o projeto com exatamente 100 caracteres"
     }
   ]
 }
 
 IMPORTANTE:
-- Título deve ter no máximo 40 caracteres
-- Cada especialidade title deve ter no máximo 50 caracteres
-- Cada descrição deve ter no máximo 100 caracteres
-- Gere exatamente 9 especialidades baseadas na expertise do agente
-- Foque em benefícios reais e linguagem natural
-- Evite termos genéricos e mencione "metodologia Flash"
-- Use linguagem persuasiva e específica do setor`;
+- Gere entre 6 e 9 especialidades
+- Proibido citar cliente ou template
+- Foque em resultados mensuráveis e autoridade
+- Linguagem natural, ativa e humanizada
+- Responda somente com JSON.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -425,6 +441,13 @@ IMPORTANTE:
 
       try {
         parsed = JSON.parse(response);
+        parsed.title = parsed.title?.slice(0, 140) || "";
+        parsed.topics = (parsed.topics || []).map(
+          (topic: FlashSpecialtyTopic) => ({
+            title: topic.title.slice(0, 50),
+            description: topic.description.slice(0, 100),
+          })
+        );
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         this.fallbackUsed = true;
@@ -456,9 +479,11 @@ IMPORTANTE:
     agent: BaseAgentConfig
   ): Promise<FlashStepsSection> {
     // Normalize project name to prevent CAPS leakage
-    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const { cleanProjectNameForProposal } = await import(
+      "../utils/project-name-handler"
+    );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
-    
+
     const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -468,48 +493,25 @@ DADOS DO PROJETO:
 - Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
 
-Crie uma seção "Processo" personalizada para o projeto ${normalizedProjectName} de ${data.clientName}. Retorne APENAS um objeto JSON com:
+Crie uma seção "Processo" personalizada para o projeto ${normalizedProjectName}. Retorne APENAS um objeto JSON com:
 
 {
-  "introduction": "Introdução ao processo específico para ${normalizedProjectName}",
+  "introduction": "Introdução com exatamente 100 caracteres",
   "title": "Nosso Processo",
   "topics": [
     {
-      "title": "Etapa 1 específica para ${data.clientName}",
-      "description": "Descrição da etapa 1 aplicada ao projeto ${normalizedProjectName}"
-    },
-    {
-      "title": "Etapa 2 específica para ${data.clientName}",
-      "description": "Descrição da etapa 2 aplicada ao projeto ${normalizedProjectName}"
+      "title": "Etapa com exatamente 40 caracteres",
+      "description": "Descrição com exatamente 240 caracteres"
     }
   ]
 }
 
 IMPORTANTE:
-- Introduction deve ter no máximo 100 caracteres
-- Cada step title deve ter no máximo 40 caracteres
-- Cada step description deve ter no máximo 240 caracteres
-- Gere exatamente 5 etapas baseadas no setor ${agent.sector}
-- Use as informações específicas do projeto: ${data.projectDescription}
-- Personalize para o cliente: ${data.clientName}
-- NÃO mencione "metodologia Flash" ou termos genéricos
-- Use linguagem persuasiva e específica do setor
-
-REGRAS CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- Escape quebras de linha com \\n
-- Escape aspas dentro de strings com \\"
-- NÃO use vírgulas no final de arrays ou objetos
-- NÃO inclua propriedades extras como "_id", "__v"
-- Valores monetários: "R$ 1.999,90" (sem unicode)
-- Nomes de propriedades exatamente como especificado
-- Teste o JSON antes de retornar
-
-IMPORTANTE: 
-- Use as informações específicas do projeto: ${data.projectDescription}
-- Personalize para o cliente: ${data.clientName}
-- NÃO mencione "metodologia FLASH" ou termos genéricos
-- Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
+- Gere exatamente 5 etapas
+- Proibido citar cliente, nome da empresa ou metodologia
+- Foque em clareza, impacto e lucro
+- Linguagem natural, ativa e próxima
+- Responda apenas com JSON.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -517,22 +519,45 @@ IMPORTANTE:
 
       try {
         parsed = JSON.parse(response);
+        parsed.introduction = parsed.introduction?.slice(0, 100) || "";
+        parsed.topics = (parsed.topics || [])
+          .slice(0, 5)
+          .map((topic: FlashStepTopic) => ({
+            title: topic.title.slice(0, 40),
+            description: topic.description.slice(0, 240),
+          }));
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         this.fallbackUsed = true;
         return {
-          introduction: "Processo otimizado para máxima eficiência",
-          title: "Nosso Processo Flash",
+          introduction:
+            "Guiamos cada etapa com clareza para acelerar resultados sem perder consistência",
+          title: "Nosso Processo",
           topics: [
             {
-              title: "Briefing Rápido",
+              title: "Descobrindo oportunidades",
               description:
-                "Coleta de informações essenciais em tempo recorde para entender suas necessidades",
+                "Investigamos contexto, objetivos e metas para estruturar decisões orientadas a lucro e impacto sustentável.",
             },
             {
-              title: "Execução Ágil",
+              title: "Desenhando estratégias",
               description:
-                "Desenvolvimento e implementação com metodologias ágeis para entrega rápida",
+                "Construímos um plano integrado com metas, prazos e métricas claras, alinhado aos resultados desejados.",
+            },
+            {
+              title: "Executando com foco",
+              description:
+                "Ativamos iniciativas de alto impacto com monitoramento constante para garantir evolução contínua.",
+            },
+            {
+              title: "Medindo resultados",
+              description:
+                "Avaliamos indicadores de lucro, engajamento e expansão para otimizar decisões e reforçar ganhos.",
+            },
+            {
+              title: "Evoluindo continuamente",
+              description:
+                "Aprimoramos entregas com ciclos de melhoria que mantêm crescimento sustentável e previsível.",
             },
           ],
         };
@@ -565,27 +590,21 @@ Crie uma seção "Investimento" personalizada para o projeto ${
     } de ${data.clientName}. Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título da seção de investimento para ${
-    data.projectName
-  } (máximo 85 caracteres)",
+  "title": "Título da seção de investimento com exatamente 85 caracteres",
   "deliverables": [
     {
-      "title": "Entrega 1 específica para ${
-        data.clientName
-      } (máximo 30 caracteres)",
-      "description": "Descrição da entrega 1 aplicada ao projeto ${
+      "title": "Entrega específica para ${
         data.projectName
-      } (máximo 330 caracteres)"
+      } (máximo 30 caracteres)",
+      "description": "Descrição aplicada ao projeto com até 330 caracteres"
     }
   ],
   "plans": [
     {
-      "title": "Plano 1 para ${data.clientName} (máximo 20 caracteres)",
-      "description": "Descrição do plano específico para ${
-        data.projectName
-      } (máximo 95 caracteres)",
-      "value": "R$ 999",
-      "topics": ["Benefício 1 específico", "Benefício 2 específico", "Benefício 3 específico"]
+      "title": "Plano com exatamente 20 caracteres",
+      "description": "Descrição imperativa com call to action, exatamente 95 caracteres",
+      "value": "R$X.XXX",
+      "topics": ["Benefício com até 45 caracteres"]
     }
   ]
 }
@@ -613,18 +632,37 @@ IMPORTANTE:
 
       try {
         parsed = JSON.parse(response);
+        parsed.title = parsed.title?.slice(0, 85) || "";
+        parsed.deliverables = (parsed.deliverables || []).map(
+          (deliverable: FlashDeliverable) => ({
+            title: deliverable.title.slice(0, 30),
+            description: deliverable.description.slice(0, 330),
+          })
+        );
+        parsed.plans = (parsed.plans || []).map((plan: FlashPlan) => ({
+          title: plan.title.slice(0, 20),
+          description: plan.description.slice(0, 95),
+          value: plan.value.slice(0, 11),
+          topics: (plan.topics || []).map((topic: string) =>
+            topic.slice(0, 45)
+          ),
+        }));
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         this.fallbackUsed = true;
         return {
-          title: "Investimento Flash - Resultados Rápidos",
+          title:
+            "Investir agora garante crescimento escalável, previsível e centrado em lucro real com entregas mensuráveis",
           deliverables: [
             {
               title: "Projeto Completo",
               description:
                 "Solução completa entregue no prazo estabelecido com qualidade superior e metodologia Flash",
             },
-          ],
+          ].map((deliverable) => ({
+            title: deliverable.title.slice(0, 30),
+            description: deliverable.description.slice(0, 330),
+          })),
           plans: [
             {
               title: "Flash Básico",
@@ -637,7 +675,12 @@ IMPORTANTE:
                 "Revisões limitadas",
               ],
             },
-          ],
+          ].map((plan) => ({
+            title: plan.title.slice(0, 20),
+            description: plan.description.slice(0, 95),
+            value: plan.value.slice(0, 11),
+            topics: plan.topics.map((topic) => topic.slice(0, 45)),
+          })),
         };
       }
 
@@ -734,34 +777,19 @@ DADOS DO PROJETO:
 - Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
 
-Crie perguntas frequentes personalizadas para o projeto ${data.projectName} de ${data.clientName}. Retorne APENAS um array JSON com:
-
+Crie 10 perguntas frequentes personalizadas. Retorne APENAS um array JSON com:
 [
   {
-    "question": "Pergunta 1 específica para ${data.projectName} (máximo 100 caracteres)",
-    "answer": "Resposta 1 personalizada para ${data.clientName} (máximo 280 caracteres)"
-  },
-  {
-    "question": "Pergunta 2 específica para ${data.projectName} (máximo 100 caracteres)",
-    "answer": "Resposta 2 personalizada para ${data.clientName} (máximo 280 caracteres)"
+    "question": "Pergunta com exatamente 100 caracteres",
+    "answer": "Resposta empática com exatamente 300 caracteres"
   }
 ]
 
-REGRAS CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- Escape quebras de linha com \\n
-- Escape aspas dentro de strings com \\"
-- NÃO use vírgulas no final de arrays ou objetos
-- NÃO inclua propriedades extras como "_id", "__v"
-- Valores monetários: "R$ 1.999,90" (sem unicode)
-- Nomes de propriedades exatamente como especificado
-- Teste o JSON antes de retornar
-
-IMPORTANTE: 
-- Use as informações específicas do projeto: ${data.projectDescription}
-- Personalize para o cliente: ${data.clientName}
-- NÃO mencione "metodologia FLASH" ou termos genéricos
-- Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
+REGRAS CRÍTICAS:
+- Gere exatamente 10 itens
+- Proibido citar cliente, empresa, metodologia ou template
+- Linguagem acolhedora, segura e orientada a resultados
+- Responda somente com JSON.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
@@ -769,41 +797,122 @@ IMPORTANTE:
 
       try {
         parsed = JSON.parse(response);
+        parsed = (parsed || []).slice(0, 10).map((faqItem: FlashFaqItem) => ({
+          question: faqItem.question.slice(0, 100),
+          answer: faqItem.answer.slice(0, 300),
+        }));
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         this.fallbackUsed = true;
         return [
           {
-            question: "Qual é o prazo de entrega?",
+            question:
+              "Como garantimos que cada etapa avance com clareza e previsibilidade?",
             answer:
-              "Com nossa metodologia Flash, entregamos em até 15 dias úteis após aprovação e pagamento inicial",
+              "Mantemos acompanhamento diário, relatórios objetivos e ciclos de ajustes contínuos que asseguram confiança, rapidez nas decisões e evolução alinhada ao crescimento sustentável que você busca.",
           },
           {
-            question: "Como funciona o processo Flash?",
+            question:
+              "Qual suporte oferecemos depois da implementação inicial?",
             answer:
-              "Utilizamos metodologias ágeis e processos otimizados para máxima eficiência sem comprometer a qualidade",
+              "Seguimos lado a lado com você, oferecendo abertura total para ajustes, novos testes e otimizações constantes, garantindo evolução consistente e segurança para ampliar resultados com tranquilidade.",
           },
-        ];
+        ].map((item) => ({
+          question: item.question.slice(0, 100),
+          answer: item.answer.slice(0, 300),
+        }));
       }
 
       return parsed;
     } catch (error) {
       console.error("Flash FAQ Generation Error:", error);
       this.fallbackUsed = true;
-      throw error;
+      return [
+        {
+          question:
+            "Como garantimos que cada etapa avance com clareza e previsibilidade?",
+          answer:
+            "Mantemos acompanhamento diário, relatórios objetivos e ciclos de ajustes contínuos que asseguram confiança, rapidez nas decisões e evolução alinhada ao crescimento sustentável que você busca.",
+        },
+        {
+          question: "Qual suporte oferecemos depois da implementação inicial?",
+          answer:
+            "Seguimos lado a lado com você, oferecendo abertura total para ajustes, novos testes e otimizações constantes, garantindo evolução consistente e segurança para ampliar resultados com tranquilidade.",
+        },
+      ].map((item) => ({
+        question: item.question.slice(0, 100),
+        answer: item.answer.slice(0, 300),
+      }));
+    }
+  }
+
+  private async generateTeam(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashTeamSection> {
+    const userPrompt = `Responda APENAS com JSON válido.
+
+Crie o título da seção "Time" com exatamente 55 caracteres.
+- Linguagem inclusiva, calorosa e confiante
+- Foque em parceria, proximidade e evolução
+- Proibido mencionar cliente, empresa ou metodologia
+
+Retorne:
+{
+  "title": "Frase com exatamente 55 caracteres"
+}`;
+
+    try {
+      const response = await this.runLLM(userPrompt, agent.systemPrompt);
+      const parsed = JSON.parse(response) as FlashTeamSection;
+      parsed.title = parsed.title?.slice(0, 55) || "";
+      return parsed;
+    } catch (error) {
+      console.error("Flash Team Generation Error:", error);
+      this.fallbackUsed = true;
+      return {
+        title: "Crescemos lado a lado fortalecendo evoluções constantes",
+      };
+    }
+  }
+
+  private async generateScope(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashScopeSection> {
+    const userPrompt = `Responda somente com JSON válido.
+
+Crie o conteúdo da seção "Escopo do Projeto" com exatamente 350 caracteres.
+- Integre benefícios do investimento e entregas principais
+- Proibido citar cliente, empresa ou metodologia
+- Foque em transformação, crescimento e previsibilidade
+- Linguagem natural, ativa e confiante
+
+Retorne:
+{
+  "content": "Texto com exatamente 350 caracteres"
+}`;
+
+    try {
+      const response = await this.runLLM(userPrompt, agent.systemPrompt);
+      const parsed = JSON.parse(response) as FlashScopeSection;
+      parsed.content = parsed.content?.slice(0, 350) || "";
+      return parsed;
+    } catch (error) {
+      console.error("Flash Scope Generation Error:", error);
+      this.fallbackUsed = true;
+      return {
+        content:
+          "Integramos diagnóstico, estratégia, execução e otimização em fluxo contínuo, assegurando previsibilidade, crescimento sustentável e lucro consistente com entregas alinhadas ao investimento e à visão estratégica do projeto",
+      };
     }
   }
 
   private generateFooter(data: FlashThemeData): FlashFooterSection {
     return {
-      thanks: "Obrigado pela confiança!",
-      followUp: "Vamos começar agora?",
-      disclaimer: `Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto ${data.projectName} para ${data.clientName}.`,
-      validity: new Date(
-        Date.now() + 15 * 24 * 60 * 60 * 1000
-      ).toLocaleDateString("pt-BR"),
-      callToAction: "Iniciar Projeto",
-      contactInfo: "Entre em contato para mais detalhes",
+      callToAction: "Transforme crescimento com nossa equipe agora",
+      disclaimer:
+        "Estamos aqui para acompanhar cada passo com atenção, empatia e velocidade, garantindo suporte contínuo, clareza em cada decisão e disponibilidade imediata para ajustes que mantenham o crescimento sustentável da sua empresa",
     };
   }
 

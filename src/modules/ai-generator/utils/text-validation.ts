@@ -26,14 +26,16 @@ export function validateCharacterLimit(
 ): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
-  if (!text || typeof text !== 'string') {
+
+  if (!text || typeof text !== "string") {
     errors.push(`${fieldName} is empty or invalid`);
     return { isValid: false, errors, warnings };
   }
 
   if (text.length > limit) {
-    errors.push(`${fieldName} exceeds limit of ${limit} characters (${text.length})`);
+    errors.push(
+      `${fieldName} exceeds limit of ${limit} characters (${text.length})`
+    );
   }
 
   // Check for meta instructions that shouldn't appear in output
@@ -43,12 +45,14 @@ export function validateCharacterLimit(
     /\(até \d+ caracteres?\)/gi,
     /\(limite \d+\)/gi,
     /\(máx\. \d+\)/gi,
-    /\(max \d+\)/gi
+    /\(max \d+\)/gi,
   ];
 
   for (const pattern of metaPatterns) {
     if (pattern.test(text)) {
-      warnings.push(`${fieldName} contains meta instructions that should be removed`);
+      warnings.push(
+        `${fieldName} contains meta instructions that should be removed`
+      );
       break;
     }
   }
@@ -60,23 +64,25 @@ export function validateCharacterLimit(
     /template flash/gi,
     /template prime/gi,
     /processo flash/gi,
-    /processo prime/gi
+    /processo prime/gi,
   ];
 
   for (const pattern of templateNamePatterns) {
     if (pattern.test(text)) {
-      warnings.push(`${fieldName} contains template name that should be removed`);
+      warnings.push(
+        `${fieldName} contains template name that should be removed`
+      );
       break;
     }
   }
 
   // Check for Portuguese language errors
   const commonErrors = [
-    { pattern: /fidais/gi, correction: 'fieis' },
-    { pattern: /fieis/gi, correction: 'fiéis' },
-    { pattern: /nao/gi, correction: 'não' },
-    { pattern: /voce/gi, correction: 'você' },
-    { pattern: /vem/gi, correction: 'vêm' }
+    { pattern: /fidais/gi, correction: "fieis" },
+    { pattern: /fieis/gi, correction: "fiéis" },
+    { pattern: /nao/gi, correction: "não" },
+    { pattern: /voce/gi, correction: "você" },
+    { pattern: /vem/gi, correction: "vêm" },
   ];
 
   for (const error of commonErrors) {
@@ -90,34 +96,46 @@ export function validateCharacterLimit(
 
   // Auto-correct common issues
   if (text.length > limit) {
-    correctedText = text.substring(0, limit - 3) + '...';
+    correctedText = text.substring(0, limit - 3) + "...";
   }
 
   // Remove meta instructions
   for (const pattern of metaPatterns) {
-    correctedText = correctedText.replace(pattern, '');
+    correctedText = correctedText.replace(pattern, "");
   }
 
   // Fix template name leakage
-  correctedText = correctedText.replace(/metodologia flash/gi, 'metodologia ágil');
-  correctedText = correctedText.replace(/metodologia prime/gi, 'metodologia premium');
-  correctedText = correctedText.replace(/template flash/gi, 'processo otimizado');
-  correctedText = correctedText.replace(/template prime/gi, 'processo premium');
-  correctedText = correctedText.replace(/processo flash/gi, 'processo otimizado');
-  correctedText = correctedText.replace(/processo prime/gi, 'processo premium');
+  correctedText = correctedText.replace(
+    /metodologia flash/gi,
+    "metodologia ágil"
+  );
+  correctedText = correctedText.replace(
+    /metodologia prime/gi,
+    "metodologia premium"
+  );
+  correctedText = correctedText.replace(
+    /template flash/gi,
+    "processo otimizado"
+  );
+  correctedText = correctedText.replace(/template prime/gi, "processo premium");
+  correctedText = correctedText.replace(
+    /processo flash/gi,
+    "processo otimizado"
+  );
+  correctedText = correctedText.replace(/processo prime/gi, "processo premium");
 
   // Fix Portuguese errors
-  correctedText = correctedText.replace(/fidais/gi, 'fiéis');
-  correctedText = correctedText.replace(/fieis/gi, 'fiéis');
-  correctedText = correctedText.replace(/\bnao\b/gi, 'não');
-  correctedText = correctedText.replace(/\bvoce\b/gi, 'você');
-  correctedText = correctedText.replace(/\bvem\b/gi, 'vêm');
+  correctedText = correctedText.replace(/fidais/gi, "fiéis");
+  correctedText = correctedText.replace(/fieis/gi, "fiéis");
+  correctedText = correctedText.replace(/\bnao\b/gi, "não");
+  correctedText = correctedText.replace(/\bvoce\b/gi, "você");
+  correctedText = correctedText.replace(/\bvem\b/gi, "vêm");
 
   return {
     isValid: errors.length === 0,
     errors,
     warnings,
-    correctedText: correctedText !== text ? correctedText : undefined
+    correctedText: correctedText !== text ? correctedText : undefined,
   };
 }
 
@@ -134,7 +152,11 @@ export function validateTextArray(
   const correctedItems: string[] = [];
 
   for (let i = 0; i < items.length; i++) {
-    const itemResult = validateCharacterLimit(items[i], limit, `${fieldName}[${i}]`);
+    const itemResult = validateCharacterLimit(
+      items[i],
+      limit,
+      `${fieldName}[${i}]`
+    );
     errors.push(...itemResult.errors);
     warnings.push(...itemResult.warnings);
     correctedItems.push(itemResult.correctedText || items[i]);
@@ -144,7 +166,7 @@ export function validateTextArray(
     isValid: errors.length === 0,
     errors,
     warnings,
-    correctedText: correctedItems.join(', ')
+    correctedText: correctedItems.join(", "),
   };
 }
 
@@ -152,7 +174,7 @@ export function validateTextArray(
  * Validate project name case handling
  */
 export function validateProjectNameCase(projectName: string): string {
-  if (!projectName || typeof projectName !== 'string') {
+  if (!projectName || typeof projectName !== "string") {
     return projectName;
   }
 
@@ -160,9 +182,9 @@ export function validateProjectNameCase(projectName: string): string {
   if (projectName === projectName.toUpperCase() && projectName.length > 1) {
     return projectName
       .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   return projectName;
@@ -186,17 +208,21 @@ export function validateTopicQuantity(
   }
 
   if (topics.length < expectedMin) {
-    errors.push(`${fieldName} has ${topics.length} items, minimum required is ${expectedMin}`);
+    errors.push(
+      `${fieldName} has ${topics.length} items, minimum required is ${expectedMin}`
+    );
   }
 
   if (topics.length > expectedMax) {
-    warnings.push(`${fieldName} has ${topics.length} items, maximum recommended is ${expectedMax}`);
+    warnings.push(
+      `${fieldName} has ${topics.length} items, maximum recommended is ${expectedMax}`
+    );
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -204,7 +230,7 @@ export function validateTopicQuantity(
  * Clean AI response from meta instructions and unwanted content
  */
 export function cleanAIResponse(text: string): string {
-  if (!text || typeof text !== 'string') {
+  if (!text || typeof text !== "string") {
     return text;
   }
 
@@ -219,27 +245,27 @@ export function cleanAIResponse(text: string): string {
     /\(máx\. \d+\)/gi,
     /\(max \d+\)/gi,
     /\(chars?\)/gi,
-    /\(caracteres?\)/gi
+    /\(caracteres?\)/gi,
   ];
 
   for (const pattern of metaPatterns) {
-    cleaned = cleaned.replace(pattern, '');
+    cleaned = cleaned.replace(pattern, "");
   }
 
   // Remove template name leakage
-  cleaned = cleaned.replace(/metodologia flash/gi, 'metodologia ágil');
-  cleaned = cleaned.replace(/metodologia prime/gi, 'metodologia premium');
-  cleaned = cleaned.replace(/template flash/gi, 'processo otimizado');
-  cleaned = cleaned.replace(/template prime/gi, 'processo premium');
-  cleaned = cleaned.replace(/processo flash/gi, 'processo otimizado');
-  cleaned = cleaned.replace(/processo prime/gi, 'processo premium');
+  cleaned = cleaned.replace(/metodologia flash/gi, "metodologia ágil");
+  cleaned = cleaned.replace(/metodologia prime/gi, "metodologia premium");
+  cleaned = cleaned.replace(/template flash/gi, "processo otimizado");
+  cleaned = cleaned.replace(/template prime/gi, "processo premium");
+  cleaned = cleaned.replace(/processo flash/gi, "processo otimizado");
+  cleaned = cleaned.replace(/processo prime/gi, "processo premium");
 
   // Fix Portuguese errors
-  cleaned = cleaned.replace(/fidais/gi, 'fiéis');
-  cleaned = cleaned.replace(/fieis/gi, 'fiéis');
-  cleaned = cleaned.replace(/\bnao\b/gi, 'não');
-  cleaned = cleaned.replace(/\bvoce\b/gi, 'você');
-  cleaned = cleaned.replace(/\bvem\b/gi, 'vêm');
+  cleaned = cleaned.replace(/fidais/gi, "fiéis");
+  cleaned = cleaned.replace(/fieis/gi, "fiéis");
+  cleaned = cleaned.replace(/\bnao\b/gi, "não");
+  cleaned = cleaned.replace(/\bvoce\b/gi, "você");
+  cleaned = cleaned.replace(/\bvem\b/gi, "vêm");
 
   return cleaned.trim();
 }
@@ -248,16 +274,16 @@ export function cleanAIResponse(text: string): string {
  * Ensure proper voice and tone compliance
  */
 export function ensureProperVoice(text: string): string {
-  if (!text || typeof text !== 'string') {
+  if (!text || typeof text !== "string") {
     return text;
   }
 
   let corrected = text;
 
   // Ensure second person usage where appropriate
-  corrected = corrected.replace(/nossa empresa/gi, 'sua empresa');
-  corrected = corrected.replace(/nossa equipe/gi, 'sua equipe');
-  corrected = corrected.replace(/nossos serviços/gi, 'seus serviços');
+  corrected = corrected.replace(/nossa empresa/gi, "sua empresa");
+  corrected = corrected.replace(/nossa equipe/gi, "sua equipe");
+  corrected = corrected.replace(/nossos serviços/gi, "seus serviços");
 
   // This is a simple implementation - in practice, you'd want more sophisticated logic
   return corrected;

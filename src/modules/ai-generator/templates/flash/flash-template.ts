@@ -24,51 +24,61 @@ export interface FlashSection extends BaseSection {
 export interface FlashProposal extends BaseProposal {
   // Introduction Section
   introduction: {
-    title: string; // 60 chars, AI-generated
-    subtitle: string; // 100 chars, AI-generated
-    services: string[]; // 4 max, 30 chars each, AI-generated
+    title: string; // exactly 60 chars, AI-generated
+    subtitle: string; // exactly 100 chars, AI-generated
+    services: string[]; // exactly 4, each 30 chars, AI-generated
     validity: string; // Not editable
     buttonText: string; // 20 chars, no AI
   };
 
   // About Us Section
   aboutUs: {
-    title: string; // 155 chars, AI-generated
-    supportText: string; // 70 chars, AI-generated
-    subtitle: string; // 250 chars, AI-generated
+    title: string; // exactly 155 chars, AI-generated
+    supportText: string; // exactly 70 chars, AI-generated
+    subtitle: string; // exactly 250 chars, AI-generated
+  };
+
+  // Team Section
+  team: {
+    title: string; // exactly 55 chars, AI-generated
   };
 
   // Specialties Section
   specialties: {
-    title: string; // 40 chars, AI-generated
+    title: string; // exactly 140 chars, AI-generated
     topics: Array<{
-      title: string; // 50 chars
-      description: string; // 100 chars
-    }>; // 9 max
+      title: string; // exactly 50 chars
+      description: string; // exactly 100 chars
+    }>; // 6-9 topics
   };
 
   // Process Steps Section
   steps: {
-    introduction: string; // 100 chars, AI-generated
+    introduction: string; // exactly 100 chars, AI-generated
     title: string; // Fixed, not editable
     topics: Array<{
-      title: string; // 40 chars
-      description: string; // 240 chars
-    }>; // 5 max, AI-generated
+      title: string; // exactly 40 chars
+      description: string; // exactly 240 chars
+    }>; // exactly 5, AI-generated
+  };
+
+  // Project Scope Section
+  scope: {
+    content: string; // exactly 350 chars
   };
 
   // Investment Section
   investment: {
-    title: string; // 85 chars, AI-generated
+    title: string; // exactly 85 chars, AI-generated
     deliverables: Array<{
-      title: string; // 30 chars
-      description: string; // 330 chars
+      title: string; // up to 30 chars
+      description: string; // up to 330 chars
     }>;
     plans: Array<{
-      title: string; // 20 chars
-      description: string; // 95 chars
-      value: string; // 11 chars
-      topics: string[]; // 6 max, 45 chars each
+      title: string; // exactly 20 chars
+      description: string; // exactly 95 chars
+      value: string; // format R$X.XXX (<= 11 chars)
+      topics: string[]; // 3-6 items, each <= 45 chars
     }>; // 3 max, AI-generated
   };
 
@@ -78,16 +88,16 @@ export interface FlashProposal extends BaseProposal {
     description: string; // 180 chars
   }>;
 
-  // FAQ (optional)
-  faq?: Array<{
-    question: string; // 100 chars
-    answer: string; // 280 chars
-  }>;
+  // FAQ (mandatory)
+  faq: Array<{
+    question: string; // exactly 100 chars
+    answer: string; // exactly 300 chars
+  }>; // exactly 10
 
   // Footer
   footer: {
-    callToAction: string; // 80 chars, AI-generated
-    contactInfo: string; // 120 chars, editable
+    callToAction: string; // exactly 35 chars, AI-generated
+    disclaimer: string; // exactly 330 chars, AI-generated
   };
 }
 
@@ -129,44 +139,59 @@ export function validateFlashCharacterLimits(
   const validations: Record<string, boolean> = {};
 
   if (proposal.introduction?.title) {
-    validations.introductionTitle = proposal.introduction.title.length <= 60;
+    validations.introductionTitle = proposal.introduction.title.length === 60;
   }
 
   if (proposal.introduction?.subtitle) {
     validations.introductionSubtitle =
-      proposal.introduction.subtitle.length <= 100;
+      proposal.introduction.subtitle.length === 100;
+  }
+
+  if (proposal.introduction?.services) {
+    validations.introductionServices =
+      proposal.introduction.services.length === 4 &&
+      proposal.introduction.services.every((service) => service.length === 30);
   }
 
   if (proposal.aboutUs?.title) {
-    validations.aboutUsTitle = proposal.aboutUs.title.length <= 155;
+    validations.aboutUsTitle = proposal.aboutUs.title.length === 155;
   }
 
   if (proposal.aboutUs?.supportText) {
-    validations.aboutUsSupportText = proposal.aboutUs.supportText.length <= 70;
+    validations.aboutUsSupportText =
+      proposal.aboutUs.supportText.length === 70;
   }
 
   if (proposal.aboutUs?.subtitle) {
-    validations.aboutUsSubtitle = proposal.aboutUs.subtitle.length <= 250;
+    validations.aboutUsSubtitle = proposal.aboutUs.subtitle.length === 250;
+  }
+
+  if (proposal.team?.title) {
+    validations.teamTitle = proposal.team.title.length === 55;
   }
 
   if (proposal.specialties?.title) {
-    validations.specialtiesTitle = proposal.specialties.title.length <= 40;
+    validations.specialtiesTitle = proposal.specialties.title.length === 140;
   }
 
   if (proposal.steps?.introduction) {
-    validations.stepsIntroduction = proposal.steps.introduction.length <= 100;
+    validations.stepsIntroduction = proposal.steps.introduction.length === 100;
+  }
+
+  if (proposal.scope?.content) {
+    validations.scopeContent = proposal.scope.content.length === 350;
   }
 
   if (proposal.investment?.title) {
-    validations.investmentTitle = proposal.investment.title.length <= 85;
+    validations.investmentTitle = proposal.investment.title.length === 85;
   }
 
   if (proposal.footer?.callToAction) {
-    validations.footerCallToAction = proposal.footer.callToAction.length <= 80;
+    validations.footerCallToAction = proposal.footer.callToAction.length === 35;
   }
 
-  if (proposal.footer?.contactInfo) {
-    validations.footerContactInfo = proposal.footer.contactInfo.length <= 120;
+  if (proposal.footer?.disclaimer) {
+    validations.footerDisclaimer = proposal.footer.disclaimer.length === 330;
   }
 
   return validations;
@@ -186,6 +211,9 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
       supportText: "",
       subtitle: "",
     },
+    team: {
+      title: "",
+    },
     specialties: {
       title: "Nossas Especialidades",
       topics: [],
@@ -195,14 +223,18 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
       title: "Nosso Processo",
       topics: [],
     },
+    scope: {
+      content: "",
+    },
     investment: {
       title: "",
       deliverables: [],
       plans: [],
     },
+    faq: [],
     footer: {
       callToAction: "",
-      contactInfo: "",
+      disclaimer: "",
     },
   };
 }
@@ -211,72 +243,55 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
 export function generateFlashProposalOutline(): Partial<FlashProposal> {
   return {
     introduction: {
-      title: "Proposta Flash - Entrega Rápida",
-      subtitle: "Solução eficiente para seu projeto",
-      services: ["Desenvolvimento", "Design", "Marketing"],
+      title: "Ative crescimento com decisões colaborativas e seguras",
+      subtitle:
+        "Integramos estratégia, execução e análise para multiplicar lucro, consolidar presença e fortalecer resultados",
+      services: [
+        "Campanhas que aceleram vendas",
+        "Gestão integrada de canais",
+        "Conteúdo que cria valor",
+        "Análises para decisões",
+      ],
       validity: "15 dias",
       buttonText: "Aprovar Agora",
     },
     aboutUs: {
-      title: "Especialistas em Soluções Rápidas",
-      supportText: "Suporte 24/7",
-      subtitle: "Equipe experiente focada em resultados rápidos e eficientes",
+      title:
+        "Construímos parcerias duradouras que elevam ideias a resultados consistentes, fortalecendo valor, crescimento e lucro sustentável",
+      supportText:
+        "Confiança diária que aproxima decisões",
+      subtitle:
+        "Transformamos contextos complexos em jornadas lucrativas ao combinar estratégia, criatividade e execução ajustada ao ritmo do seu negócio",
+    },
+    team: {
+      title: "Crescemos lado a lado fortalecendo evoluções constantes",
     },
     specialties: {
-      title: "Especialidades Flash",
-      topics: [
-        { title: "Entrega Rápida", description: "Resultados em tempo recorde" },
-        {
-          title: "Qualidade Garantida",
-          description: "Padrões elevados mantidos",
-        },
-        { title: "Suporte Contínuo", description: "Acompanhamento completo" },
-      ],
+      title:
+        "Dominamos estratégias integradas que unem dados, criatividade e execução para acelerar lucro comprovado",
+      topics: [],
     },
     steps: {
-      introduction: "Processo otimizado para máxima eficiência",
-      title: "Processo Flash",
-      topics: [
-        {
-          title: "Briefing Rápido",
-          description: "Coleta de informações essenciais em tempo recorde",
-        },
-        {
-          title: "Desenvolvimento Ágil",
-          description: "Execução com metodologias ágeis e eficientes",
-        },
-        {
-          title: "Entrega Express",
-          description: "Resultado final entregue no prazo prometido",
-        },
-      ],
+      introduction:
+        "Guiamos cada etapa com clareza para acelerar resultados sem perder consistência",
+      title: "Nosso Processo",
+      topics: [],
+    },
+    scope: {
+      content:
+        "A proposta integra diagnósticos precisos e execuções orquestradas para destravar crescimento rentável, conectando planejamento, campanhas e otimizações contínuas, garantindo entregas alinhadas ao investimento e à visão estratégica do projeto",
     },
     investment: {
-      title: "Investimento Flash",
-      deliverables: [
-        {
-          title: "Projeto Completo",
-          description: "Solução completa entregue no prazo estabelecido",
-        },
-      ],
-      plans: [
-        {
-          title: "Flash Básico",
-          description: "Solução essencial com entrega rápida",
-          value: "R$ 999",
-          topics: ["Entrega em 7 dias", "Suporte básico", "Revisões limitadas"],
-        },
-        {
-          title: "Flash Pro",
-          description: "Solução completa com suporte premium",
-          value: "R$ 1.999",
-          topics: ["Entrega em 5 dias", "Suporte 24/7", "Revisões ilimitadas"],
-        },
-      ],
+      title:
+        "Investir agora garante crescimento escalável, previsível e centrado em lucro real",
+      deliverables: [],
+      plans: [],
     },
+    faq: [],
     footer: {
-      callToAction: "Aproveite a velocidade Flash!",
-      contactInfo: "Entre em contato agora para começar seu projeto",
+      callToAction: "Impulsione resultados com nossa equipe",
+      disclaimer:
+        "Estamos prontos para orientar cada decisão com proximidade, clareza e dedicação diária, garantindo ajustes ágeis e suporte completo para que cada etapa avance com segurança e confiança",
     },
   };
 }

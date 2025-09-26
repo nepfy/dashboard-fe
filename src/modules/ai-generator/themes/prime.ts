@@ -191,9 +191,11 @@ export class PrimeTemplateWorkflow {
 
   private async generateIntroduction(data: PrimeThemeData) {
     // Normalize project name to prevent CAPS leakage
-    const { cleanProjectNameForProposal } = await import('../utils/project-name-handler');
+    const { cleanProjectNameForProposal } = await import(
+      "../utils/project-name-handler"
+    );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
-    
+
     const userPrompt = `Você é um especialista em criação de propostas comerciais premium. Responda APENAS com JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
@@ -253,32 +255,33 @@ IMPORTANTE: Responda APENAS com o JSON válido, sem explicações ou texto adici
 
       try {
         parsed = JSON.parse(response);
-        
+
         // Clean and validate the response
-        const { cleanAIResponse } = await import('../utils/text-validation');
-        
+        const { cleanAIResponse } = await import("../utils/text-validation");
+
         // Clean meta instructions and template names
-        parsed.title = cleanAIResponse(parsed.title || '');
-        parsed.subtitle = cleanAIResponse(parsed.subtitle || '');
-        parsed.services = (parsed.services || []).map((service: string) => cleanAIResponse(service));
-        
+        parsed.title = cleanAIResponse(parsed.title || "");
+        parsed.subtitle = cleanAIResponse(parsed.subtitle || "");
+        parsed.services = (parsed.services || []).map((service: string) =>
+          cleanAIResponse(service)
+        );
+
         // Validate character limits
         if (parsed.title && parsed.title.length > 60) {
-          parsed.title = parsed.title.substring(0, 57) + '...';
+          parsed.title = parsed.title.substring(0, 57) + "...";
         }
         if (parsed.subtitle && parsed.subtitle.length > 100) {
-          parsed.subtitle = parsed.subtitle.substring(0, 97) + '...';
+          parsed.subtitle = parsed.subtitle.substring(0, 97) + "...";
         }
-        parsed.services = parsed.services.map((service: string) => 
-          service.length > 30 ? service.substring(0, 27) + '...' : service
+        parsed.services = parsed.services.map((service: string) =>
+          service.length > 30 ? service.substring(0, 27) + "..." : service
         );
-        
+
         // Ensure we have exactly 4 services
         while (parsed.services.length < 4) {
           parsed.services.push(`Serviço Premium ${parsed.services.length + 1}`);
         }
         parsed.services = parsed.services.slice(0, 4);
-        
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError, "Response:", response);
         // Fallback to default values if JSON parsing fails
@@ -378,13 +381,11 @@ OBJETIVO: Criar conteúdo premium, sofisticado e persuasivo que conecte ${
 Retorne APENAS um objeto JSON com:
 
 {
-  "title": "Título sofisticado sobre nossa empresa e ${
-      data.projectName
-    }",
-  "supportText": "Frase de apoio premium única para ${
-    data.clientName
-  }",
-  "subtitle": "Descrição detalhada da nossa abordagem premium para ${data.projectName}"
+  "title": "Título sofisticado sobre nossa empresa e ${data.projectName}",
+  "supportText": "Frase de apoio premium única para ${data.clientName}",
+  "subtitle": "Descrição detalhada da nossa abordagem premium para ${
+    data.projectName
+  }"
 }
 
 IMPORTANTE:
@@ -639,7 +640,9 @@ IMPORTANTE:
 - Cada plan description deve ter no máximo 95 caracteres
 - Cada plan value deve ter no máximo 11 caracteres
 - Cada topic deve ter no máximo 45 caracteres
-- Gere exatamente 3 entregáveis e 3 planos baseados no setor ${this.agent?.sector}
+- Gere exatamente 3 entregáveis e 3 planos baseados no setor ${
+      this.agent?.sector
+    }
 - Foque em qualidade premium e atenção aos detalhes
 - Use linguagem persuasiva e específica do setor
 
