@@ -1,5 +1,6 @@
 import { db } from "#/lib/db";
 import { BaseAgentConfig, ServiceType, TemplateType } from "./base/types";
+import { TemplateConfig } from "./base/template-config";
 import { agentsTable, agentTemplatesTable } from "#/lib/db/schema/agents";
 import { eq, and } from "drizzle-orm";
 
@@ -7,6 +8,7 @@ import { eq, and } from "drizzle-orm";
 // This replaces the file-based agent configuration
 
 export interface DatabaseAgentConfig extends BaseAgentConfig {
+  templateConfig?: TemplateConfig;
   primeSpecific?: {
     introductionStyle: string;
     aboutUsFocus: string;
@@ -71,6 +73,9 @@ export async function getAgentByServiceAndTemplate(
       pricingModel: agentData.pricingModel,
       proposalStructure: agentData.proposalStructure as string[],
       keyTerms: agentData.keyTerms as string[],
+      templateConfig: agentData.templateConfig
+        ? (agentData.templateConfig as TemplateConfig)
+        : undefined,
     };
 
     // Get template-specific data if template is not default
@@ -244,7 +249,7 @@ export async function upsertAgent(
       INSERT INTO agents (
         id, name, sector, service_type, system_prompt, 
         expertise, common_services, pricing_model, 
-        proposal_structure, key_terms
+        proposal_structure, key_terms, template_config
       ) VALUES (
         '${agentId}', 
         '${agent.name}', 
@@ -255,7 +260,12 @@ export async function upsertAgent(
         '${JSON.stringify(agent.commonServices).replace(/'/g, "''")}', 
         '${agent.pricingModel}', 
         '${JSON.stringify(agent.proposalStructure).replace(/'/g, "''")}', 
-        '${JSON.stringify(agent.keyTerms).replace(/'/g, "''")}'
+        '${JSON.stringify(agent.keyTerms).replace(/'/g, "''")}',
+        ${
+          agent.templateConfig
+            ? `'${JSON.stringify(agent.templateConfig).replace(/'/g, "''")}'`
+            : "NULL"
+        }
       )
       ON CONFLICT (id) DO UPDATE SET
         name = EXCLUDED.name,
@@ -266,6 +276,7 @@ export async function upsertAgent(
         pricing_model = EXCLUDED.pricing_model,
         proposal_structure = EXCLUDED.proposal_structure,
         key_terms = EXCLUDED.key_terms,
+        template_config = EXCLUDED.template_config,
         updated_at = CURRENT_TIMESTAMP
     `);
 

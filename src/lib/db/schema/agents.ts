@@ -32,6 +32,7 @@ export const agentsTable = pgTable("agents", {
   pricingModel: varchar("pricing_model", { length: 50 }).notNull(),
   proposalStructure: json("proposal_structure").notNull().default([]),
   keyTerms: json("key_terms").notNull().default([]),
+  templateConfig: json("template_config"),
   isActive: boolean("is_active").notNull().default(true),
   ...timestamps,
 });

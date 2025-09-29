@@ -1,13 +1,81 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
+import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-config";
+import { flashTemplateConfigV1 } from "#/modules/ai-generator/templates/flash";
+import { primeTemplateConfigV1 } from "#/modules/ai-generator/templates/prime";
+
+interface TemplateTabOption {
+  id: TemplateTab;
+  label: string;
+  description: string;
+}
+
+type TemplateTab = "flash" | "prime";
 
 interface AgentFormProps {
   agent: DatabaseAgentConfig;
-  onChange: (field: string, value: string | string[]) => void;
+  onChange: (
+    field: string,
+    value: string | string[] | TemplateConfig | null
+  ) => void;
+}
+
+const DEFAULT_TEMPLATE_CONFIGS: Record<TemplateTab, TemplateConfig> = {
+  flash: flashTemplateConfigV1,
+  prime: primeTemplateConfigV1,
+};
+
+const TEMPLATE_TAB_OPTIONS: TemplateTabOption[] = [
+  {
+    id: "flash",
+    label: "Flash",
+    description: "Propostas enxutas, rápidas e objetivas.",
+  },
+  {
+    id: "prime",
+    label: "Prime",
+    description: "Propostas completas com validações premium.",
+  },
+];
+
+function detectTemplateTab(
+  agentId: string,
+  templateConfig?: TemplateConfig | null
+): TemplateTab {
+  if (agentId.includes("prime")) {
+    return "prime";
+  }
+
+  if (agentId.includes("flash")) {
+    return "flash";
+  }
+
+  if (templateConfig?.templateType === "prime") {
+    return "prime";
+  }
+
+  return "flash";
 }
 
 export default function AgentForm({ agent, onChange }: AgentFormProps) {
+  const [activeTemplateTab, setActiveTemplateTab] = useState<TemplateTab>(() =>
+    detectTemplateTab(agent.id, agent.templateConfig)
+  );
+
+  useEffect(() => {
+    setActiveTemplateTab(detectTemplateTab(agent.id, agent.templateConfig));
+  }, [agent.id, agent.templateConfig]);
+
+  const templateConfig = useMemo<TemplateConfig | null>(() => {
+    return agent.templateConfig || DEFAULT_TEMPLATE_CONFIGS[activeTemplateTab];
+  }, [agent.templateConfig, activeTemplateTab]);
+
+  const handleTemplateConfigChange = (nextConfig: TemplateConfig | null) => {
+    onChange("templateConfig", nextConfig);
+  };
+
   const handleArrayAdd = (field: string, currentValue: string[]) => {
     onChange(field, [...currentValue, ""]);
   };

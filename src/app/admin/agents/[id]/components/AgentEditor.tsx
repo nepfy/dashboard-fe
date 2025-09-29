@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
+import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-config";
 import AgentForm from "./AgentForm";
 
 interface AgentEditorProps {
@@ -89,10 +90,20 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
     return () => clearTimeout(timeoutId);
   }, [editedAgent, hasChanges, handleSave]);
 
-  const handleChange = (field: string, value: string | string[]) => {
+  const handleChange = (
+    field: string,
+    value: string | string[] | TemplateConfig | null
+  ) => {
+    const normalizedValue =
+      field === "templateConfig" && value === null ? undefined : value;
+
     setEditedAgent((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: normalizedValue as
+        | string
+        | string[]
+        | TemplateConfig
+        | undefined,
     }));
   };
 

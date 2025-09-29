@@ -1,3 +1,5 @@
+import { TemplateConfig } from "./template-config";
+
 export interface BaseAgentConfig {
   id: string;
   name: string;
@@ -8,6 +10,7 @@ export interface BaseAgentConfig {
   pricingModel: string;
   proposalStructure: string[];
   keyTerms: string[];
+  templateConfig?: TemplateConfig;
 }
 
 export interface PrimeAgentConfig extends BaseAgentConfig {
