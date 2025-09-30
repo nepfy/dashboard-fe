@@ -27,36 +27,6 @@ function ensureExactLength(
   return str;
 }
 
-function ensureMaxLength(value: unknown, max: number, field: string): string {
-  const str = ensureString(value, field);
-  ensureCondition(
-    str.length > 0 && str.length <= max,
-    `${field} must have between 1 and ${max} characters. Received ${str.length}.`
-  );
-  return str;
-}
-
-function ensureArray<T>(value: unknown, field: string): T[] {
-  ensureCondition(Array.isArray(value), `${field} must be an array`);
-  return value as T[];
-}
-
-function ensureLengthBetween<T>(
-  array: T[],
-  min: number,
-  max: number,
-  field: string
-): void {
-  ensureCondition(
-    array.length >= min && array.length <= max,
-    `${field} must contain between ${min} and ${max} items. Received ${array.length}.`
-  );
-}
-
-function ensureMatchesRegex(value: string, regex: RegExp, field: string): void {
-  ensureCondition(regex.test(value), `${field} is invalid`);
-}
-
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
 

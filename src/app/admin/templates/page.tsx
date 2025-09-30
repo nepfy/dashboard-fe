@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface Template {
   id: string;
@@ -194,10 +195,12 @@ export default function AdminTemplatesPage() {
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-10 w-10">
                     {template.previewImage ? (
-                      <img
+                      <Image
                         className="h-10 w-10 rounded-lg object-cover"
                         src={template.previewImage}
                         alt={template.displayName}
+                        width={40}
+                        height={40}
                       />
                     ) : (
                       <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">

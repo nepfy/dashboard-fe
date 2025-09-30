@@ -8,11 +8,13 @@
     "migrations": "npx drizzle-kit generate",
     "start": "next start",
     "lint": "next lint",
+    "type-check": "tsc --noEmit",
     "migrate-agents": "npx tsx src/scripts/migrate-agents-to-db.ts",
     "check-migration": "npx tsx src/scripts/check-migration.ts",
     "verify-agents": "npx tsx src/scripts/verify-migration-completeness.ts",
     "list-db-agents": "npx tsx src/scripts/check-db-agents.ts",
-    "test-db-agents": "npx tsx src/scripts/test-database-agents.ts"
+    "test-db-agents": "npx tsx src/scripts/test-database-agents.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ai-sdk/togetherai": "^1.0.1",
@@ -32,9 +34,9 @@
     "react-dom": "^19.0.0",
     "react-fast-marquee": "^1.6.5",
     "react-slick": "^0.30.3",
-    "slick-carousel": "^1.8.1",    
-    "svix": "^1.74.1",
+    "slick-carousel": "^1.8.1",
     "stripe": "^18.4.0",
+    "svix": "^1.74.1",
     "tailwindcss-animate": "^1.0.7",
     "together-ai": "^0.21.1",
     "ws": "^8.18.1",
@@ -51,6 +53,7 @@
     "drizzle-kit": "^0.31.1",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
+    "husky": "^9.1.7",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
     "typescript": "^5"

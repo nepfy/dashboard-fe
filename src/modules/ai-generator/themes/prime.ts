@@ -158,15 +158,15 @@ export class PrimeTemplateWorkflow {
       footer,
     ] = await Promise.all([
       this.generateIntroduction(data),
-      this.generateAboutUs(data),
-      this.generateTeam(data),
-      this.generateSpecialties(data),
-      this.generateProcessSteps(data),
-      this.generateScope(data),
-      this.generateInvestment(data),
-      data.includeTerms ? this.generateTerms(data) : Promise.resolve(undefined),
-      this.generateFAQ(data),
-      this.generateFooter(data),
+      this.generateAboutUs(),
+      this.generateTeam(),
+      this.generateSpecialties(),
+      this.generateProcessSteps(),
+      this.generateScope(),
+      this.generateInvestment(),
+      data.includeTerms ? this.generateTerms() : Promise.resolve(undefined),
+      this.generateFAQ(),
+      this.generateFooter(),
     ]);
 
     return {
@@ -240,7 +240,7 @@ Retorne:
     };
   }
 
-  private async generateAboutUs(data: PrimeThemeData) {
+  private async generateAboutUs() {
     const userPrompt = `Crie seção Sobre Nós premium. Responda somente com JSON.
 
 Retorne:
@@ -264,7 +264,7 @@ Retorne:
     };
   }
 
-  private async generateTeam(data: PrimeThemeData) {
+  private async generateTeam() {
     const userPrompt = `Crie título e subtítulo para seção Time premium. Retorne JSON.
 {
   "title": "Frase com confiança e parceria, 60 caracteres",
@@ -280,7 +280,7 @@ Retorne:
     };
   }
 
-  private async generateSpecialties(data: PrimeThemeData) {
+  private async generateSpecialties() {
     const userPrompt = `Crie especialidades premium. Responda com JSON.
 {
   "title": "Título com autoridade e resultados, 180 caracteres",
@@ -321,7 +321,7 @@ Retorne:
     };
   }
 
-  private async generateProcessSteps(data: PrimeThemeData) {
+  private async generateProcessSteps() {
     const userPrompt = `Crie processo premium. Retorne JSON.
 {
   "introduction": "Frase com 120 caracteres",
@@ -365,7 +365,7 @@ Retorne:
     };
   }
 
-  private async generateScope(data: PrimeThemeData) {
+  private async generateScope() {
     const userPrompt = `Crie escopo premium. Retorne JSON.
 {
   "content": "Texto com exatamente 400 caracteres"
@@ -379,7 +379,7 @@ Retorne:
     };
   }
 
-  private async generateInvestment(data: PrimeThemeData) {
+  private async generateInvestment() {
     const userPrompt = `Crie seção de investimento premium. Retorne JSON.
 {
   "title": "Título com 95 caracteres",
@@ -466,7 +466,7 @@ Retorne:
     };
   }
 
-  private async generateTerms(data: PrimeThemeData) {
+  private async generateTerms() {
     const userPrompt = `Crie termos premium. Retorne JSON.
 [
   {
@@ -494,7 +494,7 @@ Retorne:
     }));
   }
 
-  private async generateFAQ(data: PrimeThemeData) {
+  private async generateFAQ() {
     const userPrompt = `Crie FAQ premium. Retorne JSON.
 [
   {
@@ -515,7 +515,7 @@ Retorne:
     }));
   }
 
-  private async generateFooter(data: PrimeThemeData) {
+  private async generateFooter() {
     const userPrompt = `Crie footer premium. Retorne JSON.
 {
   "callToAction": "Frase com 60 caracteres",
@@ -561,6 +561,6 @@ Retorne:
       "LLM returned an empty response"
     );
 
-    return result.trim();
+    return result!.trim();
   }
 }
