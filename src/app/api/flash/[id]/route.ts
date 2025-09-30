@@ -97,104 +97,89 @@ export async function GET(
       );
     }
 
-    // Get all Flash template data
+    // Get main section data first
     const [
       introduction,
-      introductionServices,
       aboutUs,
       team,
-      teamMembers,
       expertise,
-      expertiseTopics,
       results,
-      resultsList,
       clients,
-      clientsList,
       steps,
-      stepsTopics,
-      stepsMarquee,
       cta,
       testimonials,
-      testimonialsList,
       investment,
       deliverables,
-      deliverablesList,
       plans,
-      plansList,
-      plansIncludedItems,
       termsConditions,
-      termsConditionsList,
       faq,
-      faqList,
       footer,
+    ] = await Promise.all([
+      // Main sections with projectId
+      db.select().from(flashTemplateIntroductionTable).where(eq(flashTemplateIntroductionTable.projectId, projectId)),
+      db.select().from(flashTemplateAboutUsTable).where(eq(flashTemplateAboutUsTable.projectId, projectId)),
+      db.select().from(flashTemplateTeamTable).where(eq(flashTemplateTeamTable.projectId, projectId)),
+      db.select().from(flashTemplateExpertiseTable).where(eq(flashTemplateExpertiseTable.projectId, projectId)),
+      db.select().from(flashTemplateResultsTable).where(eq(flashTemplateResultsTable.projectId, projectId)),
+      db.select().from(flashTemplateClientsTable).where(eq(flashTemplateClientsTable.projectId, projectId)),
+      db.select().from(flashTemplateStepsTable).where(eq(flashTemplateStepsTable.projectId, projectId)),
+      db.select().from(flashTemplateCtaTable).where(eq(flashTemplateCtaTable.projectId, projectId)),
+      db.select().from(flashTemplateTestimonialsTable).where(eq(flashTemplateTestimonialsTable.projectId, projectId)),
+      db.select().from(flashTemplateInvestmentTable).where(eq(flashTemplateInvestmentTable.projectId, projectId)),
+      db.select().from(flashTemplateDeliverablesTable).where(eq(flashTemplateDeliverablesTable.projectId, projectId)),
+      db.select().from(flashTemplatePlansTable).where(eq(flashTemplatePlansTable.projectId, projectId)),
+      db.select().from(flashTemplateTermsConditionsTable).where(eq(flashTemplateTermsConditionsTable.projectId, projectId)),
+      db.select().from(flashTemplateFaqTable).where(eq(flashTemplateFaqTable.projectId, projectId)),
+      db.select().from(flashTemplateFooterTable).where(eq(flashTemplateFooterTable.projectId, projectId)),
+    ]);
+
+    // Get sub-tables data based on parent IDs
+    const [
+      introductionServices,
+      teamMembers,
+      expertiseTopics,
+      resultsList,
+      clientsList,
+      stepsTopics,
+      stepsMarquee,
+      testimonialsList,
+      deliverablesList,
+      plansList,
+      termsConditionsList,
+      faqList,
       footerMarquee,
     ] = await Promise.all([
-      // Introduction
-      db.select().from(flashTemplateIntroductionTable).where(eq(flashTemplateIntroductionTable.projectId, projectId)),
-      db.select().from(flashTemplateIntroductionServicesTable).where(eq(flashTemplateIntroductionServicesTable.introductionId, projectId)),
-      
-      // About Us
-      db.select().from(flashTemplateAboutUsTable).where(eq(flashTemplateAboutUsTable.projectId, projectId)),
-      
-      // Team
-      db.select().from(flashTemplateTeamTable).where(eq(flashTemplateTeamTable.projectId, projectId)),
-      db.select().from(flashTemplateTeamMembersTable),
-      
-      // Expertise
-      db.select().from(flashTemplateExpertiseTable).where(eq(flashTemplateExpertiseTable.projectId, projectId)),
-      db.select().from(flashTemplateExpertiseTopicsTable),
-      
-      // Results
-      db.select().from(flashTemplateResultsTable).where(eq(flashTemplateResultsTable.projectId, projectId)),
-      db.select().from(flashTemplateResultsListTable),
-      
-      // Clients
-      db.select().from(flashTemplateClientsTable).where(eq(flashTemplateClientsTable.projectId, projectId)),
-      db.select().from(flashTemplateClientsListTable),
-      
-      // Steps
-      db.select().from(flashTemplateStepsTable).where(eq(flashTemplateStepsTable.projectId, projectId)),
-      db.select().from(flashTemplateStepsTopicsTable),
-      db.select().from(flashTemplateStepsMarqueeTable),
-      
-      // CTA
-      db.select().from(flashTemplateCtaTable).where(eq(flashTemplateCtaTable.projectId, projectId)),
-      
-      // Testimonials
-      db.select().from(flashTemplateTestimonialsTable).where(eq(flashTemplateTestimonialsTable.projectId, projectId)),
-      db.select().from(flashTemplateTestimonialsListTable),
-      
-      // Investment
-      db.select().from(flashTemplateInvestmentTable).where(eq(flashTemplateInvestmentTable.projectId, projectId)),
-      
-      // Deliverables
-      db.select().from(flashTemplateDeliverablesTable).where(eq(flashTemplateDeliverablesTable.projectId, projectId)),
-      db.select().from(flashTemplateDeliverablesListTable),
-      
-      // Plans
-      db.select().from(flashTemplatePlansTable).where(eq(flashTemplatePlansTable.projectId, projectId)),
-      db.select().from(flashTemplatePlansListTable),
-      db.select().from(flashTemplatePlansIncludedItemsTable),
-      
-      // Terms & Conditions
-      db.select().from(flashTemplateTermsConditionsTable).where(eq(flashTemplateTermsConditionsTable.projectId, projectId)),
-      db.select().from(flashTemplateTermsConditionsListTable),
-      
-      // FAQ
-      db.select().from(flashTemplateFaqTable).where(eq(flashTemplateFaqTable.projectId, projectId)),
-      db.select().from(flashTemplateFaqListTable),
-      
-      // Footer
-      db.select().from(flashTemplateFooterTable).where(eq(flashTemplateFooterTable.projectId, projectId)),
-      db.select().from(flashTemplateFooterMarqueeTable),
+      // Sub-tables with foreign key relationships
+      introduction[0] ? db.select().from(flashTemplateIntroductionServicesTable).where(eq(flashTemplateIntroductionServicesTable.introductionId, introduction[0].id)) : [],
+      team[0] ? db.select().from(flashTemplateTeamMembersTable).where(eq(flashTemplateTeamMembersTable.teamSectionId, team[0].id)) : [],
+      expertise[0] ? db.select().from(flashTemplateExpertiseTopicsTable).where(eq(flashTemplateExpertiseTopicsTable.expertiseId, expertise[0].id)) : [],
+      results[0] ? db.select().from(flashTemplateResultsListTable).where(eq(flashTemplateResultsListTable.resultsSectionId, results[0].id)) : [],
+      clients[0] ? db.select().from(flashTemplateClientsListTable).where(eq(flashTemplateClientsListTable.clientsSectionId, clients[0].id)) : [],
+      steps[0] ? db.select().from(flashTemplateStepsTopicsTable).where(eq(flashTemplateStepsTopicsTable.stepsId, steps[0].id)) : [],
+      steps[0] ? db.select().from(flashTemplateStepsMarqueeTable).where(eq(flashTemplateStepsMarqueeTable.stepsId, steps[0].id)) : [],
+      testimonials[0] ? db.select().from(flashTemplateTestimonialsListTable).where(eq(flashTemplateTestimonialsListTable.testimonialsSectionId, testimonials[0].id)) : [],
+      deliverables[0] ? db.select().from(flashTemplateDeliverablesListTable).where(eq(flashTemplateDeliverablesListTable.deliverablesSectionId, deliverables[0].id)) : [],
+      plans[0] ? db.select().from(flashTemplatePlansListTable).where(eq(flashTemplatePlansListTable.plansSectionId, plans[0].id)) : [],
+      termsConditions[0] ? db.select().from(flashTemplateTermsConditionsListTable).where(eq(flashTemplateTermsConditionsListTable.termsSectionId, termsConditions[0].id)) : [],
+      faq[0] ? db.select().from(flashTemplateFaqListTable).where(eq(flashTemplateFaqListTable.faqSectionId, faq[0].id)) : [],
+      footer[0] ? db.select().from(flashTemplateFooterMarqueeTable).where(eq(flashTemplateFooterMarqueeTable.footerId, footer[0].id)) : [],
     ]);
+
+    // Get plan items for each individual plan
+    const plansIncludedItems = plansList.length > 0 ? await Promise.all(
+      plansList.map(plan => 
+        db.select().from(flashTemplatePlansIncludedItemsTable).where(eq(flashTemplatePlansIncludedItemsTable.planId, plan.id))
+      )
+    ).then(results => results.flat()) : [];
 
     // Build the response with properly nested data
     const flashProjectData = {
       project: project[0],
       template: {
-        introduction: introduction[0] || null,
-        introductionServices: introductionServices || [],
+        introduction: {
+          section: introduction[0] || null,
+          services: introductionServices || [],
+        },
         aboutUs: aboutUs[0] || null,
         team: {
           section: team[0] || null,

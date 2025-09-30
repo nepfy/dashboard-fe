@@ -95,93 +95,76 @@ export async function GET(
       );
     }
 
-    // Get all Prime template data
+    // Get main section data first
     const [
       introduction,
-      introductionMarquee,
       aboutUs,
       team,
-      teamMembers,
       expertise,
-      expertiseTopics,
       results,
-      resultsList,
       clients,
-      clientsList,
       cta,
       steps,
-      stepsTopics,
       testimonials,
-      testimonialsList,
       investment,
       deliverables,
-      deliverablesList,
       plans,
-      plansList,
-      plansIncludedItems,
       termsConditions,
-      termsConditionsList,
       faq,
-      faqList,
       footer,
     ] = await Promise.all([
-      // Introduction
+      // Main sections with projectId
       db.select().from(primeTemplateIntroductionTable).where(eq(primeTemplateIntroductionTable.projectId, projectId)),
-      db.select().from(primeTemplateIntroductionMarqueeTable),
-      
-      // About Us
       db.select().from(primeTemplateAboutUsTable).where(eq(primeTemplateAboutUsTable.projectId, projectId)),
-      
-      // Team
       db.select().from(primeTemplateTeamTable).where(eq(primeTemplateTeamTable.projectId, projectId)),
-      db.select().from(primeTemplateTeamMembersTable),
-      
-      // Expertise
       db.select().from(primeTemplateExpertiseTable).where(eq(primeTemplateExpertiseTable.projectId, projectId)),
-      db.select().from(primeTemplateExpertiseTopicsTable),
-      
-      // Results
       db.select().from(primeTemplateResultsTable).where(eq(primeTemplateResultsTable.projectId, projectId)),
-      db.select().from(primeTemplateResultsListTable),
-      
-      // Clients
       db.select().from(primeTemplateClientsTable).where(eq(primeTemplateClientsTable.projectId, projectId)),
-      db.select().from(primeTemplateClientsListTable),
-      
-      // CTA
       db.select().from(primeTemplateCtaTable).where(eq(primeTemplateCtaTable.projectId, projectId)),
-      
-      // Steps
       db.select().from(primeTemplateStepsTable).where(eq(primeTemplateStepsTable.projectId, projectId)),
-      db.select().from(primeTemplateStepsTopicsTable),
-      
-      // Testimonials
       db.select().from(primeTemplateTestimonialsTable).where(eq(primeTemplateTestimonialsTable.projectId, projectId)),
-      db.select().from(primeTemplateTestimonialsListTable),
-      
-      // Investment
       db.select().from(primeTemplateInvestmentTable).where(eq(primeTemplateInvestmentTable.projectId, projectId)),
-      
-      // Deliverables
       db.select().from(primeTemplateDeliverablesTable).where(eq(primeTemplateDeliverablesTable.projectId, projectId)),
-      db.select().from(primeTemplateDeliverablesListTable),
-      
-      // Plans
       db.select().from(primeTemplatePlansTable).where(eq(primeTemplatePlansTable.projectId, projectId)),
-      db.select().from(primeTemplatePlansListTable),
-      db.select().from(primeTemplatePlansIncludedItemsTable),
-      
-      // Terms & Conditions
       db.select().from(primeTemplateTermsConditionsTable).where(eq(primeTemplateTermsConditionsTable.projectId, projectId)),
-      db.select().from(primeTemplateTermsConditionsListTable),
-      
-      // FAQ
       db.select().from(primeTemplateFaqTable).where(eq(primeTemplateFaqTable.projectId, projectId)),
-      db.select().from(primeTemplateFaqListTable),
-      
-      // Footer
       db.select().from(primeTemplateFooterTable).where(eq(primeTemplateFooterTable.projectId, projectId)),
     ]);
+
+    // Get sub-tables data based on parent IDs
+    const [
+      introductionMarquee,
+      teamMembers,
+      expertiseTopics,
+      resultsList,
+      clientsList,
+      stepsTopics,
+      testimonialsList,
+      deliverablesList,
+      plansList,
+      termsConditionsList,
+      faqList,
+    ] = await Promise.all([
+      // Sub-tables with foreign key relationships
+      introduction[0] ? db.select().from(primeTemplateIntroductionMarqueeTable).where(eq(primeTemplateIntroductionMarqueeTable.introductionId, introduction[0].id)) : [],
+      team[0] ? db.select().from(primeTemplateTeamMembersTable).where(eq(primeTemplateTeamMembersTable.teamSectionId, team[0].id)) : [],
+      expertise[0] ? db.select().from(primeTemplateExpertiseTopicsTable).where(eq(primeTemplateExpertiseTopicsTable.expertiseId, expertise[0].id)) : [],
+      results[0] ? db.select().from(primeTemplateResultsListTable).where(eq(primeTemplateResultsListTable.resultsSectionId, results[0].id)) : [],
+      clients[0] ? db.select().from(primeTemplateClientsListTable).where(eq(primeTemplateClientsListTable.clientsSectionId, clients[0].id)) : [],
+      steps[0] ? db.select().from(primeTemplateStepsTopicsTable).where(eq(primeTemplateStepsTopicsTable.stepsId, steps[0].id)) : [],
+      testimonials[0] ? db.select().from(primeTemplateTestimonialsListTable).where(eq(primeTemplateTestimonialsListTable.testimonialsSectionId, testimonials[0].id)) : [],
+      deliverables[0] ? db.select().from(primeTemplateDeliverablesListTable).where(eq(primeTemplateDeliverablesListTable.deliverablesSectionId, deliverables[0].id)) : [],
+      plans[0] ? db.select().from(primeTemplatePlansListTable).where(eq(primeTemplatePlansListTable.plansSectionId, plans[0].id)) : [],
+      termsConditions[0] ? db.select().from(primeTemplateTermsConditionsListTable).where(eq(primeTemplateTermsConditionsListTable.termsSectionId, termsConditions[0].id)) : [],
+      faq[0] ? db.select().from(primeTemplateFaqListTable).where(eq(primeTemplateFaqListTable.faqSectionId, faq[0].id)) : [],
+    ]);
+
+    // Get plan items for each individual plan
+    const plansIncludedItems = plansList.length > 0 ? await Promise.all(
+      plansList.map(plan => 
+        db.select().from(primeTemplatePlansIncludedItemsTable).where(eq(primeTemplatePlansIncludedItemsTable.planId, plan.id))
+      )
+    ).then(results => results.flat()) : [];
 
     // Build the response with properly nested data
     const primeProjectData = {
