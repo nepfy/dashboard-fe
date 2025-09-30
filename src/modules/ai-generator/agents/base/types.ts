@@ -41,6 +41,6 @@ export type ServiceType =
   | "development"
   | "architecture"
   | "photography"
-  | "medical";
+  | "agencias-consultoria";
 
 export type TemplateType = "prime" | "flash" | "grid" | "base" | "novo";

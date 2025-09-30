@@ -4,7 +4,7 @@ export const PRIME_SERVICE_TYPES = {
   DESIGNER: "Prime - Designer",
   PHOTOGRAPHER: "Prime - Fotógrafo",
   MARKETING: "Prime - Marketing Digital",
-  MEDICAL: "Prime - Médico",
+  AGENCIES: "Prime - Agências / Consultoria",
 } as const;
 
 export type PrimeServiceType =
@@ -21,8 +21,8 @@ export const PRIME_SERVICE_DESCRIPTIONS = {
     "Fotografia profissional premium com direção artística e qualidade superior",
   [PRIME_SERVICE_TYPES.MARKETING]:
     "Marketing digital estratégico com foco em crescimento sustentável e ROI",
-  [PRIME_SERVICE_TYPES.MEDICAL]:
-    "Atendimento médico premium com protocolos avançados e acompanhamento personalizado",
+  [PRIME_SERVICE_TYPES.AGENCIES]:
+    "Consultoria sênior que integra estratégia, criatividade e tecnologia para gerar crescimento previsível",
 } as const;
 
 export const PRIME_SERVICE_ICONS = {
@@ -31,5 +31,5 @@ export const PRIME_SERVICE_ICONS = {
   [PRIME_SERVICE_TYPES.DESIGNER]: "🎨",
   [PRIME_SERVICE_TYPES.PHOTOGRAPHER]: "📸",
   [PRIME_SERVICE_TYPES.MARKETING]: "📈",
-  [PRIME_SERVICE_TYPES.MEDICAL]: "🏥",
+  [PRIME_SERVICE_TYPES.AGENCIES]: "🤝",
 } as const;

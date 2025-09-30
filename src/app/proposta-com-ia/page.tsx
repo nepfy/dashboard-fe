@@ -36,6 +36,7 @@ export default function NepfyAIPage() {
   const [clientName, setClientName] = useState("");
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
+  const [clientDescription, setClientDescription] = useState("");
   const [companyInfo, setCompanyInfo] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
 
@@ -134,6 +135,7 @@ export default function NepfyAIPage() {
       clientName: !!clientName,
       projectName: !!projectName,
       projectDescription: !!projectDescription,
+      clientDescription: !!clientDescription,
       clientNameValue: clientName,
       projectNameValue: projectName,
     });
@@ -156,6 +158,7 @@ export default function NepfyAIPage() {
       clientName,
       projectName,
       projectDescription,
+      clientDescription,
       companyInfo,
       selectedPlan,
       includeTerms,
@@ -175,6 +178,7 @@ export default function NepfyAIPage() {
           clientName,
           projectName,
           projectDescription,
+          clientDescription,
           companyInfo,
           selectedPlan,
           includeTerms,
@@ -220,6 +224,7 @@ export default function NepfyAIPage() {
           clientName,
           projectName,
           projectDescription,
+          clientDescription,
           companyInfo,
           templateType: templateType || "flash",
           mainColor: formData.step1?.mainColor || "#3B82F6",
@@ -272,6 +277,7 @@ export default function NepfyAIPage() {
           clientName,
           projectName,
           projectDescription,
+          clientDescription,
           companyName: companyInfo,
           templateType,
           mainColor: formData.step1?.mainColor || "#3B82F6",
@@ -380,20 +386,24 @@ export default function NepfyAIPage() {
                   projectName,
                   projectDescription,
                   clientName,
+                  clientDescription,
                 }}
                 setClientData={({
                   clientName,
                   projectName,
                   projectDescription,
+                  clientDescription,
                 }) => {
                   console.log("Debug - setClientData called with:", {
                     clientName,
                     projectName,
                     projectDescription,
+                    clientDescription,
                   });
                   setClientName(clientName);
                   setProjectName(projectName);
                   setProjectDescription(projectDescription);
+                  setClientDescription(clientDescription);
                 }}
                 handleBack={() => setCurrentStep("company_info")}
                 handleNext={() => setCurrentStep("pricing_step")}

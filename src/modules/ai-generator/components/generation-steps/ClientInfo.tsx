@@ -17,12 +17,14 @@ export function ClientInfo({
     clientName: string;
     projectName: string;
     projectDescription: string;
+    detailedClientInfo?: string;
   };
   setClientData: (data: {
     companyName: string;
     clientName: string;
     projectName: string;
     projectDescription: string;
+    detailedClientInfo?: string;
   }) => void;
 }) {
   const [formData, setFormData] = useState({
@@ -30,6 +32,7 @@ export function ClientInfo({
     companyName: clientData.companyName,
     projectName: clientData.projectName,
     projectDescription: clientData.projectDescription,
+    detailedClientInfo: clientData.detailedClientInfo || "",
   });
 
   const handleInputChange = (
@@ -42,7 +45,10 @@ export function ClientInfo({
     }));
   };
 
-  const isFormValid = formData.clientName.trim() && formData.projectName.trim();
+  const isFormValid =
+    formData.clientName.trim() &&
+    formData.companyName.trim() &&
+    formData.projectName.trim();
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 justify-center items-center gap-10 font-satoshi">
@@ -53,7 +59,9 @@ export function ClientInfo({
             Sobre seu cliente
           </h1>
           <p className="text-gray-600 text-lg leading-relaxed">
-            Nome, área de atuação e no que a empresa é especializada.
+            Nome do cliente, empresa, projeto e detalhes sobre o cliente.
+            Conte-nos mais sobre quem você está atendendo para personalizar a
+            proposta.
           </p>
         </div>
 
@@ -78,6 +86,25 @@ export function ClientInfo({
             />
           </div>
 
+          {/* Company Name */}
+          <div className="space-y-2">
+            <label
+              htmlFor="companyName"
+              className="block text-sm font-satoshi font-medium text-gray-700 p-3 bg-[#E8E2FD]/30 rounded-lg border border-[#E8E2FD]"
+            >
+              Nome da empresa
+            </label>
+            <input
+              type="text"
+              id="companyName"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleInputChange}
+              placeholder="Empresa ABC Ltda"
+              className="w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 text-gray-700 placeholder-gray-400 transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
+            />
+          </div>
+
           {/* Project Name */}
           <div className="space-y-2">
             <label
@@ -97,6 +124,29 @@ export function ClientInfo({
             />
             <p className="text-xs text-gray-500 mt-1">
               Para você identificar essa proposta no seu painel de gerenciamento
+            </p>
+          </div>
+
+          {/* Detailed Client Information */}
+          <div className="space-y-2">
+            <label
+              htmlFor="detailedClientInfo"
+              className="block text-sm font-satoshi font-medium text-gray-700 p-3 bg-[#E8E2FD]/30 rounded-lg border border-[#E8E2FD]"
+            >
+              Conte um pouco mais sobre o seu cliente
+            </label>
+            <textarea
+              id="detailedClientInfo"
+              name="detailedClientInfo"
+              value={formData.detailedClientInfo || ""}
+              onChange={handleInputChange}
+              placeholder="Descreva mais profundamente quem é o seu cliente: personalidade, preferências de comunicação, histórico de trabalhos anteriores, relacionamento com a empresa, expectativas específicas, contexto do mercado onde atua, etc. Quanto mais detalhes você compartilhar, mais personalizada será a abordagem da proposta."
+              rows={6}
+              className="w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 text-gray-700 placeholder-gray-400 resize-none transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Este campo é opcional, mas altamente recomendado para uma proposta
+              mais personalizada
             </p>
           </div>
 
@@ -140,6 +190,7 @@ export function ClientInfo({
                 clientName: formData.clientName,
                 projectName: formData.projectName,
                 projectDescription: formData.projectDescription,
+                detailedClientInfo: formData.detailedClientInfo,
               });
 
               handleNext();

@@ -4,7 +4,7 @@ import DesignerIcon from "./DesignerIcon";
 import DeveloperIcon from "./DeveloperIcon";
 import ArchitectIcon from "./ArchitectIcon";
 import PhotographerIcon from "./PhotographerIcon";
-import DoctorIcon from "./DoctorIcon";
+import ConsultingIcon from "./ConsultingIcon";
 
 export {
   StartProposalIcon,
@@ -13,5 +13,5 @@ export {
   DeveloperIcon,
   ArchitectIcon,
   PhotographerIcon,
-  DoctorIcon,
+  ConsultingIcon,
 };

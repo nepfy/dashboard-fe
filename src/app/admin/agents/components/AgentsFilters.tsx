@@ -113,7 +113,9 @@ export default function AgentsFilters({ onFiltersChange }: AgentsFiltersProps) {
               <option value="design">Design</option>
               <option value="development">Desenvolvimento</option>
               <option value="photography">Fotografia</option>
-              <option value="medical">Médico</option>
+              <option value="agencias-consultoria">
+                Agências / Consultoria
+              </option>
               <option value="architecture">Arquitetura</option>
             </select>
           </div>
@@ -167,4 +169,3 @@ export default function AgentsFilters({ onFiltersChange }: AgentsFiltersProps) {
     </div>
   );
 }
-

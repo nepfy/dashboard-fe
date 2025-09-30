@@ -39,12 +39,12 @@ This module contains specialized AI agents for the Flash template type, each des
 - **Specialties**: SEO/SEM, social media, email marketing, content marketing, analytics
 - **Pricing**: Monthly retainer
 
-### 6. Flash - Médico (Medical)
+### 6. Flash - Agências / Consultoria
 
-- **ID**: `flash-medical-agent`
-- **Focus**: Efficient and humanized medical care with quick diagnosis
-- **Specialties**: Medical consultations, diagnostic exams, procedures, telemedicine
-- **Pricing**: Consultation-based
+- **ID**: `flash-agencias-consultoria-agent`
+- **Focus**: Consultoria integrada com entregas ágeis e foco em crescimento escalável
+- **Specialties**: Estratégia, campanhas multicanal, branding, tecnologia, analytics
+- **Pricing**: Retainer mensal ou project-based
 
 ## Usage
 

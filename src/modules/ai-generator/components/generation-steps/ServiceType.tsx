@@ -8,7 +8,7 @@ import {
   DeveloperIcon,
   ArchitectIcon,
   PhotographerIcon,
-  DoctorIcon,
+  ConsultingIcon,
 } from "../icons";
 
 import "slick-carousel/slick/slick.css";
@@ -47,9 +47,9 @@ const DEFAULT_SERVICES: Service[] = [
     icon: <PhotographerIcon />,
   },
   {
-    id: "medicos",
-    title: "Médico",
-    icon: <DoctorIcon />,
+    id: "agencias",
+    title: "Agências / Consultoria",
+    icon: <ConsultingIcon />,
   },
 ];
 

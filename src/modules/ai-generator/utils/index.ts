@@ -10,8 +10,8 @@ export function generateDefaultCompanyInfo(serviceId: string): string {
       "Escritório de arquitetura especializado em projetos residenciais e comerciais. Combinamos funcionalidade, estética e sustentabilidade em todos os nossos projetos. Nossa experiência inclui aprovações, acompanhamento de obra e design de interiores.",
     photography:
       "Estúdio de fotografia profissional com experiência em diversos segmentos. Especializamos em fotografia corporativa, de produtos, eventos e retratos. Nossa equipe utiliza equipamentos de alta qualidade e técnicas avançadas de pós-produção.",
-    medical:
-      "Clínica médica especializada em atendimento personalizado e de qualidade. Oferecemos consultas, exames diagnósticos e procedimentos com foco na saúde e bem-estar dos pacientes. Nossa equipe médica é altamente qualificada e experiente.",
+    "agencias-consultoria":
+      "Somos uma consultoria multidisciplinar que integra marketing, design e tecnologia para acelerar o crescimento de marcas. Atuamos em todo o ciclo de planejamento e execução, combinando dados, criatividade e processos enxutos para entregar resultados consistentes.",
   };
 
   return (
@@ -27,7 +27,7 @@ export function generateDefaultPlans(serviceId: string): string[] {
     development: ["web-app", "mobile-app"],
     architecture: ["project", "complete"],
     photography: ["session", "package"],
-    medical: ["consultation", "checkup"],
+    "agencias-consultoria": ["estrategico", "executivo"],
   };
 
   return (
@@ -65,8 +65,8 @@ export function generateDefaultPlanDetails(
       "Plano Project: Projeto arquitetônico básico. Plano Complete: Projeto completo com acompanhamento de obra.",
     photography:
       "Plano Session: Sessão fotográfica com edição básica. Plano Package: Pacote completo com múltiplas sessões e edição avançada.",
-    medical:
-      "Plano Consultation: Consulta médica especializada. Plano Checkup: Checkup completo com exames e laudos.",
+    "agencias-consultoria":
+      "Plano Estratégico: Diagnóstico completo, posicionamento e plano de crescimento. Plano Executivo: Execução mensal integrada com produção de campanhas, otimizações e relatórios de performance.",
   };
 
   return (
@@ -105,10 +105,10 @@ export function generatePlanOptionsByCount(
       2: ["session", "package"],
       3: ["session", "package", "premium"],
     },
-    medical: {
-      1: ["consultation"],
-      2: ["consultation", "checkup"],
-      3: ["consultation", "checkup", "premium"],
+    "agencias-consultoria": {
+      1: ["essencial"],
+      2: ["essencial", "performance"],
+      3: ["essencial", "performance", "parceiro"],
     },
   };
 
@@ -132,13 +132,17 @@ export function generatePlanOptionsByCount(
 
 export const serviceMapping: Record<string, string> = {
   "marketing-digital": "marketing-digital",
-  designer: "designer", // Keep original name since agents exist as designer-*-agent
-  desenvolvedor: "desenvolvedor", // Keep original name since agents exist as desenvolvedor-*-agent
-  arquiteto: "arquiteto", // Keep original name since agents exist as arquiteto-*-agent
-  fotografo: "fotógrafo", // Map to fotógrafo since agents exist as fotógrafo-*-agent
-  fotógrafo: "fotógrafo", // Support both with and without accent
-  medico: "médico", // Map to médico since agents exist as médico-*-agent
-  medicos: "médico", // Alternative name
+  designer: "designer",
+  desenvolvedor: "desenvolvedor",
+  arquiteto: "arquiteto",
+  fotografo: "fotógrafo",
+  fotógrafo: "fotógrafo",
+  agencia: "agencias-consultoria",
+  agência: "agencias-consultoria",
+  agencias: "agencias-consultoria",
+  agências: "agencias-consultoria",
+  consultoria: "agencias-consultoria",
+  consultorias: "agencias-consultoria",
 };
 
 // Template-specific service mapping for flash and prime templates
@@ -148,8 +152,11 @@ export const flashServiceMapping: Record<string, string> = {
   desenvolvedor: "Flash - Desenvolvedor",
   arquiteto: "Flash - Arquiteto",
   fotografo: "Flash - Fotógrafo",
-  fotógrafo: "Flash - Fotógrafo", // Support both with and without accent
-  medicos: "Flash - Médico",
+  fotógrafo: "Flash - Fotógrafo",
+  agencias: "Flash - Agências / Consultoria",
+  agências: "Flash - Agências / Consultoria",
+  consultoria: "Flash - Agências / Consultoria",
+  consultorias: "Flash - Agências / Consultoria",
 };
 
 export const primeServiceMapping: Record<string, string> = {
@@ -158,6 +165,9 @@ export const primeServiceMapping: Record<string, string> = {
   desenvolvedor: "Prime - Desenvolvedor",
   arquiteto: "Prime - Arquiteto",
   fotografo: "Prime - Fotógrafo",
-  fotógrafo: "Prime - Fotógrafo", // Support both with and without accent
-  medicos: "Prime - Médico",
+  fotógrafo: "Prime - Fotógrafo",
+  agencias: "Prime - Agências / Consultoria",
+  agências: "Prime - Agências / Consultoria",
+  consultoria: "Prime - Agências / Consultoria",
+  consultorias: "Prime - Agências / Consultoria",
 };

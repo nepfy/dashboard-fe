@@ -45,11 +45,11 @@ The Prime template supports the following service categories:
 - **Methodology**: PRIME approach emphasizing deep data analysis and optimized campaigns
 - **Expertise**: SEO/SEM, social media, email marketing, content marketing, analytics
 
-### 6. Prime - Médico (Medical)
+### 6. Prime - Agências / Consultoria
 
-- **Focus**: Premium medical services with advanced protocols and personalized care
-- **Methodology**: PRIME approach emphasizing advanced medical protocols and exceptional patient outcomes
-- **Expertise**: Medical consultations, diagnostic exams, procedures, telemedicine, preventive care
+- **Focus**: Consultorias premium que integram estratégia, criatividade e tecnologia para gerar crescimento previsível
+- **Methodology**: PRIME approach com discovery profundo, arquitetura de campanhas, governança de performance e relatórios executivos
+- **Expertise**: Planejamento estratégico, squads multidisciplinares, branding + growth, marketing integrado, BI e analytics
 
 ## Agent Configuration
 

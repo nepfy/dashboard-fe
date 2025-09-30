@@ -4,7 +4,7 @@ export const FLASH_SERVICE_TYPES = {
   DESIGNER: "Flash - Designer",
   PHOTOGRAPHER: "Flash - Fotógrafo",
   MARKETING: "Flash - Marketing Digital",
-  MEDICAL: "Flash - Médico",
+  AGENCIES: "Flash - Agências / Consultoria",
 } as const;
 
 export type FlashServiceType =
@@ -21,8 +21,8 @@ export const FLASH_SERVICE_DESCRIPTIONS = {
     "Fotografia profissional com entrega expressa e qualidade superior",
   [FLASH_SERVICE_TYPES.MARKETING]:
     "Marketing digital com resultados rápidos e ROI imediato",
-  [FLASH_SERVICE_TYPES.MEDICAL]:
-    "Atendimento médico eficiente e humanizado com diagnóstico rápido",
+  [FLASH_SERVICE_TYPES.AGENCIES]:
+    "Consultoria integrada que combina marketing, design e tecnologia com foco em resultados consistentes",
 } as const;
 
 export const FLASH_SERVICE_ICONS = {
@@ -31,5 +31,5 @@ export const FLASH_SERVICE_ICONS = {
   [FLASH_SERVICE_TYPES.DESIGNER]: "🎨",
   [FLASH_SERVICE_TYPES.PHOTOGRAPHER]: "📸",
   [FLASH_SERVICE_TYPES.MARKETING]: "📈",
-  [FLASH_SERVICE_TYPES.MEDICAL]: "🏥",
+  [FLASH_SERVICE_TYPES.AGENCIES]: "🤝",
 } as const;
