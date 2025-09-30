@@ -16,6 +16,7 @@ import {
   newTemplateExpertiseTopicsTable,
   newTemplatePlansTable,
   newTemplatePlansListTable,
+  newTemplatePlansIncludedItemsTable,
   newTemplateTermsConditionsTable,
   newTemplateTermsConditionsListTable,
   newTemplateFaqTable,
@@ -115,7 +116,6 @@ export async function GET(
       clientsList,
       expertiseTopics,
       plansList,
-      plansIncludedItems,
       termsConditionsList,
       faqList,
       footerMarquee,
@@ -127,12 +127,17 @@ export async function GET(
       clients[0] ? db.select().from(newTemplateClientsListTable).where(eq(newTemplateClientsListTable.clientsSectionId, clients[0].id)) : [],
       expertise[0] ? db.select().from(newTemplateExpertiseTopicsTable).where(eq(newTemplateExpertiseTopicsTable.expertiseId, expertise[0].id)) : [],
       plans[0] ? db.select().from(newTemplatePlansListTable).where(eq(newTemplatePlansListTable.plansSectionId, plans[0].id)) : [],
-      // TODO: Need to get plan items for each individual plan, not the plans section
-      [],
       termsConditions[0] ? db.select().from(newTemplateTermsConditionsListTable).where(eq(newTemplateTermsConditionsListTable.termsSectionId, termsConditions[0].id)) : [],
       faq[0] ? db.select().from(newTemplateFaqListTable).where(eq(newTemplateFaqListTable.faqSectionId, faq[0].id)) : [],
       footer[0] ? db.select().from(newTemplateFooterMarqueeTable).where(eq(newTemplateFooterMarqueeTable.footerId, footer[0].id)) : [],
     ]);
+
+    // Get plan items for each individual plan
+    const plansIncludedItems = plansList.length > 0 ? await Promise.all(
+      plansList.map(plan => 
+        db.select().from(newTemplatePlansIncludedItemsTable).where(eq(newTemplatePlansIncludedItemsTable.planId, plan.id))
+      )
+    ).then(results => results.flat()) : [];
 
     // Build the response with properly nested data
     const newProjectData = {
