@@ -1,16 +1,18 @@
 // JSON validation instructions to automatically append to systemPrompts
 export const JSON_VALIDATION_INSTRUCTIONS = `
 
-INSTRUÇÕES CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- NÃO use aspas simples (')
-- NÃO use quebras de linha dentro das strings
-- NÃO use vírgulas no final de arrays ou objetos
-- Escape aspas dentro de strings com \\"
-- Nomes de propriedades exatamente como especificado
-- Retorne APENAS JSON válido, sem explicações ou texto adicional
+🚨 INSTRUÇÕES CRÍTICAS - OBRIGATÓRIO SEGUIR:
 
-EXEMPLO DE JSON VÁLIDO:
+1. RETORNE APENAS JSON VÁLIDO - NADA MAIS
+2. Use APENAS aspas duplas (") - NUNCA aspas simples (')
+3. NÃO use quebras de linha dentro das strings
+4. NÃO use vírgulas no final de arrays ou objetos
+5. Escape aspas dentro de strings com \\"
+6. Nomes de propriedades exatamente como especificado
+7. NÃO inclua explicações, comentários ou texto adicional
+8. O JSON deve começar com { e terminar com }
+
+EXEMPLO CORRETO:
 {
   "title": "Título da seção",
   "content": "Conteúdo da seção",
@@ -22,7 +24,7 @@ EXEMPLO DE JSON VÁLIDO:
   ]
 }
 
-SEMPRE gere JSON válido seguindo exatamente o formato solicitado.`;
+⚠️ IMPORTANTE: Se você não retornar JSON válido, a resposta será rejeitada.`;
 
 /**
  * Appends JSON validation instructions to any systemPrompt
@@ -34,7 +36,7 @@ export function appendJsonInstructions(systemPrompt: string): string {
   if (systemPrompt.includes("INSTRUÇÕES CRÍTICAS PARA JSON VÁLIDO")) {
     return systemPrompt;
   }
-  
+
   return systemPrompt + JSON_VALIDATION_INSTRUCTIONS;
 }
 
