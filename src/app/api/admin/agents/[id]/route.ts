@@ -121,21 +121,45 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id: agentId } = await params;
 
-    const deletedAgent = await db
-      .delete(agentsTable)
-      .where(eq(agentsTable.id, agentId))
-      .returning();
+    console.log("Debug - DELETE /api/admin/agents/[id] called with:", { agentId });
 
-    if (deletedAgent.length === 0) {
+    // Verificar se o agente existe antes de tentar deletar
+    const existingAgent = await db
+      .select()
+      .from(agentsTable)
+      .where(eq(agentsTable.id, agentId))
+      .limit(1);
+
+    if (existingAgent.length === 0) {
+      console.log("Debug - Agent not found:", agentId);
       return NextResponse.json(
         { error: "Agente não encontrado" },
         { status: 404 }
       );
     }
 
+    console.log("Debug - Agent found, proceeding with deletion:", {
+      id: existingAgent[0].id,
+      name: existingAgent[0].name,
+    });
+
+    // Deletar o agente (os templates serão removidos automaticamente devido ao CASCADE)
+    const deletedAgent = await db
+      .delete(agentsTable)
+      .where(eq(agentsTable.id, agentId))
+      .returning();
+
+    console.log("Debug - Agent deleted successfully:", {
+      deletedCount: deletedAgent.length,
+      deletedAgent: deletedAgent[0] ? {
+        id: deletedAgent[0].id,
+        name: deletedAgent[0].name,
+      } : null,
+    });
+
     return NextResponse.json({
       success: true,
-      message: "Agente removido com sucesso",
+      message: "Agente e templates associados removidos com sucesso",
       agent: deletedAgent[0],
     });
   } catch (error) {

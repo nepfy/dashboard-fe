@@ -2,11 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { BaseAgentConfig } from "#/modules/ai-generator/agents/base/types";
+import { useRouter } from "next/navigation";
 
 export default function AgentsList() {
+  const router = useRouter();
   const [agents, setAgents] = useState<Record<string, BaseAgentConfig>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    agent: BaseAgentConfig | null;
+  }>({ isOpen: false, agent: null });
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function loadAgents() {
@@ -31,6 +38,48 @@ export default function AgentsList() {
 
     loadAgents();
   }, []);
+
+  const handleEdit = (agentId: string) => {
+    router.push(`/admin/agents/${agentId}`);
+  };
+
+  const handleDeleteClick = (agent: BaseAgentConfig) => {
+    setDeleteModal({ isOpen: true, agent });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteModal.agent) return;
+
+    try {
+      setDeleting(true);
+      
+      const response = await fetch(`/api/admin/agents/${deleteModal.agent.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao remover agente");
+      }
+
+      // Remove o agente da lista local
+      setAgents(prev => {
+        const newAgents = { ...prev };
+        delete newAgents[deleteModal.agent!.id];
+        return newAgents;
+      });
+
+      setDeleteModal({ isOpen: false, agent: null });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao remover agente");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModal({ isOpen: false, agent: null });
+  };
 
   if (loading) {
     return (
@@ -173,8 +222,8 @@ export default function AgentsList() {
                         : "Unknown"}
                     </span>
                     <div className="flex space-x-1">
-                      <a
-                        href={`/admin/agents/${agent.id}`}
+                      <button
+                        onClick={() => handleEdit(agent.id)}
                         className="inline-flex items-center p-1 border border-transparent rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         title="Editar agente"
                       >
@@ -191,10 +240,11 @@ export default function AgentsList() {
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                           />
                         </svg>
-                      </a>
+                      </button>
                       <button
-                        type="button"
-                        className="inline-flex items-center p-1 border border-transparent rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        onClick={() => handleDeleteClick(agent)}
+                        className="inline-flex items-center p-1 border border-transparent rounded-full text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        title="Remover agente"
                       >
                         <svg
                           className="h-4 w-4"
@@ -206,7 +256,7 @@ export default function AgentsList() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                           />
                         </svg>
                       </button>
@@ -233,6 +283,59 @@ export default function AgentsList() {
           </div>
         )}
       </div>
+
+      {/* Modal de confirmação de remoção */}
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3 text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg
+                  className="h-6 w-6 text-red-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mt-4">
+                Confirmar remoção
+              </h3>
+              <div className="mt-2 px-7 py-3">
+                <p className="text-sm text-gray-500">
+                  Tem certeza que deseja remover o agente{" "}
+                  <span className="font-medium text-gray-900">
+                    {deleteModal.agent?.name}
+                  </span>
+                  ? Esta ação não pode ser desfeita.
+                </p>
+              </div>
+              <div className="flex justify-center space-x-4 mt-4">
+                <button
+                  onClick={handleDeleteCancel}
+                  disabled={deleting}
+                  className="px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  disabled={deleting}
+                  className="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
+                >
+                  {deleting ? "Removendo..." : "Remover"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
