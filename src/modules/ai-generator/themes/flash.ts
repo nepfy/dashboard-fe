@@ -1008,19 +1008,19 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parseResult = safeJSONParse<FlashFAQSection>(response);
-      
+
       if (!parseResult.success) {
         console.error("Flash FAQ JSON Parse Error:", parseResult.error);
         throw new Error(`Failed to parse FAQ JSON: ${parseResult.error}`);
       }
-      
+
       const parsed = parseResult.data!;
-      
+
       ensureCondition(
         Array.isArray(parsed) && parsed.length === 10,
         "faq must contain exactly 10 items"
       );
-      
+
       parsed.forEach((item, index) => {
         const questionValidation = validateMaxLengthWithWarning(
           item.question,
@@ -1045,7 +1045,7 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
           );
         }
       });
-      
+
       return parsed.map((item, index) => {
         const questionValidation = validateMaxLengthWithWarning(
           item.question,
