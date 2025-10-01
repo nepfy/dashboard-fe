@@ -196,88 +196,267 @@ DADOS DO PROJETO:
 - Setor: ${this.agent?.sector}
 - Serviços: ${this.agent?.commonServices.join(", ")}
 
+IMPORTANTE: Os textos devem ter EXATAMENTE as contagens de caracteres especificadas (contando espaços).
+
 Retorne:
 {
-  "title": "Frase imperativa premium, exatamente 60 caracteres",
-  "subtitle": "Frase sobre valor, exclusividade e lucro, exatamente 100 caracteres",
+  "title": "Frase imperativa premium, EXATAMENTE 60 caracteres",
+  "subtitle": "Frase sobre valor, exclusividade e lucro, EXATAMENTE 100 caracteres",
   "services": [
-    "Serviço com exatamente 30 caracteres",
-    "Serviço com exatamente 30 caracteres",
-    "Serviço com exatamente 30 caracteres",
-    "Serviço com exatamente 30 caracteres"
+    "Serviço com EXATAMENTE 30 caracteres",
+    "Serviço com EXATAMENTE 30 caracteres",
+    "Serviço com EXATAMENTE 30 caracteres",
+    "Serviço com EXATAMENTE 30 caracteres"
+  ],
+  "validity": "dd/mm/aaaa",
+  "buttonText": "texto"
+}
+
+Exemplos:
+- Título com 60 caracteres: "Transforme sua visão em realidade com nossa expertise premium"
+- Subtítulo com 100 caracteres: "Nós criamos soluções exclusivas que elevam seu negócio e multiplicam seus resultados."
+- Serviços com 30 caracteres: "Consultoria estratégica", "Desenvolvimento premium"`;
+
+    try {
+      const response = await this.runLLM(userPrompt);
+      const parsed = JSON.parse(response);
+
+      // Validate and retry if needed
+      const titleLength = parsed.title?.length || 0;
+      const subtitleLength = parsed.subtitle?.length || 0;
+      const servicesLength = parsed.services?.length || 0;
+      const servicesValidLength =
+        parsed.services?.every((s: string) => s.length === 30) || false;
+
+      if (
+        titleLength !== 60 ||
+        subtitleLength !== 100 ||
+        servicesLength !== 4 ||
+        !servicesValidLength
+      ) {
+        console.log(
+          `Prime Introduction length mismatch: title=${titleLength}, subtitle=${subtitleLength}, services=${servicesLength}, servicesValid=${servicesValidLength}, retrying...`
+        );
+        const retryPrompt = `O conteúdo anterior tinha contagens incorretas:
+- Título: ${titleLength} caracteres (deveria ter 60)
+- Subtítulo: ${subtitleLength} caracteres (deveria ter 100)
+- Serviços: ${servicesLength} itens (deveria ter 4)
+- Serviços válidos: ${servicesValidLength}
+
+Crie novos textos com as contagens EXATAS:
+
+{
+  "title": "Novo título com exatamente 60 caracteres",
+  "subtitle": "Novo subtítulo com exatamente 100 caracteres",
+  "services": [
+    "Serviço 1 com exatamente 30 caracteres",
+    "Serviço 2 com exatamente 30 caracteres",
+    "Serviço 3 com exatamente 30 caracteres",
+    "Serviço 4 com exatamente 30 caracteres"
   ],
   "validity": "dd/mm/aaaa",
   "buttonText": "texto"
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+        const retryResponse = await this.runLLM(retryPrompt);
+        const retryParsed = JSON.parse(retryResponse);
 
-    const title = ensureExactLength(parsed.title, 60, "introduction.title");
-    const subtitle = ensureExactLength(
-      parsed.subtitle,
-      100,
-      "introduction.subtitle"
-    );
-    const services = ensureArray<string>(
-      parsed.services,
-      "introduction.services"
-    );
-    ensureCondition(
-      services.length === 4,
-      "introduction.services must have 4 items"
-    );
-    services.forEach((service, index) =>
-      ensureExactLength(service, 30, `introduction.services[${index}]`)
-    );
+        const retryTitle = ensureExactLength(
+          retryParsed.title,
+          60,
+          "introduction.title"
+        );
+        const retrySubtitle = ensureExactLength(
+          retryParsed.subtitle,
+          100,
+          "introduction.subtitle"
+        );
+        const retryServices = ensureArray<string>(
+          retryParsed.services,
+          "introduction.services"
+        );
+        ensureCondition(
+          retryServices.length === 4,
+          "introduction.services must have 4 items"
+        );
+        retryServices.forEach((service, index) =>
+          ensureExactLength(service, 30, `introduction.services[${index}]`)
+        );
 
-    return {
-      title,
-      subtitle,
-      services,
-      validity: ensureString(parsed.validity, "introduction.validity"),
-      buttonText: ensureString(parsed.buttonText, "introduction.buttonText"),
-    };
+        return {
+          title: retryTitle,
+          subtitle: retrySubtitle,
+          services: retryServices,
+          validity: ensureString(retryParsed.validity, "introduction.validity"),
+          buttonText: ensureString(
+            retryParsed.buttonText,
+            "introduction.buttonText"
+          ),
+        };
+      }
+
+      const title = ensureExactLength(parsed.title, 60, "introduction.title");
+      const subtitle = ensureExactLength(
+        parsed.subtitle,
+        100,
+        "introduction.subtitle"
+      );
+      const services = ensureArray<string>(
+        parsed.services,
+        "introduction.services"
+      );
+      ensureCondition(
+        services.length === 4,
+        "introduction.services must have 4 items"
+      );
+      services.forEach((service, index) =>
+        ensureExactLength(service, 30, `introduction.services[${index}]`)
+      );
+
+      return {
+        title,
+        subtitle,
+        services,
+        validity: ensureString(parsed.validity, "introduction.validity"),
+        buttonText: ensureString(parsed.buttonText, "introduction.buttonText"),
+      };
+    } catch (error) {
+      console.error("Prime Introduction Generation Error:", error);
+      throw error;
+    }
   }
 
   private async generateAboutUs() {
     const userPrompt = `Crie seção Sobre Nós premium. Responda somente com JSON.
 
+IMPORTANTE: Os textos devem ter EXATAMENTE as contagens de caracteres especificadas (contando espaços).
+
 Retorne:
 {
-  "title": "Frase com transformação e lucro, 155 caracteres",
-  "supportText": "Frase de apoio sofisticada, 70 caracteres",
-  "subtitle": "Descrição detalhada sem citar cliente, 250 caracteres"
+  "title": "Frase com transformação e lucro, EXATAMENTE 155 caracteres",
+  "supportText": "Frase de apoio sofisticada, EXATAMENTE 70 caracteres",
+  "subtitle": "Descrição detalhada sem citar cliente, EXATAMENTE 250 caracteres"
+}
+
+Exemplos:
+- Título com 155 caracteres: "Nós acreditamos em parcerias que transformam ideias em conquistas sólidas, aumentando valor, impacto e lucro de forma sustentável para você."
+- SupportText com 70 caracteres: "Nossa equipe é composta por especialistas dedicados e experientes."
+- Subtítulo com 250 caracteres: "Combinamos criatividade e estratégia para entregar soluções de design que geram resultados duradouros. Nossa equipe é apaixonada por criar experiências visuais que atendem às necessidades de cada cliente, com foco em inovação e impacto no mercado."`;
+
+    try {
+      const response = await this.runLLM(userPrompt);
+      const parsed = JSON.parse(response);
+
+      // Validate and retry if needed
+      if (
+        parsed.title.length !== 155 ||
+        parsed.supportText.length !== 70 ||
+        parsed.subtitle.length !== 250
+      ) {
+        console.log(
+          `Prime AboutUs length mismatch: title=${parsed.title.length}, supportText=${parsed.supportText.length}, subtitle=${parsed.subtitle.length}, retrying...`
+        );
+        const retryPrompt = `O conteúdo anterior tinha contagens incorretas:
+- Título: ${parsed.title.length} caracteres (deveria ter 155)
+- SupportText: ${parsed.supportText.length} caracteres (deveria ter 70)
+- Subtítulo: ${parsed.subtitle.length} caracteres (deveria ter 250)
+
+Crie novos textos com as contagens EXATAS:
+
+{
+  "title": "Novo título com exatamente 155 caracteres",
+  "supportText": "Novo supportText com exatamente 70 caracteres",
+  "subtitle": "Novo subtítulo com exatamente 250 caracteres"
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+        const retryResponse = await this.runLLM(retryPrompt);
+        const retryParsed = JSON.parse(retryResponse);
 
-    return {
-      title: ensureExactLength(parsed.title, 155, "aboutUs.title"),
-      supportText: ensureExactLength(
-        parsed.supportText,
-        70,
-        "aboutUs.supportText"
-      ),
-      subtitle: ensureExactLength(parsed.subtitle, 250, "aboutUs.subtitle"),
-    };
+        return {
+          title: ensureExactLength(retryParsed.title, 155, "aboutUs.title"),
+          supportText: ensureExactLength(
+            retryParsed.supportText,
+            70,
+            "aboutUs.supportText"
+          ),
+          subtitle: ensureExactLength(
+            retryParsed.subtitle,
+            250,
+            "aboutUs.subtitle"
+          ),
+        };
+      }
+
+      return {
+        title: ensureExactLength(parsed.title, 155, "aboutUs.title"),
+        supportText: ensureExactLength(
+          parsed.supportText,
+          70,
+          "aboutUs.supportText"
+        ),
+        subtitle: ensureExactLength(parsed.subtitle, 250, "aboutUs.subtitle"),
+      };
+    } catch (error) {
+      console.error("Prime AboutUs Generation Error:", error);
+      throw error;
+    }
   }
 
   private async generateTeam() {
     const userPrompt = `Crie título e subtítulo para seção Time premium. Retorne JSON.
+
+IMPORTANTE: Os textos devem ter EXATAMENTE as contagens de caracteres especificadas (contando espaços).
+
 {
-  "title": "Frase com confiança e parceria, 60 caracteres",
-  "subtitle": "Frase sobre dedicação e proximidade, 120 caracteres"
+  "title": "Frase com confiança e parceria, EXATAMENTE 60 caracteres",
+  "subtitle": "Frase sobre dedicação e proximidade, EXATAMENTE 120 caracteres"
+}
+
+Exemplos:
+- Título com 60 caracteres: "Nós crescemos junto com você, lado a lado sempre"
+- Subtítulo com 120 caracteres: "Nossa equipe é composta por especialistas dedicados que trabalham em parceria com você para alcançar resultados excepcionais."`;
+
+    try {
+      const response = await this.runLLM(userPrompt);
+      const parsed = JSON.parse(response);
+
+      // Validate and retry if needed
+      if (parsed.title.length !== 60 || parsed.subtitle.length !== 120) {
+        console.log(
+          `Prime Team length mismatch: title=${parsed.title.length}, subtitle=${parsed.subtitle.length}, retrying...`
+        );
+        const retryPrompt = `O conteúdo anterior tinha contagens incorretas:
+- Título: ${parsed.title.length} caracteres (deveria ter 60)
+- Subtítulo: ${parsed.subtitle.length} caracteres (deveria ter 120)
+
+Crie novos textos com as contagens EXATAS:
+
+{
+  "title": "Novo título com exatamente 60 caracteres",
+  "subtitle": "Novo subtítulo com exatamente 120 caracteres"
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+        const retryResponse = await this.runLLM(retryPrompt);
+        const retryParsed = JSON.parse(retryResponse);
 
-    return {
-      title: ensureExactLength(parsed.title, 60, "team.title"),
-      subtitle: ensureExactLength(parsed.subtitle, 120, "team.subtitle"),
-    };
+        return {
+          title: ensureExactLength(retryParsed.title, 60, "team.title"),
+          subtitle: ensureExactLength(
+            retryParsed.subtitle,
+            120,
+            "team.subtitle"
+          ),
+        };
+      }
+
+      return {
+        title: ensureExactLength(parsed.title, 60, "team.title"),
+        subtitle: ensureExactLength(parsed.subtitle, 120, "team.subtitle"),
+      };
+    } catch (error) {
+      console.error("Prime Team Generation Error:", error);
+      throw error;
+    }
   }
 
   private async generateSpecialties() {
@@ -367,16 +546,48 @@ Retorne:
 
   private async generateScope() {
     const userPrompt = `Crie escopo premium. Retorne JSON.
+
+IMPORTANTE: O texto deve ter EXATAMENTE 400 caracteres (contando espaços), nem mais nem menos.
+
 {
   "content": "Texto com exatamente 400 caracteres"
+}
+
+Exemplo de texto com 400 caracteres: "Nosso projeto premium reúne estratégias digitais avançadas que elevam sua autoridade e ampliam suas oportunidades de crescimento sustentável. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma consistente e mensurável."`;
+
+    try {
+      const response = await this.runLLM(userPrompt);
+      const parsed = JSON.parse(response);
+
+      // Validate and retry if needed
+      if (parsed.content.length !== 400) {
+        console.log(
+          `Prime Scope length mismatch: ${parsed.content.length}, retrying...`
+        );
+        const retryPrompt = `O conteúdo anterior tinha ${parsed.content.length} caracteres. Crie um novo conteúdo com EXATAMENTE 400 caracteres:
+
+"${parsed.content}"
+
+Retorne JSON:
+{
+  "content": "Novo conteúdo com exatamente 400 caracteres"
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+        const retryResponse = await this.runLLM(retryPrompt);
+        const retryParsed = JSON.parse(retryResponse);
 
-    return {
-      content: ensureExactLength(parsed.content, 400, "scope.content"),
-    };
+        return {
+          content: ensureExactLength(retryParsed.content, 400, "scope.content"),
+        };
+      }
+
+      return {
+        content: ensureExactLength(parsed.content, 400, "scope.content"),
+      };
+    } catch (error) {
+      console.error("Prime Scope Generation Error:", error);
+      throw error;
+    }
   }
 
   private async generateInvestment() {

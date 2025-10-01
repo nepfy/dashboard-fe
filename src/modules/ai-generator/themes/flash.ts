@@ -731,10 +731,13 @@ REGRAS CRÍTICAS:
   ): Promise<FlashTeamSection> {
     const userPrompt = `Responda APENAS com JSON válido.
 
-Crie o título da seção "Time" com exatamente 55 caracteres.
+Crie o título da seção "Time" com EXATAMENTE 55 caracteres (contando espaços).
 - Linguagem inclusiva, calorosa e confiante
 - Foque em parceria, proximidade e evolução
 - Proibido mencionar cliente, empresa ou metodologia
+- IMPORTANTE: O texto deve ter exatamente 55 caracteres, nem mais nem menos
+
+Exemplo de texto com 55 caracteres: "Nós crescemos junto com você, lado a lado sempre"
 
 Retorne:
 {
@@ -745,8 +748,31 @@ Retorne:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashTeamSection;
 
-      ensureExactLength(parsed.title, 55, "team.title");
+      // Validate and retry if needed
+      if (parsed.title.length !== 55) {
+        console.log(
+          `Team title length mismatch: ${parsed.title.length}, retrying...`
+        );
+        const retryPrompt = `O título anterior tinha ${parsed.title.length} caracteres. Crie um novo título com EXATAMENTE 55 caracteres:
 
+"${parsed.title}"
+
+Retorne JSON:
+{
+  "title": "Novo título com exatamente 55 caracteres"
+}`;
+
+        const retryResponse = await this.runLLM(
+          retryPrompt,
+          agent.systemPrompt
+        );
+        const retryParsed = JSON.parse(retryResponse) as FlashTeamSection;
+
+        ensureExactLength(retryParsed.title, 55, "team.title");
+        return retryParsed;
+      }
+
+      ensureExactLength(parsed.title, 55, "team.title");
       return parsed;
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
@@ -760,11 +786,14 @@ Retorne:
   ): Promise<FlashScopeSection> {
     const userPrompt = `Responda somente com JSON válido.
 
-Crie o conteúdo da seção "Escopo do Projeto" com exatamente 350 caracteres.
+Crie o conteúdo da seção "Escopo do Projeto" com EXATAMENTE 350 caracteres (contando espaços).
 - Integre benefícios do investimento e entregas principais
 - Proibido citar cliente, empresa ou metodologia
 - Foque em transformação, crescimento e previsibilidade
 - Linguagem natural, ativa e confiante
+- IMPORTANTE: O texto deve ter exatamente 350 caracteres, nem mais nem menos
+
+Exemplo de texto com 350 caracteres: "Nosso projeto reúne estratégias digitais que aumentam sua autoridade e ampliam suas oportunidades de crescimento. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma sustentável."
 
 Retorne:
 {
@@ -775,8 +804,31 @@ Retorne:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashScopeSection;
 
-      ensureExactLength(parsed.content, 350, "scope.content");
+      // Validate and retry if needed
+      if (parsed.content.length !== 350) {
+        console.log(
+          `Scope content length mismatch: ${parsed.content.length}, retrying...`
+        );
+        const retryPrompt = `O conteúdo anterior tinha ${parsed.content.length} caracteres. Crie um novo conteúdo com EXATAMENTE 350 caracteres:
 
+"${parsed.content}"
+
+Retorne JSON:
+{
+  "content": "Novo conteúdo com exatamente 350 caracteres"
+}`;
+
+        const retryResponse = await this.runLLM(
+          retryPrompt,
+          agent.systemPrompt
+        );
+        const retryParsed = JSON.parse(retryResponse) as FlashScopeSection;
+
+        ensureExactLength(retryParsed.content, 350, "scope.content");
+        return retryParsed;
+      }
+
+      ensureExactLength(parsed.content, 350, "scope.content");
       return parsed;
     } catch (error) {
       console.error("Flash Scope Generation Error:", error);
