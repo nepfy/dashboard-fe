@@ -3,7 +3,7 @@ import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
 import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 import { validateMaxLengthWithWarning } from "./validators";
-import { safeJSONParse, generateJSONRetryPrompt } from "./json-utils";
+import { generateJSONRetryPrompt } from "./json-utils";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {
@@ -208,7 +208,7 @@ export class FlashTemplateWorkflow {
         : Promise.resolve(undefined),
       data.includeFAQ
         ? this.generateFAQ(data, agent)
-        : Promise.resolve(this.getFallbackFAQ()),
+        : Promise.resolve(undefined),
     ]);
 
     // Collect sections for metadata
@@ -234,7 +234,7 @@ export class FlashTemplateWorkflow {
       scope,
       investment,
       ...(terms && { terms }),
-      faq,
+      faq: faq || [],
       footer: this.generateFooter(data),
     };
   }
@@ -278,73 +278,34 @@ REGRAS CRÍTICAS:
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashIntroductionSection;
+      let parsed: FlashIntroductionSection;
 
-      const titleValidation = validateMaxLengthWithWarning(
-        parsed.title,
-        60,
-        "introduction.title"
-      );
-      const subtitleValidation = validateMaxLengthWithWarning(
-        parsed.subtitle,
-        100,
-        "introduction.subtitle"
-      );
-
-      if (titleValidation.warning) {
-        console.warn(
-          "Flash Introduction Title Warning:",
-          titleValidation.warning
-        );
-      }
-      if (subtitleValidation.warning) {
-        console.warn(
-          "Flash Introduction Subtitle Warning:",
-          subtitleValidation.warning
-        );
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        this.fallbackUsed = true;
+        // Fallback to default values if JSON parsing fails
+        return {
+          title: `${agent.sector} Flash para ${data.projectName}`,
+          subtitle: `Proposta flash personalizada para ${data.clientName}`,
+          services: agent.commonServices.slice(0, 4) || [
+            "Serviço 1",
+            "Serviço 2",
+            "Serviço 3",
+            "Serviço 4",
+          ],
+          validity: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+          ).toLocaleDateString("pt-BR"),
+          buttonText: "Iniciar Projeto Flash",
+        };
       }
 
-      ensureCondition(
-        Array.isArray(parsed.services) && parsed.services.length === 4,
-        "introduction.services must contain exactly 4 items"
-      );
-      parsed.services.forEach((service, index) => {
-        const serviceValidation = validateMaxLengthWithWarning(
-          service,
-          30,
-          `introduction.services[${index}]`
-        );
-        if (serviceValidation.warning) {
-          console.warn(
-            `Flash Introduction Service ${index} Warning:`,
-            serviceValidation.warning
-          );
-        }
-      });
-      ensureCondition(
-        Boolean(parsed.validity),
-        "introduction.validity missing"
-      );
-      ensureCondition(
-        Boolean(parsed.buttonText),
-        "introduction.buttonText missing"
-      );
-
-      return {
-        ...parsed,
-        title: titleValidation.value,
-        subtitle: subtitleValidation.value,
-        services: parsed.services.map((service, index) => {
-          const serviceValidation = validateMaxLengthWithWarning(
-            service,
-            30,
-            `introduction.services[${index}]`
-          );
-          return serviceValidation.value;
-        }),
-      };
+      return parsed;
     } catch (error) {
       console.error("Flash Introduction Generation Error:", error);
+      this.fallbackUsed = true;
       throw error;
     }
   }
@@ -1009,70 +970,26 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parseResult = safeJSONParse<FlashFAQSection>(response);
+      let parsed: FlashFAQSection;
 
-      if (!parseResult.success) {
-        console.error("Flash FAQ JSON Parse Error:", parseResult.error);
-        console.log("Raw response that failed to parse:", response);
-
-        // Return fallback FAQ instead of throwing error
-        console.warn("Using fallback FAQ due to parsing error");
+      try {
+        parsed = JSON.parse(response);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response:", response);
+        this.fallbackUsed = true;
         return this.getFallbackFAQ();
       }
 
-      const parsed = parseResult.data!;
+      // Validate that we have an array with FAQ items
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        console.warn("FAQ response is not a valid array, using fallback");
+        return this.getFallbackFAQ();
+      }
 
-      ensureCondition(
-        Array.isArray(parsed) && parsed.length === 10,
-        "faq must contain exactly 10 items"
-      );
-
-      parsed.forEach((item, index) => {
-        const questionValidation = validateMaxLengthWithWarning(
-          item.question,
-          100,
-          `faq[${index}].question`
-        );
-        const answerValidation = validateMaxLengthWithWarning(
-          item.answer,
-          300,
-          `faq[${index}].answer`
-        );
-        if (questionValidation.warning) {
-          console.warn(
-            `Flash FAQ ${index} Question Warning:`,
-            questionValidation.warning
-          );
-        }
-        if (answerValidation.warning) {
-          console.warn(
-            `Flash FAQ ${index} Answer Warning:`,
-            answerValidation.warning
-          );
-        }
-      });
-
-      return parsed.map((item, index) => {
-        const questionValidation = validateMaxLengthWithWarning(
-          item.question,
-          100,
-          `faq[${index}].question`
-        );
-        const answerValidation = validateMaxLengthWithWarning(
-          item.answer,
-          300,
-          `faq[${index}].answer`
-        );
-        return {
-          ...item,
-          question: questionValidation.value,
-          answer: answerValidation.value,
-        };
-      });
+      return parsed;
     } catch (error) {
       console.error("Flash FAQ Generation Error:", error);
-      // Return fallback FAQ instead of throwing error
-      console.warn("Using fallback FAQ due to generation error");
+      this.fallbackUsed = true;
       return this.getFallbackFAQ();
     }
   }
