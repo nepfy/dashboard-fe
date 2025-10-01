@@ -19,12 +19,12 @@ export default function AgentsList() {
     async function loadAgents() {
       try {
         setLoading(true);
-        
+
         const response = await fetch("/api/admin/agents");
         if (!response.ok) {
           throw new Error("Failed to fetch agents");
         }
-        
+
         const data = await response.json();
         setAgents(data.agents);
       } catch (err) {
@@ -52,10 +52,13 @@ export default function AgentsList() {
 
     try {
       setDeleting(true);
-      
-      const response = await fetch(`/api/admin/agents/${deleteModal.agent.id}`, {
-        method: "DELETE",
-      });
+
+      const response = await fetch(
+        `/api/admin/agents/${deleteModal.agent.id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -63,7 +66,7 @@ export default function AgentsList() {
       }
 
       // Remove o agente da lista local
-      setAgents(prev => {
+      setAgents((prev) => {
         const newAgents = { ...prev };
         delete newAgents[deleteModal.agent!.id];
         return newAgents;

@@ -121,7 +121,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id: agentId } = await params;
 
-    console.log("Debug - DELETE /api/admin/agents/[id] called with:", { agentId });
+    console.log("Debug - DELETE /api/admin/agents/[id] called with:", {
+      agentId,
+    });
 
     // Verificar se o agente existe antes de tentar deletar
     const existingAgent = await db
@@ -151,10 +153,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     console.log("Debug - Agent deleted successfully:", {
       deletedCount: deletedAgent.length,
-      deletedAgent: deletedAgent[0] ? {
-        id: deletedAgent[0].id,
-        name: deletedAgent[0].name,
-      } : null,
+      deletedAgent: deletedAgent[0]
+        ? {
+            id: deletedAgent[0].id,
+            name: deletedAgent[0].name,
+          }
+        : null,
     });
 
     return NextResponse.json({
