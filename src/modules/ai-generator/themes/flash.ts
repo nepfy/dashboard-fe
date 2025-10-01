@@ -454,11 +454,11 @@ REGRAS CRÍTICAS:
     );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
 
-    const userPrompt = `Você é um especialista em propostas comerciais. Gere APENAS um JSON válido.
+    const userPrompt = `Gere APENAS um JSON válido para especialidades.
 
 PROJETO: ${normalizedProjectName} - ${data.projectDescription}
 
-GERE UM JSON EXATAMENTE ASSIM:
+COPIE EXATAMENTE ESTE FORMATO:
 
 {
   "title": "Aplicamos estratégias que unem tecnologia, análise e execução, garantindo performance digital e resultados reais.",
@@ -490,14 +490,15 @@ GERE UM JSON EXATAMENTE ASSIM:
   ]
 }
 
-INSTRUÇÕES OBRIGATÓRIAS:
-1. Use APENAS aspas duplas (") para strings
-2. Gere entre 6 e 9 especialidades
-3. Personalize para: ${data.projectDescription}
-4. Foque em resultados mensuráveis
-5. NÃO cite cliente ou empresa
+REGRAS OBRIGATÓRIAS:
+- Use APENAS aspas duplas (")
+- NÃO use aspas simples (')
+- NÃO use quebras de linha dentro das strings
+- Gere entre 6 e 9 especialidades
+- Personalize para: ${data.projectDescription}
+- NÃO cite cliente ou empresa
 
-Retorne APENAS o JSON, sem explicações.`;
+Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<FlashSpecialtiesSection>(
@@ -588,11 +589,11 @@ Retorne APENAS o JSON, sem explicações.`;
     );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
 
-    const userPrompt = `Você é um especialista em propostas comerciais. Gere APENAS um JSON válido.
+    const userPrompt = `Gere APENAS um JSON válido para etapas do processo.
 
 PROJETO: ${normalizedProjectName} - ${data.projectDescription}
 
-GERE UM JSON EXATAMENTE ASSIM:
+COPIE EXATAMENTE ESTE FORMATO:
 
 {
   "introduction": "Desenvolvemos soluções inovadoras com foco em resultados e impacto contínuo",
@@ -621,14 +622,15 @@ GERE UM JSON EXATAMENTE ASSIM:
   ]
 }
 
-INSTRUÇÕES OBRIGATÓRIAS:
-1. Use APENAS aspas duplas (") para strings
-2. Gere exatamente 5 etapas
-3. Personalize para: ${data.projectDescription}
-4. Foque em clareza e impacto
-5. NÃO cite cliente ou empresa
+REGRAS OBRIGATÓRIAS:
+- Use APENAS aspas duplas (")
+- NÃO use aspas simples (')
+- NÃO use quebras de linha dentro das strings
+- Gere exatamente 5 etapas
+- Personalize para: ${data.projectDescription}
+- NÃO cite cliente ou empresa
 
-Retorne APENAS o JSON, sem explicações.`;
+Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<FlashStepsSection>(
@@ -719,17 +721,12 @@ Retorne APENAS o JSON, sem explicações.`;
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashInvestmentSection> {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais. Sua tarefa é gerar APENAS um JSON válido, sem texto adicional.
+    const userPrompt = `Gere APENAS um JSON válido para investimento.
 
-DADOS DO PROJETO:
-- Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
-- Descrição: ${data.projectDescription}
-- Empresa: ${data.companyInfo}
-- Setor: ${agent.sector}
-- Planos: ${data.selectedPlans.join(", ")}
+PROJETO: ${data.projectName} - ${data.projectDescription}
+PLANOS: ${data.selectedPlans.join(", ")}
 
-GERE UM JSON EXATAMENTE ASSIM:
+COPIE EXATAMENTE ESTE FORMATO:
 
 {
   "title": "Investimento em soluções digitais robustas para crescimento sustentável",
@@ -751,7 +748,7 @@ GERE UM JSON EXATAMENTE ASSIM:
       "topics": ["Site responsivo", "Sistema de agendamento", "Otimização SEO", "Suporte técnico"]
     },
     {
-      "title": "Plano Executivo", 
+      "title": "Plano Executivo",
       "description": "Acelere crescimento com integrações avançadas e automações inteligentes",
       "value": "R$ 7.200",
       "topics": ["Tudo do Essencial", "Integrações avançadas", "Automações", "Relatórios detalhados"]
@@ -759,16 +756,16 @@ GERE UM JSON EXATAMENTE ASSIM:
   ]
 }
 
-INSTRUÇÕES OBRIGATÓRIAS:
-1. Use APENAS aspas duplas (") para strings
-2. NÃO use vírgulas no final de arrays ou objetos
-3. Escape aspas dentro de strings com \\"
-4. Nomes de propriedades exatamente como no exemplo
-5. Valores monetários no formato "R$ X.XXX"
-6. Personalize para o projeto: ${data.projectName}
-7. Use os planos: ${data.selectedPlans.join(", ")}
+REGRAS OBRIGATÓRIAS:
+- Use APENAS aspas duplas (")
+- NÃO use aspas simples (')
+- NÃO use quebras de linha dentro das strings
+- NÃO use vírgulas no final de arrays ou objetos
+- Valores monetários no formato "R$ X.XXX"
+- Personalize para: ${data.projectName}
+- Use os planos: ${data.selectedPlans.join(", ")}
 
-Retorne APENAS o JSON, sem explicações.`;
+Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<FlashInvestmentSection>(
@@ -949,28 +946,64 @@ IMPORTANTE:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashFAQSection> {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
+    const userPrompt = `Gere APENAS um JSON válido para perguntas frequentes.
 
-DADOS DO PROJETO:
-- Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
-- Descrição do Projeto: ${data.projectDescription}
-- Empresa: ${data.companyInfo}
-- Setor: ${agent.sector}
+PROJETO: ${data.projectName} - ${data.projectDescription}
 
-Crie 10 perguntas frequentes personalizadas. Retorne APENAS um array JSON com:
+COPIE EXATAMENTE ESTE FORMATO:
+
 [
   {
-    "question": "Pergunta com exatamente 100 caracteres",
-    "answer": "Resposta empática com exatamente 300 caracteres"
+    "question": "Como vocês garantem que o projeto será entregue no prazo?",
+    "answer": "Utilizamos metodologias ágeis e planejamento detalhado para garantir entregas pontuais. Nossa equipe trabalha com cronogramas realistas e comunicação constante."
+  },
+  {
+    "question": "Posso solicitar alterações durante o desenvolvimento?",
+    "answer": "Sim, incluímos ciclos de revisão e ajustes para garantir que o resultado final atenda perfeitamente às suas expectativas e necessidades."
+  },
+  {
+    "question": "Qual é o processo de acompanhamento do projeto?",
+    "answer": "Mantemos comunicação regular através de reuniões semanais, relatórios de progresso e acesso a plataforma de acompanhamento em tempo real."
+  },
+  {
+    "question": "Vocês oferecem suporte após a entrega?",
+    "answer": "Sim, incluímos período de suporte pós-entrega para garantir que tudo funcione perfeitamente e você tenha total tranquilidade."
+  },
+  {
+    "question": "Como é definido o investimento do projeto?",
+    "answer": "O investimento é baseado na complexidade, prazo e recursos necessários. Apresentamos propostas transparentes sem custos ocultos."
+  },
+  {
+    "question": "Qual é o prazo médio para desenvolvimento?",
+    "answer": "O prazo varia conforme a complexidade, mas geralmente entre 4 a 8 semanas para projetos completos, sempre respeitando suas necessidades."
+  },
+  {
+    "question": "Vocês trabalham com empresas de qualquer porte?",
+    "answer": "Sim, atendemos desde startups até grandes corporações, adaptando nossa abordagem para cada perfil e necessidade específica."
+  },
+  {
+    "question": "Como garantem a qualidade do trabalho?",
+    "answer": "Seguimos rigorosos padrões de qualidade, testes extensivos e revisões constantes para entregar sempre o melhor resultado possível."
+  },
+  {
+    "question": "Posso acompanhar o progresso do projeto?",
+    "answer": "Sim, você terá acesso total ao progresso através de nossa plataforma de acompanhamento e reuniões regulares de alinhamento."
+  },
+  {
+    "question": "O que acontece se eu não ficar satisfeito?",
+    "answer": "Nosso compromisso é sua satisfação total. Trabalhamos até que você esteja completamente satisfeito com o resultado entregue."
   }
 ]
 
-REGRAS CRÍTICAS:
+REGRAS OBRIGATÓRIAS:
+- Use APENAS aspas duplas (")
+- NÃO use aspas simples (')
+- NÃO use quebras de linha dentro das strings
 - Gere exatamente 10 itens
-- Proibido citar cliente, empresa, metodologia ou template
-- Linguagem acolhedora, segura e orientada a resultados
-- Responda somente com JSON.`;
+- Personalize para: ${data.projectDescription}
+- NÃO cite cliente ou empresa
+
+Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<FlashFAQSection>(
@@ -1081,25 +1114,25 @@ Retorne:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashScopeSection> {
-    const userPrompt = `Você é um especialista em propostas comerciais. Gere APENAS um JSON válido.
+    const userPrompt = `Gere APENAS um JSON válido para o escopo do projeto.
 
 PROJETO: ${data.projectName} - ${data.projectDescription}
 
-GERE UM JSON EXATAMENTE ASSIM:
+COPIE EXATAMENTE ESTE FORMATO:
 
 {
   "content": "Nosso projeto integra soluções digitais que ampliam resultados e fortalecem a presença online. Desenvolvemos sistemas robustos que entregam performance, conversão e crescimento sustentável para seu negócio."
 }
 
-INSTRUÇÕES OBRIGATÓRIAS:
-1. Use APENAS aspas duplas (") para strings
-2. Máximo 350 caracteres no content
-3. Foque em benefícios e entregas do projeto
-4. Linguagem natural e confiante
-5. NÃO cite cliente ou empresa
-6. Personalize para: ${data.projectDescription}
+REGRAS OBRIGATÓRIAS:
+- Use APENAS aspas duplas (") 
+- NÃO use aspas simples (')
+- NÃO use quebras de linha dentro das strings
+- Máximo 350 caracteres no content
+- NÃO cite cliente ou empresa
+- Personalize para: ${data.projectDescription}
 
-Retorne APENAS o JSON, sem explicações.`;
+Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<FlashScopeSection>(
