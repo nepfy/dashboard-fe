@@ -4,6 +4,7 @@ import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 import { validateMaxLengthWithWarning } from "./validators";
 import { safeJSONParse, generateJSONRetryPrompt } from "./json-utils";
+import { createCompleteSystemPrompt } from "./json-instructions";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {
@@ -1224,6 +1225,9 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
     systemPrompt: string,
     maxRetries: number = 2
   ): Promise<T> {
+    // Automatically append JSON instructions to systemPrompt
+    const completeSystemPrompt = createCompleteSystemPrompt(systemPrompt);
+    
     let lastError: string = "";
     let lastResponse: string = "";
 
@@ -1233,7 +1237,7 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
           attempt === 0
             ? userPrompt
             : generateJSONRetryPrompt(userPrompt, lastError, lastResponse),
-          systemPrompt
+          completeSystemPrompt
         );
 
         const parseResult = safeJSONParse<T>(response);

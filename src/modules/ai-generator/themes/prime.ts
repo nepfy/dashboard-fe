@@ -10,6 +10,7 @@ import {
   validateMaxLengthWithWarning,
 } from "./validators";
 import { safeJSONParse, generateJSONRetryPrompt } from "./json-utils";
+import { createCompleteSystemPrompt } from "./json-instructions";
 
 export interface PrimeThemeData extends BaseThemeData {
   templateType: "prime";
@@ -1181,6 +1182,11 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
     userPrompt: string,
     maxRetries: number = 2
   ): Promise<T> {
+    // Automatically append JSON instructions to systemPrompt
+    if (this.agent?.systemPrompt) {
+      this.agent.systemPrompt = createCompleteSystemPrompt(this.agent.systemPrompt);
+    }
+    
     let lastError: string = "";
     let lastResponse: string = "";
 
