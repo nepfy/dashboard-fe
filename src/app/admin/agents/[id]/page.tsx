@@ -46,12 +46,27 @@ export default async function AgentPage({ params }: AgentPageProps) {
     // Converter o agente do banco para o tipo esperado
     const agentData: DatabaseAgentConfig = {
       ...agent[0],
-      expertise: agent[0].expertise as string[],
-      commonServices: agent[0].commonServices as string[],
-      proposalStructure: agent[0].proposalStructure as string[],
-      keyTerms: agent[0].keyTerms as string[],
+      expertise: Array.isArray(agent[0].expertise)
+        ? (agent[0].expertise as string[])
+        : [],
+      commonServices: Array.isArray(agent[0].commonServices)
+        ? (agent[0].commonServices as string[])
+        : [],
+      proposalStructure: Array.isArray(agent[0].proposalStructure)
+        ? (agent[0].proposalStructure as string[])
+        : [],
+      keyTerms: Array.isArray(agent[0].keyTerms)
+        ? (agent[0].keyTerms as string[])
+        : [],
       templateConfig: agent[0].templateConfig as TemplateConfig | undefined,
     };
+
+    console.log("Debug - Converted agent data:", {
+      id: agentData.id,
+      name: agentData.name,
+      expertise: agentData.expertise,
+      commonServices: agentData.commonServices,
+    });
 
     return <AgentEditor agent={agentData} />;
   } catch (error) {

@@ -39,15 +39,29 @@ export default function AgentsList() {
     loadAgents();
   }, []);
 
+  // Debug: Monitor modal state changes
+  useEffect(() => {
+    console.log("Debug - Modal state changed:", deleteModal);
+  }, [deleteModal]);
+
   const handleEdit = (agentId: string) => {
     router.push(`/admin/agents/${agentId}`);
   };
 
   const handleDeleteClick = (agent: BaseAgentConfig) => {
+    console.log("Debug - handleDeleteClick called with:", agent);
     setDeleteModal({ isOpen: true, agent });
+    console.log("Debug - Modal state set to:", {
+      isOpen: true,
+      agent: agent.name,
+    });
   };
 
   const handleDeleteConfirm = async () => {
+    console.log(
+      "Debug - Delete confirm clicked for agent:",
+      deleteModal.agent?.name
+    );
     if (!deleteModal.agent) return;
 
     try {
@@ -73,7 +87,9 @@ export default function AgentsList() {
       });
 
       setDeleteModal({ isOpen: false, agent: null });
+      console.log("Debug - Agent deleted successfully");
     } catch (err) {
+      console.error("Debug - Error deleting agent:", err);
       setError(err instanceof Error ? err.message : "Erro ao remover agente");
     } finally {
       setDeleting(false);
@@ -81,6 +97,7 @@ export default function AgentsList() {
   };
 
   const handleDeleteCancel = () => {
+    console.log("Debug - Delete cancel clicked");
     setDeleteModal({ isOpen: false, agent: null });
   };
 
@@ -245,7 +262,15 @@ export default function AgentsList() {
                         </svg>
                       </button>
                       <button
-                        onClick={() => handleDeleteClick(agent)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log(
+                            "Debug - Delete button clicked for agent:",
+                            agent.name
+                          );
+                          handleDeleteClick(agent);
+                        }}
                         className="inline-flex items-center p-1 border border-transparent rounded-full text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                         title="Remover agente"
                       >
