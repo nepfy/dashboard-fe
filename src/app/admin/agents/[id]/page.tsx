@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { getAgentByServiceAndTemplate } from "#/modules/ai-generator/agents";
-import {
-  ServiceType,
-  TemplateType,
-} from "#/modules/ai-generator/agents/base/types";
+import { db } from "#/lib/db";
+import { agentsTable } from "#/lib/db/schema/agents";
+import { eq } from "drizzle-orm";
+import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
+import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-config";
 import AgentEditor from "./components/AgentEditor";
 
 interface AgentPageProps {
@@ -16,40 +16,44 @@ interface AgentPageProps {
 export const revalidate = 0;
 
 export default async function AgentPage({ params }: AgentPageProps) {
-  // Extrair service e template do ID (ex: "marketing-flash-agent" -> service: "marketing", template: "flash")
   const { id } = await params;
-  const idParts = id.split("-");
-  const template = idParts[idParts.length - 2]; // "flash", "prime", "base"
-  const service = idParts.slice(0, -2).join("-"); // "marketing", "marketing-digital", etc.
 
-  console.log("Debug - AgentPage loading with:", { id, service, template });
-
-  if (!template || !service) {
-    notFound();
-  }
+  console.log("Debug - AgentPage loading with ID:", id);
 
   try {
-    const agent = await getAgentByServiceAndTemplate(
-      service as ServiceType,
-      template as TemplateType
-    );
+    // Buscar agente diretamente pelo ID
+    const agent = await db
+      .select()
+      .from(agentsTable)
+      .where(eq(agentsTable.id, id))
+      .limit(1);
 
     console.log(
       "Debug - Agent loaded:",
-      agent
+      agent[0]
         ? {
-            id: agent.id,
-            name: agent.name,
-            systemPrompt: agent.systemPrompt?.substring(0, 100) + "...",
+            id: agent[0].id,
+            name: agent[0].name,
+            systemPrompt: agent[0].systemPrompt?.substring(0, 100) + "...",
           }
         : null
     );
 
-    if (!agent) {
+    if (!agent[0]) {
       notFound();
     }
 
-    return <AgentEditor agent={agent} />;
+    // Converter o agente do banco para o tipo esperado
+    const agentData: DatabaseAgentConfig = {
+      ...agent[0],
+      expertise: agent[0].expertise as string[],
+      commonServices: agent[0].commonServices as string[],
+      proposalStructure: agent[0].proposalStructure as string[],
+      keyTerms: agent[0].keyTerms as string[],
+      templateConfig: agent[0].templateConfig as TemplateConfig | undefined,
+    };
+
+    return <AgentEditor agent={agentData} />;
   } catch (error) {
     console.error("Error loading agent:", error);
     notFound();
