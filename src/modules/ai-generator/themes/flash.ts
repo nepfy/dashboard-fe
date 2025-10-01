@@ -3,6 +3,7 @@ import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
 import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 import { validateMaxLengthWithWarning } from "./validators";
+import { safeJSONParse, generateJSONRetryPrompt } from "./json-utils";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {
@@ -480,8 +481,7 @@ IMPORTANTE:
 - Responda somente com JSON.`;
 
     try {
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashSpecialtiesSection;
+      const parsed = await this.runLLMWithJSONRetry<FlashSpecialtiesSection>(userPrompt, agent.systemPrompt);
 
       const titleValidation = validateMaxLengthWithWarning(
         parsed.title,
@@ -596,8 +596,7 @@ IMPORTANTE:
 - Responda apenas com JSON.`;
 
     try {
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashStepsSection;
+      const parsed = await this.runLLMWithJSONRetry<FlashStepsSection>(userPrompt, agent.systemPrompt);
 
       const introValidation = validateMaxLengthWithWarning(
         parsed.introduction,
@@ -734,8 +733,7 @@ IMPORTANTE:
 - Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     try {
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashInvestmentSection;
+      const parsed = await this.runLLMWithJSONRetry<FlashInvestmentSection>(userPrompt, agent.systemPrompt);
 
       const titleValidation = validateMaxLengthWithWarning(
         parsed.title,
@@ -934,8 +932,7 @@ REGRAS CRÍTICAS:
 - Responda somente com JSON.`;
 
     try {
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashFAQSection;
+      const parsed = await this.runLLMWithJSONRetry<FlashFAQSection>(userPrompt, agent.systemPrompt);
 
       ensureCondition(
         Array.isArray(parsed) && parsed.length === 10,
@@ -1058,8 +1055,7 @@ Retorne:
 }`;
 
     try {
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashScopeSection;
+      const parsed = await this.runLLMWithJSONRetry<FlashScopeSection>(userPrompt, agent.systemPrompt);
 
       // Validate with max length warning instead of throwing error
       const validation = validateMaxLengthWithWarning(
@@ -1138,5 +1134,36 @@ Retorne:
       console.error("LLM API Error:", error);
       throw new Error("Failed to generate content with AI");
     }
+  }
+
+  private async runLLMWithJSONRetry<T>(
+    userPrompt: string,
+    systemPrompt: string,
+    maxRetries: number = 2
+  ): Promise<T> {
+    let lastError: string = "";
+    let lastResponse: string = "";
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await this.runLLM(
+          attempt === 0 ? userPrompt : generateJSONRetryPrompt(userPrompt, lastError, lastResponse),
+          systemPrompt
+        );
+
+        const parseResult = safeJSONParse<T>(response);
+        
+        if (parseResult.success && parseResult.data) {
+          return parseResult.data;
+        }
+
+        lastError = parseResult.error || "Unknown JSON parsing error";
+        lastResponse = parseResult.rawResponse || response;
+      } catch (error) {
+        lastError = error instanceof Error ? error.message : String(error);
+      }
+    }
+
+    throw new Error(`Failed to parse JSON after ${maxRetries + 1} attempts. Last error: ${lastError}`);
   }
 }
