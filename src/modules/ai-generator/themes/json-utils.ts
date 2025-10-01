@@ -51,22 +51,70 @@ export function safeJSONParse<T>(
  * Clean JSON string by removing common issues
  */
 function cleanJSONString(jsonString: string): string {
-  return jsonString
-    // Remove any text before the first {
-    .replace(/^[^{]*/, "")
-    // Remove any text after the last }
-    .replace(/[^}]*$/, "")
-    // Fix common quote issues
+  let cleaned = jsonString;
+  
+  // Remove any text before the first { or [
+  const firstBrace = Math.min(
+    cleaned.indexOf('{') === -1 ? Infinity : cleaned.indexOf('{'),
+    cleaned.indexOf('[') === -1 ? Infinity : cleaned.indexOf('[')
+  );
+  
+  if (firstBrace !== Infinity && firstBrace > 0) {
+    cleaned = cleaned.substring(firstBrace);
+  }
+  
+  // Remove any text after the last } or ]
+  const lastBrace = Math.max(
+    cleaned.lastIndexOf('}'),
+    cleaned.lastIndexOf(']')
+  );
+  
+  if (lastBrace !== -1 && lastBrace < cleaned.length - 1) {
+    cleaned = cleaned.substring(0, lastBrace + 1);
+  }
+  
+  // Fix multiple JSON objects (take the first complete one)
+  const openBraces = (cleaned.match(/\{/g) || []).length;
+  const closeBraces = (cleaned.match(/\}/g) || []).length;
+  
+  if (openBraces > closeBraces) {
+    // Find the first complete object
+    let braceCount = 0;
+    let endIndex = -1;
+    for (let i = 0; i < cleaned.length; i++) {
+      if (cleaned[i] === '{') braceCount++;
+      if (cleaned[i] === '}') braceCount--;
+      if (braceCount === 0) {
+        endIndex = i;
+        break;
+      }
+    }
+    if (endIndex !== -1) {
+      cleaned = cleaned.substring(0, endIndex + 1);
+    }
+  }
+  
+  // Fix common issues
+  cleaned = cleaned
+    // Fix single quotes to double quotes
     .replace(/'/g, '"')
     // Fix trailing commas
     .replace(/,(\s*[}\]])/g, '$1')
     // Fix missing quotes around property names
     .replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
-    // Fix unescaped quotes in strings
+    // Fix unescaped quotes in string values (more robust)
     .replace(/"([^"]*)"([^"]*)"([^"]*)"/g, (match, p1, p2, p3) => {
       return `"${p1}\\"${p2}\\"${p3}"`;
     })
+    // Fix common structural issues
+    .replace(/\{\s*"([^"]+)"\s*:\s*"([^"]+)"\s*\}\s*\{\s*"([^"]+)"\s*:/g, '{"$1":"$2","$3":')
+    // Fix missing commas between objects in arrays
+    .replace(/\}\s*\{\s*"/g, '},{"')
+    // Fix incomplete objects
+    .replace(/\{\s*"([^"]+)"\s*:\s*"([^"]+)"\s*\}\s*$/g, '{"$1":"$2"}')
     .trim();
+  
+  return cleaned;
 }
 
 /**
@@ -95,6 +143,27 @@ function attemptFixJSON(jsonString: string): string {
     fixed = fixed.substring(0, lastBrace + 1);
   }
   
+  // Fix multiple JSON objects (take the first complete one)
+  const openBraces = (fixed.match(/\{/g) || []).length;
+  const closeBraces = (fixed.match(/\}/g) || []).length;
+  
+  if (openBraces > closeBraces) {
+    // Find the first complete object
+    let braceCount = 0;
+    let endIndex = -1;
+    for (let i = 0; i < fixed.length; i++) {
+      if (fixed[i] === '{') braceCount++;
+      if (fixed[i] === '}') braceCount--;
+      if (braceCount === 0) {
+        endIndex = i;
+        break;
+      }
+    }
+    if (endIndex !== -1) {
+      fixed = fixed.substring(0, endIndex + 1);
+    }
+  }
+  
   // Fix common issues
   fixed = fixed
     // Fix single quotes to double quotes
@@ -106,7 +175,18 @@ function attemptFixJSON(jsonString: string): string {
     // Fix unescaped quotes in string values
     .replace(/"([^"]*)"([^"]*)"([^"]*)"/g, (match, p1, p2, p3) => {
       return `"${p1}\\"${p2}\\"${p3}"`;
-    });
+    })
+    // Fix common structural issues
+    .replace(/\{\s*"([^"]+)"\s*:\s*"([^"]+)"\s*\}\s*\{\s*"([^"]+)"\s*:/g, '{"$1":"$2","$3":')
+    // Fix missing commas between objects in arrays
+    .replace(/\}\s*\{\s*"/g, '},{"')
+    // Fix incomplete objects
+    .replace(/\{\s*"([^"]+)"\s*:\s*"([^"]+)"\s*\}\s*$/g, '{"$1":"$2"}')
+    // Fix malformed property names
+    .replace(/"([^"]+)"\s*:\s*"([^"]+)"\s*"([^"]+)"\s*:/g, '"$1":"$2","$3":')
+    // Fix missing colons
+    .replace(/"([^"]+)"\s*"([^"]+)"\s*:/g, '"$1":"$2",')
+    .trim();
   
   return fixed;
 }

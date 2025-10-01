@@ -454,34 +454,56 @@ REGRAS CRÍTICAS:
     );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
 
-    const userPrompt = `PROJETO ESPECÍFICO:
-- Cliente: ${data.clientName}
-- Projeto: ${normalizedProjectName}
-- Descrição: ${data.projectDescription}
-- Empresa: ${data.companyInfo}
+    const userPrompt = `Você é um especialista em propostas comerciais. Gere APENAS um JSON válido.
 
-Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
+PROJETO: ${normalizedProjectName} - ${data.projectDescription}
 
-Retorne JSON com:
+GERE UM JSON EXATAMENTE ASSIM:
+
 {
-  "title": "Título com autoridade e resultados, exatamente 140 caracteres",
+  "title": "Aplicamos estratégias que unem tecnologia, análise e execução, garantindo performance digital e resultados reais.",
   "topics": [
     {
-      "title": "Especialidade específica com exatamente 50 caracteres",
-      "description": "Como ajuda o projeto com exatamente 100 caracteres"
+      "title": "Desenvolvimento web responsivo",
+      "description": "Sites otimizados que convertem visitantes em clientes com performance superior."
+    },
+    {
+      "title": "Sistemas de agendamento",
+      "description": "Plataformas personalizadas que automatizam e organizam seus agendamentos."
+    },
+    {
+      "title": "Integrações avançadas",
+      "description": "Conectamos ferramentas para criar fluxos de trabalho mais eficientes."
+    },
+    {
+      "title": "Otimização de performance",
+      "description": "Aceleramos carregamento e melhoramos experiência do usuário."
+    },
+    {
+      "title": "Segurança e proteção",
+      "description": "Implementamos medidas robustas para proteger dados e operações."
+    },
+    {
+      "title": "Suporte técnico contínuo",
+      "description": "Acompanhamento especializado para garantir funcionamento perfeito."
     }
   ]
 }
 
-IMPORTANTE:
-- Gere entre 6 e 9 especialidades
-- Proibido citar cliente ou template
-- Foque em resultados mensuráveis e autoridade
-- Linguagem natural, ativa e humanizada
-- Responda somente com JSON.`;
+INSTRUÇÕES OBRIGATÓRIAS:
+1. Use APENAS aspas duplas (") para strings
+2. Gere entre 6 e 9 especialidades
+3. Personalize para: ${data.projectDescription}
+4. Foque em resultados mensuráveis
+5. NÃO cite cliente ou empresa
+
+Retorne APENAS o JSON, sem explicações.`;
 
     try {
-      const parsed = await this.runLLMWithJSONRetry<FlashSpecialtiesSection>(userPrompt, agent.systemPrompt);
+      const parsed = await this.runLLMWithJSONRetry<FlashSpecialtiesSection>(
+        userPrompt,
+        agent.systemPrompt
+      );
 
       const titleValidation = validateMaxLengthWithWarning(
         parsed.title,
@@ -566,37 +588,53 @@ IMPORTANTE:
     );
     const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
 
-    const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
+    const userPrompt = `Você é um especialista em propostas comerciais. Gere APENAS um JSON válido.
 
-DADOS DO PROJETO:
-- Cliente: ${data.clientName}
-- Projeto: ${normalizedProjectName}
-- Descrição do Projeto: ${data.projectDescription}
-- Empresa: ${data.companyInfo}
-- Setor: ${agent.sector}
+PROJETO: ${normalizedProjectName} - ${data.projectDescription}
 
-Crie uma seção "Processo" personalizada para o projeto ${normalizedProjectName}. Retorne APENAS um objeto JSON com:
+GERE UM JSON EXATAMENTE ASSIM:
 
 {
-  "introduction": "Introdução com exatamente 100 caracteres",
+  "introduction": "Desenvolvemos soluções inovadoras com foco em resultados e impacto contínuo",
   "title": "Nosso Processo",
   "topics": [
     {
-      "title": "Etapa com exatamente 40 caracteres",
-      "description": "Descrição com exatamente 240 caracteres"
+      "title": "Análise e planejamento estratégico",
+      "description": "Mapeamos necessidades e objetivos para criar uma estratégia personalizada que maximize resultados e garanta o sucesso do seu projeto digital."
+    },
+    {
+      "title": "Desenvolvimento e implementação",
+      "description": "Construímos soluções robustas e escaláveis, utilizando tecnologias modernas para entregar performance e funcionalidades excepcionais."
+    },
+    {
+      "title": "Testes e otimização",
+      "description": "Realizamos testes rigorosos e otimizações contínuas para garantir que sua solução funcione perfeitamente em todos os dispositivos."
+    },
+    {
+      "title": "Deploy e configuração",
+      "description": "Implementamos sua solução com segurança e configuramos todos os sistemas para funcionar de forma integrada e eficiente."
+    },
+    {
+      "title": "Suporte e acompanhamento",
+      "description": "Oferecemos suporte contínuo e monitoramento para garantir que sua solução continue performando e gerando resultados consistentes."
     }
   ]
 }
 
-IMPORTANTE:
-- Gere exatamente 5 etapas
-- Proibido citar cliente, nome da empresa ou metodologia
-- Foque em clareza, impacto e lucro
-- Linguagem natural, ativa e próxima
-- Responda apenas com JSON.`;
+INSTRUÇÕES OBRIGATÓRIAS:
+1. Use APENAS aspas duplas (") para strings
+2. Gere exatamente 5 etapas
+3. Personalize para: ${data.projectDescription}
+4. Foque em clareza e impacto
+5. NÃO cite cliente ou empresa
+
+Retorne APENAS o JSON, sem explicações.`;
 
     try {
-      const parsed = await this.runLLMWithJSONRetry<FlashStepsSection>(userPrompt, agent.systemPrompt);
+      const parsed = await this.runLLMWithJSONRetry<FlashStepsSection>(
+        userPrompt,
+        agent.systemPrompt
+      );
 
       const introValidation = validateMaxLengthWithWarning(
         parsed.introduction,
@@ -681,59 +719,62 @@ IMPORTANTE:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashInvestmentSection> {
-    const userPrompt = `Você é um especialista em criação de propostas comerciais. Responda APENAS com JSON válido, sem texto adicional.
+    const userPrompt = `Você é um especialista em criação de propostas comerciais. Sua tarefa é gerar APENAS um JSON válido, sem texto adicional.
 
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Descrição do Projeto: ${data.projectDescription}
+- Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
 - Setor: ${agent.sector}
-- Planos Selecionados: ${data.selectedPlans.join(", ")}
+- Planos: ${data.selectedPlans.join(", ")}
 
-Crie uma seção "Investimento" personalizada para o projeto ${
-      data.projectName
-    } de ${data.clientName}. Retorne APENAS um objeto JSON com:
+GERE UM JSON EXATAMENTE ASSIM:
 
 {
-  "title": "Título da seção de investimento com exatamente 85 caracteres",
+  "title": "Investimento em soluções digitais robustas para crescimento sustentável",
   "deliverables": [
     {
-      "title": "Entrega específica para ${
-        data.projectName
-      } (máximo 30 caracteres)",
-      "description": "Descrição aplicada ao projeto com até 330 caracteres"
+      "title": "Site institucional",
+      "description": "Desenvolvimento completo de site responsivo com sistema de agendamento integrado, otimizado para conversão e performance."
+    },
+    {
+      "title": "Sistema de agendamento",
+      "description": "Plataforma personalizada para gestão de agendamentos com notificações automáticas e integração com calendários."
     }
   ],
   "plans": [
     {
-      "title": "Plano com exatamente 20 caracteres",
-      "description": "Descrição imperativa com call to action, exatamente 95 caracteres",
-      "value": "R$X.XXX",
-      "topics": ["Benefício com até 45 caracteres"]
+      "title": "Plano Essencial",
+      "description": "Impulsione resultados com soluções digitais que ampliam performance e conversão",
+      "value": "R$ 4.500",
+      "topics": ["Site responsivo", "Sistema de agendamento", "Otimização SEO", "Suporte técnico"]
+    },
+    {
+      "title": "Plano Executivo", 
+      "description": "Acelere crescimento com integrações avançadas e automações inteligentes",
+      "value": "R$ 7.200",
+      "topics": ["Tudo do Essencial", "Integrações avançadas", "Automações", "Relatórios detalhados"]
     }
   ]
 }
 
-REGRAS CRÍTICAS PARA JSON VÁLIDO:
-- Use APENAS aspas duplas (") para strings
-- Escape quebras de linha com \\n
-- Escape aspas dentro de strings com \\"
-- NÃO use vírgulas no final de arrays ou objetos
-- NÃO inclua propriedades extras como "_id", "__v"
-- Valores monetários: "R$ 1.999,90" (sem unicode)
-- Nomes de propriedades exatamente como especificado
-- Teste o JSON antes de retornar
+INSTRUÇÕES OBRIGATÓRIAS:
+1. Use APENAS aspas duplas (") para strings
+2. NÃO use vírgulas no final de arrays ou objetos
+3. Escape aspas dentro de strings com \\"
+4. Nomes de propriedades exatamente como no exemplo
+5. Valores monetários no formato "R$ X.XXX"
+6. Personalize para o projeto: ${data.projectName}
+7. Use os planos: ${data.selectedPlans.join(", ")}
 
-IMPORTANTE: 
-- Use as informações específicas do projeto: ${data.projectDescription}
-- Personalize para o cliente: ${data.clientName}
-- Use os planos selecionados: ${data.selectedPlans.join(", ")}
-- NÃO mencione "metodologia FLASH" ou termos genéricos
-- Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
+Retorne APENAS o JSON, sem explicações.`;
 
     try {
-      const parsed = await this.runLLMWithJSONRetry<FlashInvestmentSection>(userPrompt, agent.systemPrompt);
+      const parsed = await this.runLLMWithJSONRetry<FlashInvestmentSection>(
+        userPrompt,
+        agent.systemPrompt
+      );
 
       const titleValidation = validateMaxLengthWithWarning(
         parsed.title,
@@ -932,7 +973,10 @@ REGRAS CRÍTICAS:
 - Responda somente com JSON.`;
 
     try {
-      const parsed = await this.runLLMWithJSONRetry<FlashFAQSection>(userPrompt, agent.systemPrompt);
+      const parsed = await this.runLLMWithJSONRetry<FlashFAQSection>(
+        userPrompt,
+        agent.systemPrompt
+      );
 
       ensureCondition(
         Array.isArray(parsed) && parsed.length === 10,
@@ -1037,25 +1081,31 @@ Retorne:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashScopeSection> {
-    const userPrompt = `Responda APENAS com JSON válido.
+    const userPrompt = `Você é um especialista em propostas comerciais. Gere APENAS um JSON válido.
 
-Crie o conteúdo da seção "Escopo do Projeto" com MÁXIMO 350 caracteres (contando espaços):
-- Integre benefícios do investimento e entregas principais
-- Proibido citar cliente, empresa ou metodologia
-- Foque em transformação, crescimento e previsibilidade
-- Linguagem natural, ativa e confiante
-- Seja conciso e direto ao ponto
+PROJETO: ${data.projectName} - ${data.projectDescription}
 
-EXEMPLO (350 caracteres):
-"Nosso projeto reúne estratégias digitais que aumentam sua autoridade e ampliam suas oportunidades de crescimento. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma sustentável."
+GERE UM JSON EXATAMENTE ASSIM:
 
-Retorne:
 {
-  "content": "Seu texto com máximo 350 caracteres"
-}`;
+  "content": "Nosso projeto integra soluções digitais que ampliam resultados e fortalecem a presença online. Desenvolvemos sistemas robustos que entregam performance, conversão e crescimento sustentável para seu negócio."
+}
+
+INSTRUÇÕES OBRIGATÓRIAS:
+1. Use APENAS aspas duplas (") para strings
+2. Máximo 350 caracteres no content
+3. Foque em benefícios e entregas do projeto
+4. Linguagem natural e confiante
+5. NÃO cite cliente ou empresa
+6. Personalize para: ${data.projectDescription}
+
+Retorne APENAS o JSON, sem explicações.`;
 
     try {
-      const parsed = await this.runLLMWithJSONRetry<FlashScopeSection>(userPrompt, agent.systemPrompt);
+      const parsed = await this.runLLMWithJSONRetry<FlashScopeSection>(
+        userPrompt,
+        agent.systemPrompt
+      );
 
       // Validate with max length warning instead of throwing error
       const validation = validateMaxLengthWithWarning(
@@ -1147,12 +1197,14 @@ Retorne:
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         const response = await this.runLLM(
-          attempt === 0 ? userPrompt : generateJSONRetryPrompt(userPrompt, lastError, lastResponse),
+          attempt === 0
+            ? userPrompt
+            : generateJSONRetryPrompt(userPrompt, lastError, lastResponse),
           systemPrompt
         );
 
         const parseResult = safeJSONParse<T>(response);
-        
+
         if (parseResult.success && parseResult.data) {
           return parseResult.data;
         }
@@ -1164,6 +1216,10 @@ Retorne:
       }
     }
 
-    throw new Error(`Failed to parse JSON after ${maxRetries + 1} attempts. Last error: ${lastError}`);
+    throw new Error(
+      `Failed to parse JSON after ${
+        maxRetries + 1
+      } attempts. Last error: ${lastError}`
+    );
   }
 }

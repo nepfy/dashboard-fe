@@ -9,6 +9,7 @@ import {
   ensureString,
   validateMaxLengthWithWarning,
 } from "./validators";
+import { safeJSONParse, generateJSONRetryPrompt } from "./json-utils";
 
 export interface PrimeThemeData extends BaseThemeData {
   templateType: "prime";
@@ -19,9 +20,68 @@ export interface PrimeThemeData extends BaseThemeData {
   };
 }
 
+export interface PrimeIntroductionSection {
+  title: string;
+  subtitle: string;
+  services: string[];
+  validity: string;
+  buttonText: string;
+}
+
+export interface PrimeAboutUsSection {
+  title: string;
+  supportText: string;
+  subtitle: string;
+}
+
 export interface PrimeTeamSection {
   title: string;
   subtitle: string;
+}
+
+export interface PrimeSpecialtiesSection {
+  title: string;
+  topics: Array<{
+    title: string;
+    description: string;
+  }>;
+}
+
+export interface PrimeProcessStepsSection {
+  introduction: string;
+  title: string;
+  topics: Array<{
+    title: string;
+    description: string;
+  }>;
+}
+
+export interface PrimeScopeSection {
+  content: string;
+}
+
+export interface PrimeInvestmentSection {
+  title: string;
+  deliverables: Array<{
+    title: string;
+    description: string;
+  }>;
+  plans: Array<{
+    title: string;
+    description: string;
+    value: string;
+    topics: string[];
+  }>;
+}
+
+export type PrimeFAQSection = Array<{
+  question: string;
+  answer: string;
+}>;
+
+export interface PrimeFooterSection {
+  callToAction: string;
+  contactInfo: string;
 }
 
 export interface PrimeSpecialtyTopic {
@@ -217,8 +277,9 @@ Exemplos:
 - Serviços com 30 caracteres: "Consultoria estratégica", "Desenvolvimento premium"`;
 
     try {
-      const response = await this.runLLM(userPrompt);
-      const parsed = JSON.parse(response);
+      const parsed = await this.runLLMWithJSONRetry<PrimeIntroductionSection>(
+        userPrompt
+      );
 
       // Validate and retry if needed
       const titleLength = parsed.title?.length || 0;
@@ -409,8 +470,9 @@ Exemplos:
 - Subtítulo com 250 caracteres: "Combinamos criatividade e estratégia para entregar soluções de design que geram resultados duradouros. Nossa equipe é apaixonada por criar experiências visuais que atendem às necessidades de cada cliente, com foco em inovação e impacto no mercado."`;
 
     try {
-      const response = await this.runLLM(userPrompt);
-      const parsed = JSON.parse(response);
+      const parsed = await this.runLLMWithJSONRetry<PrimeAboutUsSection>(
+        userPrompt
+      );
 
       // Validate and retry if needed
       if (
@@ -537,8 +599,9 @@ Exemplos:
 - Subtítulo com 120 caracteres: "Nossa equipe é composta por especialistas dedicados que trabalham em parceria com você para alcançar resultados excepcionais."`;
 
     try {
-      const response = await this.runLLM(userPrompt);
-      const parsed = JSON.parse(response);
+      const parsed = await this.runLLMWithJSONRetry<PrimeTeamSection>(
+        userPrompt
+      );
 
       // Validate and retry if needed
       if (parsed.title.length !== 60 || parsed.subtitle.length !== 120) {
@@ -632,8 +695,9 @@ Crie novos textos com as contagens EXATAS:
   ]
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+    const parsed = await this.runLLMWithJSONRetry<PrimeProcessStepsSection>(
+      userPrompt
+    );
 
     const topics = ensureArray<PrimeSpecialtyTopic>(
       parsed.topics,
@@ -702,8 +766,9 @@ Crie novos textos com as contagens EXATAS:
   ]
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+    const parsed = await this.runLLMWithJSONRetry<PrimeProcessStepsSection>(
+      userPrompt
+    );
 
     const topics = ensureArray<PrimeStepsTopic>(parsed.topics, "steps.topics");
     ensureCondition(
@@ -784,8 +849,9 @@ Crie o conteúdo da seção "Escopo do Projeto" (máximo 400 caracteres):
 Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elevam sua autoridade e ampliam suas oportunidades de crescimento sustentável. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma consistente e mensurável."`;
 
     try {
-      const response = await this.runLLM(userPrompt);
-      const parsed = JSON.parse(response);
+      const parsed = await this.runLLMWithJSONRetry<PrimeScopeSection>(
+        userPrompt
+      );
 
       // Validate with max length warning instead of throwing error
       const validation = validateMaxLengthWithWarning(
@@ -829,8 +895,9 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
   ]
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+    const parsed = await this.runLLMWithJSONRetry<PrimeInvestmentSection>(
+      userPrompt
+    );
 
     const deliverables = ensureArray<PrimeDeliverable>(
       parsed.deliverables,
@@ -956,8 +1023,9 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
   }
 ]`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+    const parsed = await this.runLLMWithJSONRetry<
+      Array<{ title: string; description: string }>
+    >(userPrompt);
     const terms = ensureArray<{ title: string; description: string }>(
       parsed,
       "terms"
@@ -1006,8 +1074,7 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
   }
 ]`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+    const parsed = await this.runLLMWithJSONRetry<PrimeFAQSection>(userPrompt);
     const faq = ensureArray<PrimeFAQItem>(parsed, "faq");
 
     ensureCondition(faq.length === 8, "faq must contain exactly 8 items");
@@ -1051,8 +1118,9 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
   "contactInfo": "Texto com 150 caracteres"
 }`;
 
-    const response = await this.runLLM(userPrompt);
-    const parsed = JSON.parse(response);
+    const parsed = await this.runLLMWithJSONRetry<PrimeFooterSection>(
+      userPrompt
+    );
 
     const callToActionValidation = validateMaxLengthWithWarning(
       parsed.callToAction,
@@ -1107,5 +1175,40 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
     );
 
     return result!.trim();
+  }
+
+  private async runLLMWithJSONRetry<T>(
+    userPrompt: string,
+    maxRetries: number = 2
+  ): Promise<T> {
+    let lastError: string = "";
+    let lastResponse: string = "";
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await this.runLLM(
+          attempt === 0
+            ? userPrompt
+            : generateJSONRetryPrompt(userPrompt, lastError, lastResponse)
+        );
+
+        const parseResult = safeJSONParse<T>(response);
+
+        if (parseResult.success && parseResult.data) {
+          return parseResult.data;
+        }
+
+        lastError = parseResult.error || "Unknown JSON parsing error";
+        lastResponse = parseResult.rawResponse || response;
+      } catch (error) {
+        lastError = error instanceof Error ? error.message : String(error);
+      }
+    }
+
+    throw new Error(
+      `Failed to parse JSON after ${
+        maxRetries + 1
+      } attempts. Last error: ${lastError}`
+    );
   }
 }

@@ -42,7 +42,7 @@ const DEFAULT_SERVICES: Service[] = [
     icon: <ArchitectIcon />,
   },
   {
-    id: "fotografo",
+    id: "photography",
     title: "Fotógrafo",
     icon: <PhotographerIcon />,
   },
