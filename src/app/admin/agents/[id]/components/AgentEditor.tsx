@@ -74,37 +74,93 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
   }, [hasChanges, agent.id, editedAgent]);
 
   // Detectar mudanças
+  // Função para comparar objetos de forma mais robusta
+  const compareAgents = (
+    a: DatabaseAgentConfig,
+    b: DatabaseAgentConfig
+  ): boolean => {
+    // Comparar campos básicos
+    if (a.name !== b.name) return false;
+    if (a.sector !== b.sector) return false;
+    if (a.systemPrompt !== b.systemPrompt) return false;
+
+    // Comparar arrays
+    const compareArrays = (arr1: string[], arr2: string[]): boolean => {
+      if (arr1.length !== arr2.length) return false;
+      return arr1.every((item, index) => item === arr2[index]);
+    };
+
+    if (!compareArrays(a.expertise || [], b.expertise || [])) return false;
+    if (!compareArrays(a.commonServices || [], b.commonServices || []))
+      return false;
+    if (!compareArrays(a.proposalStructure || [], b.proposalStructure || []))
+      return false;
+    if (!compareArrays(a.keyTerms || [], b.keyTerms || [])) return false;
+
+    // Comparar templateConfig
+    if (JSON.stringify(a.templateConfig) !== JSON.stringify(b.templateConfig))
+      return false;
+
+    return true;
+  };
+
   useEffect(() => {
-    const hasChanges = JSON.stringify(editedAgent) !== JSON.stringify(agent);
+    const hasChanges = !compareAgents(editedAgent, agent);
+    console.log("Debug - Change detection:", {
+      hasChanges,
+      editedAgent: {
+        name: editedAgent.name,
+        systemPrompt: editedAgent.systemPrompt?.substring(0, 50) + "...",
+        expertise: editedAgent.expertise?.length || 0,
+      },
+      originalAgent: {
+        name: agent.name,
+        systemPrompt: agent.systemPrompt?.substring(0, 50) + "...",
+        expertise: agent.expertise?.length || 0,
+      },
+    });
     setHasChanges(hasChanges);
   }, [editedAgent, agent]);
 
-  // Auto-save após 2 segundos de inatividade
-  useEffect(() => {
-    if (!hasChanges) return;
+  // Auto-save desabilitado temporariamente para debug
+  // useEffect(() => {
+  //   if (!hasChanges) return;
 
-    const timeoutId = setTimeout(() => {
-      handleSave();
-    }, 2000);
+  //   const timeoutId = setTimeout(() => {
+  //     handleSave();
+  //   }, 2000);
 
-    return () => clearTimeout(timeoutId);
-  }, [editedAgent, hasChanges, handleSave]);
+  //   return () => clearTimeout(timeoutId);
+  // }, [editedAgent, hasChanges, handleSave]);
 
   const handleChange = (
     field: string,
     value: string | string[] | TemplateConfig | null
   ) => {
+    console.log("Debug - handleChange called:", {
+      field,
+      value: typeof value === "string" ? value.substring(0, 50) + "..." : value,
+    });
+
     const normalizedValue =
       field === "templateConfig" && value === null ? undefined : value;
 
-    setEditedAgent((prev) => ({
-      ...prev,
-      [field]: normalizedValue as
-        | string
-        | string[]
-        | TemplateConfig
-        | undefined,
-    }));
+    setEditedAgent((prev) => {
+      const newAgent = {
+        ...prev,
+        [field]: normalizedValue as
+          | string
+          | string[]
+          | TemplateConfig
+          | undefined,
+      };
+      console.log("Debug - Updated agent:", {
+        field,
+        oldValue: prev[field as keyof DatabaseAgentConfig],
+        newValue: normalizedValue,
+      });
+      return newAgent;
+    });
   };
 
   return (
@@ -209,7 +265,13 @@ export default function AgentEditor({ agent }: AgentEditorProps) {
 
           {/* Botão de Salvar Manual */}
           <button
-            onClick={handleSave}
+            onClick={() => {
+              console.log("Debug - Save button clicked:", {
+                hasChanges,
+                isSaving,
+              });
+              handleSave();
+            }}
             disabled={!hasChanges || isSaving}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
