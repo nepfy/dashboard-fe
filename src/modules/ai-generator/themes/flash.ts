@@ -4,7 +4,6 @@ import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 import { validateMaxLengthWithWarning } from "./validators";
 import { safeJSONParse, generateJSONRetryPrompt } from "./json-utils";
-import { createCompleteSystemPrompt } from "./json-instructions";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {
@@ -1007,15 +1006,21 @@ REGRAS OBRIGATÓRIAS:
 Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
     try {
-      const parsed = await this.runLLMWithJSONRetry<FlashFAQSection>(
-        userPrompt,
-        agent.systemPrompt
-      );
-
+      const response = await this.runLLM(userPrompt, agent.systemPrompt);
+      const parseResult = safeJSONParse<FlashFAQSection>(response);
+      
+      if (!parseResult.success) {
+        console.error("Flash FAQ JSON Parse Error:", parseResult.error);
+        throw new Error(`Failed to parse FAQ JSON: ${parseResult.error}`);
+      }
+      
+      const parsed = parseResult.data!;
+      
       ensureCondition(
         Array.isArray(parsed) && parsed.length === 10,
         "faq must contain exactly 10 items"
       );
+      
       parsed.forEach((item, index) => {
         const questionValidation = validateMaxLengthWithWarning(
           item.question,
@@ -1027,7 +1032,6 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
           300,
           `faq[${index}].answer`
         );
-
         if (questionValidation.warning) {
           console.warn(
             `Flash FAQ ${index} Question Warning:`,
@@ -1041,7 +1045,7 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
           );
         }
       });
-
+      
       return parsed.map((item, index) => {
         const questionValidation = validateMaxLengthWithWarning(
           item.question,
@@ -1053,7 +1057,6 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
           300,
           `faq[${index}].answer`
         );
-
         return {
           ...item,
           question: questionValidation.value,
@@ -1225,11 +1228,8 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
     systemPrompt: string,
     maxRetries: number = 2
   ): Promise<T> {
-    // Automatically append JSON instructions to systemPrompt
-    const completeSystemPrompt = createCompleteSystemPrompt(systemPrompt);
-    
     let lastError: string = "";
-    let lastResponse: string = "";
+    const lastResponse: string = "";
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
@@ -1237,17 +1237,10 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
           attempt === 0
             ? userPrompt
             : generateJSONRetryPrompt(userPrompt, lastError, lastResponse),
-          completeSystemPrompt
+          systemPrompt
         );
 
-        const parseResult = safeJSONParse<T>(response);
-
-        if (parseResult.success && parseResult.data) {
-          return parseResult.data;
-        }
-
-        lastError = parseResult.error || "Unknown JSON parsing error";
-        lastResponse = parseResult.rawResponse || response;
+        return JSON.parse(response) as T;
       } catch (error) {
         lastError = error instanceof Error ? error.message : String(error);
       }

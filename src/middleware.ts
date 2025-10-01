@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/login(.*)",
   "/criar-conta(.*)",
   "/recuperar-conta(.*)",
+  "/proposta-com-ia(.*)",
   "/termos-de-uso(.*)",
   "/project(.*)",
   "/admin(.*)", // Temporário para desenvolvimento
