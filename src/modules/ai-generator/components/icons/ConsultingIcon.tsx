@@ -32,10 +32,25 @@ export default function ConsultingIcon() {
         {/* Two people icons representing consulting/agencies */}
         <circle cx="60" cy="45" r="8" fill="white" />
         <circle cx="106" cy="45" r="8" fill="white" />
-        <path d="M52 60C52 55 56 50 60 50C64 50 68 55 68 60" stroke="white" strokeWidth="2" fill="none" />
-        <path d="M98 60C98 55 102 50 106 50C110 50 114 55 114 60" stroke="white" strokeWidth="2" fill="none" />
+        <path
+          d="M52 60C52 55 56 50 60 50C64 50 68 55 68 60"
+          stroke="white"
+          strokeWidth="2"
+          fill="none"
+        />
+        <path
+          d="M98 60C98 55 102 50 106 50C110 50 114 55 114 60"
+          stroke="white"
+          strokeWidth="2"
+          fill="none"
+        />
         {/* Connection line between people */}
-        <path d="M68 45L98 45" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path
+          d="M68 45L98 45"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
         {/* Chart/analytics icon */}
         <rect x="70" y="65" width="4" height="12" fill="white" />
         <rect x="78" y="60" width="4" height="17" fill="white" />
