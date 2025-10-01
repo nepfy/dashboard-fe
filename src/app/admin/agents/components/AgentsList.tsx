@@ -39,19 +39,12 @@ export default function AgentsList() {
     loadAgents();
   }, []);
 
-  // Debug: Monitor modal state changes
-  useEffect(() => {
-    console.log("Debug - Modal state changed:", deleteModal);
-  }, [deleteModal]);
-
   const handleEdit = (agentId: string) => {
     router.push(`/admin/agents/${agentId}`);
   };
 
   const handleDeleteClick = (agent: BaseAgentConfig) => {
-    console.log("Debug - handleDeleteClick called with:", agent);
     setDeleteModal({ isOpen: true, agent });
-    console.log("Debug - Modal state after setState:", { isOpen: true, agent });
   };
 
   const handleDeleteConfirm = async () => {
