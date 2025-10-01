@@ -4,10 +4,8 @@ import { BaseThemeData } from "./base-theme";
 import {
   ensureArray,
   ensureCondition,
-  ensureExactLength,
   ensureLengthBetween,
   ensureMatchesRegex,
-  ensureMaxLength,
   ensureString,
   validateMaxLengthWithWarning,
 } from "./validators";
@@ -262,16 +260,30 @@ Crie novos textos com as contagens EXATAS:
         const retryResponse = await this.runLLM(retryPrompt);
         const retryParsed = JSON.parse(retryResponse);
 
-        const retryTitle = ensureExactLength(
+        const retryTitleValidation = validateMaxLengthWithWarning(
           retryParsed.title,
           60,
           "introduction.title"
         );
-        const retrySubtitle = ensureExactLength(
+        const retrySubtitleValidation = validateMaxLengthWithWarning(
           retryParsed.subtitle,
           100,
           "introduction.subtitle"
         );
+
+        if (retryTitleValidation.warning) {
+          console.warn(
+            "Prime Introduction Retry Title Warning:",
+            retryTitleValidation.warning
+          );
+        }
+        if (retrySubtitleValidation.warning) {
+          console.warn(
+            "Prime Introduction Retry Subtitle Warning:",
+            retrySubtitleValidation.warning
+          );
+        }
+
         const retryServices = ensureArray<string>(
           retryParsed.services,
           "introduction.services"
@@ -280,14 +292,31 @@ Crie novos textos com as contagens EXATAS:
           retryServices.length === 4,
           "introduction.services must have 4 items"
         );
-        retryServices.forEach((service, index) =>
-          ensureExactLength(service, 30, `introduction.services[${index}]`)
-        );
+        retryServices.forEach((service, index) => {
+          const serviceValidation = validateMaxLengthWithWarning(
+            service,
+            30,
+            `introduction.services[${index}]`
+          );
+          if (serviceValidation.warning) {
+            console.warn(
+              `Prime Introduction Retry Service ${index} Warning:`,
+              serviceValidation.warning
+            );
+          }
+        });
 
         return {
-          title: retryTitle,
-          subtitle: retrySubtitle,
-          services: retryServices,
+          title: retryTitleValidation.value,
+          subtitle: retrySubtitleValidation.value,
+          services: retryServices.map((service, index) => {
+            const serviceValidation = validateMaxLengthWithWarning(
+              service,
+              30,
+              `introduction.services[${index}]`
+            );
+            return serviceValidation.value;
+          }),
           validity: ensureString(retryParsed.validity, "introduction.validity"),
           buttonText: ensureString(
             retryParsed.buttonText,
@@ -296,12 +325,30 @@ Crie novos textos com as contagens EXATAS:
         };
       }
 
-      const title = ensureExactLength(parsed.title, 60, "introduction.title");
-      const subtitle = ensureExactLength(
+      const titleValidation = validateMaxLengthWithWarning(
+        parsed.title,
+        60,
+        "introduction.title"
+      );
+      const subtitleValidation = validateMaxLengthWithWarning(
         parsed.subtitle,
         100,
         "introduction.subtitle"
       );
+
+      if (titleValidation.warning) {
+        console.warn(
+          "Prime Introduction Title Warning:",
+          titleValidation.warning
+        );
+      }
+      if (subtitleValidation.warning) {
+        console.warn(
+          "Prime Introduction Subtitle Warning:",
+          subtitleValidation.warning
+        );
+      }
+
       const services = ensureArray<string>(
         parsed.services,
         "introduction.services"
@@ -310,14 +357,31 @@ Crie novos textos com as contagens EXATAS:
         services.length === 4,
         "introduction.services must have 4 items"
       );
-      services.forEach((service, index) =>
-        ensureExactLength(service, 30, `introduction.services[${index}]`)
-      );
+      services.forEach((service, index) => {
+        const serviceValidation = validateMaxLengthWithWarning(
+          service,
+          30,
+          `introduction.services[${index}]`
+        );
+        if (serviceValidation.warning) {
+          console.warn(
+            `Prime Introduction Service ${index} Warning:`,
+            serviceValidation.warning
+          );
+        }
+      });
 
       return {
-        title,
-        subtitle,
-        services,
+        title: titleValidation.value,
+        subtitle: subtitleValidation.value,
+        services: services.map((service, index) => {
+          const serviceValidation = validateMaxLengthWithWarning(
+            service,
+            30,
+            `introduction.services[${index}]`
+          );
+          return serviceValidation.value;
+        }),
         validity: ensureString(parsed.validity, "introduction.validity"),
         buttonText: ensureString(parsed.buttonText, "introduction.buttonText"),
       };
@@ -373,29 +437,84 @@ Crie novos textos com as contagens EXATAS:
         const retryResponse = await this.runLLM(retryPrompt);
         const retryParsed = JSON.parse(retryResponse);
 
+        const retryTitleValidation = validateMaxLengthWithWarning(
+          retryParsed.title,
+          155,
+          "aboutUs.title"
+        );
+        const retrySupportTextValidation = validateMaxLengthWithWarning(
+          retryParsed.supportText,
+          70,
+          "aboutUs.supportText"
+        );
+        const retrySubtitleValidation = validateMaxLengthWithWarning(
+          retryParsed.subtitle,
+          250,
+          "aboutUs.subtitle"
+        );
+
+        if (retryTitleValidation.warning) {
+          console.warn(
+            "Prime AboutUs Retry Title Warning:",
+            retryTitleValidation.warning
+          );
+        }
+        if (retrySupportTextValidation.warning) {
+          console.warn(
+            "Prime AboutUs Retry SupportText Warning:",
+            retrySupportTextValidation.warning
+          );
+        }
+        if (retrySubtitleValidation.warning) {
+          console.warn(
+            "Prime AboutUs Retry Subtitle Warning:",
+            retrySubtitleValidation.warning
+          );
+        }
+
         return {
-          title: ensureExactLength(retryParsed.title, 155, "aboutUs.title"),
-          supportText: ensureExactLength(
-            retryParsed.supportText,
-            70,
-            "aboutUs.supportText"
-          ),
-          subtitle: ensureExactLength(
-            retryParsed.subtitle,
-            250,
-            "aboutUs.subtitle"
-          ),
+          title: retryTitleValidation.value,
+          supportText: retrySupportTextValidation.value,
+          subtitle: retrySubtitleValidation.value,
         };
       }
 
+      const titleValidation = validateMaxLengthWithWarning(
+        parsed.title,
+        155,
+        "aboutUs.title"
+      );
+      const supportTextValidation = validateMaxLengthWithWarning(
+        parsed.supportText,
+        70,
+        "aboutUs.supportText"
+      );
+      const subtitleValidation = validateMaxLengthWithWarning(
+        parsed.subtitle,
+        250,
+        "aboutUs.subtitle"
+      );
+
+      if (titleValidation.warning) {
+        console.warn("Prime AboutUs Title Warning:", titleValidation.warning);
+      }
+      if (supportTextValidation.warning) {
+        console.warn(
+          "Prime AboutUs SupportText Warning:",
+          supportTextValidation.warning
+        );
+      }
+      if (subtitleValidation.warning) {
+        console.warn(
+          "Prime AboutUs Subtitle Warning:",
+          subtitleValidation.warning
+        );
+      }
+
       return {
-        title: ensureExactLength(parsed.title, 155, "aboutUs.title"),
-        supportText: ensureExactLength(
-          parsed.supportText,
-          70,
-          "aboutUs.supportText"
-        ),
-        subtitle: ensureExactLength(parsed.subtitle, 250, "aboutUs.subtitle"),
+        title: titleValidation.value,
+        supportText: supportTextValidation.value,
+        subtitle: subtitleValidation.value,
       };
     } catch (error) {
       console.error("Prime AboutUs Generation Error:", error);
@@ -440,19 +559,60 @@ Crie novos textos com as contagens EXATAS:
         const retryResponse = await this.runLLM(retryPrompt);
         const retryParsed = JSON.parse(retryResponse);
 
+        const retryTitleValidation = validateMaxLengthWithWarning(
+          retryParsed.title,
+          60,
+          "team.title"
+        );
+        const retrySubtitleValidation = validateMaxLengthWithWarning(
+          retryParsed.subtitle,
+          120,
+          "team.subtitle"
+        );
+
+        if (retryTitleValidation.warning) {
+          console.warn(
+            "Prime Team Retry Title Warning:",
+            retryTitleValidation.warning
+          );
+        }
+        if (retrySubtitleValidation.warning) {
+          console.warn(
+            "Prime Team Retry Subtitle Warning:",
+            retrySubtitleValidation.warning
+          );
+        }
+
         return {
-          title: ensureExactLength(retryParsed.title, 60, "team.title"),
-          subtitle: ensureExactLength(
-            retryParsed.subtitle,
-            120,
-            "team.subtitle"
-          ),
+          title: retryTitleValidation.value,
+          subtitle: retrySubtitleValidation.value,
         };
       }
 
+      const titleValidation = validateMaxLengthWithWarning(
+        parsed.title,
+        60,
+        "team.title"
+      );
+      const subtitleValidation = validateMaxLengthWithWarning(
+        parsed.subtitle,
+        120,
+        "team.subtitle"
+      );
+
+      if (titleValidation.warning) {
+        console.warn("Prime Team Title Warning:", titleValidation.warning);
+      }
+      if (subtitleValidation.warning) {
+        console.warn(
+          "Prime Team Subtitle Warning:",
+          subtitleValidation.warning
+        );
+      }
+
       return {
-        title: ensureExactLength(parsed.title, 60, "team.title"),
-        subtitle: ensureExactLength(parsed.subtitle, 120, "team.subtitle"),
+        title: titleValidation.value,
+        subtitle: subtitleValidation.value,
       };
     } catch (error) {
       console.error("Prime Team Generation Error:", error);
@@ -484,20 +644,48 @@ Crie novos textos com as contagens EXATAS:
       "specialties.topics must have exactly 9 items"
     );
 
+    const titleValidation = validateMaxLengthWithWarning(
+      parsed.title,
+      180,
+      "specialties.title"
+    );
+
+    if (titleValidation.warning) {
+      console.warn("Prime Specialties Title Warning:", titleValidation.warning);
+    }
+
     return {
-      title: ensureExactLength(parsed.title, 180, "specialties.title"),
-      topics: topics.map((topic, index) => ({
-        title: ensureExactLength(
+      title: titleValidation.value,
+      topics: topics.map((topic, index) => {
+        const topicTitleValidation = validateMaxLengthWithWarning(
           topic.title,
           60,
           `specialties.topics[${index}].title`
-        ),
-        description: ensureExactLength(
+        );
+        const topicDescValidation = validateMaxLengthWithWarning(
           topic.description,
           140,
           `specialties.topics[${index}].description`
-        ),
-      })),
+        );
+
+        if (topicTitleValidation.warning) {
+          console.warn(
+            `Prime Specialties Topic ${index} Title Warning:`,
+            topicTitleValidation.warning
+          );
+        }
+        if (topicDescValidation.warning) {
+          console.warn(
+            `Prime Specialties Topic ${index} Description Warning:`,
+            topicDescValidation.warning
+          );
+        }
+
+        return {
+          title: topicTitleValidation.value,
+          description: topicDescValidation.value,
+        };
+      }),
     };
   }
 
@@ -523,25 +711,60 @@ Crie novos textos com as contagens EXATAS:
       "steps.topics must have exactly 6 items"
     );
 
+    const introValidation = validateMaxLengthWithWarning(
+      parsed.introduction,
+      120,
+      "steps.introduction"
+    );
+    const titleValidation = validateMaxLengthWithWarning(
+      parsed.title,
+      50,
+      "steps.title"
+    );
+
+    if (introValidation.warning) {
+      console.warn(
+        "Prime Steps Introduction Warning:",
+        introValidation.warning
+      );
+    }
+    if (titleValidation.warning) {
+      console.warn("Prime Steps Title Warning:", titleValidation.warning);
+    }
+
     return {
-      introduction: ensureExactLength(
-        parsed.introduction,
-        120,
-        "steps.introduction"
-      ),
-      title: ensureExactLength(parsed.title, 50, "steps.title"),
-      topics: topics.map((topic, index) => ({
-        title: ensureExactLength(
+      introduction: introValidation.value,
+      title: titleValidation.value,
+      topics: topics.map((topic, index) => {
+        const topicTitleValidation = validateMaxLengthWithWarning(
           topic.title,
           45,
           `steps.topics[${index}].title`
-        ),
-        description: ensureExactLength(
+        );
+        const topicDescValidation = validateMaxLengthWithWarning(
           topic.description,
           260,
           `steps.topics[${index}].description`
-        ),
-      })),
+        );
+
+        if (topicTitleValidation.warning) {
+          console.warn(
+            `Prime Steps Topic ${index} Title Warning:`,
+            topicTitleValidation.warning
+          );
+        }
+        if (topicDescValidation.warning) {
+          console.warn(
+            `Prime Steps Topic ${index} Description Warning:`,
+            topicDescValidation.warning
+          );
+        }
+
+        return {
+          title: topicTitleValidation.value,
+          description: topicDescValidation.value,
+        };
+      }),
     };
   }
 
@@ -624,30 +847,73 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
       "investment.plans must contain exactly 3 items"
     );
 
+    const titleValidation = validateMaxLengthWithWarning(
+      parsed.title,
+      95,
+      "investment.title"
+    );
+
+    if (titleValidation.warning) {
+      console.warn("Prime Investment Title Warning:", titleValidation.warning);
+    }
+
     return {
-      title: ensureExactLength(parsed.title, 95, "investment.title"),
-      deliverables: deliverables.map((deliverable, index) => ({
-        title: ensureExactLength(
+      title: titleValidation.value,
+      deliverables: deliverables.map((deliverable, index) => {
+        const deliverableTitleValidation = validateMaxLengthWithWarning(
           deliverable.title,
           35,
           `investment.deliverables[${index}].title`
-        ),
-        description: (() => {
-          const validation = validateMaxLengthWithWarning(
-            deliverable.description,
-            350,
-            `investment.deliverables[${index}].description`
+        );
+        const deliverableDescValidation = validateMaxLengthWithWarning(
+          deliverable.description,
+          350,
+          `investment.deliverables[${index}].description`
+        );
+
+        if (deliverableTitleValidation.warning) {
+          console.warn(
+            `Prime Investment Deliverable ${index} Title Warning:`,
+            deliverableTitleValidation.warning
           );
-          if (validation.warning) {
-            console.warn(
-              "Prime Investment Deliverable Warning:",
-              validation.warning
-            );
-          }
-          return validation.value;
-        })(),
-      })),
+        }
+        if (deliverableDescValidation.warning) {
+          console.warn(
+            `Prime Investment Deliverable ${index} Description Warning:`,
+            deliverableDescValidation.warning
+          );
+        }
+
+        return {
+          title: deliverableTitleValidation.value,
+          description: deliverableDescValidation.value,
+        };
+      }),
       plans: plans.map((plan, index) => {
+        const planTitleValidation = validateMaxLengthWithWarning(
+          plan.title,
+          25,
+          `investment.plans[${index}].title`
+        );
+        const planDescValidation = validateMaxLengthWithWarning(
+          plan.description,
+          110,
+          `investment.plans[${index}].description`
+        );
+
+        if (planTitleValidation.warning) {
+          console.warn(
+            `Prime Investment Plan ${index} Title Warning:`,
+            planTitleValidation.warning
+          );
+        }
+        if (planDescValidation.warning) {
+          console.warn(
+            `Prime Investment Plan ${index} Description Warning:`,
+            planDescValidation.warning
+          );
+        }
+
         ensureMatchesRegex(
           plan.value,
           currencyRegex,
@@ -659,24 +925,23 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
         );
 
         return {
-          title: ensureExactLength(
-            plan.title,
-            25,
-            `investment.plans[${index}].title`
-          ),
-          description: ensureExactLength(
-            plan.description,
-            110,
-            `investment.plans[${index}].description`
-          ),
+          title: planTitleValidation.value,
+          description: planDescValidation.value,
           value: plan.value,
-          topics: plan.topics.map((topic, topicIndex) =>
-            ensureMaxLength(
+          topics: plan.topics.map((topic, topicIndex) => {
+            const topicValidation = validateMaxLengthWithWarning(
               topic,
               50,
               `investment.plans[${index}].topics[${topicIndex}]`
-            )
-          ),
+            );
+            if (topicValidation.warning) {
+              console.warn(
+                `Prime Investment Plan ${index} Topic ${topicIndex} Warning:`,
+                topicValidation.warning
+              );
+            }
+            return topicValidation.value;
+          }),
         };
       }),
     };
@@ -700,14 +965,36 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
 
     ensureLengthBetween(terms, 1, 5, "terms");
 
-    return terms.map((term, index) => ({
-      title: ensureExactLength(term.title, 35, `terms[${index}].title`),
-      description: ensureExactLength(
+    return terms.map((term, index) => {
+      const titleValidation = validateMaxLengthWithWarning(
+        term.title,
+        35,
+        `terms[${index}].title`
+      );
+      const descValidation = validateMaxLengthWithWarning(
         term.description,
         200,
         `terms[${index}].description`
-      ),
-    }));
+      );
+
+      if (titleValidation.warning) {
+        console.warn(
+          `Prime Terms ${index} Title Warning:`,
+          titleValidation.warning
+        );
+      }
+      if (descValidation.warning) {
+        console.warn(
+          `Prime Terms ${index} Description Warning:`,
+          descValidation.warning
+        );
+      }
+
+      return {
+        title: titleValidation.value,
+        description: descValidation.value,
+      };
+    });
   }
 
   private async generateFAQ() {
@@ -725,10 +1012,36 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
 
     ensureCondition(faq.length === 8, "faq must contain exactly 8 items");
 
-    return faq.map((item, index) => ({
-      question: ensureExactLength(item.question, 120, `faq[${index}].question`),
-      answer: ensureExactLength(item.answer, 320, `faq[${index}].answer`),
-    }));
+    return faq.map((item, index) => {
+      const questionValidation = validateMaxLengthWithWarning(
+        item.question,
+        120,
+        `faq[${index}].question`
+      );
+      const answerValidation = validateMaxLengthWithWarning(
+        item.answer,
+        320,
+        `faq[${index}].answer`
+      );
+
+      if (questionValidation.warning) {
+        console.warn(
+          `Prime FAQ ${index} Question Warning:`,
+          questionValidation.warning
+        );
+      }
+      if (answerValidation.warning) {
+        console.warn(
+          `Prime FAQ ${index} Answer Warning:`,
+          answerValidation.warning
+        );
+      }
+
+      return {
+        question: questionValidation.value,
+        answer: answerValidation.value,
+      };
+    });
   }
 
   private async generateFooter() {
@@ -741,17 +1054,33 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
     const response = await this.runLLM(userPrompt);
     const parsed = JSON.parse(response);
 
+    const callToActionValidation = validateMaxLengthWithWarning(
+      parsed.callToAction,
+      60,
+      "footer.callToAction"
+    );
+    const contactInfoValidation = validateMaxLengthWithWarning(
+      parsed.contactInfo,
+      150,
+      "footer.contactInfo"
+    );
+
+    if (callToActionValidation.warning) {
+      console.warn(
+        "Prime Footer CallToAction Warning:",
+        callToActionValidation.warning
+      );
+    }
+    if (contactInfoValidation.warning) {
+      console.warn(
+        "Prime Footer ContactInfo Warning:",
+        contactInfoValidation.warning
+      );
+    }
+
     return {
-      callToAction: ensureExactLength(
-        parsed.callToAction,
-        60,
-        "footer.callToAction"
-      ),
-      contactInfo: ensureExactLength(
-        parsed.contactInfo,
-        150,
-        "footer.contactInfo"
-      ),
+      callToAction: callToActionValidation.value,
+      contactInfo: contactInfoValidation.value,
     };
   }
 
