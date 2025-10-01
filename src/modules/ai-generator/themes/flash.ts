@@ -10,23 +10,7 @@ function ensureCondition(condition: boolean, message: string): void {
   }
 }
 
-function ensureString(value: unknown, field: string): string {
-  ensureCondition(typeof value === "string", `${field} must be a string`);
-  return value as string;
-}
 
-function ensureExactLength(
-  value: unknown,
-  expected: number,
-  field: string
-): string {
-  const str = ensureString(value, field);
-  ensureCondition(
-    str.length === expected,
-    `${field} must have exactly ${expected} characters. Received ${str.length}.`
-  );
-  return str;
-}
 
 // Initialize TogetherAI client with proper error handling
 const apiKey = process.env.TOGETHER_API_KEY;
@@ -295,15 +279,26 @@ REGRAS CRÍTICAS:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashIntroductionSection;
 
-      ensureExactLength(parsed.title, 60, "introduction.title");
-      ensureExactLength(parsed.subtitle, 100, "introduction.subtitle");
+      const titleValidation = validateMaxLengthWithWarning(parsed.title, 60, "introduction.title");
+      const subtitleValidation = validateMaxLengthWithWarning(parsed.subtitle, 100, "introduction.subtitle");
+      
+      if (titleValidation.warning) {
+        console.warn("Flash Introduction Title Warning:", titleValidation.warning);
+      }
+      if (subtitleValidation.warning) {
+        console.warn("Flash Introduction Subtitle Warning:", subtitleValidation.warning);
+      }
+      
       ensureCondition(
         Array.isArray(parsed.services) && parsed.services.length === 4,
         "introduction.services must contain exactly 4 items"
       );
-      parsed.services.forEach((service, index) =>
-        ensureExactLength(service, 30, `introduction.services[${index}]`)
-      );
+      parsed.services.forEach((service, index) => {
+        const serviceValidation = validateMaxLengthWithWarning(service, 30, `introduction.services[${index}]`);
+        if (serviceValidation.warning) {
+          console.warn(`Flash Introduction Service ${index} Warning:`, serviceValidation.warning);
+        }
+      });
       ensureCondition(
         Boolean(parsed.validity),
         "introduction.validity missing"
@@ -313,7 +308,15 @@ REGRAS CRÍTICAS:
         "introduction.buttonText missing"
       );
 
-      return parsed;
+      return {
+        ...parsed,
+        title: titleValidation.value,
+        subtitle: subtitleValidation.value,
+        services: parsed.services.map((service, index) => {
+          const serviceValidation = validateMaxLengthWithWarning(service, 30, `introduction.services[${index}]`);
+          return serviceValidation.value;
+        })
+      };
     } catch (error) {
       console.error("Flash Introduction Generation Error:", error);
       throw error;
@@ -373,11 +376,26 @@ REGRAS CRÍTICAS:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashAboutUsSection;
 
-      ensureExactLength(parsed.title, 155, "aboutUs.title");
-      ensureExactLength(parsed.supportText, 70, "aboutUs.supportText");
-      ensureExactLength(parsed.subtitle, 250, "aboutUs.subtitle");
+      const titleValidation = validateMaxLengthWithWarning(parsed.title, 155, "aboutUs.title");
+      const supportTextValidation = validateMaxLengthWithWarning(parsed.supportText, 70, "aboutUs.supportText");
+      const subtitleValidation = validateMaxLengthWithWarning(parsed.subtitle, 250, "aboutUs.subtitle");
+      
+      if (titleValidation.warning) {
+        console.warn("Flash AboutUs Title Warning:", titleValidation.warning);
+      }
+      if (supportTextValidation.warning) {
+        console.warn("Flash AboutUs SupportText Warning:", supportTextValidation.warning);
+      }
+      if (subtitleValidation.warning) {
+        console.warn("Flash AboutUs Subtitle Warning:", subtitleValidation.warning);
+      }
 
-      return parsed;
+      return {
+        ...parsed,
+        title: titleValidation.value,
+        supportText: supportTextValidation.value,
+        subtitle: subtitleValidation.value
+      };
     } catch (error) {
       console.error("Flash About Us Generation Error:", error);
       throw error;
@@ -424,7 +442,12 @@ IMPORTANTE:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashSpecialtiesSection;
 
-      ensureExactLength(parsed.title, 140, "specialties.title");
+      const titleValidation = validateMaxLengthWithWarning(parsed.title, 140, "specialties.title");
+      
+      if (titleValidation.warning) {
+        console.warn("Flash Specialties Title Warning:", titleValidation.warning);
+      }
+      
       ensureCondition(
         Array.isArray(parsed.topics) &&
           parsed.topics.length >= 6 &&
@@ -432,19 +455,47 @@ IMPORTANTE:
         "specialties.topics must contain between 6 and 9 items"
       );
       parsed.topics.forEach((topic, index) => {
-        ensureExactLength(
+        const topicTitleValidation = validateMaxLengthWithWarning(
           topic.title,
           50,
           `specialties.topics[${index}].title`
         );
-        ensureExactLength(
+        const topicDescValidation = validateMaxLengthWithWarning(
           topic.description,
           100,
           `specialties.topics[${index}].description`
         );
+        
+        if (topicTitleValidation.warning) {
+          console.warn(`Flash Specialties Topic ${index} Title Warning:`, topicTitleValidation.warning);
+        }
+        if (topicDescValidation.warning) {
+          console.warn(`Flash Specialties Topic ${index} Description Warning:`, topicDescValidation.warning);
+        }
       });
 
-      return parsed;
+      return {
+        ...parsed,
+        title: titleValidation.value,
+        topics: parsed.topics.map((topic, index) => {
+          const topicTitleValidation = validateMaxLengthWithWarning(
+            topic.title,
+            50,
+            `specialties.topics[${index}].title`
+          );
+          const topicDescValidation = validateMaxLengthWithWarning(
+            topic.description,
+            100,
+            `specialties.topics[${index}].description`
+          );
+          
+          return {
+            ...topic,
+            title: topicTitleValidation.value,
+            description: topicDescValidation.value
+          };
+        })
+      };
     } catch (error) {
       console.error("Flash Specialties Generation Error:", error);
       throw error;
@@ -494,22 +545,54 @@ IMPORTANTE:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashStepsSection;
 
-      ensureExactLength(parsed.introduction, 100, "steps.introduction");
-      ensureExactLength(parsed.title, 12, "steps.title");
+      const introValidation = validateMaxLengthWithWarning(parsed.introduction, 100, "steps.introduction");
+      const titleValidation = validateMaxLengthWithWarning(parsed.title, 12, "steps.title");
+      
+      if (introValidation.warning) {
+        console.warn("Flash Steps Introduction Warning:", introValidation.warning);
+      }
+      if (titleValidation.warning) {
+        console.warn("Flash Steps Title Warning:", titleValidation.warning);
+      }
       ensureCondition(
         Array.isArray(parsed.topics) && parsed.topics.length === 5,
         "steps.topics must contain exactly 5 items"
       );
       parsed.topics.forEach((topic, index) => {
-        ensureExactLength(topic.title, 40, `steps.topics[${index}].title`);
-        ensureExactLength(
+        const topicTitleValidation = validateMaxLengthWithWarning(topic.title, 40, `steps.topics[${index}].title`);
+        const topicDescValidation = validateMaxLengthWithWarning(
           topic.description,
           240,
           `steps.topics[${index}].description`
         );
+        
+        if (topicTitleValidation.warning) {
+          console.warn(`Flash Steps Topic ${index} Title Warning:`, topicTitleValidation.warning);
+        }
+        if (topicDescValidation.warning) {
+          console.warn(`Flash Steps Topic ${index} Description Warning:`, topicDescValidation.warning);
+        }
       });
 
-      return parsed;
+      return {
+        ...parsed,
+        introduction: introValidation.value,
+        title: titleValidation.value,
+        topics: parsed.topics.map((topic, index) => {
+          const topicTitleValidation = validateMaxLengthWithWarning(topic.title, 40, `steps.topics[${index}].title`);
+          const topicDescValidation = validateMaxLengthWithWarning(
+            topic.description,
+            240,
+            `steps.topics[${index}].description`
+          );
+          
+          return {
+            ...topic,
+            title: topicTitleValidation.value,
+            description: topicDescValidation.value
+          };
+        })
+      };
     } catch (error) {
       console.error("Flash Steps Generation Error:", error);
       throw error;
@@ -575,7 +658,11 @@ IMPORTANTE:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashInvestmentSection;
 
-      ensureExactLength(parsed.title, 85, "investment.title");
+      const titleValidation = validateMaxLengthWithWarning(parsed.title, 85, "investment.title");
+      
+      if (titleValidation.warning) {
+        console.warn("Flash Investment Title Warning:", titleValidation.warning);
+      }
       ensureCondition(
         Array.isArray(parsed.deliverables) && parsed.deliverables.length > 0,
         "investment.deliverables must include at least one item"
@@ -595,12 +682,20 @@ IMPORTANTE:
         "investment.plans must include at least one item"
       );
       parsed.plans.forEach((plan, index) => {
-        ensureExactLength(plan.title, 20, `investment.plans[${index}].title`);
-        ensureExactLength(
+        const planTitleValidation = validateMaxLengthWithWarning(plan.title, 20, `investment.plans[${index}].title`);
+        const planDescValidation = validateMaxLengthWithWarning(
           plan.description,
           95,
           `investment.plans[${index}].description`
         );
+        
+        if (planTitleValidation.warning) {
+          console.warn(`Flash Investment Plan ${index} Title Warning:`, planTitleValidation.warning);
+        }
+        if (planDescValidation.warning) {
+          console.warn(`Flash Investment Plan ${index} Description Warning:`, planDescValidation.warning);
+        }
+        
         ensureCondition(
           Boolean(plan.value),
           `investment.plans[${index}].value missing`
@@ -611,15 +706,44 @@ IMPORTANTE:
             plan.topics.length <= 6,
           `investment.plans[${index}].topics must contain 3 to 6 items`
         );
-        plan.topics.forEach((topic, topicIndex) =>
-          ensureCondition(
-            topic.length <= 45,
-            `investment.plans[${index}].topics[${topicIndex}] must have up to 45 characters`
-          )
-        );
+        plan.topics.forEach((topic, topicIndex) => {
+          const topicValidation = validateMaxLengthWithWarning(
+            topic,
+            45,
+            `investment.plans[${index}].topics[${topicIndex}]`
+          );
+          if (topicValidation.warning) {
+            console.warn(`Flash Investment Plan ${index} Topic ${topicIndex} Warning:`, topicValidation.warning);
+          }
+        });
       });
 
-      return parsed;
+      return {
+        ...parsed,
+        title: titleValidation.value,
+        plans: parsed.plans.map((plan, index) => {
+          const planTitleValidation = validateMaxLengthWithWarning(plan.title, 20, `investment.plans[${index}].title`);
+          const planDescValidation = validateMaxLengthWithWarning(
+            plan.description,
+            95,
+            `investment.plans[${index}].description`
+          );
+          
+          return {
+            ...plan,
+            title: planTitleValidation.value,
+            description: planDescValidation.value,
+            topics: plan.topics.map((topic, topicIndex) => {
+              const topicValidation = validateMaxLengthWithWarning(
+                topic,
+                45,
+                `investment.plans[${index}].topics[${topicIndex}]`
+              );
+              return topicValidation.value;
+            })
+          };
+        })
+      };
     } catch (error) {
       console.error("Flash Investment Generation Error:", error);
       throw error;
@@ -715,11 +839,27 @@ REGRAS CRÍTICAS:
         "faq must contain exactly 10 items"
       );
       parsed.forEach((item, index) => {
-        ensureExactLength(item.question, 100, `faq[${index}].question`);
-        ensureExactLength(item.answer, 300, `faq[${index}].answer`);
+        const questionValidation = validateMaxLengthWithWarning(item.question, 100, `faq[${index}].question`);
+        const answerValidation = validateMaxLengthWithWarning(item.answer, 300, `faq[${index}].answer`);
+        
+        if (questionValidation.warning) {
+          console.warn(`Flash FAQ ${index} Question Warning:`, questionValidation.warning);
+        }
+        if (answerValidation.warning) {
+          console.warn(`Flash FAQ ${index} Answer Warning:`, answerValidation.warning);
+        }
       });
 
-      return parsed;
+      return parsed.map((item, index) => {
+        const questionValidation = validateMaxLengthWithWarning(item.question, 100, `faq[${index}].question`);
+        const answerValidation = validateMaxLengthWithWarning(item.answer, 300, `faq[${index}].answer`);
+        
+        return {
+          ...item,
+          question: questionValidation.value,
+          answer: answerValidation.value
+        };
+      });
     } catch (error) {
       console.error("Flash FAQ Generation Error:", error);
       throw error;
