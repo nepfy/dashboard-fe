@@ -25,6 +25,38 @@ export function ensureExactLength(
   return str;
 }
 
+// New function that returns warnings instead of throwing errors
+export function validateLengthWithWarning(
+  value: unknown,
+  expected: number,
+  field: string
+): { value: string; warning?: string } {
+  const str = ensureString(value, field);
+  if (str.length !== expected) {
+    return {
+      value: str,
+      warning: `${field} should have exactly ${expected} characters but has ${str.length}.`,
+    };
+  }
+  return { value: str };
+}
+
+// New function for max length validation with warnings
+export function validateMaxLengthWithWarning(
+  value: unknown,
+  maxLength: number,
+  field: string
+): { value: string; warning?: string } {
+  const str = ensureString(value, field);
+  if (str.length > maxLength) {
+    return {
+      value: str.substring(0, maxLength), // Truncate to max length
+      warning: `${field} exceeded maximum length of ${maxLength} characters (had ${str.length}), truncated.`,
+    };
+  }
+  return { value: str };
+}
+
 export function ensureMaxLength(
   value: unknown,
   max: number,

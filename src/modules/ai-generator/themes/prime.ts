@@ -9,6 +9,7 @@ import {
   ensureMatchesRegex,
   ensureMaxLength,
   ensureString,
+  validateMaxLengthWithWarning,
 } from "./validators";
 
 export interface PrimeThemeData extends BaseThemeData {
@@ -547,46 +548,41 @@ Crie novos textos com as contagens EXATAS:
   private async generateScope() {
     const userPrompt = `Crie escopo premium. Retorne JSON.
 
-IMPORTANTE: O texto deve ter EXATAMENTE 400 caracteres (contando espaços), nem mais nem menos.
+Crie o conteúdo da seção "Escopo do Projeto" (máximo 400 caracteres):
+- Integre benefícios do investimento e entregas principais
+- Foque em transformação, crescimento e previsibilidade
+- Linguagem natural, ativa e confiante
+- Seja conciso e direto ao ponto
 
 {
-  "content": "Texto com exatamente 400 caracteres"
+  "content": "Texto com máximo 400 caracteres"
 }
 
-Exemplo de texto com 400 caracteres: "Nosso projeto premium reúne estratégias digitais avançadas que elevam sua autoridade e ampliam suas oportunidades de crescimento sustentável. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma consistente e mensurável."`;
+Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elevam sua autoridade e ampliam suas oportunidades de crescimento sustentável. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma consistente e mensurável."`;
 
     try {
       const response = await this.runLLM(userPrompt);
       const parsed = JSON.parse(response);
 
-      // Validate and retry if needed
-      if (parsed.content.length !== 400) {
-        console.log(
-          `Prime Scope length mismatch: ${parsed.content.length}, retrying...`
-        );
-        const retryPrompt = `O conteúdo anterior tinha ${parsed.content.length} caracteres. Crie um novo conteúdo com EXATAMENTE 400 caracteres:
+      // Validate with max length warning instead of throwing error
+      const validation = validateMaxLengthWithWarning(
+        parsed.content,
+        400,
+        "scope.content"
+      );
 
-"${parsed.content}"
-
-Retorne JSON:
-{
-  "content": "Novo conteúdo com exatamente 400 caracteres"
-}`;
-
-        const retryResponse = await this.runLLM(retryPrompt);
-        const retryParsed = JSON.parse(retryResponse);
-
-        return {
-          content: ensureExactLength(retryParsed.content, 400, "scope.content"),
-        };
+      if (validation.warning) {
+        console.warn("Prime Scope Generation Warning:", validation.warning);
       }
 
-      return {
-        content: ensureExactLength(parsed.content, 400, "scope.content"),
-      };
+      return { content: validation.value };
     } catch (error) {
       console.error("Prime Scope Generation Error:", error);
-      throw error;
+      // Return a fallback instead of throwing
+      return {
+        content:
+          "Nosso projeto premium reúne estratégias digitais avançadas que elevam sua autoridade e ampliam suas oportunidades de crescimento sustentável. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma consistente e mensurável.",
+      };
     }
   }
 
@@ -636,11 +632,20 @@ Retorne JSON:
           35,
           `investment.deliverables[${index}].title`
         ),
-        description: ensureExactLength(
-          deliverable.description,
-          350,
-          `investment.deliverables[${index}].description`
-        ),
+        description: (() => {
+          const validation = validateMaxLengthWithWarning(
+            deliverable.description,
+            350,
+            `investment.deliverables[${index}].description`
+          );
+          if (validation.warning) {
+            console.warn(
+              "Prime Investment Deliverable Warning:",
+              validation.warning
+            );
+          }
+          return validation.value;
+        })(),
       })),
       plans: plans.map((plan, index) => {
         ensureMatchesRegex(

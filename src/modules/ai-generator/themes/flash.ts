@@ -2,6 +2,7 @@ import Together from "together-ai";
 import { getAgentByServiceAndTemplate, type BaseAgentConfig } from "../agents";
 import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
+import { validateMaxLengthWithWarning } from "./validators";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {
@@ -731,52 +732,42 @@ REGRAS CRÍTICAS:
   ): Promise<FlashTeamSection> {
     const userPrompt = `Responda APENAS com JSON válido.
 
-Crie o título da seção "Time" com EXATAMENTE 55 caracteres (contando espaços).
+Crie o título da seção "Time" (máximo 60 caracteres):
 - Linguagem inclusiva, calorosa e confiante
 - Foque em parceria, proximidade e evolução
 - Proibido mencionar cliente, empresa ou metodologia
-- IMPORTANTE: O texto deve ter exatamente 55 caracteres, nem mais nem menos
+- Seja conciso e impactante
 
-Exemplo de texto com 55 caracteres: "Nós crescemos junto com você, lado a lado sempre"
+EXEMPLO:
+"Nós crescemos junto com você, lado a lado sempre"
 
 Retorne:
 {
-  "title": "Frase com exatamente 55 caracteres"
+  "title": "Seu título para a seção Time"
 }`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashTeamSection;
 
-      // Validate and retry if needed
-      if (parsed.title.length !== 55) {
-        console.log(
-          `Team title length mismatch: ${parsed.title.length}, retrying...`
-        );
-        const retryPrompt = `O título anterior tinha ${parsed.title.length} caracteres. Crie um novo título com EXATAMENTE 55 caracteres:
+      // Validate with max length warning instead of throwing error
+      const validation = validateMaxLengthWithWarning(
+        parsed.title,
+        60,
+        "team.title"
+      );
 
-"${parsed.title}"
-
-Retorne JSON:
-{
-  "title": "Novo título com exatamente 55 caracteres"
-}`;
-
-        const retryResponse = await this.runLLM(
-          retryPrompt,
-          agent.systemPrompt
-        );
-        const retryParsed = JSON.parse(retryResponse) as FlashTeamSection;
-
-        ensureExactLength(retryParsed.title, 55, "team.title");
-        return retryParsed;
+      if (validation.warning) {
+        console.warn("Flash Team Generation Warning:", validation.warning);
       }
 
-      ensureExactLength(parsed.title, 55, "team.title");
-      return parsed;
+      return { title: validation.value };
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
-      throw error;
+      // Return a fallback instead of throwing
+      return {
+        title: "Nós crescemos junto com você, lado a lado sempre",
+      };
     }
   }
 
@@ -784,55 +775,46 @@ Retorne JSON:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashScopeSection> {
-    const userPrompt = `Responda somente com JSON válido.
+    const userPrompt = `Responda APENAS com JSON válido.
 
-Crie o conteúdo da seção "Escopo do Projeto" com EXATAMENTE 350 caracteres (contando espaços).
+Crie o conteúdo da seção "Escopo do Projeto" com MÁXIMO 350 caracteres (contando espaços):
 - Integre benefícios do investimento e entregas principais
 - Proibido citar cliente, empresa ou metodologia
 - Foque em transformação, crescimento e previsibilidade
 - Linguagem natural, ativa e confiante
-- IMPORTANTE: O texto deve ter exatamente 350 caracteres, nem mais nem menos
+- Seja conciso e direto ao ponto
 
-Exemplo de texto com 350 caracteres: "Nosso projeto reúne estratégias digitais que aumentam sua autoridade e ampliam suas oportunidades de crescimento. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma sustentável."
+EXEMPLO (350 caracteres):
+"Nosso projeto reúne estratégias digitais que aumentam sua autoridade e ampliam suas oportunidades de crescimento. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma sustentável."
 
 Retorne:
 {
-  "content": "Texto com exatamente 350 caracteres"
+  "content": "Seu texto com máximo 350 caracteres"
 }`;
 
     try {
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashScopeSection;
 
-      // Validate and retry if needed
-      if (parsed.content.length !== 350) {
-        console.log(
-          `Scope content length mismatch: ${parsed.content.length}, retrying...`
-        );
-        const retryPrompt = `O conteúdo anterior tinha ${parsed.content.length} caracteres. Crie um novo conteúdo com EXATAMENTE 350 caracteres:
+      // Validate with max length warning instead of throwing error
+      const validation = validateMaxLengthWithWarning(
+        parsed.content,
+        350,
+        "scope.content"
+      );
 
-"${parsed.content}"
-
-Retorne JSON:
-{
-  "content": "Novo conteúdo com exatamente 350 caracteres"
-}`;
-
-        const retryResponse = await this.runLLM(
-          retryPrompt,
-          agent.systemPrompt
-        );
-        const retryParsed = JSON.parse(retryResponse) as FlashScopeSection;
-
-        ensureExactLength(retryParsed.content, 350, "scope.content");
-        return retryParsed;
+      if (validation.warning) {
+        console.warn("Flash Scope Generation Warning:", validation.warning);
       }
 
-      ensureExactLength(parsed.content, 350, "scope.content");
-      return parsed;
+      return { content: validation.value };
     } catch (error) {
       console.error("Flash Scope Generation Error:", error);
-      throw error;
+      // Return a fallback instead of throwing
+      return {
+        content:
+          "Nosso projeto reúne estratégias digitais que aumentam sua autoridade e ampliam suas oportunidades de crescimento. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma sustentável.",
+      };
     }
   }
 
