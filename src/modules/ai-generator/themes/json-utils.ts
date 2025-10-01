@@ -104,10 +104,16 @@ function cleanJSONString(jsonString: string): string {
     .replace(/,(\s*[}\]])/g, "$1")
     // Fix missing quotes around property names
     .replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
-    // Fix unescaped quotes in string values
+    // Fix unescaped quotes in string values - more comprehensive
     .replace(/"([^"]*)"([^"]*)"([^"]*)"/g, (match, p1, p2, p3) => {
       return `"${p1}\\"${p2}\\"${p3}"`;
     })
+    // Fix quotes inside string values that break JSON
+    .replace(/"([^"]*)"([^"]*)"([^"]*)"/g, (match, p1, p2, p3) => {
+      return `"${p1}\\"${p2}\\"${p3}"`;
+    })
+    // Fix missing colons after property names
+    .replace(/"([^"]+)"\s+"([^"]+)"\s*:/g, '"$1":"$2",')
     // Fix common structural issues
     .replace(
       /\{\s*"([^"]+)"\s*:\s*"([^"]+)"\s*\}\s*\{\s*"([^"]+)"\s*:/g,
@@ -121,6 +127,8 @@ function cleanJSONString(jsonString: string): string {
     .replace(/"([^"]+)"\s*:\s*"([^"]+)"\s*"([^"]+)"\s*:/g, '"$1":"$2","$3":')
     // Fix missing colons
     .replace(/"([^"]+)"\s*"([^"]+)"\s*:/g, '"$1":"$2",')
+    // Fix broken property names with spaces
+    .replace(/"([^"]+)\s+([^"]+)"\s*:/g, '"$1$2":')
     // Remove any text after the last }
     .replace(/\}[^}]*$/, "}")
     // Remove any text before the first {

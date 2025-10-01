@@ -1011,7 +1011,11 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
       if (!parseResult.success) {
         console.error("Flash FAQ JSON Parse Error:", parseResult.error);
-        throw new Error(`Failed to parse FAQ JSON: ${parseResult.error}`);
+        console.log("Raw response that failed to parse:", response);
+
+        // Return fallback FAQ instead of throwing error
+        console.warn("Using fallback FAQ due to parsing error");
+        return this.getFallbackFAQ();
       }
 
       const parsed = parseResult.data!;
@@ -1065,7 +1069,9 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
       });
     } catch (error) {
       console.error("Flash FAQ Generation Error:", error);
-      throw error;
+      // Return fallback FAQ instead of throwing error
+      console.warn("Using fallback FAQ due to generation error");
+      return this.getFallbackFAQ();
     }
   }
 
@@ -1172,6 +1178,61 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
       callToAction: "",
       disclaimer: "",
     } as FlashFooterSection;
+  }
+
+  private getFallbackFAQ(): FlashFAQSection {
+    return [
+      {
+        question: "Como vocês garantem que o projeto será entregue no prazo?",
+        answer:
+          "Utilizamos metodologias ágeis e planejamento detalhado para garantir entregas pontuais. Nossa equipe trabalha com cronogramas realistas e comunicação constante.",
+      },
+      {
+        question: "Posso solicitar alterações durante o desenvolvimento?",
+        answer:
+          "Sim, incluímos ciclos de revisão e ajustes para garantir que o resultado final atenda perfeitamente às suas expectativas e necessidades.",
+      },
+      {
+        question: "Qual é o processo de acompanhamento do projeto?",
+        answer:
+          "Mantemos comunicação regular através de reuniões semanais, relatórios de progresso e acesso a plataforma de acompanhamento em tempo real.",
+      },
+      {
+        question: "Vocês oferecem suporte após a entrega?",
+        answer:
+          "Sim, incluímos período de suporte pós-entrega para garantir que tudo funcione perfeitamente e você tenha total tranquilidade.",
+      },
+      {
+        question: "Como é definido o investimento do projeto?",
+        answer:
+          "O investimento é baseado na complexidade, prazo e recursos necessários. Apresentamos propostas transparentes sem custos ocultos.",
+      },
+      {
+        question: "Qual é o prazo médio para desenvolvimento?",
+        answer:
+          "O prazo varia conforme a complexidade, mas geralmente entre 4 a 8 semanas para projetos completos, sempre respeitando suas necessidades.",
+      },
+      {
+        question: "Vocês trabalham com empresas de qualquer porte?",
+        answer:
+          "Sim, atendemos desde startups até grandes corporações, adaptando nossa abordagem para cada perfil e necessidade específica.",
+      },
+      {
+        question: "Como garantem a qualidade do trabalho?",
+        answer:
+          "Seguimos rigorosos padrões de qualidade, testes extensivos e revisões constantes para entregar sempre o melhor resultado possível.",
+      },
+      {
+        question: "Posso acompanhar o progresso do projeto?",
+        answer:
+          "Sim, você terá acesso total ao progresso através de nossa plataforma de acompanhamento e reuniões regulares de alinhamento.",
+      },
+      {
+        question: "O que acontece se eu não ficar satisfeito?",
+        answer:
+          "Nosso compromisso é sua satisfação total. Trabalhamos até que você esteja completamente satisfeito com o resultado entregue.",
+      },
+    ];
   }
 
   private async runLLM(
