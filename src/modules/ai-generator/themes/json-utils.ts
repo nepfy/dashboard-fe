@@ -36,6 +36,21 @@ export function safeJSONParse<T>(
       if (attempt < maxRetries) {
         // Try to fix common JSON issues
         jsonString = attemptFixJSON(jsonString);
+      } else {
+        // Last attempt: try to extract FAQ array specifically
+        if (
+          jsonString.includes('"question"') &&
+          jsonString.includes('"answer"')
+        ) {
+          const faqExtracted = extractFAQFromMalformedJSON(jsonString);
+          if (faqExtracted) {
+            return {
+              success: true,
+              data: faqExtracted as T,
+              rawResponse: jsonString,
+            };
+          }
+        }
       }
     }
   }
@@ -104,6 +119,10 @@ function cleanJSONString(jsonString: string): string {
     .replace(/,(\s*[}\]])/g, "$1")
     // Fix missing quotes around property names
     .replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
+    // Fix specific error: "question" "answer" -> "question":"answer"
+    .replace(/"question"\s+"answer"/g, '"question":"answer"')
+    // Fix missing colons after property names
+    .replace(/"([^"]+)"\s+"([^"]+)"\s*:/g, '"$1":"$2",')
     // Fix unescaped quotes in string values - more comprehensive
     .replace(/"([^"]*)"([^"]*)"([^"]*)"/g, (match, p1, p2, p3) => {
       return `"${p1}\\"${p2}\\"${p3}"`;
@@ -112,8 +131,6 @@ function cleanJSONString(jsonString: string): string {
     .replace(/"([^"]*)"([^"]*)"([^"]*)"/g, (match, p1, p2, p3) => {
       return `"${p1}\\"${p2}\\"${p3}"`;
     })
-    // Fix missing colons after property names
-    .replace(/"([^"]+)"\s+"([^"]+)"\s*:/g, '"$1":"$2",')
     // Fix common structural issues
     .replace(
       /\{\s*"([^"]+)"\s*:\s*"([^"]+)"\s*\}\s*\{\s*"([^"]+)"\s*:/g,
@@ -129,6 +146,9 @@ function cleanJSONString(jsonString: string): string {
     .replace(/"([^"]+)"\s*"([^"]+)"\s*:/g, '"$1":"$2",')
     // Fix broken property names with spaces
     .replace(/"([^"]+)\s+([^"]+)"\s*:/g, '"$1$2":')
+    // Fix specific FAQ pattern issues
+    .replace(/"question"\s*"([^"]+)"\s*:/g, '"question":"$1",')
+    .replace(/"answer"\s*"([^"]+)"\s*:/g, '"answer":"$1",')
     // Remove any text after the last }
     .replace(/\}[^}]*$/, "}")
     // Remove any text before the first {
@@ -210,6 +230,54 @@ function attemptFixJSON(jsonString: string): string {
     .trim();
 
   return fixed;
+}
+
+/**
+ * Extract FAQ array from malformed JSON
+ */
+function extractFAQFromMalformedJSON(
+  jsonString: string
+): Array<{ question: string; answer: string }> | null {
+  try {
+    // Find all question-answer pairs using regex
+    const questionAnswerRegex =
+      /"question"\s*:\s*"([^"]+)"\s*,\s*"answer"\s*:\s*"([^"]+)"/g;
+    const matches = [];
+    let match;
+
+    while ((match = questionAnswerRegex.exec(jsonString)) !== null) {
+      matches.push({
+        question: match[1],
+        answer: match[2],
+      });
+    }
+
+    // If we found at least 5 FAQ items, return them
+    if (matches.length >= 5) {
+      return matches;
+    }
+
+    // Try alternative pattern with missing colons
+    const altPattern = /"question"\s*"([^"]+)"\s*"answer"\s*"([^"]+)"/g;
+    const altMatches = [];
+    let altMatch;
+
+    while ((altMatch = altPattern.exec(jsonString)) !== null) {
+      altMatches.push({
+        question: altMatch[1],
+        answer: altMatch[2],
+      });
+    }
+
+    if (altMatches.length >= 5) {
+      return altMatches;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error extracting FAQ from malformed JSON:", error);
+    return null;
+  }
 }
 
 /**

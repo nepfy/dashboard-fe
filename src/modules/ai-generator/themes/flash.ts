@@ -206,7 +206,9 @@ export class FlashTemplateWorkflow {
       data.includeTerms
         ? this.generateTerms(data, agent)
         : Promise.resolve(undefined),
-      this.generateFAQ(data, agent),
+      data.includeFAQ
+        ? this.generateFAQ(data, agent)
+        : Promise.resolve(this.getFallbackFAQ()),
     ]);
 
     // Collect sections for metadata
