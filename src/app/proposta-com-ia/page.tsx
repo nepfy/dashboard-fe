@@ -386,24 +386,24 @@ export default function NepfyAIPage() {
                   projectName,
                   projectDescription,
                   clientName,
-                  clientDescription,
+                  detailedClientInfo: clientDescription,
                 }}
                 setClientData={({
                   clientName,
                   projectName,
                   projectDescription,
-                  clientDescription,
+                  detailedClientInfo,
                 }) => {
                   console.log("Debug - setClientData called with:", {
                     clientName,
                     projectName,
                     projectDescription,
-                    clientDescription,
+                    detailedClientInfo,
                   });
                   setClientName(clientName);
                   setProjectName(projectName);
                   setProjectDescription(projectDescription);
-                  setClientDescription(clientDescription);
+                  setClientDescription(detailedClientInfo || "");
                 }}
                 handleBack={() => setCurrentStep("company_info")}
                 handleNext={() => setCurrentStep("pricing_step")}
