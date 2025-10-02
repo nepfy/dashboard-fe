@@ -15,12 +15,6 @@ export default function TemplateConfigDetailPage() {
   const [saving, setSaving] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (templateId) {
-      fetchConfig();
-    }
-  }, [templateId, fetchConfig]);
-
   const fetchConfig = useCallback(async () => {
     try {
       setLoading(true);
@@ -45,6 +39,12 @@ export default function TemplateConfigDetailPage() {
       setLoading(false);
     }
   }, [templateId]);
+
+  useEffect(() => {
+    if (templateId) {
+      fetchConfig();
+    }
+  }, [templateId, fetchConfig]);
 
   const updateMoAConfig = async (moaConfig: Partial<TemplateConfig["moa"]>) => {
     try {
