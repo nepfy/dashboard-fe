@@ -30,7 +30,7 @@ export default function AdminLayout({
                 Agentes
               </Link>
               <Link
-                href="/admin/templates"
+                href="/admin/templates/config"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Templates
