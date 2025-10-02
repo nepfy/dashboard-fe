@@ -10,6 +10,7 @@ import {
   validateMaxLengthWithWarning,
 } from "./validators";
 import { safeJSONParse, generateJSONRetryPrompt } from "./json-utils";
+import { MOAService } from "../services/moa-service";
 
 export interface PrimeThemeData extends BaseThemeData {
   templateType: "prime";
@@ -176,6 +177,22 @@ const currencyRegex = /^R\$\d{1,3}(?:\.\d{3})?(?:,\d{2})?$/;
 export class PrimeTemplateWorkflow {
   private agent: BaseAgentConfig | null = null;
   private model = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
+  private moaService: MOAService;
+
+  constructor() {
+    this.moaService = new MOAService(client, {
+      referenceModels: [
+        "Qwen/Qwen2-72B-Instruct",
+        "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "mistralai/Mixtral-8x22B-Instruct-v0.1",
+        "databricks/dbrx-instruct",
+      ],
+      aggregatorModel: "mistralai/Mixtral-8x22B-Instruct-v0.1",
+      maxRetries: 3,
+      temperature: 0.6,
+      maxTokens: 2500,
+    });
+  }
 
   async execute(data: PrimeThemeData): Promise<PrimeWorkflowResult> {
     const proposal = await this.generateTemplateProposal(data);
@@ -276,7 +293,202 @@ Exemplos:
 - Subtítulo com 100 caracteres: "Nós criamos soluções exclusivas que elevam seu negócio e multiplicam seus resultados."
 - Serviços com 30 caracteres: "Consultoria estratégica", "Desenvolvimento premium"`;
 
+    const expectedFormat = `{
+  "title": "string (exactly 60 characters)",
+  "subtitle": "string (exactly 100 characters)",
+  "services": ["string (30 chars)", "string (30 chars)", "string (30 chars)", "string (30 chars)"],
+  "validity": "string",
+  "buttonText": "string"
+}`;
+
     try {
+      const moaResult =
+        await this.moaService.generateWithRetry<PrimeIntroductionSection>(
+          userPrompt,
+          this.agent?.systemPrompt || "You are a premium proposal specialist.",
+          expectedFormat,
+          this.agent?.systemPrompt || "You are a premium proposal specialist."
+        );
+
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Prime Introduction generated successfully");
+        const parsed = moaResult.result;
+
+        // Validate and retry if needed
+        const titleLength = parsed.title?.length || 0;
+        const subtitleLength = parsed.subtitle?.length || 0;
+        const servicesLength = parsed.services?.length || 0;
+        const servicesValidLength =
+          parsed.services?.every((s: string) => s.length === 30) || false;
+
+        if (
+          titleLength !== 60 ||
+          subtitleLength !== 100 ||
+          servicesLength !== 4 ||
+          !servicesValidLength
+        ) {
+          console.log(
+            `Prime Introduction length mismatch: title=${titleLength}, subtitle=${subtitleLength}, services=${servicesLength}, servicesValid=${servicesValidLength}, retrying...`
+          );
+          const retryPrompt = `O conteúdo anterior tinha contagens incorretas:
+- Título: ${titleLength} caracteres (deveria ter 60)
+- Subtítulo: ${subtitleLength} caracteres (deveria ter 100)
+- Serviços: ${servicesLength} itens (deveria ter 4)
+- Serviços válidos: ${servicesValidLength}
+
+Crie novos textos com as contagens EXATAS:
+
+{
+  "title": "Novo título com exatamente 60 caracteres",
+  "subtitle": "Novo subtítulo com exatamente 100 caracteres",
+  "services": [
+    "Serviço 1 com exatamente 30 caracteres",
+    "Serviço 2 com exatamente 30 caracteres",
+    "Serviço 3 com exatamente 30 caracteres",
+    "Serviço 4 com exatamente 30 caracteres"
+  ],
+  "validity": "dd/mm/aaaa",
+  "buttonText": "texto"
+}`;
+
+          const retryResponse = await this.runLLM(retryPrompt);
+          const retryParsed = JSON.parse(retryResponse);
+
+          const retryTitleValidation = validateMaxLengthWithWarning(
+            retryParsed.title,
+            60,
+            "introduction.title"
+          );
+          const retrySubtitleValidation = validateMaxLengthWithWarning(
+            retryParsed.subtitle,
+            100,
+            "introduction.subtitle"
+          );
+
+          if (retryTitleValidation.warning) {
+            console.warn(
+              "Prime Introduction Retry Title Warning:",
+              retryTitleValidation.warning
+            );
+          }
+          if (retrySubtitleValidation.warning) {
+            console.warn(
+              "Prime Introduction Retry Subtitle Warning:",
+              retrySubtitleValidation.warning
+            );
+          }
+
+          const retryServices = ensureArray<string>(
+            retryParsed.services,
+            "introduction.services"
+          );
+          ensureCondition(
+            retryServices.length === 4,
+            "introduction.services must have 4 items"
+          );
+          retryServices.forEach((service, index) => {
+            const serviceValidation = validateMaxLengthWithWarning(
+              service,
+              30,
+              `introduction.services[${index}]`
+            );
+            if (serviceValidation.warning) {
+              console.warn(
+                `Prime Introduction Retry Service ${index} Warning:`,
+                serviceValidation.warning
+              );
+            }
+          });
+
+          return {
+            title: retryTitleValidation.value,
+            subtitle: retrySubtitleValidation.value,
+            services: retryServices.map((service, index) => {
+              const serviceValidation = validateMaxLengthWithWarning(
+                service,
+                30,
+                `introduction.services[${index}]`
+              );
+              return serviceValidation.value;
+            }),
+            validity: ensureString(
+              retryParsed.validity,
+              "introduction.validity"
+            ),
+            buttonText: ensureString(
+              retryParsed.buttonText,
+              "introduction.buttonText"
+            ),
+          };
+        }
+
+        const titleValidation = validateMaxLengthWithWarning(
+          parsed.title,
+          60,
+          "introduction.title"
+        );
+        const subtitleValidation = validateMaxLengthWithWarning(
+          parsed.subtitle,
+          100,
+          "introduction.subtitle"
+        );
+
+        if (titleValidation.warning) {
+          console.warn(
+            "Prime Introduction Title Warning:",
+            titleValidation.warning
+          );
+        }
+        if (subtitleValidation.warning) {
+          console.warn(
+            "Prime Introduction Subtitle Warning:",
+            subtitleValidation.warning
+          );
+        }
+
+        const services = ensureArray<string>(
+          parsed.services,
+          "introduction.services"
+        );
+        ensureCondition(
+          services.length === 4,
+          "introduction.services must have 4 items"
+        );
+        services.forEach((service, index) => {
+          const serviceValidation = validateMaxLengthWithWarning(
+            service,
+            30,
+            `introduction.services[${index}]`
+          );
+          if (serviceValidation.warning) {
+            console.warn(
+              `Prime Introduction Service ${index} Warning:`,
+              serviceValidation.warning
+            );
+          }
+        });
+
+        return {
+          title: titleValidation.value,
+          subtitle: subtitleValidation.value,
+          services: services.map((service, index) => {
+            const serviceValidation = validateMaxLengthWithWarning(
+              service,
+              30,
+              `introduction.services[${index}]`
+            );
+            return serviceValidation.value;
+          }),
+          validity: ensureString(parsed.validity, "introduction.validity"),
+          buttonText: ensureString(
+            parsed.buttonText,
+            "introduction.buttonText"
+          ),
+        };
+      }
+
+      // Fallback to single model if MoA fails
+      console.warn("MoA failed, falling back to single model");
       const parsed = await this.runLLMWithJSONRetry<PrimeIntroductionSection>(
         userPrompt
       );
