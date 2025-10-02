@@ -124,16 +124,87 @@ export default function TemplateConfigDetailPage() {
           </span>
         </div>
 
-        {/* MoA Configuration */}
+        {/* Template Basic Info */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Mixture of Agents (MoA) Configuration
+            Informações do Template
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enabled
+                Nome do Template
+              </label>
+              <input
+                type="text"
+                value={config.name}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                disabled
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tipo
+              </label>
+              <input
+                type="text"
+                value={config.type}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                disabled
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Descrição
+              </label>
+              <textarea
+                value={config.description}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                disabled
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
+              <select
+                value={config.status}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={saving}
+              >
+                <option value="active">Ativo</option>
+                <option value="inactive">Inativo</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Última Atualização
+              </label>
+              <input
+                type="text"
+                value={config.lastUpdated}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* MoA Configuration */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Configuração Mixture of Agents (MoA)
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                MoA Habilitado
               </label>
               <select
                 value={config.moa.enabled ? "true" : "false"}
@@ -143,32 +214,42 @@ export default function TemplateConfigDetailPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={saving}
               >
-                <option value="true">Enabled</option>
-                <option value="false">Disabled</option>
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Aggregator Model
+                Modelo Agregador
               </label>
-              <input
-                type="text"
+              <select
                 value={config.moa.aggregatorModel}
                 onChange={(e) =>
                   updateMoAConfig({ aggregatorModel: e.target.value })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={saving}
-              />
+              >
+                <option value="mistralai/Mixtral-8x22B-Instruct-v0.1">
+                  Mixtral 8x22B
+                </option>
+                <option value="meta-llama/Llama-3.3-70B-Instruct-Turbo">
+                  Llama 3.3 70B
+                </option>
+                <option value="Qwen/Qwen2-72B-Instruct">Qwen2 72B</option>
+                <option value="databricks/dbrx-instruct">DBRX Instruct</option>
+              </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Max Retries
+                Máximo de Tentativas
               </label>
               <input
                 type="number"
+                min="1"
+                max="5"
                 value={config.moa.maxRetries}
                 onChange={(e) =>
                   updateMoAConfig({ maxRetries: parseInt(e.target.value, 10) })
@@ -180,11 +261,13 @@ export default function TemplateConfigDetailPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Temperature
+                Temperatura (0.0 - 1.0)
               </label>
               <input
                 type="number"
                 step="0.1"
+                min="0"
+                max="1"
                 value={config.moa.temperature}
                 onChange={(e) =>
                   updateMoAConfig({ temperature: parseFloat(e.target.value) })
@@ -196,10 +279,13 @@ export default function TemplateConfigDetailPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Max Tokens
+                Máximo de Tokens
               </label>
               <input
                 type="number"
+                min="1000"
+                max="5000"
+                step="500"
                 value={config.moa.maxTokens}
                 onChange={(e) =>
                   updateMoAConfig({ maxTokens: parseInt(e.target.value, 10) })
@@ -212,7 +298,7 @@ export default function TemplateConfigDetailPage() {
 
           <div className="mt-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Reference Models
+              Modelos de Referência
             </label>
             <div className="space-y-2">
               {config.moa.referenceModels.map((model, index) => (
@@ -225,29 +311,52 @@ export default function TemplateConfigDetailPage() {
                 </div>
               ))}
             </div>
+            <p className="text-sm text-gray-500 mt-2">
+              {config.moa.referenceModels.length} modelos de referência ativos
+            </p>
           </div>
         </div>
 
         {/* Sections Configuration */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Sections Configuration
+            Configuração de Seções
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(config.sections).map(([key, section]) => (
-              <button
+              <div
                 key={key}
-                onClick={() => setSelectedSection(key)}
-                className={`p-4 rounded-lg border-2 transition-all text-left ${
+                className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
                   selectedSection === key
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
+                onClick={() => setSelectedSection(key)}
               >
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-gray-900 capitalize">
-                    {key}
+                    {key === "introduction"
+                      ? "Introdução"
+                      : key === "aboutUs"
+                      ? "Sobre Nós"
+                      : key === "team"
+                      ? "Equipe"
+                      : key === "specialties"
+                      ? "Especialidades"
+                      : key === "steps"
+                      ? "Etapas"
+                      : key === "scope"
+                      ? "Escopo"
+                      : key === "investment"
+                      ? "Investimento"
+                      : key === "terms"
+                      ? "Termos"
+                      : key === "faq"
+                      ? "FAQ"
+                      : key === "footer"
+                      ? "Rodapé"
+                      : key}
                   </h3>
                   <span
                     className={`text-xs px-2 py-1 rounded-full ${
@@ -256,55 +365,106 @@ export default function TemplateConfigDetailPage() {
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
-                    {(section as { enabled?: boolean }).enabled ? "On" : "Off"}
+                    {(section as { enabled?: boolean }).enabled
+                      ? "Ativo"
+                      : "Inativo"}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">
-                  {(section as { rules?: string[] }).rules?.length || 0} rules
+                  {(section as { rules?: string[] }).rules?.length || 0} regras
+                  configuradas
                 </p>
-              </button>
+              </div>
             ))}
           </div>
 
           {selectedSection && (
             <div className="mt-6 p-6 bg-gray-50 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 capitalize">
-                {selectedSection} Section
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                {selectedSection === "introduction"
+                  ? "Introdução"
+                  : selectedSection === "aboutUs"
+                  ? "Sobre Nós"
+                  : selectedSection === "team"
+                  ? "Equipe"
+                  : selectedSection === "specialties"
+                  ? "Especialidades"
+                  : selectedSection === "steps"
+                  ? "Etapas"
+                  : selectedSection === "scope"
+                  ? "Escopo"
+                  : selectedSection === "investment"
+                  ? "Investimento"
+                  : selectedSection === "terms"
+                  ? "Termos"
+                  : selectedSection === "faq"
+                  ? "FAQ"
+                  : selectedSection === "footer"
+                  ? "Rodapé"
+                  : selectedSection}
               </h3>
-              <div className="space-y-4">
+
+              <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Enabled
+                    Seção Ativa
                   </label>
-                  <input
-                    type="checkbox"
-                    checked={
-                      (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={
+                        (
+                          config.sections as Record<
+                            string,
+                            { enabled?: boolean }
+                          >
+                        )[selectedSection]?.enabled
+                      }
+                      className="w-5 h-5"
+                      disabled
+                    />
+                    <span className="text-sm text-gray-600">
+                      {(
                         config.sections as Record<string, { enabled?: boolean }>
                       )[selectedSection]?.enabled
-                    }
-                    className="w-5 h-5"
-                    disabled
-                  />
+                        ? "Esta seção está ativa"
+                        : "Esta seção está inativa"}
+                    </span>
+                  </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Rules
+                    Regras de Geração
                   </label>
-                  <ul className="space-y-2">
+                  <div className="space-y-2">
                     {(
                       (config.sections as Record<string, { rules?: string[] }>)[
                         selectedSection
                       ]?.rules || []
                     ).map((rule, index) => (
-                      <li
+                      <div
                         key={index}
-                        className="bg-white px-4 py-2 rounded-lg text-gray-700"
+                        className="bg-white px-4 py-3 rounded-lg border border-gray-200"
                       >
-                        {rule}
-                      </li>
+                        <div className="flex items-start space-x-2">
+                          <span className="text-blue-600 font-medium text-sm">
+                            {index + 1}.
+                          </span>
+                          <span className="text-gray-700 text-sm">{rule}</span>
+                        </div>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
+                  {(
+                    (config.sections as Record<string, { rules?: string[] }>)[
+                      selectedSection
+                    ]?.rules || []
+                  ).length === 0 && (
+                    <p className="text-gray-500 text-sm italic">
+                      Nenhuma regra específica configurada para esta seção
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
