@@ -1,8 +1,7 @@
 export default function ArchitectIcon() {
   return (
     <svg
-      width="166"
-      height="111"
+      className="w-[110px] h-[73.5px] lg:w-[166px] lg:h-[111px]"
       viewBox="0 0 166 111"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

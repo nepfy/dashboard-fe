@@ -64,9 +64,7 @@ export const TemplateCard = ({
   isSelected,
 }: TemplateCardProps) => (
   <div
-    className={`h-[500px] w-[340px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 px-1 ${
-      isSelected ? "border-primary-light-300" : "border-white-neutral-light-300"
-    }`}
+    className="h-auto w-[350px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 border-white-neutral-light-300 px-1 shadow-md"
     tabIndex={0}
   >
     {/* Header */}

@@ -45,7 +45,7 @@ export default function Header({
       <div className="flex flex-wrap items-start">
         <div className="flex flex-row flex-wrap w-full gap-1 items-start sm:items-center">
           {viewMode === "active" && (
-            <Link href="/proposta-com-ia" className="w-full sm:w-40">
+            <Link href="/gerar-proposta" className="w-full sm:w-40">
               <div className="flex items-center justify-center w-full sm:w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
                 <PlusIcon fill="#FFFFFF" />
                 Criar proposta
@@ -54,7 +54,7 @@ export default function Header({
           )}
 
           {/* <Link
-            href="/proposta-com-ia"
+            href="/gerar-proposta"
             className="flex items-center justify-center h-11 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse px-4 gap-2"
           >
             <BrainIcon size={20} />

@@ -47,7 +47,7 @@ export default function NepfyAILayout({
             </div>
           </nav>
           <div className="bg-white-neutral-light-200 flex flex-col h-[calc(100vh-7rem)]">
-            <main className="flex-1 flex-col gap-8">{children}</main>
+            <main className="flex-1 flex-col gap-8 h-full">{children}</main>
           </div>
         </div>
       </CopyLinkCacheProvider>

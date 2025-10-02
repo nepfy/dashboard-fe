@@ -9,7 +9,6 @@ import MultiStepForm from "./components/MultiStepForm";
 import TemplateSelection from "./components/TemplateSelection";
 
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
-import { TemplateType } from "#/types/project";
 
 const templates = [
   {
@@ -66,7 +65,7 @@ const templates = [
 
 export default function ProjectGenerator() {
   const searchParams = useSearchParams();
-  const { updateFormData, setTemplateType, templateType, loadProjectData } =
+  const { setTemplateType, templateType, loadProjectData } =
     useProjectGenerator();
 
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
@@ -115,14 +114,6 @@ export default function ProjectGenerator() {
     }
   }, [hasLoadedEdit, templateType]);
 
-  const handleTemplateSelect = (template: TemplateType, color: string) => {
-    setTemplateType(template);
-    updateFormData("step1", {
-      templateType: template,
-      mainColor: color,
-    });
-  };
-
   if (isLoadingEdit) {
     return (
       <div className="flex items-center justify-center h-full p-7">
@@ -143,10 +134,7 @@ export default function ProjectGenerator() {
           <h2 className="text-white-neutral-light-800 text-[21px] text-center font-medium py-4 lg:pb-0 lg:pt-12">
             Escolha o modelo da sua proposta
           </h2>
-          <TemplateSelection
-            templates={templates}
-            onSelectTemplate={handleTemplateSelect}
-          />
+          <TemplateSelection templates={templates} />
         </div>
       )}
     </div>

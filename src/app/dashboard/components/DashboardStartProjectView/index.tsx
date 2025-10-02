@@ -107,7 +107,7 @@ export default function DashboardStartProjectView() {
                 <ContractIcon width="24" height="24" />
                 Gerar Contratos
               </Link>
-              <Link href="/proposta-com-ia" className={BUTTON_CLASS}>
+              <Link href="/gerar-proposta" className={BUTTON_CLASS}>
                 <FileIcon width="24" height="24" />
                 Criar Propostas
               </Link>

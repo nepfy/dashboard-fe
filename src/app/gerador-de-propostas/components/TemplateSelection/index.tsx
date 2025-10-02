@@ -14,16 +14,17 @@ import { MobileNavigation } from "./partials/MobileNavigation";
 
 interface TemplateSelectionProps {
   templates: Template[];
-  onSelectTemplate: (template: TemplateType, color: string) => void;
+  onNextStep?: () => void;
   hideBanner?: boolean;
 }
 
 export default function TemplateSelection({
   templates,
-  onSelectTemplate,
+  onNextStep,
   hideBanner = false,
 }: TemplateSelectionProps) {
-  const { updateFormData, templateType } = useProjectGenerator();
+  const { updateFormData, setTemplateType, templateType } =
+    useProjectGenerator();
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>(
     {}
   );
@@ -38,20 +39,22 @@ export default function TemplateSelection({
 
   const handleColorSelect = (templateTitle: string, color: string) => {
     setSelectedColors((prev) => ({ ...prev, [templateTitle]: color }));
-
-    if (templateTitle === "Flash") {
-      updateFormData("step1", {
-        mainColor: color,
-      });
-    }
   };
 
   const handleSelectTemplate = (template: Template) => {
     const selectedColor = getSelectedColor(template);
-    onSelectTemplate(
-      template.title.toLowerCase() as TemplateType,
-      selectedColor
-    );
+    const templateType = template.title.toLowerCase() as TemplateType;
+
+    setTemplateType(templateType);
+    updateFormData("step1", {
+      templateType: templateType,
+      mainColor: selectedColor,
+    });
+
+    // Call onNextStep if provided
+    if (onNextStep) {
+      onNextStep();
+    }
   };
 
   const handlePreviewTemplate = (templateName: string) => {
@@ -90,7 +93,7 @@ export default function TemplateSelection({
 
   return (
     <div className="w-full lg:h-full lg:flex justify-center items-start xl:items-start lg:px-7 py-8">
-      <div className="hidden lg:flex flex-wrap items-end xl:justify-start gap-4 max-w-[1100px] lg:mt-0 xl:mt-0">
+      <div className="hidden xl:flex flex-wrap items-end xl:justify-start gap-4 max-w-[1100px] lg:mt-0 xl:mt-0">
         {templates.map((template) => (
           <TemplateCard
             key={template.title}
@@ -110,10 +113,10 @@ export default function TemplateSelection({
       </div>
 
       {/* Mobile View */}
-      <div className="mb-8 lg:hidden">
+      <div className="mb-8 w-full h-full xl:hidden">
         <Slider ref={sliderRef} {...sliderSettings}>
           {templates.map((template) => (
-            <div key={template.title} className="px-4 shadow-lg">
+            <div key={template.title} className="px-4">
               <div className="mx-auto flex justify-center items-center">
                 <TemplateCard
                   template={template}
