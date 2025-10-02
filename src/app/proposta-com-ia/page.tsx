@@ -3,10 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
-import {
-  StartProposal,
-  SelectTemplate,
-} from "#/modules/ai-generator/components/generation-steps";
+import { SelectTemplate } from "#/modules/ai-generator/components/generation-steps";
 
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { ServiceType } from "#/modules/ai-generator/components/generation-steps/ServiceType";
@@ -352,15 +349,9 @@ export default function NepfyAIPage() {
         {/* Conteúdo das Etapas */}
         {(() => {
           const stepMap: Record<string, React.ReactNode> = {
-            start: (
-              <StartProposal
-                handleNextStep={() => setCurrentStep("template_selection")}
-              />
-            ),
             template_selection: (
               <SelectTemplate
                 handleNextStep={() => setCurrentStep("service_selection")}
-                handleBack={() => setCurrentStep("start")}
               />
             ),
             service_selection: (
@@ -382,10 +373,9 @@ export default function NepfyAIPage() {
             client_details: (
               <ClientInfo
                 clientData={{
-                  companyName: formData.step1?.companyName || "",
+                  clientName,
                   projectName,
                   projectDescription,
-                  clientName,
                   detailedClientInfo: clientDescription,
                 }}
                 setClientData={({

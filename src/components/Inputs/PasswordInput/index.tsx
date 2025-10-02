@@ -4,6 +4,8 @@ import { TextField } from "#/components/Inputs";
 
 type PasswordInputProps = {
   label?: string;
+  bgLabel?: boolean;
+  info?: boolean;
   id: string;
   placeholder: string;
   value: string;
@@ -15,6 +17,8 @@ type PasswordInputProps = {
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
+  bgLabel = false,
+  info = false,
   id,
   placeholder,
   value,
@@ -40,6 +44,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
 
       <TextField
         label={label}
+        bgLabel={bgLabel}
         inputName={id}
         id={id}
         type={showPassword ? "text" : "password"}
@@ -47,6 +52,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         onChange={onChange}
         value={value}
         disabled={disabled}
+        info={info}
       />
     </div>
   );

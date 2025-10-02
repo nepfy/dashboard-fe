@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { TextAreaField, CheckboxInput } from "#/components/Inputs";
 import { Box } from "#/modules/ai-generator/components/box/Box";
+import { CompanyInfoModal } from "#/modules/ai-generator/components/modal/CompanyInfoModal";
 
 export function CompanyInfo({
   handleNext,
@@ -17,6 +18,7 @@ export function CompanyInfo({
 }) {
   const [aboutCompany, setAboutCompany] = useState(companyInfo);
   const [saveDescriptionAsModel, setSaveDescriptionAsModel] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   console.log(saveDescriptionAsModel);
 
@@ -32,6 +34,8 @@ export function CompanyInfo({
           handleNext();
         }}
         disabled={!aboutCompany}
+        info
+        onInfoClick={() => setIsModalOpen(true)}
       >
         <div className="space-y-6 py-4">
           <TextAreaField
@@ -54,6 +58,11 @@ export function CompanyInfo({
           />
         </div>
       </Box>
+
+      <CompanyInfoModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
     </section>
   );
 }

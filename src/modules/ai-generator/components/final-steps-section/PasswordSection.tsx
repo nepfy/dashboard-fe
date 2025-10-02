@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { PasswordInput } from "#/components/Inputs";
 
 // Types
 interface PasswordValidation {
@@ -44,45 +44,26 @@ export function PasswordSection({
   });
 
   return (
-    <>
-      <p className="bg-[#E8E2FD4D] rounded-[8px] p-3 mb-4 text-sm mt-6 border border-[#E8E2FD]">
-        Crie uma senha para sua proposta
-      </p>
-
+    <div className="mb-6">
       <div className="relative">
-        <input
+        <PasswordInput
           id="pagePassword"
-          name="pagePassword"
-          type={showPassword ? "text" : "password"}
+          label="Crie uma senha para sua proposta"
           placeholder="Digite uma senha para a sua proposta"
           value={pagePassword}
           onChange={(e) => {
             setPagePassword(e.target.value);
             clearError("pagePassword");
           }}
-          className="w-full px-4 py-3 pr-12 rounded-[var(--radius-s)] 
-                        border border-white-neutral-light-300 
-                        focus:outline-none focus:border-[var(--color-primary-light-400)]
-                        bg-white-neutral-light-100 
-                        placeholder:text-[var(--color-white-neutral-light-400)]  
-                        text-white-neutral-light-800"
+          showPassword={showPassword}
+          toggleShowPassword={() => setShowPassword(!showPassword)}
+          bgLabel
+          info
         />
-
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 
-                     text-white-neutral-light-600 hover:text-white-neutral-light-800 
-                     focus:outline-none transition-colors duration-200 cursor-pointer"
-          aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-        >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
       </div>
 
-      {/* Password validation indicators */}
       {pagePassword && (
-        <div className="mt-3 space-y-1">
+        <div className="space-y-1">
           <div
             className={`text-xs flex items-center gap-2 ${
               passwordValidation.minLength ? "text-green-500" : "text-red-500"
@@ -111,6 +92,6 @@ export function PasswordSection({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

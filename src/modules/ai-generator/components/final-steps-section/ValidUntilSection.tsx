@@ -1,4 +1,5 @@
 import { DatePicker } from "#/components/Inputs";
+import { Label } from "#/components/Label";
 
 interface ValidUntilSectionProps {
   validUntil: string;
@@ -13,9 +14,9 @@ export function ValidUntilSection({
 }: ValidUntilSectionProps) {
   return (
     <>
-      <p className="bg-[#E8E2FD4D] rounded-[8px] p-3 mb-4 text-sm mt-6 border border-[#E8E2FD]">
+      <Label htmlFor="projectValidUntil" info>
         Qual a validade desta proposta?
-      </p>
+      </Label>
 
       <div className="relative w-full lg:w-1/2">
         <DatePicker

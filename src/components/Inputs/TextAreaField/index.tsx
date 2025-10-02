@@ -5,6 +5,7 @@ import QuestionIcon from "#/components/icons/QuestionIcon";
 interface CustomTextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string | React.ReactNode;
+  bgLabel?: boolean;
   textareaName?: string;
   infoText?: string;
   error?: string;
@@ -42,6 +43,7 @@ const ResizeIcon = () => (
 const TextArea: React.FC<CustomTextAreaProps> = (props) => {
   const {
     label,
+    bgLabel = false,
     textareaName,
     id,
     placeholder,
@@ -104,7 +106,11 @@ const TextArea: React.FC<CustomTextAreaProps> = (props) => {
     <div className="block w-full">
       <label
         htmlFor={textareaName}
-        className="text-[var(--color-white-neutral-light-700)] text-sm font-medium flex items-center justify-between"
+        className={`${
+          bgLabel
+            ? "text-[#1C1C1C] bg-[#E8E2FD4D]/80 text-sm p-3 rounded-[8px] font-medium flex justify-between items-center mb-2 border border-[#E8E2FD]"
+            : "text-[var(--color-white-neutral-light-700)] text-sm font-medium flex items-center justify-between"
+        }`}
       >
         {label}
         {info && (

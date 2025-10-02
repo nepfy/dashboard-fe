@@ -2,6 +2,7 @@ import QuestionIcon from "#/components/icons/QuestionIcon";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string | React.ReactNode;
+  bgLabel?: boolean;
   inputName?: string;
   infoText?: string;
   error?: string;
@@ -17,6 +18,7 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const TextField: React.FC<CustomInputProps> = (props) => {
   const {
     label,
+    bgLabel = false,
     inputName,
     id,
     type,
@@ -42,7 +44,11 @@ const TextField: React.FC<CustomInputProps> = (props) => {
     <div className="block w-full overflow-hidden">
       <label
         htmlFor={inputName}
-        className="text-[var(--color-white-neutral-light-700)] text-sm font-medium flex items-center justify-between"
+        className={`${
+          bgLabel
+            ? "text-[#1C1C1C] bg-[#E8E2FD4D]/80 text-sm p-3 rounded-[8px] font-medium flex justify-between items-center mb-2 border border-[#E8E2FD]"
+            : "text-[var(--color-white-neutral-light-700)] text-sm font-medium flex items-center justify-between"
+        }`}
       >
         {label}
         {info && (

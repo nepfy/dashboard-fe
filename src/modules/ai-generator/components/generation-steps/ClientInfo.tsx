@@ -2,6 +2,8 @@
 
 import type React from "react";
 import { useState } from "react";
+
+import { TextField, TextAreaField } from "#/components/Inputs";
 import { Box } from "#/modules/ai-generator/components/box/Box";
 
 export function ClientInfo({
@@ -64,74 +66,52 @@ export function ClientInfo({
       >
         <div className="space-y-6 mt-6">
           <div className="space-y-2">
-            <label
-              htmlFor="clientName"
-              className="block text-sm font-satoshi font-medium text-gray-700 p-3 bg-[#E8E2FD]/30 rounded-lg border border-[#E8E2FD]"
-            >
-              Nome do cliente
-            </label>
-            <input
-              type="text"
+            <TextField
+              bgLabel
               id="clientName"
-              name="clientName"
+              inputName="clientName"
+              label="Nome do cliente"
               value={formData.clientName}
               onChange={handleInputChange}
               placeholder="Loja XYZ"
-              className="w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 text-gray-700 placeholder-gray-400 transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
             />
           </div>
 
           <div className="space-y-2">
-            <label
-              htmlFor="projectName"
-              className="block text-sm font-satoshi font-medium text-gray-700 p-3 bg-[#E8E2FD]/30 rounded-lg border border-[#E8E2FD]"
-            >
-              Nome do projeto
-            </label>
-            <input
-              type="text"
+            <TextField
+              bgLabel
               id="projectName"
-              name="projectName"
+              inputName="projectName"
+              label="Nome do projeto"
               value={formData.projectName}
               onChange={handleInputChange}
               placeholder="Ex: Site institucional da Loja XYZ"
-              className="w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 text-gray-700 placeholder-gray-400 transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
             />
           </div>
 
           <div className="space-y-2">
-            <label
-              htmlFor="detailedClientInfo"
-              className="block text-sm font-satoshi font-medium text-gray-700 p-3 bg-[#E8E2FD]/30 rounded-lg border border-[#E8E2FD]"
-            >
-              Sobre o seu cliente
-            </label>
-            <textarea
+            <TextAreaField
+              bgLabel
               id="detailedClientInfo"
-              name="detailedClientInfo"
+              textareaName="detailedClientInfo"
+              label="Sobre o seu cliente"
               value={formData.detailedClientInfo || ""}
               onChange={handleInputChange}
               placeholder="Ex: Clínica de dermatologia que oferece tratamentos estéticos e médicos e busca fortalecer sua presença digital para atrair novos pacientes."
               rows={6}
-              className="w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 text-gray-700 placeholder-gray-400 transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
             />
           </div>
 
           <div className="space-y-2">
-            <label
-              htmlFor="projectDescription"
-              className="block text-sm font-satoshi font-medium text-gray-700 p-3 bg-[#E8E2FD]/30 rounded-lg border border-[#E8E2FD]"
-            >
-              Descrição do Projeto
-            </label>
-            <textarea
+            <TextAreaField
+              bgLabel
               id="projectDescription"
-              name="projectDescription"
+              textareaName="projectDescription"
+              label="Descrição do projeto"
               value={formData.projectDescription}
               onChange={handleInputChange}
               placeholder="Ex: Desenvolvimento de um site institucional moderno e responsivo para apresentar a empresa, seus serviços e diferenciais. O objetivo é transmitir credibilidade, facilitar o contato de novos clientes e reforçar a presença digital da marca."
               rows={6}
-              className="w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 text-gray-700 placeholder-gray-400 transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
             />
           </div>
         </div>

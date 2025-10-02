@@ -1,3 +1,5 @@
+import { Label } from "#/components/Label";
+
 // Constants
 const MAX_URL_LENGTH = 20;
 
@@ -17,10 +19,10 @@ export function PageURLSection({
   isLoading = false,
 }: PageURLSectionProps) {
   return (
-    <>
-      <p className="bg-[#E8E2FD4D] rounded-[8px] p-3 mb-4 text-sm mt-6 border border-[#E8E2FD]">
+    <div className="mb-6">
+      <Label htmlFor="originalPageUrl" info>
         Personalize a URL da proposta com o nome do seu cliente:
-      </p>
+      </Label>
 
       <div className="flex items-center justify-start gap-4 font-satoshi">
         <span className="text-white-neutral-light-600 flex items-center">
@@ -67,6 +69,6 @@ export function PageURLSection({
           {originalPageUrl.length} / {MAX_URL_LENGTH}
         </div>
       </div>
-    </>
+    </div>
   );
 }

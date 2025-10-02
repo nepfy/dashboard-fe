@@ -1,21 +1,26 @@
 import { ArrowLeft } from "lucide-react";
+import QuestionIcon from "#/components/icons/QuestionIcon";
 
 export function Box({
   title,
   description,
+  info,
   children,
   handleBack,
   handleNext,
   disabled,
   step,
+  onInfoClick,
 }: {
   title: string;
   description: string;
+  info?: boolean;
   children: React.ReactNode;
   handleBack: () => void;
   handleNext: () => void;
   disabled: boolean;
   step?: string;
+  onInfoClick?: () => void;
 }) {
   return (
     <div
@@ -25,15 +30,30 @@ export function Box({
       }}
     >
       <div className="bg-white-neutral-light-200 rounded-[12px] p-3 md:p-6 w-full h-full">
-        <h1 className="text-2xl font-medium text-primary-light-400 mb-2 font-satoshi">
-          {title}
-        </h1>
-        <p className="text-white-neutral-light-800 leading-relaxed font-light font-satoshi">
-          {description}
-        </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-medium text-primary-light-400 mb-2 font-satoshi">
+              {title}
+            </h1>
+            <p className="text-white-neutral-light-800 leading-relaxed font-light font-satoshi">
+              {description}
+            </p>
+          </div>
+          {info && (
+            <div
+              className="flex items-center gap-2 mb-2 cursor-pointer"
+              onClick={onInfoClick}
+            >
+              <QuestionIcon fill="#8B8895" />
+              <p className="text-white-neutral-light-800 leading-relaxed font-light font-satoshi">
+                {info}
+              </p>
+            </div>
+          )}
+        </div>
         {children}
 
-        <div className="border-t border-gray-200 mx-4 mt-8">
+        <div className="border-t border-gray-200 mt-8">
           <div className="w-full flex flex-col md:flex-row items-center gap-4 pt-4">
             <button
               onClick={handleBack}

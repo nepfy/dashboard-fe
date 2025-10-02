@@ -1,91 +1,63 @@
 export default function ConsultingIcon() {
   return (
     <svg
-      width="166"
-      height="111"
+      className="w-[110px] h-[73.5px] lg:w-[166px] lg:h-[111px]"
       viewBox="0 0 166 111"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M0.333252 8.5C0.333252 4.08172 3.91497 0.5 8.33325 0.5H157.667C162.085 0.5 165.667 4.08172 165.667 8.5V102.5C165.667 106.918 162.085 110.5 157.667 110.5H8.33324C3.91497 110.5 0.333252 106.918 0.333252 102.5V8.5Z"
+        d="M0 8.5C0 4.08172 3.58172 0.5 8 0.5H157.333C161.752 0.5 165.333 4.08172 165.333 8.5V102.5C165.333 106.918 161.752 110.5 157.333 110.5H7.99999C3.58172 110.5 0 106.918 0 102.5V8.5Z"
         fill="#6945F1"
       />
       <path
-        d="M0.333252 8.5C0.333252 4.08172 3.91497 0.5 8.33325 0.5H157.667C162.085 0.5 165.667 4.08172 165.667 8.5V102.5C165.667 106.918 162.085 110.5 157.667 110.5H8.33324C3.91497 110.5 0.333252 106.918 0.333252 102.5V8.5Z"
-        fill="url(#paint0_linear_299_consulting)"
+        d="M0 8.5C0 4.08172 3.58172 0.5 8 0.5H157.333C161.752 0.5 165.333 4.08172 165.333 8.5V102.5C165.333 106.918 161.752 110.5 157.333 110.5H7.99999C3.58172 110.5 0 106.918 0 102.5V8.5Z"
+        fill="url(#paint0_linear_267_6131)"
         fillOpacity="0.9"
       />
-      <g opacity="0.5" filter="url(#filter0_d_299_consulting)">
+      <g opacity="0.5" filter="url(#filter0_d_267_6131)">
         <rect
-          x="43"
+          x="42.6667"
           y="15.5"
           width="80"
           height="80"
           rx="20"
-          fill="url(#paint1_linear_299_consulting)"
+          fill="url(#paint1_linear_267_6131)"
           fillOpacity="0.9"
           shapeRendering="crispEdges"
         />
       </g>
-      <g filter="url(#filter1_d_299_consulting)">
-        {/* Two people icons representing consulting/agencies */}
-        <circle cx="60" cy="45" r="8" fill="white" />
-        <circle cx="106" cy="45" r="8" fill="white" />
+      <path
+        d="M73.0002 42.5C65.8205 42.5 60.0002 48.3203 60.0002 55.5C60.0002 62.6797 65.8205 68.5 73.0002 68.5C80.1799 68.5 86.0002 62.6797 86.0002 55.5C86.0002 53.8431 87.3434 52.5 89.0002 52.5C90.6571 52.5 92.0002 53.8431 92.0002 55.5C92.0002 65.9934 83.4937 74.5 73.0002 74.5C62.5068 74.5 54.0002 65.9934 54.0002 55.5C54.0002 45.0066 62.5068 36.5 73.0002 36.5C74.6571 36.5 76.0002 37.8431 76.0002 39.5C76.0002 41.1569 74.6571 42.5 73.0002 42.5Z"
+        fill="url(#paint2_linear_267_6131)"
+        fillOpacity="0.9"
+      />
+      <path
+        d="M106 55.5C106 62.6797 100.18 68.5 93.0002 68.5C91.3434 68.5 90.0002 69.8431 90.0002 71.5C90.0002 73.1569 91.3434 74.5 93.0002 74.5C103.494 74.5 112 65.9934 112 55.5C112 45.0066 103.494 36.5 93.0002 36.5C82.5068 36.5 74.0002 45.0066 74.0002 55.5C74.0002 57.1569 75.3434 58.5 77.0002 58.5C78.6571 58.5 80.0002 57.1569 80.0002 55.5C80.0002 48.3203 85.8205 42.5 93.0002 42.5C100.18 42.5 106 48.3203 106 55.5Z"
+        fill="url(#paint3_linear_267_6131)"
+        fillOpacity="0.9"
+      />
+      <g filter="url(#filter1_d_267_6131)">
         <path
-          d="M52 60C52 55 56 50 60 50C64 50 68 55 68 60"
-          stroke="white"
-          strokeWidth="2"
-          fill="none"
+          d="M73.0002 42.5C65.8205 42.5 60.0002 48.3203 60.0002 55.5C60.0002 62.6797 65.8205 68.5 73.0002 68.5C80.1799 68.5 86.0002 62.6797 86.0002 55.5C86.0002 53.8431 87.3434 52.5 89.0002 52.5C90.6571 52.5 92.0002 53.8431 92.0002 55.5C92.0002 65.9934 83.4937 74.5 73.0002 74.5C62.5068 74.5 54.0002 65.9934 54.0002 55.5C54.0002 45.0066 62.5068 36.5 73.0002 36.5C74.6571 36.5 76.0002 37.8431 76.0002 39.5C76.0002 41.1569 74.6571 42.5 73.0002 42.5Z"
+          fill="url(#paint4_linear_267_6131)"
+          fillOpacity="0.9"
+          shapeRendering="crispEdges"
         />
         <path
-          d="M98 60C98 55 102 50 106 50C110 50 114 55 114 60"
-          stroke="white"
-          strokeWidth="2"
-          fill="none"
+          d="M106 55.5C106 62.6797 100.18 68.5 93.0002 68.5C91.3434 68.5 90.0002 69.8431 90.0002 71.5C90.0002 73.1569 91.3434 74.5 93.0002 74.5C103.494 74.5 112 65.9934 112 55.5C112 45.0066 103.494 36.5 93.0002 36.5C82.5068 36.5 74.0002 45.0066 74.0002 55.5C74.0002 57.1569 75.3434 58.5 77.0002 58.5C78.6571 58.5 80.0002 57.1569 80.0002 55.5C80.0002 48.3203 85.8205 42.5 93.0002 42.5C100.18 42.5 106 48.3203 106 55.5Z"
+          fill="url(#paint5_linear_267_6131)"
+          fillOpacity="0.9"
+          shape-rendering="crispEdges"
         />
-        {/* Connection line between people */}
-        <path
-          d="M68 45L98 45"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        {/* Chart/analytics icon */}
-        <rect x="70" y="65" width="4" height="12" fill="white" />
-        <rect x="78" y="60" width="4" height="17" fill="white" />
-        <rect x="86" y="55" width="4" height="22" fill="white" />
-        <rect x="94" y="62" width="4" height="15" fill="white" />
       </g>
       <defs>
-        <linearGradient
-          id="paint0_linear_299_consulting"
-          x1="0.333252"
-          y1="0.5"
-          x2="165.667"
-          y2="110.5"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#8B5CF6" />
-          <stop offset="1" stopColor="#A855F7" />
-        </linearGradient>
-        <linearGradient
-          id="paint1_linear_299_consulting"
-          x1="43"
-          y1="15.5"
-          x2="123"
-          y2="95.5"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#8B5CF6" />
-          <stop offset="1" stopColor="#A855F7" />
-        </linearGradient>
         <filter
-          id="filter0_d_299_consulting"
-          x="39"
-          y="11.5"
-          width="88"
-          height="88"
+          id="filter0_d_267_6131"
+          x="38.0267"
+          y="15.5"
+          width="89.28"
+          height="89.28"
           filterUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
         >
@@ -96,8 +68,8 @@ export default function ConsultingIcon() {
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
             result="hardAlpha"
           />
-          <feOffset dy="4" />
-          <feGaussianBlur stdDeviation="2" />
+          <feOffset dy="4.64" />
+          <feGaussianBlur stdDeviation="2.32" />
           <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix
             type="matrix"
@@ -106,21 +78,21 @@ export default function ConsultingIcon() {
           <feBlend
             mode="normal"
             in2="BackgroundImageFix"
-            result="effect1_dropShadow_299_consulting"
+            result="effect1_dropShadow_267_6131"
           />
           <feBlend
             mode="normal"
             in="SourceGraphic"
-            in2="effect1_dropShadow_299_consulting"
+            in2="effect1_dropShadow_267_6131"
             result="shape"
           />
         </filter>
         <filter
-          id="filter1_d_299_consulting"
-          x="40"
-          y="35"
-          width="86"
-          height="50"
+          id="filter1_d_267_6131"
+          x="51.3002"
+          y="36.5"
+          width="63.4"
+          height="43.4"
           filterUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
         >
@@ -131,8 +103,8 @@ export default function ConsultingIcon() {
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
             result="hardAlpha"
           />
-          <feOffset dy="2" />
-          <feGaussianBlur stdDeviation="1" />
+          <feOffset dy="2.7" />
+          <feGaussianBlur stdDeviation="1.35" />
           <feComposite in2="hardAlpha" operator="out" />
           <feColorMatrix
             type="matrix"
@@ -141,15 +113,81 @@ export default function ConsultingIcon() {
           <feBlend
             mode="normal"
             in2="BackgroundImageFix"
-            result="effect1_dropShadow_299_consulting"
+            result="effect1_dropShadow_267_6131"
           />
           <feBlend
             mode="normal"
             in="SourceGraphic"
-            in2="effect1_dropShadow_299_consulting"
+            in2="effect1_dropShadow_267_6131"
             result="shape"
           />
         </filter>
+        <linearGradient
+          id="paint0_linear_267_6131"
+          x1="59.495"
+          y1="42.276"
+          x2="147.371"
+          y2="88.5322"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#6B46F5" />
+          <stop offset="1" stopColor="#5437C1" />
+        </linearGradient>
+        <linearGradient
+          id="paint1_linear_267_6131"
+          x1="46.3716"
+          y1="81.647"
+          x2="90.9554"
+          y2="34.4869"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="white" stopOpacity="0" />
+          <stop offset="1" stopColor="white" />
+        </linearGradient>
+        <linearGradient
+          id="paint2_linear_267_6131"
+          x1="56.6862"
+          y1="67.9198"
+          x2="75.6761"
+          y2="37.2604"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="white" stopOpacity="0" />
+          <stop offset="1" stopColor="white" />
+        </linearGradient>
+        <linearGradient
+          id="paint3_linear_267_6131"
+          x1="56.6862"
+          y1="67.9198"
+          x2="75.6761"
+          y2="37.2604"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="white" stopOpacity="0" />
+          <stop offset="1" stopColor="white" />
+        </linearGradient>
+        <linearGradient
+          id="paint4_linear_267_6131"
+          x1="56.6862"
+          y1="67.9198"
+          x2="75.6761"
+          y2="37.2604"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="white" stopOpacity="0" />
+          <stop offset="1" stopColor="white" />
+        </linearGradient>
+        <linearGradient
+          id="paint5_linear_267_6131"
+          x1="56.6862"
+          y1="67.9198"
+          x2="75.6761"
+          y2="37.2604"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="white" stopOpacity="0" />
+          <stop offset="1" stopColor="white" />
+        </linearGradient>
       </defs>
     </svg>
   );

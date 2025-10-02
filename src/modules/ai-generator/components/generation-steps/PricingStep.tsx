@@ -7,6 +7,7 @@ import DotsOneMobileIcon from "../icons/DotsOneMobileIcon";
 import DotsTwoMobileIcon from "../icons/DotsTwoMobileIcon";
 import DotsThreeMobileIcon from "../icons/DotsThreeMobileIcon";
 import { Box } from "#/modules/ai-generator/components/box/Box";
+import { Label } from "#/components/Label";
 
 export function PricingStep({
   handleBack,
@@ -51,9 +52,7 @@ export function PricingStep({
         disabled={!selectedPlan}
       >
         <div className="mb-6 mt-6">
-          <p className="bg-[#E8E2FD4D] rounded-[8px] p-3 mb-4 text-sm">
-            Quantos planos você quer oferecer para seu cliente?
-          </p>
+          <Label>Quantos planos você quer oferecer para seu cliente?</Label>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
