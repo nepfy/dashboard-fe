@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { TemplateConfig } from "#/modules/ai-generator/config/template-config";
 
@@ -19,9 +19,9 @@ export default function TemplateConfigDetailPage() {
     if (templateId) {
       fetchConfig();
     }
-  }, [templateId]);
+  }, [templateId, fetchConfig]);
 
-  const fetchConfig = async () => {
+  const fetchConfig = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/admin/templates/config");
@@ -44,7 +44,7 @@ export default function TemplateConfigDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [templateId]);
 
   const updateMoAConfig = async (moaConfig: Partial<TemplateConfig["moa"]>) => {
     try {
