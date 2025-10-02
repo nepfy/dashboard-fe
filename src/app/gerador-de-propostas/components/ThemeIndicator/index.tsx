@@ -136,6 +136,13 @@ export default function ThemeIndicator({
                 <button
                   className="flex-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded transition-colors"
                   title="Configurações do tema"
+                  onClick={() => {
+                    const templateId = templateType?.toLowerCase() || "flash";
+                    window.open(
+                      `/admin/templates/config/${templateId}`,
+                      "_blank"
+                    );
+                  }}
                 >
                   <Settings className="w-3 h-3 inline mr-1" />
                   Config
