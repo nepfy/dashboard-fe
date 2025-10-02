@@ -681,7 +681,66 @@ Exemplos:
 - SupportText com 70 caracteres: "Nossa equipe é composta por especialistas dedicados e experientes."
 - Subtítulo com 250 caracteres: "Combinamos criatividade e estratégia para entregar soluções de design que geram resultados duradouros. Nossa equipe é apaixonada por criar experiências visuais que atendem às necessidades de cada cliente, com foco em inovação e impacto no mercado."`;
 
+    const expectedFormat = `{
+  "title": "string (exactly 155 characters)",
+  "supportText": "string (exactly 70 characters)",
+  "subtitle": "string (exactly 250 characters)"
+}`;
+
     try {
+      const moaResult =
+        await this.moaService.generateWithRetry<PrimeAboutUsSection>(
+          userPrompt,
+          this.agent?.systemPrompt || "You are a premium proposal specialist.",
+          expectedFormat,
+          this.agent?.systemPrompt || "You are a premium proposal specialist."
+        );
+
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Prime AboutUs generated successfully");
+        const parsed = moaResult.result;
+
+        // Validate and retry if needed
+        if (
+          parsed.title.length !== 155 ||
+          parsed.supportText.length !== 70 ||
+          parsed.subtitle.length !== 250
+        ) {
+          console.log(
+            `Prime AboutUs length mismatch: title=${parsed.title.length}, supportText=${parsed.supportText.length}, subtitle=${parsed.subtitle.length}, retrying...`
+          );
+          const retryPrompt = `O conteúdo anterior tinha contagens incorretas:
+- Título: ${parsed.title.length} caracteres (deveria ter 155)
+- SupportText: ${parsed.supportText.length} caracteres (deveria ter 70)
+- Subtítulo: ${parsed.subtitle.length} caracteres (deveria ter 250)
+
+Crie novos textos com as contagens EXATAS:
+
+{
+  "title": "Novo título com exatamente 155 caracteres",
+  "supportText": "Novo supportText com exatamente 70 caracteres",
+  "subtitle": "Novo subtítulo com exatamente 250 caracteres"
+}`;
+
+          const retryResponse = await this.runLLM(retryPrompt);
+          const retryParsed = JSON.parse(retryResponse);
+
+          return {
+            title: retryParsed.title,
+            supportText: retryParsed.supportText,
+            subtitle: retryParsed.subtitle,
+          };
+        }
+
+        return {
+          title: parsed.title,
+          supportText: parsed.supportText,
+          subtitle: parsed.subtitle,
+        };
+      }
+
+      // Fallback to single model if MoA fails
+      console.warn("MoA failed, falling back to single model");
       const parsed = await this.runLLMWithJSONRetry<PrimeAboutUsSection>(
         userPrompt
       );
@@ -907,62 +966,151 @@ Crie novos textos com as contagens EXATAS:
   ]
 }`;
 
-    const parsed = await this.runLLMWithJSONRetry<PrimeProcessStepsSection>(
-      userPrompt
-    );
-
-    const topics = ensureArray<PrimeSpecialtyTopic>(
-      parsed.topics,
-      "specialties.topics"
-    );
-    ensureCondition(
-      topics.length === 9,
-      "specialties.topics must have exactly 9 items"
-    );
-
-    const titleValidation = validateMaxLengthWithWarning(
-      parsed.title,
-      180,
-      "specialties.title"
-    );
-
-    if (titleValidation.warning) {
-      console.warn("Prime Specialties Title Warning:", titleValidation.warning);
+    const expectedFormat = `{
+  "title": "string (max 180 characters)",
+  "topics": [
+    {
+      "title": "string (max 60 characters)",
+      "description": "string (max 140 characters)"
     }
+  ]
+}`;
 
-    return {
-      title: titleValidation.value,
-      topics: topics.map((topic, index) => {
-        const topicTitleValidation = validateMaxLengthWithWarning(
-          topic.title,
-          60,
-          `specialties.topics[${index}].title`
-        );
-        const topicDescValidation = validateMaxLengthWithWarning(
-          topic.description,
-          140,
-          `specialties.topics[${index}].description`
+    try {
+      const moaResult =
+        await this.moaService.generateWithRetry<PrimeSpecialtiesSection>(
+          userPrompt,
+          this.agent?.systemPrompt || "You are a premium proposal specialist.",
+          expectedFormat,
+          this.agent?.systemPrompt || "You are a premium proposal specialist."
         );
 
-        if (topicTitleValidation.warning) {
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Prime Specialties generated successfully");
+        const parsed = moaResult.result;
+
+        const topics = ensureArray<PrimeSpecialtyTopic>(
+          parsed.topics,
+          "specialties.topics"
+        );
+        ensureCondition(
+          topics.length === 9,
+          "specialties.topics must have exactly 9 items"
+        );
+
+        const titleValidation = validateMaxLengthWithWarning(
+          parsed.title,
+          180,
+          "specialties.title"
+        );
+
+        if (titleValidation.warning) {
           console.warn(
-            `Prime Specialties Topic ${index} Title Warning:`,
-            topicTitleValidation.warning
-          );
-        }
-        if (topicDescValidation.warning) {
-          console.warn(
-            `Prime Specialties Topic ${index} Description Warning:`,
-            topicDescValidation.warning
+            "Prime Specialties Title Warning:",
+            titleValidation.warning
           );
         }
 
         return {
-          title: topicTitleValidation.value,
-          description: topicDescValidation.value,
+          title: titleValidation.value,
+          topics: topics.map((topic, index) => {
+            const topicTitleValidation = validateMaxLengthWithWarning(
+              topic.title,
+              60,
+              `specialties.topics[${index}].title`
+            );
+            const topicDescValidation = validateMaxLengthWithWarning(
+              topic.description,
+              140,
+              `specialties.topics[${index}].description`
+            );
+
+            if (topicTitleValidation.warning) {
+              console.warn(
+                `Prime Specialties Topic ${index} Title Warning:`,
+                topicTitleValidation.warning
+              );
+            }
+            if (topicDescValidation.warning) {
+              console.warn(
+                `Prime Specialties Topic ${index} Description Warning:`,
+                topicDescValidation.warning
+              );
+            }
+
+            return {
+              title: topicTitleValidation.value,
+              description: topicDescValidation.value,
+            };
+          }),
         };
-      }),
-    };
+      }
+
+      // Fallback to single model if MoA fails
+      console.warn("MoA failed, falling back to single model");
+      const parsed = await this.runLLMWithJSONRetry<PrimeSpecialtiesSection>(
+        userPrompt
+      );
+
+      const topics = ensureArray<PrimeSpecialtyTopic>(
+        parsed.topics,
+        "specialties.topics"
+      );
+      ensureCondition(
+        topics.length === 9,
+        "specialties.topics must have exactly 9 items"
+      );
+
+      const titleValidation = validateMaxLengthWithWarning(
+        parsed.title,
+        180,
+        "specialties.title"
+      );
+
+      if (titleValidation.warning) {
+        console.warn(
+          "Prime Specialties Title Warning:",
+          titleValidation.warning
+        );
+      }
+
+      return {
+        title: titleValidation.value,
+        topics: topics.map((topic, index) => {
+          const topicTitleValidation = validateMaxLengthWithWarning(
+            topic.title,
+            60,
+            `specialties.topics[${index}].title`
+          );
+          const topicDescValidation = validateMaxLengthWithWarning(
+            topic.description,
+            140,
+            `specialties.topics[${index}].description`
+          );
+
+          if (topicTitleValidation.warning) {
+            console.warn(
+              `Prime Specialties Topic ${index} Title Warning:`,
+              topicTitleValidation.warning
+            );
+          }
+          if (topicDescValidation.warning) {
+            console.warn(
+              `Prime Specialties Topic ${index} Description Warning:`,
+              topicDescValidation.warning
+            );
+          }
+
+          return {
+            title: topicTitleValidation.value,
+            description: topicDescValidation.value,
+          };
+        }),
+      };
+    } catch (error) {
+      console.error("Prime Specialties Generation Error:", error);
+      throw error;
+    }
   }
 
   private async generateProcessSteps() {
@@ -978,71 +1126,170 @@ Crie novos textos com as contagens EXATAS:
   ]
 }`;
 
-    const parsed = await this.runLLMWithJSONRetry<PrimeProcessStepsSection>(
-      userPrompt
-    );
-
-    const topics = ensureArray<PrimeStepsTopic>(parsed.topics, "steps.topics");
-    ensureCondition(
-      topics.length === 6,
-      "steps.topics must have exactly 6 items"
-    );
-
-    const introValidation = validateMaxLengthWithWarning(
-      parsed.introduction,
-      120,
-      "steps.introduction"
-    );
-    const titleValidation = validateMaxLengthWithWarning(
-      parsed.title,
-      50,
-      "steps.title"
-    );
-
-    if (introValidation.warning) {
-      console.warn(
-        "Prime Steps Introduction Warning:",
-        introValidation.warning
-      );
+    const expectedFormat = `{
+  "introduction": "string (max 120 characters)",
+  "title": "string (max 50 characters)",
+  "topics": [
+    {
+      "title": "string (max 45 characters)",
+      "description": "string (max 260 characters)"
     }
-    if (titleValidation.warning) {
-      console.warn("Prime Steps Title Warning:", titleValidation.warning);
-    }
+  ]
+}`;
 
-    return {
-      introduction: introValidation.value,
-      title: titleValidation.value,
-      topics: topics.map((topic, index) => {
-        const topicTitleValidation = validateMaxLengthWithWarning(
-          topic.title,
-          45,
-          `steps.topics[${index}].title`
-        );
-        const topicDescValidation = validateMaxLengthWithWarning(
-          topic.description,
-          260,
-          `steps.topics[${index}].description`
+    try {
+      const moaResult =
+        await this.moaService.generateWithRetry<PrimeProcessStepsSection>(
+          userPrompt,
+          this.agent?.systemPrompt || "You are a premium proposal specialist.",
+          expectedFormat,
+          this.agent?.systemPrompt || "You are a premium proposal specialist."
         );
 
-        if (topicTitleValidation.warning) {
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Prime ProcessSteps generated successfully");
+        const parsed = moaResult.result;
+
+        const topics = ensureArray<PrimeStepsTopic>(
+          parsed.topics,
+          "steps.topics"
+        );
+        ensureCondition(
+          topics.length === 6,
+          "steps.topics must have exactly 6 items"
+        );
+
+        const introValidation = validateMaxLengthWithWarning(
+          parsed.introduction,
+          120,
+          "steps.introduction"
+        );
+        const titleValidation = validateMaxLengthWithWarning(
+          parsed.title,
+          50,
+          "steps.title"
+        );
+
+        if (introValidation.warning) {
           console.warn(
-            `Prime Steps Topic ${index} Title Warning:`,
-            topicTitleValidation.warning
+            "Prime Steps Introduction Warning:",
+            introValidation.warning
           );
         }
-        if (topicDescValidation.warning) {
-          console.warn(
-            `Prime Steps Topic ${index} Description Warning:`,
-            topicDescValidation.warning
-          );
+        if (titleValidation.warning) {
+          console.warn("Prime Steps Title Warning:", titleValidation.warning);
         }
 
         return {
-          title: topicTitleValidation.value,
-          description: topicDescValidation.value,
+          introduction: introValidation.value,
+          title: titleValidation.value,
+          topics: topics.map((topic, index) => {
+            const topicTitleValidation = validateMaxLengthWithWarning(
+              topic.title,
+              45,
+              `steps.topics[${index}].title`
+            );
+            const topicDescValidation = validateMaxLengthWithWarning(
+              topic.description,
+              260,
+              `steps.topics[${index}].description`
+            );
+
+            if (topicTitleValidation.warning) {
+              console.warn(
+                `Prime Steps Topic ${index} Title Warning:`,
+                topicTitleValidation.warning
+              );
+            }
+            if (topicDescValidation.warning) {
+              console.warn(
+                `Prime Steps Topic ${index} Description Warning:`,
+                topicDescValidation.warning
+              );
+            }
+
+            return {
+              title: topicTitleValidation.value,
+              description: topicDescValidation.value,
+            };
+          }),
         };
-      }),
-    };
+      }
+
+      // Fallback to single model if MoA fails
+      console.warn("MoA failed, falling back to single model");
+      const parsed = await this.runLLMWithJSONRetry<PrimeProcessStepsSection>(
+        userPrompt
+      );
+
+      const topics = ensureArray<PrimeStepsTopic>(
+        parsed.topics,
+        "steps.topics"
+      );
+      ensureCondition(
+        topics.length === 6,
+        "steps.topics must have exactly 6 items"
+      );
+
+      const introValidation = validateMaxLengthWithWarning(
+        parsed.introduction,
+        120,
+        "steps.introduction"
+      );
+      const titleValidation = validateMaxLengthWithWarning(
+        parsed.title,
+        50,
+        "steps.title"
+      );
+
+      if (introValidation.warning) {
+        console.warn(
+          "Prime Steps Introduction Warning:",
+          introValidation.warning
+        );
+      }
+      if (titleValidation.warning) {
+        console.warn("Prime Steps Title Warning:", titleValidation.warning);
+      }
+
+      return {
+        introduction: introValidation.value,
+        title: titleValidation.value,
+        topics: topics.map((topic, index) => {
+          const topicTitleValidation = validateMaxLengthWithWarning(
+            topic.title,
+            45,
+            `steps.topics[${index}].title`
+          );
+          const topicDescValidation = validateMaxLengthWithWarning(
+            topic.description,
+            260,
+            `steps.topics[${index}].description`
+          );
+
+          if (topicTitleValidation.warning) {
+            console.warn(
+              `Prime Steps Topic ${index} Title Warning:`,
+              topicTitleValidation.warning
+            );
+          }
+          if (topicDescValidation.warning) {
+            console.warn(
+              `Prime Steps Topic ${index} Description Warning:`,
+              topicDescValidation.warning
+            );
+          }
+
+          return {
+            title: topicTitleValidation.value,
+            description: topicDescValidation.value,
+          };
+        }),
+      };
+    } catch (error) {
+      console.error("Prime ProcessSteps Generation Error:", error);
+      throw error;
+    }
   }
 
   private async generateScope() {
