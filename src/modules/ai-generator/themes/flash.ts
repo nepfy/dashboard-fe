@@ -208,7 +208,7 @@ export class FlashTemplateWorkflow {
         : Promise.resolve(undefined),
       data.includeFAQ
         ? this.generateFAQ(data, agent)
-        : Promise.resolve(undefined),
+        : Promise.resolve(this.getFallbackFAQ()),
     ]);
 
     // Collect sections for metadata
@@ -603,12 +603,12 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
       const introValidation = validateMaxLengthWithWarning(
         parsed.introduction,
-        100,
+        200,
         "steps.introduction"
       );
       const titleValidation = validateMaxLengthWithWarning(
         parsed.title,
-        12,
+        50,
         "steps.title"
       );
 
@@ -738,7 +738,7 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
 
       const titleValidation = validateMaxLengthWithWarning(
         parsed.title,
-        85,
+        150,
         "investment.title"
       );
 
@@ -1094,8 +1094,9 @@ Retorne APENAS o JSON acima, substituindo apenas o conteúdo entre aspas.`;
   private generateFooter(data: FlashThemeData): FlashFooterSection {
     console.log("Flash footer generated for", data.projectName);
     return {
-      callToAction: "",
-      disclaimer: "",
+      callToAction: "Transforme sua presença digital conosco",
+      disclaimer:
+        "Estamos à disposição para apoiar cada etapa do seu projeto. Conte com nossa equipe para garantir sucesso, impacto e crescimento contínuo, com atenção e dedicação personalizada.",
     } as FlashFooterSection;
   }
 
