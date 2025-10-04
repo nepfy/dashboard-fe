@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Label } from "#/components/Label";
+import { URLModal } from "#/modules/ai-generator/components/modal/URLModal";
 
 // Constants
 const MAX_URL_LENGTH = 20;
@@ -18,9 +20,15 @@ export function PageURLSection({
   clearError,
   isLoading = false,
 }: PageURLSectionProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="mb-6">
-      <Label htmlFor="originalPageUrl" info>
+      <Label
+        htmlFor="originalPageUrl"
+        info
+        onClick={() => setIsModalOpen(true)}
+      >
         Personalize a URL da proposta com o nome do seu cliente:
       </Label>
 
@@ -69,6 +77,8 @@ export function PageURLSection({
           {originalPageUrl.length} / {MAX_URL_LENGTH}
         </div>
       </div>
+
+      <URLModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </div>
   );
 }

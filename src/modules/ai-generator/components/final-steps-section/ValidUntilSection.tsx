@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { DatePicker } from "#/components/Inputs";
 import { Label } from "#/components/Label";
+import { ValidUntilModal } from "#/modules/ai-generator/components/modal/ValidUntilModal";
 
 interface ValidUntilSectionProps {
   validUntil: string;
@@ -12,9 +14,11 @@ export function ValidUntilSection({
   setValidUntil,
   errors,
 }: ValidUntilSectionProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
-      <Label htmlFor="projectValidUntil" info>
+      <Label info onClick={() => setIsModalOpen(true)}>
         Qual a validade desta proposta?
       </Label>
 
@@ -29,6 +33,11 @@ export function ValidUntilSection({
           disabled={false}
         />
       </div>
+
+      <ValidUntilModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
     </>
   );
 }

@@ -1,9 +1,9 @@
+import { useState } from "react";
 import Modal from "#/modules/ai-generator/components/modal/Modal";
 import { SparkleIcon } from "#/modules/ai-generator/components/icons/SparkleIcon";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useState } from "react";
 
 export function CompanyInfoModal({
   isModalOpen,
@@ -55,7 +55,7 @@ export function CompanyInfoModal({
     >
       <div className="font-satoshi">
         <div className="flex items-center gap-2 bg-[#DBD2FF1A]/90 rounded-[12px] p-4 border border-[#5639C6] button-inner">
-          <div className="h-10 w-10 flex justify-center items-center bg-[#DBD2FF] rounded-full">
+          <div className="h-10 w-10 hidden md:flex justify-center items-center bg-[#DBD2FF] rounded-full">
             <SparkleIcon />
           </div>
           <div className="w-[88%]">

@@ -14,7 +14,7 @@ export function Label({
   return (
     <label
       htmlFor={htmlFor}
-      className="text-[#1C1C1C] bg-[#E8E2FD4D]/80 text-sm p-3 rounded-[8px] font-medium flex justify-between items-center mb-2 border border-[#E8E2FD]"
+      className="text-[#1C1C1C] bg-[#E8E2FD4D]/80 text-sm p-3 rounded-[8px] font-medium flex justify-between items-center mb-2 border border-[#E8E2FD] ml-2"
     >
       {children}
       {info && (

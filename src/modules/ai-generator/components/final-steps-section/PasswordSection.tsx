@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PasswordInput } from "#/components/Inputs";
+import { PasswordModal } from "#/modules/ai-generator/components/modal/PasswordModal";
 
 // Types
 interface PasswordValidation {
@@ -23,6 +24,7 @@ export function PasswordSection({
   clearError,
 }: PasswordSectionProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [passwordValidation, setPasswordValidation] =
     useState<PasswordValidation>({
       minLength: false,
@@ -59,6 +61,7 @@ export function PasswordSection({
           toggleShowPassword={() => setShowPassword(!showPassword)}
           bgLabel
           info
+          showInfo={() => setIsModalOpen(true)}
         />
       </div>
 
@@ -92,6 +95,11 @@ export function PasswordSection({
           </div>
         </div>
       )}
+
+      <PasswordModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
     </div>
   );
 }

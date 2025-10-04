@@ -13,6 +13,7 @@ type PasswordInputProps = {
   showPassword: boolean;
   toggleShowPassword: () => void;
   disabled?: boolean;
+  showInfo?: () => void;
 };
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
@@ -26,6 +27,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   showPassword,
   toggleShowPassword,
   disabled,
+  showInfo,
 }) => {
   return (
     <div className="space-y-2 relative">
@@ -53,6 +55,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         value={value}
         disabled={disabled}
         info={info}
+        onClick={showInfo}
       />
     </div>
   );

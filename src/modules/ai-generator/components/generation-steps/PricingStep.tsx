@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import DotsOneIcon from "../icons/DotsOneIcon";
 import DotsTwoIcon from "../icons/DotsTwoIcon";
 import DotsThreeIcon from "../icons/DotsThreeIcon";
@@ -8,6 +9,7 @@ import DotsTwoMobileIcon from "../icons/DotsTwoMobileIcon";
 import DotsThreeMobileIcon from "../icons/DotsThreeMobileIcon";
 import { Box } from "#/modules/ai-generator/components/box/Box";
 import { Label } from "#/components/Label";
+import { PricingModal } from "#/modules/ai-generator/components/modal/PricingModal";
 
 export function PricingStep({
   handleBack,
@@ -41,6 +43,8 @@ export function PricingStep({
     },
   ];
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-140px)]">
       {/* Main Pricing Plans Modal */}
@@ -52,7 +56,9 @@ export function PricingStep({
         disabled={!selectedPlan}
       >
         <div className="mb-6 mt-6">
-          <Label>Quantos planos você quer oferecer para seu cliente?</Label>
+          <Label info onClick={() => setIsModalOpen(true)}>
+            Quantos planos você quer oferecer para seu cliente?
+          </Label>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
@@ -99,6 +105,8 @@ export function PricingStep({
           ))}
         </div>
       </Box>
+
+      <PricingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </div>
   );
 }
