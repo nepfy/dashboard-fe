@@ -4,7 +4,6 @@ import { PageURLSection } from "#/modules/ai-generator/components/final-steps-se
 import { PasswordSection } from "#/modules/ai-generator/components/final-steps-section/PasswordSection";
 import { ValidUntilSection } from "#/modules/ai-generator/components/final-steps-section/ValidUntilSection";
 
-// Types
 interface PasswordValidation {
   minLength: boolean;
   hasNumber: boolean;
@@ -18,7 +17,6 @@ interface FormErrors {
   general?: string;
 }
 
-// Constants
 const MIN_URL_LENGTH = 3;
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -27,16 +25,25 @@ export function FinalStep({
   handleBack,
   userName = "usuário",
   step,
+  originalPageUrl,
+  setOriginalPageUrl,
+  pagePassword,
+  setPagePassword,
+  validUntil,
+  setValidUntil,
 }: {
   handleGenerateProposal: () => void;
   handleBack: () => void;
   userName: string;
   step: string;
+  originalPageUrl: string;
+  setOriginalPageUrl: (url: string) => void;
+  pagePassword: string;
+  setPagePassword: (password: string) => void;
+  validUntil: string;
+  setValidUntil: (date: string) => void;
 }) {
-  const [pagePassword, setPagePassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
-  const [originalPageUrl, setOriginalPageUrl] = useState<string>("");
-  const [validUntil, setValidUntil] = useState<string>("");
 
   const validatePassword = (password: string): PasswordValidation => ({
     minLength: password.length >= MIN_PASSWORD_LENGTH,
@@ -60,13 +67,13 @@ export function FinalStep({
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
-    if (originalPageUrl.length === 0) {
+    if (originalPageUrl?.length === 0) {
       newErrors.originalPageUrl = "O campo 'URL personalizada' é obrigatório";
-    } else if (originalPageUrl.length < MIN_URL_LENGTH) {
+    } else if (originalPageUrl?.length < MIN_URL_LENGTH) {
       newErrors.originalPageUrl = "A URL deve ter pelo menos 3 caracteres";
     }
 
-    if (pagePassword.length === 0) {
+    if (pagePassword?.length === 0) {
       newErrors.pagePassword = "O campo 'Senha' é obrigatório";
     } else if (!isPasswordValid(validatePassword(pagePassword))) {
       newErrors.pagePassword =

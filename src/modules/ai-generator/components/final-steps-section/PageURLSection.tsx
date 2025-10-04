@@ -22,6 +22,16 @@ export function PageURLSection({
 }: PageURLSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const sanitizeInput = (input: string) => {
+    return input.toLowerCase().replace(/[^a-z]/g, "");
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const sanitizedValue = sanitizeInput(e.target.value);
+    setOriginalPageUrl(sanitizedValue);
+    clearError("originalPageUrl");
+  };
+
   return (
     <div className="mb-6">
       <Label
@@ -44,10 +54,7 @@ export function PageURLSection({
         <textarea
           placeholder="Digite o nome do seu cliente"
           value={originalPageUrl}
-          onChange={(e) => {
-            setOriginalPageUrl(e.target.value);
-            clearError("originalPageUrl");
-          }}
+          onChange={handleInputChange}
           className={`w-full px-4 py-3 rounded-[var(--radius-s)] 
                     border border-white-neutral-light-300 
                     focus:outline-none focus:border-[var(--color-primary-light-400)]
@@ -69,12 +76,12 @@ export function PageURLSection({
       <div className="mt-2 flex justify-end">
         <div
           className={`text-xs font-satoshi ${
-            originalPageUrl.length >= 18
+            originalPageUrl?.length >= 18
               ? "text-red-500"
               : "text-white-neutral-light-500"
           }`}
         >
-          {originalPageUrl.length} / {MAX_URL_LENGTH}
+          {originalPageUrl?.length} / {MAX_URL_LENGTH}
         </div>
       </div>
 
