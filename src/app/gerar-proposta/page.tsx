@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast, Slide } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 import { SelectTemplate } from "#/modules/ai-generator/components/generation-steps";
 
@@ -15,7 +16,7 @@ import { Loading } from "#/modules/ai-generator/components/loading/Loading";
 
 export default function NepfyAIPage() {
   const { templateType, formData } = useProjectGenerator();
-
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<string>("template_selection");
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [clientName, setClientName] = useState("");
@@ -96,6 +97,7 @@ export default function NepfyAIPage() {
 
       if (result.success) {
         console.log("Proposal generated successfully:", result.data);
+        router.push("/dashboard");
       } else {
         console.error("Error generating proposal:", result.error);
         toast.error("Erro ao gerar proposta: " + result.error, {
