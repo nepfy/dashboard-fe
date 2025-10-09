@@ -19,6 +19,7 @@ interface RowEditMenuProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: string;
+  templateType?: "flash" | "prime" | "essencial" | "grid" | "new" | null;
   currentStatus?: string;
   viewMode?: "active" | "archived";
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
@@ -67,6 +68,7 @@ export default function RowEditMenu({
   isOpen,
   onClose,
   projectId,
+  templateType,
   currentStatus,
   viewMode = "active",
   onStatusUpdate,
@@ -150,7 +152,7 @@ export default function RowEditMenu({
   }, [isOpen, onClose, triggerElement]);
 
   const handleEditClick = () => {
-    router.push(`/gerador-de-propostas?editId=${projectId}`);
+    router.push(`/editar?projectId=${projectId}&templateType=${templateType}`);
     onClose();
   };
 

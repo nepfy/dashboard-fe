@@ -25,6 +25,7 @@ export interface ProjectsDataProps {
   state?: string;
   street?: string;
   updated_at?: string;
+  templateType?: "flash" | "prime" | "essencial" | "grid" | "new" | null;
 }
 
 export interface TableProps {

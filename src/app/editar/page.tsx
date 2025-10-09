@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Flash from "./modules/flash";
 import Prime from "./modules/prime";
-import {
-  Project,
-  FlashProjectData,
-  PrimeProjectData,
-} from "#/types/template-data";
+import { FlashProjectData, PrimeProjectData } from "#/types/template-data";
 
 // Type guard functions
 function isFlashProjectData(
@@ -26,6 +22,7 @@ function isPrimeProjectData(
 export default function EditarPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams?.get("projectId");
+  const templateType = searchParams?.get("templateType");
 
   const [projectData, setProjectData] = useState<
     FlashProjectData | PrimeProjectData | null
@@ -43,16 +40,6 @@ export default function EditarPage() {
     const loadProjectData = async () => {
       try {
         setIsLoading(true);
-
-        const projectResponse = await fetch(`/api/projects/${projectId}`);
-        const projectResult: { success: boolean; data?: Project; error?: string } =
-          await projectResponse.json();
-
-        if (!projectResult.success || !projectResult.data) {
-          throw new Error(projectResult.error || "Erro ao carregar projeto");
-        }
-
-        const templateType = projectResult.data.templateType;
 
         let templateDataResponse: Response;
         if (templateType === "flash") {
@@ -87,7 +74,7 @@ export default function EditarPage() {
     };
 
     loadProjectData();
-  }, [projectId]);
+  }, [projectId, templateType]);
 
   if (isLoading) {
     return (
@@ -118,9 +105,6 @@ export default function EditarPage() {
       </div>
     );
   }
-
-  // Render the appropriate template based on templateType with type guards
-  const templateType = projectData.project.templateType;
 
   if (isFlashProjectData(projectData)) {
     return <Flash projectData={projectData} />;

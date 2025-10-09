@@ -402,6 +402,9 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           isOpen={true}
           onClose={handleMenuClose}
           projectId={openMenuRowId}
+          templateType={
+            data?.find((row) => row.id === openMenuRowId)?.templateType
+          }
           currentStatus={
             data?.find((row) => row.id === openMenuRowId)?.projectStatus
           }
