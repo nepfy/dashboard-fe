@@ -1,0 +1,1 @@
+ALTER TABLE "flash_template_results" ADD COLUMN "title" text NOT NULL;

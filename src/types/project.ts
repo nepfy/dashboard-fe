@@ -94,15 +94,12 @@ export interface FAQ {
   sortOrder?: number;
 }
 
+// Core project interface matching the simplified projects table schema
 export interface Project {
   id?: string;
   personId?: string;
 
   projectName?: string;
-  hideClientName?: boolean;
-  clientName?: string;
-  hideClientPhoto?: boolean;
-  clientPhoto?: string;
   projectSentDate?: Date | string;
   projectValidUntil?: Date | string;
   projectStatus?:
@@ -116,8 +113,24 @@ export interface Project {
   projectVisualizationDate?: Date | string;
 
   templateType?: TemplateType;
-
   mainColor?: string;
+
+  projectUrl?: string;
+  pagePassword?: string;
+
+  isPublished?: boolean;
+  isProposalGenerated?: boolean;
+  created_at?: Date | string;
+  updated_at?: Date | string;
+}
+
+// Extended project interface for form data and legacy compatibility
+// This interface includes all the form fields that will be saved to template-specific tables
+export interface ProjectWithTemplateData extends Project {
+  hideClientName?: boolean;
+  clientName?: string;
+  hideClientPhoto?: boolean;
+  clientPhoto?: string;
   companyName?: string;
   companyEmail?: string;
   ctaButtonTitle?: string;
@@ -184,14 +197,6 @@ export interface Project {
   endMessageTitle?: string;
   endMessageTitle2?: string;
   endMessageDescription?: string;
-
-  projectUrl?: string;
-  pagePassword?: string;
-
-  isPublished?: boolean;
-  isProposalGenerated?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
 }
 
 export interface Step1Data {
@@ -327,19 +332,19 @@ export interface ProposalFormData {
 
 export interface CreateProposalResponse {
   success: boolean;
-  data?: Project;
+  data?: ProjectWithTemplateData;
   error?: string;
 }
 
 export interface UpdateProposalResponse {
   success: boolean;
-  data?: Project;
+  data?: ProjectWithTemplateData;
   error?: string;
 }
 
 export interface GetProposalResponse {
   success: boolean;
-  data?: Project;
+  data?: ProjectWithTemplateData;
   error?: string;
 }
 

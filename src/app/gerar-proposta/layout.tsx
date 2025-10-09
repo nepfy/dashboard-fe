@@ -4,7 +4,7 @@ import Link from "next/link";
 import Logo from "#/components/icons/Logo";
 import { ProjectGeneratorProvider } from "#/contexts/ProjectGeneratorContext";
 import CloseIcon from "#/components/icons/CloseIcon";
-import SaveDraftButton from "../gerador-de-propostas/components/SaveDraftButton";
+import SaveDraftButton from "#/modules/ai-generator/components/save-draft";
 
 export default function NepfyAILayout({
   children,

@@ -1,0 +1,28 @@
+import { FlashProjectData } from "#/types/template-data";
+
+interface FlashProps {
+  projectData: FlashProjectData;
+}
+
+export default function Flash({ projectData }: FlashProps) {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Flash Template Editor</h1>
+      <p className="mb-4">
+        <span className="font-semibold">Project:</span>{" "}
+        {projectData.project.projectName}
+      </p>
+      <p className="mb-4">
+        <span className="font-semibold">Template Type:</span>{" "}
+        {projectData.project.templateType}
+      </p>
+      {/* Add your Flash template editor UI here */}
+      <div className="mt-6">
+        <h2 className="text-xl font-semibold mb-2">Template Data:</h2>
+        <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96 text-sm">
+          {JSON.stringify(projectData, null, 2)}
+        </pre>
+      </div>
+    </div>
+  );
+}

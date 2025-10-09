@@ -90,7 +90,7 @@ export default function ProjectsView({
           </Link> */}
 
           <Link href="/dashboard/propostas">
-            <div className="w-[100px] h-[36px] flex items-center justify-center text-white-neutral-light-900 text-sm font-medium rounded-[var(--radius-s)] cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-400 border border-white-neutral-light-300 button-inner">
+            <div className="w-[100px] h-[36px] flex items-center justify-center text-white-neutral-light-900 text-sm font-medium rounded-[var(--radius-s)] cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 border border-white-neutral-light-300 button-inner">
               Ver todas
             </div>
           </Link>

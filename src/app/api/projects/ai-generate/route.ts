@@ -15,21 +15,12 @@ import {
 } from "#/modules/ai-generator/utils";
 import { db } from "#/lib/db";
 import { eq } from "drizzle-orm/expressions";
-import {
-  projectsTable,
-  projectTeamMembersTable,
-  projectExpertiseTable,
-  projectResultsTable,
-  projectClientsTable,
-  projectProcessStepsTable,
-  projectTestimonialsTable,
-  projectServicesTable,
-  projectPlansTable,
-  projectPlanDetailsTable,
-  projectTermsConditionsTable,
-  projectFaqTable,
-} from "#/lib/db/schema/projects";
+import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
+import {
+  saveFlashTemplateData,
+  savePrimeTemplateData,
+} from "#/lib/db/template-save-handlers";
 
 export interface NepfyAIRequestData {
   selectedService: string;
@@ -44,6 +35,9 @@ export interface NepfyAIRequestData {
   includeFAQ?: boolean;
   templateType?: string;
   mainColor?: string;
+  originalPageUrl?: string;
+  pagePassword?: string;
+  validUntil?: string;
 }
 
 export type ProposalResult =
@@ -77,92 +71,23 @@ async function createProjectFromAIResult(
     userId,
     requestDataClientName: requestData.clientName,
     requestDataProjectName: requestData.projectName,
-    requestDataCompanyInfo: requestData.companyInfo,
+    requestDataTemplateType: requestData.templateType,
   });
 
-  // Create main project
+  // Create main project record
   const projectData = {
     personId: userId,
     projectName: requestData.projectName,
-    clientName: requestData.clientName,
+    projectSentDate: null,
+    projectValidUntil: requestData.validUntil ? new Date(requestData.validUntil) : null,
     projectStatus: "draft",
+    projectVisualizationDate: null,
     templateType: requestData.templateType || "flash",
     mainColor: requestData.mainColor || "#3B82F6",
-    companyName:
-      requestData.companyInfo || "Empresa especializada em soluções premium",
-    companyEmail: "",
-    pageTitle:
-      ((aiResult as Record<string, unknown>).pageTitle as string) ||
-      requestData.projectName,
-    pageSubtitle:
-      ((aiResult as Record<string, unknown>).pageSubtitle as string) ||
-      requestData.projectDescription,
-    services:
-      ((aiResult as Record<string, unknown>).services as string) ||
-      requestData.projectDescription,
-    hideServices: false,
-    hideAboutUsSection: false,
-    hideAboutUsTitle: false,
-    hideAboutUsSubtitle1: false,
-    hideAboutUsSubtitle2: false,
-    aboutUsTitle:
-      ((aiResult as Record<string, unknown>).aboutUsTitle as string) ||
-      "Sobre Nós",
-    aboutUsSubtitle1:
-      ((aiResult as Record<string, unknown>).aboutUsSubtitle1 as string) ||
-      requestData.companyInfo ||
-      "Empresa especializada em soluções premium",
-    aboutUsSubtitle2:
-      ((aiResult as Record<string, unknown>).aboutUsSubtitle2 as string) || "",
-    hideAboutYourTeamSection: false,
-    ourTeamSubtitle:
-      ((aiResult as Record<string, unknown>).ourTeamSubtitle as string) ||
-      "Nossa Equipe",
-    hideExpertiseSection: false,
-    expertiseSubtitle:
-      ((aiResult as Record<string, unknown>).expertiseSubtitle as string) ||
-      "Nossa Expertise",
-    hideResultsSection: false,
-    resultsSubtitle:
-      ((aiResult as Record<string, unknown>).resultsSubtitle as string) ||
-      "Resultados",
-    hideClientsSection: false,
-    clientSubtitle:
-      ((aiResult as Record<string, unknown>).clientSubtitle as string) ||
-      "Nossos Clientes",
-    hideProcessSection: false,
-    hideProcessSubtitle: false,
-    processSubtitle:
-      ((aiResult as Record<string, unknown>).processSubtitle as string) ||
-      "Nosso Processo",
-    hideCTASection: false,
-    hideTestimonialsSection: false,
-    hideInvestmentSection: false,
-    investmentTitle:
-      ((aiResult as Record<string, unknown>).investmentTitle as string) ||
-      "Investimento",
-    hideIncludedServicesSection: false,
-    hidePlansSection: false,
-    hideTermsSection: !requestData.includeTerms,
-    hideFaqSection: !requestData.includeFAQ,
-    hideFaqSubtitle: false,
-    faqSubtitle:
-      ((aiResult as Record<string, unknown>).faqSubtitle as string) ||
-      "Perguntas Frequentes",
-    hideFinalMessageSection: false,
-    hideFinalMessageSubtitle: false,
-    endMessageTitle:
-      ((aiResult as Record<string, unknown>).endMessageTitle as string) ||
-      "Vamos Conversar?",
-    endMessageTitle2:
-      ((aiResult as Record<string, unknown>).endMessageTitle2 as string) ||
-      "Entre em contato conosco",
-    endMessageDescription:
-      ((aiResult as Record<string, unknown>).endMessageDescription as string) ||
-      "Estamos prontos para transformar sua ideia em realidade. Entre em contato para começarmos.",
+    projectUrl: requestData.originalPageUrl || null,
+    pagePassword: requestData.pagePassword || null,
+    isPublished: false,
     isProposalGenerated: true,
-    created_at: new Date(),
-    updated_at: new Date(),
   };
 
   console.log("Debug - Inserting project with data:", projectData);
@@ -174,283 +99,19 @@ async function createProjectFromAIResult(
 
   console.log("Debug - Project inserted successfully:", newProject);
 
-  const projectId = newProject.id;
-
-  // Create team members if available
-  if (
-    (aiResult as Record<string, unknown>).teamMembers &&
-    Array.isArray((aiResult as Record<string, unknown>).teamMembers)
-  ) {
-    const teamMembersData = (aiResult as Record<string, unknown>)
-      .teamMembers as Array<Record<string, unknown>>;
-    const mappedTeamMembers = teamMembersData.map((member, index: number) => ({
-      projectId,
-      name: (member.name as string) || `Membro ${index + 1}`,
-      role: (member.role as string) || "Especialista",
-      photo: (member.photo as string) || "",
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (mappedTeamMembers.length > 0) {
-      await db.insert(projectTeamMembersTable).values(mappedTeamMembers);
-    }
-  }
-
-  // Create expertise if available
-  if (
-    (aiResult as Record<string, unknown>).expertise &&
-    Array.isArray((aiResult as Record<string, unknown>).expertise)
-  ) {
-    const expertiseData = (aiResult as Record<string, unknown>)
-      .expertise as Array<Record<string, unknown>>;
-    const mappedExpertise = expertiseData.map((exp, index: number) => ({
-      projectId,
-      title: (exp.title as string) || `Expertise ${index + 1}`,
-      description: (exp.description as string) || "",
-      icon: (exp.icon as string) || "",
-      sortOrder: index,
-      hideExpertiseIcon: false,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (mappedExpertise.length > 0) {
-      await db.insert(projectExpertiseTable).values(mappedExpertise);
-    }
-  }
-
-  // Create results if available
-  if (
-    (aiResult as Record<string, unknown>).results &&
-    Array.isArray((aiResult as Record<string, unknown>).results)
-  ) {
-    const resultsData = (aiResult as Record<string, unknown>).results as Array<
-      Record<string, unknown>
-    >;
-    const mappedResults = resultsData.map((result, index: number) => ({
-      projectId,
-      client: (result.client as string) || `Cliente ${index + 1}`,
-      subtitle: (result.subtitle as string) || "",
-      investment: (result.investment as string | null) || null,
-      roi: (result.roi as string | null) || null,
-      photo: (result.photo as string) || "",
-      hidePhoto: false,
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (mappedResults.length > 0) {
-      await db.insert(projectResultsTable).values(mappedResults);
-    }
-  }
-
-  // Create clients if available
-  if (
-    (aiResult as Record<string, unknown>).clients &&
-    Array.isArray((aiResult as Record<string, unknown>).clients)
-  ) {
-    const clientsData = (aiResult as Record<string, unknown>).clients as Array<
-      Record<string, unknown>
-    >;
-    const mappedClients = clientsData.map((client, index: number) => ({
-      projectId,
-      name: (client.name as string) || `Cliente ${index + 1}`,
-      logo: (client.logo as string) || "",
-      hideLogo: false,
-      hideClientName: false,
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (mappedClients.length > 0) {
-      await db.insert(projectClientsTable).values(mappedClients);
-    }
-  }
-
-  // Create process steps if available
-  if (
-    (aiResult as Record<string, unknown>).processSteps &&
-    Array.isArray((aiResult as Record<string, unknown>).processSteps)
-  ) {
-    const processStepsData = (aiResult as Record<string, unknown>)
-      .processSteps as Array<Record<string, unknown>>;
-    const mappedProcessSteps = processStepsData.map((step, index: number) => ({
-      projectId,
-      stepCounter: index + 1,
-      stepName: (step.stepName as string) || `Passo ${index + 1}`,
-      description: (step.description as string) || "",
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (mappedProcessSteps.length > 0) {
-      await db.insert(projectProcessStepsTable).values(mappedProcessSteps);
-    }
-  }
-
-  // Create testimonials if available
-  if (
-    (aiResult as Record<string, unknown>).testimonials &&
-    Array.isArray((aiResult as Record<string, unknown>).testimonials)
-  ) {
-    const testimonialsData = (aiResult as Record<string, unknown>)
-      .testimonials as Array<Record<string, unknown>>;
-    const mappedTestimonials = testimonialsData.map(
-      (testimonial, index: number) => ({
-        projectId,
-        testimonial: (testimonial.testimonial as string) || "",
-        name: (testimonial.name as string) || `Cliente ${index + 1}`,
-        role: (testimonial.role as string) || "",
-        photo: (testimonial.photo as string) || "",
-        hidePhoto: false,
-        sortOrder: index,
-        created_at: new Date(),
-        updated_at: new Date(),
-      })
+  // Save template-specific data based on template type
+  if (requestData.templateType === "flash" && "proposal" in aiResult) {
+    await saveFlashTemplateData(
+      newProject.id,
+      aiResult as FlashWorkflowResult,
+      requestData
     );
-
-    if (mappedTestimonials.length > 0) {
-      await db.insert(projectTestimonialsTable).values(mappedTestimonials);
-    }
-  }
-
-  // Create services if available
-  if (
-    (aiResult as Record<string, unknown>).servicesList &&
-    Array.isArray((aiResult as Record<string, unknown>).servicesList)
-  ) {
-    const servicesData = (aiResult as Record<string, unknown>)
-      .servicesList as Array<Record<string, unknown>>;
-    const mappedServices = servicesData.map((service, index: number) => ({
-      projectId,
-      title: (service.title as string) || `Serviço ${index + 1}`,
-      description: (service.description as string) || "",
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (mappedServices.length > 0) {
-      await db.insert(projectServicesTable).values(mappedServices);
-    }
-  }
-
-  // Create plans if available
-  if (
-    (aiResult as Record<string, unknown>).plans &&
-    Array.isArray((aiResult as Record<string, unknown>).plans)
-  ) {
-    const plansData = (
-      (aiResult as Record<string, unknown>).plans as Array<
-        Record<string, unknown>
-      >
-    ).map((plan: Record<string, unknown>, index: number) => ({
-      projectId,
-      title: (plan.title as string) || `Plano ${index + 1}`,
-      description: (plan.description as string) || "",
-      price: (plan.price as string) || null,
-      pricePeriod: (plan.pricePeriod as string) || "one-time",
-      isBestOffer: (plan.isBestOffer as boolean) || false,
-      ctaButtonTitle: (plan.ctaButtonTitle as string) || "Começar Agora",
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (plansData.length > 0) {
-      const insertedPlans = await db
-        .insert(projectPlansTable)
-        .values(plansData)
-        .returning();
-
-      // Create plan details if available
-      if (
-        (aiResult as Record<string, unknown>).planDetails &&
-        Array.isArray((aiResult as Record<string, unknown>).planDetails)
-      ) {
-        for (let i = 0; i < insertedPlans.length; i++) {
-          const plan = insertedPlans[i];
-          const planDetail = (
-            (aiResult as Record<string, unknown>).planDetails as Array<
-              Record<string, unknown>
-            >
-          )[i];
-
-          if (
-            planDetail &&
-            planDetail.features &&
-            Array.isArray(planDetail.features)
-          ) {
-            const planDetailsData = (planDetail.features as Array<string>).map(
-              (feature: string, index: number) => ({
-                planId: plan.id,
-                description: feature || "",
-                sortOrder: index,
-                created_at: new Date(),
-                updated_at: new Date(),
-              })
-            );
-
-            if (planDetailsData.length > 0) {
-              await db.insert(projectPlanDetailsTable).values(planDetailsData);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Create terms and conditions if available
-  if (
-    requestData.includeTerms &&
-    (aiResult as Record<string, unknown>).terms &&
-    Array.isArray((aiResult as Record<string, unknown>).terms)
-  ) {
-    const termsData = (
-      (aiResult as Record<string, unknown>).terms as Array<
-        Record<string, unknown>
-      >
-    ).map((term: Record<string, unknown>, index: number) => ({
-      projectId,
-      title: (term.title as string) || `Termo ${index + 1}`,
-      description: (term.description as string) || "",
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (termsData.length > 0) {
-      await db.insert(projectTermsConditionsTable).values(termsData);
-    }
-  }
-
-  // Create FAQ if available
-  if (
-    requestData.includeFAQ &&
-    (aiResult as Record<string, unknown>).faq &&
-    Array.isArray((aiResult as Record<string, unknown>).faq)
-  ) {
-    const faqData = (
-      (aiResult as Record<string, unknown>).faq as Array<
-        Record<string, unknown>
-      >
-    ).map((faqItem: Record<string, unknown>, index: number) => ({
-      projectId,
-      question: (faqItem.question as string) || `Pergunta ${index + 1}`,
-      answer: (faqItem.answer as string) || "",
-      sortOrder: index,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }));
-
-    if (faqData.length > 0) {
-      await db.insert(projectFaqTable).values(faqData);
-    }
+  } else if (requestData.templateType === "prime" && "data" in aiResult) {
+    await savePrimeTemplateData(
+      newProject.id,
+      aiResult as PrimeWorkflowResult,
+      requestData
+    );
   }
 
   return newProject;
@@ -787,7 +448,6 @@ export async function POST(request: NextRequest) {
 
     console.log("Debug - Project created successfully:", {
       projectId: newProject.id,
-      clientName: newProject.clientName,
       projectName: newProject.projectName,
     });
 
@@ -803,7 +463,6 @@ export async function POST(request: NextRequest) {
         project: {
           id: newProject.id,
           projectName: newProject.projectName,
-          clientName: newProject.clientName,
           templateType: newProject.templateType,
           mainColor: newProject.mainColor,
         },

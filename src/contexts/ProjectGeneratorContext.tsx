@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { ProposalFormData, TemplateType, Project, Plan } from "#/types/project";
 import { useSaveDraft } from "#/hooks/useProjectGenerator/useSaveDraft";
-import flash from "#/app/gerador-de-propostas/constants/flash";
+import flash from "#/constants/flash";
 
 interface ProjectGeneratorContextType {
   formData: ProposalFormData;
@@ -189,7 +189,7 @@ export function ProjectGeneratorProvider({
         typeof data === "object" &&
         "mainColor" in data
       ) {
-        const mainColor = (data as Project).mainColor;
+        const mainColor = (data as { mainColor?: string }).mainColor;
         if (mainColor && typeof window !== "undefined") {
           localStorage.setItem("flash-mainColor", mainColor);
         }
@@ -301,162 +301,15 @@ export function ProjectGeneratorProvider({
       setTemplateTypeState(projectData.templateType as TemplateType);
     }
 
-    // Step 1 - Basic company info
+    // Step 1 - Basic project metadata
     safeUpdate("step1", {
       templateType: projectData?.templateType,
       mainColor: projectData.mainColor,
-      hideClientName: projectData.hideClientName,
-      clientName: projectData.clientName,
       projectName: projectData.projectName,
-      companyName: projectData.companyName,
-      companyEmail: projectData.companyEmail,
-      ctaButtonTitle: projectData.ctaButtonTitle,
-      pageTitle: projectData.pageTitle,
-      pageSubtitle: projectData.pageSubtitle,
-      hidePageSubtitle: projectData.hidePageSubtitle,
-      services: projectData.services
-        ? projectData.services.split(",")
-        : flash.step1.services?.split(","),
-      hideServices: projectData.hideServices,
-      hideClientPhoto: projectData.hideClientPhoto,
-      clientPhoto: projectData.clientPhoto,
     });
 
-    // Step 2 - About us (Your Business)
-    safeUpdate("step2", {
-      hideAboutUsSection: projectData.hideAboutUsSection || false,
-      aboutUsTitle: projectData.aboutUsTitle,
-      hideAboutUsTitle: projectData.hideAboutUsTitle || false,
-      hideAboutUsSubtitle1: projectData.hideAboutUsSubtitle1 || false,
-      hideAboutUsSubtitle2: projectData.hideAboutUsSubtitle2 || false,
-      aboutUsSubtitle1: projectData.aboutUsSubtitle1,
-      aboutUsSubtitle2: projectData.aboutUsSubtitle2,
-    });
-
-    // Step 3 - Our team
-    safeUpdate("step3", {
-      ourTeamSubtitle: projectData.ourTeamSubtitle,
-      hideAboutYourTeamSection: projectData.hideAboutYourTeamSection || false,
-      teamMembers:
-        projectData.teamMembers ||
-        flash.step3.teamMembers.map((member) => ({
-          ...member,
-        })),
-    });
-
-    // Step 4 - Expertise
-    safeUpdate("step4", {
-      hideExpertiseSection: projectData.hideExpertiseSection || false,
-      expertiseSubtitle: projectData.expertiseSubtitle,
-      expertise:
-        projectData.expertise ||
-        flash.step4.expertise.map((item) => ({
-          ...item,
-        })),
-    });
-
-    // Step 5 - Results
-    safeUpdate("step5", {
-      hideYourResultsSection: projectData.hideResultsSection || false,
-      resultsSubtitle: projectData.resultsSubtitle,
-      results:
-        projectData.results ||
-        flash.step5.results.map((item, index) => ({
-          ...item,
-          sortOrder: index + 1,
-        })),
-    });
-
-    // Step 6 - Clients
-    safeUpdate("step6", {
-      hideClientsSection: projectData.hideClientsSection || false,
-      clients:
-        projectData.clients ||
-        flash.step6.clients.map((item) => ({
-          ...item,
-        })),
-    });
-
-    // Step 7 - Process
-    safeUpdate("step7", {
-      hideProcessSection: projectData.hideProcessSection || false,
-      hideProcessSubtitle: projectData.hideProcessSubtitle || false,
-      processSubtitle: projectData.processSubtitle,
-      processSteps:
-        projectData.processSteps ||
-        flash.step7.processSteps.map((item) => ({
-          ...item,
-        })),
-    });
-
-    // Step 8 - CTA Background
-    safeUpdate("step8", {
-      hideCTASection: projectData.hideCTASection || false,
-      ctaBackgroundImage: projectData.ctaBackgroundImage,
-    });
-
-    // Step 9 - Testimonials
-    safeUpdate("step9", {
-      hideTestimonialsSection: projectData.hideTestimonialsSection || false,
-      testimonials:
-        projectData.testimonials ||
-        flash.step9.testimonials.map((item) => ({
-          ...item,
-        })),
-    });
-
-    // Step 10 - Investment
-    safeUpdate("step10", {
-      hideInvestmentSection: projectData.hideInvestmentSection || false,
-      investmentTitle: projectData.investmentTitle,
-    });
-
-    // Step 11 - Services
-    safeUpdate("step11", {
-      hideIncludedServicesSection:
-        projectData.hideIncludedServicesSection || false,
-      includedServices:
-        projectData.includedServices ||
-        flash.step11.includedServices.map((item) => ({
-          ...item,
-        })),
-    });
-
-    // Step 12 - Plans
-    safeUpdate("step12", {
-      hidePlansSection: projectData.hidePlansSection || false,
-      plans: projectData.plans,
-    });
-
-    // Step 13 - Terms
-    safeUpdate("step13", {
-      hideTermsSection: projectData.hideTermsSection || false,
-      termsConditions:
-        projectData.termsConditions ||
-        flash.step13.termsConditions.map((item) => ({
-          ...item,
-        })),
-    });
-
-    // Step 14 - FAQ
-    safeUpdate("step14", {
-      hideFaqSection: projectData.hideFaqSection || false,
-      hideFaqSubtitle: projectData.hideFaqSubtitle,
-      faqSubtitle: projectData.faqSubtitle,
-      faq:
-        projectData.faq ||
-        flash.step14.faq.map((item) => ({
-          ...item,
-        })),
-    });
-
-    // Step 15 - End message
+    // Step 15 - End message (includes projectValidUntil)
     safeUpdate("step15", {
-      hideFinalMessage: projectData.hideFinalMessage || false,
-      hideFinalMessageSubtitle: projectData.hideFinalMessageSubtitle,
-      endMessageTitle: projectData.endMessageTitle,
-      endMessageTitle2: projectData.endMessageTitle2,
-      endMessageDescription: projectData.endMessageDescription,
       projectValidUntil: projectData.projectValidUntil
         ? new Date(projectData.projectValidUntil)
         : undefined,
@@ -467,6 +320,11 @@ export function ProjectGeneratorProvider({
       pageUrl: projectData.projectUrl,
       pagePassword: projectData.pagePassword,
     });
+
+    // NOTE: Template-specific content data (teamMembers, expertise, results, etc.)
+    // is no longer stored in the projects table. It should be loaded from
+    // template-specific tables based on templateType.
+    //
   };
 
   const saveDraft = async () => {

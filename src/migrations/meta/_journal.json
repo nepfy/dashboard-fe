@@ -267,6 +267,27 @@
       "when": 1759254302977,
       "tag": "0037_worthless_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1760020395443,
+      "tag": "0038_glossy_orphan",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1760020503968,
+      "tag": "0039_rich_big_bertha",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1760033086267,
+      "tag": "0040_yellow_micromacro",
+      "breakpoints": true
     }
   ]
 }

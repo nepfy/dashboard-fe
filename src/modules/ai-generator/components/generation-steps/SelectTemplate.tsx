@@ -1,4 +1,4 @@
-import TemplateSelection from "#/app/gerador-de-propostas/components/TemplateSelection";
+import TemplateSelection from "../template-selection";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { useEffect } from "react";
 
