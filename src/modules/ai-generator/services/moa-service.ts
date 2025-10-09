@@ -27,12 +27,12 @@ export class MOAService {
     this.together = together;
     this.config = {
       referenceModels: [
-        "Qwen/Qwen2-72B-Instruct",
-        "meta-llama/Llama-3.3-70B-Instruct-Turbo",
-        "mistralai/Mixtral-8x22B-Instruct-v0.1",
-        "databricks/dbrx-instruct",
+        "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+        "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        "Qwen/Qwen2.5-7B-Instruct-Turbo",
+        "google/gemma-2-9b-it",
       ],
-      aggregatorModel: "mistralai/Mixtral-8x22B-Instruct-v0.1",
+      aggregatorModel: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
       maxRetries: 3,
       temperature: 0.7,
       maxTokens: 2000,
