@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS agents (
 CREATE TABLE IF NOT EXISTS agent_templates (
   id VARCHAR(50) PRIMARY KEY,
   agent_id VARCHAR(50) NOT NULL,
-  template_type VARCHAR(20) NOT NULL, -- 'prime', 'flash', 'novo'
+  template_type VARCHAR(20) NOT NULL, -- 'prime', 'flash', 'minimal'
   introduction_style TEXT,
   about_us_focus TEXT,
   specialties_approach TEXT,
@@ -69,7 +69,7 @@ ON DUPLICATE KEY UPDATE name = VALUES(name);
 INSERT INTO template_types (id, name, description) VALUES
 ('prime', 'Prime', 'Template premium com foco em qualidade'),
 ('flash', 'Flash', 'Template rápido e eficiente'),
-('novo', 'Novo', 'Template inovador (em desenvolvimento)')
+('minimal', 'Minimal', 'Template minimalista com design limpo (em desenvolvimento)')
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 
 -- Create indexes for better performance

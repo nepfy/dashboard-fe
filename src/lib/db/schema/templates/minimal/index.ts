@@ -1,4 +1,4 @@
-// New Template Schema Exports
+// Minimal Template Schema Exports
 export * from "./introduction";
 export * from "./about-us";
 export * from "./clients";

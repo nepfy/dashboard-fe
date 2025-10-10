@@ -1,4 +1,10 @@
-export type TemplateType = "flash" | "prime" | "essencial" | "grid" | null;
+export type TemplateType =
+  | "flash"
+  | "prime"
+  | "essencial"
+  | "grid"
+  | "minimal"
+  | null;
 
 export interface TeamMember {
   id: string;

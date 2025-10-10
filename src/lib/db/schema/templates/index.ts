@@ -1,4 +1,4 @@
 // Template Schema Exports
-export * as NewTemplate from "./new";
+export * as MinimalTemplate from "./minimal";
 export * as FlashTemplate from "./flash";
 export * as PrimeTemplate from "./prime";

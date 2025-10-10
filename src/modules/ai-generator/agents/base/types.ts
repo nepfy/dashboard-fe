@@ -43,4 +43,4 @@ export type ServiceType =
   | "photography"
   | "agencias-consultoria";
 
-export type TemplateType = "prime" | "flash" | "grid" | "base" | "novo";
+export type TemplateType = "prime" | "flash" | "grid" | "base" | "minimal";

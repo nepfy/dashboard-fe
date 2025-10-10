@@ -34,6 +34,17 @@ export const TEMPLATE_CONFIGS: Record<string, TemplateConfig> = {
       { position: 100, colorModification: "lighten", intensity: 20 },
     ],
   },
+  minimal: {
+    name: "minimal",
+    displayName: "Minimal",
+    description: "Design minimalista e elegante",
+    gradientType: "linear",
+    colorStops: [
+      { position: 0, colorModification: "lighten", intensity: 50 },
+      { position: 60, colorModification: "original", intensity: 0 },
+      { position: 100, colorModification: "darken", intensity: 15 },
+    ],
+  },
   essencial: {
     name: "essencial",
     displayName: "Essencial",

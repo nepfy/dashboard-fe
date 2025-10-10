@@ -41,6 +41,20 @@ const templates: TemplateModel[] = [
     preview: "prime",
   },
   {
+    id: "minimal",
+    title: "Minimal",
+    description: "Design minimalista e elegante, focado no essencial.",
+    colorsList: [
+      "#000000",
+      "#FFFFFF",
+      "#F5F5F5",
+      "#333333",
+      "#666666",
+      "#999999",
+    ],
+    preview: "minimal",
+  },
+  {
     id: "grid",
     title: "Grid",
     description:
