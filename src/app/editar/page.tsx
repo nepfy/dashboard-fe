@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Flash from "./modules/flash";
 import Prime from "./modules/prime";
@@ -79,9 +80,10 @@ export default function EditarPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p>Carregando projeto...</p>
+        <div className="p-7">
+          <div className="flex items-center justify-center h-64">
+            <LoaderCircle className="animate-spin text-primary-light-400" />
+          </div>
         </div>
       </div>
     );

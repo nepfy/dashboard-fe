@@ -5,7 +5,14 @@ export interface Project {
   projectName: string;
   projectSentDate: Date | string | null;
   projectValidUntil: Date | string | null;
-  projectStatus: "active" | "approved" | "negotiation" | "rejected" | "draft" | "expired" | "archived";
+  projectStatus:
+    | "active"
+    | "approved"
+    | "negotiation"
+    | "rejected"
+    | "draft"
+    | "expired"
+    | "archived";
   projectVisualizationDate: Date | string | null;
   templateType: "flash" | "prime" | "essencial" | "grid" | null;
   mainColor: string | null;
@@ -30,14 +37,14 @@ export interface FlashTemplateData {
       validity: Date | string;
       subtitle: string;
       hideSubtitle: boolean;
-    } | null;
-    services: Array<{
-      id: string;
-      introductionId: string;
-      serviceName: string;
-      hideService: boolean;
-      sortOrder: number;
-    }>;
+      services: Array<{
+        id: string;
+        introductionId: string;
+        serviceName: string;
+        hideService: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   aboutUs: {
     id: string;
@@ -46,23 +53,23 @@ export interface FlashTemplateData {
     title: string;
     supportText: string;
     subtitle: string;
-  } | null;
+  };
   team: {
     section: {
       id: string;
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    members: Array<{
-      id: string;
-      teamSectionId: string;
-      name: string;
-      role: string;
-      photo: string | null;
-      hidePhoto: boolean;
-      sortOrder: number;
-    }>;
+      members: Array<{
+        id: string;
+        teamSectionId: string;
+        name: string;
+        role: string;
+        photo: string | null;
+        hidePhoto: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   expertise: {
     section: {
@@ -70,16 +77,16 @@ export interface FlashTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    topics: Array<{
-      id: string;
-      expertiseId: string;
-      title: string;
-      description: string;
-      hideTitleField: boolean;
-      hideDescription: boolean;
-      sortOrder: number;
-    }>;
+      topics: Array<{
+        id: string;
+        expertiseId: string;
+        title: string;
+        description: string;
+        hideTitleField: boolean;
+        hideDescription: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   results: {
     section: {
@@ -87,18 +94,18 @@ export interface FlashTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      resultsSectionId: string;
-      client: string;
-      subtitle: string;
-      investment: string;
-      roi: string;
-      photo: string | null;
-      hidePhoto: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        resultsSectionId: string;
+        client: string;
+        instagram: string;
+        investment: string;
+        roi: string;
+        photo: string | null;
+        hidePhoto: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   clients: {
     section: {
@@ -122,23 +129,23 @@ export interface FlashTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    topics: Array<{
-      id: string;
-      stepsId: string;
-      stepName: string;
-      stepDescription: string;
-      hideStepName: boolean;
-      hideStepDescription: boolean;
-      sortOrder: number;
-    }>;
-    marquee: Array<{
-      id: string;
-      stepsId: string;
-      stepName: string;
-      hideStepName: boolean;
-      sortOrder: number;
-    }>;
+      topics: Array<{
+        id: string;
+        stepsId: string;
+        stepName: string;
+        stepDescription: string;
+        hideStepName: boolean;
+        hideStepDescription: boolean;
+        sortOrder: number;
+      }>;
+      marquee: Array<{
+        id: string;
+        stepsId: string;
+        stepName: string;
+        hideStepName: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   cta: {
     id: string;
@@ -151,24 +158,24 @@ export interface FlashTemplateData {
       id: string;
       projectId: string;
       hideSection: boolean;
-    } | null;
-    list: Array<{
-      id: string;
-      testimonialsSectionId: string;
-      testimonial: string;
-      name: string;
-      role: string | null;
-      photo: string | null;
-      hidePhoto: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        testimonialsSectionId: string;
+        testimonial: string;
+        name: string;
+        role: string | null;
+        photo: string | null;
+        hidePhoto: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   investment: {
     id: string;
     projectId: string;
     hideSection: boolean;
     title: string;
-  } | null;
+  };
   deliverables: {
     section: {
       id: string;
@@ -191,29 +198,30 @@ export interface FlashTemplateData {
       id: string;
       projectId: string;
       hideSection: boolean;
-    } | null;
-    list: Array<{
-      id: string;
-      plansSectionId: string;
-      title: string;
-      description: string;
-      price: string;
-      planPeriod: string;
-      buttonTitle: string;
-      hideTitleField: boolean;
-      hideDescription: boolean;
-      hidePrice: boolean;
-      hidePlanPeriod: boolean;
-      hideButtonTitle: boolean;
-      sortOrder: number;
-    }>;
-    includedItems: Array<{
-      id: string;
-      planId: string;
-      description: string;
-      hideDescription: boolean;
-      sortOrder: number;
-    }>;
+      projectScope: string;
+      list: Array<{
+        id: string;
+        plansSectionId: string;
+        title: string;
+        description: string;
+        price: string;
+        planPeriod: string;
+        buttonTitle: string;
+        hideTitleField: boolean;
+        hideDescription: boolean;
+        hidePrice: boolean;
+        hidePlanPeriod: boolean;
+        hideButtonTitle: boolean;
+        sortOrder: number;
+        includedItems: Array<{
+          id: string;
+          planId: string;
+          description: string;
+          hideDescription: boolean;
+          sortOrder: number;
+        }>;
+      }>;
+    };
   };
   termsConditions: {
     section: {
@@ -237,16 +245,16 @@ export interface FlashTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      faqSectionId: string;
-      question: string;
-      answer: string;
-      hideQuestion: boolean;
-      hideAnswer: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        faqSectionId: string;
+        question: string;
+        answer: string;
+        hideQuestion: boolean;
+        hideAnswer: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   footer: {
     section: {
@@ -258,14 +266,8 @@ export interface FlashTemplateData {
       disclaimer: string;
       hideDisclaimer: boolean;
       validity: string;
-    } | null;
-    marquee: Array<{
-      id: string;
-      footerId: string;
-      serviceName: string;
-      hideService: boolean;
-      sortOrder: number;
-    }>;
+      buttonTitle: string;
+    };
   };
 }
 
@@ -285,7 +287,7 @@ export interface PrimeTemplateData {
       hidePhoto: boolean;
       memberName: string | null;
       hideMemberName: boolean;
-    } | null;
+    };
     marquee: Array<{
       id: string;
       introductionId: string;
@@ -303,7 +305,7 @@ export interface PrimeTemplateData {
     paragraph2: string;
     hideParagraph1: boolean;
     hideParagraph2: boolean;
-  } | null;
+  };
   team: {
     section: {
       id: string;
@@ -311,16 +313,16 @@ export interface PrimeTemplateData {
       hideSection: boolean;
       title: string;
       hideTitle: boolean;
-    } | null;
-    members: Array<{
-      id: string;
-      teamSectionId: string;
-      name: string;
-      role: string;
-      photo: string | null;
-      hidePhoto: boolean;
-      sortOrder: number;
-    }>;
+      members: Array<{
+        id: string;
+        teamSectionId: string;
+        name: string;
+        role: string;
+        photo: string | null;
+        hidePhoto: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   expertise: {
     section: {
@@ -328,16 +330,16 @@ export interface PrimeTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    topics: Array<{
-      id: string;
-      expertiseId: string;
-      title: string;
-      description: string;
-      hideTitleField: boolean;
-      hideDescription: boolean;
-      sortOrder: number;
-    }>;
+      topics: Array<{
+        id: string;
+        expertiseId: string;
+        title: string;
+        description: string;
+        hideTitleField: boolean;
+        hideDescription: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   results: {
     section: {
@@ -345,34 +347,34 @@ export interface PrimeTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      resultsSectionId: string;
-      client: string;
-      subtitle: string;
-      investment: string;
-      roi: string;
-      photo: string | null;
-      hidePhoto: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        resultsSectionId: string;
+        client: string;
+        subtitle: string;
+        investment: string;
+        roi: string;
+        photo: string | null;
+        hidePhoto: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   clients: {
     section: {
       id: string;
       projectId: string;
       hideSection: boolean;
-    } | null;
-    list: Array<{
-      id: string;
-      clientsSectionId: string;
-      logo: string | null;
-      hideLogo: boolean;
-      name: string;
-      hideClientName: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        clientsSectionId: string;
+        logo: string | null;
+        hideLogo: boolean;
+        name: string;
+        hideClientName: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   cta: {
     id: string;
@@ -381,7 +383,7 @@ export interface PrimeTemplateData {
     title: string;
     buttonTitle: string;
     backgroundImage: string;
-  } | null;
+  };
   steps: {
     section: {
       id: string;
@@ -389,55 +391,55 @@ export interface PrimeTemplateData {
       hideSection: boolean;
       title: string;
       hideTitle: boolean;
-    } | null;
-    topics: Array<{
-      id: string;
-      stepsId: string;
-      stepName: string;
-      stepDescription: string;
-      hideStepName: boolean;
-      hideStepDescription: boolean;
-      sortOrder: number;
-    }>;
+      topics: Array<{
+        id: string;
+        stepsId: string;
+        stepName: string;
+        stepDescription: string;
+        hideStepName: boolean;
+        hideStepDescription: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   testimonials: {
     section: {
       id: string;
       projectId: string;
       hideSection: boolean;
-    } | null;
-    list: Array<{
-      id: string;
-      testimonialsSectionId: string;
-      testimonial: string;
-      name: string;
-      role: string | null;
-      photo: string | null;
-      hidePhoto: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        testimonialsSectionId: string;
+        testimonial: string;
+        name: string;
+        role: string | null;
+        photo: string | null;
+        hidePhoto: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   investment: {
     id: string;
     projectId: string;
     hideSection: boolean;
     title: string;
-  } | null;
+  };
   deliverables: {
     section: {
       id: string;
       projectId: string;
       title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      deliverablesSectionId: string;
-      deliveryName: string;
-      deliveryContent: string;
-      hideDeliveryName: boolean;
-      hideDeliveryContent: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        deliverablesSectionId: string;
+        deliveryName: string;
+        deliveryContent: string;
+        hideDeliveryName: boolean;
+        hideDeliveryContent: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   plans: {
     section: {
@@ -445,29 +447,29 @@ export interface PrimeTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      plansSectionId: string;
-      title: string;
-      description: string;
-      price: string;
-      planPeriod: string;
-      buttonTitle: string;
-      hideTitleField: boolean;
-      hideDescription: boolean;
-      hidePrice: boolean;
-      hidePlanPeriod: boolean;
-      hideButtonTitle: boolean;
-      sortOrder: number;
-    }>;
-    includedItems: Array<{
-      id: string;
-      planId: string;
-      description: string;
-      hideDescription: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        plansSectionId: string;
+        title: string;
+        description: string;
+        price: string;
+        planPeriod: string;
+        buttonTitle: string;
+        hideTitleField: boolean;
+        hideDescription: boolean;
+        hidePrice: boolean;
+        hidePlanPeriod: boolean;
+        hideButtonTitle: boolean;
+        sortOrder: number;
+        includedItems: Array<{
+          id: string;
+          planId: string;
+          description: string;
+          hideDescription: boolean;
+          sortOrder: number;
+        }>;
+      }>;
+    };
   };
   termsConditions: {
     section: {
@@ -475,16 +477,16 @@ export interface PrimeTemplateData {
       projectId: string;
       hideSection: boolean;
       title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      termsSectionId: string;
-      title: string;
-      description: string;
-      hideTitleField: boolean;
-      hideDescription: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        termsSectionId: string;
+        title: string;
+        description: string;
+        hideTitleField: boolean;
+        hideDescription: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   faq: {
     section: {
@@ -493,16 +495,16 @@ export interface PrimeTemplateData {
       hideSection: boolean;
       subtitle: string;
       hideSubtitle: boolean;
-    } | null;
-    list: Array<{
-      id: string;
-      faqSectionId: string;
-      question: string;
-      answer: string;
-      hideQuestion: boolean;
-      hideAnswer: boolean;
-      sortOrder: number;
-    }>;
+      list: Array<{
+        id: string;
+        faqSectionId: string;
+        question: string;
+        answer: string;
+        hideQuestion: boolean;
+        hideAnswer: boolean;
+        sortOrder: number;
+      }>;
+    };
   };
   footer: {
     id: string;
@@ -516,7 +518,7 @@ export interface PrimeTemplateData {
     hideThankYouTitle: boolean;
     hideThankYouMessage: boolean;
     hideDisclaimer: boolean;
-  } | null;
+  };
 }
 
 // Combined response types
@@ -534,7 +536,9 @@ export interface PrimeProjectData {
 export type TemplateProjectData = FlashProjectData | PrimeProjectData;
 
 // API Response types
-export interface TemplateDataResponse<T = FlashTemplateData | PrimeTemplateData> {
+export interface TemplateDataResponse<
+  T = FlashTemplateData | PrimeTemplateData
+> {
   success: boolean;
   data: {
     project: Project;
