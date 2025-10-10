@@ -234,15 +234,15 @@ export class PrimeTemplateWorkflow {
       footer,
     ] = await Promise.all([
       this.generateIntroduction(data),
-      this.generateAboutUs(),
-      this.generateTeam(),
-      this.generateSpecialties(),
-      this.generateProcessSteps(),
-      this.generateScope(),
-      this.generateInvestment(),
-      data.includeTerms ? this.generateTerms() : Promise.resolve(undefined),
-      this.generateFAQ(),
-      this.generateFooter(),
+      this.generateAboutUs(data),
+      this.generateTeam(data),
+      this.generateSpecialties(data),
+      this.generateProcessSteps(data),
+      this.generateScope(data),
+      this.generateInvestment(data),
+      data.includeTerms ? this.generateTerms(data) : Promise.resolve(undefined),
+      this.generateFAQ(data),
+      this.generateFooter(data),
     ]);
 
     return {
@@ -268,9 +268,11 @@ export class PrimeTemplateWorkflow {
     const userPrompt = `Você é um especialista em propostas premium. Responda APENAS com JSON válido.
 
 DADOS DO PROJETO:
+- Cliente: ${data.clientName}
 - Projeto: ${normalizedProjectName}
-- Setor: ${this.agent?.sector}
-- Serviços: ${this.agent?.commonServices.join(", ")}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
 
 IMPORTANTE: Os textos devem ter EXATAMENTE as contagens de caracteres especificadas (contando espaços).
 
@@ -664,22 +666,34 @@ Crie novos textos com as contagens EXATAS:
     }
   }
 
-  private async generateAboutUs() {
-    const userPrompt = `Crie seção Sobre Nós premium. Responda somente com JSON.
+  private async generateAboutUs(data: PrimeThemeData) {
+    const userPrompt = `Crie uma seção "Sobre Nós" única e personalizada para nossa empresa no projeto ${
+      data.projectName
+    } de ${data.clientName}.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
 
 IMPORTANTE: Os textos devem ter EXATAMENTE as contagens de caracteres especificadas (contando espaços).
 
-Retorne:
+Retorne APENAS um JSON válido com:
 {
-  "title": "Frase com transformação e lucro, EXATAMENTE 155 caracteres",
-  "supportText": "Frase de apoio sofisticada, EXATAMENTE 70 caracteres",
-  "subtitle": "Descrição detalhada sem citar cliente, EXATAMENTE 250 caracteres"
+  "title": "Título que mostra transformação, valor e benefício com EXATAMENTE 155 caracteres",
+  "supportText": "Texto de apoio sofisticado com EXATAMENTE 70 caracteres",
+  "subtitle": "Subtítulo detalhado com EXATAMENTE 250 caracteres"
 }
 
-Exemplos:
-- Título com 155 caracteres: "Nós acreditamos em parcerias que transformam ideias em conquistas sólidas, aumentando valor, impacto e lucro de forma sustentável para você."
-- SupportText com 70 caracteres: "Nossa equipe é composta por especialistas dedicados e experientes."
-- Subtítulo com 250 caracteres: "Combinamos criatividade e estratégia para entregar soluções de design que geram resultados duradouros. Nossa equipe é apaixonada por criar experiências visuais que atendem às necessidades de cada cliente, com foco em inovação e impacto no mercado."`;
+REGRAS OBRIGATÓRIAS:
+- title: EXATAMENTE 155 caracteres
+- supportText: EXATAMENTE 70 caracteres
+- subtitle: EXATAMENTE 250 caracteres
+- Foque em transformação, impacto e lucro
+- Use linguagem premium, sofisticada e confiante
+- Responda APENAS com o JSON válido.`;
 
     const expectedFormat = `{
   "title": "string (exactly 155 characters)",
@@ -855,19 +869,30 @@ Crie novos textos com as contagens EXATAS:
     }
   }
 
-  private async generateTeam() {
-    const userPrompt = `Crie título e subtítulo para seção Time premium. Retorne JSON.
+  private async generateTeam(data: PrimeThemeData) {
+    const userPrompt = `Crie título e subtítulo para seção Time premium adaptados ao projeto.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
 
 IMPORTANTE: Os textos devem ter EXATAMENTE as contagens de caracteres especificadas (contando espaços).
 
+Retorne APENAS um JSON válido com:
 {
   "title": "Frase com confiança e parceria, EXATAMENTE 60 caracteres",
   "subtitle": "Frase sobre dedicação e proximidade, EXATAMENTE 120 caracteres"
 }
 
-Exemplos:
-- Título com 60 caracteres: "Nós crescemos junto com você, lado a lado sempre"
-- Subtítulo com 120 caracteres: "Nossa equipe é composta por especialistas dedicados que trabalham em parceria com você para alcançar resultados excepcionais."`;
+REGRAS OBRIGATÓRIAS:
+- title: EXATAMENTE 60 caracteres
+- subtitle: EXATAMENTE 120 caracteres
+- Foque em parceria, confiança e dedicação
+- Use linguagem premium e personalizada ao projeto
+- Responda APENAS com o JSON válido.`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<PrimeTeamSection>(
@@ -954,17 +979,35 @@ Crie novos textos com as contagens EXATAS:
     }
   }
 
-  private async generateSpecialties() {
-    const userPrompt = `Crie especialidades premium. Responda com JSON.
+  private async generateSpecialties(data: PrimeThemeData) {
+    const userPrompt = `Crie especialidades premium personalizadas para o projeto.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
+
+Retorne APENAS um JSON válido com:
 {
-  "title": "Título com autoridade e resultados, 180 caracteres",
+  "title": "Título com autoridade e resultados, EXATAMENTE 180 caracteres",
   "topics": [
     {
-      "title": "Especialidade com 60 caracteres",
-      "description": "Descrição com 140 caracteres"
+      "title": "Especialidade com EXATAMENTE 60 caracteres",
+      "description": "Descrição com EXATAMENTE 140 caracteres"
     }
   ]
-}`;
+}
+
+REGRAS OBRIGATÓRIAS:
+- title: EXATAMENTE 180 caracteres
+- topics: EXATAMENTE 9 especialidades
+- Cada topic.title: EXATAMENTE 60 caracteres
+- Cada topic.description: EXATAMENTE 140 caracteres
+- Personalize conforme o setor e projeto do cliente
+- Use linguagem premium e técnica
+- Responda APENAS com o JSON válido.`;
 
     const expectedFormat = `{
   "title": "string (max 180 characters)",
@@ -1113,18 +1156,37 @@ Crie novos textos com as contagens EXATAS:
     }
   }
 
-  private async generateProcessSteps() {
-    const userPrompt = `Crie processo premium. Retorne JSON.
+  private async generateProcessSteps(data: PrimeThemeData) {
+    const userPrompt = `Crie processo premium personalizado para o projeto.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
+
+Retorne APENAS um JSON válido com:
 {
-  "introduction": "Frase com 120 caracteres",
-  "title": "Frase com 50 caracteres",
+  "introduction": "Frase introdutória com EXATAMENTE 120 caracteres",
+  "title": "Título do processo com EXATAMENTE 50 caracteres",
   "topics": [
     {
-      "title": "Etapa com 45 caracteres",
-      "description": "Descrição com 260 caracteres"
+      "title": "Nome da etapa com EXATAMENTE 45 caracteres",
+      "description": "Descrição detalhada com EXATAMENTE 260 caracteres"
     }
   ]
-}`;
+}
+
+REGRAS OBRIGATÓRIAS:
+- introduction: EXATAMENTE 120 caracteres
+- title: EXATAMENTE 50 caracteres
+- topics: EXATAMENTE 6 etapas
+- Cada topic.title: EXATAMENTE 45 caracteres
+- Cada topic.description: EXATAMENTE 260 caracteres
+- Personalize o processo conforme o projeto
+- Use linguagem premium e profissional
+- Responda APENAS com o JSON válido.`;
 
     const expectedFormat = `{
   "introduction": "string (max 120 characters)",
@@ -1292,20 +1354,33 @@ Crie novos textos com as contagens EXATAS:
     }
   }
 
-  private async generateScope() {
-    const userPrompt = `Crie escopo premium. Retorne JSON.
+  private async generateScope(data: PrimeThemeData) {
+    const userPrompt = `Crie escopo premium personalizado para o projeto.
 
-Crie o conteúdo da seção "Escopo do Projeto" (máximo 400 caracteres):
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
+
+Crie o conteúdo da seção "Escopo do Projeto" (EXATAMENTE 400 caracteres):
 - Integre benefícios do investimento e entregas principais
 - Foque em transformação, crescimento e previsibilidade
-- Linguagem natural, ativa e confiante
+- Personalize conforme as necessidades do cliente e projeto
+- Linguagem natural, ativa, confiante e premium
 - Seja conciso e direto ao ponto
 
+Retorne APENAS um JSON válido com:
 {
-  "content": "Texto com máximo 400 caracteres"
+  "content": "Texto descritivo com EXATAMENTE 400 caracteres"
 }
 
-Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elevam sua autoridade e ampliam suas oportunidades de crescimento sustentável. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma consistente e mensurável."`;
+REGRAS OBRIGATÓRIAS:
+- content: EXATAMENTE 400 caracteres
+- Personalize conforme o projeto do cliente
+- Use linguagem premium e profissional
+- Responda APENAS com o JSON válido.`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<PrimeScopeSection>(
@@ -1334,25 +1409,47 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
     }
   }
 
-  private async generateInvestment() {
-    const userPrompt = `Crie seção de investimento premium. Retorne JSON.
+  private async generateInvestment(data: PrimeThemeData) {
+    const userPrompt = `Crie seção de investimento premium personalizada para o projeto.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
+
+Retorne APENAS um JSON válido com:
 {
-  "title": "Título com 95 caracteres",
+  "title": "Título de investimento com EXATAMENTE 95 caracteres",
   "deliverables": [
     {
-      "title": "Entrega com 35 caracteres",
-      "description": "Descrição com 350 caracteres"
+      "title": "Nome da entrega com EXATAMENTE 35 caracteres",
+      "description": "Descrição detalhada com EXATAMENTE 350 caracteres"
     }
   ],
   "plans": [
     {
-      "title": "Nome do plano com 25 caracteres",
-      "description": "Descrição com 110 caracteres",
+      "title": "Nome do plano com EXATAMENTE 25 caracteres",
+      "description": "Descrição do plano com EXATAMENTE 110 caracteres",
       "value": "R$X.XXX",
       "topics": ["Benefício com até 50 caracteres"]
     }
   ]
-}`;
+}
+
+REGRAS OBRIGATÓRIAS:
+- title: EXATAMENTE 95 caracteres
+- deliverables: Mínimo 3 entregas
+- Cada deliverable.title: EXATAMENTE 35 caracteres
+- Cada deliverable.description: EXATAMENTE 350 caracteres
+- plans: EXATAMENTE 3 planos
+- Cada plan.title: EXATAMENTE 25 caracteres
+- Cada plan.description: EXATAMENTE 110 caracteres
+- Cada plan deve ter 4 a 6 topics (cada topic até 50 caracteres)
+- Personalize conforme o projeto do cliente
+- Use linguagem premium e profissional
+- Responda APENAS com o JSON válido.`;
 
     const parsed = await this.runLLMWithJSONRetry<PrimeInvestmentSection>(
       userPrompt
@@ -1473,14 +1570,31 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
     };
   }
 
-  private async generateTerms() {
-    const userPrompt = `Crie termos premium. Retorne JSON.
+  private async generateTerms(data: PrimeThemeData) {
+    const userPrompt = `Crie termos e condições premium personalizados para o projeto.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
+
+Retorne APENAS um JSON array com termos e condições:
 [
   {
-    "title": "Termo com 35 caracteres",
-    "description": "Descrição com 200 caracteres"
+    "title": "Nome do termo com EXATAMENTE 35 caracteres",
+    "description": "Descrição do termo com EXATAMENTE 200 caracteres"
   }
-]`;
+]
+
+REGRAS OBRIGATÓRIAS:
+- Mínimo 1 e máximo 5 termos
+- Cada title: EXATAMENTE 35 caracteres
+- Cada description: EXATAMENTE 200 caracteres
+- Personalize conforme o tipo de projeto
+- Use linguagem premium e profissional
+- Responda APENAS com o JSON válido.`;
 
     const parsed = await this.runLLMWithJSONRetry<
       Array<{ title: string; description: string }>
@@ -1524,14 +1638,33 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
     });
   }
 
-  private async generateFAQ() {
-    const userPrompt = `Crie FAQ premium. Retorne JSON.
+  private async generateFAQ(data: PrimeThemeData) {
+    const userPrompt = `Crie FAQ premium personalizado para o projeto.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
+
+Retorne APENAS um JSON array com perguntas frequentes:
 [
   {
-    "question": "Pergunta com 120 caracteres",
-    "answer": "Resposta com 320 caracteres"
+    "question": "Pergunta relevante com até 120 caracteres",
+    "answer": "Resposta detalhada com até 320 caracteres"
   }
-]`;
+]
+
+REGRAS OBRIGATÓRIAS:
+- EXATAMENTE 8 perguntas
+- Cada question: Máximo 120 caracteres
+- Cada answer: Máximo 320 caracteres
+- Perguntas devem ser relevantes ao projeto e setor
+- Respostas devem ser detalhadas e profissionais
+- Personalize conforme o tipo de projeto do cliente
+- Use linguagem premium e clara
+- Responda APENAS com o JSON válido.`;
 
     const parsed = await this.runLLMWithJSONRetry<PrimeFAQSection>(userPrompt);
     const faq = ensureArray<PrimeFAQItem>(parsed, "faq");
@@ -1570,12 +1703,28 @@ Exemplo: "Nosso projeto premium reúne estratégias digitais avançadas que elev
     });
   }
 
-  private async generateFooter() {
-    const userPrompt = `Crie footer premium. Retorne JSON.
+  private async generateFooter(data: PrimeThemeData) {
+    const userPrompt = `Crie footer premium personalizado para o projeto.
+
+DADOS DO PROJETO:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
+- Empresa: ${data.companyInfo}
+
+Retorne APENAS um JSON válido com:
 {
-  "callToAction": "Frase com 60 caracteres",
-  "contactInfo": "Texto com 150 caracteres"
-}`;
+  "callToAction": "Frase call-to-action com até 60 caracteres",
+  "contactInfo": "Texto com informações de contato com até 150 caracteres"
+}
+
+REGRAS OBRIGATÓRIAS:
+- callToAction: Máximo 60 caracteres
+- contactInfo: Máximo 150 caracteres
+- Personalize conforme o projeto
+- Use linguagem premium, convidativa e profissional
+- Responda APENAS com o JSON válido.`;
 
     const parsed = await this.runLLMWithJSONRetry<PrimeFooterSection>(
       userPrompt

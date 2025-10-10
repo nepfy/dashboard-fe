@@ -6,6 +6,7 @@ export interface BaseThemeData {
   clientName: string;
   projectName: string;
   projectDescription: string;
+  clientDescription?: string;
   selectedPlans: string[];
   planDetails: string;
   includeTerms: boolean;

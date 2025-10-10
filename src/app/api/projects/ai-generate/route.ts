@@ -27,6 +27,7 @@ export interface NepfyAIRequestData {
   clientName: string;
   projectName: string;
   projectDescription: string;
+  clientDescription?: string;
   companyInfo?: string;
   selectedPlan?: number;
   selectedPlans?: string[];
@@ -152,6 +153,7 @@ export async function POST(request: NextRequest) {
       clientName,
       projectName,
       projectDescription,
+      clientDescription,
       companyInfo,
       selectedPlan,
       selectedPlans,
@@ -272,6 +274,7 @@ export async function POST(request: NextRequest) {
         clientName,
         projectName,
         projectDescription,
+        clientDescription,
         selectedPlans: defaultPlans,
         planDetails:
           planDetails ||
@@ -331,6 +334,7 @@ export async function POST(request: NextRequest) {
         clientName,
         projectName,
         projectDescription,
+        clientDescription,
         selectedPlans: defaultPlans,
         planDetails:
           planDetails ||

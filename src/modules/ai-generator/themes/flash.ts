@@ -92,6 +92,7 @@ export class FlashTheme {
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
 - Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
 - Empresa: ${data.companyInfo}
 
 Crie uma introdução impactante e personalizada para este projeto específico seguindo rigorosamente os limites de caracteres.
@@ -163,12 +164,15 @@ REGRAS OBRIGATÓRIAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashAboutUsSection> {
-    const userPrompt = `Crie uma seção "Sobre Nós" única e personalizada para nossa empresa no projeto ${data.projectName} de ${data.clientName}.
+    const userPrompt = `Crie uma seção "Sobre Nós" única e personalizada para nossa empresa no projeto ${
+      data.projectName
+    } de ${data.clientName}.
 
 DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
 - Descrição: ${data.projectDescription}
+- Sobre o Cliente: ${data.clientDescription || "Não informado"}
 - Empresa: ${data.companyInfo}
 
 Retorne APENAS um JSON válido com:
