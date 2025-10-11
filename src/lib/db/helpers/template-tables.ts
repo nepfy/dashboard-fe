@@ -1,4 +1,3 @@
-import { db } from "#/lib/db";
 import * as flashTables from "#/lib/db/schema/templates/flash";
 import * as primeTables from "#/lib/db/schema/templates/prime";
 import * as minimalTables from "#/lib/db/schema/templates/minimal";
@@ -8,27 +7,6 @@ export type TemplateType = (typeof VALID_TEMPLATES)[number];
 
 export function isValidTemplate(template: string): template is TemplateType {
   return VALID_TEMPLATES.includes(template as TemplateType);
-}
-
-interface TemplateTables {
-  // Main section tables
-  introduction: ReturnType<typeof db.select>;
-  aboutUs: ReturnType<typeof db.select>;
-  clients: ReturnType<typeof db.select>;
-  expertise: ReturnType<typeof db.select>;
-  plans: ReturnType<typeof db.select>;
-  termsConditions: ReturnType<typeof db.select>;
-  faq: ReturnType<typeof db.select>;
-  footer: ReturnType<typeof db.select>;
-  
-  // Template-specific tables (optional)
-  team?: ReturnType<typeof db.select>;
-  results?: ReturnType<typeof db.select>;
-  steps?: ReturnType<typeof db.select>;
-  cta?: ReturnType<typeof db.select>;
-  testimonials?: ReturnType<typeof db.select>;
-  investment?: ReturnType<typeof db.select>;
-  deliverables?: ReturnType<typeof db.select>;
 }
 
 // Helper to get template-specific table schemas
@@ -87,7 +65,7 @@ export function getTemplateSchemas(template: TemplateType) {
         investment: primeTables.primeTemplateInvestmentTable,
         deliverables: primeTables.primeTemplateDeliverablesTable,
         deliverablesList: primeTables.primeTemplateDeliverablesListTable,
-        plans: primeTables.primTemplatePlansTable,
+        plans: primeTables.primeTemplatePlansTable,
         plansList: primeTables.primeTemplatePlansListTable,
         plansIncludedItems: primeTables.primeTemplatePlansIncludedItemsTable,
         termsConditions: primeTables.primeTemplateTermsConditionsTable,

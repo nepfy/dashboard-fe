@@ -91,8 +91,6 @@ export async function GET(
       );
     }
 
-    const templateDisplayName = getTemplateDisplayName(template);
-
     // Count total template projects (excluding archived)
     const totalCountResult = await db
       .select({ count: count() })

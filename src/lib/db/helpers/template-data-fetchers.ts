@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "#/lib/db";
 import { eq } from "drizzle-orm";
 import { getTemplateSchemas } from "./template-tables";
@@ -17,14 +18,35 @@ export async function fetchMinimalTemplateData(projectId: string) {
     faq,
     footer,
   ] = await Promise.all([
-    db.select().from(schemas.introduction).where(eq(schemas.introduction.projectId, projectId)),
-    db.select().from(schemas.aboutUs).where(eq(schemas.aboutUs.projectId, projectId)),
-    db.select().from(schemas.clients).where(eq(schemas.clients.projectId, projectId)),
-    db.select().from(schemas.expertise).where(eq(schemas.expertise.projectId, projectId)),
-    db.select().from(schemas.plans).where(eq(schemas.plans.projectId, projectId)),
-    db.select().from(schemas.termsConditions).where(eq(schemas.termsConditions.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.introduction)
+      .where(eq(schemas.introduction.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.aboutUs)
+      .where(eq(schemas.aboutUs.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.clients)
+      .where(eq(schemas.clients.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.expertise)
+      .where(eq(schemas.expertise.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.plans)
+      .where(eq(schemas.plans.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.termsConditions)
+      .where(eq(schemas.termsConditions.projectId, projectId)),
     db.select().from(schemas.faq).where(eq(schemas.faq.projectId, projectId)),
-    db.select().from(schemas.footer).where(eq(schemas.footer.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.footer)
+      .where(eq(schemas.footer.projectId, projectId)),
   ]);
 
   // Get sub-tables data based on parent IDs
@@ -39,23 +61,88 @@ export async function fetchMinimalTemplateData(projectId: string) {
     faqList,
     footerMarquee,
   ] = await Promise.all([
-    introduction[0] ? db.select().from(schemas.introductionPhotos).where(eq(schemas.introductionPhotos.introductionId, introduction[0].id)) : [],
-    aboutUs[0] ? db.select().from(schemas.aboutUsTeam).where(eq(schemas.aboutUsTeam.aboutUsId, aboutUs[0].id)) : [],
-    aboutUs[0] ? db.select().from(schemas.aboutUsMarquee).where(eq(schemas.aboutUsMarquee.aboutUsId, aboutUs[0].id)) : [],
-    clients[0] ? db.select().from(schemas.clientsList).where(eq(schemas.clientsList.clientsSectionId, clients[0].id)) : [],
-    expertise[0] ? db.select().from(schemas.expertiseTopics).where(eq(schemas.expertiseTopics.expertiseId, expertise[0].id)) : [],
-    plans[0] ? db.select().from(schemas.plansList).where(eq(schemas.plansList.plansSectionId, plans[0].id)) : [],
-    termsConditions[0] ? db.select().from(schemas.termsConditionsList).where(eq(schemas.termsConditionsList.termsSectionId, termsConditions[0].id)) : [],
-    faq[0] ? db.select().from(schemas.faqList).where(eq(schemas.faqList.faqSectionId, faq[0].id)) : [],
-    footer[0] ? db.select().from(schemas.footerMarquee).where(eq(schemas.footerMarquee.footerId, footer[0].id)) : [],
+    introduction[0]
+      ? db
+          .select()
+          .from(schemas.introductionPhotos as any)
+          .where(
+            eq(
+              (schemas.introductionPhotos as any).introductionId,
+              introduction[0].id
+            )
+          )
+      : [],
+    aboutUs[0]
+      ? db
+          .select()
+          .from(schemas.aboutUsTeam as any)
+          .where(eq((schemas.aboutUsTeam as any).aboutUsId, aboutUs[0].id))
+      : [],
+    aboutUs[0]
+      ? db
+          .select()
+          .from(schemas.aboutUsMarquee as any)
+          .where(eq((schemas.aboutUsMarquee as any).aboutUsId, aboutUs[0].id))
+      : [],
+    clients[0]
+      ? db
+          .select()
+          .from(schemas.clientsList as any)
+          .where(
+            eq((schemas.clientsList as any).clientsSectionId, clients[0].id)
+          )
+      : [],
+    expertise[0]
+      ? db
+          .select()
+          .from(schemas.expertiseTopics as any)
+          .where(
+            eq((schemas.expertiseTopics as any).expertiseId, expertise[0].id)
+          )
+      : [],
+    plans[0]
+      ? db
+          .select()
+          .from(schemas.plansList as any)
+          .where(eq((schemas.plansList as any).plansSectionId, plans[0].id))
+      : [],
+    termsConditions[0]
+      ? db
+          .select()
+          .from(schemas.termsConditionsList as any)
+          .where(
+            eq(
+              (schemas.termsConditionsList as any).termsSectionId,
+              termsConditions[0].id
+            )
+          )
+      : [],
+    faq[0]
+      ? db
+          .select()
+          .from(schemas.faqList as any)
+          .where(eq((schemas.faqList as any).faqSectionId, faq[0].id))
+      : [],
+    footer[0]
+      ? db
+          .select()
+          .from(schemas.footerMarquee as any)
+          .where(eq((schemas.footerMarquee as any).footerId, footer[0].id))
+      : [],
   ]);
 
   // Get plan items for each individual plan
-  const plansIncludedItems = plansList.length > 0 ? await Promise.all(
-    plansList.map(plan =>
-      db.select().from(schemas.plansIncludedItems).where(eq(schemas.plansIncludedItems.planId, plan.id))
-    )
-  ).then(results => results.flat()) : [];
+  const plansIncludedItems =
+    plansList.length > 0
+      ? await Promise.all(
+          plansList.map((plan) =>
+            db
+              .select()
+              .from(schemas.plansIncludedItems as any)
+              .where(eq((schemas.plansIncludedItems as any).planId, plan.id))
+          )
+        ).then((results) => results.flat())
+      : [];
 
   return {
     introduction: {
@@ -116,21 +203,66 @@ export async function fetchFlashTemplateData(projectId: string) {
     faq,
     footer,
   ] = await Promise.all([
-    db.select().from(schemas.introduction).where(eq(schemas.introduction.projectId, projectId)),
-    db.select().from(schemas.aboutUs).where(eq(schemas.aboutUs.projectId, projectId)),
-    db.select().from(schemas.team).where(eq(schemas.team.projectId, projectId)),
-    db.select().from(schemas.expertise).where(eq(schemas.expertise.projectId, projectId)),
-    db.select().from(schemas.results).where(eq(schemas.results.projectId, projectId)),
-    db.select().from(schemas.clients).where(eq(schemas.clients.projectId, projectId)),
-    db.select().from(schemas.steps).where(eq(schemas.steps.projectId, projectId)),
-    db.select().from(schemas.cta).where(eq(schemas.cta.projectId, projectId)),
-    db.select().from(schemas.testimonials).where(eq(schemas.testimonials.projectId, projectId)),
-    db.select().from(schemas.investment).where(eq(schemas.investment.projectId, projectId)),
-    db.select().from(schemas.deliverables).where(eq(schemas.deliverables.projectId, projectId)),
-    db.select().from(schemas.plans).where(eq(schemas.plans.projectId, projectId)),
-    db.select().from(schemas.termsConditions).where(eq(schemas.termsConditions.projectId, projectId)),
-    db.select().from(schemas.faq).where(eq(schemas.faq.projectId, projectId)),
-    db.select().from(schemas.footer).where(eq(schemas.footer.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.introduction as any)
+      .where(eq((schemas.introduction as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.aboutUs as any)
+      .where(eq((schemas.aboutUs as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.team as any)
+      .where(eq((schemas.team as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.expertise as any)
+      .where(eq((schemas.expertise as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.results as any)
+      .where(eq((schemas.results as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.clients as any)
+      .where(eq((schemas.clients as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.steps as any)
+      .where(eq((schemas.steps as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.cta as any)
+      .where(eq((schemas.cta as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.testimonials as any)
+      .where(eq((schemas.testimonials as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.investment as any)
+      .where(eq((schemas.investment as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.deliverables as any)
+      .where(eq((schemas.deliverables as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.plans as any)
+      .where(eq((schemas.plans as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.termsConditions as any)
+      .where(eq((schemas.termsConditions as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.faq as any)
+      .where(eq((schemas.faq as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.footer as any)
+      .where(eq((schemas.footer as any).projectId, projectId)),
   ]);
 
   // Get sub-tables
@@ -149,27 +281,122 @@ export async function fetchFlashTemplateData(projectId: string) {
     faqList,
     footerMarquee,
   ] = await Promise.all([
-    introduction[0] ? db.select().from(schemas.introductionServices).where(eq(schemas.introductionServices.introductionId, introduction[0].id)) : [],
-    team[0] ? db.select().from(schemas.teamMembers).where(eq(schemas.teamMembers.teamId, team[0].id)) : [],
-    expertise[0] ? db.select().from(schemas.expertiseTopics).where(eq(schemas.expertiseTopics.expertiseId, expertise[0].id)) : [],
-    results[0] ? db.select().from(schemas.resultsList).where(eq(schemas.resultsList.resultsId, results[0].id)) : [],
-    clients[0] ? db.select().from(schemas.clientsList).where(eq(schemas.clientsList.clientsSectionId, clients[0].id)) : [],
-    steps[0] ? db.select().from(schemas.stepsTopics).where(eq(schemas.stepsTopics.stepsId, steps[0].id)) : [],
-    steps[0] ? db.select().from(schemas.stepsMarquee).where(eq(schemas.stepsMarquee.stepsId, steps[0].id)) : [],
-    testimonials[0] ? db.select().from(schemas.testimonialsList).where(eq(schemas.testimonialsList.testimonialsId, testimonials[0].id)) : [],
-    deliverables[0] ? db.select().from(schemas.deliverablesList).where(eq(schemas.deliverablesList.deliverablesId, deliverables[0].id)) : [],
-    plans[0] ? db.select().from(schemas.plansList).where(eq(schemas.plansList.plansSectionId, plans[0].id)) : [],
-    termsConditions[0] ? db.select().from(schemas.termsConditionsList).where(eq(schemas.termsConditionsList.termsSectionId, termsConditions[0].id)) : [],
-    faq[0] ? db.select().from(schemas.faqList).where(eq(schemas.faqList.faqSectionId, faq[0].id)) : [],
-    footer[0] ? db.select().from(schemas.footerMarquee).where(eq(schemas.footerMarquee.footerId, footer[0].id)) : [],
+    introduction[0]
+      ? db
+          .select()
+          .from(schemas.introductionServices as any)
+          .where(
+            eq(
+              (schemas.introductionServices as any).introductionId,
+              introduction[0].id
+            )
+          )
+      : [],
+    team[0]
+      ? db
+          .select()
+          .from(schemas.teamMembers as any)
+          .where(eq((schemas.teamMembers as any).teamId, team[0].id))
+      : [],
+    expertise[0]
+      ? db
+          .select()
+          .from(schemas.expertiseTopics as any)
+          .where(
+            eq((schemas.expertiseTopics as any).expertiseId, expertise[0].id)
+          )
+      : [],
+    results[0]
+      ? db
+          .select()
+          .from(schemas.resultsList as any)
+          .where(eq((schemas.resultsList as any).resultsId, results[0].id))
+      : [],
+    clients[0]
+      ? db
+          .select()
+          .from(schemas.clientsList as any)
+          .where(
+            eq((schemas.clientsList as any).clientsSectionId, clients[0].id)
+          )
+      : [],
+    steps[0]
+      ? db
+          .select()
+          .from(schemas.stepsTopics as any)
+          .where(eq((schemas.stepsTopics as any).stepsId, steps[0].id))
+      : [],
+    steps[0]
+      ? db
+          .select()
+          .from(schemas.stepsMarquee as any)
+          .where(eq((schemas.stepsMarquee as any).stepsId, steps[0].id))
+      : [],
+    testimonials[0]
+      ? db
+          .select()
+          .from(schemas.testimonialsList as any)
+          .where(
+            eq(
+              (schemas.testimonialsList as any).testimonialsId,
+              testimonials[0].id
+            )
+          )
+      : [],
+    deliverables[0]
+      ? db
+          .select()
+          .from(schemas.deliverablesList as any)
+          .where(
+            eq(
+              (schemas.deliverablesList as any).deliverablesId,
+              deliverables[0].id
+            )
+          )
+      : [],
+    plans[0]
+      ? db
+          .select()
+          .from(schemas.plansList as any)
+          .where(eq((schemas.plansList as any).plansSectionId, plans[0].id))
+      : [],
+    termsConditions[0]
+      ? db
+          .select()
+          .from(schemas.termsConditionsList as any)
+          .where(
+            eq(
+              (schemas.termsConditionsList as any).termsSectionId,
+              termsConditions[0].id
+            )
+          )
+      : [],
+    faq[0]
+      ? db
+          .select()
+          .from(schemas.faqList as any)
+          .where(eq((schemas.faqList as any).faqSectionId, faq[0].id))
+      : [],
+    footer[0]
+      ? db
+          .select()
+          .from(schemas.footerMarquee as any)
+          .where(eq((schemas.footerMarquee as any).footerId, footer[0].id))
+      : [],
   ]);
 
   // Get plan items
-  const plansIncludedItems = plansList.length > 0 ? await Promise.all(
-    plansList.map(plan =>
-      db.select().from(schemas.plansIncludedItems).where(eq(schemas.plansIncludedItems.planId, plan.id))
-    )
-  ).then(results => results.flat()) : [];
+  const plansIncludedItems =
+    plansList.length > 0
+      ? await Promise.all(
+          plansList.map((plan) =>
+            db
+              .select()
+              .from(schemas.plansIncludedItems as any)
+              .where(eq((schemas.plansIncludedItems as any).planId, plan.id))
+          )
+        ).then((results) => results.flat())
+      : [];
 
   return {
     introduction: {
@@ -255,21 +482,66 @@ export async function fetchPrimeTemplateData(projectId: string) {
     faq,
     footer,
   ] = await Promise.all([
-    db.select().from(schemas.introduction).where(eq(schemas.introduction.projectId, projectId)),
-    db.select().from(schemas.aboutUs).where(eq(schemas.aboutUs.projectId, projectId)),
-    db.select().from(schemas.team).where(eq(schemas.team.projectId, projectId)),
-    db.select().from(schemas.expertise).where(eq(schemas.expertise.projectId, projectId)),
-    db.select().from(schemas.results).where(eq(schemas.results.projectId, projectId)),
-    db.select().from(schemas.clients).where(eq(schemas.clients.projectId, projectId)),
-    db.select().from(schemas.cta).where(eq(schemas.cta.projectId, projectId)),
-    db.select().from(schemas.steps).where(eq(schemas.steps.projectId, projectId)),
-    db.select().from(schemas.testimonials).where(eq(schemas.testimonials.projectId, projectId)),
-    db.select().from(schemas.investment).where(eq(schemas.investment.projectId, projectId)),
-    db.select().from(schemas.deliverables).where(eq(schemas.deliverables.projectId, projectId)),
-    db.select().from(schemas.plans).where(eq(schemas.plans.projectId, projectId)),
-    db.select().from(schemas.termsConditions).where(eq(schemas.termsConditions.projectId, projectId)),
-    db.select().from(schemas.faq).where(eq(schemas.faq.projectId, projectId)),
-    db.select().from(schemas.footer).where(eq(schemas.footer.projectId, projectId)),
+    db
+      .select()
+      .from(schemas.introduction as any)
+      .where(eq((schemas.introduction as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.aboutUs as any)
+      .where(eq((schemas.aboutUs as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.team as any)
+      .where(eq((schemas.team as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.expertise as any)
+      .where(eq((schemas.expertise as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.results as any)
+      .where(eq((schemas.results as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.clients as any)
+      .where(eq((schemas.clients as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.cta as any)
+      .where(eq((schemas.cta as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.steps as any)
+      .where(eq((schemas.steps as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.testimonials as any)
+      .where(eq((schemas.testimonials as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.investment as any)
+      .where(eq((schemas.investment as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.deliverables as any)
+      .where(eq((schemas.deliverables as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.plans as any)
+      .where(eq((schemas.plans as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.termsConditions as any)
+      .where(eq((schemas.termsConditions as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.faq as any)
+      .where(eq((schemas.faq as any).projectId, projectId)),
+    db
+      .select()
+      .from(schemas.footer as any)
+      .where(eq((schemas.footer as any).projectId, projectId)),
   ]);
 
   // Get sub-tables
@@ -286,25 +558,110 @@ export async function fetchPrimeTemplateData(projectId: string) {
     termsConditionsList,
     faqList,
   ] = await Promise.all([
-    introduction[0] ? db.select().from(schemas.introductionMarquee).where(eq(schemas.introductionMarquee.introductionId, introduction[0].id)) : [],
-    team[0] ? db.select().from(schemas.teamMembers).where(eq(schemas.teamMembers.teamId, team[0].id)) : [],
-    expertise[0] ? db.select().from(schemas.expertiseTopics).where(eq(schemas.expertiseTopics.expertiseId, expertise[0].id)) : [],
-    results[0] ? db.select().from(schemas.resultsList).where(eq(schemas.resultsList.resultsId, results[0].id)) : [],
-    clients[0] ? db.select().from(schemas.clientsList).where(eq(schemas.clientsList.clientsSectionId, clients[0].id)) : [],
-    steps[0] ? db.select().from(schemas.stepsTopics).where(eq(schemas.stepsTopics.stepsId, steps[0].id)) : [],
-    testimonials[0] ? db.select().from(schemas.testimonialsList).where(eq(schemas.testimonialsList.testimonialsId, testimonials[0].id)) : [],
-    deliverables[0] ? db.select().from(schemas.deliverablesList).where(eq(schemas.deliverablesList.deliverablesId, deliverables[0].id)) : [],
-    plans[0] ? db.select().from(schemas.plansList).where(eq(schemas.plansList.plansSectionId, plans[0].id)) : [],
-    termsConditions[0] ? db.select().from(schemas.termsConditionsList).where(eq(schemas.termsConditionsList.termsSectionId, termsConditions[0].id)) : [],
-    faq[0] ? db.select().from(schemas.faqList).where(eq(schemas.faqList.faqSectionId, faq[0].id)) : [],
+    introduction[0]
+      ? db
+          .select()
+          .from(schemas.introductionMarquee as any)
+          .where(
+            eq(
+              (schemas.introductionMarquee as any).introductionId,
+              introduction[0].id
+            )
+          )
+      : [],
+    team[0]
+      ? db
+          .select()
+          .from(schemas.teamMembers as any)
+          .where(eq((schemas.teamMembers as any).teamId, team[0].id))
+      : [],
+    expertise[0]
+      ? db
+          .select()
+          .from(schemas.expertiseTopics as any)
+          .where(
+            eq((schemas.expertiseTopics as any).expertiseId, expertise[0].id)
+          )
+      : [],
+    results[0]
+      ? db
+          .select()
+          .from(schemas.resultsList as any)
+          .where(eq((schemas.resultsList as any).resultsId, results[0].id))
+      : [],
+    clients[0]
+      ? db
+          .select()
+          .from(schemas.clientsList as any)
+          .where(
+            eq((schemas.clientsList as any).clientsSectionId, clients[0].id)
+          )
+      : [],
+    steps[0]
+      ? db
+          .select()
+          .from(schemas.stepsTopics as any)
+          .where(eq((schemas.stepsTopics as any).stepsId, steps[0].id))
+      : [],
+    testimonials[0]
+      ? db
+          .select()
+          .from(schemas.testimonialsList as any)
+          .where(
+            eq(
+              (schemas.testimonialsList as any).testimonialsId,
+              testimonials[0].id
+            )
+          )
+      : [],
+    deliverables[0]
+      ? db
+          .select()
+          .from(schemas.deliverablesList as any)
+          .where(
+            eq(
+              (schemas.deliverablesList as any).deliverablesId,
+              deliverables[0].id
+            )
+          )
+      : [],
+    plans[0]
+      ? db
+          .select()
+          .from(schemas.plansList as any)
+          .where(eq((schemas.plansList as any).plansSectionId, plans[0].id))
+      : [],
+    termsConditions[0]
+      ? db
+          .select()
+          .from(schemas.termsConditionsList as any)
+          .where(
+            eq(
+              (schemas.termsConditionsList as any).termsSectionId,
+              termsConditions[0].id
+            )
+          )
+      : [],
+    faq[0]
+      ? db
+          .select()
+          .from(schemas.faqList as any)
+          .where(eq((schemas.faqList as any).faqSectionId, faq[0].id))
+      : [],
   ]);
 
   // Get plan items
-  const plansIncludedItems = plansList.length > 0 ? await Promise.all(
-    plansList.map(plan =>
-      db.select().from(schemas.plansIncludedItems).where(eq(schemas.plansIncludedItems.planId, plan.id))
-    )
-  ).then(results => results.flat()) : [];
+  const plansIncludedItems =
+    plansList.length > 0
+      ? await Promise.all(
+          plansList.map((plan) =>
+            db
+              .select()
+              .from(schemas.plansIncludedItems as any)
+              .where(eq((schemas.plansIncludedItems as any).planId, plan.id))
+          )
+        ).then((results) => results.flat())
+      : [];
 
   return {
     introduction: {
@@ -367,7 +724,10 @@ export async function fetchPrimeTemplateData(projectId: string) {
   };
 }
 
-export async function fetchTemplateData(template: TemplateType, projectId: string) {
+export async function fetchTemplateData(
+  template: TemplateType,
+  projectId: string
+) {
   switch (template) {
     case "flash":
       return fetchFlashTemplateData(projectId);
@@ -379,4 +739,3 @@ export async function fetchTemplateData(template: TemplateType, projectId: strin
       throw new Error(`Template não suportado: ${template}`);
   }
 }
-

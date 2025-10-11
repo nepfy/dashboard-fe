@@ -1,1 +1,1 @@
-export * from "./minimal-template";
+export * from "./novo-template";
