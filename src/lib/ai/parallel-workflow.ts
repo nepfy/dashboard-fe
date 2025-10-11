@@ -100,15 +100,18 @@ export class ProposalWorkflow {
   async execute(data: ProposalWorkflowData): Promise<WorkflowResult> {
     const startTime = Date.now();
     const template = data.templateType || "flash";
+
+    console.log("🚀 Starting ProposalWorkflow execution...");
+
     const agent = await getAgentByServiceAndTemplate(
       data.selectedService as ServiceType,
       template
     );
 
     if (!agent) {
-      throw new Error(
-        `Agent not found for service: ${data.selectedService} and template: ${template}`
-      );
+      const errorMsg = `Agent not found for service: ${data.selectedService} and template: ${template}`;
+      console.error("❌ ProposalWorkflow Error:", errorMsg);
+      throw new Error(errorMsg);
     }
 
     try {
@@ -116,6 +119,11 @@ export class ProposalWorkflow {
 
       const executionTime = Date.now() - startTime;
 
+      console.log(
+        "✅ ProposalWorkflow completed successfully in",
+        executionTime,
+        "ms"
+      );
       return {
         steps: this.steps,
         finalProposal: result,
@@ -126,7 +134,12 @@ export class ProposalWorkflow {
         },
       };
     } catch (error) {
-      console.error("AI Workflow Error:", error);
+      console.error("❌ ProposalWorkflow Error:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+        duration: Date.now() - startTime,
+      });
       throw error; // Re-throw to let the route handle fallback
     }
   }

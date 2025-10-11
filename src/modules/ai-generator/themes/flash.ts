@@ -1018,10 +1018,16 @@ export class FlashTemplateWorkflow {
     const startTime = Date.now();
 
     try {
+      console.log("🚀 Starting Flash workflow execution...");
       const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
       const flashTheme = new FlashTheme(together);
       const proposal = await flashTheme.execute(data);
 
+      console.log(
+        "✅ Flash workflow completed successfully in",
+        Date.now() - startTime,
+        "ms"
+      );
       return {
         success: true,
         proposal,
@@ -1031,7 +1037,12 @@ export class FlashTemplateWorkflow {
         },
       };
     } catch (error) {
-      console.error("Flash Template Workflow Error:", error);
+      console.error("❌ Flash Template Workflow Error:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+        duration: Date.now() - startTime,
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

@@ -195,19 +195,49 @@ export class PrimeTemplateWorkflow {
   }
 
   async execute(data: PrimeThemeData): Promise<PrimeWorkflowResult> {
-    const proposal = await this.generateTemplateProposal(data);
+    const startTime = Date.now();
 
-    return {
-      success: true,
-      templateType: "prime",
-      data: proposal,
-      metadata: {
-        service: data.selectedService,
-        agent: this.agent?.name ?? "unknown",
-        timestamp: new Date().toISOString(),
-        generationType: "prime-workflow",
-      },
-    };
+    try {
+      console.log("🚀 Starting Prime workflow execution...");
+      const proposal = await this.generateTemplateProposal(data);
+
+      console.log(
+        "✅ Prime workflow completed successfully in",
+        Date.now() - startTime,
+        "ms"
+      );
+      return {
+        success: true,
+        templateType: "prime",
+        data: proposal,
+        metadata: {
+          service: data.selectedService,
+          agent: this.agent?.name ?? "unknown",
+          timestamp: new Date().toISOString(),
+          generationType: "prime-workflow",
+        },
+      };
+    } catch (error) {
+      console.error("❌ Prime Template Workflow Error:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+        duration: Date.now() - startTime,
+      });
+
+      // Return a failed result instead of throwing
+      return {
+        success: false,
+        templateType: "prime",
+        data: {} as PrimeProposal, // Empty placeholder
+        metadata: {
+          service: data.selectedService,
+          agent: this.agent?.name ?? "unknown",
+          timestamp: new Date().toISOString(),
+          generationType: "prime-workflow-failed",
+        },
+      };
+    }
   }
 
   async generateTemplateProposal(data: PrimeThemeData): Promise<PrimeProposal> {

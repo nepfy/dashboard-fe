@@ -289,35 +289,49 @@ export async function POST(request: NextRequest) {
       let result: FlashWorkflowResult;
 
       try {
-        // 25s timeout for main flash workflow
+        // 45s timeout for main flash workflow (increased for new models)
         const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error("Flash AI timeout")), 25000);
+          setTimeout(() => reject(new Error("Flash AI timeout")), 45000);
         });
         const flashPromise = flashWorkflow.execute(flashData);
         result = await Promise.race([flashPromise, timeoutPromise]);
         generationType = "flash-workflow";
-      } catch {
-        // Fallback to simple generation (15s timeout)
+      } catch (workflowError) {
+        console.error("Flash workflow error:", workflowError);
+        // Fallback to simple generation (30s timeout)
         try {
           const simpleTimeoutPromise = new Promise<never>((_, reject) => {
             setTimeout(
               () => reject(new Error("Flash simple generation timeout")),
-              15000
+              30000
             );
           });
           const simplePromise = flashWorkflow.execute(flashData);
           result = await Promise.race([simplePromise, simpleTimeoutPromise]);
           generationType = "flash-simple-generation";
-        } catch {
+        } catch (simpleError) {
+          console.error("Flash simple generation error:", simpleError);
           return NextResponse.json(
             {
               error: "Failed to generate flash proposal",
-              details: "Both flash AI workflow and simple generation failed",
+              details: `Workflow error: ${workflowError instanceof Error ? workflowError.message : 'Unknown'}. Fallback error: ${simpleError instanceof Error ? simpleError.message : 'Unknown'}`,
               generationType: "failed",
             },
             { status: 500 }
           );
         }
+      }
+
+      // Validate flash result before continuing
+      if (!result.success || !result.proposal) {
+        return NextResponse.json(
+          {
+            error: "Failed to generate flash proposal",
+            details: result.error || "Flash AI workflow did not return a valid proposal",
+            generationType: "failed",
+          },
+          { status: 500 }
+        );
       }
 
       aiResult = result;
@@ -349,35 +363,49 @@ export async function POST(request: NextRequest) {
       let result: PrimeWorkflowResult;
 
       try {
-        // 25s timeout for main prime workflow
+        // 45s timeout for main prime workflow (increased for new models)
         const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error("Prime AI timeout")), 25000);
+          setTimeout(() => reject(new Error("Prime AI timeout")), 45000);
         });
         const primePromise = primeWorkflow.execute(primeData);
         result = await Promise.race([primePromise, timeoutPromise]);
         generationType = "prime-workflow";
-      } catch {
-        // Fallback to simple generation (15s timeout)
+      } catch (workflowError) {
+        console.error("Prime workflow error:", workflowError);
+        // Fallback to simple generation (30s timeout)
         try {
           const simpleTimeoutPromise = new Promise<never>((_, reject) => {
             setTimeout(
               () => reject(new Error("Prime simple generation timeout")),
-              15000
+              30000
             );
           });
           const simplePromise = primeWorkflow.execute(primeData);
           result = await Promise.race([simplePromise, simpleTimeoutPromise]);
           generationType = "prime-simple-generation";
-        } catch {
+        } catch (simpleError) {
+          console.error("Prime simple generation error:", simpleError);
           return NextResponse.json(
             {
               error: "Failed to generate prime proposal",
-              details: "Both prime AI workflow and simple generation failed",
+              details: `Workflow error: ${workflowError instanceof Error ? workflowError.message : 'Unknown'}. Fallback error: ${simpleError instanceof Error ? simpleError.message : 'Unknown'}`,
               generationType: "failed",
             },
             { status: 500 }
           );
         }
+      }
+
+      // Validate prime result before continuing
+      if (!result.success || !result.data) {
+        return NextResponse.json(
+          {
+            error: "Failed to generate prime proposal",
+            details: "Prime AI workflow did not return valid data",
+            generationType: "failed",
+          },
+          { status: 500 }
+        );
       }
 
       aiResult = result;
