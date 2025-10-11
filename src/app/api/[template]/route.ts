@@ -1,13 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
 import { eq, desc, count, and, inArray, ne } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
+import {
+  isValidTemplate,
+  getTemplateDisplayName,
+  type TemplateType,
+} from "#/lib/db/helpers/template-tables";
 
 const VALID_STATUSES = [
   "active",
-  "approved", 
+  "approved",
   "negotiation",
   "rejected",
   "draft",
@@ -15,7 +20,9 @@ const VALID_STATUSES = [
   "archived",
 ] as const;
 
-async function getUserIdFromEmail(emailAddress: string): Promise<string | null> {
+async function getUserIdFromEmail(
+  emailAddress: string
+): Promise<string | null> {
   const personResult = await db
     .select({ id: personUserTable.id })
     .from(personUserTable)
@@ -26,7 +33,8 @@ async function getUserIdFromEmail(emailAddress: string): Promise<string | null> 
 
 async function validateProjectOwnership(
   projectIds: string[],
-  userId: string
+  userId: string,
+  templateType: TemplateType
 ): Promise<boolean> {
   const ownedProjects = await db
     .select({ id: projectsTable.id })
@@ -35,15 +43,31 @@ async function validateProjectOwnership(
       and(
         inArray(projectsTable.id, projectIds),
         eq(projectsTable.personId, userId),
-        eq(projectsTable.templateType, "prime")
+        eq(projectsTable.templateType, templateType)
       )
     );
 
   return ownedProjects.length === projectIds.length;
 }
 
-export async function GET(request: Request) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ template: string }> }
+) {
   try {
+    const { template } = await params;
+
+    // Validate template type
+    if (!isValidTemplate(template)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Template inválido. Templates válidos: flash, prime, minimal`,
+        },
+        { status: 400 }
+      );
+    }
+
     const user = await currentUser();
 
     if (!user) {
@@ -67,50 +91,52 @@ export async function GET(request: Request) {
       );
     }
 
-    // Count total Prime template projects (excluding archived)
+    const templateDisplayName = getTemplateDisplayName(template);
+
+    // Count total template projects (excluding archived)
     const totalCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
       .where(
         and(
           eq(projectsTable.personId, userId),
-          eq(projectsTable.templateType, "prime"),
+          eq(projectsTable.templateType, template),
           ne(projectsTable.projectStatus, "archived")
         )
       );
 
-    // Count sent Prime projects
+    // Count sent projects
     const sentProjectsCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
       .where(
         and(
           eq(projectsTable.personId, userId),
-          eq(projectsTable.templateType, "prime"),
+          eq(projectsTable.templateType, template),
           ne(projectsTable.projectStatus, "archived")
         )
       );
 
-    // Count approved Prime projects
+    // Count approved projects
     const approvedProjectsCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
       .where(
         and(
           eq(projectsTable.personId, userId),
-          eq(projectsTable.templateType, "prime"),
+          eq(projectsTable.templateType, template),
           eq(projectsTable.projectStatus, "approved")
         )
       );
 
-    // Count archived Prime projects
+    // Count archived projects
     const archivedProjectsCountResult = await db
       .select({ count: count() })
       .from(projectsTable)
       .where(
         and(
           eq(projectsTable.personId, userId),
-          eq(projectsTable.templateType, "prime"),
+          eq(projectsTable.templateType, template),
           eq(projectsTable.projectStatus, "archived")
         )
       );
@@ -121,14 +147,14 @@ export async function GET(request: Request) {
     const archivedProjectsCount = archivedProjectsCountResult[0]?.count || 0;
     const totalPages = Math.ceil(totalCount / limit);
 
-    // Fetch Prime template projects (excluding archived)
+    // Fetch template projects (excluding archived)
     const projects = await db
       .select()
       .from(projectsTable)
       .where(
         and(
           eq(projectsTable.personId, userId),
-          eq(projectsTable.templateType, "prime"),
+          eq(projectsTable.templateType, template),
           ne(projectsTable.projectStatus, "archived")
         )
       )
@@ -147,22 +173,40 @@ export async function GET(request: Request) {
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
       },
-      statistics: {
-        sentProjectsCount,
-        approvedProjectsCount,
-        archivedProjectsCount,
+      stats: {
+        total: totalCount,
+        sent: sentProjectsCount,
+        approved: approvedProjectsCount,
+        archived: archivedProjectsCount,
       },
     });
   } catch (error) {
+    console.error("Error fetching template projects:", error);
     return NextResponse.json(
-      { success: false, error: `${error}` },
+      { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }
     );
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ template: string }> }
+) {
   try {
+    const { template } = await params;
+
+    // Validate template type
+    if (!isValidTemplate(template)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Template inválido. Templates válidos: flash, prime, minimal`,
+        },
+        { status: 400 }
+      );
+    }
+
     const user = await currentUser();
 
     if (!user) {
@@ -183,9 +227,16 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { projectId, status } = body;
 
-    if (!projectId || !status) {
+    if (!projectId) {
       return NextResponse.json(
-        { success: false, error: "ID do projeto e status são obrigatórios" },
+        { success: false, error: "ID do projeto é obrigatório" },
+        { status: 400 }
+      );
+    }
+
+    if (!status) {
+      return NextResponse.json(
+        { success: false, error: "Status é obrigatório" },
         { status: 400 }
       );
     }
@@ -208,7 +259,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const isOwner = await validateProjectOwnership([projectId], userId);
+    const isOwner = await validateProjectOwnership([projectId], userId, template);
     if (!isOwner) {
       return NextResponse.json(
         { success: false, error: "Projeto não encontrado ou acesso negado" },
@@ -226,7 +277,7 @@ export async function PUT(request: Request) {
         and(
           eq(projectsTable.id, projectId),
           eq(projectsTable.personId, userId),
-          eq(projectsTable.templateType, "prime")
+          eq(projectsTable.templateType, template)
         )
       )
       .returning();
@@ -238,13 +289,15 @@ export async function PUT(request: Request) {
       );
     }
 
+    const templateDisplayName = getTemplateDisplayName(template);
+
     return NextResponse.json({
       success: true,
-      message: "Status do projeto Prime atualizado com sucesso",
+      message: `Status do projeto ${templateDisplayName} atualizado com sucesso`,
       data: updatedProject[0],
     });
   } catch (error) {
-    console.error("Error updating Prime project:", error);
+    console.error("Error updating template project:", error);
     return NextResponse.json(
       { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }
@@ -252,8 +305,24 @@ export async function PUT(request: Request) {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ template: string }> }
+) {
   try {
+    const { template } = await params;
+
+    // Validate template type
+    if (!isValidTemplate(template)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Template inválido. Templates válidos: flash, prime, minimal`,
+        },
+        { status: 400 }
+      );
+    }
+
     const user = await currentUser();
 
     if (!user) {
@@ -306,7 +375,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const isOwner = await validateProjectOwnership(projectIds, userId);
+    const isOwner = await validateProjectOwnership(projectIds, userId, template);
     if (!isOwner) {
       return NextResponse.json(
         {
@@ -327,29 +396,32 @@ export async function PATCH(request: Request) {
         and(
           inArray(projectsTable.id, projectIds),
           eq(projectsTable.personId, userId),
-          eq(projectsTable.templateType, "prime")
+          eq(projectsTable.templateType, template)
         )
       )
       .returning();
 
     if (updatedProjects.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Falha ao atualizar os projetos Prime" },
+        { success: false, error: "Falha ao atualizar os projetos" },
         { status: 500 }
       );
     }
 
+    const templateDisplayName = getTemplateDisplayName(template);
+
     return NextResponse.json({
       success: true,
-      message: `${updatedProjects.length} projeto(s) Prime atualizado(s) com sucesso`,
+      message: `${updatedProjects.length} projeto(s) ${templateDisplayName} atualizado(s) com sucesso`,
       data: updatedProjects,
       updatedCount: updatedProjects.length,
     });
   } catch (error) {
-    console.error("Error updating Prime projects:", error);
+    console.error("Error updating template projects:", error);
     return NextResponse.json(
       { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }
     );
   }
 }
+

@@ -5,15 +5,15 @@ import { eq, and } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 import {
-  newTemplateIntroductionTable,
-  newTemplateAboutUsTable,
-  newTemplateClientsTable,
-  newTemplateExpertiseTable,
-  newTemplatePlansTable,
-  newTemplateTermsConditionsTable,
-  newTemplateFaqTable,
-  newTemplateFooterTable,
-} from "#/lib/db/schema/templates/new";
+  minimalTemplateIntroductionTable as newTemplateIntroductionTable,
+  minimalTemplateAboutUsTable as newTemplateAboutUsTable,
+  minimalTemplateClientsTable as newTemplateClientsTable,
+  minimalTemplateExpertiseTable as newTemplateExpertiseTable,
+  minimalTemplatePlansTable as newTemplatePlansTable,
+  minimalTemplateTermsConditionsTable as newTemplateTermsConditionsTable,
+  minimalTemplateFaqTable as newTemplateFaqTable,
+  minimalTemplateFooterTable as newTemplateFooterTable,
+} from "#/lib/db/schema/templates/minimal";
 
 async function getUserIdFromEmail(emailAddress: string): Promise<string | null> {
   const personResult = await db
@@ -57,9 +57,9 @@ export async function POST(request: Request) {
     // Create or update main project
     const mainProjectData = {
       personId: userId,
-      projectName: projectData.projectName || `Rascunho New ${new Date().toLocaleDateString()}`,
+      projectName: projectData.projectName || `Rascunho Minimal ${new Date().toLocaleDateString()}`,
       clientName: projectData.clientName || "Cliente não informado",
-      templateType: "new" as const,
+      templateType: "minimal" as const,
       projectStatus: "draft" as const,
       mainColor: projectData.mainColor || "#3B82F6",
       companyName: projectData.companyName,
@@ -80,14 +80,14 @@ export async function POST(request: Request) {
           and(
             eq(projectsTable.id, projectId),
             eq(projectsTable.personId, userId),
-            eq(projectsTable.templateType, "new")
+            eq(projectsTable.templateType, "minimal")
           )
         )
         .limit(1);
 
       if (existingProject.length === 0) {
         return NextResponse.json(
-          { success: false, error: "Projeto New não encontrado" },
+          { success: false, error: "Projeto Minimal não encontrado" },
           { status: 404 }
         );
       }
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
           and(
             eq(projectsTable.id, projectId),
             eq(projectsTable.personId, userId),
-            eq(projectsTable.templateType, "new")
+            eq(projectsTable.templateType, "minimal")
           )
         )
         .returning();
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
 
     if (savedProject.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Falha ao salvar rascunho New" },
+        { success: false, error: "Falha ao salvar rascunho Minimal" },
         { status: 500 }
       );
     }
@@ -323,11 +323,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Rascunho New salvo com sucesso",
+      message: "Rascunho Minimal salvo com sucesso",
       data: savedProject[0],
     });
   } catch (error) {
-    console.error("Error saving New draft:", error);
+    console.error("Error saving Minimal draft:", error);
     return NextResponse.json(
       { success: false, error: `Erro interno do servidor: ${error}` },
       { status: 500 }

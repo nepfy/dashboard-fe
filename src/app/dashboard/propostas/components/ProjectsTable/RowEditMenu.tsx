@@ -19,7 +19,7 @@ interface RowEditMenuProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: string;
-  templateType?: "flash" | "prime" | "essencial" | "grid" | "new" | null;
+  templateType?: "flash" | "prime" | "essencial" | "grid" | "minimal" | null;
   currentStatus?: string;
   viewMode?: "active" | "archived";
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
