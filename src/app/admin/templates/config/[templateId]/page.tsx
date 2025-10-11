@@ -231,7 +231,7 @@ export default function TemplateConfigDetailPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={saving}
               >
-                <option value="mistralai/Mixtral-8x22B-Instruct-v0.1">
+                <option value="mistralai/Mistral-7B-Instruct-v0.3">
                   Mixtral 8x22B
                 </option>
                 <option value="meta-llama/Llama-3.3-70B-Instruct-Turbo">

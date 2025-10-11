@@ -184,10 +184,10 @@ export class PrimeTemplateWorkflow {
       referenceModels: [
         "Qwen/Qwen2-72B-Instruct",
         "meta-llama/Llama-3.3-70B-Instruct-Turbo",
-        "mistralai/Mixtral-8x22B-Instruct-v0.1",
+        "mistralai/Mistral-7B-Instruct-v0.3",
         "databricks/dbrx-instruct",
       ],
-      aggregatorModel: "mistralai/Mixtral-8x22B-Instruct-v0.1",
+      aggregatorModel: "mistralai/Mistral-7B-Instruct-v0.3",
       maxRetries: 3,
       temperature: 0.6,
       maxTokens: 2500,
