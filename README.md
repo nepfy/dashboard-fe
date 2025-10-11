@@ -28,7 +28,7 @@ This application provides a comprehensive proposal management platform with:
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm/yarn/pnpm
 - PostgreSQL database (Neon recommended)
 - Clerk account
@@ -38,6 +38,7 @@ This application provides a comprehensive proposal management platform with:
 ### Environment Setup
 
 1. **Copy environment variables**:
+
    ```bash
    cp .env.example .env.local
    ```
@@ -45,20 +46,23 @@ This application provides a comprehensive proposal management platform with:
 2. **Configure environment variables** (see [Environment Variables](#environment-variables) section below)
 
 3. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 4. **Setup database**:
+
    ```bash
    # Generate database migrations
    npm run migrations
-   
+
    # Apply migrations to database
    npm run push
    ```
 
 5. **Run development server**:
+
    ```bash
    npm run dev
    ```
@@ -71,6 +75,7 @@ This application provides a comprehensive proposal management platform with:
 Create a `.env.local` file with the following variables. You can find example values in `.env.example` and the actual values on the Vercel dashboard.
 
 ### Application
+
 ```env
 NEXT_PUBLIC_VERCEL_ENV=development
 NEXT_PUBLIC_VERCEL_URL=localhost:3000
@@ -78,6 +83,7 @@ NEXT_PUBLIC_NEPFY_API_URL=http://localhost:3000/api
 ```
 
 ### Database (PostgreSQL/Neon)
+
 ```env
 DATABASE_URL=""
 DATABASE_URL_UNPOOLED=""
@@ -96,6 +102,7 @@ POSTGRES_USER=""
 ```
 
 ### Authentication (Clerk)
+
 ```env
 CLERK_WEBHOOK_SECRET=
 CLERK_SECRET_KEY=
@@ -105,11 +112,13 @@ NEXT_PUBLIC_CLERK_SIGN_IN_URL=
 ```
 
 ### AI Integration (Together AI)
+
 ```env
 TOGETHER_API_KEY=
 ```
 
 ### Payments (Stripe)
+
 ```env
 STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
@@ -117,6 +126,7 @@ STRIPE_SECRET_KEY=
 ```
 
 ### File Storage (Vercel Blob)
+
 ```env
 BLOB_READ_WRITE_TOKEN=""
 ```
@@ -171,21 +181,24 @@ npm run type-check   # Run TypeScript compiler check
 ## Documentation
 
 ### 📚 Schema Documentation
+
 - **[Database Schema](./schemas/README.md)** - Complete database schema documentation
 - **[New Template](./schemas/new.md)** - New template specification
-- **[Flash Template](./schemas/flash.md)** - Flash template specification  
+- **[Flash Template](./schemas/flash.md)** - Flash template specification
 - **[Prime Template](./schemas/prime.md)** - Prime template specification
 
 ### 🚀 API Documentation
+
 The application provides template-specific API endpoints:
 
 ```
 /api/flash/     - Flash template operations
-/api/prime/     - Prime template operations  
-/api/new/       - New template operations
+/api/prime/     - Prime template operations
+/api/minimal/   - Minimal template operations
 ```
 
 Each template supports:
+
 - `GET /` - List projects
 - `GET /[id]` - Get single project
 - `POST /draft` - Save draft
@@ -198,12 +211,15 @@ Each template supports:
 The system supports three proposal templates:
 
 ### 🆕 New Template
+
 Comprehensive business proposals with detailed sections including introduction, about us, clients, expertise, plans, terms, FAQ, and footer.
 
-### ⚡ Flash Template  
+### ⚡ Flash Template
+
 Quick, conversion-focused proposals optimized for fast turnaround with introduction, team, results, testimonials, deliverables, and streamlined sections.
 
 ### ⭐ Prime Template
+
 Premium, detailed business proposals for high-value clients with enhanced presentation and comprehensive feature set.
 
 Each template has its own database schema and API endpoints for maximum flexibility and type safety.
