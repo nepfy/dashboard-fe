@@ -23,12 +23,12 @@ export class FlashTheme {
   constructor(private together: Together) {
     this.moaService = new MOAService(together, {
       referenceModels: [
-        "Qwen/Qwen2-72B-Instruct",
+        "Qwen/Qwen2.5-72B-Instruct-Turbo",
         "meta-llama/Llama-3.3-70B-Instruct-Turbo",
-        "mistralai/Mistral-7B-Instruct-v0.3",
-        "databricks/dbrx-instruct",
+        "deepseek-ai/DeepSeek-V3.1",
+        "Qwen/Qwen2.5-7B-Instruct-Turbo",
       ],
-      aggregatorModel: "mistralai/Mistral-7B-Instruct-v0.3",
+      aggregatorModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
       maxRetries: 2,
       temperature: 0.7,
       maxTokens: 2000,

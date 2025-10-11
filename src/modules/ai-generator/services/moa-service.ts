@@ -28,11 +28,11 @@ export class MOAService {
     this.config = {
       referenceModels: [
         "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-        "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         "Qwen/Qwen2.5-7B-Instruct-Turbo",
-        "google/gemma-2-9b-it",
+        "Qwen/Qwen2.5-72B-Instruct-Turbo",
       ],
-      aggregatorModel: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+      aggregatorModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
       maxRetries: 3,
       temperature: 0.7,
       maxTokens: 2000,
