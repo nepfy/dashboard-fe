@@ -162,7 +162,7 @@ export function PasswordIcon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#6B46F5" />
-          <stop offset="1" stop-color="#5437C1" />
+          <stop offset="1" stopColor="#5437C1" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_266_4488"
@@ -173,7 +173,7 @@ export function PasswordIcon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="white" stopOpacity="0" />
-          <stop offset="1" stop-color="white" />
+          <stop offset="1" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_266_4488"
