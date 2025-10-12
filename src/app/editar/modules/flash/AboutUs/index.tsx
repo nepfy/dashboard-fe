@@ -1,31 +1,67 @@
 interface FlashAboutUsProps {
-  id: string;
-  projectId: string;
   hideSection: boolean;
-  title: string;
-  supportText: string;
-  subtitle: string;
+  title?: string;
+  supportText?: string;
+  subtitle?: string;
 }
 
 export default function FlashAboutUs({
-  id,
-  projectId,
   hideSection,
   title,
-  supportText,
   subtitle,
 }: FlashAboutUsProps) {
   return (
-    <div>
+    <>
       {!hideSection && (
-        <div>
-          <h1>{id}</h1>
-          <h1>{projectId}</h1>
-          <h1>{title}</h1>
-          <h1>{supportText}</h1>
-          <h1>{subtitle}</h1>
+        <div className="bg-black relative overflow-hidden">
+          <div
+            className="hidden lg:block"
+            style={{
+              width: 1148,
+              height: 1148,
+              background:
+                "radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)",
+              filter: "blur(80px)",
+              position: "absolute",
+              top: -420,
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 0,
+              overflow: "hidden",
+              borderRadius: "100%",
+            }}
+          />
+
+          <div
+            className="lg:hidden"
+            style={{
+              width: 546,
+              height: 546,
+              background:
+                "radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)",
+              filter: "blur(80px)",
+              position: "absolute",
+              top: -180,
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 0,
+              overflow: "hidden",
+              borderRadius: "100%",
+            }}
+          />
+          <div className="flex justify-center items-center px-6 lg:px-12 xl:px-0 py-35 lg:py-62 relative z-10 max-w-[1440px] mx-auto">
+            <div className="pl-4 lg:pl-10 pt-36 border-l border-l-[#A0A0A0] max-w-[1100px]">
+              <p className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-semibold">
+                {title || "Sobre nós."}{" "}
+                <span className="font-normal">
+                  {subtitle ||
+                    "Crio identidades visuais únicas para médicos e clínicas, unindo estética e estratégia para gerar autoridade, credibilidade e novos pacientes."}
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

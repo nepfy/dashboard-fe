@@ -17,16 +17,7 @@ interface FlashProps {
 
 export default function Flash({ projectData }: FlashProps) {
   return (
-    <div className="p-6">
-      <p className="mb-4">
-        <span className="font-semibold">Project:</span>{" "}
-        {projectData.project.projectName}
-      </p>
-      <p className="mb-4">
-        <span className="font-semibold">Template Type:</span>{" "}
-        {projectData.project.templateType}
-      </p>
-
+    <div className="p-3 font-manrope">
       <FlashIntro {...projectData.template.introduction.section} />
       <FlashAboutUs {...projectData.template.aboutUs} />
       <FlashTeam {...projectData.template.team.section} />

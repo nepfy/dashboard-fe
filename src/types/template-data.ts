@@ -132,6 +132,7 @@ export interface FlashTemplateData {
       topics: Array<{
         id: string;
         stepsId: string;
+        icon: string | null;
         stepName: string;
         stepDescription: string;
         hideStepName: boolean;
@@ -158,6 +159,7 @@ export interface FlashTemplateData {
       id: string;
       projectId: string;
       hideSection: boolean;
+      projectScope: string;
       list: Array<{
         id: string;
         testimonialsSectionId: string;
@@ -175,6 +177,7 @@ export interface FlashTemplateData {
     projectId: string;
     hideSection: boolean;
     title: string;
+    projectScope: string;
   };
   deliverables: {
     section: {
@@ -202,6 +205,7 @@ export interface FlashTemplateData {
       list: Array<{
         id: string;
         plansSectionId: string;
+        isTheBest: boolean;
         title: string;
         description: string;
         price: string;
