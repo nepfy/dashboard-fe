@@ -51,7 +51,7 @@ export function PasswordSection({
         <PasswordInput
           id="pagePassword"
           label="Crie uma senha para sua proposta"
-          placeholder="Digite uma senha para a sua proposta"
+          placeholder="Escolha uma senha"
           value={pagePassword}
           onChange={(e) => {
             setPagePassword(e.target.value);

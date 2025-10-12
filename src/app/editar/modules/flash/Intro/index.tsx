@@ -82,7 +82,7 @@ export default function FlashIntro({
         </div>
 
         <button
-          className="lg:hidden flex flex-col justify-center items-center w-6 h-6 space-y-1 cursor-pointer z-[99999]"
+          className="lg:hidden flex flex-col justify-center items-center w-6 h-6 space-y-1 cursor-pointer z-[900]"
           aria-label="Toggle menu"
         >
           <span

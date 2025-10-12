@@ -52,7 +52,7 @@ export function PageURLSection({
         </span>
 
         <textarea
-          placeholder="Digite o nome do seu cliente"
+          placeholder="lojasxyz"
           value={originalPageUrl}
           onChange={handleInputChange}
           className={`w-full px-4 py-3 rounded-[var(--radius-s)] 

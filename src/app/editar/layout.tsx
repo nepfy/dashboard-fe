@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CloseIcon from "#/components/icons/CloseIcon";
 import Logo from "#/components/icons/Logo";
 import Personalize from "./components/personalize";
@@ -10,12 +10,31 @@ import Publish from "./components/publish";
 import MobileNavigation from "./components/MobileNavigation";
 import MobileMenu from "./components/MobileMenu";
 
+type OpenModal = "personalize" | "sections" | null;
+
 export default function EditarLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openModal, setOpenModal] = useState<OpenModal>(null);
+
+  // Centralized scroll blocking
+  useEffect(() => {
+    if (openModal) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+      };
+    }
+  }, [openModal]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -32,8 +51,14 @@ export default function EditarLayout({
         <div className="flex items-center gap-4">
           <Logo fill="#1C1A22" />
           <div className="border-l border-l-white-neutral-light-300 h-4" />
-          <Personalize />
-          <Sections />
+          <Personalize
+            isModalOpen={openModal === "personalize"}
+            setIsModalOpen={(open) => setOpenModal(open ? "personalize" : null)}
+          />
+          <Sections
+            isModalOpen={openModal === "sections"}
+            setIsModalOpen={(open) => setOpenModal(open ? "sections" : null)}
+          />
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
@@ -47,14 +72,17 @@ export default function EditarLayout({
         </div>
       </nav>
 
-      {/* Mobile Navigation */}
       <MobileNavigation
         isMobileMenuOpen={isMobileMenuOpen}
         onToggleMenu={toggleMobileMenu}
       />
 
-      {/* Mobile Menu */}
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={closeMobileMenu}
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+      />
 
       <div className="mt-[56px] sm:mt-[66px]">{children}</div>
     </div>
