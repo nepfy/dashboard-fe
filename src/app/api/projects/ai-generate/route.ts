@@ -20,7 +20,7 @@ import { personUserTable } from "#/lib/db/schema/users";
 import {
   saveFlashTemplateData,
   savePrimeTemplateData,
-} from "#/lib/db/template-save-handlers";
+} from "#/lib/db/proposal-save-handler";
 
 export interface NepfyAIRequestData {
   selectedService: string;
@@ -80,7 +80,9 @@ async function createProjectFromAIResult(
     personId: userId,
     projectName: requestData.projectName,
     projectSentDate: null,
-    projectValidUntil: requestData.validUntil ? new Date(requestData.validUntil) : null,
+    projectValidUntil: requestData.validUntil
+      ? new Date(requestData.validUntil)
+      : null,
     projectStatus: "draft",
     projectVisualizationDate: null,
     templateType: requestData.templateType || "flash",
@@ -314,7 +316,13 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(
             {
               error: "Failed to generate flash proposal",
-              details: `Workflow error: ${workflowError instanceof Error ? workflowError.message : 'Unknown'}. Fallback error: ${simpleError instanceof Error ? simpleError.message : 'Unknown'}`,
+              details: `Workflow error: ${
+                workflowError instanceof Error
+                  ? workflowError.message
+                  : "Unknown"
+              }. Fallback error: ${
+                simpleError instanceof Error ? simpleError.message : "Unknown"
+              }`,
               generationType: "failed",
             },
             { status: 500 }
@@ -327,7 +335,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             error: "Failed to generate flash proposal",
-            details: result.error || "Flash AI workflow did not return a valid proposal",
+            details:
+              result.error ||
+              "Flash AI workflow did not return a valid proposal",
             generationType: "failed",
           },
           { status: 500 }
@@ -388,7 +398,13 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(
             {
               error: "Failed to generate prime proposal",
-              details: `Workflow error: ${workflowError instanceof Error ? workflowError.message : 'Unknown'}. Fallback error: ${simpleError instanceof Error ? simpleError.message : 'Unknown'}`,
+              details: `Workflow error: ${
+                workflowError instanceof Error
+                  ? workflowError.message
+                  : "Unknown"
+              }. Fallback error: ${
+                simpleError instanceof Error ? simpleError.message : "Unknown"
+              }`,
               generationType: "failed",
             },
             { status: 500 }

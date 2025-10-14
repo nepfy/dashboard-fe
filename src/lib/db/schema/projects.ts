@@ -5,10 +5,12 @@ import {
   text,
   timestamp,
   boolean,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { timestamps } from "#/lib/db/schema/helpers/columns.helpers";
 import { personUserTable } from "#/lib/db/schema/users";
+import type { ProposalData } from "#/types/proposal-data";
 
 export const projectsTable = pgTable("projects", {
   id: uuid().notNull().primaryKey().defaultRandom(),
@@ -35,16 +37,16 @@ export const projectsTable = pgTable("projects", {
   isPublished: boolean("is_published").default(false),
   isProposalGenerated: boolean("is_proposal_generated").default(false),
 
+  // Unified proposal data - replaces 29+ separate tables with a single JSON field
+  proposalData: jsonb("proposal_data").$type<ProposalData>(),
+
   ...timestamps,
 });
 
 // Relations
-export const projectUserRelations = relations(
-  projectsTable,
-  ({ one }) => ({
-    personUser: one(personUserTable, {
-      fields: [projectsTable.personId],
-      references: [personUserTable.id],
-    }),
-  })
-);
+export const projectUserRelations = relations(projectsTable, ({ one }) => ({
+  personUser: one(personUserTable, {
+    fields: [projectsTable.personId],
+    references: [personUserTable.id],
+  }),
+}));
