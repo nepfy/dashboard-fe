@@ -360,7 +360,7 @@ export async function saveFlashTemplateData(
     .update(projectsTable)
     .set({
       proposalData: proposalData as unknown as Record<string, unknown>,
-      updatedAt: new Date(),
+      updated_at: new Date(),
     })
     .where(eq(projectsTable.id, projectId));
 
@@ -385,7 +385,7 @@ export async function savePrimeTemplateData(
     .update(projectsTable)
     .set({
       proposalData: proposalData as unknown as Record<string, unknown>,
-      updatedAt: new Date(),
+      updated_at: new Date(),
     })
     .where(eq(projectsTable.id, projectId));
 

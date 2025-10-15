@@ -35,7 +35,7 @@ export async function updateProposalData(
     .update(projectsTable)
     .set({
       proposalData: proposalData as unknown as Record<string, unknown>,
-      updatedAt: new Date(),
+      updated_at: new Date(),
     })
     .where(eq(projectsTable.id, projectId));
 }
@@ -96,6 +96,7 @@ export async function deleteProposalSection(
   const currentData = await getProposalData(projectId);
   if (!currentData) return;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { [sectionKey]: _, ...remainingData } = currentData;
 
   await updateProposalData(projectId, remainingData as ProposalData);

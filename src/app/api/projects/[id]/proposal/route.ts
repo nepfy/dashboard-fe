@@ -48,9 +48,10 @@ async function verifyProjectOwnership(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params;
     const user = await currentUser();
 
     if (!user) {
@@ -75,8 +76,6 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    const projectId = params.id;
 
     // Verify ownership
     const isOwner = await verifyProjectOwnership(projectId, userId);
@@ -120,9 +119,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params;
     const user = await currentUser();
 
     if (!user) {
@@ -147,8 +147,6 @@ export async function PUT(
         { status: 404 }
       );
     }
-
-    const projectId = params.id;
 
     // Verify ownership
     const isOwner = await verifyProjectOwnership(projectId, userId);
@@ -196,9 +194,10 @@ export async function PUT(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params;
     const user = await currentUser();
 
     if (!user) {
@@ -223,8 +222,6 @@ export async function PATCH(
         { status: 404 }
       );
     }
-
-    const projectId = params.id;
 
     // Verify ownership
     const isOwner = await verifyProjectOwnership(projectId, userId);

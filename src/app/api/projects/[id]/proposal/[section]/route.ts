@@ -46,9 +46,11 @@ async function verifyProjectOwnership(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; section: string } }
+  { params }: { params: Promise<{ id: string; section: string }> }
 ) {
   try {
+    const { id: projectId, section: sectionKey } = await params;
+    const sectionKeyTyped = sectionKey as keyof ProposalData;
     const user = await currentUser();
 
     if (!user) {
@@ -74,9 +76,6 @@ export async function GET(
       );
     }
 
-    const projectId = params.id;
-    const sectionKey = params.section as keyof ProposalData;
-
     // Verify ownership
     const isOwner = await verifyProjectOwnership(projectId, userId);
     if (!isOwner) {
@@ -87,7 +86,7 @@ export async function GET(
     }
 
     // Get section data
-    const sectionData = await getProposalSection(projectId, sectionKey);
+    const sectionData = await getProposalSection(projectId, sectionKeyTyped);
 
     if (!sectionData) {
       return NextResponse.json(
@@ -119,9 +118,11 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; section: string } }
+  { params }: { params: Promise<{ id: string; section: string }> }
 ) {
   try {
+    const { id: projectId, section: sectionKey } = await params;
+    const sectionKeyTyped = sectionKey as keyof ProposalData;
     const user = await currentUser();
 
     if (!user) {
@@ -147,9 +148,6 @@ export async function PUT(
       );
     }
 
-    const projectId = params.id;
-    const sectionKey = params.section as keyof ProposalData;
-
     // Verify ownership
     const isOwner = await verifyProjectOwnership(projectId, userId);
     if (!isOwner) {
@@ -171,7 +169,7 @@ export async function PUT(
     }
 
     // Update section
-    await updateProposalSection(projectId, sectionKey, sectionData);
+    await updateProposalSection(projectId, sectionKeyTyped, sectionData);
 
     return NextResponse.json({
       success: true,
