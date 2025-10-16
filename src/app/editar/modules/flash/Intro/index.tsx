@@ -1,19 +1,4 @@
-interface FlashIntroProps {
-  name: string;
-  email: string;
-  buttonTitle: string;
-  title: string;
-  validity: Date | string;
-  subtitle: string;
-  hideSubtitle: boolean;
-  services: Array<{
-    id: string;
-    introductionId: string;
-    serviceName: string;
-    hideService: boolean;
-    sortOrder: number;
-  }>;
-}
+import { IntroductionSection } from "#/types/template-data";
 
 export default function FlashIntro({
   name,
@@ -23,37 +8,8 @@ export default function FlashIntro({
   validity,
   subtitle,
   hideSubtitle,
-  services = [
-    {
-      id: "1",
-      introductionId: "1",
-      serviceName: "Identidade Visual Médica",
-      hideService: false,
-      sortOrder: 1,
-    },
-    {
-      id: "2",
-      introductionId: "1",
-      serviceName: "Branding para Clínicas",
-      hideService: false,
-      sortOrder: 2,
-    },
-    {
-      id: "3",
-      introductionId: "1",
-      serviceName: "Direção de arte estratégica",
-      hideService: false,
-      sortOrder: 3,
-    },
-    {
-      id: "4",
-      introductionId: "1",
-      serviceName: "Design que atrai pacientes",
-      hideService: false,
-      sortOrder: 4,
-    },
-  ],
-}: FlashIntroProps) {
+  services,
+}: IntroductionSection) {
   return (
     <div className="relative px-6 lg:px-12 py-11 overflow-hidden">
       <div
@@ -104,9 +60,7 @@ export default function FlashIntro({
         <p className="font-bold text-sm text-[#E6E6E6]">
           Proposta válida até -{" "}
           <span className="font-normal text-[#E6E6E6]/40">
-            {validity instanceof Date
-              ? validity.toDateString()
-              : validity || "30 de Outubro de 2025"}
+            {validity?.toString()}
           </span>
         </p>
       </div>

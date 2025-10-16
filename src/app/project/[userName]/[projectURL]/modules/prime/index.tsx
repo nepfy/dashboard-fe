@@ -1,20 +1,16 @@
-import { PrimeProjectData } from "#/types/template-data";
+import { TemplateData } from "#/types/template-data";
 
-interface PrimeProps {
-  projectData: PrimeProjectData;
-}
-
-export default function Prime({ projectData }: PrimeProps) {
+export default function Prime(projectData: TemplateData) {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Prime Template Editor</h1>
       <p className="mb-4">
         <span className="font-semibold">Project:</span>{" "}
-        {projectData.project.projectName}
+        {projectData.projectName}
       </p>
       <p className="mb-4">
         <span className="font-semibold">Template Type:</span>{" "}
-        {projectData.project.templateType}
+        {projectData.templateType}
       </p>
       {/* Add your Prime template editor UI here */}
       <div className="mt-6">

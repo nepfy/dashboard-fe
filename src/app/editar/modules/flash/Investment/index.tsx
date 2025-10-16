@@ -1,16 +1,11 @@
-interface FlashInvestmentProps {
-  id: string;
-  projectId: string;
-  projectScope: string;
-  hideSection: boolean;
-  title: string;
-}
+import { InvestmentSection } from "#/types/template-data";
 
 export default function FlashInvestment({
-  projectScope,
   hideSection,
   title,
-}: FlashInvestmentProps) {
+  projectScope,
+  hideProjectScope,
+}: InvestmentSection) {
   return (
     <div className="bg-black relative overflow-hidden">
       {!hideSection && (
@@ -29,10 +24,12 @@ export default function FlashInvestment({
               </p>
             </div>
 
-            <p className="text-[#E6E6E6]">
-              {projectScope ||
-                "Criação de identidade visual médica completa, alinhada ao branding estratégico, fortalecendo a presença da marca e sua conexão com o público. Desenvolvimento de conteúdos para redes sociais e aplicação de direção de arte em todos os materiais, garantindo comunicação visual consistente e impactante."}
-            </p>
+            {!hideProjectScope && (
+              <p className="text-[#E6E6E6]">
+                {projectScope ||
+                  "Criação de identidade visual médica completa, alinhada ao branding estratégico, fortalecendo a presença da marca e sua conexão com o público. Desenvolvimento de conteúdos para redes sociais e aplicação de direção de arte em todos os materiais, garantindo comunicação visual consistente e impactante."}
+              </p>
+            )}
           </div>
         </div>
       )}

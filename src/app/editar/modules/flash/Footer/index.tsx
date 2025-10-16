@@ -1,20 +1,13 @@
-interface FlashFooterProps {
-  hideSection: boolean;
-  thankYouMessage: string;
-  disclaimer: string;
-  hideDisclaimer: boolean;
-  validity: Date | string;
-  buttonTitle: string;
-}
+import { FooterSection } from "#/types/template-data";
 
 export default function FlashFooter({
   hideSection,
-  thankYouMessage,
+  callToAction,
   disclaimer,
   hideDisclaimer,
   validity,
   buttonTitle,
-}: FlashFooterProps) {
+}: FooterSection) {
   return (
     <div className="bg-[#4F21A1] relative overflow-hidden">
       {!hideSection && (
@@ -22,7 +15,7 @@ export default function FlashFooter({
           <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-43">
             <div className="lg:pl-10 lg:pt-11 lg:border-l lg:border-l-[#A0A0A0] max-w-[1100px] mb-15">
               <p className="text-[32px] lg:text-[88px] text-[#E6E6E6] font-normal">
-                {thankYouMessage || "Vamos iniciar sua transformação visual!"}
+                {callToAction || "Vamos iniciar sua transformação visual!"}
               </p>
               <p className="font-bold text-sm text-[#E6E6E6] pb-10 pt-6 lg:pt-0">
                 Proposta válida até -{" "}

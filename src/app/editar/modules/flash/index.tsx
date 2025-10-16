@@ -1,4 +1,4 @@
-import { FlashProjectData } from "#/types/template-data";
+import { TemplateData } from "#/types/template-data";
 import FlashIntro from "./Intro";
 import FlashAboutUs from "./AboutUs";
 import FlashTeam from "./Team";
@@ -12,23 +12,23 @@ import FlashFooter from "./Footer";
 import FlashTestimonials from "./Testimonials";
 
 interface FlashProps {
-  projectData: FlashProjectData;
+  projectData: TemplateData;
 }
 
 export default function Flash({ projectData }: FlashProps) {
   return (
     <div className="p-3 font-manrope">
-      <FlashIntro {...projectData.template.introduction.section} />
-      <FlashAboutUs {...projectData.template.aboutUs} />
-      <FlashTeam {...projectData.template.team.section} />
-      <FlashExpertise {...projectData.template.expertise.section} />
-      <FlashResults {...projectData.template.results.section} />
-      <FlashTestimonials {...projectData.template.testimonials.section} />
-      <FlashSteps {...projectData.template.steps.section} />
-      <FlashInvestment {...projectData.template.investment} />
-      <FlashPlans {...projectData.template.plans.section} />
-      <FlashFAQ {...projectData.template.faq.section} />
-      <FlashFooter {...projectData.template.footer.section} />
+      <FlashIntro {...projectData.proposalData.introduction} />
+      <FlashAboutUs {...projectData.proposalData.aboutUs} />
+      <FlashTeam {...projectData.proposalData.team} />
+      <FlashExpertise {...projectData.proposalData.expertise} />
+      <FlashResults {...projectData.proposalData.results} />
+      <FlashTestimonials {...projectData.proposalData.testimonials} />
+      <FlashSteps {...projectData.proposalData.steps} />
+      <FlashInvestment {...projectData.proposalData.investment} />
+      <FlashPlans {...projectData.proposalData.plans} />
+      <FlashFAQ {...projectData.proposalData.faq} />
+      <FlashFooter {...projectData.proposalData.footer} />
     </div>
   );
 }

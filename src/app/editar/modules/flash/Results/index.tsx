@@ -1,96 +1,18 @@
 import Image from "next/image";
 import { formatCurrencyDisplay } from "#/helpers/formatCurrency";
-
-interface FlashResultsProps {
-  hideSection: boolean;
-  title: string;
-  list: Array<{
-    id: string;
-    resultsSectionId: string;
-    client: string;
-    instagram: string;
-    investment: string;
-    roi: string;
-    photo: string | null;
-    hidePhoto: boolean;
-    sortOrder: number;
-  }>;
-}
-
-const resultsList = [
-  {
-    id: "1",
-    name: "Dra Daniele Oliveira",
-    instagram: "dradaniele.oliveira",
-    investment: "2500",
-    roi: "5000",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 1,
-  },
-  {
-    id: "2",
-    name: "Dra Daniele Oliveira",
-    instagram: "dradaniele.oliveira",
-    investment: "2500",
-    roi: "5000",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 2,
-  },
-  {
-    id: "3",
-    name: "Dra Daniele Oliveira",
-    instagram: "dradaniele.oliveira",
-    investment: "2500",
-    roi: "5000",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 3,
-  },
-  {
-    id: "4",
-    name: "Dra Daniele Oliveira",
-    instagram: "dradaniele.oliveira",
-    investment: "2500",
-    roi: "5000",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 4,
-  },
-  {
-    id: "5",
-    name: "Dra Daniele Oliveira",
-    instagram: "dradaniele.oliveira",
-    investment: "2500",
-    roi: "5000",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 5,
-  },
-  {
-    id: "6",
-    name: "Dra Daniele Oliveira",
-    instagram: "dradaniele.oliveira",
-    investment: "2500",
-    roi: "5000",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 6,
-  },
-];
+import { ResultSection } from "#/types/template-data";
 
 export default function FlashResults({
   hideSection,
   title,
-  list,
-}: FlashResultsProps) {
-  console.log(list);
+  items,
+}: ResultSection) {
+  console.log(items);
 
-  const visibleResults = (list || resultsList).filter(
+  const visibleResults = items?.filter(
     (result) => !result.hidePhoto && result.photo
   );
-  const resultCount = visibleResults.length;
+  const resultCount = visibleResults?.length;
 
   const getPhotoDimensions = () => {
     // Desktop/Tablet dimensions
@@ -127,7 +49,7 @@ export default function FlashResults({
             </div>
 
             <div className="flex flex-wrap items-center justify-center sm:justify-between gap-3 max-w-[1500px] mx-auto pb-30">
-              {resultsList?.map((item) => (
+              {items?.map((item) => (
                 <div key={item.id} className="flex flex-col items-start mb-20">
                   {!item.hidePhoto && item?.photo && (
                     <div
@@ -148,7 +70,7 @@ export default function FlashResults({
                       <div className="relative w-full h-full">
                         <Image
                           src={item.photo || ""}
-                          alt={item.name || ""}
+                          alt={item.client || ""}
                           fill
                           className="object-cover"
                           style={{ aspectRatio: "auto" }}
@@ -160,7 +82,7 @@ export default function FlashResults({
                   )}
 
                   <p className="text-[24px] font-medium text-[#E6E6E6] mt-3 p-0">
-                    {item.name}
+                    {item.client}
                   </p>
                   <p className="font-normal text-[#A0A0A0] text-sm">
                     @{item.instagram}

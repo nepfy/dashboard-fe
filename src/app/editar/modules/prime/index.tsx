@@ -1,36 +1,32 @@
-import { PrimeProjectData } from "#/types/template-data";
-import PrimeIntro from "./Intro";
-import PrimeMarquee from "./Marquee";
-import PrimeAboutUs from "./AboutUs";
-import PrimeTeam from "./Team";
-import PrimeExpertise from "./Expertise";
-import PrimeResults from "./Results";
-import PrimeClients from "./Clients";
-import PrimeSteps from "./Steps";
-import PrimeTestimonials from "./Testimonials";
-import PrimeInvestment from "./Investment";
-import PrimeDelivererables from "./Delivererables";
-import PrimePlans from "./Plans";
-import PrimeTermsAndConditions from "./TermsAndConditions";
-import PrimeFAQ from "./FAQ";
-import PrimeFooter from "./Footer";
-import PrimeCTA from "./CTA";
+// import PrimeIntro from "./Intro";
+// import PrimeMarquee from "./Marquee";
+// import PrimeAboutUs from "./AboutUs";
+// import PrimeTeam from "./Team";
+// import PrimeExpertise from "./Expertise";
+// import PrimeResults from "./Results";
+// import PrimeClients from "./Clients";
+// import PrimeSteps from "./Steps";
+// import PrimeTestimonials from "./Testimonials";
+// import PrimeInvestment from "./Investment";
+// import PrimeDelivererables from "./Delivererables";
+// import PrimePlans from "./Plans";
+// import PrimeTermsAndConditions from "./TermsAndConditions";
+// import PrimeFAQ from "./FAQ";
+// import PrimeFooter from "./Footer";
+// import PrimeCTA from "./CTA";
+import { TemplateData } from "#/types/template-data";
 
-interface PrimeProps {
-  projectData: PrimeProjectData;
-}
-
-export default function Prime({ projectData }: PrimeProps) {
+export default function Prime(projectData: TemplateData) {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Prime Template Editor</h1>
       <p className="mb-4">
         <span className="font-semibold">Project:</span>{" "}
-        {projectData.project.projectName}
+        {projectData.projectName}
       </p>
       <p className="mb-4">
         <span className="font-semibold">Template Type:</span>{" "}
-        {projectData.project.templateType}
+        {projectData.templateType}
       </p>
       {/* Add your Prime template editor UI here */}
       <div className="mt-6">
@@ -40,24 +36,22 @@ export default function Prime({ projectData }: PrimeProps) {
         </pre>
       </div>
 
-      <PrimeIntro {...projectData.template.introduction.section} />
-      <PrimeMarquee marquee={projectData.template.introduction.marquee} />
-      <PrimeAboutUs {...projectData.template.aboutUs} />
-      <PrimeTeam {...projectData.template.team.section} />
-      <PrimeExpertise {...projectData.template.expertise.section} />
-      <PrimeResults {...projectData.template.results.section} />
-      <PrimeClients {...projectData.template.clients.section} />
-      <PrimeCTA {...projectData.template.cta} />
-      <PrimeSteps {...projectData.template.steps.section} />
-      <PrimeTestimonials {...projectData.template.testimonials.section} />
-      <PrimeInvestment {...projectData.template.investment} />
-      <PrimeDelivererables {...projectData.template.deliverables.section} />
-      <PrimePlans {...projectData.template.plans.section} />
-      <PrimeTermsAndConditions
-        {...projectData.template.termsConditions.section}
-      />
-      <PrimeFAQ {...projectData.template.faq.section} />
-      <PrimeFooter {...projectData.template.footer} />
+      {/* <PrimeIntro {...projectData.proposalData.introduction} />
+      <PrimeMarquee marquee={projectData.proposalData.introduction.marquee} />
+      <PrimeAboutUs {...projectData.proposalData.aboutUs} />
+      <PrimeTeam {...projectData.proposalData.team} />
+      <PrimeExpertise {...projectData.proposalData.expertise} />
+      <PrimeResults {...projectData.proposalData.results} />
+      <PrimeClients {...projectData.proposalData.clients} />
+      <PrimeCTA {...projectData.proposalData.cta} />
+      <PrimeSteps {...projectData.proposalData.steps} />
+      <PrimeTestimonials {...projectData.proposalData.testimonials} />
+      <PrimeInvestment {...projectData.proposalData.investment} />
+      <PrimeDelivererables {...projectData.proposalData.deliverables} />
+      <PrimePlans {...projectData.proposalData.plans} />
+      <PrimeTermsAndConditions {...projectData.proposalData.termsConditions} />
+      <PrimeFAQ {...projectData.proposalData.faq} />
+      <PrimeFooter {...projectData.proposalData.footer} /> */}
     </div>
   );
 }

@@ -1,77 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { MoveUp, MoveDown } from "lucide-react";
-import { useState } from "react";
-
-interface FlashTestimonialsProps {
-  hideSection: boolean;
-  list: Array<{
-    id: string;
-    testimonialsSectionId: string;
-    testimonial: string;
-    name: string;
-    role: string | null;
-    photo: string | null;
-    hidePhoto: boolean;
-    sortOrder: number;
-  }>;
-}
-
-const Testimonials = [
-  {
-    id: "1",
-    testimonialsSectionId: "1",
-    testimonial:
-      "Trabalhar com a MICH foi uma experiência incrível. Eles conseguiram entender a essência da nossa marca e transformá-la em um design único e impactante, que realmente se conecta com nosso público.",
-    name: "Juliana Pereira",
-    role: "Ginecologista",
-    photo: "/images/templates/flash/placeholder.png",
-    hidePhoto: false,
-    sortOrder: 1,
-  },
-  {
-    id: "2",
-    testimonialsSectionId: "1",
-    testimonial:
-      "Trabalhar com a MICH foi uma experiência incrível. Eles conseguiram entender a essência da nossa marca e transformá-la em um design único e impactante, que realmente se conecta com nosso público.",
-    name: "Adriano Sousa",
-    role: "Engenheiro de Software",
-    photo: "/images/templates/flash/placeholder.png",
-    hidePhoto: false,
-    sortOrder: 2,
-  },
-  {
-    id: "3",
-    testimonialsSectionId: "1",
-    testimonial:
-      "Trabalhar com a MICH foi uma experiência incrível. Eles conseguiram entender a essência da nossa marca e transformá-la em um design único e impactante, que realmente se conecta com nosso público.",
-    name: "João Silva",
-    role: "Engenheiro de Software",
-    photo: "/images/templates/flash/placeholder.png",
-    hidePhoto: false,
-    sortOrder: 3,
-  },
-];
+import { TestimonialsSection } from "#/types/template-data";
 
 export default function FlashTestimonials({
   hideSection,
-  list,
-}: FlashTestimonialsProps) {
+  items,
+}: TestimonialsSection) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const testimonials = list?.length > 0 ? list : Testimonials;
-  const currentTestimonial = testimonials[currentIndex];
+  const currentTestimonial = items?.[currentIndex];
 
   const handlePrevious = () => {
     if (isTransitioning) return;
 
     setIsTransitioning(true);
     setTimeout(() => {
-      setCurrentIndex((prev) =>
-        prev === 0 ? testimonials.length - 1 : prev - 1
-      );
+      setCurrentIndex((prev) => (prev === 0 ? items?.length - 1 : prev - 1));
       setIsTransitioning(false);
     }, 800);
   };
@@ -81,14 +29,11 @@ export default function FlashTestimonials({
 
     setIsTransitioning(true);
     setTimeout(() => {
-      setCurrentIndex((prev) =>
-        prev === testimonials.length - 1 ? 0 : prev + 1
-      );
+      setCurrentIndex((prev) => (prev === items?.length - 1 ? 0 : prev + 1));
       setIsTransitioning(false);
     }, 800);
   };
 
-  console.log(list);
   return (
     <div className="bg-black relative overflow-hidden">
       {!hideSection && (
@@ -105,28 +50,29 @@ export default function FlashTestimonials({
               }`}
             >
               <p className="text-[#E6E6E6] text-[24px] md:text-[32px] mb-7">
-                {currentTestimonial.testimonial}
+                {currentTestimonial?.testimonial}
               </p>
               <div className="flex items-center gap-3">
-                {!currentTestimonial.hidePhoto && currentTestimonial.photo && (
-                  <div className="relative w-[54px] h-[54px] rounded-full overflow-hidden">
-                    <Image
-                      src={currentTestimonial.photo}
-                      alt={`Depoimento de ${currentTestimonial.name}`}
-                      fill
-                      className="object-cover"
-                      style={{ aspectRatio: "auto" }}
-                      quality={95}
-                    />
-                  </div>
-                )}
+                {!currentTestimonial?.hidePhoto &&
+                  currentTestimonial?.photo && (
+                    <div className="relative w-[54px] h-[54px] rounded-full overflow-hidden">
+                      <Image
+                        src={currentTestimonial?.photo}
+                        alt={`Depoimento de ${currentTestimonial?.name}`}
+                        fill
+                        className="object-cover"
+                        style={{ aspectRatio: "auto" }}
+                        quality={95}
+                      />
+                    </div>
+                  )}
                 <div>
                   <p className="text-[#E6E6E6] text-[18px] font-semibold">
-                    {currentTestimonial.name}
+                    {currentTestimonial?.name}
                   </p>
-                  {currentTestimonial.role && (
+                  {currentTestimonial?.role && (
                     <p className="text-[#A0A0A0] text-[18px] font-medium">
-                      {currentTestimonial.role}
+                      {currentTestimonial?.role}
                     </p>
                   )}
                 </div>
@@ -136,7 +82,7 @@ export default function FlashTestimonials({
             <div className="flex items-center gap-1 mt-12">
               <button
                 onClick={handlePrevious}
-                disabled={isTransitioning || testimonials.length <= 1}
+                disabled={isTransitioning || items?.length <= 1}
                 className="w-10 h-10 bg-[#E6E6E6] rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-colors disabled:opacity-50 rotate-270"
                 aria-label="Depoimento anterior"
               >
@@ -144,7 +90,7 @@ export default function FlashTestimonials({
               </button>
               <button
                 onClick={handleNext}
-                disabled={isTransitioning || testimonials.length <= 1}
+                disabled={isTransitioning || items?.length <= 1}
                 className="w-10 h-10 bg-[#E6E6E6] rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-colors disabled:opacity-50 rotate-270"
                 aria-label="Próximo depoimento"
               >

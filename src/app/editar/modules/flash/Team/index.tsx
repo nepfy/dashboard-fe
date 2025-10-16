@@ -1,77 +1,13 @@
 import Image from "next/image";
-
-interface FlashTeamProps {
-  hideSection: boolean;
-  title: string;
-  members: Array<{
-    id: string;
-    teamSectionId: string;
-    name: string;
-    role: string;
-    photo: string | null;
-    hidePhoto: boolean;
-    sortOrder: number;
-  }>;
-}
-
-const teamMembers = [
-  {
-    id: "1",
-    name: "Luan Varela",
-    role: "Diretor de Criação",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 1,
-  },
-  {
-    id: "2",
-    name: "Isadora Luz",
-    hidePhoto: false,
-    role: "Head de Design Estratégico",
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 2,
-  },
-  {
-    id: "3",
-    name: "Adriano Mota",
-    role: "Designer",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 3,
-  },
-  {
-    id: "4",
-    name: "João Victor",
-    hidePhoto: false,
-    role: "Desenvolvedor",
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 4,
-  },
-  {
-    id: "5",
-    name: "Gabriel Nunes",
-    role: "Atendimento",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 5,
-  },
-  {
-    id: "6",
-    name: "Daniel Nunes",
-    role: "Suporte ao Cliente",
-    hidePhoto: false,
-    photo: "/images/templates/flash/placeholder.png",
-    sortOrder: 6,
-  },
-];
+import { TeamSection } from "#/types/template-data";
 
 export default function FlashTeam({
   hideSection,
   title,
   members,
-}: FlashTeamProps) {
+}: TeamSection) {
   console.log(members);
-  const visibleMembers = (members || teamMembers).filter(
+  const visibleMembers = members?.filter(
     (member) => !member.hidePhoto && member.photo
   );
   const memberCount = visibleMembers.length;
@@ -97,7 +33,7 @@ export default function FlashTeam({
     <div className="bg-black relative pb-10 lg:pb-70 overflow-hidden">
       {!hideSection && (
         <div className="pt-31 max-w-[1440px] mx-auto relative z-10">
-          {teamMembers?.length > 1 && (
+          {members?.length > 1 && (
             <div className="px-6 lg:px-12 xl:px-40">
               <p className="text-[32px] lg:text-[72px] text-[#E6E6E6] max-w-[1050px] pb-21">
                 {title ||
@@ -106,7 +42,7 @@ export default function FlashTeam({
             </div>
           )}
           <div className="px-6 lg:px-12 xl:px-8">
-            {teamMembers?.length > 1 && (
+            {members?.length > 1 && (
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-white-neutral-light-100 w-3 h-3 rounded-full" />
                 <p className="text-white text-sm font-semibold">Time</p>
@@ -114,17 +50,17 @@ export default function FlashTeam({
             )}
 
             <div className="flex flex-wrap items-center justify-center sm:justify-between max-w-[1500px] mx-auto gap-3">
-              {teamMembers?.length < 2 && (
+              {members?.length < 2 && (
                 <p className="text-[18px] xl:text-[72px] text-[#E6E6E6] max-w-[688px]">
                   {title ||
                     "Especialistas em design estratégico para área da saúde"}
                 </p>
               )}
-              {(members || teamMembers)?.map((member) => (
+              {members?.map((member) => (
                 <div
                   key={member.id}
                   className={`flex flex-col items-start ${
-                    teamMembers?.length > 2 ? "mb-20" : ""
+                    members?.length > 2 ? "mb-20" : ""
                   }`}
                 >
                   {!member.hidePhoto && member?.photo && (

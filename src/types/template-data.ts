@@ -1,552 +1,283 @@
-// Core project type (from simplified schema)
-export interface Project {
+// Base interfaces for common patterns
+export interface BaseSection {
+  hideTitle?: boolean;
+  hideSection?: boolean;
+}
+
+export interface SortableItem {
+  sortOrder: number;
+}
+
+export interface HideableItem {
+  hideItem?: boolean;
+}
+
+// FAQ related interfaces
+export interface FAQItem extends SortableItem {
+  id: string;
+  question: string;
+  answer: string;
+  hideQuestion?: boolean;
+  hideAnswer?: boolean;
+}
+
+export interface FAQSection extends BaseSection {
+  hideSection?: boolean;
+  title: string;
+  items: FAQItem[];
+}
+
+// Team related interfaces
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  photo?: string;
+  hidePhoto?: boolean;
+  hideMember?: boolean;
+  sortOrder: number;
+}
+
+export interface TeamSection extends BaseSection {
+  title: string;
+  members: TeamMember[];
+}
+
+// Plans related interfaces
+export interface PlanIncludedItem extends HideableItem, SortableItem {
+  item: string;
+}
+
+export interface PlanIncludedItem extends HideableItem, SortableItem {
+  id: string;
+  description: string;
+  hideDescription: boolean;
+}
+
+export interface Plan extends HideableItem, SortableItem {
+  id: string;
+  title: string;
+  description: string;
+  price: string;
+  planPeriod: string;
+  isTheBest: boolean;
+  buttonTitle: string;
+  hideTitleField: boolean;
+  hideDescription: boolean;
+  hidePrice: boolean;
+  hidePlanPeriod: boolean;
+  hideButtonTitle: boolean;
+  includedItems: PlanIncludedItem[];
+}
+
+export interface PlansSection extends BaseSection {
+  hideSection?: boolean;
+  title?: string;
+  items: Plan[];
+}
+
+export interface MarqueeItem extends HideableItem, SortableItem {
+  id: string;
+  text: string;
+}
+
+// Steps related interfaces
+export interface StepTopic extends HideableItem, SortableItem {
+  id: string;
+  title: string;
+  description: string;
+  hideStepDescription?: boolean;
+  hideStepName?: boolean;
+}
+
+export interface StepsSection extends BaseSection {
+  hideSection?: boolean;
+  title: string;
+  topics: StepTopic[];
+  marquee: MarqueeItem[];
+  hideIntroduction?: boolean;
+}
+
+// Footer related interfaces
+export interface FooterSection extends BaseSection {
+  marquee: string[];
+  callToAction: string;
+  hideDisclaimer?: boolean;
+  hideCallToAction?: boolean;
+  disclaimer?: string;
+  validity?: Date | string;
+  buttonTitle?: string;
+}
+
+// About Us related interfaces
+export interface AboutUsSection extends BaseSection {
+  hideSection?: boolean;
+  title: string;
+  subtitle: string;
+  supportText: string;
+  hideSubtitle?: boolean;
+  hideSupportText?: boolean;
+}
+
+// Clients related interfaces
+export interface Client {
+  name: string;
+  logo?: string;
+  testimonial?: string;
+  hideClient?: boolean;
+  sortOrder: number;
+}
+
+export interface ClientsSection extends BaseSection {
+  title?: string;
+  items: Client[];
+}
+
+// Expertise related interfaces
+export interface ExpertiseTopic extends HideableItem, SortableItem {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
+  hideTitleField?: boolean;
+  hideDescription?: boolean;
+}
+
+export interface ExpertiseSection extends BaseSection {
+  hideSection?: boolean;
+  title: string;
+  topics: ExpertiseTopic[];
+}
+
+// Investment related interfaces
+export interface InvestmentSection extends BaseSection {
+  hideSection?: boolean;
+  title: string;
+  projectScope: string;
+  hideProjectScope?: boolean;
+}
+
+// Results related interfaces
+export interface Result extends HideableItem, SortableItem {
+  id: string;
+  client: string;
+  instagram: string;
+  investment: string;
+  roi: string;
+  photo: string | null;
+  hidePhoto: boolean;
+  sortOrder: number;
+}
+
+export interface ResultSection extends HideableItem, SortableItem {
+  hideSection: boolean;
+  title: string;
+  items: Result[];
+}
+
+// Deliverables related interfaces
+export interface DeliverableItem extends HideableItem, SortableItem {
+  title: string;
+  description: string;
+}
+
+export interface DeliverablesSection extends BaseSection {
+  title: string;
+  items: DeliverableItem[];
+}
+
+// Introduction related interfaces
+export interface IntroductionService extends HideableItem, SortableItem {
+  id: string;
+  serviceName: string;
+}
+
+export interface IntroductionSection {
+  name: string;
+  email: string;
+  title: string;
+  services: IntroductionService[];
+  subtitle: string;
+  validity: string;
+  buttonTitle: string;
+  hideSubtitle?: boolean;
+}
+
+// Testimonials related interfaces
+export interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  testimonial: string;
+  photo?: string;
+  hidePhoto?: boolean;
+  sortOrder?: number;
+}
+
+export interface TestimonialsSection extends BaseSection {
+  hideSection?: boolean;
+  title?: string;
+  items: Testimonial[];
+}
+
+// Terms and Conditions related interfaces
+export interface TermsCondition extends HideableItem, SortableItem {
+  term: string;
+}
+
+export interface TermsConditionsSection extends BaseSection {
+  title: string;
+  items: TermsCondition[];
+}
+
+// Main ProposalData interface
+export interface ProposalData {
+  faq: FAQSection;
+  team: TeamSection;
+  plans: PlansSection;
+  steps: StepsSection;
+  footer: FooterSection;
+  aboutUs: AboutUsSection;
+  clients: ClientsSection;
+  expertise: ExpertiseSection;
+  investment: InvestmentSection;
+  results: ResultSection;
+  deliverables: DeliverablesSection;
+  introduction: IntroductionSection;
+  testimonials: TestimonialsSection;
+  termsConditions: TermsConditionsSection;
+}
+
+// Project status enum
+export type ProjectStatus =
+  | "draft"
+  | "published"
+  | "sent"
+  | "accepted"
+  | "rejected";
+
+// Template type enum
+export type TemplateType = "flash" | "prime" | "base";
+
+// Main TemplateData interface
+export interface TemplateData {
   id: string;
   personId: string;
   projectName: string;
-  projectSentDate: Date | string | null;
-  projectValidUntil: Date | string | null;
-  projectStatus:
-    | "active"
-    | "approved"
-    | "negotiation"
-    | "rejected"
-    | "draft"
-    | "expired"
-    | "archived";
-  projectVisualizationDate: Date | string | null;
-  templateType: "flash" | "prime" | "essencial" | "grid" | null;
-  mainColor: string | null;
-  projectUrl: string | null;
-  pagePassword: string | null;
-  isPublished: boolean | null;
-  isProposalGenerated: boolean | null;
-  created_at: Date | string;
-  updated_at: Date | string;
-}
-
-// Flash Template Types
-export interface FlashTemplateData {
-  introduction: {
-    section: {
-      id: string;
-      projectId: string;
-      name: string;
-      email: string;
-      buttonTitle: string;
-      title: string;
-      validity: Date | string;
-      subtitle: string;
-      hideSubtitle: boolean;
-      services: Array<{
-        id: string;
-        introductionId: string;
-        serviceName: string;
-        hideService: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  aboutUs: {
-    id: string;
-    projectId: string;
-    hideSection: boolean;
-    title: string;
-    supportText: string;
-    subtitle: string;
-  };
-  team: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      members: Array<{
-        id: string;
-        teamSectionId: string;
-        name: string;
-        role: string;
-        photo: string | null;
-        hidePhoto: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  expertise: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      topics: Array<{
-        id: string;
-        expertiseId: string;
-        title: string;
-        description: string;
-        hideTitleField: boolean;
-        hideDescription: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  results: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      list: Array<{
-        id: string;
-        resultsSectionId: string;
-        client: string;
-        instagram: string;
-        investment: string;
-        roi: string;
-        photo: string | null;
-        hidePhoto: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  clients: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-    } | null;
-    list: Array<{
-      id: string;
-      clientsSectionId: string;
-      logo: string | null;
-      hideLogo: boolean;
-      name: string;
-      hideClientName: boolean;
-      sortOrder: number;
-    }>;
-  };
-  steps: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      topics: Array<{
-        id: string;
-        stepsId: string;
-        icon: string | null;
-        stepName: string;
-        stepDescription: string;
-        hideStepName: boolean;
-        hideStepDescription: boolean;
-        sortOrder: number;
-      }>;
-      marquee: Array<{
-        id: string;
-        stepsId: string;
-        stepName: string;
-        hideStepName: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  cta: {
-    id: string;
-    projectId: string;
-    hideSection: boolean;
-    backgroundImage: string | null;
-  } | null;
-  testimonials: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      projectScope: string;
-      list: Array<{
-        id: string;
-        testimonialsSectionId: string;
-        testimonial: string;
-        name: string;
-        role: string | null;
-        photo: string | null;
-        hidePhoto: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  investment: {
-    id: string;
-    projectId: string;
-    hideSection: boolean;
-    title: string;
-    projectScope: string;
-  };
-  deliverables: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      deliverablesSectionId: string;
-      deliveryName: string;
-      deliveryContent: string;
-      hideDeliveryName: boolean;
-      hideDeliveryContent: boolean;
-      sortOrder: number;
-    }>;
-  };
-  plans: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      projectScope: string;
-      list: Array<{
-        id: string;
-        plansSectionId: string;
-        isTheBest: boolean;
-        title: string;
-        description: string;
-        price: string;
-        planPeriod: string;
-        buttonTitle: string;
-        hideTitleField: boolean;
-        hideDescription: boolean;
-        hidePrice: boolean;
-        hidePlanPeriod: boolean;
-        hideButtonTitle: boolean;
-        sortOrder: number;
-        includedItems: Array<{
-          id: string;
-          planId: string;
-          description: string;
-          hideDescription: boolean;
-          sortOrder: number;
-        }>;
-      }>;
-    };
-  };
-  termsConditions: {
-    section: {
-      id: string;
-      projectId: string;
-      title: string;
-    } | null;
-    list: Array<{
-      id: string;
-      termsSectionId: string;
-      title: string;
-      description: string;
-      hideTitleField: boolean;
-      hideDescription: boolean;
-      sortOrder: number;
-    }>;
-  };
-  faq: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      list: Array<{
-        id: string;
-        faqSectionId: string;
-        question: string;
-        answer: string;
-        hideQuestion: boolean;
-        hideAnswer: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  footer: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      thankYouMessage: string;
-      ctaMessage: string;
-      disclaimer: string;
-      hideDisclaimer: boolean;
-      validity: string;
-      buttonTitle: string;
-    };
-  };
-}
-
-// Prime Template Types
-export interface PrimeTemplateData {
-  introduction: {
-    section: {
-      id: string;
-      projectId: string;
-      name: string;
-      validity: Date | string;
-      email: string;
-      title: string;
-      subtitle: string;
-      buttonTitle: string;
-      photo: string | null;
-      hidePhoto: boolean;
-      memberName: string | null;
-      hideMemberName: boolean;
-    };
-    marquee: Array<{
-      id: string;
-      introductionId: string;
-      serviceName: string;
-      hideService: boolean;
-      sortOrder: number;
-    }>;
-  };
-  aboutUs: {
-    id: string;
-    projectId: string;
-    hideSection: boolean;
-    title: string;
-    paragraph1: string;
-    paragraph2: string;
-    hideParagraph1: boolean;
-    hideParagraph2: boolean;
-  };
-  team: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      hideTitle: boolean;
-      members: Array<{
-        id: string;
-        teamSectionId: string;
-        name: string;
-        role: string;
-        photo: string | null;
-        hidePhoto: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  expertise: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      topics: Array<{
-        id: string;
-        expertiseId: string;
-        title: string;
-        description: string;
-        hideTitleField: boolean;
-        hideDescription: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  results: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      list: Array<{
-        id: string;
-        resultsSectionId: string;
-        client: string;
-        subtitle: string;
-        investment: string;
-        roi: string;
-        photo: string | null;
-        hidePhoto: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  clients: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      list: Array<{
-        id: string;
-        clientsSectionId: string;
-        logo: string | null;
-        hideLogo: boolean;
-        name: string;
-        hideClientName: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  cta: {
-    id: string;
-    projectId: string;
-    hideSection: boolean;
-    title: string;
-    buttonTitle: string;
-    backgroundImage: string;
-  };
-  steps: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      hideTitle: boolean;
-      topics: Array<{
-        id: string;
-        stepsId: string;
-        stepName: string;
-        stepDescription: string;
-        hideStepName: boolean;
-        hideStepDescription: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  testimonials: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      list: Array<{
-        id: string;
-        testimonialsSectionId: string;
-        testimonial: string;
-        name: string;
-        role: string | null;
-        photo: string | null;
-        hidePhoto: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  investment: {
-    id: string;
-    projectId: string;
-    hideSection: boolean;
-    title: string;
-  };
-  deliverables: {
-    section: {
-      id: string;
-      projectId: string;
-      title: string;
-      list: Array<{
-        id: string;
-        deliverablesSectionId: string;
-        deliveryName: string;
-        deliveryContent: string;
-        hideDeliveryName: boolean;
-        hideDeliveryContent: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  plans: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      list: Array<{
-        id: string;
-        plansSectionId: string;
-        title: string;
-        description: string;
-        price: string;
-        planPeriod: string;
-        buttonTitle: string;
-        hideTitleField: boolean;
-        hideDescription: boolean;
-        hidePrice: boolean;
-        hidePlanPeriod: boolean;
-        hideButtonTitle: boolean;
-        sortOrder: number;
-        includedItems: Array<{
-          id: string;
-          planId: string;
-          description: string;
-          hideDescription: boolean;
-          sortOrder: number;
-        }>;
-      }>;
-    };
-  };
-  termsConditions: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      title: string;
-      list: Array<{
-        id: string;
-        termsSectionId: string;
-        title: string;
-        description: string;
-        hideTitleField: boolean;
-        hideDescription: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  faq: {
-    section: {
-      id: string;
-      projectId: string;
-      hideSection: boolean;
-      subtitle: string;
-      hideSubtitle: boolean;
-      list: Array<{
-        id: string;
-        faqSectionId: string;
-        question: string;
-        answer: string;
-        hideQuestion: boolean;
-        hideAnswer: boolean;
-        sortOrder: number;
-      }>;
-    };
-  };
-  footer: {
-    id: string;
-    projectId: string;
-    thankYouTitle: string;
-    thankYouMessage: string;
-    disclaimer: string;
-    email: string;
-    buttonTitle: string;
-    validity: Date | string;
-    hideThankYouTitle: boolean;
-    hideThankYouMessage: boolean;
-    hideDisclaimer: boolean;
-  };
-}
-
-// Combined response types
-export interface FlashProjectData {
-  project: Project;
-  template: FlashTemplateData;
-}
-
-export interface PrimeProjectData {
-  project: Project;
-  template: PrimeTemplateData;
-}
-
-// Union type for either template
-export type TemplateProjectData = FlashProjectData | PrimeProjectData;
-
-// API Response types
-export interface TemplateDataResponse<
-  T = FlashTemplateData | PrimeTemplateData
-> {
-  success: boolean;
-  data: {
-    project: Project;
-    template: T;
-  };
-  error?: string;
+  projectSentDate: string | null;
+  projectValidUntil: string;
+  projectStatus: ProjectStatus;
+  projectVisualizationDate: string | null;
+  templateType: TemplateType;
+  mainColor: string;
+  projectUrl: string;
+  pagePassword: string;
+  isPublished: boolean;
+  isProposalGenerated: boolean;
+  proposalData: ProposalData;
+  userName: string;
+  companyName: string;
+  updated_at: string;
+  created_at: string;
+  deleted_at: string | null;
 }

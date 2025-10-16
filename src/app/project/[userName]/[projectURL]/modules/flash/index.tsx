@@ -1,20 +1,16 @@
-import { FlashProjectData } from "#/types/template-data";
+import { TemplateData } from "#/types/template-data";
 
-interface FlashProps {
-  projectData: FlashProjectData;
-}
-
-export default function Flash({ projectData }: FlashProps) {
+export default function Flash(projectData: TemplateData) {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Flash Template Editor</h1>
       <p className="mb-4">
         <span className="font-semibold">Project:</span>{" "}
-        {projectData.project.projectName}
+        {projectData.projectName}
       </p>
       <p className="mb-4">
         <span className="font-semibold">Template Type:</span>{" "}
-        {projectData.project.templateType}
+        {projectData.templateType}
       </p>
       {/* Add your Flash template editor UI here */}
       <div className="mt-6">

@@ -1,15 +1,10 @@
-interface FlashAboutUsProps {
-  hideSection: boolean;
-  title?: string;
-  supportText?: string;
-  subtitle?: string;
-}
+import { AboutUsSection } from "#/types/template-data";
 
 export default function FlashAboutUs({
   hideSection,
   title,
   subtitle,
-}: FlashAboutUsProps) {
+}: AboutUsSection) {
   return (
     <>
       {!hideSection && (

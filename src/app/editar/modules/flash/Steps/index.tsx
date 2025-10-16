@@ -3,106 +3,13 @@
 import { useState } from "react";
 import Marquee from "react-fast-marquee";
 import PlusIcon from "#/components/icons/PlusIcon";
-
-interface FlashStepsProps {
-  hideSection: boolean;
-  topics: Array<{
-    id: string;
-    stepsId: string;
-    stepName: string;
-    stepDescription: string;
-    hideStepName: boolean;
-    hideStepDescription: boolean;
-    sortOrder: number;
-  }>;
-  marquee: Array<{
-    id: string;
-    stepsId: string;
-    stepName: string;
-    hideStepName: boolean;
-    sortOrder: number;
-  }>;
-}
-
-const stepsField = [
-  {
-    id: "1",
-    stepsId: "1",
-    hideStepName: false,
-    hideStepDescription: false,
-    sortOrder: 1,
-    stepName: "Briefing Detalhado",
-    stepDescription:
-      "Coletamos informações essenciais para alinhar objetivos, evitando retrabalhos, otimizando recursos e garantindo maior retorno sobre o investimento.",
-  },
-  {
-    id: "2",
-    stepsId: "1",
-    hideStepName: false,
-    hideStepDescription: false,
-    sortOrder: 2,
-    stepName: "Pesquisa e análise",
-    stepDescription:
-      "Realizamos uma análise profunda do mercado, competidores e necessidades do seu negócio para criar uma estratégia personalizada e inovadora.",
-  },
-  {
-    id: "3",
-    stepsId: "1",
-    hideStepName: false,
-    hideStepDescription: false,
-    sortOrder: 3,
-    stepName: "Conceito criativo",
-    stepDescription:
-      "Desenvolvemos um design personalizado que reflete a identidade da sua marca, garantindo uma experiência visual única e memorável.",
-  },
-  {
-    id: "4",
-    stepsId: "1",
-    hideStepName: false,
-    hideStepDescription: false,
-    sortOrder: 4,
-    stepName: "Desenvolvimento visual",
-    stepDescription:
-      "Implementamos o design criativo em todas as plataformas, garantindo uma experiência visual consistente e de alta qualidade.",
-  },
-  {
-    id: "5",
-    stepsId: "1",
-    hideStepName: false,
-    hideStepDescription: false,
-    sortOrder: 5,
-    stepName: "Entrega e suporte",
-    stepDescription:
-      "Entregamos o projeto final, fornecendo suporte técnico e atualizações regulares para garantir que o seu negócio continue a prosperar.",
-  },
-];
-
-const marqueeField = [
-  {
-    id: "1",
-    stepsId: "1",
-    stepName: "Briefing Detalhado.",
-    hideStepName: false,
-  },
-  {
-    id: "2",
-    stepsId: "1",
-    stepName: "Pesquisa e análise.",
-    hideStepName: false,
-  },
-  {
-    id: "3",
-    stepsId: "1",
-    stepName: "Conceito criativo.",
-    hideStepName: false,
-  },
-];
+import { StepsSection } from "#/types/template-data";
 
 export default function FlashSteps({
   hideSection,
   topics,
   marquee,
-}: FlashStepsProps) {
+}: StepsSection) {
   const [openSteps, setOpenSteps] = useState<Set<string>>(new Set());
 
   console.log(marquee);
@@ -134,7 +41,7 @@ export default function FlashSteps({
               </p>
             </div>
 
-            {stepsField?.map((topic, index) => {
+            {topics?.map((topic, index) => {
               const isOpen = openSteps.has(topic.id);
               const shouldShowDescription =
                 isOpen && !topic.hideStepDescription;
@@ -156,7 +63,7 @@ export default function FlashSteps({
                             isOpen ? "text-[#E6E6E6]" : "text-[#E6E6E6]/30"
                           }`}
                         >
-                          {topic.stepName}
+                          {topic.title}
                         </p>
                       )}
                     </span>
@@ -193,7 +100,7 @@ export default function FlashSteps({
                     }`}
                   >
                     <p className="text-[16px] text-[#E6E6E6] pl-15 md:pl-30 pt-6 pb-0 md:pb-10">
-                      {topic.stepDescription}
+                      {topic.description}
                     </p>
                   </div>
 
@@ -226,12 +133,10 @@ export default function FlashSteps({
 
           <div className="hidden lg:block">
             <Marquee speed={100} gradientWidth={0} autoFill>
-              {marqueeField?.map((item) => (
+              {marquee?.map((item) => (
                 <div key={item.id} className="mr-8">
-                  {!item.hideStepName && (
-                    <p className="text-[#E6E6E6] text-[171px]">
-                      {item.stepName}
-                    </p>
+                  {!item.hideItem && (
+                    <p className="text-[#E6E6E6] text-[171px]">{item.text}</p>
                   )}
                 </div>
               ))}

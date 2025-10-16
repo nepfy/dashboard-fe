@@ -1,3 +1,4 @@
+import { ExpertiseSection } from "#/types/template-data";
 import DiamondIcon from "./iconsList/DiamondIcon";
 import CircleIcon from "./iconsList/CircleIcon";
 import BubblesIcon from "./iconsList/BubblesIcon";
@@ -18,21 +19,6 @@ import EyeIcon from "./iconsList/EyeIcon";
 import FolderIcon from "./iconsList/FolderIcon";
 import PlayIcon from "./iconsList/PlayIcon";
 import CubeIcon from "./iconsList/CubeIcon";
-
-interface FlashExpertiseProps {
-  hideSection: boolean;
-  title: string;
-  topics: Array<{
-    id: string;
-    expertiseId: string;
-    title: string;
-    description: string;
-    hideTitleField: boolean;
-    hideDescription: boolean;
-    sortOrder: number;
-    icon?: string; // Make this optional
-  }>;
-}
 
 const iconMap = {
   DiamondIcon: <DiamondIcon fill="#ffffff" />,
@@ -57,80 +43,11 @@ const iconMap = {
   CubeIcon: <CubeIcon fill="#ffffff" />,
 };
 
-const topicsField = [
-  {
-    id: "1",
-    expertiseId: "1",
-    title: "Identidade visual médica",
-    description:
-      "Marcas exclusivas que transmitem credibilidade, confiança e reforçam seu posicionamento.",
-    hideTitleField: false,
-    hideDescription: false,
-    sortOrder: 1,
-    icon: "DiamondIcon",
-  },
-  {
-    id: "2",
-    expertiseId: "2",
-    title: "Branding estratégico",
-    description:
-      "Posicionamento visual que conecta, atrai e fideliza pacientes, aumentando valor percebido.",
-    hideTitleField: false,
-    hideDescription: false,
-    sortOrder: 1,
-    icon: "CircleIcon",
-  },
-  {
-    id: "3",
-    expertiseId: "3",
-    title: "Design para redes sociais",
-    description:
-      "Posts e artes que ampliam alcance, geram interação e fortalecem a presença digital.",
-    hideTitleField: false,
-    hideDescription: false,
-    sortOrder: 1,
-    icon: "BubblesIcon",
-  },
-  {
-    id: "4",
-    expertiseId: "4",
-    title: "Direção de arte",
-    description:
-      "Visual consistente e impactante que comunica autoridade e diferencia sua marca no mercado.",
-    hideTitleField: false,
-    hideDescription: false,
-    sortOrder: 1,
-    icon: "BubblesIcon",
-  },
-  {
-    id: "5",
-    expertiseId: "5",
-    title: "Design editorial",
-    description:
-      "Materiais impressos que educam, encantam e consolidam sua imagem como referência na área.",
-    hideTitleField: false,
-    hideDescription: false,
-    sortOrder: 1,
-    icon: "BubblesIcon",
-  },
-  {
-    id: "6",
-    expertiseId: "6",
-    title: "Prototipagem visual",
-    description:
-      "Layouts funcionais que antecipam resultados e otimizam aprovações em cada etapa do projeto.",
-    hideTitleField: false,
-    hideDescription: false,
-    sortOrder: 1,
-    icon: "BubblesIcon",
-  },
-];
-
 export default function FlashExpertise({
   hideSection,
   title,
   topics,
-}: FlashExpertiseProps) {
+}: ExpertiseSection) {
   console.log(topics);
 
   const renderIcon = (iconName: string) => {
@@ -152,9 +69,9 @@ export default function FlashExpertise({
           </div>
 
           <div className="flex flex-wrap justify-between gap-6 max-w-[1100px] mx-auto pb-32">
-            {topicsField?.map((topic) => (
+            {topics?.map((topic) => (
               <div
-                key={topic.expertiseId}
+                key={topic.id}
                 className="w-[260px]  text-white-neutral-light-100 text-[15px]"
               >
                 <div className="text-white mb-2">

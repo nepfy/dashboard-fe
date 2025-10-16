@@ -2,75 +2,9 @@
 
 import { MoveDown } from "lucide-react";
 import { useState } from "react";
+import { FAQSection } from "#/types/template-data";
 
-interface FlashFAQProps {
-  hideSection: boolean;
-  list: Array<{
-    id: string;
-    faqSectionId: string;
-    question: string;
-    answer: string;
-    hideQuestion: boolean;
-    hideAnswer: boolean;
-    sortOrder: number;
-  }>;
-}
-
-const faqField = [
-  {
-    id: "1",
-
-    question: "Posso pedir alterações após entrega?",
-    answer:
-      "Sim! Entendemos que ajustes podem ser necessários. Por isso, incluímos revisões dentro do escopo do projeto, permitindo que você solicite alterações para alinhar o resultado às suas expectativas, garantindo que a identidade visual, o branding e os materiais finais reflitam exatamente a visão da sua marca.",
-    hideQuestion: false,
-    hideAnswer: false,
-    sortOrder: 1,
-  },
-  {
-    id: "2",
-
-    question: "Os arquivos serão editáveis?",
-    answer:
-      "Sim! Os arquivos serão editáveis, você poderá alterar o texto, as cores, as imagens, etc. Você poderá fazer isso através do nosso painel de controle, onde você poderá editar o projeto em tempo real.",
-    hideQuestion: false,
-    hideAnswer: false,
-    sortOrder: 2,
-  },
-  {
-    id: "3",
-
-    question: "Vocês cuidam da impressão dos materiais?",
-    answer:
-      "Sim! Você poderá fazer isso através do nosso painel de controle, onde você poderá editar o projeto em tempo real.",
-    hideQuestion: false,
-    hideAnswer: false,
-    sortOrder: 3,
-  },
-  {
-    id: "4",
-
-    question: "O que acontece se atrasar minha aprovação?",
-    answer:
-      "Podemos ajustar o cronograma do projeto para atender às suas necessidades, desde que não comprometa a qualidade do projeto.",
-    hideQuestion: false,
-    hideAnswer: false,
-    sortOrder: 4,
-  },
-  {
-    id: "5",
-
-    question: "O pagamento pode ser parcelado?",
-    answer:
-      "Sim! Podemos parcelar o pagamento do projeto, desde que não comprometa a qualidade do projeto.",
-    hideQuestion: false,
-    hideAnswer: false,
-    sortOrder: 5,
-  },
-];
-
-export default function FlashFAQ({ hideSection, list }: FlashFAQProps) {
-  console.log(list);
+export default function FlashFAQ({ hideSection, items }: FAQSection) {
   const [openQuestions, setOpenQuestions] = useState<Set<string>>(new Set());
 
   const toggleQuestion = (questionId: string) => {
@@ -92,7 +26,7 @@ export default function FlashFAQ({ hideSection, list }: FlashFAQProps) {
             Perguntas
             <br /> Frequentes
           </p>
-          {faqField?.map((item, index) => {
+          {items?.map((item, index) => {
             const isOpen = openQuestions.has(item.id);
             const shouldShowDescription = isOpen && !item.hideAnswer;
 

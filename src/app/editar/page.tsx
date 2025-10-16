@@ -5,29 +5,14 @@ import { LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Flash from "./modules/flash";
 import Prime from "./modules/prime";
-import { FlashProjectData, PrimeProjectData } from "#/types/template-data";
-
-// Type guard functions
-function isFlashProjectData(
-  data: FlashProjectData | PrimeProjectData
-): data is FlashProjectData {
-  return data.project.templateType === "flash";
-}
-
-function isPrimeProjectData(
-  data: FlashProjectData | PrimeProjectData
-): data is PrimeProjectData {
-  return data.project.templateType === "prime";
-}
+import { TemplateData } from "#/types/template-data";
 
 export default function EditarPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams?.get("projectId");
   const templateType = searchParams?.get("templateType");
 
-  const [projectData, setProjectData] = useState<
-    FlashProjectData | PrimeProjectData | null
-  >(null);
+  const [projectData, setProjectData] = useState<TemplateData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,18 +27,11 @@ export default function EditarPage() {
       try {
         setIsLoading(true);
 
-        let templateDataResponse: Response;
-        if (templateType === "flash") {
-          templateDataResponse = await fetch(`/api/flash/${projectId}`);
-        } else if (templateType === "prime") {
-          templateDataResponse = await fetch(`/api/prime/${projectId}`);
-        } else {
-          throw new Error(`Template tipo "${templateType}" não suportado`);
-        }
+        const templateDataResponse = await fetch(`/api/projects/${projectId}`);
 
         const templateDataResult: {
           success: boolean;
-          data?: FlashProjectData | PrimeProjectData;
+          data?: TemplateData[];
           error?: string;
         } = await templateDataResponse.json();
 
@@ -63,7 +41,7 @@ export default function EditarPage() {
           );
         }
 
-        setProjectData(templateDataResult.data);
+        setProjectData(templateDataResult.data[0]);
       } catch (err) {
         console.error("Error loading project data:", err);
         setError(
@@ -76,6 +54,8 @@ export default function EditarPage() {
 
     loadProjectData();
   }, [projectId, templateType]);
+
+  console.log("projectData", projectData);
 
   if (isLoading) {
     return (
@@ -108,12 +88,12 @@ export default function EditarPage() {
     );
   }
 
-  if (isFlashProjectData(projectData)) {
+  if (projectData.templateType === "flash") {
     return <Flash projectData={projectData} />;
   }
 
-  if (isPrimeProjectData(projectData)) {
-    return <Prime projectData={projectData} />;
+  if (projectData.templateType === "prime") {
+    return <Prime {...projectData} />;
   }
 
   // Fallback for unsupported template types
