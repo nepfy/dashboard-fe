@@ -24,6 +24,8 @@ export interface FlashSection extends BaseSection {
 export interface FlashProposal extends BaseProposal {
   // Introduction Section
   introduction: {
+    userName?: string;
+    email: string;
     title: string; // exactly 60 chars, AI-generated
     subtitle: string; // exactly 100 chars, AI-generated
     services: string[]; // exactly 4, each 30 chars, AI-generated
@@ -41,6 +43,14 @@ export interface FlashProposal extends BaseProposal {
   // Team Section
   team: {
     title: string; // exactly 55 chars, AI-generated
+    members: Array<{
+      id?: string;
+      name: string;
+      role: string;
+      image?: string;
+      hideMember?: boolean;
+      sortOrder?: number;
+    }>;
   };
 
   // Specialties Section
@@ -75,10 +85,24 @@ export interface FlashProposal extends BaseProposal {
       description: string; // up to 330 chars
     }>;
     plans: Array<{
+      id?: string;
       title: string; // exactly 20 chars
       description: string; // exactly 95 chars
+      hideTitleField?: boolean;
+      hideDescription?: boolean;
+      hidePrice?: boolean;
+      hidePlanPeriod?: boolean;
+      hideButtonTitle?: boolean;
+      buttonTitle: string;
       value: string; // format R$X.XXX (<= 11 chars)
-      topics: string[]; // 3-6 items, each <= 45 chars
+      planPeriod: string;
+      recommended: boolean;
+      sortOrder?: number;
+      includedItems: Array<{
+        item: string;
+        hideItem?: boolean;
+        sortOrder?: number;
+      }>;
     }>; // 3 max, AI-generated
   };
 
@@ -158,8 +182,7 @@ export function validateFlashCharacterLimits(
   }
 
   if (proposal.aboutUs?.supportText) {
-    validations.aboutUsSupportText =
-      proposal.aboutUs.supportText.length === 70;
+    validations.aboutUsSupportText = proposal.aboutUs.supportText.length === 70;
   }
 
   if (proposal.aboutUs?.subtitle) {
@@ -200,6 +223,8 @@ export function validateFlashCharacterLimits(
 export function getFlashTemplateDefaults(): Partial<FlashProposal> {
   return {
     introduction: {
+      userName: "", // Will be populated from userData
+      email: "", // Will be populated from userData
       title: "",
       subtitle: "",
       services: [],
@@ -213,6 +238,7 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
     },
     team: {
       title: "",
+      members: [],
     },
     specialties: {
       title: "Nossas Especialidades",
@@ -243,6 +269,8 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
 export function generateFlashProposalOutline(): Partial<FlashProposal> {
   return {
     introduction: {
+      userName: "",
+      email: "",
       title: "Ative crescimento com decisões colaborativas e seguras",
       subtitle:
         "Integramos estratégia, execução e análise para multiplicar lucro, consolidar presença e fortalecer resultados",
@@ -258,13 +286,13 @@ export function generateFlashProposalOutline(): Partial<FlashProposal> {
     aboutUs: {
       title:
         "Construímos parcerias duradouras que elevam ideias a resultados consistentes, fortalecendo valor, crescimento e lucro sustentável",
-      supportText:
-        "Confiança diária que aproxima decisões",
+      supportText: "Confiança diária que aproxima decisões",
       subtitle:
         "Transformamos contextos complexos em jornadas lucrativas ao combinar estratégia, criatividade e execução ajustada ao ritmo do seu negócio",
     },
     team: {
       title: "Crescemos lado a lado fortalecendo evoluções constantes",
+      members: [],
     },
     specialties: {
       title:

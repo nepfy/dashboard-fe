@@ -28,7 +28,10 @@ export default function Flash({ projectData }: FlashProps) {
       <FlashInvestment {...projectData.proposalData.investment} />
       <FlashPlans {...projectData.proposalData.plans} />
       <FlashFAQ {...projectData.proposalData.faq} />
-      <FlashFooter {...projectData.proposalData.footer} />
+      <FlashFooter
+        {...projectData.proposalData.footer}
+        validity={projectData.proposalData.introduction.validity}
+      />
     </div>
   );
 }

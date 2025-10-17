@@ -23,6 +23,8 @@ import {
 } from "#/lib/db/proposal-save-handler";
 
 export interface NepfyAIRequestData {
+  userName: string;
+  userEmail: string;
   selectedService: string;
   clientName: string;
   projectName: string;
@@ -46,15 +48,27 @@ export type ProposalResult =
   | PrimeWorkflowResult
   | WorkflowResult;
 
-async function getUserIdFromEmail(
-  emailAddress: string
-): Promise<string | null> {
+async function getUserIdFromEmail(emailAddress: string): Promise<{
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+} | null> {
   const personResult = await db
-    .select({ id: personUserTable.id })
+    .select({
+      id: personUserTable.id,
+      firstName: personUserTable.firstName,
+      lastName: personUserTable.lastName,
+    })
     .from(personUserTable)
     .where(eq(personUserTable.email, emailAddress));
 
-  return personResult[0]?.id || null;
+  return personResult[0]
+    ? {
+        id: personResult[0].id,
+        firstName: personResult[0].firstName,
+        lastName: personResult[0].lastName,
+      }
+    : null;
 }
 
 type AIResult =
@@ -78,6 +92,7 @@ async function createProjectFromAIResult(
   // Create main project record
   const projectData = {
     personId: userId,
+    clientName: requestData.clientName,
     projectName: requestData.projectName,
     projectSentDate: null,
     projectValidUntil: requestData.validUntil
@@ -271,7 +286,7 @@ export async function POST(request: NextRequest) {
         "#/modules/ai-generator/themes/flash"
       );
       const flashData = {
-        selectedService: agentServiceId as ServiceType, // Use mapped service ID instead of originalServiceId
+        selectedService: agentServiceId as ServiceType,
         companyInfo: defaultCompanyInfo,
         clientName,
         projectName,
@@ -280,11 +295,13 @@ export async function POST(request: NextRequest) {
         selectedPlans: defaultPlans,
         planDetails:
           planDetails ||
-          generateDefaultPlanDetails(agentServiceId, defaultPlans), // Also use mapped service ID here
+          generateDefaultPlanDetails(agentServiceId, defaultPlans),
         includeTerms,
         includeFAQ,
         templateType: "flash" as const,
         mainColor,
+        userName: `${userId.firstName} ${userId.lastName}`,
+        userEmail: emailAddress,
       };
 
       const flashWorkflow = new FlashTemplateWorkflow();
@@ -492,7 +509,11 @@ export async function POST(request: NextRequest) {
       mainColor: body.mainColor,
     });
 
-    const newProject = await createProjectFromAIResult(userId, aiResult, body);
+    const newProject = await createProjectFromAIResult(
+      userId.id,
+      aiResult,
+      body
+    );
 
     console.log("Debug - Project created successfully:", {
       projectId: newProject.id,

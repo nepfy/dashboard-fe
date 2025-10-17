@@ -13,6 +13,8 @@ export interface BaseThemeData {
   includeFAQ: boolean;
   templateType: TemplateType;
   mainColor?: string;
+  userName?: string;
+  userEmail?: string;
 }
 
 export interface BaseThemeConfig {

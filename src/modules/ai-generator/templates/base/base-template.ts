@@ -55,10 +55,24 @@ export interface BaseProposal {
       description: string;
     }>;
     plans: Array<{
+      id?: string;
+      hideTitleField?: boolean;
+      hideDescription?: boolean;
+      hidePrice?: boolean;
+      hidePlanPeriod?: boolean;
+      hideButtonTitle?: boolean;
+      buttonTitle: string;
+      planPeriod: string;
+      recommended: boolean;
+      sortOrder?: number;
       title: string;
       description: string;
       value: string;
-      topics: string[];
+      includedItems: Array<{
+        item: string;
+        hideItem?: boolean;
+        sortOrder?: number;
+      }>;
     }>;
   };
 

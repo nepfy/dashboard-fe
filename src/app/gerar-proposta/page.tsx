@@ -98,7 +98,7 @@ export default function NepfyAIPage() {
       if (result.success) {
         console.log("Proposal generated successfully:", result.data);
         router.push(
-          `/dashboard?success&project=${projectName}&projectId=${result.data.id}`
+          `/dashboard?success&project=${projectName}&projectId=${result.data.project.id}`
         );
       } else {
         console.error("Error generating proposal:", result.error);

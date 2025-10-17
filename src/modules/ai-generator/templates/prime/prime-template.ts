@@ -76,10 +76,24 @@ export interface PrimeProposal extends BaseProposal {
       description: string; // exactly 350 chars
     }>;
     plans: Array<{
+      id?: string;
+      hideTitleField?: boolean;
+      hideDescription?: boolean;
+      hidePrice?: boolean;
+      hidePlanPeriod?: boolean;
+      hideButtonTitle?: boolean;
+      buttonTitle: string;
+      planPeriod: string;
+      recommended: boolean;
+      sortOrder?: number;
       title: string; // exactly 25 chars
       description: string; // exactly 110 chars
       value: string; // format R$X.XXX (<= 11 chars)
-      topics: string[]; // 4-6 items, each <= 50 chars
+      includedItems: Array<{
+        item: string;
+        hideItem?: boolean;
+        sortOrder?: number;
+      }>;
     }>; // 3 plans
   };
 
@@ -227,9 +241,9 @@ export function validatePrimeCharacterLimits(
           plan.title.length === 25 &&
           plan.description.length === 110 &&
           plan.value.length <= 11 &&
-          plan.topics.length >= 4 &&
-          plan.topics.length <= 6 &&
-          plan.topics.every((topic) => topic.length <= 50)
+          plan.includedItems.length >= 4 &&
+          plan.includedItems.length <= 6 &&
+          plan.includedItems.every((item) => item.item.length <= 50)
       );
   }
 

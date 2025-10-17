@@ -48,8 +48,6 @@ export default function FlashExpertise({
   title,
   topics,
 }: ExpertiseSection) {
-  console.log(topics);
-
   const renderIcon = (iconName: string) => {
     return iconMap[iconName as keyof typeof iconMap];
   };
@@ -61,10 +59,9 @@ export default function FlashExpertise({
           <div className="flex items-end pt-24 pl-5 lg:pl-10 border-l border-l-[#A0A0A0] max-w-[1100px] mb-16 lg:mb-43 mx-auto">
             <p className="text-[18px] lg:text-[48px] text-[#E6E6E6] h-full">
               <span className="font-bold block sm:inline">
-                Nossas Especializações.
+                Nossas Especializações.{" "}
               </span>
-              {title ||
-                "Transformamos sua presença visual em ferramenta de crescimento, atraindo pacientes e aumentando receita com design estratégico."}
+              {title}
             </p>
           </div>
 

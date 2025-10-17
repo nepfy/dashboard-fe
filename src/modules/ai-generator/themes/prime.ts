@@ -101,10 +101,24 @@ export interface PrimeDeliverable {
 }
 
 export interface PrimePlan {
+  id?: string;
+  hideTitleField?: boolean;
+  hideDescription?: boolean;
+  hidePrice?: boolean;
+  hidePlanPeriod?: boolean;
+  hideButtonTitle?: boolean;
+  buttonTitle: string;
   title: string;
   description: string;
   value: string;
-  topics: string[];
+  planPeriod: string;
+  recommended: boolean;
+  sortOrder?: number;
+  includedItems: Array<{
+    item: string;
+    hideItem?: boolean;
+    sortOrder?: number;
+  }>;
 }
 
 export interface PrimeFAQItem {
@@ -1573,28 +1587,28 @@ REGRAS OBRIGATÓRIAS:
           `investment.plans[${index}].value`
         );
         ensureCondition(
-          plan.topics.length >= 4 && plan.topics.length <= 6,
-          `investment.plans[${index}].topics must contain 4 to 6 items`
+          plan.includedItems.length >= 4 && plan.includedItems.length <= 6,
+          `investment.plans[${index}].includedItems must contain 4 to 6 items`
         );
 
         return {
           title: planTitleValidation.value,
           description: planDescValidation.value,
           value: plan.value,
-          topics: plan.topics.map((topic, topicIndex) => {
-            const topicValidation = validateMaxLengthWithWarning(
-              topic,
-              50,
-              `investment.plans[${index}].topics[${topicIndex}]`
-            );
-            if (topicValidation.warning) {
-              console.warn(
-                `Prime Investment Plan ${index} Topic ${topicIndex} Warning:`,
-                topicValidation.warning
-              );
-            }
-            return topicValidation.value;
-          }),
+          planPeriod: "mensal", // Add default plan period
+          buttonTitle: "Contratar", // Add default button title
+          recommended: index === 1, // Mark middle plan as recommended
+          hideTitleField: false,
+          hideDescription: false,
+          hidePrice: false,
+          hidePlanPeriod: false,
+          hideButtonTitle: false,
+          sortOrder: index,
+          includedItems: plan.includedItems.map((item, itemIndex) => ({
+            item: item.item,
+            hideItem: false,
+            sortOrder: itemIndex,
+          })),
         };
       }),
     };

@@ -58,9 +58,9 @@ export interface Plan extends HideableItem, SortableItem {
   id: string;
   title: string;
   description: string;
-  price: string;
+  value: string;
   planPeriod: string;
-  isTheBest: boolean;
+  recommended: boolean;
   buttonTitle: string;
   hideTitleField: boolean;
   hideDescription: boolean;
@@ -193,7 +193,7 @@ export interface IntroductionService extends HideableItem, SortableItem {
 }
 
 export interface IntroductionSection {
-  name: string;
+  userName: string;
   email: string;
   title: string;
   services: IntroductionService[];

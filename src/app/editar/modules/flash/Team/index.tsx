@@ -36,8 +36,7 @@ export default function FlashTeam({
           {members?.length > 1 && (
             <div className="px-6 lg:px-12 xl:px-40">
               <p className="text-[32px] lg:text-[72px] text-[#E6E6E6] max-w-[1050px] pb-21">
-                {title ||
-                  "Especialistas em design estratégico para área da saúde"}
+                {title}
               </p>
             </div>
           )}
@@ -52,8 +51,7 @@ export default function FlashTeam({
             <div className="flex flex-wrap items-center justify-center sm:justify-between max-w-[1500px] mx-auto gap-3">
               {members?.length < 2 && (
                 <p className="text-[18px] xl:text-[72px] text-[#E6E6E6] max-w-[688px]">
-                  {title ||
-                    "Especialistas em design estratégico para área da saúde"}
+                  {title}
                 </p>
               )}
               {members?.map((member) => (

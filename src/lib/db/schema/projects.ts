@@ -18,6 +18,7 @@ export const projectsTable = pgTable("projects", {
     .notNull()
     .references(() => personUserTable.id),
 
+  clientName: text("client_name"),
   projectName: text("project_name").notNull(),
   projectSentDate: timestamp("project_sent_date", { mode: "date" }),
   projectValidUntil: timestamp("project_valid_until", {

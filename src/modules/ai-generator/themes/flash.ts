@@ -139,7 +139,15 @@ REGRAS OBRIGATÓRIAS:
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Introduction generated successfully");
-        return moaResult.result;
+        return {
+          userName: data.userName,
+          email: data.userEmail || "",
+          title: moaResult.result.title,
+          subtitle: moaResult.result.subtitle,
+          services: moaResult.result.services,
+          validity: moaResult.result.validity,
+          buttonText: moaResult.result.buttonText,
+        };
       }
 
       // Fallback to single model if MoA fails
@@ -148,6 +156,8 @@ REGRAS OBRIGATÓRIAS:
       const parsed = JSON.parse(response) as FlashIntroductionSection;
 
       return {
+        userName: data.userName,
+        email: data.userEmail || "",
         title: parsed.title,
         subtitle: parsed.subtitle,
         services: parsed.services,
@@ -247,6 +257,7 @@ Retorne APENAS:
 
       return {
         title: parsed.title,
+        members: [],
       };
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
@@ -928,6 +939,8 @@ REGRAS OBRIGATÓRIAS:
 
 // Type definitions
 export interface FlashIntroductionSection {
+  userName?: string;
+  email: string;
   title: string;
   subtitle: string;
   services: string[];
@@ -943,6 +956,14 @@ export interface FlashAboutUsSection {
 
 export interface FlashTeamSection {
   title: string;
+  members: Array<{
+    id?: string;
+    name: string;
+    role: string;
+    image?: string;
+    hideMember?: boolean;
+    sortOrder?: number;
+  }>;
 }
 
 export interface FlashSpecialtiesSection {
@@ -973,10 +994,24 @@ export interface FlashInvestmentSection {
     description: string;
   }>;
   plans: Array<{
+    id?: string;
+    hideTitleField?: boolean;
+    hideDescription?: boolean;
+    hidePrice?: boolean;
+    hidePlanPeriod?: boolean;
+    hideButtonTitle?: boolean;
+    buttonTitle: string;
+    planPeriod: string;
+    recommended: boolean;
+    sortOrder?: number;
     title: string;
     description: string;
     value: string;
-    topics: string[];
+    includedItems: Array<{
+      item: string;
+      hideItem?: boolean;
+      sortOrder?: number;
+    }>;
   }>;
 }
 

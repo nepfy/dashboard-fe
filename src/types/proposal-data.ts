@@ -4,7 +4,7 @@
 export interface ProposalData {
   // Introduction Section
   introduction?: {
-    name: string;
+    userName?: string;
     email: string;
     buttonTitle: string;
     title: string;
@@ -81,6 +81,7 @@ export interface ProposalData {
   investment?: {
     hideSection?: boolean;
     title?: string;
+    projectScope?: string;
     hideTitle?: boolean;
   };
 
@@ -104,12 +105,19 @@ export interface ProposalData {
     title?: string;
     hideTitle?: boolean;
     items?: Array<{
+      id?: string;
       title: string;
       description: string;
       value: string;
+      planPeriod: string;
       recommended?: boolean;
-      hidePlan?: boolean;
+      hideTitleField?: boolean;
+      hideDescription?: boolean;
+      hidePrice?: boolean;
+      hidePlanPeriod?: boolean;
+      hideButtonTitle?: boolean;
       sortOrder?: number;
+      buttonTitle: string;
       includedItems?: Array<{
         item: string;
         hideItem?: boolean;

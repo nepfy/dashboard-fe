@@ -30,8 +30,8 @@ function convertFlashToProposalData(
 
   return {
     introduction: {
-      name: "Flash Template",
-      email: requestData.originalPageUrl || "",
+      userName: proposal.introduction.userName,
+      email: proposal.introduction.email,
       buttonTitle: proposal.introduction.buttonText,
       title: proposal.introduction.title,
       validity: requestData.validUntil || new Date().toISOString(),
@@ -57,7 +57,15 @@ function convertFlashToProposalData(
       hideSection: false,
       title: proposal.team.title,
       hideTitle: false,
-      members: [],
+      members:
+        proposal.team.members?.map((member, index) => ({
+          id: crypto.randomUUID(),
+          name: member.name,
+          role: member.role,
+          image: member.image,
+          hideMember: false,
+          sortOrder: index,
+        })) || [],
     },
     expertise: {
       hideSection: false,
@@ -65,6 +73,8 @@ function convertFlashToProposalData(
       hideTitle: false,
       topics:
         proposal.specialties.topics?.map((topic, index) => ({
+          id: crypto.randomUUID(),
+          icon: "DiamondIcon",
           title: topic.title,
           description: topic.description,
           hideTopic: false,
@@ -79,7 +89,9 @@ function convertFlashToProposalData(
       hideIntroduction: false,
       topics:
         proposal.steps.topics?.map((topic, index) => ({
+          id: crypto.randomUUID(),
           title: topic.title,
+          icon: "DiamondIcon",
           description: topic.description,
           hideTopic: false,
           sortOrder: index,
@@ -100,7 +112,8 @@ function convertFlashToProposalData(
     },
     investment: {
       hideSection: false,
-      title: proposal.investment.title,
+      title: `Investimento. ${proposal.investment.title}`,
+      projectScope: proposal.scope.content,
       hideTitle: false,
     },
     deliverables: {
@@ -121,17 +134,24 @@ function convertFlashToProposalData(
       hideTitle: false,
       items:
         proposal.investment.plans?.map((plan, index) => ({
+          id: crypto.randomUUID(),
           title: plan.title,
+          recommended: false,
           description: plan.description,
           value: plan.value,
-          recommended: false,
-          hidePlan: false,
+          planPeriod: plan.planPeriod,
+          hideTitleField: false,
+          hideDescription: false,
+          hidePrice: false,
+          hidePlanPeriod: false,
+          hideButtonTitle: false,
+          buttonTitle: plan.buttonTitle,
           sortOrder: index,
           includedItems:
-            plan.topics?.map((topic, topicIndex) => ({
-              item: topic,
+            plan.includedItems?.map((item, itemIndex) => ({
+              item: item.item,
               hideItem: false,
-              sortOrder: topicIndex,
+              sortOrder: itemIndex,
             })) || [],
         })) || [],
     },
@@ -152,6 +172,7 @@ function convertFlashToProposalData(
       hideTitle: false,
       items:
         proposal.faq?.map((item, index) => ({
+          id: crypto.randomUUID(),
           question: item.question,
           answer: item.answer,
           hideQuestion: false,
@@ -175,6 +196,8 @@ function convertFlashToProposalData(
 function convertPrimeToProposalData(
   aiResult: PrimeWorkflowResult,
   requestData: {
+    userName: string;
+    userEmail: string;
     validUntil?: string;
     originalPageUrl?: string;
     pagePassword?: string;
@@ -188,8 +211,8 @@ function convertPrimeToProposalData(
 
   return {
     introduction: {
-      name: "Prime Template",
-      email: requestData.originalPageUrl || "",
+      userName: requestData.userName,
+      email: requestData.userEmail,
       buttonTitle: proposal.introduction.buttonText,
       title: proposal.introduction.title,
       validity: requestData.validUntil || new Date().toISOString(),
@@ -294,17 +317,24 @@ function convertPrimeToProposalData(
       hideTitle: false,
       items:
         proposal.investment.plans?.map((plan, index) => ({
+          id: crypto.randomUUID(),
           title: plan.title,
           description: plan.description,
           value: plan.value,
           recommended: false,
-          hidePlan: false,
+          hideTitleField: false,
+          hideDescription: false,
+          hidePrice: false,
+          hidePlanPeriod: false,
+          hideButtonTitle: false,
+          buttonTitle: plan.buttonTitle,
+          planPeriod: plan.planPeriod,
           sortOrder: index,
           includedItems:
-            plan.topics?.map((topic, topicIndex) => ({
-              item: topic,
+            plan.includedItems?.map((item, itemIndex) => ({
+              item: item.item,
               hideItem: false,
-              sortOrder: topicIndex,
+              sortOrder: itemIndex,
             })) || [],
         })) || [],
     },
@@ -349,6 +379,8 @@ export async function saveFlashTemplateData(
   projectId: string,
   aiResult: FlashWorkflowResult,
   requestData: {
+    userName: string;
+    userEmail: string;
     validUntil?: string;
     originalPageUrl?: string;
     pagePassword?: string;
@@ -374,6 +406,8 @@ export async function savePrimeTemplateData(
   projectId: string,
   aiResult: PrimeWorkflowResult,
   requestData: {
+    userName: string;
+    userEmail: string;
     validUntil?: string;
     originalPageUrl?: string;
     pagePassword?: string;

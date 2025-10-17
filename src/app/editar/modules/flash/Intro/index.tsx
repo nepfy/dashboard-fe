@@ -1,7 +1,7 @@
 import { IntroductionSection } from "#/types/template-data";
 
 export default function FlashIntro({
-  name,
+  userName,
   email,
   buttonTitle,
   title,
@@ -28,10 +28,10 @@ export default function FlashIntro({
       />
       <nav className="flex justify-between items-center text-[#E6E6E6] max-w-[1440px] mx-auto">
         <p className="text-lg lg:text-base font-semibold lg:font-normal">
-          {name || "MICH Design"}{" "}
+          {userName}{" "}
         </p>
         <div className="hidden lg:flex gap-12 items-center">
-          <p>{email || "contato@michdesign.com"}</p>
+          <p>{email}</p>
           <p className="rounded-full bg-black p-5">
             {buttonTitle || "Iniciar Projeto"}
           </p>
@@ -55,7 +55,7 @@ export default function FlashIntro({
 
       <div className="pt-30 lg:pt-60 mb-24 lg:mb-0 lg:pb-39 xl:pl-30 max-w-[1440px] mx-auto">
         <h1 className="text-[32px] xl:text-[72px] text-[#E6E6E6] max-w-[1120px] pb-4">
-          {title || "Transforme sua clínica em referência na dermatologia"}
+          {title}
         </h1>
         <p className="font-bold text-sm text-[#E6E6E6]">
           Proposta válida até -{" "}

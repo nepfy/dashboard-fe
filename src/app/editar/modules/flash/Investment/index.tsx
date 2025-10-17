@@ -12,8 +12,7 @@ export default function FlashInvestment({
         <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-23 xl:pb-36 relative z-10">
           <p className="text-[24px] lg:text-[48px] text-[#E6E6E6] max-w-[1055px] pb-21 font-normal">
             <span className="text-[#A0A0A0] font-semibold">Investimento. </span>
-            {title ||
-              "Planos estratégicos que conectam design e retorno financeiro para sua clínica crescer."}
+            {title}
           </p>
 
           <div className="max-w-[700px] border-l border-l-[#A0A0A0]/30 pl-5 lg:pl-10">
@@ -25,10 +24,7 @@ export default function FlashInvestment({
             </div>
 
             {!hideProjectScope && (
-              <p className="text-[#E6E6E6]">
-                {projectScope ||
-                  "Criação de identidade visual médica completa, alinhada ao branding estratégico, fortalecendo a presença da marca e sua conexão com o público. Desenvolvimento de conteúdos para redes sociais e aplicação de direção de arte em todos os materiais, garantindo comunicação visual consistente e impactante."}
-              </p>
+              <p className="text-[#E6E6E6]">{projectScope}</p>
             )}
           </div>
         </div>

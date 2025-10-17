@@ -14,7 +14,7 @@ export default function FlashPlans({ hideSection, items }: PlansSection) {
                 key={item.id}
                 className="w-full md:w-[310px] min-h-[600px] flex flex-col my-10 lg:my-0 relative"
               >
-                {item.isTheBest && (
+                {item.recommended && (
                   <div
                     className="absolute top-[-44px] left-0 w-[145px] h-[37px] flex items-center justify-center rounded-[4px] gap-2"
                     style={{
@@ -31,7 +31,7 @@ export default function FlashPlans({ hideSection, items }: PlansSection) {
                 <div
                   className="rounded-[4px] p-6"
                   style={{
-                    background: item.isTheBest
+                    background: item.recommended
                       ? "radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)"
                       : "#111111",
                   }}
@@ -49,7 +49,7 @@ export default function FlashPlans({ hideSection, items }: PlansSection) {
                   <div className="flex items-baseline gap-4">
                     {!item.hidePrice && (
                       <p className="text-[#E6E6E6] text-[32px] font-medium">
-                        {formatCurrencyDisplayNoCents(item.price)}
+                        {formatCurrencyDisplayNoCents(item.value)}
                       </p>
                     )}
                     {!item.hidePlanPeriod && (
@@ -82,7 +82,7 @@ export default function FlashPlans({ hideSection, items }: PlansSection) {
                 {!item.hideButtonTitle && (
                   <button
                     className={`w-full py-4 rounded-full mt-8 font-semibold ${
-                      item.isTheBest
+                      item.recommended
                         ? "text-[#121212] bg-[#FBFBFB]"
                         : "text-[#FBFBFB] bg-[#121212]"
                     }`}
