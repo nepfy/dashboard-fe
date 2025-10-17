@@ -5,7 +5,7 @@ export interface BaseSection {
 }
 
 export interface SortableItem {
-  sortOrder: number;
+  sortOrder?: number;
 }
 
 export interface HideableItem {
@@ -23,24 +23,24 @@ export interface FAQItem extends SortableItem {
 
 export interface FAQSection extends BaseSection {
   hideSection?: boolean;
-  title: string;
-  items: FAQItem[];
+  title?: string;
+  items?: FAQItem[];
 }
 
 // Team related interfaces
 export interface TeamMember {
-  id: string;
+  id?: string;
   name: string;
-  role: string;
-  photo?: string;
+  role?: string;
+  image?: string;
   hidePhoto?: boolean;
   hideMember?: boolean;
-  sortOrder: number;
+  sortOrder?: number;
 }
 
 export interface TeamSection extends BaseSection {
-  title: string;
-  members: TeamMember[];
+  title?: string;
+  members?: TeamMember[];
 }
 
 // Plans related interfaces
@@ -67,13 +67,13 @@ export interface Plan extends HideableItem, SortableItem {
   hidePrice: boolean;
   hidePlanPeriod: boolean;
   hideButtonTitle: boolean;
-  includedItems: PlanIncludedItem[];
+  includedItems?: PlanIncludedItem[];
 }
 
 export interface PlansSection extends BaseSection {
   hideSection?: boolean;
   title?: string;
-  items: Plan[];
+  plansItems?: Plan[];
 }
 
 export interface MarqueeItem extends HideableItem, SortableItem {
@@ -83,25 +83,25 @@ export interface MarqueeItem extends HideableItem, SortableItem {
 
 // Steps related interfaces
 export interface StepTopic extends HideableItem, SortableItem {
-  id: string;
-  title: string;
-  description: string;
+  id?: string;
+  title?: string;
+  description?: string;
   hideStepDescription?: boolean;
   hideStepName?: boolean;
 }
 
 export interface StepsSection extends BaseSection {
   hideSection?: boolean;
-  title: string;
-  topics: StepTopic[];
-  marquee: MarqueeItem[];
+  title?: string;
+  topics?: StepTopic[];
+  marquee?: MarqueeItem[];
   hideIntroduction?: boolean;
 }
 
 // Footer related interfaces
 export interface FooterSection extends BaseSection {
-  marquee: string[];
-  callToAction: string;
+  marquee?: string[];
+  callToAction?: string;
   hideDisclaimer?: boolean;
   hideCallToAction?: boolean;
   disclaimer?: string;
@@ -112,9 +112,9 @@ export interface FooterSection extends BaseSection {
 // About Us related interfaces
 export interface AboutUsSection extends BaseSection {
   hideSection?: boolean;
-  title: string;
-  subtitle: string;
-  supportText: string;
+  title?: string;
+  subtitle?: string;
+  supportText?: string;
   hideSubtitle?: boolean;
   hideSupportText?: boolean;
 }
@@ -135,9 +135,9 @@ export interface ClientsSection extends BaseSection {
 
 // Expertise related interfaces
 export interface ExpertiseTopic extends HideableItem, SortableItem {
-  id: string;
-  title: string;
-  description: string;
+  id?: string;
+  title?: string;
+  description?: string;
   icon?: string;
   hideTitleField?: boolean;
   hideDescription?: boolean;
@@ -145,34 +145,33 @@ export interface ExpertiseTopic extends HideableItem, SortableItem {
 
 export interface ExpertiseSection extends BaseSection {
   hideSection?: boolean;
-  title: string;
-  topics: ExpertiseTopic[];
+  title?: string;
+  topics?: ExpertiseTopic[];
 }
 
 // Investment related interfaces
 export interface InvestmentSection extends BaseSection {
   hideSection?: boolean;
-  title: string;
-  projectScope: string;
+  title?: string;
+  projectScope?: string;
   hideProjectScope?: boolean;
 }
 
 // Results related interfaces
 export interface Result extends HideableItem, SortableItem {
-  id: string;
-  client: string;
-  instagram: string;
-  investment: string;
-  roi: string;
-  photo: string | null;
-  hidePhoto: boolean;
-  sortOrder: number;
+  id?: string;
+  client?: string;
+  instagram?: string;
+  investment?: string;
+  roi?: string;
+  photo?: string | null;
+  hidePhoto?: boolean;
 }
 
 export interface ResultSection extends HideableItem, SortableItem {
-  hideSection: boolean;
-  title: string;
-  items: Result[];
+  hideSection?: boolean;
+  title?: string;
+  items?: Result[];
 }
 
 // Deliverables related interfaces
@@ -193,22 +192,22 @@ export interface IntroductionService extends HideableItem, SortableItem {
 }
 
 export interface IntroductionSection {
-  userName: string;
-  email: string;
-  title: string;
-  services: IntroductionService[];
-  subtitle: string;
-  validity: string;
-  buttonTitle: string;
+  userName?: string;
+  email?: string;
+  title?: string;
+  services?: IntroductionService[];
+  subtitle?: string;
+  validity?: string;
+  buttonTitle?: string;
   hideSubtitle?: boolean;
 }
 
 // Testimonials related interfaces
 export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  testimonial: string;
+  id?: string;
+  name?: string;
+  role?: string;
+  testimonial?: string;
   photo?: string;
   hidePhoto?: boolean;
   sortOrder?: number;
@@ -217,7 +216,7 @@ export interface Testimonial {
 export interface TestimonialsSection extends BaseSection {
   hideSection?: boolean;
   title?: string;
-  items: Testimonial[];
+  items?: Testimonial[];
 }
 
 // Terms and Conditions related interfaces
@@ -261,23 +260,23 @@ export type TemplateType = "flash" | "prime" | "base";
 
 // Main TemplateData interface
 export interface TemplateData {
-  id: string;
-  personId: string;
+  id?: string;
+  personId?: string;
   projectName: string;
   projectSentDate: string | null;
-  projectValidUntil: string;
-  projectStatus: ProjectStatus;
-  projectVisualizationDate: string | null;
+  projectValidUntil?: string;
+  projectStatus?: ProjectStatus;
+  projectVisualizationDate?: string | null;
   templateType: TemplateType;
   mainColor: string;
-  projectUrl: string;
-  pagePassword: string;
-  isPublished: boolean;
-  isProposalGenerated: boolean;
-  proposalData: ProposalData;
-  userName: string;
-  companyName: string;
-  updated_at: string;
-  created_at: string;
-  deleted_at: string | null;
+  projectUrl?: string;
+  pagePassword?: string;
+  isPublished?: boolean;
+  isProposalGenerated?: boolean;
+  proposalData?: ProposalData;
+  userName?: string;
+  companyName?: string;
+  updated_at?: string;
+  created_at?: string;
+  deleted_at?: string | null;
 }

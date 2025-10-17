@@ -55,8 +55,6 @@ export default function EditarPage() {
     loadProjectData();
   }, [projectId, templateType]);
 
-  console.log("projectData", projectData);
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">

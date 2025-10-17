@@ -75,7 +75,7 @@ export interface PrimeProposal extends BaseProposal {
       title: string; // exactly 35 chars
       description: string; // exactly 350 chars
     }>;
-    plans: Array<{
+    plansItems: Array<{
       id?: string;
       hideTitleField?: boolean;
       hideDescription?: boolean;
@@ -90,7 +90,8 @@ export interface PrimeProposal extends BaseProposal {
       description: string; // exactly 110 chars
       value: string; // format R$X.XXX (<= 11 chars)
       includedItems: Array<{
-        item: string;
+        id?: string;
+        description: string;
         hideItem?: boolean;
         sortOrder?: number;
       }>;
@@ -233,17 +234,17 @@ export function validatePrimeCharacterLimits(
     );
   }
 
-  if (proposal.investment?.plans) {
+  if (proposal.investment?.plansItems) {
     validations.investmentPlans =
-      proposal.investment.plans.length === 3 &&
-      proposal.investment.plans.every(
+      proposal.investment.plansItems.length === 3 &&
+      proposal.investment.plansItems.every(
         (plan) =>
           plan.title.length === 25 &&
           plan.description.length === 110 &&
           plan.value.length <= 11 &&
           plan.includedItems.length >= 4 &&
           plan.includedItems.length <= 6 &&
-          plan.includedItems.every((item) => item.item.length <= 50)
+          plan.includedItems.every((item) => item.description.length <= 50)
       );
   }
 
@@ -305,7 +306,7 @@ export function getPrimeTemplateDefaults(): Partial<PrimeProposal> {
     investment: {
       title: "",
       deliverables: [],
-      plans: [],
+      plansItems: [],
     },
     faq: [],
     footer: {

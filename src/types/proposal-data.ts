@@ -12,6 +12,7 @@ export interface ProposalData {
     subtitle?: string;
     hideSubtitle?: boolean;
     services?: Array<{
+      id?: string;
       serviceName: string;
       hideService?: boolean;
       sortOrder?: number;
@@ -104,7 +105,7 @@ export interface ProposalData {
     hideSection?: boolean;
     title?: string;
     hideTitle?: boolean;
-    items?: Array<{
+    plansItems?: Array<{
       id?: string;
       title: string;
       description: string;
@@ -119,7 +120,8 @@ export interface ProposalData {
       sortOrder?: number;
       buttonTitle: string;
       includedItems?: Array<{
-        item: string;
+        id?: string;
+        description: string;
         hideItem?: boolean;
         sortOrder?: number;
       }>;
@@ -132,11 +134,14 @@ export interface ProposalData {
     title?: string;
     hideTitle?: boolean;
     items?: Array<{
-      title: string;
-      description: string;
-      metric?: string;
-      hideResult?: boolean;
-      sortOrder?: number;
+      id: string;
+      client: string;
+      instagram: string;
+      investment: string;
+      roi: string;
+      photo: string | null;
+      hidePhoto: boolean;
+      sortOrder: number;
     }>;
   };
 

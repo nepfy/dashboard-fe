@@ -19,7 +19,9 @@ export default function FlashTestimonials({
 
     setIsTransitioning(true);
     setTimeout(() => {
-      setCurrentIndex((prev) => (prev === 0 ? items?.length - 1 : prev - 1));
+      setCurrentIndex((prev) =>
+        prev === 0 ? (items?.length ?? 0) - 1 : prev - 1
+      );
       setIsTransitioning(false);
     }, 800);
   };
@@ -29,7 +31,9 @@ export default function FlashTestimonials({
 
     setIsTransitioning(true);
     setTimeout(() => {
-      setCurrentIndex((prev) => (prev === items?.length - 1 ? 0 : prev + 1));
+      setCurrentIndex((prev) =>
+        prev === (items?.length ?? 0) - 1 ? 0 : prev + 1
+      );
       setIsTransitioning(false);
     }, 800);
   };
@@ -82,7 +86,7 @@ export default function FlashTestimonials({
             <div className="flex items-center gap-1 mt-12">
               <button
                 onClick={handlePrevious}
-                disabled={isTransitioning || items?.length <= 1}
+                disabled={isTransitioning || (items?.length ?? 0) <= 1}
                 className="w-10 h-10 bg-[#E6E6E6] rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-colors disabled:opacity-50 rotate-270"
                 aria-label="Depoimento anterior"
               >
@@ -90,7 +94,7 @@ export default function FlashTestimonials({
               </button>
               <button
                 onClick={handleNext}
-                disabled={isTransitioning || items?.length <= 1}
+                disabled={isTransitioning || (items?.length ?? 0) <= 1}
                 className="w-10 h-10 bg-[#E6E6E6] rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-colors disabled:opacity-50 rotate-270"
                 aria-label="Próximo depoimento"
               >

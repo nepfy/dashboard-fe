@@ -1,4 +1,5 @@
 import { IntroductionSection } from "#/types/template-data";
+import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 
 export default function FlashIntro({
   userName,
@@ -57,12 +58,14 @@ export default function FlashIntro({
         <h1 className="text-[32px] xl:text-[72px] text-[#E6E6E6] max-w-[1120px] pb-4">
           {title}
         </h1>
-        <p className="font-bold text-sm text-[#E6E6E6]">
-          Proposta válida até -{" "}
-          <span className="font-normal text-[#E6E6E6]/40">
-            {validity?.toString()}
-          </span>
-        </p>
+        {validity && (
+          <p className="font-bold text-sm text-[#E6E6E6]">
+            Proposta válida até -{" "}
+            <span className="font-normal text-[#E6E6E6]/40">
+              {formatDateToDDDeMonthDeYYYY(validity)}
+            </span>
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col lg:flex-row justify-between items-end gap-4 max-w-[1440px] mx-auto">

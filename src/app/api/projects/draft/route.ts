@@ -1,17 +1,40 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
-import { eq, and } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
+import { eq, and } from "drizzle-orm/expressions";
 import { personUserTable } from "#/lib/db/schema/users";
 
-export async function POST(request: Request) {
+async function getUserIdFromEmail(emailAddress: string): Promise<{
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+} | null> {
+  const personResult = await db
+    .select({
+      id: personUserTable.id,
+      firstName: personUserTable.firstName,
+      lastName: personUserTable.lastName,
+    })
+    .from(personUserTable)
+    .where(eq(personUserTable.email, emailAddress));
+
+  return personResult[0]
+    ? {
+        id: personResult[0].id,
+        firstName: personResult[0].firstName,
+        lastName: personResult[0].lastName,
+      }
+    : null;
+}
+
+export async function POST(request: NextRequest) {
   try {
     const user = await currentUser();
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Não autorizado" },
+        { success: false, error: "Unauthorized" },
         { status: 401 }
       );
     }
@@ -24,123 +47,92 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
-    const { formData, templateType, projectId } = body;
-
-    // Get the user's person ID
-    const personResult = await db
-      .select({
-        id: personUserTable.id,
-      })
-      .from(personUserTable)
-      .where(eq(personUserTable.email, emailAddress));
-
-    if (!personResult[0]?.id) {
+    const userId = await getUserIdFromEmail(emailAddress);
+    if (!userId) {
       return NextResponse.json(
         { success: false, error: "Usuário não encontrado" },
         { status: 404 }
       );
     }
 
-    const userId = personResult[0].id;
+    const body = await request.json();
+    const { formData, templateType, projectId } = body;
 
-    // Convert form data to simplified project data (core metadata only)
-    const projectData = {
-      personId: userId,
-      projectName:
-        formData.step1?.projectName ||
-        `Rascunho ${new Date().toLocaleDateString()}`,
-      projectSentDate: null,
-      projectValidUntil: formData.step15?.projectValidUntil
-        ? new Date(formData.step15.projectValidUntil)
-        : null,
-      projectStatus: "draft" as const,
-      projectVisualizationDate: null,
-      templateType: templateType || "flash",
-      mainColor: formData.step1?.mainColor || "#3B82F6",
-      projectUrl: formData.step16?.pageUrl || null,
-      pagePassword: formData.step16?.pagePassword || null,
-      isPublished: false,
-      isProposalGenerated: false,
-      created_at: new Date(),
-      updated_at: new Date(),
-    };
+    if (!formData || !templateType) {
+      return NextResponse.json(
+        { success: false, error: "Dados obrigatórios não fornecidos" },
+        { status: 400 }
+      );
+    }
 
-    let savedProject;
-
+    // If projectId is provided, update existing draft
     if (projectId) {
-      // Update existing draft
-      const existingProject = await db
-        .select()
-        .from(projectsTable)
-        .where(
-          and(
-            eq(projectsTable.id, projectId),
-            eq(projectsTable.personId, userId)
-          )
-        )
-        .limit(1);
-
-      if (existingProject.length === 0) {
-        return NextResponse.json(
-          { success: false, error: "Projeto não encontrado" },
-          { status: 404 }
-        );
-      }
-
-      savedProject = await db
+      const [updatedProject] = await db
         .update(projectsTable)
         .set({
-          ...projectData,
+          clientName: formData.clientName || null,
+          projectName: formData.projectName || "Proposta - Rascunho",
+          projectStatus: "draft",
+          templateType: templateType,
+          mainColor: formData.mainColor || "#3B82F6",
           updated_at: new Date(),
         })
         .where(
           and(
             eq(projectsTable.id, projectId),
-            eq(projectsTable.personId, userId)
+            eq(projectsTable.personId, userId.id)
           )
         )
         .returning();
-    } else {
-      // Create new draft
-      savedProject = await db
-        .insert(projectsTable)
-        .values(projectData)
-        .returning();
+
+      if (updatedProject) {
+        return NextResponse.json({
+          success: true,
+          message: "Rascunho atualizado com sucesso",
+          data: {
+            id: updatedProject.id,
+            projectName: updatedProject.projectName,
+          },
+        });
+      } else {
+        return NextResponse.json(
+          { success: false, error: "Projeto não encontrado" },
+          { status: 404 }
+        );
+      }
     }
 
-    if (savedProject.length === 0) {
-      return NextResponse.json(
-        { success: false, error: "Falha ao salvar rascunho" },
-        { status: 500 }
-      );
-    }
-
-    // TODO: Implement template-specific data saving for manual form builder
-    // The template-specific content (teamMembers, expertise, results, etc.) should be saved
-    // to template-specific tables based on the templateType (flash/prime/new).
-    // This requires creating save handlers similar to saveFlashTemplateData and savePrimeTemplateData
-    // but adapted for the manual form data structure (ProposalFormData).
-    //
-    // For now, only core project metadata is saved. Template-specific data will be handled
-    // in a future update when manual form builder template save handlers are implemented.
-
-    console.log(
-      `Draft saved successfully. Project ID: ${savedProject[0].id}, Template: ${templateType}`
-    );
-    console.log(
-      "Note: Template-specific content data is not yet saved to template tables for manual drafts."
-    );
+    // Create new draft
+    const [newProject] = await db
+      .insert(projectsTable)
+      .values({
+        personId: userId.id,
+        clientName: formData.clientName || null,
+        projectName: formData.projectName || "Rascunho",
+        projectStatus: "draft",
+        templateType: templateType,
+        mainColor: formData.mainColor || "#3B82F6",
+        isPublished: false,
+        isProposalGenerated: false,
+      })
+      .returning();
 
     return NextResponse.json({
       success: true,
       message: "Rascunho salvo com sucesso",
-      data: savedProject[0],
+      data: {
+        id: newProject.id,
+        projectName: newProject.projectName,
+      },
     });
   } catch (error) {
     console.error("Error saving draft:", error);
     return NextResponse.json(
-      { success: false, error: `Erro interno do servidor: ${error}` },
+      {
+        success: false,
+        error: "Erro ao salvar rascunho",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

@@ -14,7 +14,7 @@ import {
   primeServiceMapping,
 } from "#/modules/ai-generator/utils";
 import { db } from "#/lib/db";
-import { eq } from "drizzle-orm/expressions";
+import { eq, and } from "drizzle-orm/expressions";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 import {
@@ -77,19 +77,32 @@ type AIResult =
   | WorkflowResult
   | Record<string, unknown>;
 
-async function createProjectFromAIResult(
+async function createOrUpdateProjectFromAIResult(
   userId: string,
   aiResult: AIResult,
   requestData: NepfyAIRequestData
 ) {
-  console.log("Debug - createProjectFromAIResult called with:", {
+  console.log("Debug - createOrUpdateProjectFromAIResult called with:", {
     userId,
     requestDataClientName: requestData.clientName,
     requestDataProjectName: requestData.projectName,
     requestDataTemplateType: requestData.templateType,
   });
 
-  // Create main project record
+  // Check if a draft exists with matching clientName and projectName
+  const existingDrafts = await db
+    .select()
+    .from(projectsTable)
+    .where(
+      and(
+        eq(projectsTable.personId, userId),
+        eq(projectsTable.clientName, requestData.clientName),
+        eq(projectsTable.projectName, requestData.projectName),
+        eq(projectsTable.projectStatus, "draft")
+      )
+    )
+    .limit(1);
+
   const projectData = {
     personId: userId,
     clientName: requestData.clientName,
@@ -108,31 +121,50 @@ async function createProjectFromAIResult(
     isProposalGenerated: true,
   };
 
-  console.log("Debug - Inserting project with data:", projectData);
+  let project;
 
-  const [newProject] = await db
-    .insert(projectsTable)
-    .values(projectData)
-    .returning();
+  if (existingDrafts.length > 0) {
+    // Update existing draft
+    console.log("Debug - Found existing draft, updating:", existingDrafts[0].id);
+    const [updatedProject] = await db
+      .update(projectsTable)
+      .set({
+        ...projectData,
+        updated_at: new Date(),
+      })
+      .where(eq(projectsTable.id, existingDrafts[0].id))
+      .returning();
 
-  console.log("Debug - Project inserted successfully:", newProject);
+    project = updatedProject;
+    console.log("Debug - Project updated successfully:", project);
+  } else {
+    // Create new project
+    console.log("Debug - No existing draft found, creating new project");
+    const [newProject] = await db
+      .insert(projectsTable)
+      .values(projectData)
+      .returning();
+
+    project = newProject;
+    console.log("Debug - Project inserted successfully:", project);
+  }
 
   // Save template-specific data based on template type
   if (requestData.templateType === "flash" && "proposal" in aiResult) {
     await saveFlashTemplateData(
-      newProject.id,
+      project.id,
       aiResult as FlashWorkflowResult,
       requestData
     );
   } else if (requestData.templateType === "prime" && "data" in aiResult) {
     await savePrimeTemplateData(
-      newProject.id,
+      project.id,
       aiResult as PrimeWorkflowResult,
       requestData
     );
   }
 
-  return newProject;
+  return project;
 }
 
 export async function POST(request: NextRequest) {
@@ -509,7 +541,7 @@ export async function POST(request: NextRequest) {
       mainColor: body.mainColor,
     });
 
-    const newProject = await createProjectFromAIResult(
+    const newProject = await createOrUpdateProjectFromAIResult(
       userId.id,
       aiResult,
       body

@@ -70,6 +70,12 @@ export interface FlashProposal extends BaseProposal {
       title: string; // exactly 40 chars
       description: string; // exactly 240 chars
     }>; // exactly 5, AI-generated
+    marquee: Array<{
+      id?: string;
+      text: string;
+      hideItem?: boolean;
+      sortOrder?: number;
+    }>;
   };
 
   // Project Scope Section
@@ -84,7 +90,7 @@ export interface FlashProposal extends BaseProposal {
       title: string; // up to 30 chars
       description: string; // up to 330 chars
     }>;
-    plans: Array<{
+    plansItems: Array<{
       id?: string;
       title: string; // exactly 20 chars
       description: string; // exactly 95 chars
@@ -99,11 +105,27 @@ export interface FlashProposal extends BaseProposal {
       recommended: boolean;
       sortOrder?: number;
       includedItems: Array<{
-        item: string;
+        id?: string;
+        description: string;
         hideItem?: boolean;
         sortOrder?: number;
       }>;
     }>; // 3 max, AI-generated
+  };
+
+  // Results Section
+  results: {
+    title: string; // exactly 85 chars, AI-generated
+    items: Array<{
+      id: string;
+      client: string;
+      instagram: string;
+      investment: string;
+      roi: string;
+      photo: string | null;
+      hidePhoto: boolean;
+      sortOrder: number;
+    }>;
   };
 
   // Terms and Conditions (optional)
@@ -248,6 +270,7 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
       introduction: "",
       title: "Nosso Processo",
       topics: [],
+      marquee: [],
     },
     scope: {
       content: "",
@@ -255,7 +278,31 @@ export function getFlashTemplateDefaults(): Partial<FlashProposal> {
     investment: {
       title: "",
       deliverables: [],
-      plans: [],
+      plansItems: [
+        {
+          id: crypto.randomUUID(),
+          title: "",
+          description: "",
+          value: "",
+          planPeriod: "",
+          recommended: false,
+          buttonTitle: "",
+          includedItems: [
+            {
+              id: crypto.randomUUID(),
+              description: "",
+              hideItem: false,
+              sortOrder: 0,
+            },
+            {
+              id: crypto.randomUUID(),
+              description: "",
+              hideItem: false,
+              sortOrder: 1,
+            },
+          ],
+        },
+      ],
     },
     faq: [],
     footer: {
@@ -304,6 +351,7 @@ export function generateFlashProposalOutline(): Partial<FlashProposal> {
         "Guiamos cada etapa com clareza para acelerar resultados sem perder consistência",
       title: "Nosso Processo",
       topics: [],
+      marquee: [],
     },
     scope: {
       content:
@@ -313,7 +361,7 @@ export function generateFlashProposalOutline(): Partial<FlashProposal> {
       title:
         "Investir agora garante crescimento escalável, previsível e centrado em lucro real",
       deliverables: [],
-      plans: [],
+      plansItems: [],
     },
     faq: [],
     footer: {

@@ -49,6 +49,7 @@ export class FlashTheme {
       steps,
       scope,
       investment,
+      results,
       terms,
       faq,
     ] = await Promise.all([
@@ -59,6 +60,7 @@ export class FlashTheme {
       this.generateSteps(data, agent),
       this.generateScope(data, agent),
       this.generateInvestment(data, agent),
+      this.generateResults(data, agent),
       data.includeTerms
         ? this.generateTerms(data, agent)
         : Promise.resolve(undefined),
@@ -78,6 +80,7 @@ export class FlashTheme {
       steps,
       scope,
       investment,
+      results,
       ...(terms ? { terms: [terms] } : {}),
       faq: faq || [],
       footer: this.generateFooter(data),
@@ -257,7 +260,32 @@ Retorne APENAS:
 
       return {
         title: parsed.title,
-        members: [],
+        members: [
+          {
+            id: crypto.randomUUID(),
+            name: "John Doe",
+            role: "CEO",
+            image: "/images/templates/flash/placeholder.png",
+            hideMember: false,
+            sortOrder: 0,
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Jane Doe",
+            role: "CTO",
+            image: "/images/templates/flash/placeholder2.png",
+            hideMember: false,
+            sortOrder: 1,
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "John Doe",
+            role: "CEO",
+            image: "/images/templates/flash/placeholder3.png",
+            hideMember: false,
+            sortOrder: 0,
+          },
+        ],
       };
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
@@ -285,26 +313,38 @@ COPIE EXATAMENTE ESTE FORMATO:
   "title": "Aplicamos estratégias que unem tecnologia, análise e execução, garantindo performance digital e resultados reais.",
   "topics": [
     {
+      "id": ${crypto.randomUUID()},
+      "icon": "DiamondIcon",
       "title": "Desenvolvimento web responsivo",
       "description": "Sites otimizados que convertem visitantes em clientes com performance superior."
     },
     {
+      "id": ${crypto.randomUUID()},
+      "icon": "DiamondIcon",
       "title": "Sistemas de agendamento",
       "description": "Plataformas personalizadas que automatizam e organizam seus agendamentos."
     },
     {
+      "id": ${crypto.randomUUID()},
+      "icon": "DiamondIcon",
       "title": "Integrações avançadas",
       "description": "Conectamos ferramentas para criar fluxos de trabalho mais eficientes."
     },
-    {
+    { 
+      "id": ${crypto.randomUUID()},
+      "icon": "DiamondIcon",
       "title": "Otimização de performance",
       "description": "Aceleramos carregamento e melhoramos experiência do usuário."
     },
     {
+      "id": ${crypto.randomUUID()},
+      "icon": "DiamondIcon",
       "title": "Segurança e proteção",
       "description": "Implementamos medidas robustas para proteger dados e operações."
     },
     {
+      "id": ${crypto.randomUUID()},
+      "icon": "DiamondIcon",
       "title": "Suporte técnico especializado",
       "description": "Equipe dedicada para garantir funcionamento perfeito e contínuo."
     }
@@ -321,6 +361,8 @@ REGRAS OBRIGATÓRIAS:
   "title": "string (max 140 characters)",
   "topics": [
     {
+      "id": "string",
+      "icon": "string",
       "title": "string (max 50 characters)",
       "description": "string (max 100 characters)"
     }
@@ -385,22 +427,27 @@ COPIE EXATAMENTE ESTE FORMATO:
   "introduction": "Desenvolvemos soluções inovadoras com foco em resultados e impacto contínuo.",
   "topics": [
     {
+      "id": ${crypto.randomUUID()},
       "title": "Análise e planejamento estratégico",
       "description": "Identificamos as necessidades da sua marca para criar uma estratégia personalizada que maximize resultados e garanta o sucesso do seu projeto digital."
     },
     {
+      "id": ${crypto.randomUUID()},
       "title": "Elaboração de layout e design",
       "description": "Criamos layouts atraentes e funcionais que refletem a imagem da sua marca e apresentam seu negócio de forma clara e profissional."
     },
     {
+      "id": ${crypto.randomUUID()},
       "title": "Desenvolvimento da funcionalidade",
       "description": "Implementamos todas as funcionalidades necessárias para que seu site funcione perfeitamente e atenda às suas necessidades específicas."
     },
     {
+      "id": ${crypto.randomUUID()},
       "title": "Testes e otimização da experiência",
       "description": "Realizamos testes rigorosos para garantir que o site seja fácil de navegar, intuitivo e performe bem em todos os dispositivos."
     },
     {
+      "id": ${crypto.randomUUID()},
       "title": "Deploy finalizado e entrega completa",
       "description": "Implementamos seu projeto com segurança, configuramos os sistemas necessários para funcionar de forma integrada e eficiente."
     }
@@ -418,6 +465,7 @@ REGRAS OBRIGATÓRIAS:
   "introduction": "string (max 200 characters)",
   "topics": [
     {
+      id: "string",
       "title": "string (max 40 characters)",
       "description": "string (max 240 characters)"
     }
@@ -509,7 +557,7 @@ PLANOS: ${data.selectedPlans?.join(", ") || "Plano Essencial, Plano Executivo"}
 COPIE EXATAMENTE ESTE FORMATO:
 
 {
-  "title": "Investimento planejado para gerar impacto digital, valor e reconhecimento duradouro",
+  "title": "Planejamento para gerar impacto digital, valor e reconhecimento duradouro",
   "deliverables": [
     {
       "title": "Site institucional completo",
@@ -520,28 +568,75 @@ COPIE EXATAMENTE ESTE FORMATO:
       "description": "Plataforma personalizada para gestão de conteúdo e funcionalidades com painel administrativo intuitivo e seguro."
     }
   ],
-  "plans": [
+  "plansItems": [
     {
+      "id": ${crypto.randomUUID()},
       "title": "Plano Essencial",
       "description": "Impulsione resultados com soluções digitais que ampliam performance e conversão",
-      "value": "R$ 4.500",
-      "topics": [
-        "Site responsivo completo",
-        "Sistema de gestão",
-        "Otimização SEO básica",
-        "Suporte técnico 30 dias"
+      "value": 4000,
+      "hideTitleField": false,
+      "hideDescription": false,
+      "hidePrice": false,
+      "hidePlanPeriod": false,
+      "hideButtonTitle": false,
+      "buttonTitle": "Assinar",
+      "planPeriod": "mensal",
+      "recommended": false,
+      "sortOrder": 0,
+      "includedItems": [
+        {
+          "id": ${crypto.randomUUID()},
+          "description": "Site responsivo completo",
+          "hideItem": false,
+          "sortOrder": 0
+        },
+        {
+          "id": ${crypto.randomUUID()},
+          "description": "Sistema de gestão",
+          "hideItem": false,
+          "sortOrder": 1
+        },
+        {
+          "id": ${crypto.randomUUID()},
+          "description": "Otimização SEO básica",
+          "hideItem": false,
+          "sortOrder": 2
+        }
       ]
     },
     {
+      "id": ${crypto.randomUUID()},
       "title": "Plano Executivo", 
       "description": "Acelere crescimento com integrações avançadas e automações inteligentes",
-      "value": "R$ 7.200",
-      "topics": [
-        "Tudo do Essencial",
-        "Integrações avançadas",
-        "Automações personalizadas",
-        "Relatórios detalhados",
-        "Suporte técnico 90 dias"
+      "value": "7200",
+      "hideTitleField": false,
+      "hideDescription": false,
+      "hidePrice": false,
+      "hidePlanPeriod": false,
+      "hideButtonTitle": false,
+      "buttonTitle": "Assinar",
+      "planPeriod": "mensal",
+      "recommended": false,
+      "sortOrder": 1,
+      "includedItems": [
+        {
+          "id": ${crypto.randomUUID()},
+          "description": "Tudo do Essencial",
+          "hideItem": false,
+          "sortOrder": 0
+        },
+        {
+          "id": ${crypto.randomUUID()},
+          "description": "Integrações avançadas",
+          "hideItem": false,
+          "sortOrder": 1
+        },
+        {
+          "id": ${crypto.randomUUID()},
+          "description": "Automações personalizadas",
+          "hideItem": false,
+          "sortOrder": 2
+        }
       ]
     }
   ]
@@ -549,10 +644,11 @@ COPIE EXATAMENTE ESTE FORMATO:
 
 REGRAS OBRIGATÓRIAS:
 - EXATAMENTE 2 planos
-- Cada plano deve ter title, description, value e topics
-- topics: 3 a 6 itens por plano
+- Cada plano deve ter title, description, value e includedItems
+- includedItems: 3 a 6 itens por plano
 - Use valores realistas em reais
-- Responda APENAS com o JSON válido.`;
+- Responda APENAS com o JSON válido.
+- includedItems deve ser um array de objetos com id, description, hideItem e sortOrder`;
 
     try {
       const parsed = await this.runLLMWithJSONRetry<FlashInvestmentSection>(
@@ -561,13 +657,77 @@ REGRAS OBRIGATÓRIAS:
       );
 
       ensureCondition(
-        Array.isArray(parsed.plans) && parsed.plans.length > 0,
+        Array.isArray(parsed.plansItems) && parsed.plansItems.length > 0,
         "investment.plans must include at least one item"
       );
 
       return parsed;
     } catch (error) {
       console.error("Flash Investment Generation Error:", error);
+      throw error;
+    }
+  }
+
+  private async generateResults(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashResultsSection> {
+    const userPrompt = `Gere APENAS um JSON válido para resultados.
+
+    PROJETO: ${data.projectName} - ${data.projectDescription}
+    COPIE EXATAMENTE ESTE FORMATO:
+
+    {
+      "title": "Resultados que transformam negócios",
+      "items": [
+        {
+          "id": "${crypto.randomUUID()}",
+          "client": "Cliente 1",
+          "instagram": "cliente1",
+          "investment": "1500",
+          "roi": "2500",
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 0
+        },
+        {
+          "id": "${crypto.randomUUID()}",
+          "client": "Cliente 2",
+          "instagram": "cliente2",
+          "investment": "2000",
+          "roi": "3000",
+          "photo": "/images/templates/flash/placeholder2.png",
+          "hidePhoto": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "${crypto.randomUUID()}",
+          "client": "Cliente 3",
+          "instagram": "cliente3",
+          "investment": "2500",
+          "roi": "4000",
+          "photo": "/images/templates/flash/placeholder3.png",
+          "hidePhoto": false,
+          "sortOrder": 2
+        }
+      ]
+    }
+
+    REGRAS OBRIGATÓRIAS:
+    - title: Título da seção de resultados
+    - items: Array de objetos com id, client, instagram, investment, roi, photo, hidePhoto e sortOrder
+    - Use linguagem clara e profissional
+    - Responda APENAS com o JSON válido.`;
+
+    try {
+      const parsed = await this.runLLMWithJSONRetry<FlashResultsSection>(
+        userPrompt,
+        agent.systemPrompt
+      );
+
+      return parsed;
+    } catch (error) {
+      console.error("Flash Results Generation Error:", error);
       throw error;
     }
   }
@@ -619,42 +779,52 @@ COPIE EXATAMENTE ESTE FORMATO:
 {
   "faq": [
     {
+      "id": ${crypto.randomUUID()},
       "question": "Como vocês garantem que o projeto será entregue no prazo?",
       "answer": "Utilizamos metodologias ágeis e planejamento detalhado para garantir entregas pontuais. Nossa equipe trabalha com cronogramas realistas e comunicação constante."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Posso solicitar alterações durante o desenvolvimento?",
       "answer": "Sim, incluímos ciclos de revisão e ajustes para garantir que o resultado final atenda perfeitamente às suas expectativas e necessidades."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Qual é o prazo médio para entrega do projeto?",
       "answer": "O prazo médio é de 30 dias úteis, variando conforme a complexidade do projeto. Sempre informamos o cronograma detalhado antes do início."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Vocês oferecem suporte após a entrega?",
       "answer": "Sim, incluímos suporte técnico gratuito por 30 dias após a entrega, além de manutenção e atualizações conforme necessário."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Como funciona o processo de pagamento?",
       "answer": "O pagamento é dividido em duas parcelas: 50% na assinatura do contrato e 50% na entrega final do projeto."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Posso ver o progresso do projeto durante o desenvolvimento?",
       "answer": "Sim, mantemos comunicação constante e fornecemos relatórios de progresso regulares para que você acompanhe cada etapa."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Vocês trabalham com projetos de qualquer tamanho?",
       "answer": "Sim, atendemos desde pequenos sites institucionais até grandes plataformas complexas, sempre adaptando nossa abordagem às suas necessidades."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Qual é a garantia oferecida?",
       "answer": "Oferecemos garantia de 90 dias para correção de bugs e ajustes necessários, além do suporte técnico incluído no projeto."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Posso solicitar funcionalidades adicionais depois?",
       "answer": "Sim, podemos desenvolver funcionalidades adicionais conforme suas necessidades, com orçamento e prazo específicos para cada nova demanda."
     },
     {
+      "id": ${crypto.randomUUID()},
       "question": "Como vocês garantem a segurança do projeto?",
       "answer": "Implementamos as melhores práticas de segurança, incluindo certificados SSL, backups regulares e monitoramento contínuo para proteger seus dados."
     }
@@ -696,51 +866,61 @@ REGRAS OBRIGATÓRIAS:
   private getFallbackFAQ(): FlashFAQSection {
     return [
       {
+        id: crypto.randomUUID(),
         question: "Como vocês garantem que o projeto será entregue no prazo?",
         answer:
           "Utilizamos metodologias ágeis e planejamento detalhado para garantir entregas pontuais. Nossa equipe trabalha com cronogramas realistas e comunicação constante.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Posso solicitar alterações durante o desenvolvimento?",
         answer:
           "Sim, incluímos ciclos de revisão e ajustes para garantir que o resultado final atenda perfeitamente às suas expectativas e necessidades.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Qual é o prazo médio para entrega do projeto?",
         answer:
           "O prazo médio é de 30 dias úteis, variando conforme a complexidade do projeto. Sempre informamos o cronograma detalhado antes do início.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Vocês oferecem suporte após a entrega?",
         answer:
           "Sim, incluímos suporte técnico gratuito por 30 dias após a entrega, além de manutenção e atualizações conforme necessário.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Como funciona o processo de pagamento?",
         answer:
           "O pagamento é dividido em duas parcelas: 50% na assinatura do contrato e 50% na entrega final do projeto.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Posso ver o progresso do projeto durante o desenvolvimento?",
         answer:
           "Sim, mantemos comunicação constante e fornecemos relatórios de progresso regulares para que você acompanhe cada etapa.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Vocês trabalham com projetos de qualquer tamanho?",
         answer:
           "Sim, atendemos desde pequenos sites institucionais até grandes plataformas complexas, sempre adaptando nossa abordagem às suas necessidades.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Qual é a garantia oferecida?",
         answer:
           "Oferecemos garantia de 90 dias para correção de bugs e ajustes necessários, além do suporte técnico incluído no projeto.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Posso solicitar funcionalidades adicionais depois?",
         answer:
           "Sim, podemos desenvolver funcionalidades adicionais conforme suas necessidades, com orçamento e prazo específicos para cada nova demanda.",
       },
       {
+        id: crypto.randomUUID(),
         question: "Como vocês garantem a segurança do projeto?",
         answer:
           "Implementamos as melhores práticas de segurança, incluindo certificados SSL, backups regulares e monitoramento contínuo para proteger seus dados.",
@@ -981,6 +1161,12 @@ export interface FlashStepsSection {
     title: string;
     description: string;
   }>;
+  marquee: Array<{
+    id?: string;
+    text: string;
+    hideItem?: boolean;
+    sortOrder?: number;
+  }>;
 }
 
 export interface FlashScopeSection {
@@ -993,7 +1179,7 @@ export interface FlashInvestmentSection {
     title: string;
     description: string;
   }>;
-  plans: Array<{
+  plansItems: Array<{
     id?: string;
     hideTitleField?: boolean;
     hideDescription?: boolean;
@@ -1008,10 +1194,25 @@ export interface FlashInvestmentSection {
     description: string;
     value: string;
     includedItems: Array<{
-      item: string;
+      id?: string;
+      description: string;
       hideItem?: boolean;
       sortOrder?: number;
     }>;
+  }>;
+}
+
+export interface FlashResultsSection {
+  title: string;
+  items: Array<{
+    id: string;
+    client: string;
+    instagram: string;
+    investment: string;
+    roi: string;
+    photo: string;
+    hidePhoto: boolean;
+    sortOrder: number;
   }>;
 }
 
@@ -1021,6 +1222,7 @@ export interface FlashTermsSection {
 }
 
 export type FlashFAQSection = Array<{
+  id: string;
   question: string;
   answer: string;
 }>;

@@ -21,6 +21,24 @@ const MONTH_NAMES_PT = [
 ];
 
 /**
+ * Portuguese month names (full)
+ */
+const MONTH_NAMES_PT_FULL = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+/**
  * Formats a date string to "DD Mon YYYY" format in Portuguese
  * @param dateString - ISO date string
  * @returns Formatted date string
@@ -56,6 +74,48 @@ export const formatDateToDDMonYYYY = (dateString: string): string => {
     const year = date.getFullYear();
 
     return `${day} ${month} ${year}`;
+  } catch (error) {
+    console.error("Error formatting date:", error, "Input:", dateString);
+    return "Data inválida";
+  }
+};
+
+/**
+ * Formats a date string to "DD de MONTH de YYYY" format in Portuguese
+ * @param dateString - ISO date string
+ * @returns Formatted date string
+ */
+export const formatDateToDDDeMonthDeYYYY = (dateString: string): string => {
+  if (!dateString) {
+    return "Data inválida";
+  }
+
+  try {
+    let datePart: string;
+
+    if (dateString.includes("T")) {
+      datePart = dateString.split("T")[0];
+    } else if (dateString.includes(" ")) {
+      datePart = dateString.split(" ")[0];
+    } else {
+      datePart = dateString;
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+      return "Data inválida";
+    }
+
+    const date = new Date(datePart + "T12:00:00");
+
+    if (isNaN(date.getTime())) {
+      return "Data inválida";
+    }
+
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = MONTH_NAMES_PT_FULL[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${day} de ${month} de ${year}`;
   } catch (error) {
     console.error("Error formatting date:", error, "Input:", dateString);
     return "Data inválida";

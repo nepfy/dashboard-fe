@@ -55,6 +55,12 @@ export interface PrimeProcessStepsSection {
     title: string;
     description: string;
   }>;
+  marquee: Array<{
+    id?: string;
+    text: string;
+    hideItem?: boolean;
+    sortOrder?: number;
+  }>;
 }
 
 export interface PrimeScopeSection {
@@ -115,7 +121,8 @@ export interface PrimePlan {
   recommended: boolean;
   sortOrder?: number;
   includedItems: Array<{
-    item: string;
+    id?: string;
+    description: string;
     hideItem?: boolean;
     sortOrder?: number;
   }>;
@@ -148,6 +155,12 @@ export interface PrimeProposal {
     introduction: string;
     title: string;
     topics: PrimeStepsTopic[];
+    marquee: Array<{
+      id?: string;
+      text: string;
+      hideItem?: boolean;
+      sortOrder?: number;
+    }>;
   };
   scope: {
     content: string;
@@ -155,7 +168,7 @@ export interface PrimeProposal {
   investment: {
     title: string;
     deliverables: PrimeDeliverable[];
-    plans: PrimePlan[];
+    plansItems: PrimePlan[];
   };
   terms?: {
     title: string;
@@ -1319,6 +1332,12 @@ REGRAS OBRIGATÓRIAS:
               description: topicDescValidation.value,
             };
           }),
+          marquee: parsed.marquee.map((item) => ({
+            id: crypto.randomUUID(),
+            text: item.text,
+            hideItem: false,
+            sortOrder: item.sortOrder,
+          })),
         };
       }
 
@@ -1391,6 +1410,12 @@ REGRAS OBRIGATÓRIAS:
             description: topicDescValidation.value,
           };
         }),
+        marquee: parsed.marquee.map((item) => ({
+          id: crypto.randomUUID(),
+          text: item.text,
+          hideItem: false,
+          sortOrder: item.sortOrder,
+        })),
       };
     } catch (error) {
       console.error("Prime ProcessSteps Generation Error:", error);
@@ -1556,7 +1581,7 @@ REGRAS OBRIGATÓRIAS:
           description: deliverableDescValidation.value,
         };
       }),
-      plans: plans.map((plan, index) => {
+      plansItems: plans.map((plan, index) => {
         const planTitleValidation = validateMaxLengthWithWarning(
           plan.title,
           25,
@@ -1605,7 +1630,8 @@ REGRAS OBRIGATÓRIAS:
           hideButtonTitle: false,
           sortOrder: index,
           includedItems: plan.includedItems.map((item, itemIndex) => ({
-            item: item.item,
+            id: item.id,
+            description: item.description,
             hideItem: false,
             sortOrder: itemIndex,
           })),

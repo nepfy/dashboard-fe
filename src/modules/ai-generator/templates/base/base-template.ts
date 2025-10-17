@@ -54,7 +54,7 @@ export interface BaseProposal {
       title: string;
       description: string;
     }>;
-    plans: Array<{
+    plansItems: Array<{
       id?: string;
       hideTitleField?: boolean;
       hideDescription?: boolean;
@@ -69,7 +69,7 @@ export interface BaseProposal {
       description: string;
       value: string;
       includedItems: Array<{
-        item: string;
+        description: string;
         hideItem?: boolean;
         sortOrder?: number;
       }>;

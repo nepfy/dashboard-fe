@@ -6,11 +6,11 @@ export default function FlashTeam({
   title,
   members,
 }: TeamSection) {
-  console.log(members);
+  console.log("members", members);
   const visibleMembers = members?.filter(
-    (member) => !member.hidePhoto && member.photo
+    (member) => !member.hidePhoto && member.image
   );
-  const memberCount = visibleMembers.length;
+  const memberCount = visibleMembers?.length;
 
   const getPhotoDimensions = () => {
     // Desktop/Tablet dimensions
@@ -20,7 +20,7 @@ export default function FlashTeam({
       4: { width: 500, height: 410 },
       5: { width: 430, height: 340 },
       6: { width: 430, height: 340 },
-    }[memberCount] || { width: 430, height: 340 }; // default
+    }[memberCount ?? 0] || { width: 430, height: 340 }; // default
 
     return {
       desktop: desktopDimensions,
@@ -33,7 +33,7 @@ export default function FlashTeam({
     <div className="bg-black relative pb-10 lg:pb-70 overflow-hidden">
       {!hideSection && (
         <div className="pt-31 max-w-[1440px] mx-auto relative z-10">
-          {members?.length > 1 && (
+          {(members?.length ?? 0) > 1 && (
             <div className="px-6 lg:px-12 xl:px-40">
               <p className="text-[32px] lg:text-[72px] text-[#E6E6E6] max-w-[1050px] pb-21">
                 {title}
@@ -41,7 +41,7 @@ export default function FlashTeam({
             </div>
           )}
           <div className="px-6 lg:px-12 xl:px-8">
-            {members?.length > 1 && (
+            {(members?.length ?? 0) > 1 && (
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-white-neutral-light-100 w-3 h-3 rounded-full" />
                 <p className="text-white text-sm font-semibold">Time</p>
@@ -49,7 +49,7 @@ export default function FlashTeam({
             )}
 
             <div className="flex flex-wrap items-center justify-center sm:justify-between max-w-[1500px] mx-auto gap-3">
-              {members?.length < 2 && (
+              {(members?.length ?? 0) < 2 && (
                 <p className="text-[18px] xl:text-[72px] text-[#E6E6E6] max-w-[688px]">
                   {title}
                 </p>
@@ -58,10 +58,10 @@ export default function FlashTeam({
                 <div
                   key={member.id}
                   className={`flex flex-col items-start ${
-                    members?.length > 2 ? "mb-20" : ""
+                    (members?.length ?? 0) > 2 ? "mb-20" : ""
                   }`}
                 >
-                  {!member.hidePhoto && member?.photo && (
+                  {!member.hidePhoto && member?.image && (
                     <div
                       className="relative overflow-hidden rounded-[4px]"
                       style={{
@@ -79,13 +79,13 @@ export default function FlashTeam({
                       `}</style>
                       <div className="relative w-full h-full">
                         <Image
-                          src={member.photo || ""}
+                          src={member.image || ""}
                           alt={member.name || ""}
                           fill
                           className="object-cover"
                           style={{ aspectRatio: "auto" }}
                           quality={95}
-                          priority={member.sortOrder < 3}
+                          priority={(member?.sortOrder ?? 0) < 3}
                         />
                       </div>
                     </div>

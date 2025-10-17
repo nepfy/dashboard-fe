@@ -42,7 +42,7 @@ export default function FlashSteps({
             </div>
 
             {topics?.map((topic, index) => {
-              const isOpen = openSteps.has(topic.id);
+              const isOpen = openSteps.has(topic.id ?? "");
               const shouldShowDescription =
                 isOpen && !topic.hideStepDescription;
 
@@ -50,7 +50,7 @@ export default function FlashSteps({
                 <div
                   key={topic.id}
                   className="pt-12 cursor-pointer"
-                  onClick={() => toggleStep(topic.id)}
+                  onClick={() => toggleStep(topic?.id ?? "")}
                 >
                   <div className="flex items-baseline justify-between border-b border-[#A0A0A0]/30 last:border-b-0 w-full pb-6">
                     <span className="flex items-baseline justify-between md:justify-start gap-0 md:gap-24 w-full md:w-auto">

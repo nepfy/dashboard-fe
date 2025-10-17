@@ -5,6 +5,7 @@ import { maskCNPJ } from "./validateAndMaskCNPJ";
 import { validateCPF, maskCPF } from "./validateAndMaskCpf";
 import { formatCurrency, formatCurrencyValue } from "./formatCurrency";
 import { formatPhoneForWhatsApp } from "./formatPhoneForWhatsApp";
+import { formatDateToDDDeMonthDeYYYY } from "./formatDateAndTime";
 
 export {
   formatCep,
@@ -18,5 +19,6 @@ export {
   formatCurrency,
   formatCurrencyValue,
   formatPhoneForWhatsApp,
+  formatDateToDDDeMonthDeYYYY,
 };
 export type { PasswordStrength };

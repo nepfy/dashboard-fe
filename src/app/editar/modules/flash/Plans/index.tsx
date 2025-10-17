@@ -3,18 +3,18 @@ import StarIcon from "./StarIcon";
 import { formatCurrencyDisplayNoCents } from "#/helpers/formatCurrency";
 import { PlansSection } from "#/types/template-data";
 
-export default function FlashPlans({ hideSection, items }: PlansSection) {
+export default function FlashPlans({ hideSection, plansItems }: PlansSection) {
   return (
     <div className="bg-black relative overflow-hidden">
       {!hideSection && (
         <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-23 xl:pb-36 relative z-10">
           <div className="flex flex-wrap gap-6">
-            {items?.map((item) => (
+            {plansItems?.map((plan) => (
               <div
-                key={item.id}
+                key={plan.id}
                 className="w-full md:w-[310px] min-h-[600px] flex flex-col my-10 lg:my-0 relative"
               >
-                {item.recommended && (
+                {plan.recommended && (
                   <div
                     className="absolute top-[-44px] left-0 w-[145px] h-[37px] flex items-center justify-center rounded-[4px] gap-2"
                     style={{
@@ -31,29 +31,29 @@ export default function FlashPlans({ hideSection, items }: PlansSection) {
                 <div
                   className="rounded-[4px] p-6"
                   style={{
-                    background: item.recommended
+                    background: plan.recommended
                       ? "radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)"
                       : "#111111",
                   }}
                 >
-                  {!item.hideTitleField && (
+                  {!plan.hideTitleField && (
                     <p className="text-[#E6E6E6] text-[24px] font-bold">
-                      {item.title}
+                      {plan.title}
                     </p>
                   )}
-                  {!item.hideDescription && (
+                  {!plan.hideDescription && (
                     <p className="text-[#E6E6E6]/30 text-sm mb-4">
-                      {item.description}
+                      {plan.description}
                     </p>
                   )}
                   <div className="flex items-baseline gap-4">
-                    {!item.hidePrice && (
+                    {!plan.hidePrice && (
                       <p className="text-[#E6E6E6] text-[32px] font-medium">
-                        {formatCurrencyDisplayNoCents(item.value)}
+                        {formatCurrencyDisplayNoCents(plan.value)}
                       </p>
                     )}
-                    {!item.hidePlanPeriod && (
-                      <p className="text-[#E6E6E6]">/{item.planPeriod}</p>
+                    {!plan.hidePlanPeriod && (
+                      <p className="text-[#E6E6E6]">/{plan.planPeriod}</p>
                     )}
                   </div>
                 </div>
@@ -62,7 +62,7 @@ export default function FlashPlans({ hideSection, items }: PlansSection) {
                   <p className="text-[#E6E6E6] text-[12px] font-semibold mb-4 uppercase px-6 mt-8">
                     Incluso:
                   </p>
-                  {item.includedItems?.map((includedItem) => (
+                  {plan.includedItems?.map((includedItem) => (
                     <div
                       key={includedItem.id}
                       className="flex items-center gap-2 px-6 py-2"
@@ -79,15 +79,15 @@ export default function FlashPlans({ hideSection, items }: PlansSection) {
                   ))}
                 </div>
 
-                {!item.hideButtonTitle && (
+                {!plan.hideButtonTitle && (
                   <button
                     className={`w-full py-4 rounded-full mt-8 font-semibold ${
-                      item.recommended
+                      plan.recommended
                         ? "text-[#121212] bg-[#FBFBFB]"
                         : "text-[#FBFBFB] bg-[#121212]"
                     }`}
                   >
-                    {item.buttonTitle}
+                    {plan.buttonTitle}
                   </button>
                 )}
               </div>

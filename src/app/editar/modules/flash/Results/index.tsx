@@ -7,8 +7,6 @@ export default function FlashResults({
   title,
   items,
 }: ResultSection) {
-  console.log(items);
-
   const visibleResults = items?.filter(
     (result) => !result.hidePhoto && result.photo
   );
@@ -22,7 +20,7 @@ export default function FlashResults({
       4: { width: 500, height: 410 },
       5: { width: 430, height: 340 },
       6: { width: 430, height: 340 },
-    }[resultCount] || { width: 430, height: 340 }; // default
+    }[resultCount || 0] || { width: 430, height: 340 }; // default
 
     return {
       desktop: desktopDimensions,
@@ -75,7 +73,7 @@ export default function FlashResults({
                           className="object-cover"
                           style={{ aspectRatio: "auto" }}
                           quality={95}
-                          priority={item.sortOrder < 3}
+                          priority={(item?.sortOrder ?? 0) < 3}
                         />
                       </div>
                     </div>
@@ -94,7 +92,7 @@ export default function FlashResults({
                         Investimento
                       </p>
                       <p className="font-medium text-[#A0A0A0] text-lg">
-                        {formatCurrencyDisplay(item.investment)}
+                        {formatCurrencyDisplay(item.investment ?? 0)}
                       </p>
                     </span>
                     <span>
@@ -102,7 +100,7 @@ export default function FlashResults({
                         Retorno
                       </p>
                       <p className="font-medium text-[#C085FD] text-lg">
-                        {formatCurrencyDisplay(item.roi)}
+                        {formatCurrencyDisplay(item.roi ?? 0)}
                       </p>
                     </span>
                   </div>

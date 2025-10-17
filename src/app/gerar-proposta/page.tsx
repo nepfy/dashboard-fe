@@ -1,55 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { toast, Slide } from "react-toastify";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+import Logo from "#/components/icons/Logo";
 
 import { SelectTemplate } from "#/modules/ai-generator/components/generation-steps";
 
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
+import { useProposalGenerator } from "./ProposalGeneratorContext";
 import { ServiceType } from "#/modules/ai-generator/components/generation-steps/ServiceType";
 import { ClientInfo } from "#/modules/ai-generator/components/generation-steps/ClientInfo";
 import { CompanyInfo } from "#/modules/ai-generator/components/generation-steps/CompanyInfo";
 import { PricingStep } from "#/modules/ai-generator/components/generation-steps/PricingStep";
 import { FinalStep } from "#/modules/ai-generator/components/generation-steps/FinalStep";
 import { Loading } from "#/modules/ai-generator/components/loading/Loading";
+import CloseIcon from "#/components/icons/CloseIcon";
+import { SaveDraftButton } from "#/modules/ai-generator/components/save-draft";
 
 export default function NepfyAIPage() {
   const { templateType, formData } = useProjectGenerator();
+  const {
+    currentStep,
+    setCurrentStep,
+    selectedService,
+    setSelectedService,
+    clientName,
+    setClientName,
+    projectName,
+    setProjectName,
+    projectDescription,
+    setProjectDescription,
+    detailedClientInfo,
+    setDetailedClientInfo,
+    companyInfo,
+    setCompanyInfo,
+    selectedPlan,
+    setSelectedPlan,
+    originalPageUrl,
+    setOriginalPageUrl,
+    pagePassword,
+    setPagePassword,
+    validUntil,
+    setValidUntil,
+    userName,
+    isLoading,
+    setIsLoading,
+  } = useProposalGenerator();
+
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<string>("template_selection");
-  const [selectedService, setSelectedService] = useState<string | null>(null);
-  const [clientName, setClientName] = useState("");
-  const [projectName, setProjectName] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
-  const [detailedClientInfo, setDetailedClientInfo] = useState("");
-  const [companyInfo, setCompanyInfo] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
-  const [originalPageUrl, setOriginalPageUrl] = useState<string>("");
-  const [pagePassword, setPagePassword] = useState<string>("");
-  const [validUntil, setValidUntil] = useState<string>("");
-  const [userName, setUserName] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch("/api/user-account", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const result = await response.json();
-      if (result.success && result.data?.userName) {
-        setUserName(result?.data?.userName);
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId);
@@ -143,82 +143,119 @@ export default function NepfyAIPage() {
   }
 
   return (
-    <div className="h-full">
-      <div className="mx-auto h-full p-6">
-        {(() => {
-          const stepMap: Record<string, React.ReactNode> = {
-            template_selection: (
-              <div>
-                <SelectTemplate
-                  handleNextStep={() => setCurrentStep("service_selection")}
+    <>
+      <nav className="p-7 border-b border-b-white-neutral-light-300 bg-white-neutral-light-200 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Logo fill="#1C1A22" />
+
+          <p
+            className="hidden sm:block border border-white-neutral-light-300 rounded-2xs px-2 py-1 bg-white-neutral-light-200 text-xs sm:text-[16px]"
+            style={{
+              backgroundImage: `repeating-linear-gradient(
+                    45deg,
+                    rgba(0,0,0,0.1) 0px,
+                    rgba(0,0,0,0.1) 1px,
+                    transparent 1px,
+                    transparent 3px
+                  )`,
+            }}
+          >
+            Gerador de Proposta
+          </p>
+        </div>
+
+        <div className="flex items-center gap-1 sm:gap-2">
+          <SaveDraftButton
+            clientName={clientName}
+            projectName={projectName}
+            projectDescription={projectDescription}
+            companyInfo={companyInfo}
+          />
+          <Link
+            href="/dashboard"
+            className="h-[40px] w-[40px] sm:h-[44px] sm:w-[44px] border border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 rounded-[10px] flex items-center justify-center button-inner cursor-pointer"
+          >
+            <CloseIcon width="10" height="10" fill="#1C1A22" />
+          </Link>
+        </div>
+      </nav>
+      <div className="h-full">
+        <div className="mx-auto h-full p-6">
+          {(() => {
+            const stepMap: Record<string, React.ReactNode> = {
+              template_selection: (
+                <div>
+                  <SelectTemplate
+                    handleNextStep={() => setCurrentStep("service_selection")}
+                  />
+                </div>
+              ),
+              service_selection: (
+                <ServiceType
+                  onServiceSelect={handleServiceSelect}
+                  selectedService={selectedService}
+                  handleBack={() => setCurrentStep("template_selection")}
+                  handleNext={() => setCurrentStep("company_info")}
                 />
-              </div>
-            ),
-            service_selection: (
-              <ServiceType
-                onServiceSelect={handleServiceSelect}
-                selectedService={selectedService}
-                handleBack={() => setCurrentStep("template_selection")}
-                handleNext={() => setCurrentStep("company_info")}
-              />
-            ),
-            company_info: (
-              <CompanyInfo
-                companyInfo={companyInfo}
-                setCompanyInfo={setCompanyInfo}
-                handleBack={() => setCurrentStep("service_selection")}
-                handleNext={() => setCurrentStep("client_details")}
-              />
-            ),
-            client_details: (
-              <ClientInfo
-                clientData={{
-                  clientName,
-                  projectName,
-                  detailedClientInfo,
-                  projectDescription,
-                }}
-                setClientData={({
-                  clientName,
-                  projectName,
-                  projectDescription,
-                  detailedClientInfo,
-                }) => {
-                  setClientName(clientName);
-                  setProjectName(projectName);
-                  setProjectDescription(projectDescription);
-                  setDetailedClientInfo(detailedClientInfo || "");
-                }}
-                handleBack={() => setCurrentStep("company_info")}
-                handleNext={() => setCurrentStep("pricing_step")}
-              />
-            ),
-            pricing_step: (
-              <PricingStep
-                selectedPlan={selectedPlan || 1}
-                handlePlanSelect={setSelectedPlan}
-                handleBack={() => setCurrentStep("client_details")}
-                handleNext={() => setCurrentStep("final_step")}
-              />
-            ),
-            final_step: (
-              <FinalStep
-                handleGenerateProposal={handleGenerateProposal}
-                handleBack={() => setCurrentStep("pricing_step")}
-                userName={userName}
-                step={currentStep}
-                originalPageUrl={originalPageUrl}
-                setOriginalPageUrl={setOriginalPageUrl}
-                pagePassword={pagePassword}
-                setPagePassword={setPagePassword}
-                validUntil={validUntil}
-                setValidUntil={setValidUntil}
-              />
-            ),
-          };
-          return stepMap[currentStep] || null;
-        })()}
+              ),
+              company_info: (
+                <CompanyInfo
+                  companyInfo={companyInfo}
+                  setCompanyInfo={setCompanyInfo}
+                  handleBack={() => setCurrentStep("service_selection")}
+                  handleNext={() => setCurrentStep("client_details")}
+                />
+              ),
+              client_details: (
+                <ClientInfo
+                  clientData={{
+                    clientName,
+                    projectName,
+                    detailedClientInfo,
+                    projectDescription,
+                  }}
+                  setClientData={({
+                    clientName,
+                    projectName,
+                    projectDescription,
+                    detailedClientInfo,
+                  }) => {
+                    setClientName(clientName);
+                    setProjectName(projectName);
+                    setProjectDescription(projectDescription);
+                    setDetailedClientInfo(detailedClientInfo || "");
+                  }}
+                  handleBack={() => setCurrentStep("company_info")}
+                  handleNext={() => setCurrentStep("pricing_step")}
+                />
+              ),
+              pricing_step: (
+                <PricingStep
+                  selectedPlan={selectedPlan || 1}
+                  handlePlanSelect={setSelectedPlan}
+                  handleBack={() => setCurrentStep("client_details")}
+                  handleNext={() => setCurrentStep("final_step")}
+                />
+              ),
+              final_step: (
+                <FinalStep
+                  handleGenerateProposal={handleGenerateProposal}
+                  handleBack={() => setCurrentStep("pricing_step")}
+                  userName={userName}
+                  step={currentStep}
+                  originalPageUrl={originalPageUrl}
+                  setOriginalPageUrl={setOriginalPageUrl}
+                  pagePassword={pagePassword}
+                  setPagePassword={setPagePassword}
+                  validUntil={validUntil}
+                  setValidUntil={setValidUntil}
+                />
+              ),
+            };
+            return stepMap[currentStep] || null;
+          })()}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
