@@ -613,7 +613,7 @@ Retorne APENAS:
       ],
       "plansItems": [
         {
-          "id": "uuid-1",
+          "id": "uuid-7",
           "title": "Plano Essencial",
           "description": "Impulsione resultados com soluções digitais que ampliam performance e conversão",
           "value": 4000,
@@ -624,7 +624,7 @@ Retorne APENAS:
           "hideButtonTitle": false,
           "buttonTitle": "Assinar",
           "planPeriod": "Mensal",
-          "recommended": false,
+          "recommended": boolean,
           "sortOrder": 0,
           "includedItems": [
             {
@@ -648,7 +648,7 @@ Retorne APENAS:
           ]
         },
         {
-          "id": "uuid-2",
+          "id": "uuid-7",
           "title": "Plano Executivo", 
           "description": "Acelere crescimento com integrações avançadas e automações inteligentes",
           "value": "7200",
@@ -659,7 +659,7 @@ Retorne APENAS:
           "hideButtonTitle": false,
           "buttonTitle": "Assinar",
           "planPeriod": "Anual",
-          "recommended": true,
+          "recommended": boolean,
           "sortOrder": 1,
           "includedItems": [
             {
@@ -683,7 +683,7 @@ Retorne APENAS:
           ]
         },
         {
-          "id": "uuid-3",
+          "id": "uuid-7",
           "title": "Plano Premium",
           "description": "Transforme seu negócio com soluções digitais avançadas e personalizadas",
           "value": 8000,
@@ -694,7 +694,7 @@ Retorne APENAS:
           "hideButtonTitle": false,
           "buttonTitle": "Assinar",
           "planPeriod": "Único",
-          "recommended": false,
+          "recommended": boolean,
           "sortOrder": 0,
           "includedItems": [
             {
