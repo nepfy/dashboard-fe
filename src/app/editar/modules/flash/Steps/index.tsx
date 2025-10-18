@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Marquee from "react-fast-marquee";
 import PlusIcon from "#/components/icons/PlusIcon";
 import { StepsSection } from "#/types/template-data";
@@ -10,22 +9,6 @@ export default function FlashSteps({
   topics,
   marquee,
 }: StepsSection) {
-  const [openSteps, setOpenSteps] = useState<Set<string>>(new Set());
-
-  console.log(marquee);
-
-  const toggleStep = (stepId: string) => {
-    setOpenSteps((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(stepId)) {
-        newSet.delete(stepId);
-      } else {
-        newSet.add(stepId);
-      }
-      return newSet;
-    });
-  };
-
   return (
     <div className="bg-[#4F21A1]">
       {!hideSection && (
@@ -42,16 +25,8 @@ export default function FlashSteps({
             </div>
 
             {topics?.map((topic, index) => {
-              const isOpen = openSteps.has(topic.id ?? "");
-              const shouldShowDescription =
-                isOpen && !topic.hideStepDescription;
-
               return (
-                <div
-                  key={topic.id}
-                  className="pt-12 cursor-pointer"
-                  onClick={() => toggleStep(topic?.id ?? "")}
-                >
+                <div key={topic.id} className="pt-12 cursor-pointer">
                   <div className="flex items-baseline justify-between border-b border-[#A0A0A0]/30 last:border-b-0 w-full pb-6">
                     <span className="flex items-baseline justify-between md:justify-start gap-0 md:gap-24 w-full md:w-auto">
                       <p className="text-[15px] text-[#C085FD]">
@@ -59,9 +34,7 @@ export default function FlashSteps({
                       </p>
                       {!topic.hideStepName && (
                         <p
-                          className={`text-[24px] lg:text-[36px] transition-colors duration-300 ${
-                            isOpen ? "text-[#E6E6E6]" : "text-[#E6E6E6]/30"
-                          }`}
+                          className={`text-[24px] lg:text-[36px] transition-colors duration-300 text-[#E6E6E6]`}
                         >
                           {topic.title}
                         </p>
@@ -69,35 +42,23 @@ export default function FlashSteps({
                     </span>
 
                     <button
-                      className={`hidden md:block text-[14px] uppercase transition-colors duration-300 ${
-                        isOpen ? "text-[#E6E6E6]" : "text-[#E6E6E6]/30"
-                      }`}
+                      className={`hidden md:block text-[14px] uppercase transition-colors duration-300 text-[#E6E6E6]`}
                     >
                       <span className="flex items-center gap-1">
                         Mais Info
-                        <span
-                          className={`transition-opacity duration-300 ${
-                            isOpen ? "opacity-100" : "opacity-0"
-                          }`}
-                        >
-                          {isOpen && (
-                            <PlusIcon
-                              width="12"
-                              height="12"
-                              fill="rgba(230, 230, 230, 1)"
-                            />
-                          )}
+                        <span className={`transition-opacity duration-300`}>
+                          <PlusIcon
+                            width="12"
+                            height="12"
+                            fill="rgba(230, 230, 230, 1)"
+                          />
                         </span>
                       </span>
                     </button>
                   </div>
 
                   <div
-                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                      shouldShowDescription
-                        ? "max-h-96 opacity-100"
-                        : "max-h-0 opacity-0"
-                    }`}
+                    className={`overflow-hidden transition-all duration-500 ease-in-out "max-h-96 opacity-100`}
                   >
                     <p className="text-[16px] text-[#E6E6E6] pl-15 md:pl-30 pt-6 pb-0 md:pb-10">
                       {topic.description}
@@ -105,24 +66,16 @@ export default function FlashSteps({
                   </div>
 
                   <button
-                    className={`flex justify-end md:hidden text-[14px] uppercase my-10 w-full transition-colors duration-300 ${
-                      isOpen ? "text-[#E6E6E6]" : "text-[#E6E6E6]/30"
-                    }`}
+                    className={`flex justify-end md:hidden text-[14px] uppercase my-10 w-full transition-colors duration-300 ext-[#E6E6E6]`}
                   >
                     <span className="flex items-center gap-1">
                       Mais Info
-                      <span
-                        className={`transition-opacity duration-300 ${
-                          isOpen ? "opacity-100" : "opacity-0"
-                        }`}
-                      >
-                        {isOpen && (
-                          <PlusIcon
-                            width="12"
-                            height="12"
-                            fill="rgba(230, 230, 230, 1)"
-                          />
-                        )}
+                      <span className={`transition-opacity duration-300`}>
+                        <PlusIcon
+                          width="12"
+                          height="12"
+                          fill="rgba(230, 230, 230, 1)"
+                        />
                       </span>
                     </span>
                   </button>

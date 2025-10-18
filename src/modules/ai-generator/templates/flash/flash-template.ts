@@ -128,6 +128,20 @@ export interface FlashProposal extends BaseProposal {
     }>;
   };
 
+  // Testimonials Section
+  testimonials: {
+    title: string; // exactly 85 chars, AI-generated
+    items: Array<{
+      id: string;
+      name: string;
+      role: string;
+      testimonial: string;
+      photo: string | null;
+      hidePhoto: boolean;
+      sortOrder: number;
+    }>;
+  };
+
   // Terms and Conditions (optional)
   terms?: Array<{
     title: string; // 30 chars

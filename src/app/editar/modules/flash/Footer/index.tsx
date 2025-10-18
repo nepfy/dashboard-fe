@@ -1,4 +1,5 @@
 import { FooterSection } from "#/types/template-data";
+import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 
 export default function FlashFooter({
   hideSection,
@@ -17,12 +18,14 @@ export default function FlashFooter({
               <p className="text-[32px] lg:text-[88px] text-[#E6E6E6] font-normal">
                 {callToAction}
               </p>
-              <p className="font-bold text-sm text-[#E6E6E6] pb-10 pt-6 lg:pt-0">
-                Proposta válida até -{" "}
-                <span className="font-normal text-[#E6E6E6]/40">
-                  {validity?.toString()}
-                </span>
-              </p>
+              {validity && (
+                <p className="font-bold text-sm text-[#E6E6E6] pb-10 pt-6 lg:pt-0">
+                  Proposta válida até -{" "}
+                  <span className="font-normal text-[#E6E6E6]/40">
+                    {formatDateToDDDeMonthDeYYYY(validity.toString())}
+                  </span>
+                </p>
+              )}
               <button className="rounded-full bg-[#FBFBFB] w-full lg:w-[326px] py-4 text-[#121212] font-semibold text-sm">
                 {buttonTitle || "Iniciar Projeto"}
               </button>
