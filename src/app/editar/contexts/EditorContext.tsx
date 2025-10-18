@@ -5,6 +5,7 @@ import React, {
   useContext,
   useState,
   useCallback,
+  useEffect,
   ReactNode,
 } from "react";
 import {
@@ -77,6 +78,24 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Browser-level unsaved changes warning
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue =
+          "Você tem alterações não salvas. Tem certeza que deseja sair?";
+        return "Você tem alterações não salvas. Tem certeza que deseja sair?";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   const setProjectData = useCallback((data: TemplateData) => {
     setProjectDataState(data);
