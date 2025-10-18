@@ -15,6 +15,13 @@
       "when": 1760661177289,
       "tag": "0001_cool_ultragirl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760800059971,
+      "tag": "0002_equal_sumo",
+      "breakpoints": true
     }
   ]
 }

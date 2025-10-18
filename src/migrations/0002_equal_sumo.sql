@@ -1,0 +1,1 @@
+ALTER TABLE "person_user" ADD COLUMN "company_info" varchar;

@@ -60,7 +60,7 @@ function convertFlashToProposalData(
       hideTitle: false,
       members:
         proposal.team.members?.map((member, index) => ({
-          id: crypto.randomUUID(),
+          id: member.id,
           name: member.name,
           role: member.role,
           image: member.image,
@@ -74,8 +74,8 @@ function convertFlashToProposalData(
       hideTitle: false,
       topics:
         proposal.specialties.topics?.map((topic, index) => ({
-          id: crypto.randomUUID(),
-          icon: "DiamondIcon",
+          id: topic.id,
+          icon: topic.icon,
           title: topic.title,
           description: topic.description,
           hideTopic: false,
@@ -90,14 +90,14 @@ function convertFlashToProposalData(
       hideIntroduction: false,
       topics:
         proposal.steps.topics?.map((topic, index) => ({
-          id: crypto.randomUUID(),
+          id: topic.id,
           title: topic.title,
           description: topic.description,
           hideTopic: false,
           sortOrder: index,
         })) || [],
       marquee: proposal.steps.marquee?.map((item) => ({
-        id: crypto.randomUUID(),
+        id: item.id,
         text: item.text,
         hideItem: false,
         sortOrder: item.sortOrder,

@@ -26,49 +26,50 @@ const templates: TemplateModel[] = [
     ],
     preview: "flash",
   },
-  {
-    id: "prime",
-    title: "Prime",
-    description: "Design sofisticado, perfeito para ambientes corporativos.",
-    colorsList: [
-      "#010101",
-      "#E9E9E9",
-      "#F0E5E0",
-      "#223630",
-      "#621D1E",
-      "#08306C",
-    ],
-    preview: "prime",
-  },
-  {
-    id: "minimal",
-    title: "Minimal",
-    description: "Design minimalista e elegante, focado no essencial.",
-    colorsList: [
-      "#000000",
-      "#FFFFFF",
-      "#F5F5F5",
-      "#333333",
-      "#666666",
-      "#999999",
-    ],
-    preview: "minimal",
-  },
-  {
-    id: "grid",
-    title: "Grid",
-    description:
-      "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
-    colorsList: [
-      "#2C2C2C",
-      "#146EF4",
-      "#78838E",
-      "#294D41",
-      "#5E4D35",
-      "#7C4257",
-    ],
-    preview: "grid",
-  },
+  // {
+  //   id: "prime",
+  //   title: "Prime",
+  //   description: "Design sofisticado, perfeito para ambientes corporativos.",
+  //   colorsList: [
+  //     "#010101",
+  //     "#E9E9E9",
+  //     "#F0E5E0",
+  //     "#223630",
+  //     "#621D1E",
+  //     "#08306C",
+  //   ],
+  //   preview: "prime",
+  // },
+  // {
+  //   id: "minimal",
+  //   title: "Minimal",
+  //   description:
+  //     "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
+  //   colorsList: [
+  //     "#000000",
+  //     "#FFFFFF",
+  //     "#F5F5F5",
+  //     "#333333",
+  //     "#666666",
+  //     "#999999",
+  //   ],
+  //   preview: "minimal",
+  // },
+  // {
+  //   id: "grid",
+  //   title: "Grid",
+  //   description:
+  //     "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
+  //   colorsList: [
+  //     "#2C2C2C",
+  //     "#146EF4",
+  //     "#78838E",
+  //     "#294D41",
+  //     "#5E4D35",
+  //     "#7C4257",
+  //   ],
+  //   preview: "grid",
+  // },
 ];
 
 export function SelectTemplate({

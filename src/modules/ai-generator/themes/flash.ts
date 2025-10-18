@@ -308,69 +308,74 @@ Retorne APENAS:
 
     const userPrompt = `Gere APENAS um JSON válido para especialidades.
 
-PROJETO: ${normalizedProjectName} - ${data.projectDescription}
+    PROJETO: ${normalizedProjectName} - ${data.projectDescription}
 
-COPIE EXATAMENTE ESTE FORMATO:
+    COPIE EXATAMENTE ESTE FORMATO:
 
-{
-  "title": "Aplicamos estratégias que unem tecnologia, análise e execução, garantindo performance digital e resultados reais.",
-  "topics": [
     {
-      "id": ${crypto.randomUUID()},
-      "icon": "DiamondIcon",
-      "title": "Desenvolvimento web responsivo",
-      "description": "Sites otimizados que convertem visitantes em clientes com performance superior."
-    },
-    {
-      "id": ${crypto.randomUUID()},
-      "icon": "DiamondIcon",
-      "title": "Sistemas de agendamento",
-      "description": "Plataformas personalizadas que automatizam e organizam seus agendamentos."
-    },
-    {
-      "id": ${crypto.randomUUID()},
-      "icon": "DiamondIcon",
-      "title": "Integrações avançadas",
-      "description": "Conectamos ferramentas para criar fluxos de trabalho mais eficientes."
-    },
-    { 
-      "id": ${crypto.randomUUID()},
-      "icon": "DiamondIcon",
-      "title": "Otimização de performance",
-      "description": "Aceleramos carregamento e melhoramos experiência do usuário."
-    },
-    {
-      "id": ${crypto.randomUUID()},
-      "icon": "DiamondIcon",
-      "title": "Segurança e proteção",
-      "description": "Implementamos medidas robustas para proteger dados e operações."
-    },
-    {
-      "id": ${crypto.randomUUID()},
-      "icon": "DiamondIcon",
-      "title": "Suporte técnico especializado",
-      "description": "Equipe dedicada para garantir funcionamento perfeito e contínuo."
+      "title": "Aplicamos estratégias que unem tecnologia, análise e execução, garantindo performance digital e resultados reais.",
+      "topics": [
+        {
+          "id": "uuid-7",
+          "icon": "DiamondIcon",
+          "title": "Desenvolvimento web responsivo",
+          "description": "Sites otimizados que convertem visitantes em clientes com performance superior."
+        },
+        {
+          "id": "uuid-7",
+          "icon": "DiamondIcon",
+          "title": "Sistemas de agendamento",
+          "description": "Plataformas personalizadas que automatizam e organizam seus agendamentos."
+        },
+        {
+          "id": "uuid-7",
+          "icon": "DiamondIcon",
+          "title": "Integrações avançadas",
+          "description": "Conectamos ferramentas para criar fluxos de trabalho mais eficientes."
+        },
+        { 
+          "id": "uuid-7",
+          "icon": "DiamondIcon",
+          "title": "Otimização de performance",
+          "description": "Aceleramos carregamento e melhoramos experiência do usuário."
+        },
+        {
+          "id": "uuid-7",
+          "icon": "DiamondIcon",
+          "title": "Segurança e proteção",
+          "description": "Implementamos medidas robustas para proteger dados e operações."
+        },
+        {
+          "id": "uuid-7",
+          "icon": "DiamondIcon",
+          "title": "Suporte técnico especializado",
+          "description": "Equipe dedicada para garantir funcionamento perfeito e contínuo."
+        }
+      ]
     }
-  ]
-}
 
-REGRAS OBRIGATÓRIAS:
-- EXATAMENTE 6 tópicos
-- Cada tópico deve ter title e description
-- Use linguagem profissional e focada em resultados
-- Responda APENAS com o JSON válido.`;
+    REGRAS OBRIGATÓRIAS:
+    - EXATAMENTE 6 tópicos
+    - Cada tópico deve ter id, icon, title e description
+    - O campo id deve ser uma string
+    - O campo id deve ser um UUID válido
+    - O campo icon deve ser uma string e deve ser um dos seguintes valores: DiamondIcon, CircleIcon, BubblesIcon, ClockIcon, HexagonalIcon, SwitchIcon, ThunderIcon, GlobeIcon, BellIcon ou GearIcon. Escolha um valor aleatório para cada tópico
+    - O campo title deve ser uma string
+    - O campo description deve ser uma string
+    - Use linguagem profissional e focada em resultados
+    - Responda APENAS com o JSON válido.`;
 
     const expectedFormat = `{
-  "title": "string (max 140 characters)",
-  "topics": [
-    {
-      "id": "string",
-      "icon": "string",
-      "title": "string (max 50 characters)",
-      "description": "string (max 100 characters)"
-    }
-  ]
-}`;
+      "title": "string (max 140 characters)",
+      "topics": [
+        {
+          "id": "string",
+          "icon": "DiamondIcon | CircleIcon | BubblesIcon | ClockIcon | HexagonalIcon | SwitchIcon | ThunderIcon | GlobeIcon | BellIcon | GearIcon",
+          "title": "string (max 50 characters)",
+          "description": "string (max 100 characters)"
+        }
+      ]
+    }`;
 
     try {
       const moaResult =
@@ -430,46 +435,46 @@ REGRAS OBRIGATÓRIAS:
       "introduction": "Desenvolvemos soluções inovadoras com foco em resultados e impacto contínuo.",
       "topics": [
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "title": "Análise e planejamento estratégico",
           "description": "Identificamos as necessidades da sua marca para criar uma estratégia personalizada que maximize resultados e garanta o sucesso do seu projeto digital."
         },
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "title": "Elaboração de layout e design",
           "description": "Criamos layouts atraentes e funcionais que refletem a imagem da sua marca e apresentam seu negócio de forma clara e profissional."
         },
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "title": "Desenvolvimento da funcionalidade",
           "description": "Implementamos todas as funcionalidades necessárias para que seu site funcione perfeitamente e atenda às suas necessidades específicas."
         },
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "title": "Testes e otimização da experiência",
           "description": "Realizamos testes rigorosos para garantir que o site seja fácil de navegar, intuitivo e performe bem em todos os dispositivos."
         },
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "title": "Deploy finalizado e entrega completa",
           "description": "Implementamos seu projeto com segurança, configuramos os sistemas necessários para funcionar de forma integrada e eficiente."
         }
       ],
       "marquee": [
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "text": "Nosso processo",
           "hideItem": false,
           "sortOrder": 0
         },
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "text": "Estratégia",
           "hideItem": false,
           "sortOrder": 1
         },
         {
-          "id": ${crypto.randomUUID()},
+          "id": "uuid-7",
           "text": "Design",
           "hideItem": false,
           "sortOrder": 2
@@ -479,6 +484,12 @@ REGRAS OBRIGATÓRIAS:
 
     REGRAS OBRIGATÓRIAS:
     - EXATAMENTE 5 etapas
+    - O campo id deve ser uma string
+    - O campo id deve ser um UUID válido
+    - O campo Text deve ser o nome da etapa
+    - O campo hideItem deve ser um booleano
+    - O campo sortOrder deve ser um número
+    - O campo sortOrder deve ser um número
     - Cada etapa deve ter title e description
     - Use linguagem profissional e focada em processo
     - Responda APENAS com o JSON válido.`;
@@ -491,6 +502,14 @@ REGRAS OBRIGATÓRIAS:
           id: "string",
           "title": "string (max 40 characters)",
           "description": "string (max 240 characters)"
+        }
+      ],
+      "marquee": [
+        {
+          "id": "uuid-7",
+          "text": "string",
+          "hideItem": false,
+          "sortOrder": number
         }
       ]
     }`;
@@ -572,12 +591,11 @@ REGRAS OBRIGATÓRIAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashInvestmentSection> {
+    console.log("data.selectedPlans", data.selectedPlans);
     const userPrompt = `Gere APENAS um JSON válido para investimento.
 
     PROJETO: ${data.projectName} - ${data.projectDescription}
-    PLANOS: ${
-      data.selectedPlans?.join(", ") || "Plano Essencial, Plano Executivo"
-    }
+    PLANOS: ${data.selectedPlans}
 
     COPIE EXATAMENTE ESTE FORMATO:
 
@@ -641,7 +659,7 @@ REGRAS OBRIGATÓRIAS:
           "hideButtonTitle": false,
           "buttonTitle": "Assinar",
           "planPeriod": "Anual",
-          "recommended": false,
+          "recommended": true,
           "sortOrder": 1,
           "includedItems": [
             {
@@ -703,16 +721,23 @@ REGRAS OBRIGATÓRIAS:
     }
 
     REGRAS CRÍTICAS:
-    - EXATAMENTE 3 planos
-    - Cada plano deve ter title, description, value, includedItems
+    - Crie os planos baseados na quantidade de planos selecionados: ${data.selectedPlans}
     - includedItems: 3 a 6 itens por plano
-    - Use valores realistas em reais
+    - Use valores realistas
+    - Caso tenha 1 plano, o primeiro plano deve ter o campo planPeriod como "Mensal"
+    - Caso tenha 2 planos, o segundo plano deve ter o campo planPeriod como "Anual"
+    - Caso tenha 3 planos, o terceiro plano deve ter o campo planPeriod como "Único"
     - O campo value deve ser um número
     - O campo includedItems deve ser um array de objetos com id, description, hideItem e sortOrder
     - O campo hideItem deve ser um booleano
     - O campo sortOrder deve ser um número
     - O campo id deve ser uma string
     - O campo description deve ser uma string
+    - O campo description do plansItems deve ter no máximo 180 caracteres e também ser variado para cada plano
+    - O campo description do includedItems deve ter no máximo 45 caracteres
+    - O campo buttonTitle deve ser "Assinar" ou "Contratar" (sem aspas)
+    - O plano com o campo planPeriod como "Anual" deve marcar o campo recommended como true
+    - O campo title dos planos devem ser variados para cada plano
     - Retorne APENAS o JSON válido
     - NÃO inclua texto explicativo antes ou depois
     - Use APENAS aspas duplas (") para strings
@@ -726,6 +751,7 @@ REGRAS OBRIGATÓRIAS:
     - Use as informações específicas do projeto: ${data.projectDescription}
     - Personalize para o cliente: ${data.clientName}
     - NÃO mencione "metodologia FLASH" ou termos genéricos
+    
     - Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     const expectedFormat = `{
@@ -839,8 +865,8 @@ REGRAS OBRIGATÓRIAS:
         "id": "uuid-1",
         "client": "Cliente 1",
         "instagram": "cliente1",
-        "investment": "1500",
-        "roi": "2500",
+        "investment": 1500,
+        "roi": 2500,
         "photo": "/images/templates/flash/placeholder3.png",
         "hidePhoto": false,
         "sortOrder": 0
@@ -849,8 +875,8 @@ REGRAS OBRIGATÓRIAS:
         "id": "uuid-2",
         "client": "Cliente 2",
         "instagram": "cliente2",
-        "investment": "2000",
-        "roi": "3000",
+        "investment": 2000,
+        "roi": 3000,
         "photo": "/images/templates/flash/placeholder4.png",
         "hidePhoto": false,
         "sortOrder": 1
@@ -859,8 +885,8 @@ REGRAS OBRIGATÓRIAS:
         "id": "uuid-3",
         "client": "Cliente 3",
         "instagram": "cliente3",
-        "investment": "2500",
-        "roi": "4000",
+        "investment": 2500,
+        "roi": 4000,
         "photo": "/images/templates/flash/placeholder5.png",
         "hidePhoto": false,
         "sortOrder": 2
@@ -871,25 +897,31 @@ REGRAS OBRIGATÓRIAS:
   REGRAS OBRIGATÓRIAS:
   - title: Título da seção de resultados
   - items: Array de objetos com id, client, instagram, investment, roi, photo, hidePhoto e sortOrder
+  - EXATAMENTE 3 itens
+  - O campo client deve ser um nome fictício
+  - O campo instagram deve ser igual ao campo client
+  - Os campos investment e roi devem ser número
+  - Os campos investment e roi devem ser valores que façam sentido para o projeto, sem exageros ou valores muito altos ou baixos.
   - Use linguagem clara e profissional
-  - O campo photo deve usar essa URL: /images/templates/flash/placeholder3.png
+  - O campo photo deve usar essa URL: /images/templates/flash/placeholder.png
+  - O nome placeholder na URL: /images/templates/flash/placeholder.png pode variar entre placeholder, placeholder2, placeholder3, placeholder4, placeholder5.
   - Responda APENAS com o JSON válido.`;
 
     const expectedFormat = `{
-  "title": "string",
-  "items": [
-    {
-      "id": "string",
-      "client": "string",
-      "instagram": "string",
-      "investment": "string",
-      "roi": "string",
-      "photo": "string",
-      "hidePhoto": boolean,
-      "sortOrder": number
-    }
-  ]
-}`;
+      "title": "string",
+      "items": [
+        {
+          "id": "string",
+          "client": "string",
+          "instagram": "string",
+          "investment": "string",
+          "roi": "string",
+          "photo": "string",
+          "hidePhoto": boolean,
+          "sortOrder": number
+        }
+      ]
+    }`;
 
     try {
       const moaResult =
@@ -975,14 +1007,16 @@ REGRAS OBRIGATÓRIAS:
     - Retorne APENAS o JSON válido
     - NÃO inclua texto explicativo antes ou depois
     - NÃO use "Aqui está" ou qualquer texto introdutório
+    - O testimonial deve ser um texto falando do ${data.userName} como se ele fosse a empresa que desenvolveu um projeto similar ao projeto ${data.projectName}.
     - Use APENAS aspas duplas (") para strings
     - NÃO use vírgulas no final de arrays ou objetos
     - Nomes de propriedades exatamente como especificado
-    - O campo photo deve usar essa URL: /images/templates/flash/placeholder.png
+    - O campo photo deve usar essa URL: /images/templates/flash/placeholder.png 
+    - O nome placeholder na URL: /images/templates/flash/placeholder.png pode variar entre placeholder, placeholder2, placeholder3, placeholder4, placeholder5.
     - O JSON deve começar com { e terminar com }
 
     IMPORTANTE: 
-    - Use as informações específicas do projeto: ${data.projectDescription}
+    - Use as informações do projeto: ${data.projectDescription} para criar o testimonial falando sobre um projeto similar
     - Personalize para o cliente: ${data.clientName}
     - NÃO mencione "metodologia FLASH" ou termos genéricos
     - Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;

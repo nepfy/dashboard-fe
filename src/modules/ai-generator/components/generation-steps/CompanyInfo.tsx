@@ -9,7 +9,7 @@ export function CompanyInfo({
   handleNext,
   handleBack,
   setCompanyInfo,
-  companyInfo,
+  companyInfo = "",
 }: {
   handleNext: () => void;
   handleBack: () => void;
@@ -19,8 +19,42 @@ export function CompanyInfo({
   const [aboutCompany, setAboutCompany] = useState(companyInfo);
   const [saveDescriptionAsModel, setSaveDescriptionAsModel] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  console.log(saveDescriptionAsModel);
+  const saveCompanyInfoToDatabase = async (companyInfoText: string) => {
+    try {
+      setIsSaving(true);
+      const response = await fetch("/api/user-account", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          companyInfo: companyInfoText,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        console.error("Error saving company info:", result.error);
+      }
+    } catch (error) {
+      console.error("Error saving company info:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleNextClick = async () => {
+    setCompanyInfo(aboutCompany);
+
+    if (saveDescriptionAsModel && aboutCompany.trim()) {
+      await saveCompanyInfoToDatabase(aboutCompany);
+    }
+
+    handleNext();
+  };
 
   return (
     <section className="flex flex-col min-h-[calc(100vh-140px)] bg-white-neutral-light-200 justify-center items-start gap-10 font-satoshi">
@@ -28,12 +62,8 @@ export function CompanyInfo({
         title="Sobre você ou sua empresa"
         description="Desde a área de atuação até o que te diferencia no mercado."
         handleBack={handleBack}
-        handleNext={() => {
-          setCompanyInfo(aboutCompany);
-
-          handleNext();
-        }}
-        disabled={!aboutCompany}
+        handleNext={handleNextClick}
+        disabled={!aboutCompany || isSaving}
         info
         onInfoClick={() => setIsModalOpen(true)}
       >

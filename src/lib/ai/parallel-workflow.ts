@@ -31,7 +31,7 @@ export interface ProposalWorkflowData {
   clientName: string;
   projectName: string;
   projectDescription: string;
-  selectedPlans: string[];
+  selectedPlans: number;
   planDetails: string;
   includeTerms: boolean;
   includeFAQ: boolean;
@@ -255,7 +255,7 @@ export class ProposalWorkflow {
 - Projeto: ${data.projectName}
 - Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
-- Planos: ${data.selectedPlans.join(", ")}
+- Planos: ${data.selectedPlans}
 
 TAREFA: Crie uma proposta comercial profissional e persuasiva que inclua:
 
@@ -294,7 +294,7 @@ Formato: Markdown com títulos, listas e formatação profissional.`;
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Planos: ${data.selectedPlans.join(", ")}
+- Planos: ${data.selectedPlans}
 - Detalhes: ${data.planDetails}
 - Modelo de Precificação: ${agent.pricingModel}
 
@@ -332,7 +332,7 @@ Formato: Markdown com seções claras e valores em destaque.`;
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Planos: ${data.selectedPlans.join(", ")}
+- Planos: ${data.selectedPlans}
 - Complexidade: Baseada na descrição do projeto
 
 TAREFA: Crie um cronograma de execução realista que inclua:
@@ -523,7 +523,7 @@ Formato: Markdown com perguntas em negrito e respostas claras.`;
 - Projeto: ${data.projectName}
 - Descrição: ${data.projectDescription}
 - Empresa: ${data.companyInfo}
-- Planos: ${data.selectedPlans.join(", ")}
+- Planos: ${data.selectedPlans}
 
 TAREFA: Crie uma proposta comercial profissional e persuasiva que inclua:
 
@@ -562,7 +562,7 @@ Formato: Markdown com títulos, listas e formatação profissional.`;
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Planos: ${data.selectedPlans.join(", ")}
+- Planos: ${data.selectedPlans}
 - Detalhes: ${data.planDetails}
 - Modelo de Precificação: ${agent.pricingModel}
 
@@ -600,7 +600,7 @@ Formato: Markdown com seções claras e valores em destaque.`;
     const userPrompt = `DADOS DO PROJETO:
 - Cliente: ${data.clientName}
 - Projeto: ${data.projectName}
-- Planos: ${data.selectedPlans.join(", ")}
+- Planos: ${data.selectedPlans}
 - Complexidade: Baseada na descrição do projeto
 
 TAREFA: Crie um cronograma de execução realista que inclua:

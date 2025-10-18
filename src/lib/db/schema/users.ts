@@ -20,6 +20,7 @@ export const personUserTable = pgTable("person_user", {
   userJobType: integer("user_job_type"),
   userDiscovery: integer("user_discovery"),
   userUsedBefore: integer("user_used_before"),
+  companyInfo: varchar("company_info"),
 });
 
 export const companyUserTable = pgTable("company_user", {

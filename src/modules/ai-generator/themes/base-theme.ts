@@ -7,7 +7,7 @@ export interface BaseThemeData {
   projectName: string;
   projectDescription: string;
   clientDescription?: string;
-  selectedPlans: string[];
+  selectedPlans: number;
   planDetails: string;
   includeTerms: boolean;
   includeFAQ: boolean;
@@ -161,7 +161,7 @@ export function getThemeDefaults(): Partial<BaseThemeData> {
     clientName: "",
     projectName: "",
     projectDescription: "",
-    selectedPlans: [],
+    selectedPlans: 1,
     planDetails: "",
     includeTerms: false,
     includeFAQ: false,

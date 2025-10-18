@@ -32,7 +32,7 @@ export interface NepfyAIRequestData {
   clientDescription?: string;
   companyInfo?: string;
   selectedPlan?: number;
-  selectedPlans?: string[];
+  selectedPlans?: number;
   planDetails?: string;
   includeTerms?: boolean;
   includeFAQ?: boolean;
@@ -125,7 +125,10 @@ async function createOrUpdateProjectFromAIResult(
 
   if (existingDrafts.length > 0) {
     // Update existing draft
-    console.log("Debug - Found existing draft, updating:", existingDrafts[0].id);
+    console.log(
+      "Debug - Found existing draft, updating:",
+      existingDrafts[0].id
+    );
     const [updatedProject] = await db
       .update(projectsTable)
       .set({
@@ -205,8 +208,7 @@ export async function POST(request: NextRequest) {
       clientDescription,
       companyInfo,
       selectedPlan,
-      selectedPlans,
-      planDetails,
+      planDetails = "",
       includeTerms = true,
       includeFAQ = true,
       templateType = "flash",
@@ -297,17 +299,7 @@ export async function POST(request: NextRequest) {
     // Default values
     const defaultCompanyInfo =
       companyInfo || "Empresa especializada em soluções premium";
-    const defaultPlans = selectedPlans ?? [
-      "Plano Essencial",
-      "Plano Executivo",
-    ];
-
-    // Generate default plan details if not provided
-    function generateDefaultPlanDetails(serviceId: string, plans: string[]) {
-      return plans
-        .map((plan) => `${plan}: Soluções personalizadas com qualidade premium`)
-        .join("\n");
-    }
+    const defaultPlans = selectedPlan || 1;
 
     let aiResult: AIResult;
     let generationType: string;
@@ -324,10 +316,8 @@ export async function POST(request: NextRequest) {
         projectName,
         projectDescription,
         clientDescription,
-        selectedPlans: defaultPlans,
-        planDetails:
-          planDetails ||
-          generateDefaultPlanDetails(agentServiceId, defaultPlans),
+        selectedPlans: defaultPlans as number,
+        planDetails: planDetails,
         includeTerms,
         includeFAQ,
         templateType: "flash" as const,
@@ -409,9 +399,7 @@ export async function POST(request: NextRequest) {
         projectDescription,
         clientDescription,
         selectedPlans: defaultPlans,
-        planDetails:
-          planDetails ||
-          generateDefaultPlanDetails(agentServiceId, defaultPlans), // Also use mapped service ID here
+        planDetails,
         includeTerms,
         includeFAQ,
         templateType: "prime" as const,
@@ -486,9 +474,7 @@ export async function POST(request: NextRequest) {
         projectName,
         projectDescription,
         selectedPlans: defaultPlans,
-        planDetails:
-          planDetails ||
-          generateDefaultPlanDetails(agentServiceId, defaultPlans),
+        planDetails,
         includeTerms,
         includeFAQ,
         templateType: templateType as TemplateType,
@@ -574,10 +560,10 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString(),
         mappedFrom: selectedService,
         generationType,
-        planCount: defaultPlans.length,
+        planCount: defaultPlans,
         planGenerationMethod: selectedPlan
           ? `count-${selectedPlan}`
-          : selectedPlans && selectedPlans.length > 0
+          : selectedPlan && selectedPlan > 0
           ? "array"
           : "default",
         projectCreated: true,

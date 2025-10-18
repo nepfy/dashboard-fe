@@ -87,6 +87,7 @@ export function ProposalGeneratorProvider({
       const result = await response.json();
       if (result.success && result.data?.userName) {
         setUserName(result?.data?.userName);
+        setCompanyInfo(result?.data?.companyInfo);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);

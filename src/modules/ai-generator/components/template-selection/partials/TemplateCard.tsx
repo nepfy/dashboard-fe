@@ -48,6 +48,14 @@ export const colorToImageName: Record<string, string> = {
   "#294D41": "verde",
   "#5E4D35": "marrom",
   "#7C4257": "rosa",
+
+  // Minimal
+  "#006DC5": "azul",
+  "##2C2C2C": "preto",
+  "#rgba(120, 131, 142, 1)": "cinza",
+  "#rgba(41, 77, 65, 1)": "verde",
+  "#rgba(94, 77, 53, 1)": "marrom",
+  "#rgba(124, 66, 87, 1)": "rosa",
 };
 
 export const getImagePath = (templateName: string, color: string): string => {

@@ -57,6 +57,8 @@ export interface FlashProposal extends BaseProposal {
   specialties: {
     title: string; // exactly 140 chars, AI-generated
     topics: Array<{
+      id?: string;
+      icon?: string;
       title: string; // exactly 50 chars
       description: string; // exactly 100 chars
     }>; // 6-9 topics
@@ -67,6 +69,7 @@ export interface FlashProposal extends BaseProposal {
     introduction: string; // exactly 100 chars, AI-generated
     title: string; // Fixed, not editable
     topics: Array<{
+      id?: string;
       title: string; // exactly 40 chars
       description: string; // exactly 240 chars
     }>; // exactly 5, AI-generated

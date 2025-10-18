@@ -69,6 +69,10 @@ export default function TemplateSelection({
     if (templateName === "grid") {
       window.open("/grid", "_blank", "noopener,noreferrer");
     }
+
+    if (templateName === "minimal") {
+      window.open("/minimal", "_blank", "noopener,noreferrer");
+    }
   };
 
   const nextSlide = () => sliderRef.current?.slickNext();
