@@ -42,7 +42,7 @@ export default function FlashAboutUs({ hideSection, title }: AboutUsSection) {
           />
           <div className="flex justify-center items-center px-6 lg:px-12 xl:px-0 py-35 lg:py-62 relative z-10 max-w-[1440px] mx-auto">
             <div className="pl-4 lg:pl-10 pt-36 border-l border-l-[#A0A0A0] max-w-[1100px]">
-              <p className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-semibold">
+              <p className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-medium">
                 <span className="font-bold block sm:inline">Sobre nós.</span>{" "}
                 {title}
               </p>

@@ -721,6 +721,7 @@ Retorne APENAS:
     }
 
     REGRAS CRÍTICAS:
+    - O campo title não pode conter a palavra "Investimento" em qualquer parte do texto.
     - Crie os planos baseados na quantidade de planos selecionados: ${data.selectedPlans}
     - includedItems: 3 a 6 itens por plano
     - Use valores realistas
@@ -1007,7 +1008,9 @@ Retorne APENAS:
     - Retorne APENAS o JSON válido
     - NÃO inclua texto explicativo antes ou depois
     - NÃO use "Aqui está" ou qualquer texto introdutório
-    - O testimonial deve ser um texto falando do ${data.userName} como se ele fosse a empresa que desenvolveu um projeto similar ao projeto ${data.projectName}.
+    - O testimonial deve ser um cliente fictício falando sobre como o ${data.userName} ajudou esse mesmo cliente fictício a desenvolver um projeto similar ao projeto ${data.projectDescription}.
+    - O campo role deve ser um cargo fictício do cliente fictício.
+    - O campo testimonial deve ter no máximo 220 caracteres.
     - Use APENAS aspas duplas (") para strings
     - NÃO use vírgulas no final de arrays ou objetos
     - Nomes de propriedades exatamente como especificado
@@ -1016,25 +1019,23 @@ Retorne APENAS:
     - O JSON deve começar com { e terminar com }
 
     IMPORTANTE: 
-    - Use as informações do projeto: ${data.projectDescription} para criar o testimonial falando sobre um projeto similar
-    - Personalize para o cliente: ${data.clientName}
     - NÃO mencione "metodologia FLASH" ou termos genéricos
     - Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
 
     const expectedFormat = `{
-  "title": "string",
-  "items": [
-    {
-      "id": "string",
-      "name": "string",
-      "role": "string",
-      "testimonial": "string",
-      "photo": "string",
-      "hidePhoto": boolean,
-      "sortOrder": number
-    }
-  ]
-}`;
+        "title": "string",
+        "items": [
+          {
+            "id": "string",
+            "name": "string",
+            "role": "string",
+            "testimonial": "string",
+            "photo": "string",
+            "hidePhoto": boolean,
+            "sortOrder": number
+          }
+        ]
+      }`;
 
     try {
       const moaResult =

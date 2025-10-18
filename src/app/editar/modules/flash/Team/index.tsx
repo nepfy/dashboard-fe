@@ -6,7 +6,6 @@ export default function FlashTeam({
   title,
   members,
 }: TeamSection) {
-  console.log("members", members);
   const visibleMembers = members?.filter(
     (member) => !member.hidePhoto && member.image
   );
