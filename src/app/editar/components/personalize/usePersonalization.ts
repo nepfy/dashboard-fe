@@ -1,15 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormErrors } from "./types";
-import { validateForm, isFormValid as checkFormValidity } from "./validation";
+import { validateSection } from "../../helpers/validation";
 import { TEMPLATES } from "./constants";
+import { useEditor } from "../../contexts/EditorContext";
 
 export const usePersonalizeForm = () => {
+  const { projectData, updatePersonalization } = useEditor();
   const [errors, setErrors] = useState<FormErrors>({});
-  const [originalPageUrl, setOriginalPageUrl] = useState("");
-  const [pagePassword, setPagePassword] = useState("");
-  const [selectedColor, setSelectedColor] = useState(
-    TEMPLATES[0].colorsList[0]
+  const [originalPageUrl, setOriginalPageUrl] = useState(
+    projectData?.projectUrl || ""
   );
+  const [pagePassword, setPagePassword] = useState(
+    projectData?.pagePassword || ""
+  );
+  const [selectedColor, setSelectedColor] = useState(
+    projectData?.mainColor || TEMPLATES[0].colorsList[0]
+  );
+
+  // Update local state when projectData changes
+  useEffect(() => {
+    if (projectData) {
+      setOriginalPageUrl(projectData.projectUrl || "");
+      setPagePassword(projectData.pagePassword || "");
+      setSelectedColor(projectData.mainColor || TEMPLATES[0].colorsList[0]);
+    }
+  }, [projectData]);
 
   const clearError = (field: keyof FormErrors) => {
     if (errors[field]) {
@@ -22,18 +37,35 @@ export const usePersonalizeForm = () => {
   };
 
   const handleSave = () => {
-    const validationErrors = validateForm(originalPageUrl, pagePassword);
-    console.log(validationErrors);
+    const validationResult = validateSection("personalization", {
+      projectUrl: originalPageUrl,
+      pagePassword,
+      mainColor: selectedColor,
+      projectName: "",
+      projectSentDate: null,
+      templateType: "flash",
+    });
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    if (!validationResult.isValid) {
+      setErrors(validationResult.errors);
       return;
     }
 
-    // Close modal is now handled by parent
+    // Update the context with new values
+    updatePersonalization({
+      projectUrl: originalPageUrl,
+      pagePassword,
+      mainColor: selectedColor,
+    });
+
+    // Clear any existing errors
+    setErrors({});
   };
 
-  const isFormValid = checkFormValidity(originalPageUrl, pagePassword);
+  const isFormValid =
+    originalPageUrl.length >= 3 &&
+    pagePassword.length >= 6 &&
+    /^#[0-9A-Fa-f]{6}$/.test(selectedColor);
 
   return {
     errors,

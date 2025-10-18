@@ -14,9 +14,15 @@
 // import PrimeFAQ from "./FAQ";
 // import PrimeFooter from "./Footer";
 // import PrimeCTA from "./CTA";
-import { TemplateData } from "#/types/template-data";
+import { useEditor } from "../../contexts/EditorContext";
 
-export default function Prime(projectData: TemplateData) {
+export default function Prime() {
+  const { projectData } = useEditor();
+
+  if (!projectData) {
+    return null;
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Prime Template Editor</h1>

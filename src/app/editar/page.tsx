@@ -6,26 +6,27 @@ import { useSearchParams } from "next/navigation";
 import Flash from "./modules/flash";
 import Prime from "./modules/prime";
 import { TemplateData } from "#/types/template-data";
+import { useEditor } from "./contexts/EditorContext";
 
 export default function EditarPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams?.get("projectId");
   const templateType = searchParams?.get("templateType");
 
-  const [projectData, setProjectData] = useState<TemplateData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { projectData, setProjectData, isLoading, error } = useEditor();
+  const [localLoading, setLocalLoading] = useState(true);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!projectId) {
-      setError("ID do projeto não fornecido");
-      setIsLoading(false);
+      setLocalError("ID do projeto não fornecido");
+      setLocalLoading(false);
       return;
     }
 
     const loadProjectData = async () => {
       try {
-        setIsLoading(true);
+        setLocalLoading(true);
 
         const templateDataResponse = await fetch(`/api/projects/${projectId}`);
 
@@ -44,18 +45,18 @@ export default function EditarPage() {
         setProjectData(templateDataResult.data[0]);
       } catch (err) {
         console.error("Error loading project data:", err);
-        setError(
+        setLocalError(
           err instanceof Error ? err.message : "Erro ao carregar projeto"
         );
       } finally {
-        setIsLoading(false);
+        setLocalLoading(false);
       }
     };
 
     loadProjectData();
-  }, [projectId, templateType]);
+  }, [projectId, templateType, setProjectData]);
 
-  if (isLoading) {
+  if (localLoading || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="p-7">
@@ -67,12 +68,12 @@ export default function EditarPage() {
     );
   }
 
-  if (error) {
+  if (localError || error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center text-red-600">
           <p className="text-xl font-semibold mb-2">Erro</p>
-          <p>{error}</p>
+          <p>{localError || error}</p>
         </div>
       </div>
     );
@@ -87,11 +88,11 @@ export default function EditarPage() {
   }
 
   if (projectData.templateType === "flash") {
-    return <Flash projectData={projectData} />;
+    return <Flash />;
   }
 
   if (projectData.templateType === "prime") {
-    return <Prime {...projectData} />;
+    return <Prime />;
   }
 
   // Fallback for unsupported template types

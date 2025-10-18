@@ -1,4 +1,4 @@
-import { TemplateData } from "#/types/template-data";
+import { useEditor } from "../../contexts/EditorContext";
 import FlashIntro from "./Intro";
 import FlashAboutUs from "./AboutUs";
 import FlashTeam from "./Team";
@@ -11,11 +11,12 @@ import FlashFAQ from "./FAQ";
 import FlashFooter from "./Footer";
 import FlashTestimonials from "./Testimonials";
 
-interface FlashProps {
-  projectData: TemplateData;
-}
+export default function Flash() {
+  const { projectData } = useEditor();
 
-export default function Flash({ projectData }: FlashProps) {
+  if (!projectData?.proposalData) {
+    return null;
+  }
   return (
     <div className="p-3 font-manrope">
       <FlashIntro {...projectData?.proposalData?.introduction} />

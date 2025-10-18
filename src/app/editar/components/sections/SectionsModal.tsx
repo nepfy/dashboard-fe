@@ -2,66 +2,67 @@ import { Plus, Minus } from "lucide-react";
 
 import Modal from "../Modal";
 import { SectionsModalProps } from "./types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useEditor } from "../../contexts/EditorContext";
 
 const SECTIONS = [
   {
-    id: 1,
+    id: "introduction",
     name: "Introdução",
     hidden: false,
   },
   {
-    id: 2,
+    id: "aboutUs",
     name: "Sobre Nós",
     hidden: false,
   },
   {
-    id: 3,
+    id: "team",
     name: "Time",
     hidden: false,
   },
   {
-    id: 4,
+    id: "expertise",
     name: "Especialidades",
     hidden: false,
   },
   {
-    id: 5,
+    id: "steps",
     name: "Etapas",
     hidden: false,
   },
   {
-    id: 6,
+    id: "results",
     name: "Resultados",
     hidden: false,
   },
   {
-    id: 7,
+    id: "testimonials",
     name: "Depoimentos",
     hidden: false,
   },
   {
-    id: 8,
+    id: "plans",
     name: "Planos",
     hidden: false,
   },
   {
-    id: 9,
+    id: "investment",
     name: "Investimento",
     hidden: false,
   },
   {
-    id: 10,
+    id: "deliverables",
     name: "Escopo",
     hidden: false,
   },
   {
-    id: 11,
+    id: "faq",
     name: "FAQ",
     hidden: false,
   },
   {
-    id: 12,
+    id: "footer",
     name: "Rodapé",
     hidden: false,
   },
@@ -73,14 +74,33 @@ export default function SectionsModal({
   handleSave,
   disabled,
 }: SectionsModalProps) {
+  const { getSectionVisibility, updateSectionVisibility } = useEditor();
   const [sections, setSections] = useState(SECTIONS);
 
-  const toggleSection = (id: number) => {
-    setSections(
-      sections.map((section) =>
-        section.id === id ? { ...section, hidden: !section.hidden } : section
-      )
+  // Load section visibility from context
+  useEffect(() => {
+    const visibility = getSectionVisibility();
+    setSections((prevSections) =>
+      prevSections.map((section) => ({
+        ...section,
+        hidden: visibility[section.id] || false,
+      }))
     );
+  }, [getSectionVisibility]);
+
+  const toggleSection = (id: string) => {
+    const section = sections.find((s) => s.id === id);
+    if (section) {
+      const newHidden = !section.hidden;
+
+      // Update local state
+      setSections((prevSections) =>
+        prevSections.map((s) => (s.id === id ? { ...s, hidden: newHidden } : s))
+      );
+
+      // Update context
+      updateSectionVisibility(id, newHidden);
+    }
   };
 
   return (
