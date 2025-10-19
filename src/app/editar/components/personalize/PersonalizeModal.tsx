@@ -19,6 +19,7 @@ interface PersonalizeModalProps {
   pagePassword: string;
   setPagePassword: (password: string) => void;
   clearError: (field: keyof FormErrors) => void;
+  isPublished: boolean;
 }
 
 export const PersonalizeModal = ({
@@ -34,6 +35,7 @@ export const PersonalizeModal = ({
   pagePassword,
   setPagePassword,
   clearError,
+  isPublished,
 }: PersonalizeModalProps) => {
   return (
     <Modal
@@ -55,6 +57,7 @@ export const PersonalizeModal = ({
       </div>
 
       <PageURLSection
+        isPublished={isPublished}
         userName={userName || ""}
         originalPageUrl={originalPageUrl}
         setOriginalPageUrl={setOriginalPageUrl}

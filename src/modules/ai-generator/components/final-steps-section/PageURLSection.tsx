@@ -11,6 +11,7 @@ interface PageURLSectionProps {
   setOriginalPageUrl: (url: string) => void;
   clearError: (field: string) => void;
   isLoading?: boolean;
+  isPublished: boolean;
 }
 
 export function PageURLSection({
@@ -19,6 +20,7 @@ export function PageURLSection({
   setOriginalPageUrl,
   clearError,
   isLoading = false,
+  isPublished,
 }: PageURLSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -61,14 +63,14 @@ export function PageURLSection({
                     placeholder:text-[var(--color-white-neutral-light-400)]  
                     max-w-[250px] font-satoshi
           ${
-            isLoading
+            isLoading || isPublished
               ? "bg-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
               : "bg-white-neutral-light-100 text-white-neutral-light-800"
           }`}
           rows={isLoading ? 2 : 1}
           style={{ resize: "none" }}
           maxLength={MAX_URL_LENGTH}
-          disabled={isLoading}
+          disabled={isLoading || isPublished}
         />
 
         <span className="text-white-neutral-light-600">.nepfy.com</span>

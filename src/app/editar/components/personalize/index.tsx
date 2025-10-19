@@ -1,8 +1,7 @@
 import Sparkle from "#/components/icons/Sparkle";
 import { usePersonalizeForm } from "./usePersonalization";
 import { PersonalizeModal } from "./PersonalizeModal";
-
-const USER_NAME = "teste"; // TODO: Replace with actual user data
+import { useUserStore } from "#/store/userStore";
 
 interface PersonalizeProps {
   setIsModalOpen: (open: boolean) => void;
@@ -13,7 +12,10 @@ export default function Personalize({
   setIsModalOpen,
   isModalOpen,
 }: PersonalizeProps) {
+  const { userData } = useUserStore();
+
   const {
+    projectData,
     originalPageUrl,
     setOriginalPageUrl,
     pagePassword,
@@ -58,12 +60,13 @@ export default function Personalize({
         disabled={!isFormValid}
         selectedColor={selectedColor}
         onColorSelect={setSelectedColor}
-        userName={USER_NAME}
+        userName={userData?.userName || ""}
         originalPageUrl={originalPageUrl}
         setOriginalPageUrl={setOriginalPageUrl}
         pagePassword={pagePassword}
         setPagePassword={setPagePassword}
         clearError={clearError}
+        isPublished={projectData?.isPublished || false}
       />
     </div>
   );
