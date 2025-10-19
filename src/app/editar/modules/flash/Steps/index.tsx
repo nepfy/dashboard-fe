@@ -5,12 +5,13 @@ import PlusIcon from "#/components/icons/PlusIcon";
 import { StepsSection } from "#/types/template-data";
 
 export default function FlashSteps({
+  mainColor,
   hideSection,
   topics,
   marquee,
 }: StepsSection) {
   return (
-    <div className="bg-[#4F21A1]">
+    <div style={{ background: mainColor }}>
       {!hideSection && (
         <>
           <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-23 xl:pb-36 relative z-10">
@@ -28,8 +29,8 @@ export default function FlashSteps({
               return (
                 <div key={topic.id} className="pt-12 cursor-pointer">
                   <div className="flex items-baseline justify-between border-b border-[#A0A0A0]/30 last:border-b-0 w-full pb-6">
-                    <span className="flex items-baseline justify-between md:justify-start gap-0 md:gap-24 w-full md:w-auto">
-                      <p className="text-[15px] text-[#C085FD]">
+                    <span className="flex items-baseline justify-between md:justify-start gap-10 md:gap-24 w-full md:w-auto">
+                      <p className="text-[15px] text-[#E6E6E6]">
                         0{index + 1}.
                       </p>
                       {!topic.hideStepName && (
@@ -66,7 +67,7 @@ export default function FlashSteps({
                   </div>
 
                   <button
-                    className={`flex justify-end md:hidden text-[14px] uppercase my-10 w-full transition-colors duration-300 ext-[#E6E6E6]`}
+                    className={`flex justify-end md:hidden text-[14px] uppercase my-10 w-full transition-colors duration-300 text-[#E6E6E6]`}
                   >
                     <span className="flex items-center gap-1">
                       Mais Info

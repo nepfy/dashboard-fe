@@ -23,18 +23,37 @@ export default function Flash() {
         {...projectData?.proposalData?.introduction}
         mainColor={projectData?.mainColor}
       />
-      <FlashAboutUs {...projectData?.proposalData?.aboutUs} />
-      <FlashTeam {...projectData?.proposalData?.team} />
+      <FlashAboutUs
+        {...projectData?.proposalData?.aboutUs}
+        mainColor={projectData?.mainColor}
+      />
+      <FlashTeam
+        {...projectData?.proposalData?.team}
+        mainColor={projectData?.mainColor}
+      />
       <FlashExpertise {...projectData?.proposalData?.expertise} />
       <FlashResults {...projectData?.proposalData?.results} />
-      <FlashTestimonials {...projectData?.proposalData?.testimonials} />
-      <FlashSteps {...projectData?.proposalData?.steps} />
-      <FlashInvestment {...projectData?.proposalData?.investment} />
-      <FlashPlans {...projectData?.proposalData?.plans} />
+      <FlashTestimonials
+        {...projectData?.proposalData?.testimonials}
+        mainColor={projectData?.mainColor}
+      />
+      <FlashSteps
+        {...projectData?.proposalData?.steps}
+        mainColor={projectData?.mainColor}
+      />
+      <FlashInvestment
+        {...projectData?.proposalData?.investment}
+        mainColor={projectData?.mainColor}
+      />
+      <FlashPlans
+        {...projectData?.proposalData?.plans}
+        mainColor={projectData?.mainColor}
+      />
       <FlashFAQ {...projectData?.proposalData?.faq} />
       <FlashFooter
         {...projectData?.proposalData?.footer}
         validity={projectData?.proposalData?.introduction?.validity}
+        mainColor={projectData?.mainColor}
       />
     </div>
   );

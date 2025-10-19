@@ -3,7 +3,30 @@ import StarIcon from "./StarIcon";
 import { formatCurrencyDisplayNoCents } from "#/helpers/formatCurrency";
 import { PlansSection } from "#/types/template-data";
 
-export default function FlashPlans({ hideSection, plansItems }: PlansSection) {
+export default function FlashPlans({
+  mainColor,
+  hideSection,
+  plansItems,
+}: PlansSection) {
+  let bg: string;
+  if (mainColor === "#4F21A1") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #200D42 0.01%, #4F21A1 41.86%, #A46EDB 81.78%)`;
+  }
+  if (mainColor === "#BE8406") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #2B1B01 0.01%, #BE8406 41.86%, #CEA605 81.78%)`;
+  }
+  if (mainColor === "#9B3218") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #2B0707 0.01%, #9B3218 41.86%, #BE4E3F 81.78%)`;
+  }
+  if (mainColor === "#05722C") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #072B14 0.01%, #05722C 41.86%, #4ABE3F 81.78%)`;
+  }
+  if (mainColor === "#182E9B") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #070F2B 0.01%, #182E9B 41.86%, #443FBE 81.78%)`;
+  }
+  if (mainColor === "#212121") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #0D0D0D 0.01%, #212121 41.86%, #3A3A3A 81.78%)`;
+  }
   return (
     <div className="bg-black relative overflow-hidden">
       {!hideSection && (
@@ -18,8 +41,7 @@ export default function FlashPlans({ hideSection, plansItems }: PlansSection) {
                   <div
                     className="absolute top-[-44px] left-0 w-[145px] h-[37px] flex items-center justify-center rounded-[4px] gap-2"
                     style={{
-                      background:
-                        "radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #200D42 0.01%, #4F21A1 41.86%, #A46EDB 81.78%)",
+                      background: bg,
                     }}
                   >
                     <StarIcon />

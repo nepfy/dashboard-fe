@@ -2,6 +2,7 @@ import { FooterSection } from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 
 export default function FlashFooter({
+  mainColor,
   hideSection,
   callToAction,
   disclaimer,
@@ -10,7 +11,7 @@ export default function FlashFooter({
   buttonTitle,
 }: FooterSection) {
   return (
-    <div className="bg-[#4F21A1] relative overflow-hidden">
+    <div style={{ background: mainColor }} className="relative overflow-hidden">
       {!hideSection && (
         <>
           <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-43">

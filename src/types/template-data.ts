@@ -39,6 +39,7 @@ export interface TeamMember {
 }
 
 export interface TeamSection extends BaseSection {
+  mainColor?: string;
   title?: string;
   members?: TeamMember[];
 }
@@ -71,6 +72,7 @@ export interface Plan extends HideableItem, SortableItem {
 }
 
 export interface PlansSection extends BaseSection {
+  mainColor?: string;
   hideSection?: boolean;
   title?: string;
   plansItems?: Plan[];
@@ -91,6 +93,7 @@ export interface StepTopic extends HideableItem, SortableItem {
 }
 
 export interface StepsSection extends BaseSection {
+  mainColor?: string;
   hideSection?: boolean;
   title?: string;
   topics?: StepTopic[];
@@ -100,6 +103,7 @@ export interface StepsSection extends BaseSection {
 
 // Footer related interfaces
 export interface FooterSection extends BaseSection {
+  mainColor?: string;
   marquee?: string[];
   callToAction?: string;
   hideDisclaimer?: boolean;
@@ -111,6 +115,7 @@ export interface FooterSection extends BaseSection {
 
 // About Us related interfaces
 export interface AboutUsSection extends BaseSection {
+  mainColor?: string;
   hideSection?: boolean;
   title?: string;
   subtitle?: string;
@@ -151,6 +156,7 @@ export interface ExpertiseSection extends BaseSection {
 
 // Investment related interfaces
 export interface InvestmentSection extends BaseSection {
+  mainColor?: string;
   hideSection?: boolean;
   title?: string;
   projectScope?: string;
@@ -215,6 +221,7 @@ export interface Testimonial {
 }
 
 export interface TestimonialsSection extends BaseSection {
+  mainColor?: string;
   hideSection?: boolean;
   title?: string;
   items?: Testimonial[];

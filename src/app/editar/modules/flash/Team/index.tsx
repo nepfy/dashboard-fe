@@ -2,10 +2,50 @@ import Image from "next/image";
 import { TeamSection } from "#/types/template-data";
 
 export default function FlashTeam({
+  mainColor,
   hideSection,
   title,
   members,
 }: TeamSection) {
+  let bg;
+  let bg2;
+  let bgMobile;
+  if (mainColor === "#4F21A1") {
+    bg = `linear-gradient(180deg, rgba(15, 15, 15, 0) 0%, #200D42 27.11%, #4F21A1 50.59%, #C085FD 85.36%)`;
+    bg2 = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #9560EB 100%)`;
+    bgMobile = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #4F21A1 100%)`;
+  }
+
+  if (mainColor === "#05722C") {
+    bg = `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #072B14 27.11%, #0C6132 50.59%, #4ABE3F 85.36%)`;
+    bg2 = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #05722C 100%)`;
+    bgMobile = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #0C6132 100%)`;
+  }
+
+  if (mainColor === "#9B3218") {
+    bg = `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #2B0707 27.11%, #9B3218 50.59%, #BE4E3F 85.36%)`;
+    bg2 = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #9B3218 100%)`;
+    bgMobile = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #9B3218 100%)`;
+  }
+
+  if (mainColor === "#BE8406") {
+    bg = `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #2B1B01 27.11%, #C97C00 50.59%, #CEA605 85.36%)`;
+    bg2 = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #BE8406 100%)`;
+    bgMobile = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #C97C00 100%)`;
+  }
+
+  if (mainColor === "#182E9B") {
+    bg = `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #070F2B 27.11%, #182E9B 50.59%, #443FBE 85.36%)`;
+    bg2 = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #182E9B 100%)`;
+    bgMobile = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #182E9B 100%)`;
+  }
+
+  if (mainColor === "#212121") {
+    bg = `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #0D0D0D 27.11%, #212121 50.59%, #3A3A3A 85.36%)`;
+    bg2 = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #212121 100%)`;
+    bgMobile = `radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #212121 100%)`;
+  }
+
   const visibleMembers = members?.filter(
     (member) => !member.hidePhoto && member.image
   );
@@ -106,9 +146,7 @@ export default function FlashTeam({
         style={{
           width: "100%",
           height: 1100,
-          background:
-            "linear-gradient(180deg, rgba(15, 15, 15, 0) 0%, #200D42 27.11%, #4F21A1 50.59%, #C085FD 85.36%)",
-
+          background: bg,
           filter: "blur(80px)",
           position: "absolute",
           bottom: 0,
@@ -123,9 +161,7 @@ export default function FlashTeam({
         style={{
           width: "180%",
           height: "80%",
-          background:
-            "radial-gradient(51.38% 51.38% at 50% 50%, #000000 82.2%, #9560EB 100%)",
-
+          background: bg2,
           filter: "blur(80px)",
           position: "absolute",
           bottom: "-50%",
@@ -141,9 +177,7 @@ export default function FlashTeam({
         style={{
           width: "180%",
           height: "80%",
-          background:
-            "linear-gradient(180deg, rgba(15, 15, 15, 0) 0%, #200D42 27.11%, #4F21A1 50.59%, #C085FD 85.36%)",
-
+          background: bgMobile,
           filter: "blur(80px)",
           position: "absolute",
           bottom: "-50%",

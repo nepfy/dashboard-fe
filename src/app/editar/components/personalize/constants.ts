@@ -9,9 +9,9 @@ export const TEMPLATES: Template[] = [
     title: "Flash",
     colorsList: [
       "#4F21A1",
-      "#BE8406",
-      "#9B3218",
       "#05722C",
+      "#9B3218",
+      "#BE8406",
       "#182E9B",
       "#212121",
     ],

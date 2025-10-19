@@ -12,13 +12,38 @@ export default function FlashIntro({
   hideSubtitle,
   services,
 }: IntroductionSection) {
+  let bg;
+  if (mainColor === "#4F21A1") {
+    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`;
+  }
+
+  if (mainColor === "#BE8406") {
+    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B1B01 34.22%, #C97C00 64.9%, #CEA605 81.78%)`;
+  }
+
+  if (mainColor === "#9B3218") {
+    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B0707 34.22%, #9B3218 64.9%, #BE4E3F 81.78%)`;
+  }
+
+  if (mainColor === "#05722C") {
+    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #072B14 34.22%, #189B53 64.9%, #4ABE3F 81.78%)`;
+  }
+
+  if (mainColor === "#182E9B") {
+    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #070F2B 34.22%, #182E9B 64.9%, #443FBE 81.78%)`;
+  }
+
+  if (mainColor === "#212121") {
+    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #0D0D0D 34.22%, #212121 64.9%, #3A3A3A 81.78%)`;
+  }
+
   return (
     <div className="relative px-6 lg:px-12 py-11 overflow-hidden">
       <div
         style={{
           width: "120%",
           height: "100%",
-          background: `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, ${mainColor} 64.9%, #A46EDB 81.78%)`,
+          background: bg,
           position: "absolute",
           top: 0,
           left: 0,

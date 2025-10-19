@@ -16,7 +16,7 @@ export default function FlashFAQ({ hideSection, items }: FAQSection) {
             return (
               <div key={item.id} className="pt-12 cursor-pointer">
                 <div className="flex items-baseline justify-between border-b border-[#A0A0A0]/30 last:border-b-0 w-full pb-6">
-                  <span className="flex items-baseline justify-between md:justify-start gap-0 md:gap-24 w-full md:w-auto">
+                  <span className="flex items-baseline justify-between md:justify-start gap-10 md:gap-24 w-full md:w-auto">
                     <p className="text-[15px] text-[#E6E6E6] pr-2">
                       0{index + 1}.
                     </p>
