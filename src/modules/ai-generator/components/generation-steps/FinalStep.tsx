@@ -114,6 +114,7 @@ export function FinalStep({
         step={step}
       >
         <PageURLSection
+          isPublished={false}
           userName={userName}
           originalPageUrl={originalPageUrl}
           setOriginalPageUrl={setOriginalPageUrl}
