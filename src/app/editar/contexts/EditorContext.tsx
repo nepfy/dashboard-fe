@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, {
@@ -26,6 +27,7 @@ import {
   TermsConditionsSection,
   FAQSection,
 } from "#/types/template-data";
+import { useRouter } from "next/navigation";
 
 interface EditorContextType {
   // State
@@ -78,7 +80,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-
+  const router = useRouter();
   // Browser-level unsaved changes warning
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -270,7 +272,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         testimonials: "testimonials",
         plans: "plans",
         investment: "investment",
-        deliverables: "deliverables",
+        escope: "escope",
         faq: "faq",
         footer: "footer",
         clients: "clients",
@@ -279,7 +281,9 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
       const sectionKey = sectionMap[sectionId];
       if (sectionKey) {
-        updateSection(sectionKey, { hideSection: hidden });
+        updateSection(sectionKey, {
+          hideSection: hidden,
+        });
       }
     },
     [updateSection, projectData]
@@ -322,7 +326,9 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
       }
 
       setIsDirty(false);
-      // Optionally show success message
+      router.push(
+        `/dashboard?success&project=${projectData.projectName}&projectId=${projectData.id}`
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save project");
       throw err;

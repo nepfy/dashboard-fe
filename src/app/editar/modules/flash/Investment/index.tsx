@@ -34,19 +34,18 @@ export default function FlashInvestment({
             <span className="text-[#A0A0A0] font-semibold">Investimento. </span>
             {title}
           </p>
+          {!hideProjectScope && (
+            <div className="max-w-[700px] border-l border-l-[#A0A0A0]/30 pl-5 lg:pl-10">
+              <div className="flex items-center gap-2 mb-23 lg:mb-42">
+                <div className="bg-white-neutral-light-100 w-3 h-3 rounded-full" />
+                <p className="text-white text-sm font-semibold">
+                  Escopo do projeto
+                </p>
+              </div>
 
-          <div className="max-w-[700px] border-l border-l-[#A0A0A0]/30 pl-5 lg:pl-10">
-            <div className="flex items-center gap-2 mb-23 lg:mb-42">
-              <div className="bg-white-neutral-light-100 w-3 h-3 rounded-full" />
-              <p className="text-white text-sm font-semibold">
-                Escopo do projeto
-              </p>
-            </div>
-
-            {!hideProjectScope && (
               <p className="text-[#E6E6E6]">{projectScope}</p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
 

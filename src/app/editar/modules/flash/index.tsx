@@ -44,6 +44,7 @@ export default function Flash() {
       <FlashInvestment
         {...projectData?.proposalData?.investment}
         mainColor={projectData?.mainColor}
+        hideProjectScope={projectData?.proposalData?.escope?.hideSection}
       />
       <FlashPlans
         {...projectData?.proposalData?.plans}

@@ -7,7 +7,6 @@ export default function Publish() {
 
   const handlePublish = async () => {
     if (!isDirty) {
-      // Show message that there are no changes to save
       return;
     }
 
@@ -17,7 +16,6 @@ export default function Publish() {
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       console.error("Error saving project:", error);
-      // Error is already handled in the context
     }
   };
 

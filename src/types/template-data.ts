@@ -248,6 +248,7 @@ export interface ProposalData {
   clients: ClientsSection;
   expertise: ExpertiseSection;
   investment: InvestmentSection;
+  escope: InvestmentSection;
   results: ResultSection;
   deliverables: DeliverablesSection;
   introduction: IntroductionSection;

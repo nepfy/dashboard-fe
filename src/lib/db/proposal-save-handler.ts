@@ -127,6 +127,7 @@ function convertFlashToProposalData(
       hideSection: false,
       title: proposal.investment.title,
       projectScope: proposal.scope.content,
+      hideProjectScope: false,
       hideTitle: false,
     },
 

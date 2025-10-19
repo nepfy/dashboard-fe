@@ -35,7 +35,7 @@ export default function Dashboard() {
     const project = searchParams?.get("project");
     const projectIdParam = searchParams?.get("projectId");
 
-    if (success === "true") {
+    if (success !== null && project && projectIdParam) {
       setProjectName(project ? decodeURIComponent(project) : "Nova Proposta");
       setProjectId(projectIdParam ?? null);
       setShowSuccessModal(true);

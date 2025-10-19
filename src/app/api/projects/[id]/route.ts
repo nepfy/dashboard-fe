@@ -132,12 +132,37 @@ export async function PUT(
     // Parse request body
     const body = await request.json();
 
+    // Parse and validate date fields
+    const parseDate = (dateValue: Date | string | null): Date | null => {
+      if (!dateValue) return null;
+      if (dateValue instanceof Date) return dateValue;
+      if (typeof dateValue === "string") {
+        const parsed = new Date(dateValue);
+        return isNaN(parsed.getTime()) ? null : parsed;
+      }
+      return null;
+    };
+
     // Update project with new data
     const updatedProject = await db
       .update(projectsTable)
       .set({
-        ...body,
-        updated_at: new Date().toISOString(),
+        id: body.id,
+        personId: body.personId,
+        clientName: body.clientName,
+        projectName: body.projectName,
+        projectSentDate: parseDate(body.projectSentDate),
+        projectValidUntil: parseDate(body.projectValidUntil),
+        projectStatus: body.projectStatus,
+        projectVisualizationDate: parseDate(body.projectVisualizationDate),
+        templateType: body.templateType,
+        mainColor: body.mainColor,
+        projectUrl: body.projectUrl,
+        pagePassword: body.pagePassword,
+        isPublished: true,
+        isProposalGenerated: body.isProposalGenerated,
+        proposalData: body.proposalData,
+        updated_at: new Date(),
       })
       .where(
         and(eq(projectsTable.id, projectId), eq(projectsTable.personId, userId))

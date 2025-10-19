@@ -52,7 +52,7 @@ const SECTIONS = [
     hidden: false,
   },
   {
-    id: "deliverables",
+    id: "escope",
     name: "Escopo",
     hidden: false,
   },
@@ -84,6 +84,7 @@ export default function SectionsModal({
       prevSections.map((section) => ({
         ...section,
         hidden: visibility[section.id] || false,
+        hideProjectScope: visibility[section.id] || false,
       }))
     );
   }, [getSectionVisibility]);

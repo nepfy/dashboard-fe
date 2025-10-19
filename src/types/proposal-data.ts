@@ -83,6 +83,7 @@ export interface ProposalData {
     hideSection?: boolean;
     title?: string;
     projectScope?: string;
+    hideProjectScope?: boolean;
     hideTitle?: boolean;
   };
 
