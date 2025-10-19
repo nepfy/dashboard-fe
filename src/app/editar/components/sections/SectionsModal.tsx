@@ -89,25 +89,48 @@ export default function SectionsModal({
   }, [getSectionVisibility]);
 
   const toggleSection = (id: string) => {
+    if (id === "introduction" || id === "footer") {
+      return;
+    }
+
     const section = sections.find((s) => s.id === id);
     if (section) {
       const newHidden = !section.hidden;
 
-      // Update local state
       setSections((prevSections) =>
         prevSections.map((s) => (s.id === id ? { ...s, hidden: newHidden } : s))
       );
-
-      // Update context
-      updateSectionVisibility(id, newHidden);
     }
+  };
+
+  const handleSaveWithChanges = () => {
+    sections.forEach((section) => {
+      updateSectionVisibility(section.id, section.hidden);
+    });
+
+    handleSave();
+    onClose();
+  };
+
+  const handleCancel = () => {
+    // Reload the original visibility from context
+    const visibility = getSectionVisibility();
+    setSections((prevSections) =>
+      prevSections.map((section) => ({
+        ...section,
+        hidden: visibility[section.id] || false,
+      }))
+    );
+
+    // Close the modal
+    onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
-      handleSave={handleSave}
+      onClose={handleCancel}
+      handleSave={handleSaveWithChanges}
       disabled={disabled}
     >
       <div className="max-w-[476px]">
@@ -123,13 +146,16 @@ export default function SectionsModal({
             <div
               key={section.id}
               onClick={() => toggleSection(section.id)}
-              className={`group w-full sm:w-[210px] 
-                  border rounded-[10px] pt-4 pb-4 px-6 
-                  hover:bg-white-neutral-light-200 transition-all duration-200 flex items-center justify-between cursor-pointer
+              className={`group w-full sm:w-[210px] border rounded-[10px] pt-4 pb-4 px-6 transition-all duration-200 flex items-center justify-between 
                   ${
                     section.hidden
-                      ? "bg-white-neutral-light-200 border-white-neutral-light-200"
-                      : "bg-white-neutral-light-100 border-[#E0E3E9]"
+                      ? "bg-white-neutral-light-200 border-white-neutral-light-200 cursor-pointer"
+                      : ""
+                  }
+                  ${
+                    section.id === "introduction" || section.id === "footer"
+                      ? "bg-white-neutral-light-100 hover:bg-white-neutral-light-100 border-[#E0E3E9] cursor-not-allowed"
+                      : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200 border-[#E0E3E9]"
                   }
                 `}
             >
@@ -137,7 +163,9 @@ export default function SectionsModal({
                 {section.name}
               </p>
 
-              {section.hidden ? (
+              {section.id === "introduction" || section.id === "footer" ? (
+                <div className="w-4 h-4" />
+              ) : section.hidden ? (
                 <Plus className="w-4 h-4 text-white-neutral-light-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
               ) : (
                 <Minus className="w-4 h-4 text-white-neutral-light-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
