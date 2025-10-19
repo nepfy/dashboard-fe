@@ -38,7 +38,7 @@ export default function Modal({
                   : "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 transform"
               }`}
             >
-              Salvar alterações
+              Alterar
             </button>
           </div>
         </div>

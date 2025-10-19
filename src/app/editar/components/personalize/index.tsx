@@ -5,13 +5,13 @@ import { PersonalizeModal } from "./PersonalizeModal";
 const USER_NAME = "teste"; // TODO: Replace with actual user data
 
 interface PersonalizeProps {
-  isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
+  isModalOpen: boolean;
 }
 
 export default function Personalize({
-  isModalOpen,
   setIsModalOpen,
+  isModalOpen,
 }: PersonalizeProps) {
   const {
     originalPageUrl,
@@ -22,6 +22,7 @@ export default function Personalize({
     setSelectedColor,
     clearError,
     handleSave,
+    handleClose,
     isFormValid,
   } = usePersonalizeForm();
 
@@ -46,8 +47,14 @@ export default function Personalize({
 
       <PersonalizeModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        handleSave={handleSave}
+        onClose={() => {
+          handleClose();
+          setIsModalOpen(false);
+        }}
+        handleSave={() => {
+          handleSave();
+          setIsModalOpen(false);
+        }}
         disabled={!isFormValid}
         selectedColor={selectedColor}
         onColorSelect={setSelectedColor}

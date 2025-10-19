@@ -2,6 +2,7 @@ import { IntroductionSection } from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 
 export default function FlashIntro({
+  mainColor,
   userName,
   email,
   buttonTitle,
@@ -17,9 +18,7 @@ export default function FlashIntro({
         style={{
           width: "120%",
           height: "100%",
-          background:
-            "radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)",
-
+          background: `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, ${mainColor} 64.9%, #A46EDB 81.78%)`,
           position: "absolute",
           top: 0,
           left: 0,

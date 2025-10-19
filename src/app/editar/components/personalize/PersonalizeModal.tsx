@@ -39,7 +39,10 @@ export const PersonalizeModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      handleSave={handleSave}
+      handleSave={() => {
+        handleSave();
+        onClose();
+      }}
       disabled={disabled}
     >
       <div className="mb-8">

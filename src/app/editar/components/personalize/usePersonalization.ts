@@ -51,7 +51,7 @@ export const usePersonalizeForm = () => {
       return;
     }
 
-    // Update the context with new values
+    // Update the context with new values (this will now be redundant for mainColor, but keep for consistency)
     updatePersonalization({
       projectUrl: originalPageUrl,
       pagePassword,
@@ -62,12 +62,19 @@ export const usePersonalizeForm = () => {
     setErrors({});
   };
 
+  const handleClose = () => {
+    setSelectedColor(projectData?.mainColor || TEMPLATES[0].colorsList[0]);
+    setOriginalPageUrl(projectData?.projectUrl || "");
+    setPagePassword(projectData?.pagePassword || "");
+  };
+
   const isFormValid =
     originalPageUrl.length >= 3 &&
     pagePassword.length >= 6 &&
     /^#[0-9A-Fa-f]{6}$/.test(selectedColor);
 
   return {
+    projectData,
     errors,
     originalPageUrl,
     setOriginalPageUrl,
@@ -77,6 +84,8 @@ export const usePersonalizeForm = () => {
     setSelectedColor,
     clearError,
     handleSave,
+    handleClose,
+    updatePersonalization,
     isFormValid,
   };
 };

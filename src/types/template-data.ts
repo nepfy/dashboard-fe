@@ -192,6 +192,7 @@ export interface IntroductionService extends HideableItem, SortableItem {
 }
 
 export interface IntroductionSection {
+  mainColor?: string;
   userName?: string;
   email?: string;
   title?: string;

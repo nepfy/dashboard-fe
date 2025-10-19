@@ -84,8 +84,6 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
         e.preventDefault();
-        e.returnValue =
-          "Você tem alterações não salvas. Tem certeza que deseja sair?";
         return "Você tem alterações não salvas. Tem certeza que deseja sair?";
       }
     };
@@ -243,9 +241,11 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
         return {
           ...prev,
-          ...(data.mainColor && { mainColor: data.mainColor }),
-          ...(data.projectUrl && { projectUrl: data.projectUrl }),
-          ...(data.pagePassword && { pagePassword: data.pagePassword }),
+          ...(data.mainColor !== undefined && { mainColor: data.mainColor }),
+          ...(data.projectUrl !== undefined && { projectUrl: data.projectUrl }),
+          ...(data.pagePassword !== undefined && {
+            pagePassword: data.pagePassword,
+          }),
         };
       });
 

@@ -19,7 +19,10 @@ export default function Flash() {
   }
   return (
     <div className="p-3 font-manrope">
-      <FlashIntro {...projectData?.proposalData?.introduction} />
+      <FlashIntro
+        {...projectData?.proposalData?.introduction}
+        mainColor={projectData?.mainColor}
+      />
       <FlashAboutUs {...projectData?.proposalData?.aboutUs} />
       <FlashTeam {...projectData?.proposalData?.team} />
       <FlashExpertise {...projectData?.proposalData?.expertise} />
