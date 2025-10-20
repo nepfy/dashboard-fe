@@ -6,6 +6,7 @@ import { RedirectToSignIn, SignedOut, useUser } from "@clerk/nextjs";
 
 function checkIsMainDomain(hostname: string): boolean {
   return (
+    hostname === "staging-app.nepfy.com.br" ||
     hostname === "app.nepfy.com" ||
     hostname === "localhost:3000" ||
     hostname === "nepfy.com" ||

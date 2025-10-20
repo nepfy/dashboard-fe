@@ -7,6 +7,7 @@ export function generateSubdomainUrl(
 
 export function isMainDomain(hostname: string): boolean {
   return (
+    hostname === "staging-app.nepfy.com.br" ||
     hostname === "app.nepfy.com" ||
     hostname === "localhost:3000" ||
     hostname === "nepfy.com" ||
