@@ -15,6 +15,7 @@ export default function FlashIntro({
   services,
 }: IntroductionSection) {
   const { updateIntroduction } = useEditor();
+
   let bg;
   if (mainColor === "#4F21A1") {
     bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`;

@@ -96,11 +96,13 @@ export default function EditableText({
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        className={`${className} resize-none overflow-hidden border-none outline-none bg-transparent`}
+        className={`${className} resize-none overflow-hidden border-none outline-none bg-transparent inline-block`}
         style={{
           height: "auto",
           minHeight: "1.2em",
           lineHeight: "1.2",
+          display: "inline-block",
+          verticalAlign: "baseline",
         }}
         rows={1}
       />

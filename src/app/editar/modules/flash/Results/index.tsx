@@ -1,12 +1,15 @@
 import Image from "next/image";
 import { formatCurrencyDisplay } from "#/helpers/formatCurrency";
 import { ResultSection } from "#/types/template-data";
+import EditableText from "#/app/editar/components/EditableText";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashResults({
   hideSection,
   title,
   items,
 }: ResultSection) {
+  const { updateResults } = useEditor();
   const visibleResults = items?.filter(
     (result) => !result.hidePhoto && result.photo
   );
@@ -34,9 +37,14 @@ export default function FlashResults({
       {!hideSection && (
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 xl:px-0 pt-7 lg:pt-22">
           <div className="flex items-end pt-24 pl-5 lg:pl-10 border-l border-l-[#A0A0A0] max-w-[1100px] mb-16 lg:mb-43 mx-auto">
-            <p className="text-[32px] lg:text-[72px] text-[#E6E6E6]">
-              {title || "Transformamos desafios em resultados visíveis"}
-            </p>
+            <EditableText
+              as="p"
+              value={title || ""}
+              onChange={(newTitle: string) =>
+                updateResults({ title: newTitle })
+              }
+              className="text-[32px] lg:text-[72px] text-[#E6E6E6]"
+            />
           </div>
           <div className="px-0 lg:px-0 xl:px-8">
             <div className="flex items-center gap-2 mb-4">

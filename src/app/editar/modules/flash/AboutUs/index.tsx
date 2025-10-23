@@ -1,3 +1,5 @@
+import EditableText from "#/app/editar/components/EditableText";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 import { AboutUsSection } from "#/types/template-data";
 
 export default function FlashAboutUs({
@@ -5,6 +7,7 @@ export default function FlashAboutUs({
   title,
   mainColor,
 }: AboutUsSection) {
+  const { updateAboutUs } = useEditor();
   let bg;
   let bgMobile;
   if (mainColor === "#4F21A1") {
@@ -75,11 +78,18 @@ export default function FlashAboutUs({
             }}
           />
           <div className="flex justify-center items-center px-6 lg:px-12 xl:px-0 py-35 lg:py-62 relative z-10 max-w-[1440px] mx-auto">
-            <div className="pl-4 lg:pl-10 pt-36 border-l border-l-[#A0A0A0] max-w-[1100px]">
-              <p className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-medium">
-                <span className="font-bold block sm:inline">Sobre nós.</span>{" "}
-                {title}
-              </p>
+            <div className="pl-4 lg:pl-10 pt-36 border-l border-l-[#A0A0A0] max-w-[1100px] inline">
+              <div className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-medium">
+                <span className="font-bold inline">Sobre nós.</span>{" "}
+                <EditableText
+                  as="span"
+                  value={title || ""}
+                  onChange={(newTitle: string) =>
+                    updateAboutUs({ title: newTitle })
+                  }
+                  className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-medium inline"
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,7 @@
 import { FooterSection } from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
+import EditableText from "#/app/editar/components/EditableText";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashFooter({
   mainColor,
@@ -10,15 +12,21 @@ export default function FlashFooter({
   validity,
   buttonTitle,
 }: FooterSection) {
+  const { updateFooter } = useEditor();
   return (
     <div style={{ background: mainColor }} className="relative overflow-hidden">
       {!hideSection && (
         <>
           <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-43">
             <div className="lg:pl-10 lg:pt-11 lg:border-l lg:border-l-[#A0A0A0] max-w-[1100px] mb-15">
-              <p className="text-[32px] lg:text-[88px] text-[#E6E6E6] font-normal">
-                {callToAction}
-              </p>
+              <EditableText
+                as="p"
+                value={callToAction || ""}
+                onChange={(newCallToAction: string) =>
+                  updateFooter({ callToAction: newCallToAction })
+                }
+                className="text-[32px] lg:text-[88px] text-[#E6E6E6] font-normal"
+              />
               {validity && (
                 <p className="font-bold text-sm text-[#E6E6E6] pb-10 pt-6 lg:pt-0">
                   Proposta válida até -{" "}
@@ -34,9 +42,14 @@ export default function FlashFooter({
 
             {!hideDisclaimer && (
               <div className="w-full flex justify-end mb-16">
-                <p className="text-[#E6E6E6] text-[15px] max-w-[430px]">
-                  {disclaimer}
-                </p>
+                <EditableText
+                  as="p"
+                  value={disclaimer || ""}
+                  onChange={(newDisclaimer: string) =>
+                    updateFooter({ disclaimer: newDisclaimer })
+                  }
+                  className="text-[#E6E6E6] text-[15px] w-[430px]"
+                />
               </div>
             )}
           </div>

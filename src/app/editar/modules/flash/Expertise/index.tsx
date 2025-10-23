@@ -1,4 +1,6 @@
 import { ExpertiseSection } from "#/types/template-data";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
+import EditableText from "#/app/editar/components/EditableText";
 import DiamondIcon from "./iconsList/DiamondIcon";
 import CircleIcon from "./iconsList/CircleIcon";
 import BubblesIcon from "./iconsList/BubblesIcon";
@@ -48,6 +50,7 @@ export default function FlashExpertise({
   title,
   topics,
 }: ExpertiseSection) {
+  const { updateExpertise } = useEditor();
   const renderIcon = (iconName: string) => {
     return iconMap[iconName as keyof typeof iconMap];
   };
@@ -61,7 +64,14 @@ export default function FlashExpertise({
               <span className="font-bold block sm:inline">
                 Nossas Especializações.{" "}
               </span>
-              {title}
+              <EditableText
+                as="p"
+                value={title || ""}
+                onChange={(newTitle: string) =>
+                  updateExpertise({ title: newTitle })
+                }
+                className="inline text-[18px] lg:text-[48px] text-[#E6E6E6] h-full"
+              />
             </p>
           </div>
 

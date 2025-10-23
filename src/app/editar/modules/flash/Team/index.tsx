@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { TeamSection } from "#/types/template-data";
+import EditableText from "#/app/editar/components/EditableText";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashTeam({
   mainColor,
@@ -7,6 +9,7 @@ export default function FlashTeam({
   title,
   members,
 }: TeamSection) {
+  const { updateTeam } = useEditor();
   let bg;
   let bg2;
   let bgMobile;
@@ -75,9 +78,14 @@ export default function FlashTeam({
           <div className="pt-31 max-w-[1440px] mx-auto relative z-10">
             {(members?.length ?? 0) > 1 && (
               <div className="px-6 lg:px-12 xl:px-40">
-                <p className="text-[32px] lg:text-[72px] text-[#E6E6E6] max-w-[1050px] pb-21">
-                  {title}
-                </p>
+                <EditableText
+                  as="p"
+                  value={title || ""}
+                  onChange={(newTitle: string) =>
+                    updateTeam({ title: newTitle })
+                  }
+                  className="text-[32px] lg:text-[72px] text-[#E6E6E6] max-w-[1050px] pb-21"
+                />
               </div>
             )}
             <div className="px-6 lg:px-12 xl:px-8">
@@ -90,9 +98,14 @@ export default function FlashTeam({
 
               <div className="flex flex-wrap items-center justify-center sm:justify-between max-w-[1500px] mx-auto gap-3">
                 {(members?.length ?? 0) < 2 && (
-                  <p className="text-[18px] xl:text-[72px] text-[#E6E6E6] max-w-[688px]">
-                    {title}
-                  </p>
+                  <EditableText
+                    as="p"
+                    value={title || ""}
+                    onChange={(newTitle: string) =>
+                      updateTeam({ title: newTitle })
+                    }
+                    className="text-[18px] xl:text-[72px] text-[#E6E6E6] max-w-[688px]"
+                  />
                 )}
                 {members?.map((member) => (
                   <div

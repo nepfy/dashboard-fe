@@ -1,4 +1,6 @@
 import { InvestmentSection } from "#/types/template-data";
+import EditableText from "#/app/editar/components/EditableText";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashInvestment({
   mainColor,
@@ -7,6 +9,7 @@ export default function FlashInvestment({
   projectScope,
   hideProjectScope,
 }: InvestmentSection) {
+  const { updateInvestment } = useEditor();
   let bg;
   if (mainColor === "#4F21A1") {
     bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`;
@@ -30,10 +33,19 @@ export default function FlashInvestment({
     <div className="bg-black relative overflow-hidden">
       {!hideSection && (
         <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-23 xl:pb-36 relative z-10">
-          <p className="text-[24px] lg:text-[48px] text-[#E6E6E6] max-w-[1055px] pb-21 font-normal">
-            <span className="text-[#A0A0A0] font-semibold">Investimento. </span>
-            {title}
-          </p>
+          <div className=" max-w-[1055px] pb-21">
+            <span className="text-[24px] lg:text-[48px] text-[#A0A0A0] font-semibold inline">
+              Investimento.{" "}
+            </span>{" "}
+            <EditableText
+              as="span"
+              value={title || ""}
+              onChange={(newTitle: string) =>
+                updateInvestment({ title: newTitle })
+              }
+              className="text-[24px] lg:text-[48px] text-[#E6E6E6] max-w-[1055px] pb-21 font-normal inline"
+            />
+          </div>
           {!hideProjectScope && (
             <div className="max-w-[700px] border-l border-l-[#A0A0A0]/30 pl-5 lg:pl-10">
               <div className="flex items-center gap-2 mb-23 lg:mb-42">
