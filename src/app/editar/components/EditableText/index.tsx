@@ -6,7 +6,6 @@ interface EditableTextProps {
   value: string;
   onChange: (newValue: string) => void;
   className?: string;
-  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
   placeholder?: string;
 }
 
@@ -14,8 +13,7 @@ export default function EditableText({
   value,
   onChange,
   className = "",
-  as = "span",
-  placeholder = "Click to edit...",
+  placeholder = "",
 }: EditableTextProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
@@ -48,6 +46,7 @@ export default function EditableText({
       onChange(localValue.trim());
     }
     setIsEditing(false);
+    setIsHovered(false); // Reset hover state
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -58,6 +57,7 @@ export default function EditableText({
     if (e.key === "Escape") {
       setLocalValue(value);
       setIsEditing(false);
+      setIsHovered(false); // Reset hover state on escape
     }
   };
 
@@ -78,15 +78,11 @@ export default function EditableText({
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setLocalValue(e.target.value);
 
-    // Auto-resize textarea to fit content
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   };
-
-  // Dynamic component based on 'as' prop
-  const Component = as;
 
   if (isEditing) {
     return (
@@ -96,11 +92,10 @@ export default function EditableText({
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        className={`${className} resize-none overflow-hidden border-none outline-none bg-transparent inline-block`}
+        className={`${className} inline-block resize-none overflow-hidden border border-[#0170D6] bg-transparent outline-none`}
         style={{
           height: "auto",
           minHeight: "1.2em",
-          lineHeight: "1.2",
           display: "inline-block",
           verticalAlign: "baseline",
         }}
@@ -110,11 +105,11 @@ export default function EditableText({
   }
 
   return (
-    <Component
-      className={`${className} transition-all duration-200 cursor-pointer ${
-        isHovered
+    <p
+      className={`${className} cursor-pointer transition-all duration-200 ${
+        isHovered && !isEditing
           ? "border border-[#0170D6] bg-[#0170D666]"
-          : "border border-transparent"
+          : "border border-transparent bg-transparent"
       }`}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
@@ -128,6 +123,6 @@ export default function EditableText({
             </React.Fragment>
           ))
         : placeholder}
-    </Component>
+    </p>
   );
 }

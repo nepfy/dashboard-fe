@@ -1,8 +1,20 @@
 {
-    "editor.fontSize": 10,
-    "editor.tabSize": 2,
-    "editor.minimap.enabled": false,
-    "go.lintOnSave": "file",
-    "terminal.integrated.defaultProfile.osx": "zsh",
-    "typescript.tsdk": "node_modules/typescript/lib"
+  "editor.fontSize": 10,
+  "editor.tabSize": 2,
+  "editor.minimap.enabled": false,
+  "go.lintOnSave": "file",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

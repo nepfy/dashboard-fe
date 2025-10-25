@@ -33,30 +33,29 @@ export default function FlashResults({
 
   const dimensions = getPhotoDimensions();
   return (
-    <div className="bg-black overflow-hidden">
+    <div className="overflow-hidden bg-black">
       {!hideSection && (
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 xl:px-0 pt-7 lg:pt-22">
-          <div className="flex items-end pt-24 pl-5 lg:pl-10 border-l border-l-[#A0A0A0] max-w-[1100px] mb-16 lg:mb-43 mx-auto">
+        <div className="mx-auto max-w-[1440px] px-6 pt-7 lg:px-12 lg:pt-22 xl:px-0">
+          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#A0A0A0] pt-24 pl-5 lg:mb-43 lg:pl-10">
             <EditableText
-              as="p"
               value={title || ""}
               onChange={(newTitle: string) =>
                 updateResults({ title: newTitle })
               }
-              className="text-[32px] lg:text-[72px] text-[#E6E6E6]"
+              className="text-[32px] text-[#E6E6E6] lg:text-[72px]"
             />
           </div>
           <div className="px-0 lg:px-0 xl:px-8">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="bg-white-neutral-light-100 w-3 h-3 rounded-full" />
-              <p className="text-white text-sm font-semibold">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="bg-white-neutral-light-100 h-3 w-3 rounded-full" />
+              <p className="text-sm font-semibold text-white">
                 Nossos Resultados
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center sm:justify-between gap-3 max-w-[1500px] mx-auto pb-30">
+            <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-start gap-3 pb-30 sm:justify-center lg:justify-start">
               {items?.map((item) => (
-                <div key={item.id} className="flex flex-col items-start mb-20">
+                <div key={item.id} className="mb-20 flex flex-col items-start">
                   {!item.hidePhoto && item?.photo && (
                     <div
                       className="relative overflow-hidden rounded-[4px]"
@@ -73,7 +72,7 @@ export default function FlashResults({
                           }
                         }
                       `}</style>
-                      <div className="relative w-full h-full">
+                      <div className="relative h-full w-full">
                         <Image
                           src={item.photo || ""}
                           alt={item.client || ""}
@@ -87,27 +86,27 @@ export default function FlashResults({
                     </div>
                   )}
 
-                  <p className="text-[24px] font-medium text-[#E6E6E6] mt-3 p-0">
+                  <p className="mt-3 p-0 text-[24px] font-medium text-[#E6E6E6]">
                     {item.client}
                   </p>
-                  <p className="font-normal text-[#A0A0A0] text-sm">
+                  <p className="text-sm font-normal text-[#A0A0A0]">
                     @{item.instagram}
                   </p>
 
-                  <div className="flex gap-12 mt-6">
+                  <div className="mt-6 flex gap-12">
                     <span>
-                      <p className="font-semibold text-[#E6E6E6] text-lg">
+                      <p className="text-lg font-semibold text-[#E6E6E6]">
                         Investimento
                       </p>
-                      <p className="font-medium text-[#A0A0A0] text-lg">
+                      <p className="text-lg font-medium text-[#A0A0A0]">
                         {formatCurrencyDisplay(item.investment ?? 0)}
                       </p>
                     </span>
                     <span>
-                      <p className="font-semibold text-[#E6E6E6] text-lg">
+                      <p className="text-lg font-semibold text-[#E6E6E6]">
                         Retorno
                       </p>
-                      <p className="font-medium text-[#C085FD] text-lg">
+                      <p className="text-lg font-medium text-[#C085FD]">
                         {formatCurrencyDisplay(item.roi ?? 0)}
                       </p>
                     </span>

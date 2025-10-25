@@ -30,27 +30,26 @@ export default function FlashInvestment({
     bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #212121 24.22%, #212121 64.9%, #3A3A3A 81.78%)`;
   }
   return (
-    <div className="bg-black relative overflow-hidden">
+    <div className="relative overflow-hidden bg-black">
       {!hideSection && (
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-23 xl:pb-36 relative z-10">
-          <div className=" max-w-[1055px] pb-21">
-            <span className="text-[24px] lg:text-[48px] text-[#A0A0A0] font-semibold inline">
+        <div className="relative z-10 mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
+          <div className="max-w-[1055px] pb-21">
+            <span className="inline text-[24px] font-semibold text-[#A0A0A0] lg:text-[48px]">
               Investimento.{" "}
             </span>{" "}
             <EditableText
-              as="span"
               value={title || ""}
               onChange={(newTitle: string) =>
                 updateInvestment({ title: newTitle })
               }
-              className="text-[24px] lg:text-[48px] text-[#E6E6E6] max-w-[1055px] pb-21 font-normal inline"
+              className="mb-21 inline w-full text-[24px] font-normal text-[#E6E6E6] lg:text-[48px]"
             />
           </div>
           {!hideProjectScope && (
             <div className="max-w-[700px] border-l border-l-[#A0A0A0]/30 pl-5 lg:pl-10">
-              <div className="flex items-center gap-2 mb-23 lg:mb-42">
-                <div className="bg-white-neutral-light-100 w-3 h-3 rounded-full" />
-                <p className="text-white text-sm font-semibold">
+              <div className="mb-23 flex items-center gap-2 lg:mb-42">
+                <div className="bg-white-neutral-light-100 h-3 w-3 rounded-full" />
+                <p className="text-sm font-semibold text-white">
                   Escopo do projeto
                 </p>
               </div>

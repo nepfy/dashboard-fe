@@ -56,38 +56,37 @@ export default function FlashExpertise({
   };
 
   return (
-    <div className="bg-black overflow-hidden">
+    <div className="overflow-hidden bg-black">
       {!hideSection && (
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 xl:px-0 pt-7 xl:pt-0">
-          <div className="flex items-end pt-24 pl-5 lg:pl-10 border-l border-l-[#A0A0A0] max-w-[1100px] mb-16 lg:mb-43 mx-auto">
-            <p className="text-[18px] lg:text-[48px] text-[#E6E6E6] h-full">
-              <span className="font-bold block sm:inline">
+        <div className="mx-auto max-w-[1440px] px-6 pt-7 lg:px-12 xl:px-0 xl:pt-0">
+          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#A0A0A0] pt-24 pl-5 lg:mb-43 lg:pl-10">
+            <span className="h-full w-full text-[18px] text-[#E6E6E6] lg:text-[48px]">
+              <span className="block font-bold sm:inline">
                 Nossas Especializações.{" "}
               </span>
               <EditableText
-                as="p"
                 value={title || ""}
                 onChange={(newTitle: string) =>
                   updateExpertise({ title: newTitle })
                 }
-                className="inline text-[18px] lg:text-[48px] text-[#E6E6E6] h-full"
+                className="inline h-full w-full text-[18px] text-[#E6E6E6] lg:text-[48px]"
               />
-            </p>
+            </span>
           </div>
 
-          <div className="flex flex-wrap justify-between gap-6 max-w-[1100px] mx-auto pb-32">
+          <div className="mx-auto flex max-w-[1100px] flex-wrap justify-start gap-10 pb-32 sm:justify-center lg:justify-between lg:gap-25">
             {topics?.map((topic) => (
               <div
                 key={topic.id}
-                className="w-[260px]  text-white-neutral-light-100 text-[15px]"
+                className="text-white-neutral-light-100 w-[260px] text-[15px]"
               >
-                <div className="text-white mb-2">
+                <div className="mb-2 text-white">
                   {typeof topic.icon === "string"
                     ? renderIcon(topic.icon)
                     : topic.icon}
                 </div>
                 {!topic.hideTitleField && (
-                  <p className="font-semibold py-3">{topic.title}</p>
+                  <p className="py-3 font-semibold">{topic.title}</p>
                 )}
                 {!topic.hideDescription && <p>{topic.description}</p>}
               </div>

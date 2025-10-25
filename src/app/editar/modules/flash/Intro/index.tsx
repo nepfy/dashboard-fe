@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { IntroductionSection } from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
-import EditableText from "../../../components/EditableText";
-import { useEditor } from "../../../contexts/EditorContext";
+import EditableText from "#/app/editar/components/EditableText";
+import EditableDate from "#/app/editar/components/EditableDate";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashIntro({
   mainColor,
@@ -9,12 +11,12 @@ export default function FlashIntro({
   email,
   buttonTitle,
   title,
-  validity,
   subtitle,
   hideSubtitle,
   services,
 }: IntroductionSection) {
-  const { updateIntroduction } = useEditor();
+  const { updateIntroduction, projectData } = useEditor();
+  const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
 
   let bg;
   if (mainColor === "#4F21A1") {
@@ -42,7 +44,7 @@ export default function FlashIntro({
   }
 
   return (
-    <div className="relative px-6 lg:px-12 py-11 overflow-hidden">
+    <div className="relative overflow-hidden px-6 py-11 lg:px-12">
       <div
         style={{
           width: "120%",
@@ -55,25 +57,23 @@ export default function FlashIntro({
           overflow: "hidden",
         }}
       />
-      <nav className="flex justify-between items-center text-[#E6E6E6] max-w-[1440px] mx-auto">
-        <p className="text-lg lg:text-base font-semibold lg:font-normal">
+      <nav className="mx-auto flex max-w-[1440px] items-center justify-between text-[#E6E6E6]">
+        <span className="text-lg font-semibold lg:text-base lg:font-normal">
           <EditableText
-            as="p"
             value={userName || ""}
             onChange={(newUserName: string) =>
               updateIntroduction({ userName: newUserName })
             }
-            className="text-lg lg:text-base font-semibold lg:font-normal"
+            className="text-lg font-semibold lg:text-base lg:font-normal"
           />{" "}
-        </p>
-        <div className="hidden lg:flex gap-12 items-center">
+        </span>
+        <div className="hidden items-center gap-12 lg:flex">
           <EditableText
-            as="p"
             value={email || ""}
             onChange={(newEmail: string) =>
               updateIntroduction({ email: newEmail })
             }
-            className=" text-[#E6E6E6]"
+            className="text-[#E6E6E6]"
           />
           <p className="rounded-full bg-black p-5">
             {buttonTitle || "Iniciar Projeto"}
@@ -81,44 +81,57 @@ export default function FlashIntro({
         </div>
 
         <button
-          className="lg:hidden flex flex-col justify-center items-center w-6 h-6 space-y-1 cursor-pointer z-[900]"
+          className="z-[900] flex h-6 w-6 cursor-pointer flex-col items-center justify-center space-y-1 lg:hidden"
           aria-label="Toggle menu"
         >
           <span
-            className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300`}
+            className={`bg-white-neutral-light-100 h-[1px] w-8 transition-all duration-300`}
           />
           <span
-            className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300 mb-2 mt-1`}
+            className={`bg-white-neutral-light-100 mt-1 mb-2 h-[1px] w-8 transition-all duration-300`}
           />
           <span
-            className={`w-8 h-[1px] bg-white-neutral-light-100 transition-all duration-300`}
+            className={`bg-white-neutral-light-100 h-[1px] w-8 transition-all duration-300`}
           />
         </button>
       </nav>
 
-      <div className="pt-30 lg:pt-60 mb-24 lg:mb-0 lg:pb-39 xl:pl-30 max-w-[1440px] mx-auto">
+      <div className="mx-auto mb-24 flex max-w-[1440px] flex-col pt-30 lg:mb-0 lg:pt-60 lg:pb-39 xl:pl-30">
         <EditableText
-          as="h1"
           value={title || ""}
           onChange={(newTitle: string) =>
             updateIntroduction({ title: newTitle })
           }
-          className="text-[32px] xl:text-[72px] text-[#E6E6E6] max-w-[1120px] pb-4"
+          className="max-w-[1120px] text-[32px] leading-[1.3] text-[#E6E6E6] xl:text-[72px]"
         />
-        {validity && (
-          <p className="font-bold text-sm text-[#E6E6E6]">
-            Proposta válida até -{" "}
-            <span className="font-normal text-[#E6E6E6]/40">
-              {formatDateToDDDeMonthDeYYYY(validity)}
-            </span>
-          </p>
+
+        {projectData?.projectValidUntil && (
+          <div
+            className="mt-4 self-start"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDateModalOpen(true);
+            }}
+          >
+            <p className="inline w-auto cursor-pointer border border-transparent text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666]">
+              Proposta válida até -{" "}
+              <span className="font-normal text-[#E6E6E6]/40">
+                {formatDateToDDDeMonthDeYYYY(
+                  projectData.projectValidUntil.toString()
+                )}
+              </span>
+            </p>
+            <EditableDate
+              isModalOpen={isDateModalOpen}
+              setIsModalOpen={setIsDateModalOpen}
+            />
+          </div>
         )}
       </div>
 
-      <div className="flex flex-col lg:flex-row justify-between items-end gap-4 max-w-[1440px] mx-auto">
-        <div className="pt-22 pl-4 lg:pl-8 border-l border-l-[#A0A0A0] w-full lg:w-1/2 order-2 lg:order-1">
+      <div className="mx-auto flex max-w-[1440px] flex-col items-end justify-between gap-4 lg:flex-row">
+        <div className="order-2 w-full border-l border-l-[#A0A0A0] pt-22 pl-4 lg:order-1 lg:w-1/2 lg:pl-8">
           <EditableText
-            as="p"
             value={
               services?.map((service) => service.serviceName).join("\n") || ""
             }
@@ -140,17 +153,16 @@ export default function FlashIntro({
           />
         </div>
         {!hideSubtitle && (
-          <div className="pt-22 pl-4 lg:pl-8 border-l border-l-[#A0A0A0] w-full lg:w-1/2 order-1 lg:order-2">
-            <p className="text-[18px] text-[#E6E6E6] max-w-[400px]">
+          <div className="order-1 w-full border-l border-l-[#A0A0A0] pt-22 pl-4 lg:order-2 lg:w-1/2 lg:pl-8">
+            <span className="max-w-[400px] text-[18px] text-[#E6E6E6]">
               <EditableText
-                as="p"
                 value={subtitle || ""}
                 onChange={(newSubtitle: string) =>
                   updateIntroduction({ subtitle: newSubtitle })
                 }
-                className="text-[18px] text-[#E6E6E6] max-w-[400px]"
+                className="w-full max-w-[380px] text-[18px] text-[#E6E6E6]"
               />
-            </p>
+            </span>
           </div>
         )}
       </div>

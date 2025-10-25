@@ -58,6 +58,7 @@ interface EditorContextType {
     projectUrl?: string;
     pagePassword?: string;
   }) => void;
+  updateProjectValidUntil: (date: Date | string | null) => void;
   updateSectionVisibility: (sectionId: string, hidden: boolean) => void;
   getSectionVisibility: () => Record<string, boolean>;
   saveProject: () => Promise<void>;
@@ -257,6 +258,39 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [projectData]
   );
 
+  const updateProjectValidUntil = useCallback(
+    (date: Date | string | null) => {
+      if (!projectData) return;
+
+      setProjectDataState((prev) => {
+        if (!prev) return prev;
+
+        let dateToSave: string | undefined;
+
+        if (date) {
+          if (typeof date === "string") {
+            dateToSave = date;
+          } else {
+            // Format as YYYY-MM-DD in local timezone
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            dateToSave = `${year}-${month}-${day}`;
+          }
+        }
+
+        return {
+          ...prev,
+          projectValidUntil: dateToSave,
+        };
+      });
+
+      setIsDirty(true);
+      setError(null);
+    },
+    [projectData]
+  );
+
   const updateSectionVisibility = useCallback(
     (sectionId: string, hidden: boolean) => {
       if (!projectData) return;
@@ -367,6 +401,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     updateTermsConditions,
     updateFAQ,
     updatePersonalization,
+    updateProjectValidUntil,
     updateSectionVisibility,
     getSectionVisibility,
     saveProject,

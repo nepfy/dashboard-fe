@@ -28,24 +28,24 @@ export default function FlashPlans({
     bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #0D0D0D 0.01%, #212121 41.86%, #3A3A3A 81.78%)`;
   }
   return (
-    <div className="bg-black relative overflow-hidden">
+    <div className="relative overflow-hidden bg-black">
       {!hideSection && (
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-41 pt-10 lg:pt-22 pb-23 xl:pb-36 relative z-10">
-          <div className="flex flex-wrap gap-6">
+        <div className="relative z-10 mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
+          <div className="flex flex-wrap justify-center gap-6 lg:justify-between">
             {plansItems?.map((plan) => (
               <div
                 key={plan.id}
-                className="w-full md:w-[310px] min-h-[600px] flex flex-col my-10 lg:my-0 relative"
+                className="relative my-10 flex min-h-[600px] w-full flex-col md:w-[310px] lg:my-0 lg:w-[350px]"
               >
                 {plan.recommended && (
                   <div
-                    className="absolute top-[-44px] left-0 w-[145px] h-[37px] flex items-center justify-center rounded-[4px] gap-2"
+                    className="absolute top-[-44px] left-0 flex h-[37px] w-[145px] items-center justify-center gap-2 rounded-[4px]"
                     style={{
                       background: bg,
                     }}
                   >
                     <StarIcon />
-                    <p className="text-[#E6E6E6] text-[14px] font-semibold">
+                    <p className="text-[14px] font-semibold text-[#E6E6E6]">
                       Melhor Oferta
                     </p>
                   </div>
@@ -59,18 +59,18 @@ export default function FlashPlans({
                   }}
                 >
                   {!plan.hideTitleField && (
-                    <p className="text-[#E6E6E6] text-[24px] font-bold">
+                    <p className="text-[24px] font-bold text-[#E6E6E6]">
                       {plan.title}
                     </p>
                   )}
                   {!plan.hideDescription && (
-                    <p className="text-[#E6E6E6]/30 text-sm mb-4">
+                    <p className="mb-4 text-sm text-[#E6E6E6]/30">
                       {plan.description}
                     </p>
                   )}
                   <div className="flex items-baseline gap-4">
                     {!plan.hidePrice && (
-                      <p className="text-[#E6E6E6] text-[32px] font-medium">
+                      <p className="text-[32px] font-medium text-[#E6E6E6]">
                         {formatCurrencyDisplayNoCents(plan.value)}
                       </p>
                     )}
@@ -81,7 +81,7 @@ export default function FlashPlans({
                 </div>
 
                 <div className="flex-grow">
-                  <p className="text-[#E6E6E6] text-[12px] font-semibold mb-4 uppercase px-6 mt-8">
+                  <p className="mt-8 mb-4 px-6 text-[12px] font-semibold text-[#E6E6E6] uppercase">
                     Incluso:
                   </p>
                   {plan.includedItems?.map((includedItem) => (
@@ -89,11 +89,11 @@ export default function FlashPlans({
                       key={includedItem.id}
                       className="flex items-center gap-2 px-6 py-2"
                     >
-                      <span className="w-4 h-4 flex items-start justify-center">
+                      <span className="flex h-4 w-4 items-start justify-center">
                         <Checkbox fill="rgba(230, 230, 230, 0.7)" />
                       </span>
                       {!includedItem.hideDescription && (
-                        <p className="text-[#E6E6E6]/70 text-sm">
+                        <p className="text-sm text-[#E6E6E6]/70">
                           {includedItem.description}
                         </p>
                       )}
@@ -103,10 +103,10 @@ export default function FlashPlans({
 
                 {!plan.hideButtonTitle && (
                   <button
-                    className={`w-full py-4 rounded-full mt-8 font-semibold ${
+                    className={`mt-8 w-full rounded-full py-4 font-semibold ${
                       plan.recommended
-                        ? "text-[#121212] bg-[#FBFBFB]"
-                        : "text-[#FBFBFB] bg-[#121212]"
+                        ? "bg-[#FBFBFB] text-[#121212]"
+                        : "bg-[#121212] text-[#FBFBFB]"
                     }`}
                   >
                     {plan.buttonTitle}

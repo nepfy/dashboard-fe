@@ -74,37 +74,35 @@ export default function FlashTeam({
   return (
     <>
       {!hideSection && (
-        <div className="bg-black relative pb-10 lg:pb-70 overflow-hidden">
-          <div className="pt-31 max-w-[1440px] mx-auto relative z-10">
+        <div className="relative overflow-hidden bg-black pb-10 lg:pb-70">
+          <div className="relative z-10 mx-auto max-w-[1440px] pt-31">
             {(members?.length ?? 0) > 1 && (
               <div className="px-6 lg:px-12 xl:px-40">
                 <EditableText
-                  as="p"
                   value={title || ""}
                   onChange={(newTitle: string) =>
                     updateTeam({ title: newTitle })
                   }
-                  className="text-[32px] lg:text-[72px] text-[#E6E6E6] max-w-[1050px] pb-21"
+                  className="mb-21 w-full max-w-[1050px] text-[32px] text-[#E6E6E6] lg:text-[72px]"
                 />
               </div>
             )}
             <div className="px-6 lg:px-12 xl:px-8">
               {(members?.length ?? 0) > 1 && (
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="bg-white-neutral-light-100 w-3 h-3 rounded-full" />
-                  <p className="text-white text-sm font-semibold">Time</p>
+                <div className="mb-4 flex items-center gap-2">
+                  <div className="bg-white-neutral-light-100 h-3 w-3 rounded-full" />
+                  <p className="text-sm font-semibold text-white">Time</p>
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center justify-center sm:justify-between max-w-[1500px] mx-auto gap-3">
+              <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-start gap-3 sm:justify-center lg:justify-start">
                 {(members?.length ?? 0) < 2 && (
                   <EditableText
-                    as="p"
                     value={title || ""}
                     onChange={(newTitle: string) =>
                       updateTeam({ title: newTitle })
                     }
-                    className="text-[18px] xl:text-[72px] text-[#E6E6E6] max-w-[688px]"
+                    className="max-w-[688px] text-[18px] text-[#E6E6E6] xl:text-[72px]"
                   />
                 )}
                 {members?.map((member) => (
@@ -130,7 +128,7 @@ export default function FlashTeam({
                             }
                           }
                         `}</style>
-                        <div className="relative w-full h-full">
+                        <div className="relative h-full w-full">
                           <Image
                             src={member.image || ""}
                             alt={member.name || ""}
@@ -143,10 +141,10 @@ export default function FlashTeam({
                         </div>
                       </div>
                     )}
-                    <p className="text-lg font-semibold text-[#E6E6E6] mt-3 p-0">
+                    <p className="mt-3 p-0 text-lg font-semibold text-[#E6E6E6]">
                       {member.name}
                     </p>
-                    <p className="font-medium text-[#A0A0A0] text-lg">
+                    <p className="text-lg font-medium text-[#A0A0A0]">
                       {member.role}
                     </p>
                   </div>

@@ -43,7 +43,7 @@ export default function FlashAboutUs({
   return (
     <>
       {!hideSection && (
-        <div className="bg-black relative overflow-hidden">
+        <div className="relative overflow-hidden bg-black">
           <div
             className="hidden lg:block"
             style={{
@@ -77,17 +77,16 @@ export default function FlashAboutUs({
               borderRadius: "100%",
             }}
           />
-          <div className="flex justify-center items-center px-6 lg:px-12 xl:px-0 py-35 lg:py-62 relative z-10 max-w-[1440px] mx-auto">
-            <div className="pl-4 lg:pl-10 pt-36 border-l border-l-[#A0A0A0] max-w-[1100px] inline">
-              <div className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-medium">
-                <span className="font-bold inline">Sobre nós.</span>{" "}
+          <div className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-center px-6 py-35 lg:px-12 lg:py-62 xl:px-0">
+            <div className="inline max-w-[1100px] border-l border-l-[#A0A0A0] pt-36 pl-4 lg:pl-10">
+              <div className="text-[18px] font-medium text-[#E6E6E6] lg:text-[48px]">
+                <span className="inline font-bold">Sobre nós.</span>{" "}
                 <EditableText
-                  as="span"
                   value={title || ""}
                   onChange={(newTitle: string) =>
                     updateAboutUs({ title: newTitle })
                   }
-                  className="text-[18px] lg:text-[48px] text-[#E6E6E6] font-medium inline"
+                  className="inline w-full text-[18px] font-medium text-[#E6E6E6] lg:text-[48px]"
                 />
               </div>
             </div>
