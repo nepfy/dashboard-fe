@@ -3,4 +3,6 @@ export default interface IconProps {
   height?: string;
   fill?: string;
   className?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }

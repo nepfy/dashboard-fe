@@ -1,43 +1,45 @@
 "use client";
 
-import CloseIcon from "#/components/icons/CloseIcon";
-import EditableModal from "#/app/editar/components/EditableModal";
+import ItemEditorModal from "#/app/editar/components/ItemEditorModal";
+import { TeamMember, Result } from "#/types/template-data";
 
 interface EditableImageProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  memberId: string;
+  itemType: "team" | "results";
+  items: (TeamMember | Result)[];
+  currentItemId: string | null;
+  onUpdateItem: (
+    itemId: string,
+    data: Partial<TeamMember> | Partial<Result>
+  ) => void;
+  onAddItem: () => void;
+  onDeleteItem: (itemId: string) => void;
+  onReorderItems: (items: TeamMember[] | Result[]) => void;
 }
 
 export default function EditableImage({
   isModalOpen,
   setIsModalOpen,
-  memberId,
+  itemType,
+  items,
+  currentItemId,
+  onUpdateItem,
+  onAddItem,
+  onDeleteItem,
+  onReorderItems,
 }: EditableImageProps) {
   return (
-    <div className="z-[10] w-full">
-      <EditableModal
-        isOpen={isModalOpen}
-        className="absolute top-[-16px] right-0"
-        trianglePosition="top-[85px] left-[-8px]"
-      >
-        <div
-          className="mb-6 flex w-full items-center justify-between border-b border-b-[#E0E3E9] pb-6"
-          onClick={(e) => e.stopPropagation()}
-          key={memberId}
-        >
-          <span className="text-lg font-medium text-[#2A2A2A]">Time</span>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsModalOpen(false);
-            }}
-            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
-          >
-            <CloseIcon width="12" height="12" fill="#1C1A22" />
-          </button>
-        </div>
-      </EditableModal>
-    </div>
+    <ItemEditorModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      itemType={itemType}
+      items={items}
+      currentItemId={currentItemId}
+      onUpdateItem={onUpdateItem}
+      onAddItem={onAddItem}
+      onDeleteItem={onDeleteItem}
+      onReorderItems={onReorderItems}
+    />
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import { TeamSection } from "#/types/template-data";
+import { TeamMember, TeamSection, Result } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
@@ -11,7 +11,13 @@ export default function FlashTeam({
   title,
   members,
 }: TeamSection) {
-  const { updateTeam } = useEditor();
+  const {
+    updateTeam,
+    updateTeamMember,
+    addTeamMember,
+    deleteTeamMember,
+    reorderTeamMembers,
+  } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
   let bg;
   let bg2;
@@ -111,9 +117,9 @@ export default function FlashTeam({
                 {members?.map((member) => (
                   <div
                     key={member.id}
-                    className={`relative flex flex-col items-start ${
+                    className={`relative flex flex-col items-start rounded-[4px] border border-transparent text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] ${
                       (members?.length ?? 0) > 2 ? "mb-20" : ""
-                    }`}
+                    } ${openModalId === member.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"}`}
                     onClick={() => setOpenModalId(member?.id ?? null)}
                   >
                     {!member.hidePhoto && member?.image && (
@@ -156,7 +162,17 @@ export default function FlashTeam({
                       setIsModalOpen={(isOpen) =>
                         setOpenModalId(isOpen ? (member?.id ?? null) : null)
                       }
-                      memberId={member?.id ?? ""}
+                      itemType="team"
+                      items={members || []}
+                      currentItemId={member?.id ?? null}
+                      onUpdateItem={updateTeamMember}
+                      onAddItem={addTeamMember}
+                      onDeleteItem={deleteTeamMember}
+                      onReorderItems={
+                        reorderTeamMembers as (
+                          items: TeamMember[] | Result[]
+                        ) => void
+                      }
                     />
                   </div>
                 ))}

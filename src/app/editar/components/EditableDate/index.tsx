@@ -109,9 +109,9 @@ export default function EditableDate({
             e.stopPropagation();
             handleSave();
           }}
-          className="mt-6 flex w-full transform cursor-pointer items-center justify-center gap-1 rounded-[12px] bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 hover:from-purple-700 hover:to-blue-700"
+          className="mt-14 flex w-full transform cursor-pointer items-center justify-center gap-1 rounded-[12px] bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 hover:from-purple-700 hover:to-blue-700"
         >
-          Salvar alterações
+          Alterar
         </button>
       </EditableModal>
     </div>

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import Image from "next/image";
 import { formatCurrencyDisplay } from "#/helpers/formatCurrency";
-import { ResultSection } from "#/types/template-data";
+import { Result, ResultSection, TeamMember } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
+import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashResults({
@@ -9,7 +11,14 @@ export default function FlashResults({
   title,
   items,
 }: ResultSection) {
-  const { updateResults } = useEditor();
+  const {
+    updateResults,
+    updateResultItem,
+    addResultItem,
+    deleteResultItem,
+    reorderResultItems,
+  } = useEditor();
+  const [openModalId, setOpenModalId] = useState<string | null>(null);
   const visibleResults = items?.filter(
     (result) => !result.hidePhoto && result.photo
   );
@@ -55,7 +64,11 @@ export default function FlashResults({
 
             <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-start gap-3 pb-30 sm:justify-center lg:justify-start">
               {items?.map((item) => (
-                <div key={item.id} className="mb-20 flex flex-col items-start">
+                <div
+                  key={item.id}
+                  className="mb-20 flex cursor-pointer flex-col items-start"
+                  onClick={() => setOpenModalId(item?.id ?? null)}
+                >
                   {!item.hidePhoto && item?.photo && (
                     <div
                       className="relative overflow-hidden rounded-[4px]"
@@ -111,6 +124,24 @@ export default function FlashResults({
                       </p>
                     </span>
                   </div>
+
+                  <EditableImage
+                    isModalOpen={openModalId === item.id}
+                    setIsModalOpen={(isOpen) =>
+                      setOpenModalId(isOpen ? (item?.id ?? null) : null)
+                    }
+                    itemType="results"
+                    items={items || []}
+                    currentItemId={item?.id ?? null}
+                    onUpdateItem={updateResultItem}
+                    onAddItem={addResultItem}
+                    onDeleteItem={deleteResultItem}
+                    onReorderItems={
+                      reorderResultItems as (
+                        items: TeamMember[] | Result[]
+                      ) => void
+                    }
+                  />
                 </div>
               ))}
             </div>

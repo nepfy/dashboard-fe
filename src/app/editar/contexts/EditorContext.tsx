@@ -26,6 +26,8 @@ import {
   TestimonialsSection,
   TermsConditionsSection,
   FAQSection,
+  TeamMember,
+  Result,
 } from "#/types/template-data";
 import { useRouter } from "next/navigation";
 
@@ -64,6 +66,18 @@ interface EditorContextType {
   saveProject: () => Promise<void>;
   revertChanges: () => void;
   setProjectData: (data: TemplateData) => void;
+
+  // Team member CRUD operations
+  updateTeamMember: (memberId: string, data: Partial<TeamMember>) => void;
+  addTeamMember: () => void;
+  deleteTeamMember: (memberId: string) => void;
+  reorderTeamMembers: (members: TeamMember[]) => void;
+
+  // Result item CRUD operations
+  updateResultItem: (itemId: string, data: Partial<Result>) => void;
+  addResultItem: () => void;
+  deleteResultItem: (itemId: string) => void;
+  reorderResultItems: (items: Result[]) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -379,6 +393,123 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     }
   }, [initialData]);
 
+  // Team member CRUD operations
+  const updateTeamMember = useCallback(
+    (memberId: string, data: Partial<TeamMember>) => {
+      if (!projectData?.proposalData?.team?.members) return;
+
+      const updatedMembers = projectData.proposalData.team.members.map(
+        (member) => (member.id === memberId ? { ...member, ...data } : member)
+      );
+
+      updateSection("team", { members: updatedMembers });
+    },
+    [projectData, updateSection]
+  );
+
+  const addTeamMember = useCallback(() => {
+    if (!projectData?.proposalData?.team?.members) return;
+
+    const currentMembers = projectData.proposalData.team.members;
+    if (currentMembers.length >= 6) return; // Max 6 members
+
+    const newMember: TeamMember = {
+      id: `member-${Date.now()}`,
+      name: "",
+      role: "",
+      image: "",
+      hidePhoto: false,
+      hideMember: false,
+      sortOrder: currentMembers.length,
+    };
+
+    updateSection("team", { members: [...currentMembers, newMember] });
+  }, [projectData, updateSection]);
+
+  const deleteTeamMember = useCallback(
+    (memberId: string) => {
+      if (!projectData?.proposalData?.team?.members) return;
+
+      const updatedMembers = projectData.proposalData.team.members.filter(
+        (member) => member.id !== memberId
+      );
+
+      updateSection("team", { members: updatedMembers });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderTeamMembers = useCallback(
+    (members: TeamMember[]) => {
+      const reorderedMembers = members.map((member, index) => ({
+        ...member,
+        sortOrder: index,
+      }));
+
+      updateSection("team", { members: reorderedMembers });
+    },
+    [updateSection]
+  );
+
+  // Result item CRUD operations
+  const updateResultItem = useCallback(
+    (itemId: string, data: Partial<Result>) => {
+      if (!projectData?.proposalData?.results?.items) return;
+
+      const updatedItems = projectData.proposalData.results.items.map((item) =>
+        item.id === itemId ? { ...item, ...data } : item
+      );
+
+      updateSection("results", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const addResultItem = useCallback(() => {
+    if (!projectData?.proposalData?.results?.items) return;
+
+    const currentItems = projectData.proposalData.results.items;
+    if (currentItems.length >= 6) return; // Max 6 results
+
+    const newItem: Result = {
+      id: `result-${Date.now()}`,
+      client: "",
+      instagram: "",
+      investment: "",
+      roi: "",
+      photo: null,
+      hidePhoto: false,
+      sortOrder: currentItems.length,
+    };
+
+    updateSection("results", { items: [...currentItems, newItem] });
+  }, [projectData, updateSection]);
+
+  const deleteResultItem = useCallback(
+    (itemId: string) => {
+      if (!projectData?.proposalData?.results?.items) return;
+
+      const updatedItems = projectData.proposalData.results.items.filter(
+        (item) => item.id !== itemId
+      );
+
+      updateSection("results", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderResultItems = useCallback(
+    (items: Result[]) => {
+      const reorderedItems = items.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
+
+      updateSection("results", { items: reorderedItems });
+    },
+    [updateSection]
+  );
+
   const value: EditorContextType = {
     projectData,
     isLoading,
@@ -407,6 +538,14 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     saveProject,
     revertChanges,
     setProjectData,
+    updateTeamMember,
+    addTeamMember,
+    deleteTeamMember,
+    reorderTeamMembers,
+    updateResultItem,
+    addResultItem,
+    deleteResultItem,
+    reorderResultItems,
   };
 
   return (
