@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Image from "next/image";
 import { TeamSection } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
+import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashTeam({
@@ -10,6 +12,7 @@ export default function FlashTeam({
   members,
 }: TeamSection) {
   const { updateTeam } = useEditor();
+  const [openModalId, setOpenModalId] = useState<string | null>(null);
   let bg;
   let bg2;
   let bgMobile;
@@ -108,9 +111,10 @@ export default function FlashTeam({
                 {members?.map((member) => (
                   <div
                     key={member.id}
-                    className={`flex flex-col items-start ${
+                    className={`relative flex flex-col items-start ${
                       (members?.length ?? 0) > 2 ? "mb-20" : ""
                     }`}
+                    onClick={() => setOpenModalId(member?.id ?? null)}
                   >
                     {!member.hidePhoto && member?.image && (
                       <div
@@ -147,6 +151,13 @@ export default function FlashTeam({
                     <p className="text-lg font-medium text-[#A0A0A0]">
                       {member.role}
                     </p>
+                    <EditableImage
+                      isModalOpen={openModalId === member.id}
+                      setIsModalOpen={(isOpen) =>
+                        setOpenModalId(isOpen ? (member?.id ?? null) : null)
+                      }
+                      memberId={member?.id ?? ""}
+                    />
                   </div>
                 ))}
               </div>

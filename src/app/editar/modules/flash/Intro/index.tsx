@@ -45,18 +45,6 @@ export default function FlashIntro({
 
   return (
     <div className="relative overflow-hidden px-6 py-11 lg:px-12">
-      <div
-        style={{
-          width: "120%",
-          height: "100%",
-          background: bg,
-          position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: -1,
-          overflow: "hidden",
-        }}
-      />
       <nav className="mx-auto flex max-w-[1440px] items-center justify-between text-[#E6E6E6]">
         <span className="text-lg font-semibold lg:text-base lg:font-normal">
           <EditableText
@@ -96,7 +84,7 @@ export default function FlashIntro({
         </button>
       </nav>
 
-      <div className="mx-auto mb-24 flex max-w-[1440px] flex-col pt-30 lg:mb-0 lg:pt-60 lg:pb-39 xl:pl-30">
+      <div className="mx-auto mb-24 flex max-w-[1440px] flex-col overflow-y-visible pt-30 lg:mb-0 lg:pt-60 lg:pb-39 xl:pl-30">
         <EditableText
           value={title || ""}
           onChange={(newTitle: string) =>
@@ -166,6 +154,18 @@ export default function FlashIntro({
           </div>
         )}
       </div>
+      <div
+        style={{
+          width: "120%",
+          height: "100%",
+          background: bg,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zIndex: -1,
+          overflow: "hidden",
+        }}
+      />
     </div>
   );
 }

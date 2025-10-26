@@ -74,7 +74,11 @@ export default function EditableDate({
 
   return (
     <div className="relative inline" onClick={handleOpen}>
-      <EditableModal isOpen={isModalOpen}>
+      <EditableModal
+        isOpen={isModalOpen}
+        className="fixed inset-0 z-[10] flex items-center justify-center sm:absolute sm:inset-auto sm:top-[-150px] sm:left-[25px]"
+        trianglePosition="top-[150px] left-[-8px]"
+      >
         <div
           className="mb-6 flex w-full items-center justify-between border-b border-b-[#E0E3E9] pb-6"
           onClick={(e) => e.stopPropagation()}
