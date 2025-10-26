@@ -76,9 +76,9 @@ export default function ContentTab({
   }
 
   return (
-    <div className="mt-4 space-y-6">
+    <div className="mt-4 space-y-6 px-1">
       {/* Nome field */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between">
         <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
           Nome
         </label>
@@ -86,7 +86,7 @@ export default function ContentTab({
           type="text"
           value={formData.name}
           onChange={(e) => handleInputChange("name", e.target.value)}
-          className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616] focus:ring-2 focus:ring-purple-500 focus:outline-none"
+          className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
           placeholder="Digite o nome"
         />
       </div>
@@ -101,7 +101,7 @@ export default function ContentTab({
             type="text"
             value={formData.role}
             onChange={(e) => handleInputChange("role", e.target.value)}
-            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616] focus:ring-2 focus:ring-purple-500 focus:outline-none"
+            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
             placeholder="Digite o cargo"
           />
         </div>
@@ -118,7 +118,7 @@ export default function ContentTab({
               type="text"
               value={formData.instagram}
               onChange={(e) => handleInputChange("instagram", e.target.value)}
-              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616] focus:ring-2 focus:ring-purple-500 focus:outline-none"
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="@usuario"
             />
           </div>
@@ -131,7 +131,7 @@ export default function ContentTab({
               type="text"
               value={formData.investment}
               onChange={(e) => handleInputChange("investment", e.target.value)}
-              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616] focus:ring-2 focus:ring-purple-500 focus:outline-none"
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="R$ 0,00"
             />
           </div>
@@ -144,7 +144,7 @@ export default function ContentTab({
               type="text"
               value={formData.roi}
               onChange={(e) => handleInputChange("roi", e.target.value)}
-              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616] focus:ring-2 focus:ring-purple-500 focus:outline-none"
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="R$ 0,00"
             />
           </div>

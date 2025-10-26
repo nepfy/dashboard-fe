@@ -35,6 +35,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "9pv534kdwoxoqhab.public.blob.vercel-storage.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com",
+      },
     ],
   },
   async headers() {

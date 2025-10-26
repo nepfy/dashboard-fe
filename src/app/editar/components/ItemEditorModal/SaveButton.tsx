@@ -11,7 +11,11 @@ export default function SaveButton({ onSave, hasChanges }: SaveButtonProps) {
       <button
         onClick={onSave}
         disabled={!hasChanges}
-        className="flex w-full transform cursor-pointer items-center justify-center gap-1 rounded-[12px] bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 hover:from-purple-700 hover:to-blue-700"
+        className={`flex w-full transform items-center justify-center gap-1 rounded-[12px] px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 ${
+          hasChanges
+            ? "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            : "cursor-not-allowed bg-gray-400 opacity-50"
+        }`}
       >
         Alterar
       </button>

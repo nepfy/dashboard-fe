@@ -91,6 +91,11 @@ export default function ItemEditorModal({
     if (selectedItemId && Object.keys(pendingChanges).length > 0) {
       onUpdateItem(selectedItemId, pendingChanges);
       setPendingChanges({});
+
+      setTimeout(() => {
+        console.log("Calling onClose now");
+        onClose();
+      }, 100);
     }
   };
 
@@ -159,7 +164,15 @@ export default function ItemEditorModal({
         )}
 
         {showPexelsGallery && (
-          <PexelsGallery onClose={() => setShowPexelsGallery(false)} />
+          <PexelsGallery
+            onClose={() => setShowPexelsGallery(false)}
+            onSelectImage={(imageUrl) => {
+              handleUpdateItem(
+                itemType === "team" ? { image: imageUrl } : { photo: imageUrl }
+              );
+              setShowPexelsGallery(false);
+            }}
+          />
         )}
 
         {showUploadImage && (
