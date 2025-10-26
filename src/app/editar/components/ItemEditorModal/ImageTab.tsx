@@ -12,9 +12,20 @@ interface ImageTabProps {
   itemType: "team" | "results";
   currentItem: TeamMember | Result | null;
   onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
+  setShowExploreGalleryInfo: (show: boolean) => void;
+  setShowPexelsGallery: (show: boolean) => void;
+  setShowUploadImageInfo: (show: boolean) => void;
+  setShowUploadImage: (show: boolean) => void;
 }
 
-export default function ImageTab({ itemType, onUpdate }: ImageTabProps) {
+export default function ImageTab({
+  itemType,
+  onUpdate,
+  setShowExploreGalleryInfo,
+  setShowPexelsGallery,
+  setShowUploadImageInfo,
+  setShowUploadImage,
+}: ImageTabProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [showPexelsTooltip, setShowPexelsTooltip] = useState(false);
   const [showNewImageTooltip, setShowNewImageTooltip] = useState(false);
@@ -54,10 +65,6 @@ export default function ImageTab({ itemType, onUpdate }: ImageTabProps) {
       });
     }
     setShowNewImageTooltip(true);
-  };
-
-  const handleFileSelect = () => {
-    fileInputRef.current?.click();
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,7 +124,11 @@ export default function ImageTab({ itemType, onUpdate }: ImageTabProps) {
           <h3 className="text-sm font-medium text-[#2A2A2A]">
             Explorar nossa galeria
           </h3>
-          <div className="relative" ref={iconRef}>
+          <div
+            className="relative"
+            ref={iconRef}
+            onClick={() => setShowExploreGalleryInfo(true)}
+          >
             <InfoIcon
               width="14"
               height="14"
@@ -128,7 +139,13 @@ export default function ImageTab({ itemType, onUpdate }: ImageTabProps) {
             />
           </div>
         </div>
-        <div className="relative h-[120px] w-full overflow-hidden rounded-lg bg-gray-50">
+        <div
+          className="relative h-[120px] w-full overflow-hidden rounded-lg bg-gray-50"
+          onClick={() => {
+            setShowPexelsGallery(true);
+            setShowExploreGalleryInfo(false);
+          }}
+        >
           <Image
             src="/images/pexels.jpg"
             alt="Galeria de imagens"
@@ -144,7 +161,13 @@ export default function ImageTab({ itemType, onUpdate }: ImageTabProps) {
           <h3 className="text-sm font-medium text-[#2A2A2A]">
             Adicione uma nova imagem
           </h3>
-          <div className="relative">
+          <div
+            className="relative"
+            onClick={() => {
+              setShowUploadImageInfo(true);
+              setShowNewImageTooltip(false);
+            }}
+          >
             <InfoIcon
               width="14"
               height="14"
@@ -158,7 +181,10 @@ export default function ImageTab({ itemType, onUpdate }: ImageTabProps) {
 
         {/* Upload Area */}
         <div
-          onClick={handleFileSelect}
+          onClick={() => {
+            setShowUploadImage(true);
+            setShowUploadImageInfo(false);
+          }}
           className="h-[120px] cursor-pointer rounded-lg border border-dashed border-gray-300 bg-[#F6F8FA] p-8 text-center transition-colors hover:border-purple-400 hover:bg-purple-50"
         >
           <div className="flex flex-col items-center">
@@ -194,7 +220,6 @@ export default function ImageTab({ itemType, onUpdate }: ImageTabProps) {
         />
       </div>
 
-      {/* Tooltip Portal */}
       <TooltipPortal />
     </div>
   );

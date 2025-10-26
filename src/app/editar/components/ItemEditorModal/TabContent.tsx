@@ -1,0 +1,79 @@
+"use client";
+
+import ContentTab from "./ContentTab";
+import ImageTab from "./ImageTab";
+import OrganizeTab from "./OrganizeTab";
+import { TeamMember, Result } from "#/types/template-data";
+
+type TabType = "conteudo" | "imagem" | "organizar";
+
+interface TabContentProps {
+  activeTab: TabType;
+  itemType: "team" | "results";
+  currentItem: TeamMember | Result | null;
+  sortedItems: (TeamMember | Result)[];
+  onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
+  onDelete: (itemId: string) => void;
+  onReorder: (items: TeamMember[] | Result[]) => void;
+  onUpdateItem: (
+    itemId: string,
+    data: Partial<TeamMember> | Partial<Result>
+  ) => void;
+  setShowExploreGalleryInfo: (show: boolean) => void;
+  setShowPexelsGallery: (show: boolean) => void;
+  setShowUploadImageInfo: (show: boolean) => void;
+  setShowUploadImage: (show: boolean) => void;
+}
+
+export default function TabContent({
+  activeTab,
+  itemType,
+  currentItem,
+  sortedItems,
+  onUpdate,
+  onDelete,
+  onReorder,
+  onUpdateItem,
+  setShowExploreGalleryInfo,
+  setShowPexelsGallery,
+  setShowUploadImageInfo,
+  setShowUploadImage,
+}: TabContentProps) {
+  return (
+    <div
+      className="min-h-0 flex-1 overflow-y-auto"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {activeTab === "conteudo" && (
+        <ContentTab
+          itemType={itemType}
+          currentItem={currentItem}
+          onUpdate={onUpdate}
+          onDelete={() => currentItem?.id && onDelete(currentItem.id)}
+        />
+      )}
+
+      {activeTab === "imagem" && (
+        <ImageTab
+          itemType={itemType}
+          currentItem={currentItem}
+          onUpdate={onUpdate}
+          setShowExploreGalleryInfo={setShowExploreGalleryInfo}
+          setShowPexelsGallery={setShowPexelsGallery}
+          setShowUploadImageInfo={setShowUploadImageInfo}
+          setShowUploadImage={setShowUploadImage}
+        />
+      )}
+
+      {activeTab === "organizar" && (
+        <OrganizeTab
+          itemType={itemType}
+          items={sortedItems}
+          onReorder={onReorder}
+          onDelete={onDelete}
+          onUpdateItem={onUpdateItem}
+        />
+      )}
+    </div>
+  );
+}
