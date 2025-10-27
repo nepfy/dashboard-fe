@@ -36,6 +36,7 @@ interface MainModalContentProps {
   setShowPexelsGallery: (show: boolean) => void;
   setShowUploadImageInfo: (show: boolean) => void;
   setShowUploadImage: (show: boolean) => void;
+  setShowConfirmExclusion: (show: boolean) => void;
 }
 
 export default function MainModalContent({
@@ -56,6 +57,7 @@ export default function MainModalContent({
   setShowPexelsGallery,
   setShowUploadImageInfo,
   setShowUploadImage,
+  setShowConfirmExclusion,
 }: MainModalContentProps) {
   // Get items with pending changes applied
   const getItemsWithChanges = () => {
@@ -112,6 +114,7 @@ export default function MainModalContent({
         setShowPexelsGallery={setShowPexelsGallery}
         setShowUploadImageInfo={setShowUploadImageInfo}
         setShowUploadImage={setShowUploadImage}
+        setShowConfirmExclusion={setShowConfirmExclusion}
       />
 
       <SaveButton

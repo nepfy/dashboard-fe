@@ -23,6 +23,7 @@ interface TabContentProps {
   setShowPexelsGallery: (show: boolean) => void;
   setShowUploadImageInfo: (show: boolean) => void;
   setShowUploadImage: (show: boolean) => void;
+  setShowConfirmExclusion: (show: boolean) => void;
 }
 
 export default function TabContent({
@@ -36,6 +37,7 @@ export default function TabContent({
   setShowPexelsGallery,
   setShowUploadImageInfo,
   setShowUploadImage,
+  setShowConfirmExclusion,
 }: TabContentProps) {
   return (
     <div
@@ -47,7 +49,7 @@ export default function TabContent({
           itemType={itemType}
           currentItem={currentItem}
           onUpdate={onUpdate}
-          onDelete={() => currentItem?.id && onDelete(currentItem.id)}
+          onDeleteItem={onDelete} // Pass the handleDeleteItem function
         />
       )}
 
@@ -68,7 +70,8 @@ export default function TabContent({
           itemType={itemType}
           items={sortedItems}
           onUpdate={onUpdate}
-          onDelete={onDelete}
+          setShowConfirmExclusion={setShowConfirmExclusion}
+          onDeleteItem={onDelete}
         />
       )}
     </div>

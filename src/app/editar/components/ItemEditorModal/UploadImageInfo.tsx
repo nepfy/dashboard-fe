@@ -30,7 +30,7 @@ export default function UploadImageInfo({
 
         <ul className="text-white-neutral-light-900 mt-4 text-sm font-normal">
           <li className="list-inside list-disc">
-            Formatos aceitos: JPG, PNG ou SVG
+            Formatos aceitos: JPG ou PNG
           </li>
           <li className="list-inside list-disc">Tamanho máximo: 1 MB</li>
           <li className="list-inside list-disc">

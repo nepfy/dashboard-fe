@@ -191,7 +191,7 @@ export default function ImageTab({
             <UploadFileIcon />
 
             <p className="mb-1 text-sm text-gray-600">Selecionar arquivos...</p>
-            <p className="text-xs text-gray-400">Tamanho max: 300MB</p>
+            <p className="text-xs text-gray-400">Tamanho max: 1MB</p>
           </div>
         </div>
 

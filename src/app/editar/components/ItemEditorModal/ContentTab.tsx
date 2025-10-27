@@ -7,14 +7,14 @@ interface ContentTabProps {
   itemType: "team" | "results";
   currentItem: TeamMember | Result | null;
   onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
-  onDelete: () => void;
+  onDeleteItem: (itemId: string) => void; // Change this to accept itemId
 }
 
 export default function ContentTab({
   itemType,
   currentItem,
   onUpdate,
-  onDelete,
+  onDeleteItem, // Change this
 }: ContentTabProps) {
   const [formData, setFormData] = useState({
     name: "",
@@ -154,7 +154,7 @@ export default function ContentTab({
       {/* Action buttons */}
       <div className="flex items-center justify-center pt-4">
         <button
-          onClick={onDelete}
+          onClick={() => currentItem?.id && onDeleteItem(currentItem.id)} // Change this line
           className="text-white-neutral-light-900 flex items-center gap-2 text-sm font-medium hover:text-red-700"
         >
           <svg

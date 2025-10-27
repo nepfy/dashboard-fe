@@ -106,7 +106,7 @@ export default function FlashTeam({
 
               <div
                 className={`mx-auto flex max-w-[1500px] flex-wrap items-center gap-3 ${
-                  (members?.length ?? 0) === 2
+                  (members?.length ?? 0) === 2 || (members?.length ?? 0) === 4
                     ? "justify-center"
                     : "justify-start sm:justify-center lg:justify-start"
                 }`}

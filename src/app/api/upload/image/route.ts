@@ -25,24 +25,24 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
         {
           success: false,
-          error: "Tipo de arquivo não suportado. Use apenas JPG, PNG ou WebP.",
+          error: "Tipo de arquivo não suportado. Use apenas JPG ou PNG.",
         },
         { status: 400 }
       );
     }
 
-    // Validate file size (5MB max)
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    // Validate file size (1MB max)
+    const maxSize = 1 * 1024 * 1024; // 1MB
     if (file.size > maxSize) {
       return NextResponse.json(
         {
           success: false,
-          error: "Arquivo muito grande. Tamanho máximo: 5MB.",
+          error: "Arquivo muito grande. Tamanho máximo: 1MB.",
         },
         { status: 400 }
       );

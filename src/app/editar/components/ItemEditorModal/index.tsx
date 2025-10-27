@@ -7,6 +7,7 @@ import ExploreGalleryInfo from "./ExploreGalleryInfo";
 import UploadImageInfo from "./UploadImageInfo";
 import PexelsGallery from "./PexelsGallery";
 import UploadImage from "./UploadImage";
+import ConfirmExclusion from "./ConfirmExclusion";
 import { TeamMember, Result } from "#/types/template-data";
 
 interface ItemEditorModalProps {
@@ -42,6 +43,7 @@ export default function ItemEditorModal({
   const [showPexelsGallery, setShowPexelsGallery] = useState(false);
   const [showUploadImageInfo, setShowUploadImageInfo] = useState(false);
   const [showUploadImage, setShowUploadImage] = useState(false);
+  const [showConfirmExclusion, setShowConfirmExclusion] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(
     currentItemId
   );
@@ -54,6 +56,9 @@ export default function ItemEditorModal({
     reorderedItems: undefined,
     deletedItems: [],
   });
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null); // Add this state
+  // Add this state to track when we're expecting a new item
+  const [expectingNewItem, setExpectingNewItem] = useState(false);
 
   useEffect(() => {
     setSelectedItemId(currentItemId);
@@ -63,6 +68,23 @@ export default function ItemEditorModal({
       deletedItems: [],
     });
   }, [currentItemId]);
+
+  // Add this useEffect to watch for new items
+  useEffect(() => {
+    if (expectingNewItem && items.length > 0) {
+      // Find the newest item (highest sortOrder or last in array)
+      const sortedItems = [...items].sort(
+        (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
+      );
+      const newestItem = sortedItems[sortedItems.length - 1];
+
+      if (newestItem) {
+        setSelectedItemId(newestItem.id || null);
+      }
+
+      setExpectingNewItem(false);
+    }
+  }, [items, expectingNewItem]);
 
   const currentItem = items.find((item) => item.id === selectedItemId) || null;
 
@@ -78,31 +100,37 @@ export default function ItemEditorModal({
 
   const handleAddItem = () => {
     if (items.length < 6) {
+      setExpectingNewItem(true); // Set flag that we're expecting a new item
+      setActiveTab("conteudo"); // Add this line to switch to Content tab
       onAddItem();
-      const sortedItems = [...items].sort(
-        (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
-      );
-      const newItem = sortedItems[sortedItems.length - 1];
-      if (newItem) {
-        setSelectedItemId(newItem.id || null);
-      }
     }
   };
 
   const handleDeleteItem = (itemId: string) => {
-    setPendingChanges((prev) => ({
-      ...prev,
-      deletedItems: [...prev.deletedItems, itemId],
-    }));
+    setItemToDelete(itemId); // Set the item to delete
+    setShowConfirmExclusion(true); // Show confirmation modal
+  };
 
-    if (selectedItemId === itemId) {
-      const remainingItems = items.filter(
-        (item) =>
-          item.id !== itemId && !pendingChanges.deletedItems.includes(item.id!)
-      );
-      setSelectedItemId(
-        remainingItems.length > 0 ? remainingItems[0].id || null : null
-      );
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      setPendingChanges((prev) => ({
+        ...prev,
+        deletedItems: [...prev.deletedItems, itemToDelete],
+      }));
+
+      if (selectedItemId === itemToDelete) {
+        const remainingItems = items.filter(
+          (item) =>
+            item.id !== itemToDelete &&
+            !pendingChanges.deletedItems.includes(item.id!)
+        );
+        setSelectedItemId(
+          remainingItems.length > 0 ? remainingItems[0].id || null : null
+        );
+      }
+
+      setItemToDelete(null);
+      setShowConfirmExclusion(false);
     }
   };
 
@@ -162,6 +190,18 @@ export default function ItemEditorModal({
     }, 100);
   };
 
+  const handleClose = () => {
+    // Reset pending changes when closing without saving
+    setPendingChanges({
+      itemUpdates: {},
+      reorderedItems: undefined,
+      deletedItems: [],
+    });
+    setActiveTab("conteudo"); // Reset to content tab
+    setSelectedItemId(currentItemId); // Reset to original selected item
+    onClose();
+  };
+
   const getTitle = () => {
     return itemType === "team" ? "Time" : "Resultados";
   };
@@ -199,7 +239,8 @@ export default function ItemEditorModal({
         {!showExploreGalleryInfo &&
           !showPexelsGallery &&
           !showUploadImageInfo &&
-          !showUploadImage && (
+          !showUploadImage &&
+          !showConfirmExclusion && (
             <MainModalContent
               title={getTitle()}
               items={getItemsWithChanges()}
@@ -207,17 +248,18 @@ export default function ItemEditorModal({
               currentItem={getCurrentItemWithChanges()}
               activeTab={activeTab}
               pendingChanges={pendingChanges}
-              onClose={onClose}
+              onClose={handleClose} // Change this line
               onItemSelect={handleItemSelect}
               onAddItem={handleAddItem}
               onTabChange={setActiveTab}
               onUpdate={handleUpdateItem}
-              onDelete={handleDeleteItem}
+              onDelete={handleDeleteItem} // Make sure this is handleDeleteItem
               onSave={handleSave}
               setShowExploreGalleryInfo={setShowExploreGalleryInfo}
               setShowPexelsGallery={setShowPexelsGallery}
               setShowUploadImageInfo={setShowUploadImageInfo}
               setShowUploadImage={setShowUploadImage}
+              setShowConfirmExclusion={setShowConfirmExclusion}
             />
           )}
 
@@ -254,7 +296,22 @@ export default function ItemEditorModal({
         )}
 
         {showUploadImage && (
-          <UploadImage onClose={() => setShowUploadImage(false)} />
+          <UploadImage
+            onClose={() => setShowUploadImage(false)}
+            itemType={itemType}
+            items={getItemsWithChanges()}
+            onUpdate={handleUpdateItem}
+          />
+        )}
+
+        {showConfirmExclusion && (
+          <ConfirmExclusion
+            onClose={() => {
+              setShowConfirmExclusion(false);
+              setItemToDelete(null);
+            }}
+            onConfirm={handleConfirmDelete}
+          />
         )}
       </EditableModal>
     </div>

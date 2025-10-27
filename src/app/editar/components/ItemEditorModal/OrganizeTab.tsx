@@ -25,16 +25,21 @@ interface OrganizeTabProps {
   itemType: "team" | "results";
   items: (TeamMember | Result)[];
   onUpdate: (data: { reorderedItems: (TeamMember | Result)[] }) => void;
-  onDelete: (itemId: string) => void;
+  setShowConfirmExclusion: (show: boolean) => void;
+  onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
 interface SortableItemProps {
   item: TeamMember | Result;
   itemType: "team" | "results";
-  onDelete: (itemId: string) => void;
+  onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
-function SortableItem({ item, itemType, onDelete }: SortableItemProps) {
+function SortableItem({
+  item,
+  itemType,
+  onDeleteItem, // Add this prop
+}: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -75,7 +80,7 @@ function SortableItem({ item, itemType, onDelete }: SortableItemProps) {
       {/* Delete Button */}
       <div className="hover:bg-white-neutral-light-300 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
         <button
-          onClick={() => onDelete(item.id!)}
+          onClick={() => onDeleteItem(item.id!)} // Change this to call onDeleteItem
           className="rounded p-1 text-[#D00003]"
         >
           <svg
@@ -101,7 +106,7 @@ export default function OrganizeTab({
   itemType,
   items,
   onUpdate,
-  onDelete,
+  onDeleteItem, // Add this prop
 }: OrganizeTabProps) {
   const isUserDragging = useRef(false);
 
@@ -124,13 +129,13 @@ export default function OrganizeTab({
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       const reorderedItems = arrayMove(items, oldIndex, newIndex);
-      
+
       // Update sortOrder values to match the new order
       const reorderedItemsWithSortOrder = reorderedItems.map((item, index) => ({
         ...item,
         sortOrder: index,
       }));
-      
+
       onUpdate({ reorderedItems: reorderedItemsWithSortOrder });
     }
 
@@ -165,7 +170,7 @@ export default function OrganizeTab({
                 key={item.id}
                 item={item}
                 itemType={itemType}
-                onDelete={onDelete}
+                onDeleteItem={onDeleteItem} // Add this prop
               />
             ))}
           </SortableContext>
