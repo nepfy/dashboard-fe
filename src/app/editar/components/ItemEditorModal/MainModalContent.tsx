@@ -15,18 +15,22 @@ interface MainModalContentProps {
   selectedItemId: string | null;
   currentItem: TeamMember | Result | null;
   activeTab: TabType;
-  pendingChanges: Partial<TeamMember> | Partial<Result>;
+  pendingChanges: {
+    itemUpdates: Record<string, Partial<TeamMember> | Partial<Result>>;
+    reorderedItems?: (TeamMember | Result)[];
+    deletedItems: string[];
+  };
   onClose: () => void;
   onItemSelect: (itemId: string) => void;
   onAddItem: () => void;
   onTabChange: (tab: TabType) => void;
-  onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
-  onDelete: (itemId: string) => void;
-  onReorder: (items: TeamMember[] | Result[]) => void;
-  onUpdateItem: (
-    itemId: string,
-    data: Partial<TeamMember> | Partial<Result>
+  onUpdate: (
+    data:
+      | Partial<TeamMember>
+      | Partial<Result>
+      | { reorderedItems: (TeamMember | Result)[] }
   ) => void;
+  onDelete: (itemId: string) => void;
   onSave: () => void;
   setShowExploreGalleryInfo: (show: boolean) => void;
   setShowPexelsGallery: (show: boolean) => void;
@@ -47,15 +51,36 @@ export default function MainModalContent({
   onTabChange,
   onUpdate,
   onDelete,
-  onReorder,
-  onUpdateItem,
   onSave,
   setShowExploreGalleryInfo,
   setShowPexelsGallery,
   setShowUploadImageInfo,
   setShowUploadImage,
 }: MainModalContentProps) {
-  const sortedItems = [...items].sort(
+  // Get items with pending changes applied
+  const getItemsWithChanges = () => {
+    let itemsToReturn = items
+      .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+      .map((item) => ({
+        ...item,
+        ...pendingChanges.itemUpdates[item.id!],
+      }));
+
+    // Apply reordered items if they exist
+    if (pendingChanges.reorderedItems) {
+      itemsToReturn = pendingChanges.reorderedItems
+        .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+        .map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
+    }
+
+    return itemsToReturn;
+  };
+
+  const itemsWithChanges = getItemsWithChanges();
+  const sortedItems = [...itemsWithChanges].sort(
     (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
   );
 
@@ -64,7 +89,7 @@ export default function MainModalContent({
       <ModalHeader title={title} onClose={onClose} />
 
       <ItemSelector
-        items={items}
+        items={itemsWithChanges}
         selectedItemId={selectedItemId}
         onItemSelect={onItemSelect}
         onAddItem={onAddItem}
@@ -74,13 +99,15 @@ export default function MainModalContent({
 
       <TabContent
         activeTab={activeTab}
-        itemType={items.length > 0 && "name" in items[0] ? "team" : "results"}
+        itemType={
+          itemsWithChanges.length > 0 && "name" in itemsWithChanges[0]
+            ? "team"
+            : "results"
+        }
         currentItem={currentItem}
         sortedItems={sortedItems}
         onUpdate={onUpdate}
         onDelete={onDelete}
-        onReorder={onReorder}
-        onUpdateItem={onUpdateItem}
         setShowExploreGalleryInfo={setShowExploreGalleryInfo}
         setShowPexelsGallery={setShowPexelsGallery}
         setShowUploadImageInfo={setShowUploadImageInfo}
@@ -89,7 +116,11 @@ export default function MainModalContent({
 
       <SaveButton
         onSave={onSave}
-        hasChanges={Object.keys(pendingChanges).length > 0}
+        hasChanges={
+          Object.keys(pendingChanges.itemUpdates || {}).length > 0 ||
+          (pendingChanges.deletedItems || []).length > 0 ||
+          !!pendingChanges.reorderedItems
+        }
       />
     </div>
   );

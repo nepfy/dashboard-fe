@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import {
   DndContext,
   closestCenter,
@@ -23,12 +24,8 @@ import GrabIcon from "#/components/icons/GrabIcon";
 interface OrganizeTabProps {
   itemType: "team" | "results";
   items: (TeamMember | Result)[];
-  onReorder: (items: TeamMember[] | Result[]) => void;
+  onUpdate: (data: { reorderedItems: (TeamMember | Result)[] }) => void;
   onDelete: (itemId: string) => void;
-  onUpdateItem: (
-    itemId: string,
-    data: Partial<TeamMember> | Partial<Result>
-  ) => void;
 }
 
 interface SortableItemProps {
@@ -103,15 +100,21 @@ function SortableItem({ item, itemType, onDelete }: SortableItemProps) {
 export default function OrganizeTab({
   itemType,
   items,
-  onReorder,
+  onUpdate,
   onDelete,
 }: OrganizeTabProps) {
+  const isUserDragging = useRef(false);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const handleDragStart = () => {
+    isUserDragging.current = true;
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -121,8 +124,19 @@ export default function OrganizeTab({
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       const reorderedItems = arrayMove(items, oldIndex, newIndex);
-      onReorder(reorderedItems);
+      
+      // Update sortOrder values to match the new order
+      const reorderedItemsWithSortOrder = reorderedItems.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
+      
+      onUpdate({ reorderedItems: reorderedItemsWithSortOrder });
     }
+
+    setTimeout(() => {
+      isUserDragging.current = false;
+    }, 100);
   };
 
   if (items.length === 0) {
@@ -139,6 +153,7 @@ export default function OrganizeTab({
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
           <SortableContext

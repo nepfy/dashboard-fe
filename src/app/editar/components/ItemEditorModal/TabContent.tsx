@@ -12,13 +12,13 @@ interface TabContentProps {
   itemType: "team" | "results";
   currentItem: TeamMember | Result | null;
   sortedItems: (TeamMember | Result)[];
-  onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
-  onDelete: (itemId: string) => void;
-  onReorder: (items: TeamMember[] | Result[]) => void;
-  onUpdateItem: (
-    itemId: string,
-    data: Partial<TeamMember> | Partial<Result>
+  onUpdate: (
+    data:
+      | Partial<TeamMember>
+      | Partial<Result>
+      | { reorderedItems: (TeamMember | Result)[] }
   ) => void;
+  onDelete: (itemId: string) => void;
   setShowExploreGalleryInfo: (show: boolean) => void;
   setShowPexelsGallery: (show: boolean) => void;
   setShowUploadImageInfo: (show: boolean) => void;
@@ -32,8 +32,6 @@ export default function TabContent({
   sortedItems,
   onUpdate,
   onDelete,
-  onReorder,
-  onUpdateItem,
   setShowExploreGalleryInfo,
   setShowPexelsGallery,
   setShowUploadImageInfo,
@@ -69,9 +67,8 @@ export default function TabContent({
         <OrganizeTab
           itemType={itemType}
           items={sortedItems}
-          onReorder={onReorder}
+          onUpdate={onUpdate}
           onDelete={onDelete}
-          onUpdateItem={onUpdateItem}
         />
       )}
     </div>

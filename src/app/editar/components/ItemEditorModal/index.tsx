@@ -45,16 +45,32 @@ export default function ItemEditorModal({
   const [selectedItemId, setSelectedItemId] = useState<string | null>(
     currentItemId
   );
-  const [pendingChanges, setPendingChanges] = useState<
-    Partial<TeamMember> | Partial<Result>
-  >({});
+  const [pendingChanges, setPendingChanges] = useState<{
+    itemUpdates: Record<string, Partial<TeamMember> | Partial<Result>>;
+    reorderedItems?: (TeamMember | Result)[];
+    deletedItems: string[];
+  }>({
+    itemUpdates: {},
+    reorderedItems: undefined,
+    deletedItems: [],
+  });
 
   useEffect(() => {
     setSelectedItemId(currentItemId);
-    setPendingChanges({});
+    setPendingChanges({
+      itemUpdates: {},
+      reorderedItems: undefined,
+      deletedItems: [],
+    });
   }, [currentItemId]);
 
   const currentItem = items.find((item) => item.id === selectedItemId) || null;
+
+  const getCurrentItemWithChanges = () => {
+    if (!currentItem) return null;
+    const pendingUpdates = pendingChanges.itemUpdates[currentItem.id!] || {};
+    return { ...currentItem, ...pendingUpdates };
+  };
 
   const handleItemSelect = (itemId: string) => {
     setSelectedItemId(itemId);
@@ -74,37 +90,101 @@ export default function ItemEditorModal({
   };
 
   const handleDeleteItem = (itemId: string) => {
-    onDeleteItem(itemId);
+    setPendingChanges((prev) => ({
+      ...prev,
+      deletedItems: [...prev.deletedItems, itemId],
+    }));
+
     if (selectedItemId === itemId) {
-      const remainingItems = items.filter((item) => item.id !== itemId);
+      const remainingItems = items.filter(
+        (item) =>
+          item.id !== itemId && !pendingChanges.deletedItems.includes(item.id!)
+      );
       setSelectedItemId(
         remainingItems.length > 0 ? remainingItems[0].id || null : null
       );
     }
   };
 
-  const handleUpdateItem = (data: Partial<TeamMember> | Partial<Result>) => {
-    setPendingChanges((prev) => ({ ...prev, ...data }));
-  };
-
-  const handleSave = () => {
-    if (selectedItemId && Object.keys(pendingChanges).length > 0) {
-      onUpdateItem(selectedItemId, pendingChanges);
-      setPendingChanges({});
-
-      setTimeout(() => {
-        console.log("Calling onClose now");
-        onClose();
-      }, 100);
+  const handleUpdateItem = (
+    data:
+      | Partial<TeamMember>
+      | Partial<Result>
+      | { reorderedItems: (TeamMember | Result)[] }
+  ) => {
+    if ("reorderedItems" in data) {
+      setPendingChanges((prev) => ({
+        ...prev,
+        reorderedItems: data.reorderedItems,
+      }));
+    } else if (selectedItemId) {
+      setPendingChanges((prev) => ({
+        ...prev,
+        itemUpdates: {
+          ...prev.itemUpdates,
+          [selectedItemId]: {
+            ...prev.itemUpdates[selectedItemId],
+            ...data,
+          },
+        },
+      }));
     }
   };
 
-  const handleReorderItems = (reorderedItems: (TeamMember | Result)[]) => {
-    onReorderItems(reorderedItems);
+  const handleSave = () => {
+    const hasChanges =
+      Object.keys(pendingChanges.itemUpdates).length > 0 ||
+      pendingChanges.deletedItems.length > 0 ||
+      pendingChanges.reorderedItems;
+
+    if (!hasChanges) return;
+
+    Object.entries(pendingChanges.itemUpdates).forEach(([itemId, updates]) => {
+      onUpdateItem(itemId, updates);
+    });
+
+    pendingChanges.deletedItems.forEach((itemId) => {
+      onDeleteItem(itemId);
+    });
+
+    if (pendingChanges.reorderedItems) {
+      onReorderItems(pendingChanges.reorderedItems);
+    }
+
+    setPendingChanges({
+      itemUpdates: {},
+      reorderedItems: undefined,
+      deletedItems: [],
+    });
+
+    setTimeout(() => {
+      onClose();
+    }, 100);
   };
 
   const getTitle = () => {
     return itemType === "team" ? "Time" : "Resultados";
+  };
+
+  const getItemsWithChanges = () => {
+    let itemsToReturn = items
+      .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+      .map((item) => ({
+        ...item,
+        ...pendingChanges.itemUpdates[item.id!],
+      }));
+
+    // Apply reordered items if they exist
+    if (pendingChanges.reorderedItems) {
+      itemsToReturn = pendingChanges.reorderedItems
+        .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+        .map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
+    }
+
+    return itemsToReturn;
   };
 
   if (!isOpen) return null;
@@ -122,9 +202,9 @@ export default function ItemEditorModal({
           !showUploadImage && (
             <MainModalContent
               title={getTitle()}
-              items={items}
+              items={getItemsWithChanges()}
               selectedItemId={selectedItemId}
-              currentItem={currentItem}
+              currentItem={getCurrentItemWithChanges()}
               activeTab={activeTab}
               pendingChanges={pendingChanges}
               onClose={onClose}
@@ -133,8 +213,6 @@ export default function ItemEditorModal({
               onTabChange={setActiveTab}
               onUpdate={handleUpdateItem}
               onDelete={handleDeleteItem}
-              onReorder={handleReorderItems}
-              onUpdateItem={onUpdateItem}
               onSave={handleSave}
               setShowExploreGalleryInfo={setShowExploreGalleryInfo}
               setShowPexelsGallery={setShowPexelsGallery}

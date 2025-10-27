@@ -104,7 +104,13 @@ export default function FlashTeam({
                 </div>
               )}
 
-              <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-start gap-3 sm:justify-center lg:justify-start">
+              <div
+                className={`mx-auto flex max-w-[1500px] flex-wrap items-center gap-3 ${
+                  (members?.length ?? 0) === 2
+                    ? "justify-center"
+                    : "justify-start sm:justify-center lg:justify-start"
+                }`}
+              >
                 {(members?.length ?? 0) < 2 && (
                   <EditableText
                     value={title || ""}
