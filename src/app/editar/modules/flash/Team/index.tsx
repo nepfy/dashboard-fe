@@ -11,13 +11,8 @@ export default function FlashTeam({
   title,
   members,
 }: TeamSection) {
-  const {
-    updateTeam,
-    updateTeamMember,
-    addTeamMember,
-    deleteTeamMember,
-    reorderTeamMembers,
-  } = useEditor();
+  const { updateTeam, updateTeamMember, addTeamMember, reorderTeamMembers } =
+    useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
   let bg;
   let bg2;
@@ -173,7 +168,6 @@ export default function FlashTeam({
                       currentItemId={member?.id ?? null}
                       onUpdateItem={updateTeamMember}
                       onAddItem={addTeamMember}
-                      onDeleteItem={deleteTeamMember}
                       onReorderItems={
                         reorderTeamMembers as (
                           items: TeamMember[] | Result[]

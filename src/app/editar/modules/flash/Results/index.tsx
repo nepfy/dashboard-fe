@@ -11,13 +11,8 @@ export default function FlashResults({
   title,
   items,
 }: ResultSection) {
-  const {
-    updateResults,
-    updateResultItem,
-    addResultItem,
-    deleteResultItem,
-    reorderResultItems,
-  } = useEditor();
+  const { updateResults, updateResultItem, addResultItem, reorderResultItems } =
+    useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
   const visibleResults = items?.filter(
     (result) => !result.hidePhoto && result.photo
@@ -135,7 +130,6 @@ export default function FlashResults({
                     currentItemId={item?.id ?? null}
                     onUpdateItem={updateResultItem}
                     onAddItem={addResultItem}
-                    onDeleteItem={deleteResultItem}
                     onReorderItems={
                       reorderResultItems as (
                         items: TeamMember[] | Result[]

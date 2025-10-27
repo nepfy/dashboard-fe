@@ -21,7 +21,6 @@ interface ItemEditorModalProps {
     data: Partial<TeamMember> | Partial<Result>
   ) => void;
   onAddItem: () => void;
-  onDeleteItem: (itemId: string) => void;
   onReorderItems: (items: TeamMember[] | Result[]) => void;
 }
 
@@ -35,7 +34,6 @@ export default function ItemEditorModal({
   currentItemId,
   onUpdateItem,
   onAddItem,
-  onDeleteItem,
   onReorderItems,
 }: ItemEditorModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>("conteudo");
@@ -56,8 +54,7 @@ export default function ItemEditorModal({
     reorderedItems: undefined,
     deletedItems: [],
   });
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null); // Add this state
-  // Add this state to track when we're expecting a new item
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [expectingNewItem, setExpectingNewItem] = useState(false);
 
   useEffect(() => {
@@ -69,10 +66,8 @@ export default function ItemEditorModal({
     });
   }, [currentItemId]);
 
-  // Add this useEffect to watch for new items
   useEffect(() => {
     if (expectingNewItem && items.length > 0) {
-      // Find the newest item (highest sortOrder or last in array)
       const sortedItems = [...items].sort(
         (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
       );
@@ -85,6 +80,11 @@ export default function ItemEditorModal({
       setExpectingNewItem(false);
     }
   }, [items, expectingNewItem]);
+
+  // Debug: Log pendingChanges whenever it changes
+  useEffect(() => {
+    console.log("Pending changes updated:", pendingChanges);
+  }, [pendingChanges]);
 
   const currentItem = items.find((item) => item.id === selectedItemId) || null;
 
@@ -100,34 +100,45 @@ export default function ItemEditorModal({
 
   const handleAddItem = () => {
     if (items.length < 6) {
-      setExpectingNewItem(true); // Set flag that we're expecting a new item
-      setActiveTab("conteudo"); // Add this line to switch to Content tab
+      setExpectingNewItem(true);
+      setActiveTab("conteudo");
       onAddItem();
     }
   };
 
   const handleDeleteItem = (itemId: string) => {
-    setItemToDelete(itemId); // Set the item to delete
-    setShowConfirmExclusion(true); // Show confirmation modal
+    setItemToDelete(itemId);
+    setShowConfirmExclusion(true);
   };
 
   const handleConfirmDelete = () => {
     if (itemToDelete) {
-      setPendingChanges((prev) => ({
-        ...prev,
-        deletedItems: [...prev.deletedItems, itemToDelete],
-      }));
+      const itemIdToDelete = itemToDelete; // Store the ID before resetting
+      console.log("Confirming deletion of:", itemIdToDelete);
 
-      if (selectedItemId === itemToDelete) {
-        const remainingItems = items.filter(
-          (item) =>
-            item.id !== itemToDelete &&
-            !pendingChanges.deletedItems.includes(item.id!)
-        );
-        setSelectedItemId(
-          remainingItems.length > 0 ? remainingItems[0].id || null : null
-        );
-      }
+      setPendingChanges((prev) => {
+        const updatedDeletedItems = [...prev.deletedItems, itemIdToDelete];
+        console.log("Previous deletedItems:", prev.deletedItems);
+        console.log("Adding to deletedItems:", itemIdToDelete);
+        console.log("Updated deletedItems:", updatedDeletedItems);
+
+        // Update selectedItemId if the current item is being deleted
+        if (selectedItemId === itemIdToDelete) {
+          const remainingItems = items.filter(
+            (item) =>
+              item.id !== itemIdToDelete &&
+              !updatedDeletedItems.includes(item.id!)
+          );
+          setSelectedItemId(
+            remainingItems.length > 0 ? remainingItems[0].id || null : null
+          );
+        }
+
+        return {
+          ...prev,
+          deletedItems: updatedDeletedItems,
+        };
+      });
 
       setItemToDelete(null);
       setShowConfirmExclusion(false);
@@ -167,15 +178,34 @@ export default function ItemEditorModal({
 
     if (!hasChanges) return;
 
+    console.log("Saving changes...");
+    console.log("Deleted items to process:", pendingChanges.deletedItems);
+
+    // Process updates first
     Object.entries(pendingChanges.itemUpdates).forEach(([itemId, updates]) => {
       onUpdateItem(itemId, updates);
     });
 
-    pendingChanges.deletedItems.forEach((itemId) => {
-      onDeleteItem(itemId);
-    });
+    // Handle deletions by creating a new array without the deleted items
+    if (pendingChanges.deletedItems.length > 0) {
+      console.log("Processing deletions...");
 
-    if (pendingChanges.reorderedItems) {
+      // Get current items and filter out deleted ones
+      const currentItems = items.filter(
+        (item) => !pendingChanges.deletedItems.includes(item.id!)
+      );
+
+      // Apply any pending updates to remaining items
+      const updatedItems = currentItems.map((item) => ({
+        ...item,
+        ...pendingChanges.itemUpdates[item.id!],
+      }));
+
+      console.log("Final items after deletion:", updatedItems);
+
+      // Use reorderItems to set the final state
+      onReorderItems(updatedItems);
+    } else if (pendingChanges.reorderedItems) {
       onReorderItems(pendingChanges.reorderedItems);
     }
 
@@ -191,14 +221,24 @@ export default function ItemEditorModal({
   };
 
   const handleClose = () => {
-    // Reset pending changes when closing without saving
+    // Reset all local state
     setPendingChanges({
       itemUpdates: {},
       reorderedItems: undefined,
       deletedItems: [],
     });
-    setActiveTab("conteudo"); // Reset to content tab
-    setSelectedItemId(currentItemId); // Reset to original selected item
+    setActiveTab("conteudo");
+    setSelectedItemId(currentItemId);
+
+    // Reset any other modal-specific state
+    setShowExploreGalleryInfo(false);
+    setShowPexelsGallery(false);
+    setShowUploadImageInfo(false);
+    setShowUploadImage(false);
+    setShowConfirmExclusion(false);
+    setItemToDelete(null);
+    setExpectingNewItem(false);
+
     onClose();
   };
 
@@ -248,12 +288,12 @@ export default function ItemEditorModal({
               currentItem={getCurrentItemWithChanges()}
               activeTab={activeTab}
               pendingChanges={pendingChanges}
-              onClose={handleClose} // Change this line
+              onClose={handleClose}
               onItemSelect={handleItemSelect}
               onAddItem={handleAddItem}
               onTabChange={setActiveTab}
               onUpdate={handleUpdateItem}
-              onDelete={handleDeleteItem} // Make sure this is handleDeleteItem
+              onDelete={handleDeleteItem}
               onSave={handleSave}
               setShowExploreGalleryInfo={setShowExploreGalleryInfo}
               setShowPexelsGallery={setShowPexelsGallery}
