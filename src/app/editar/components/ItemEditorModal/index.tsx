@@ -20,7 +20,6 @@ interface ItemEditorModalProps {
     itemId: string,
     data: Partial<TeamMember> | Partial<Result>
   ) => void;
-  onAddItem: () => void;
   onReorderItems: (items: TeamMember[] | Result[]) => void;
 }
 
@@ -33,7 +32,6 @@ export default function ItemEditorModal({
   items,
   currentItemId,
   onUpdateItem,
-  onAddItem,
   onReorderItems,
 }: ItemEditorModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>("conteudo");
@@ -49,13 +47,14 @@ export default function ItemEditorModal({
     itemUpdates: Record<string, Partial<TeamMember> | Partial<Result>>;
     reorderedItems?: (TeamMember | Result)[];
     deletedItems: string[];
+    newItems: (TeamMember | Result)[];
   }>({
     itemUpdates: {},
     reorderedItems: undefined,
     deletedItems: [],
+    newItems: [],
   });
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
-  const [expectingNewItem, setExpectingNewItem] = useState(false);
 
   useEffect(() => {
     setSelectedItemId(currentItemId);
@@ -63,30 +62,14 @@ export default function ItemEditorModal({
       itemUpdates: {},
       reorderedItems: undefined,
       deletedItems: [],
+      newItems: [],
     });
   }, [currentItemId]);
 
-  useEffect(() => {
-    if (expectingNewItem && items.length > 0) {
-      const sortedItems = [...items].sort(
-        (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
-      );
-      const newestItem = sortedItems[sortedItems.length - 1];
-
-      if (newestItem) {
-        setSelectedItemId(newestItem.id || null);
-      }
-
-      setExpectingNewItem(false);
-    }
-  }, [items, expectingNewItem]);
-
-  // Debug: Log pendingChanges whenever it changes
-  useEffect(() => {
-    console.log("Pending changes updated:", pendingChanges);
-  }, [pendingChanges]);
-
-  const currentItem = items.find((item) => item.id === selectedItemId) || null;
+  const currentItem =
+    items.find((item) => item.id === selectedItemId) ||
+    pendingChanges.newItems.find((item) => item.id === selectedItemId) ||
+    null;
 
   const getCurrentItemWithChanges = () => {
     if (!currentItem) return null;
@@ -99,10 +82,36 @@ export default function ItemEditorModal({
   };
 
   const handleAddItem = () => {
-    if (items.length < 6) {
-      setExpectingNewItem(true);
+    const totalItems = items.length + pendingChanges.newItems.length;
+    if (totalItems < 6) {
+      const newItem: TeamMember | Result =
+        itemType === "team"
+          ? {
+              id: `temp-${Date.now()}`,
+              name: "",
+              role: "",
+              image: "",
+              sortOrder: totalItems,
+              hidePhoto: false,
+            }
+          : {
+              id: `temp-${Date.now()}`,
+              client: "",
+              instagram: "",
+              investment: "",
+              roi: "",
+              photo: "",
+              sortOrder: totalItems,
+              hidePhoto: false,
+            };
+
+      setPendingChanges((prev) => ({
+        ...prev,
+        newItems: [...prev.newItems, newItem],
+      }));
+
+      setSelectedItemId(newItem.id!);
       setActiveTab("conteudo");
-      onAddItem();
     }
   };
 
@@ -174,22 +183,21 @@ export default function ItemEditorModal({
     const hasChanges =
       Object.keys(pendingChanges.itemUpdates).length > 0 ||
       pendingChanges.deletedItems.length > 0 ||
-      pendingChanges.reorderedItems;
+      pendingChanges.reorderedItems ||
+      pendingChanges.newItems.length > 0;
 
     if (!hasChanges) return;
-
-    console.log("Saving changes...");
-    console.log("Deleted items to process:", pendingChanges.deletedItems);
 
     // Process updates first
     Object.entries(pendingChanges.itemUpdates).forEach(([itemId, updates]) => {
       onUpdateItem(itemId, updates);
     });
 
-    // Handle deletions by creating a new array without the deleted items
-    if (pendingChanges.deletedItems.length > 0) {
-      console.log("Processing deletions...");
-
+    // Handle deletions and new items by creating a new array
+    if (
+      pendingChanges.deletedItems.length > 0 ||
+      pendingChanges.newItems.length > 0
+    ) {
       // Get current items and filter out deleted ones
       const currentItems = items.filter(
         (item) => !pendingChanges.deletedItems.includes(item.id!)
@@ -201,10 +209,16 @@ export default function ItemEditorModal({
         ...pendingChanges.itemUpdates[item.id!],
       }));
 
-      console.log("Final items after deletion:", updatedItems);
+      // Add new items with their updates
+      const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
+        ...item,
+        ...pendingChanges.itemUpdates[item.id!],
+      }));
+
+      const finalItems = [...updatedItems, ...newItemsWithUpdates];
 
       // Use reorderItems to set the final state
-      onReorderItems(updatedItems);
+      onReorderItems(finalItems);
     } else if (pendingChanges.reorderedItems) {
       onReorderItems(pendingChanges.reorderedItems);
     }
@@ -213,6 +227,7 @@ export default function ItemEditorModal({
       itemUpdates: {},
       reorderedItems: undefined,
       deletedItems: [],
+      newItems: [],
     });
 
     setTimeout(() => {
@@ -226,6 +241,7 @@ export default function ItemEditorModal({
       itemUpdates: {},
       reorderedItems: undefined,
       deletedItems: [],
+      newItems: [],
     });
     setActiveTab("conteudo");
     setSelectedItemId(currentItemId);
@@ -237,7 +253,6 @@ export default function ItemEditorModal({
     setShowUploadImage(false);
     setShowConfirmExclusion(false);
     setItemToDelete(null);
-    setExpectingNewItem(false);
 
     onClose();
   };
@@ -253,6 +268,13 @@ export default function ItemEditorModal({
         ...item,
         ...pendingChanges.itemUpdates[item.id!],
       }));
+
+    // Add new items
+    const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
+      ...item,
+      ...pendingChanges.itemUpdates[item.id!],
+    }));
+    itemsToReturn = [...itemsToReturn, ...newItemsWithUpdates];
 
     // Apply reordered items if they exist
     if (pendingChanges.reorderedItems) {

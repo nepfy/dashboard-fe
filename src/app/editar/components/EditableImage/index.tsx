@@ -13,7 +13,6 @@ interface EditableImageProps {
     itemId: string,
     data: Partial<TeamMember> | Partial<Result>
   ) => void;
-  onAddItem: () => void;
   onReorderItems: (items: TeamMember[] | Result[]) => void;
 }
 
@@ -24,7 +23,6 @@ export default function EditableImage({
   items,
   currentItemId,
   onUpdateItem,
-  onAddItem,
   onReorderItems,
 }: EditableImageProps) {
   return (
@@ -35,7 +33,6 @@ export default function EditableImage({
       items={items}
       currentItemId={currentItemId}
       onUpdateItem={onUpdateItem}
-      onAddItem={onAddItem}
       onReorderItems={onReorderItems}
     />
   );
