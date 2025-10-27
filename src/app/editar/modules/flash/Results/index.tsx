@@ -60,7 +60,7 @@ export default function FlashResults({
               {items?.map((item) => (
                 <div
                   key={item.id}
-                  className="mb-20 flex cursor-pointer flex-col items-start"
+                  className="relative mb-20 flex cursor-pointer flex-col items-start"
                   onClick={() => setOpenModalId(item?.id ?? null)}
                 >
                   {!item.hidePhoto && item?.photo && (

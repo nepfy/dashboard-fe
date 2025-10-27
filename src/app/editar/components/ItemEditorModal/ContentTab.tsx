@@ -110,7 +110,7 @@ export default function ContentTab({
       {/* Results-specific fields */}
       {itemType === "results" && (
         <>
-          <div>
+          <div className="flex items-center justify-between gap-2">
             <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
               Instagram
             </label>
@@ -123,7 +123,7 @@ export default function ContentTab({
             />
           </div>
 
-          <div>
+          <div className="flex items-center justify-between gap-2">
             <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
               Investimento
             </label>
@@ -136,7 +136,7 @@ export default function ContentTab({
             />
           </div>
 
-          <div>
+          <div className="flex items-center justify-between gap-2">
             <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
               Retorno
             </label>
