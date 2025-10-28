@@ -68,15 +68,26 @@ export default function EditableDate({
     setIsModalOpen(false);
   };
 
+  // Check if the date has been changed
+  const hasDateChanged = () => {
+    if (!currentDate || !tempSelectedDate) return false;
+
+    // Compare dates by converting to ISO string and comparing date parts only
+    const currentDateStr = currentDate.toISOString().split("T")[0];
+    const tempDateStr = tempSelectedDate.toISOString().split("T")[0];
+
+    return currentDateStr !== tempDateStr;
+  };
+
   const handleOpen = () => {
     setIsModalOpen(true);
   };
 
   return (
-    <div className="relative inline" onClick={handleOpen}>
+    <div className="relative inline w-full" onClick={handleOpen}>
       <EditableModal
         isOpen={isModalOpen}
-        className="fixed inset-0 z-[10] flex items-center justify-center sm:absolute sm:inset-auto sm:top-[-150px] sm:left-[25px]"
+        className="absolute top-[-100px] flex w-[350px] items-center justify-center sm:inset-auto sm:top-[-150px] sm:left-[25px]"
         trianglePosition="top-[150px] left-[-8px]"
       >
         <div
@@ -109,7 +120,12 @@ export default function EditableDate({
             e.stopPropagation();
             handleSave();
           }}
-          className="mt-6 flex w-full transform cursor-pointer items-center justify-center gap-1 rounded-[12px] bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 hover:from-purple-700 hover:to-blue-700"
+          disabled={!hasDateChanged()}
+          className={`mt-6 flex w-full transform items-center justify-center gap-1 rounded-[12px] px-6 py-3.5 text-sm font-medium transition-all duration-200 ${
+            hasDateChanged()
+              ? "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
+              : "cursor-not-allowed bg-gray-200 text-gray-400"
+          }`}
         >
           Alterar
         </button>

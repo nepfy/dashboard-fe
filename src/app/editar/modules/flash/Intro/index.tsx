@@ -95,7 +95,7 @@ export default function FlashIntro({
 
         {projectData?.projectValidUntil && (
           <div
-            className="mt-4 self-start"
+            className="relative mt-4 self-start"
             onClick={(e) => {
               e.stopPropagation();
               setIsDateModalOpen(true);

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import CloseIcon from "#/components/icons/CloseIcon";
+import { ChevronLeft } from "lucide-react";
 
 interface PexelsPhoto {
   id: number;
@@ -118,12 +119,22 @@ export default function PexelsGallery({
   };
 
   return (
-    <div className="bg-white-neutral-light-100 flex h-full w-full flex-col pt-2">
+    <div
+      className="bg-white-neutral-light-100 flex h-[550px] w-full flex-col pt-2 sm:h-[650px]"
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* Header */}
       <div
         className="mb-6 flex w-full flex-shrink-0 items-center justify-between border-b border-b-[#E0E3E9] pb-6"
         onClick={(e) => e.stopPropagation()}
       >
+        <ChevronLeft
+          className="cursor-pointer text-[#2A2A2A]"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+        />
         <span className="text-lg font-medium text-[#2A2A2A]">Galeria</span>
         <button
           onClick={(e) => {

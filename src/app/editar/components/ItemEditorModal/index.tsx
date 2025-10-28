@@ -127,9 +127,6 @@ export default function ItemEditorModal({
 
       setPendingChanges((prev) => {
         const updatedDeletedItems = [...prev.deletedItems, itemIdToDelete];
-        console.log("Previous deletedItems:", prev.deletedItems);
-        console.log("Adding to deletedItems:", itemIdToDelete);
-        console.log("Updated deletedItems:", updatedDeletedItems);
 
         // Update selectedItemId if the current item is being deleted
         if (selectedItemId === itemIdToDelete) {
@@ -292,10 +289,10 @@ export default function ItemEditorModal({
   if (!isOpen) return null;
 
   return (
-    <div className="z-[100] w-full">
+    <>
       <EditableModal
         isOpen={isOpen}
-        className="absolute top-0 right-0 flex h-[650px] flex-col items-stretch"
+        className="absolute top-0 right-0 z-50 flex h-auto cursor-default flex-col items-stretch"
         trianglePosition="top-[85px] left-[-8px]"
       >
         {!showExploreGalleryInfo &&
@@ -376,6 +373,6 @@ export default function ItemEditorModal({
           />
         )}
       </EditableModal>
-    </div>
+    </>
   );
 }

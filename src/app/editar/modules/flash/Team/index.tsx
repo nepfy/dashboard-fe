@@ -78,7 +78,7 @@ export default function FlashTeam({
     <>
       {!hideSection && (
         <div className="relative overflow-hidden bg-black pb-10 lg:pb-70">
-          <div className="relative z-10 mx-auto max-w-[1440px] pt-31">
+          <div className="relative mx-auto max-w-[1440px] pt-31">
             {(members?.length ?? 0) > 1 && (
               <div className="px-6 lg:px-12 xl:px-40">
                 <EditableText
@@ -172,6 +172,9 @@ export default function FlashTeam({
                         ) => void
                       }
                     />
+                    <div
+                      className={`absolute top-0 left-0 z-9 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === member.id ? "bg-[#0170D666]" : "bg-transparent"}`}
+                    />
                   </div>
                 ))}
               </div>
@@ -189,7 +192,7 @@ export default function FlashTeam({
               bottom: 0,
               left: 0,
               right: 0,
-              zIndex: 0,
+              zIndex: -1,
               overflow: "hidden",
             }}
           />
@@ -205,7 +208,7 @@ export default function FlashTeam({
               left: "-150%",
               transform: "translateX(50%)",
               right: 0,
-              zIndex: 0,
+              zIndex: -1,
               overflow: "hidden",
             }}
           />
@@ -221,7 +224,7 @@ export default function FlashTeam({
               left: "-150%",
               transform: "translateX(50%)",
               right: 0,
-              zIndex: 0,
+              zIndex: -1,
               overflow: "hidden",
             }}
           />

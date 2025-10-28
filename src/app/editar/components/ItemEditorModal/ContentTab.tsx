@@ -155,7 +155,7 @@ export default function ContentTab({
       <div className="flex items-center justify-center pt-4">
         <button
           onClick={() => currentItem?.id && onDeleteItem(currentItem.id)} // Change this line
-          className="text-white-neutral-light-900 flex items-center gap-2 text-sm font-medium hover:text-red-700"
+          className="text-white-neutral-light-900 flex cursor-pointer items-center gap-2 text-sm font-medium hover:text-red-700"
         >
           <svg
             className="h-4 w-4"

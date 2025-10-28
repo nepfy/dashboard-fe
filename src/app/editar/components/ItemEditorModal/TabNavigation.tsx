@@ -23,7 +23,7 @@ export default function TabNavigation({
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id as TabType)}
-          className={`rounded-[8px] border border-transparent px-5 py-3 text-sm font-medium transition-colors ${
+          className={`cursor-pointer rounded-[8px] border border-transparent px-4 py-3 text-sm font-medium transition-colors sm:px-5 ${
             activeTab === tab.id
               ? "bg-white-neutral-light-100 text-primary-light-500 border-white-neutral-light-300"
               : "hover:bg-white-neutral-light-300 bg-transparent text-[#6C747E]"

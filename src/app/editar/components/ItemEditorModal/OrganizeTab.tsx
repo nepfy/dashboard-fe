@@ -81,7 +81,7 @@ function SortableItem({
       <div className="hover:bg-white-neutral-light-300 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
         <button
           onClick={() => onDeleteItem(item.id!)} // Change this to call onDeleteItem
-          className="rounded p-1 text-[#D00003]"
+          className="cursor-pointer rounded p-1 text-[#D00003]"
         >
           <svg
             className="h-4 w-4"

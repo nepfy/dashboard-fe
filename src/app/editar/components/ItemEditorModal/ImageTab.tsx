@@ -117,7 +117,7 @@ export default function ImageTab({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="mb-20 space-y-6 sm:mb-0">
       {/* Gallery Section - Placeholder */}
       <div>
         <div className="mb-2 flex items-center gap-2">
@@ -140,7 +140,7 @@ export default function ImageTab({
           </div>
         </div>
         <div
-          className="relative h-[120px] w-full overflow-hidden rounded-lg bg-gray-50"
+          className="relative h-[120px] w-full cursor-pointer overflow-hidden rounded-lg bg-gray-50"
           onClick={() => {
             setShowPexelsGallery(true);
             setShowExploreGalleryInfo(false);

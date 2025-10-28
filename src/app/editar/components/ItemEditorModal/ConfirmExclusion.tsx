@@ -6,7 +6,10 @@ export default function ConfirmExclusion({
   onConfirm: () => void;
 }) {
   return (
-    <div className="bg-white-neutral-light-100 flex h-full w-full flex-col items-center justify-between pt-2">
+    <div
+      className="bg-white-neutral-light-100 flex h-full w-full flex-col items-center justify-between pt-2"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="mb-6 flex w-full flex-shrink-0 items-center justify-between border-b border-b-[#E0E3E9] pb-6">
         <span className="text-lg font-medium text-[#2A2A2A]">
           Confirmar exclusão

@@ -87,7 +87,10 @@ export default function MainModalContent({
   );
 
   return (
-    <div className="bg-white-neutral-light-100 relative flex h-full flex-col">
+    <div
+      className="bg-white-neutral-light-100 relative z-11 flex h-[550px] w-full flex-col sm:h-[650px]"
+      onClick={(e) => e.stopPropagation()}
+    >
       <ModalHeader title={title} onClose={onClose} />
 
       <ItemSelector
