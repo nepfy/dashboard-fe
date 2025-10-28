@@ -4,6 +4,7 @@ import TextAreaField from "./TextAreaField";
 import PasswordInput from "./PasswordInput";
 import CepInput from "./CepInput";
 import DatePicker from "./DatePickerInput";
+import CurrencyInput from "./CurrencyInput";
 
 export {
   CheckboxInput,
@@ -12,4 +13,5 @@ export {
   CepInput,
   TextAreaField,
   DatePicker,
+  CurrencyInput,
 };

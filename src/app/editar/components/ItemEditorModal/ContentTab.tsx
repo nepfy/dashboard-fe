@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
+import { CurrencyInput } from "#/components/Inputs";
 
 interface ContentTabProps {
   itemType: "team" | "results" | "expertise";
@@ -27,6 +28,31 @@ export default function ContentTab({
     title: "",
     description: "",
   });
+
+  const [instagramError, setInstagramError] = useState("");
+
+  // Instagram username validation
+  const validateInstagramUsername = (username: string): string => {
+    if (!username) return ""; // Empty is valid (optional field)
+
+    // Check length (1-30 characters)
+    if (username.length < 1 || username.length > 30) {
+      return "Username deve ter entre 1 e 30 caracteres";
+    }
+
+    // Check for spaces
+    if (username.includes(" ")) {
+      return "Username não pode conter espaços";
+    }
+
+    // Check for valid characters (letters, numbers, periods, underscores)
+    const validPattern = /^[a-zA-Z0-9._]+$/;
+    if (!validPattern.test(username)) {
+      return "Username pode conter apenas letras, números, pontos e underscores";
+    }
+
+    return ""; // Valid
+  };
 
   useEffect(() => {
     if (currentItem) {
@@ -69,6 +95,12 @@ export default function ContentTab({
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Validate Instagram username on change
+    if (field === "instagram") {
+      const error = validateInstagramUsername(value);
+      setInstagramError(error);
+    }
 
     // Update pending changes immediately when user types
     if (itemType === "team") {
@@ -140,24 +172,33 @@ export default function ContentTab({
             <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
               Instagram
             </label>
-            <input
-              type="text"
-              value={formData.instagram}
-              onChange={(e) => handleInputChange("instagram", e.target.value)}
-              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
-              placeholder="@usuario"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={formData.instagram}
+                onChange={(e) => handleInputChange("instagram", e.target.value)}
+                className={`w-[210px] rounded-[4px] border bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616] ${
+                  instagramError
+                    ? "border-red-500"
+                    : "border-[#DBDDDF] focus:border-[#007bff] focus:outline-none"
+                }`}
+                placeholder="Usuário"
+              />
+              {instagramError && (
+                <div className="absolute top-full left-0 mt-1 text-xs text-red-500">
+                  {instagramError}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center justify-between gap-2">
             <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
               Investimento
             </label>
-            <input
-              type="text"
+            <CurrencyInput
               value={formData.investment}
-              onChange={(e) => handleInputChange("investment", e.target.value)}
-              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              onChange={(value) => handleInputChange("investment", value)}
               placeholder="R$ 0,00"
             />
           </div>
@@ -166,11 +207,9 @@ export default function ContentTab({
             <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
               Retorno
             </label>
-            <input
-              type="text"
+            <CurrencyInput
               value={formData.roi}
-              onChange={(e) => handleInputChange("roi", e.target.value)}
-              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              onChange={(value) => handleInputChange("roi", value)}
               placeholder="R$ 0,00"
             />
           </div>
