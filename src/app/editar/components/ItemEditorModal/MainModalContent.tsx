@@ -5,20 +5,24 @@ import ItemSelector from "./ItemSelector";
 import TabNavigation from "./TabNavigation";
 import TabContent from "./TabContent";
 import SaveButton from "./SaveButton";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
 
 interface MainModalContentProps {
   title: string;
-  items: (TeamMember | Result)[];
+  items: (TeamMember | Result | ExpertiseTopic)[];
   selectedItemId: string | null;
-  currentItem: TeamMember | Result | null;
+  currentItem: TeamMember | Result | ExpertiseTopic | null;
   activeTab: TabType;
   pendingChanges: {
-    itemUpdates: Record<string, Partial<TeamMember> | Partial<Result>>;
-    reorderedItems?: (TeamMember | Result)[];
+    itemUpdates: Record<
+      string,
+      Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
+    >;
+    reorderedItems?: (TeamMember | Result | ExpertiseTopic)[];
     deletedItems: string[];
+    sectionUpdates?: { hideIcon?: boolean };
   };
   onClose: () => void;
   onItemSelect: (itemId: string) => void;
@@ -28,7 +32,8 @@ interface MainModalContentProps {
     data:
       | Partial<TeamMember>
       | Partial<Result>
-      | { reorderedItems: (TeamMember | Result)[] }
+      | Partial<ExpertiseTopic>
+      | { reorderedItems: (TeamMember | Result | ExpertiseTopic)[] }
   ) => void;
   onDelete: (itemId: string) => void;
   onSave: () => void;
@@ -37,6 +42,9 @@ interface MainModalContentProps {
   setShowUploadImageInfo: (show: boolean) => void;
   setShowUploadImage: (show: boolean) => void;
   setShowConfirmExclusion: (show: boolean) => void;
+  onUpdateSection?: (data: { hideIcon?: boolean }) => void;
+  hideIcon?: boolean;
+  pendingHideIcon?: boolean;
 }
 
 export default function MainModalContent({
@@ -58,6 +66,9 @@ export default function MainModalContent({
   setShowUploadImageInfo,
   setShowUploadImage,
   setShowConfirmExclusion,
+  onUpdateSection,
+  hideIcon,
+  pendingHideIcon,
 }: MainModalContentProps) {
   // Get items with pending changes applied
   const getItemsWithChanges = () => {
@@ -88,7 +99,7 @@ export default function MainModalContent({
 
   return (
     <div
-      className="bg-white-neutral-light-100 relative z-11 flex h-[550px] w-full flex-col sm:h-[650px]"
+      className="bg-white-neutral-light-100 relative z-11 flex h-full w-full flex-col"
       onClick={(e) => e.stopPropagation()}
     >
       <ModalHeader title={title} onClose={onClose} />
@@ -100,14 +111,26 @@ export default function MainModalContent({
         onAddItem={onAddItem}
       />
 
-      <TabNavigation activeTab={activeTab} onTabChange={onTabChange} />
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        itemType={
+          itemsWithChanges.length > 0 && "name" in itemsWithChanges[0]
+            ? "team"
+            : itemsWithChanges.length > 0 && "client" in itemsWithChanges[0]
+              ? "results"
+              : "expertise"
+        }
+      />
 
       <TabContent
         activeTab={activeTab}
         itemType={
           itemsWithChanges.length > 0 && "name" in itemsWithChanges[0]
             ? "team"
-            : "results"
+            : itemsWithChanges.length > 0 && "client" in itemsWithChanges[0]
+              ? "results"
+              : "expertise"
         }
         currentItem={currentItem}
         sortedItems={sortedItems}
@@ -118,6 +141,9 @@ export default function MainModalContent({
         setShowUploadImageInfo={setShowUploadImageInfo}
         setShowUploadImage={setShowUploadImage}
         setShowConfirmExclusion={setShowConfirmExclusion}
+        onUpdateSection={onUpdateSection}
+        hideIcon={hideIcon}
+        pendingHideIcon={pendingHideIcon}
       />
 
       <SaveButton
@@ -125,7 +151,8 @@ export default function MainModalContent({
         hasChanges={
           Object.keys(pendingChanges.itemUpdates || {}).length > 0 ||
           (pendingChanges.deletedItems || []).length > 0 ||
-          !!pendingChanges.reorderedItems
+          !!pendingChanges.reorderedItems ||
+          !!pendingChanges.sectionUpdates
         }
       />
     </div>

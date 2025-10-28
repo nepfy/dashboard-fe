@@ -8,19 +8,21 @@ import UploadImageInfo from "./UploadImageInfo";
 import PexelsGallery from "./PexelsGallery";
 import UploadImage from "./UploadImage";
 import ConfirmExclusion from "./ConfirmExclusion";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
 
 interface ItemEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  itemType: "team" | "results";
-  items: (TeamMember | Result)[];
+  itemType: "team" | "results" | "expertise";
+  items: (TeamMember | Result | ExpertiseTopic)[];
   currentItemId: string | null;
   onUpdateItem: (
     itemId: string,
-    data: Partial<TeamMember> | Partial<Result>
+    data: Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
   ) => void;
-  onReorderItems: (items: TeamMember[] | Result[]) => void;
+  onReorderItems: (items: TeamMember[] | Result[] | ExpertiseTopic[]) => void;
+  onUpdateSection?: (data: { hideIcon?: boolean }) => void;
+  hideIcon?: boolean;
 }
 
 type TabType = "conteudo" | "imagem" | "organizar";
@@ -33,6 +35,8 @@ export default function ItemEditorModal({
   currentItemId,
   onUpdateItem,
   onReorderItems,
+  onUpdateSection,
+  hideIcon,
 }: ItemEditorModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>("conteudo");
   const [showExploreGalleryInfo, setShowExploreGalleryInfo] = useState(false);
@@ -44,15 +48,20 @@ export default function ItemEditorModal({
     currentItemId
   );
   const [pendingChanges, setPendingChanges] = useState<{
-    itemUpdates: Record<string, Partial<TeamMember> | Partial<Result>>;
-    reorderedItems?: (TeamMember | Result)[];
+    itemUpdates: Record<
+      string,
+      Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
+    >;
+    reorderedItems?: (TeamMember | Result | ExpertiseTopic)[];
     deletedItems: string[];
-    newItems: (TeamMember | Result)[];
+    newItems: (TeamMember | Result | ExpertiseTopic)[];
+    sectionUpdates?: { hideIcon?: boolean };
   }>({
     itemUpdates: {},
     reorderedItems: undefined,
     deletedItems: [],
     newItems: [],
+    sectionUpdates: undefined,
   });
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
@@ -63,6 +72,7 @@ export default function ItemEditorModal({
       reorderedItems: undefined,
       deletedItems: [],
       newItems: [],
+      sectionUpdates: undefined,
     });
   }, [currentItemId]);
 
@@ -84,7 +94,7 @@ export default function ItemEditorModal({
   const handleAddItem = () => {
     const totalItems = items.length + pendingChanges.newItems.length;
     if (totalItems < 6) {
-      const newItem: TeamMember | Result =
+      const newItem: TeamMember | Result | ExpertiseTopic =
         itemType === "team"
           ? {
               id: `temp-${Date.now()}`,
@@ -94,16 +104,26 @@ export default function ItemEditorModal({
               sortOrder: totalItems,
               hidePhoto: false,
             }
-          : {
-              id: `temp-${Date.now()}`,
-              client: "",
-              instagram: "",
-              investment: "",
-              roi: "",
-              photo: "",
-              sortOrder: totalItems,
-              hidePhoto: false,
-            };
+          : itemType === "results"
+            ? {
+                id: `temp-${Date.now()}`,
+                client: "",
+                instagram: "",
+                investment: "",
+                roi: "",
+                photo: "",
+                sortOrder: totalItems,
+                hidePhoto: false,
+              }
+            : {
+                id: `temp-${Date.now()}`,
+                title: "",
+                description: "",
+                icon: "",
+                sortOrder: totalItems,
+                hideTitleField: false,
+                hideDescription: false,
+              };
 
       setPendingChanges((prev) => ({
         ...prev,
@@ -155,7 +175,8 @@ export default function ItemEditorModal({
     data:
       | Partial<TeamMember>
       | Partial<Result>
-      | { reorderedItems: (TeamMember | Result)[] }
+      | Partial<ExpertiseTopic>
+      | { reorderedItems: (TeamMember | Result | ExpertiseTopic)[] }
   ) => {
     if ("reorderedItems" in data) {
       setPendingChanges((prev) => ({
@@ -176,12 +197,23 @@ export default function ItemEditorModal({
     }
   };
 
+  const handleUpdateSection = (data: { hideIcon?: boolean }) => {
+    setPendingChanges((prev) => ({
+      ...prev,
+      sectionUpdates: {
+        ...prev.sectionUpdates,
+        ...data,
+      },
+    }));
+  };
+
   const handleSave = () => {
     const hasChanges =
       Object.keys(pendingChanges.itemUpdates).length > 0 ||
       pendingChanges.deletedItems.length > 0 ||
       pendingChanges.reorderedItems ||
-      pendingChanges.newItems.length > 0;
+      pendingChanges.newItems.length > 0 ||
+      pendingChanges.sectionUpdates;
 
     if (!hasChanges) return;
 
@@ -189,6 +221,11 @@ export default function ItemEditorModal({
     Object.entries(pendingChanges.itemUpdates).forEach(([itemId, updates]) => {
       onUpdateItem(itemId, updates);
     });
+
+    // Process section updates
+    if (pendingChanges.sectionUpdates && onUpdateSection) {
+      onUpdateSection(pendingChanges.sectionUpdates);
+    }
 
     // Handle deletions and new items by creating a new array
     if (
@@ -239,6 +276,7 @@ export default function ItemEditorModal({
       reorderedItems: undefined,
       deletedItems: [],
       newItems: [],
+      sectionUpdates: undefined,
     });
     setActiveTab("conteudo");
     setSelectedItemId(currentItemId);
@@ -255,7 +293,11 @@ export default function ItemEditorModal({
   };
 
   const getTitle = () => {
-    return itemType === "team" ? "Time" : "Resultados";
+    return itemType === "team"
+      ? "Time"
+      : itemType === "results"
+        ? "Resultados"
+        : "Especialidades";
   };
 
   const getItemsWithChanges = () => {
@@ -292,7 +334,7 @@ export default function ItemEditorModal({
     <>
       <EditableModal
         isOpen={isOpen}
-        className="absolute top-0 right-0 z-50 flex h-auto cursor-default flex-col items-stretch"
+        className="absolute top-0 right-0 z-50 flex h-[550px] cursor-default flex-col items-stretch sm:z-12 sm:h-[650px]"
         trianglePosition="top-[85px] left-[-8px]"
       >
         {!showExploreGalleryInfo &&
@@ -319,6 +361,9 @@ export default function ItemEditorModal({
               setShowUploadImageInfo={setShowUploadImageInfo}
               setShowUploadImage={setShowUploadImage}
               setShowConfirmExclusion={setShowConfirmExclusion}
+              onUpdateSection={handleUpdateSection}
+              hideIcon={hideIcon}
+              pendingHideIcon={pendingChanges.sectionUpdates?.hideIcon}
             />
           )}
 
@@ -354,12 +399,16 @@ export default function ItemEditorModal({
           />
         )}
 
-        {showUploadImage && (
+        {showUploadImage && itemType !== "expertise" && (
           <UploadImage
             onClose={() => setShowUploadImage(false)}
-            itemType={itemType}
-            items={getItemsWithChanges()}
-            onUpdate={handleUpdateItem}
+            itemType={itemType as "team" | "results"}
+            items={getItemsWithChanges() as (TeamMember | Result)[]}
+            onUpdate={
+              handleUpdateItem as (
+                data: Partial<TeamMember> | Partial<Result>
+              ) => void
+            }
           />
         )}
 

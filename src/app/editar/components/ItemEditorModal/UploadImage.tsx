@@ -151,7 +151,7 @@ export default function UploadImage({
 
   return (
     <div
-      className="bg-white-neutral-light-100 flex h-[550px] w-full flex-col overflow-y-auto pt-2 sm:h-[650px]"
+      className="bg-white-neutral-light-100 flex h-full w-full flex-col overflow-y-auto pt-2"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Header */}

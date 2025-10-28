@@ -18,20 +18,22 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
 import GrabIcon from "#/components/icons/GrabIcon";
 
 interface OrganizeTabProps {
-  itemType: "team" | "results";
-  items: (TeamMember | Result)[];
-  onUpdate: (data: { reorderedItems: (TeamMember | Result)[] }) => void;
+  itemType: "team" | "results" | "expertise";
+  items: (TeamMember | Result | ExpertiseTopic)[];
+  onUpdate: (data: {
+    reorderedItems: (TeamMember | Result | ExpertiseTopic)[];
+  }) => void;
   setShowConfirmExclusion: (show: boolean) => void;
   onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
 interface SortableItemProps {
-  item: TeamMember | Result;
-  itemType: "team" | "results";
+  item: TeamMember | Result | ExpertiseTopic;
+  itemType: "team" | "results" | "expertise";
   onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
@@ -71,10 +73,12 @@ function SortableItem({
       </div>
 
       {/* Name Field */}
-      <div className="flex h-[38px] flex-1 items-center rounded border border-[#DBDDDF] bg-[#F6F8FA] px-4 font-medium text-[#161616]">
+      <div className="flex flex-1 items-center rounded border border-[#DBDDDF] bg-[#F6F8FA] px-4 py-2 font-medium text-[#161616]">
         {itemType === "team"
           ? (item as TeamMember).name
-          : (item as Result).client}
+          : itemType === "results"
+            ? (item as Result).client
+            : (item as ExpertiseTopic).title}
       </div>
 
       {/* Delete Button */}

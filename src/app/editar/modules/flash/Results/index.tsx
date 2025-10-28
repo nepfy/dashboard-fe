@@ -36,7 +36,7 @@ export default function FlashResults({
 
   const dimensions = getPhotoDimensions();
   return (
-    <div className="overflow-hidden bg-black">
+    <div className="bg-black">
       {!hideSection && (
         <div className="mx-auto max-w-[1440px] px-6 pt-7 lg:px-12 lg:pt-22 xl:px-0">
           <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#A0A0A0] pt-24 pl-5 lg:mb-43 lg:pl-10">

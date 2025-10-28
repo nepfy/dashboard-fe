@@ -28,6 +28,7 @@ import {
   FAQSection,
   TeamMember,
   Result,
+  ExpertiseTopic,
 } from "#/types/template-data";
 import { useRouter } from "next/navigation";
 
@@ -78,6 +79,15 @@ interface EditorContextType {
   addResultItem: () => void;
   deleteResultItem: (itemId: string) => void;
   reorderResultItems: (items: Result[]) => void;
+
+  // Expertise topic CRUD operations
+  updateExpertiseTopic: (
+    topicId: string,
+    data: Partial<ExpertiseTopic>
+  ) => void;
+  addExpertiseTopic: () => void;
+  deleteExpertiseTopic: (topicId: string) => void;
+  reorderExpertiseTopics: (topics: ExpertiseTopic[]) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -510,6 +520,64 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [updateSection]
   );
 
+  // Expertise topic CRUD operations
+  const updateExpertiseTopic = useCallback(
+    (topicId: string, data: Partial<ExpertiseTopic>) => {
+      if (!projectData?.proposalData?.expertise?.topics) return;
+
+      const updatedTopics = projectData.proposalData.expertise.topics.map(
+        (topic) => (topic.id === topicId ? { ...topic, ...data } : topic)
+      );
+
+      updateSection("expertise", { topics: updatedTopics });
+    },
+    [projectData, updateSection]
+  );
+
+  const addExpertiseTopic = useCallback(() => {
+    if (!projectData?.proposalData?.expertise?.topics) return;
+
+    const currentTopics = projectData.proposalData.expertise.topics;
+    if (currentTopics.length >= 6) return; // Max 6 topics
+
+    const newTopic: ExpertiseTopic = {
+      id: `topic-${Date.now()}`,
+      title: "",
+      description: "",
+      icon: "",
+      hideTitleField: false,
+      hideDescription: false,
+      sortOrder: currentTopics.length,
+    };
+
+    updateSection("expertise", { topics: [...currentTopics, newTopic] });
+  }, [projectData, updateSection]);
+
+  const deleteExpertiseTopic = useCallback(
+    (topicId: string) => {
+      if (!projectData?.proposalData?.expertise?.topics) return;
+
+      const updatedTopics = projectData.proposalData.expertise.topics.filter(
+        (topic) => topic.id !== topicId
+      );
+
+      updateSection("expertise", { topics: updatedTopics });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderExpertiseTopics = useCallback(
+    (topics: ExpertiseTopic[]) => {
+      const reorderedTopics = topics.map((topic, index) => ({
+        ...topic,
+        sortOrder: index,
+      }));
+
+      updateSection("expertise", { topics: reorderedTopics });
+    },
+    [updateSection]
+  );
+
   const value: EditorContextType = {
     projectData,
     isLoading,
@@ -546,6 +614,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     addResultItem,
     deleteResultItem,
     reorderResultItems,
+    updateExpertiseTopic,
+    addExpertiseTopic,
+    deleteExpertiseTopic,
+    reorderExpertiseTopics,
   };
 
   return (

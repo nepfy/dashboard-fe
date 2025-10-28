@@ -152,6 +152,7 @@ export interface ExpertiseSection extends BaseSection {
   hideSection?: boolean;
   title?: string;
   topics?: ExpertiseTopic[];
+  hideIcon?: boolean;
 }
 
 // Investment related interfaces

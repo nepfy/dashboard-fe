@@ -1,19 +1,21 @@
 "use client";
 
 import ItemEditorModal from "#/app/editar/components/ItemEditorModal";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
 
 interface EditableImageProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  itemType: "team" | "results";
-  items: (TeamMember | Result)[];
+  itemType: "team" | "results" | "expertise";
+  items: (TeamMember | Result | ExpertiseTopic)[];
   currentItemId: string | null;
   onUpdateItem: (
     itemId: string,
-    data: Partial<TeamMember> | Partial<Result>
+    data: Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
   ) => void;
-  onReorderItems: (items: TeamMember[] | Result[]) => void;
+  onReorderItems: (items: TeamMember[] | Result[] | ExpertiseTopic[]) => void;
+  onUpdateSection?: (data: { hideIcon?: boolean }) => void;
+  hideIcon?: boolean;
 }
 
 export default function EditableImage({
@@ -24,6 +26,8 @@ export default function EditableImage({
   currentItemId,
   onUpdateItem,
   onReorderItems,
+  onUpdateSection,
+  hideIcon,
 }: EditableImageProps) {
   return (
     <ItemEditorModal
@@ -34,6 +38,8 @@ export default function EditableImage({
       currentItemId={currentItemId}
       onUpdateItem={onUpdateItem}
       onReorderItems={onReorderItems}
+      onUpdateSection={onUpdateSection}
+      hideIcon={hideIcon}
     />
   );
 }

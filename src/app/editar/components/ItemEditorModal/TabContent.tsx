@@ -2,21 +2,23 @@
 
 import ContentTab from "./ContentTab";
 import ImageTab from "./ImageTab";
+import IconTab from "./IconTab";
 import OrganizeTab from "./OrganizeTab";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
 
 interface TabContentProps {
   activeTab: TabType;
-  itemType: "team" | "results";
-  currentItem: TeamMember | Result | null;
-  sortedItems: (TeamMember | Result)[];
+  itemType: "team" | "results" | "expertise";
+  currentItem: TeamMember | Result | ExpertiseTopic | null;
+  sortedItems: (TeamMember | Result | ExpertiseTopic)[];
   onUpdate: (
     data:
       | Partial<TeamMember>
       | Partial<Result>
-      | { reorderedItems: (TeamMember | Result)[] }
+      | Partial<ExpertiseTopic>
+      | { reorderedItems: (TeamMember | Result | ExpertiseTopic)[] }
   ) => void;
   onDelete: (itemId: string) => void;
   setShowExploreGalleryInfo: (show: boolean) => void;
@@ -24,6 +26,9 @@ interface TabContentProps {
   setShowUploadImageInfo: (show: boolean) => void;
   setShowUploadImage: (show: boolean) => void;
   setShowConfirmExclusion: (show: boolean) => void;
+  onUpdateSection?: (data: { hideIcon?: boolean }) => void;
+  hideIcon?: boolean;
+  pendingHideIcon?: boolean;
 }
 
 export default function TabContent({
@@ -38,6 +43,9 @@ export default function TabContent({
   setShowUploadImageInfo,
   setShowUploadImage,
   setShowConfirmExclusion,
+  onUpdateSection,
+  hideIcon,
+  pendingHideIcon,
 }: TabContentProps) {
   return (
     <div
@@ -53,7 +61,18 @@ export default function TabContent({
         />
       )}
 
-      {activeTab === "imagem" && (
+      {activeTab === "imagem" && itemType === "expertise" && (
+        <IconTab
+          itemType={itemType}
+          currentItem={currentItem as ExpertiseTopic}
+          onUpdate={onUpdate}
+          onUpdateSection={onUpdateSection!}
+          hideIcon={hideIcon}
+          pendingHideIcon={pendingHideIcon}
+        />
+      )}
+
+      {activeTab === "imagem" && itemType !== "expertise" && (
         <ImageTab
           itemType={itemType}
           currentItem={currentItem}

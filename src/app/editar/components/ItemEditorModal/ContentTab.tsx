@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
 
 interface ContentTabProps {
-  itemType: "team" | "results";
-  currentItem: TeamMember | Result | null;
-  onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
+  itemType: "team" | "results" | "expertise";
+  currentItem: TeamMember | Result | ExpertiseTopic | null;
+  onUpdate: (
+    data: Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
+  ) => void;
   onDeleteItem: (itemId: string) => void; // Change this to accept itemId
 }
 
@@ -22,6 +24,8 @@ export default function ContentTab({
     instagram: "",
     investment: "",
     roi: "",
+    title: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -34,8 +38,10 @@ export default function ContentTab({
           instagram: "",
           investment: "",
           roi: "",
+          title: "",
+          description: "",
         });
-      } else {
+      } else if (itemType === "results") {
         const result = currentItem as Result;
         setFormData({
           name: result.client || "",
@@ -43,6 +49,19 @@ export default function ContentTab({
           instagram: result.instagram || "",
           investment: result.investment || "",
           roi: result.roi || "",
+          title: "",
+          description: "",
+        });
+      } else {
+        const topic = currentItem as ExpertiseTopic;
+        setFormData({
+          name: "",
+          role: "",
+          instagram: "",
+          investment: "",
+          roi: "",
+          title: topic.title || "",
+          description: topic.description || "",
         });
       }
     }
@@ -57,12 +76,17 @@ export default function ContentTab({
         name: field === "name" ? value : formData.name,
         role: field === "role" ? value : formData.role,
       });
-    } else {
+    } else if (itemType === "results") {
       onUpdate({
         client: field === "name" ? value : formData.name,
         instagram: field === "instagram" ? value : formData.instagram,
         investment: field === "investment" ? value : formData.investment,
         roi: field === "roi" ? value : formData.roi,
+      });
+    } else {
+      onUpdate({
+        title: field === "title" ? value : formData.title,
+        description: field === "description" ? value : formData.description,
       });
     }
   };
@@ -78,18 +102,20 @@ export default function ContentTab({
   return (
     <div className="mt-4 space-y-6 px-1">
       {/* Nome field */}
-      <div className="flex items-center justify-between">
-        <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
-          Nome
-        </label>
-        <input
-          type="text"
-          value={formData.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
-          className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
-          placeholder="Digite o nome"
-        />
-      </div>
+      {itemType !== "expertise" && (
+        <div className="flex items-center justify-between">
+          <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+            Nome
+          </label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+            placeholder="Digite o nome"
+          />
+        </div>
+      )}
 
       {/* Role field (only for team) */}
       {itemType === "team" && (
@@ -146,6 +172,37 @@ export default function ContentTab({
               onChange={(e) => handleInputChange("roi", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="R$ 0,00"
+            />
+          </div>
+        </>
+      )}
+
+      {/* Expertise-specific fields */}
+      {itemType === "expertise" && (
+        <>
+          <div className="flex items-center justify-between gap-2">
+            <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+              Título
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => handleInputChange("title", e.target.value)}
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              placeholder="Digite o título"
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+              Descrição
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              placeholder="Digite a descrição"
+              rows={5}
             />
           </div>
         </>
