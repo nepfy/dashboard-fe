@@ -41,6 +41,9 @@ export const projectsTable = pgTable("projects", {
   // Unified proposal data - replaces 29+ separate tables with a single JSON field
   proposalData: jsonb("proposal_data").$type<ProposalData>(),
 
+  // Button configuration for shared button settings
+  buttonConfig: jsonb("button_config"),
+
   ...timestamps,
 });
 

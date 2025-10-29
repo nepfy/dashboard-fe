@@ -162,6 +162,7 @@ export async function PUT(
         isPublished: true,
         isProposalGenerated: body.isProposalGenerated,
         proposalData: body.proposalData,
+        buttonConfig: body.buttonConfig,
         updated_at: new Date(),
       })
       .where(

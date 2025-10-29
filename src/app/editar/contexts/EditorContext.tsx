@@ -63,6 +63,12 @@ interface EditorContextType {
     pagePassword?: string;
   }) => void;
   updateProjectValidUntil: (date: Date | string | null) => void;
+  updateButtonConfig: (data: {
+    buttonTitle?: string;
+    buttonWhereToOpen?: "link" | "whatsapp";
+    buttonHref?: string;
+    buttonPhone?: string;
+  }) => void;
   updateSectionVisibility: (sectionId: string, hidden: boolean) => void;
   getSectionVisibility: () => Record<string, boolean>;
   saveProject: () => Promise<void>;
@@ -313,6 +319,33 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         return {
           ...prev,
           projectValidUntil: dateToSave,
+        };
+      });
+
+      setIsDirty(true);
+      setError(null);
+    },
+    [projectData]
+  );
+
+  const updateButtonConfig = useCallback(
+    (data: {
+      buttonTitle?: string;
+      buttonWhereToOpen?: "link" | "whatsapp";
+      buttonHref?: string;
+      buttonPhone?: string;
+    }) => {
+      if (!projectData) return;
+
+      setProjectDataState((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          buttonConfig: {
+            ...prev.buttonConfig,
+            ...data,
+          },
         };
       });
 
@@ -666,6 +699,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     updateFAQ,
     updatePersonalization,
     updateProjectValidUntil,
+    updateButtonConfig,
     updateSectionVisibility,
     getSectionVisibility,
     saveProject,

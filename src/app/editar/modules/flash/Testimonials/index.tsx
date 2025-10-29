@@ -85,7 +85,6 @@ export default function FlashTestimonials({
           </div>
 
           <div
-            onClick={() => setOpenModalId(currentTestimonial?.id ?? null)}
             className={`border-l-[#A0A0A0] pb-24 xl:border xl:border-l xl:border-transparent xl:pb-34 xl:pl-7`}
           >
             <div
@@ -96,6 +95,7 @@ export default function FlashTestimonials({
               } `}
             >
               <div
+                onClick={() => setOpenModalId(currentTestimonial?.id ?? null)}
                 className={`transition-opacity duration-800 ${
                   isTransitioning ? "opacity-0" : "opacity-100"
                 }`}

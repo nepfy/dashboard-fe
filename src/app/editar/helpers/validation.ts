@@ -673,7 +673,7 @@ function validateFooterSection(data: TemplateData): {
 
   const buttonResult = validateFooterField(
     "buttonTitle",
-    data.proposalData?.footer?.buttonTitle
+    data.buttonConfig?.buttonTitle
   );
   if (!buttonResult.isValid) errors.buttonTitle = buttonResult.message!;
 

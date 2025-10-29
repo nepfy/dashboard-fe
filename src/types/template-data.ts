@@ -110,7 +110,6 @@ export interface FooterSection extends BaseSection {
   hideCallToAction?: boolean;
   disclaimer?: string;
   validity?: Date | string;
-  buttonTitle?: string;
 }
 
 // About Us related interfaces
@@ -206,7 +205,6 @@ export interface IntroductionSection {
   services?: IntroductionService[];
   subtitle?: string;
   validity?: string;
-  buttonTitle?: string;
   hideSubtitle?: boolean;
 }
 
@@ -268,6 +266,14 @@ export type ProjectStatus =
 // Template type enum
 export type TemplateType = "flash" | "prime" | "base";
 
+// Button configuration interface
+export interface ButtonConfig {
+  buttonTitle?: string;
+  buttonWhereToOpen?: "link" | "whatsapp";
+  buttonHref?: string;
+  buttonPhone?: string;
+}
+
 // Main TemplateData interface
 export interface TemplateData {
   id?: string;
@@ -284,6 +290,7 @@ export interface TemplateData {
   isPublished?: boolean;
   isProposalGenerated?: boolean;
   proposalData?: ProposalData;
+  buttonConfig?: ButtonConfig;
   userName?: string;
   companyName?: string;
   updated_at?: string;

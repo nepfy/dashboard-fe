@@ -4,6 +4,7 @@ import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
+import EditableButton from "#/app/editar/components/EditableButton";
 
 export default function FlashFooter({
   mainColor,
@@ -11,10 +12,10 @@ export default function FlashFooter({
   callToAction,
   disclaimer,
   hideDisclaimer,
-  buttonTitle,
 }: FooterSection) {
   const { updateFooter, projectData } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
+  const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
   return (
     <div style={{ background: mainColor }} className="relative overflow-hidden">
       {!hideSection && (
@@ -37,7 +38,9 @@ export default function FlashFooter({
                     setIsDateModalOpen(true);
                   }}
                 >
-                  <p className="inline cursor-pointer border border-transparent text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] lg:pt-0">
+                  <p
+                    className={`inline cursor-pointer text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] lg:ml-[10px] lg:pt-0 ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
+                  >
                     Proposta válida até -{" "}
                     <span className="font-normal text-[#E6E6E6]/40">
                       {formatDateToDDDeMonthDeYYYY(
@@ -52,9 +55,24 @@ export default function FlashFooter({
                 </div>
               )}
 
-              <button className="mt-10 block w-full rounded-full bg-[#FBFBFB] py-4 text-sm font-semibold text-[#121212] lg:w-[326px]">
-                {buttonTitle || "Iniciar Projeto"}
-              </button>
+              <div
+                className="relative z-5 mt-10 h-auto w-auto cursor-pointer py-2 lg:w-[336px]"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsButtonModalOpen(true);
+                }}
+              >
+                <div
+                  className={`absolute inset-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
+                />
+                <button className="mx-auto block w-full rounded-full bg-[#FBFBFB] py-4 text-sm font-semibold text-[#121212] lg:w-[326px]">
+                  {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
+                </button>
+                <EditableButton
+                  isModalOpen={isButtonModalOpen}
+                  setIsModalOpen={setIsButtonModalOpen}
+                />
+              </div>
             </div>
 
             {!hideDisclaimer && (
@@ -69,8 +87,9 @@ export default function FlashFooter({
               </div>
             )}
           </div>
+
           <p className="absolute bottom-[-40px] left-1/2 m-0 -translate-x-1/2 p-0 text-[61px] text-nowrap text-[#E6E6E6] lg:bottom-[-140px] lg:text-[226px]">
-            {buttonTitle || "Iniciar Projeto"}
+            {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
           </p>
         </>
       )}

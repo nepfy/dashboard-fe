@@ -4,12 +4,12 @@ import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
+import EditableButton from "#/app/editar/components/EditableButton";
 
 export default function FlashIntro({
   mainColor,
   userName,
   email,
-  buttonTitle,
   title,
   subtitle,
   hideSubtitle,
@@ -17,7 +17,7 @@ export default function FlashIntro({
 }: IntroductionSection) {
   const { updateIntroduction, projectData } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
-
+  const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
   let bg;
   if (mainColor === "#4F21A1") {
     bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`;
@@ -63,9 +63,25 @@ export default function FlashIntro({
             }
             className="text-[#E6E6E6]"
           />
-          <p className="rounded-full bg-black p-5">
-            {buttonTitle || "Iniciar Projeto"}
-          </p>
+          <div
+            className="relative z-5 h-auto w-auto cursor-pointer py-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsButtonModalOpen(true);
+            }}
+          >
+            <div
+              className={`absolute inset-0 border hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
+            />
+            <p className="rounded-full bg-black p-5">
+              {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
+            </p>
+            <EditableButton
+              isModalOpen={isButtonModalOpen}
+              setIsModalOpen={setIsButtonModalOpen}
+              position="below"
+            />
+          </div>
         </div>
 
         <button
@@ -101,7 +117,9 @@ export default function FlashIntro({
               setIsDateModalOpen(true);
             }}
           >
-            <p className="inline w-auto cursor-pointer border border-transparent text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666]">
+            <p
+              className={`inline w-auto cursor-pointer text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
+            >
               Proposta válida até -{" "}
               <span className="font-normal text-[#E6E6E6]/40">
                 {formatDateToDDDeMonthDeYYYY(
