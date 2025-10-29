@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUserStore } from "#/store/userStore";
+import { useUserStore } from "#/store/user.slice";
 
 export function useUserAccount() {
   const {

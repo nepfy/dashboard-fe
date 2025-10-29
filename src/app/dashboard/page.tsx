@@ -8,12 +8,18 @@ import { useProjects } from "#/hooks/useProjectGenerator/useProjects";
 // import DashboardStartProjectView from "#/app/dashboard/components/DashboardStartProjectView";
 import DashboardProjectView from "#/app/dashboard/components/DashboardProjectView";
 import SuccessModal from "#/app/dashboard/components/SuccessModal";
+import { trackDashboardViewed } from "#/lib/analytics/track";
 
 export default function Dashboard() {
   const searchParams = useSearchParams();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [projectId, setProjectId] = useState<string | null>(null);
+
+  // Track dashboard viewed
+  useEffect(() => {
+    trackDashboardViewed();
+  }, []);
 
   const {
     projectsData,

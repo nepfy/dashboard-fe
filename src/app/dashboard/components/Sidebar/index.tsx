@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
-import { useUserStore } from "#/store/userStore";
+import { useUserStore } from "#/store/user.slice";
 
 import Logo from "#/components/icons/Logo";
 import GridIcon from "#/components/icons/GridIcon";
@@ -14,6 +14,7 @@ import HelpIcon from "#/components/icons/HelpIcon";
 import GearIcon from "#/components/icons/GearIcon";
 import SignOutIcon from "#/components/icons/SignOutIcon";
 import TutorialIcon from "#/components/icons/TutorialIcon";
+import { trackDashboardTabClicked } from "#/lib/analytics/track";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -128,6 +129,12 @@ export default function Sidebar() {
                 ) : (
                   <Link
                     href={item.path}
+                    onClick={() => {
+                      // Track tab clicks
+                      if (item.path === "/dashboard/propostas") {
+                        trackDashboardTabClicked({ tab_name: "propostas" });
+                      }
+                    }}
                     className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
                       isActive(item.path)
                         ? "bg-white-neutral-light-100 e0 cursor-default"

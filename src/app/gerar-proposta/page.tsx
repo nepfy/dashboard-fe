@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { toast, Slide } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -18,6 +19,11 @@ import { FinalStep } from "#/modules/ai-generator/components/generation-steps/Fi
 import { Loading } from "#/modules/ai-generator/components/loading/Loading";
 import CloseIcon from "#/components/icons/CloseIcon";
 import { SaveDraftButton } from "#/modules/ai-generator/components/save-draft";
+import {
+  trackProposalCreationStarted,
+  trackProposalAIGenerationRequested,
+  trackProposalAIGenerationCompleted,
+} from "#/lib/analytics/track";
 
 export default function NepfyAIPage() {
   const { templateType, formData } = useProjectGenerator();
@@ -50,6 +56,18 @@ export default function NepfyAIPage() {
   } = useProposalGenerator();
 
   const router = useRouter();
+  const generationStartTime = useRef<number | null>(null);
+  const hasTrackedCreationStart = useRef(false);
+
+  // Track proposal creation started
+  useEffect(() => {
+    if (!hasTrackedCreationStart.current) {
+      trackProposalCreationStarted({
+        template_type: templateType || undefined,
+      });
+      hasTrackedCreationStart.current = true;
+    }
+  }, [templateType]);
 
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId);
@@ -69,6 +87,17 @@ export default function NepfyAIPage() {
     }
 
     setCurrentStep("final_step");
+
+    // Track AI generation requested
+    generationStartTime.current = Date.now();
+    trackProposalAIGenerationRequested({
+      template_type: templateType || "flash",
+      project_name: projectName,
+      selected_service: selectedService,
+      include_terms: selectedPlan?.toString().includes("terms") || false,
+      include_faq: selectedPlan?.toString().includes("faq") || false,
+      selected_plans: selectedPlan || 1,
+    });
 
     try {
       setIsLoading(true);
@@ -99,12 +128,40 @@ export default function NepfyAIPage() {
 
       if (result.success) {
         console.log("Proposal generated successfully:", result.data);
+
+        // Calculate generation time
+        const generationTimeSeconds = generationStartTime.current
+          ? Math.round((Date.now() - generationStartTime.current) / 1000)
+          : undefined;
+
+        // Track AI generation completed
+        trackProposalAIGenerationCompleted({
+          template_type: templateType || "flash",
+          project_id: result.data.project.id,
+          project_name: projectName,
+          generation_time_seconds: generationTimeSeconds,
+          success: true,
+        });
+
         router.push(
           `/dashboard?success&project=${projectName}&projectId=${result.data.project.id}`
         );
         return;
       } else {
         console.error("Error generating proposal:", result.error);
+
+        // Track failed generation
+        trackProposalAIGenerationCompleted({
+          template_type: templateType || "flash",
+          project_id: "",
+          project_name: projectName,
+          generation_time_seconds: generationStartTime.current
+            ? Math.round((Date.now() - generationStartTime.current) / 1000)
+            : undefined,
+          success: false,
+          error: result.error || "Unknown error",
+        });
+
         toast.error("Erro ao gerar proposta: " + result.error, {
           position: "top-right",
           autoClose: 5000,
@@ -120,6 +177,19 @@ export default function NepfyAIPage() {
       }
     } catch (error) {
       console.error("Error generating proposal:", error);
+
+      // Track failed generation
+      trackProposalAIGenerationCompleted({
+        template_type: templateType || "flash",
+        project_id: "",
+        project_name: projectName,
+        generation_time_seconds: generationStartTime.current
+          ? Math.round((Date.now() - generationStartTime.current) / 1000)
+          : undefined,
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+
       toast.error("Erro ao gerar proposta. Tente novamente.", {
         position: "top-right",
         autoClose: 5000,

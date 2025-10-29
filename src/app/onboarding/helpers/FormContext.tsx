@@ -6,6 +6,7 @@ import React, {
   ChangeEvent,
   SetStateAction,
 } from "react";
+import { trackOnboardingQuestionAnswered } from "#/lib/analytics/track";
 
 export interface FormDataProps {
   fullName: string;
@@ -187,6 +188,24 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   };
 
   const nextStep = () => {
+    // Track question answered when moving to next step
+    const stepNameMap: { [key: number]: { name: string; field: keyof FormDataProps } } = {
+      1: { name: "personal_info", field: "fullName" },
+      2: { name: "job_type", field: "jobType" },
+      3: { name: "discovery_source", field: "discoverySource" },
+      4: { name: "used_before", field: "usedBefore" },
+    };
+
+    const stepInfo = stepNameMap[currentStep];
+    if (stepInfo) {
+      const answer = formData[stepInfo.field];
+      trackOnboardingQuestionAnswered({
+        question_step: currentStep,
+        question_name: stepInfo.name,
+        answer: answer,
+      });
+    }
+
     setCurrentStep((prev) => prev + 1);
     resetEnableNextStep();
   };

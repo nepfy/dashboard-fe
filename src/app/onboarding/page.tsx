@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -11,19 +11,49 @@ import IntroSlider from "#/components/IntroSlider";
 import { completeOnboarding } from "#/app/actions/onboarding/_actions";
 import MultiStepForm from "#/app/onboarding/components/MultiStepForm";
 import { FormProvider } from "#/app/onboarding/helpers/FormContext";
+import {
+  trackOnboardingStarted,
+  trackOnboardingCompleted,
+} from "#/lib/analytics/track";
 
 export default function Onboarding() {
   const { user } = useUser();
   const router = useRouter();
   const [error, setError] = useState("");
+  const startTimeRef = useRef<number | null>(null);
+  const hasTrackedStart = useRef(false);
 
   const date = new Date();
+
+  // Track onboarding started when component mounts
+  useEffect(() => {
+    if (!hasTrackedStart.current) {
+      startTimeRef.current = Date.now();
+      trackOnboardingStarted();
+      hasTrackedStart.current = true;
+    }
+  }, []);
 
   const handleOnboardingComplete = async (formData: FormData) => {
     try {
       const res = await completeOnboarding(formData);
 
       if (res?.message) {
+        // Calculate completion time
+        const completionTimeSeconds = startTimeRef.current
+          ? Math.round((Date.now() - startTimeRef.current) / 1000)
+          : undefined;
+
+        // Track onboarding completed
+        trackOnboardingCompleted({
+          job_type: formData.get("jobType")?.toString(),
+          discovery_source: formData.get("discoverySource")?.toString(),
+          used_before: formData.get("usedBefore")?.toString(),
+          application_name: formData.get("applicationName")?.toString(),
+          application_type: formData.get("applicationType")?.toString(),
+          completion_time_seconds: completionTimeSeconds,
+        });
+
         await user?.reload();
         router.push("/dashboard");
       }

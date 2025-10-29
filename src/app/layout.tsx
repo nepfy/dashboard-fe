@@ -4,6 +4,7 @@ import { ptBR } from "@clerk/localizations";
 import localFont from "next/font/local";
 import { headers } from "next/headers";
 import "#/styles/globals.css";
+import { PostHogProvider } from "#/lib/analytics/PostHogProvider";
 
 const satoshi = localFont({
   src: [
@@ -92,16 +93,18 @@ export default async function RootLayout({
   if (shouldUseClerk) {
     return (
       <ClerkProvider dynamic localization={ptBR}>
-        <html lang="pt-BR">
-          <head>
-            <meta name="x-is-subdomain" content="false" />
-          </head>
-          <body
-            className={`${satoshi.variable} ${manrope.variable} antialiased`}
-          >
-            {children}
-          </body>
-        </html>
+        <PostHogProvider>
+          <html lang="pt-BR">
+            <head>
+              <meta name="x-is-subdomain" content="false" />
+            </head>
+            <body
+              className={`${satoshi.variable} ${manrope.variable} antialiased`}
+            >
+              {children}
+            </body>
+          </html>
+        </PostHogProvider>
       </ClerkProvider>
     );
   }

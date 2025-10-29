@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
-import { useUserStore } from "#/store/userStore";
+import { useUserStore } from "#/store/user.slice";
 import Logo from "#/components/icons/Logo";
 import GridIcon from "#/components/icons/GridIcon";
 import FileIcon from "#/components/icons/FileIcon";

@@ -14,6 +14,7 @@ import ArchiveIcon from "./ArchiveIcon";
 import DuplicateIcon from "./DuplicateIcon";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 import { getStatusBadge } from "../ProjectsTable/getStatusBadge";
+import { trackProposalClicked } from "#/lib/analytics/track";
 
 interface RowEditMenuProps {
   isOpen: boolean;
@@ -152,6 +153,13 @@ export default function RowEditMenu({
   }, [isOpen, onClose, triggerElement]);
 
   const handleEditClick = () => {
+    // Track proposal clicked
+    trackProposalClicked({
+      proposal_id: projectId,
+      template_type: templateType || undefined,
+      current_status: currentStatus || undefined,
+    });
+
     router.push(`/editar?projectId=${projectId}&templateType=${templateType}`);
     onClose();
   };
