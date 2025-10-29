@@ -9,27 +9,47 @@ import {
   Result,
   ExpertiseTopic,
   Testimonial,
+  StepTopic,
+  FAQItem,
 } from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
 
 interface TabContentProps {
   activeTab: TabType;
-  itemType: "team" | "results" | "expertise" | "testimonials";
-  currentItem: TeamMember | Result | ExpertiseTopic | Testimonial | null;
-  sortedItems: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  currentItem:
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+    | null;
+  sortedItems: (
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+  )[];
   onUpdate: (
     data:
       | Partial<TeamMember>
       | Partial<Result>
       | Partial<ExpertiseTopic>
       | Partial<Testimonial>
+      | Partial<StepTopic>
+      | Partial<FAQItem>
       | {
           reorderedItems: (
             | TeamMember
             | Result
             | ExpertiseTopic
             | Testimonial
+            | StepTopic
+            | FAQItem
           )[];
         }
   ) => void;
@@ -60,6 +80,49 @@ export default function TabContent({
   hideIcon,
   pendingHideIcon,
 }: TabContentProps) {
+  // Prevent ANY image-related content from showing for steps
+  if (itemType === "steps" && activeTab === "imagem") {
+    return (
+      <div
+        className="min-h-0 flex-1 overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex h-32 items-center justify-center text-gray-500">
+          Esta seção não suporta edição de imagens
+        </div>
+      </div>
+    );
+  }
+
+  // Additional safeguard: Never render IconTab for steps or FAQ
+  if (itemType === "steps" || itemType === "faq") {
+    return (
+      <div
+        className="min-h-0 flex-1 overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {activeTab === "conteudo" && (
+          <ContentTab
+            itemType={itemType}
+            currentItem={currentItem}
+            onUpdate={onUpdate}
+            onDeleteItem={onDelete}
+          />
+        )}
+
+        {activeTab === "organizar" && (
+          <OrganizeTab
+            itemType={itemType}
+            items={sortedItems}
+            onUpdate={onUpdate}
+            setShowConfirmExclusion={setShowConfirmExclusion}
+            onDeleteItem={onDelete}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className="min-h-0 flex-1 overflow-y-auto"
@@ -87,9 +150,13 @@ export default function TabContent({
 
       {activeTab === "imagem" && itemType !== "expertise" && (
         <ImageTab
-          itemType={itemType}
-          currentItem={currentItem}
-          onUpdate={onUpdate}
+          itemType={itemType as "team" | "results" | "testimonials"}
+          currentItem={currentItem as TeamMember | Result | Testimonial}
+          onUpdate={
+            onUpdate as (
+              data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial>
+            ) => void
+          }
           setShowExploreGalleryInfo={setShowExploreGalleryInfo}
           setShowPexelsGallery={setShowPexelsGallery}
           setShowUploadImageInfo={setShowUploadImageInfo}

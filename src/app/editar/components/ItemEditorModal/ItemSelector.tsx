@@ -1,9 +1,9 @@
 "use client";
 
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, StepTopic } from "#/types/template-data";
 
 interface ItemSelectorProps {
-  items: (TeamMember | Result)[];
+  items: (TeamMember | Result | StepTopic)[];
   selectedItemId: string | null;
   onItemSelect: (itemId: string) => void;
   onAddItem: () => void;
@@ -20,7 +20,7 @@ export default function ItemSelector({
   );
 
   return (
-    <div className="mb-6 flex flex-shrink-0 gap-2">
+    <div className="mb-6 flex flex-shrink-0 flex-wrap gap-2">
       {sortedItems.map((item, index) => (
         <button
           key={item.id}

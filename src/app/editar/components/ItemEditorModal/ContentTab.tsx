@@ -6,18 +6,29 @@ import {
   Result,
   ExpertiseTopic,
   Testimonial,
+  StepTopic,
+  FAQItem,
 } from "#/types/template-data";
 import { CurrencyInput } from "#/components/Inputs";
 
 interface ContentTabProps {
-  itemType: "team" | "results" | "expertise" | "testimonials";
-  currentItem: TeamMember | Result | ExpertiseTopic | Testimonial | null;
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  currentItem:
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+    | null;
   onUpdate: (
     data:
       | Partial<TeamMember>
       | Partial<Result>
       | Partial<ExpertiseTopic>
       | Partial<Testimonial>
+      | Partial<StepTopic>
+      | Partial<FAQItem>
   ) => void;
   onDeleteItem: (itemId: string) => void; // Change this to accept itemId
 }
@@ -37,6 +48,8 @@ export default function ContentTab({
     title: "",
     description: "",
     testimonial: "",
+    question: "",
+    answer: "",
   });
 
   const [instagramError, setInstagramError] = useState("");
@@ -77,6 +90,8 @@ export default function ContentTab({
           title: "",
           description: "",
           testimonial: "",
+          question: "",
+          answer: "",
         });
       } else if (itemType === "results") {
         const result = currentItem as Result;
@@ -89,6 +104,8 @@ export default function ContentTab({
           title: "",
           description: "",
           testimonial: "",
+          question: "",
+          answer: "",
         });
       } else if (itemType === "expertise") {
         const topic = currentItem as ExpertiseTopic;
@@ -101,6 +118,36 @@ export default function ContentTab({
           title: topic.title || "",
           description: topic.description || "",
           testimonial: "",
+          question: "",
+          answer: "",
+        });
+      } else if (itemType === "steps") {
+        const step = currentItem as StepTopic;
+        setFormData({
+          name: "",
+          role: "",
+          instagram: "",
+          investment: "",
+          roi: "",
+          title: step.title || "",
+          description: step.description || "",
+          testimonial: "",
+          question: "",
+          answer: "",
+        });
+      } else if (itemType === "faq") {
+        const faq = currentItem as FAQItem;
+        setFormData({
+          name: "",
+          role: "",
+          instagram: "",
+          investment: "",
+          roi: "",
+          title: "",
+          description: "",
+          testimonial: "",
+          question: faq.question || "",
+          answer: faq.answer || "",
         });
       } else {
         const testimonial = currentItem as Testimonial;
@@ -113,6 +160,8 @@ export default function ContentTab({
           title: "",
           description: "",
           testimonial: testimonial.testimonial || "",
+          question: "",
+          answer: "",
         });
       }
     }
@@ -145,6 +194,16 @@ export default function ContentTab({
         title: field === "title" ? value : formData.title,
         description: field === "description" ? value : formData.description,
       });
+    } else if (itemType === "steps") {
+      onUpdate({
+        title: field === "title" ? value : formData.title,
+        description: field === "description" ? value : formData.description,
+      });
+    } else if (itemType === "faq") {
+      onUpdate({
+        question: field === "question" ? value : formData.question,
+        answer: field === "answer" ? value : formData.answer,
+      });
     } else {
       onUpdate({
         name: field === "name" ? value : formData.name,
@@ -165,20 +224,23 @@ export default function ContentTab({
   return (
     <div className="mt-4 space-y-6 px-1">
       {/* Nome field */}
-      {itemType !== "expertise" && itemType !== "testimonials" && (
-        <div className="flex items-center justify-between">
-          <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
-            Nome
-          </label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
-            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
-            placeholder="Digite o nome"
-          />
-        </div>
-      )}
+      {itemType !== "expertise" &&
+        itemType !== "testimonials" &&
+        itemType !== "steps" &&
+        itemType !== "faq" && (
+          <div className="flex items-center justify-between">
+            <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+              Nome
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              placeholder="Digite o nome"
+            />
+          </div>
+        )}
 
       {/* Role field (only for team) */}
       {itemType === "team" && (
@@ -272,6 +334,68 @@ export default function ContentTab({
               onChange={(e) => handleInputChange("description", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite a descrição"
+              rows={5}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Steps-specific fields */}
+      {itemType === "steps" && (
+        <>
+          <div className="flex items-center justify-between gap-2">
+            <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+              Título
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => handleInputChange("title", e.target.value)}
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              placeholder="Digite o título do passo"
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+              Descrição
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              placeholder="Digite a descrição do passo"
+              rows={5}
+            />
+          </div>
+        </>
+      )}
+
+      {/* FAQ-specific fields */}
+      {itemType === "faq" && (
+        <>
+          <div className="flex items-center justify-between gap-2">
+            <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+              Pergunta
+            </label>
+            <textarea
+              value={formData.question}
+              onChange={(e) => handleInputChange("question", e.target.value)}
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              placeholder="Digite a pergunta"
+              rows={3}
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+              Resposta
+            </label>
+            <textarea
+              value={formData.answer}
+              onChange={(e) => handleInputChange("answer", e.target.value)}
+              className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+              placeholder="Digite a resposta"
               rows={5}
             />
           </div>

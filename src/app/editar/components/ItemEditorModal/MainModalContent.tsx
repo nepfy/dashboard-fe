@@ -10,15 +10,31 @@ import {
   Result,
   ExpertiseTopic,
   Testimonial,
+  StepTopic,
+  FAQItem,
 } from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
 
 interface MainModalContentProps {
   title: string;
-  items: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+  items: (
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+  )[];
   selectedItemId: string | null;
-  currentItem: TeamMember | Result | ExpertiseTopic | Testimonial | null;
+  currentItem:
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+    | null;
   activeTab: TabType;
   pendingChanges: {
     itemUpdates: Record<
@@ -27,8 +43,17 @@ interface MainModalContentProps {
       | Partial<Result>
       | Partial<ExpertiseTopic>
       | Partial<Testimonial>
+      | Partial<StepTopic>
+      | Partial<FAQItem>
     >;
-    reorderedItems?: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+    reorderedItems?: (
+      | TeamMember
+      | Result
+      | ExpertiseTopic
+      | Testimonial
+      | StepTopic
+      | FAQItem
+    )[];
     deletedItems: string[];
     sectionUpdates?: { hideIcon?: boolean };
   };
@@ -42,12 +67,16 @@ interface MainModalContentProps {
       | Partial<Result>
       | Partial<ExpertiseTopic>
       | Partial<Testimonial>
+      | Partial<StepTopic>
+      | Partial<FAQItem>
       | {
           reorderedItems: (
             | TeamMember
             | Result
             | ExpertiseTopic
             | Testimonial
+            | StepTopic
+            | FAQItem
           )[];
         }
   ) => void;
@@ -113,6 +142,60 @@ export default function MainModalContent({
     (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
   );
 
+  // Helper function to determine item type based on item properties
+  const getItemType = (
+    items: (
+      | TeamMember
+      | Result
+      | ExpertiseTopic
+      | Testimonial
+      | StepTopic
+      | FAQItem
+    )[]
+  ): "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" => {
+    if (items.length === 0) return "expertise";
+
+    const firstItem = items[0];
+
+    // Check for team members (have name, role, but no testimonial)
+    if (
+      "name" in firstItem &&
+      "role" in firstItem &&
+      !("testimonial" in firstItem)
+    ) {
+      return "team";
+    }
+
+    // Check for results (have client property)
+    if ("client" in firstItem) {
+      return "results";
+    }
+
+    // Check for testimonials (have testimonial property)
+    if ("testimonial" in firstItem) {
+      return "testimonials";
+    }
+
+    // Check for steps (have title, description, but no icon)
+    if (
+      "title" in firstItem &&
+      "description" in firstItem &&
+      !("icon" in firstItem)
+    ) {
+      return "steps";
+    }
+
+    // Check for FAQ (have question, answer)
+    if ("question" in firstItem && "answer" in firstItem) {
+      return "faq";
+    }
+
+    // Default to expertise
+    return "expertise";
+  };
+
+  const detectedItemType = getItemType(itemsWithChanges);
+
   return (
     <div
       className="bg-white-neutral-light-100 relative z-11 flex h-full w-full flex-col"
@@ -130,36 +213,12 @@ export default function MainModalContent({
       <TabNavigation
         activeTab={activeTab}
         onTabChange={onTabChange}
-        itemType={
-          itemsWithChanges.length > 0 &&
-          "name" in itemsWithChanges[0] &&
-          "role" in itemsWithChanges[0] &&
-          !("testimonial" in itemsWithChanges[0])
-            ? "team"
-            : itemsWithChanges.length > 0 && "client" in itemsWithChanges[0]
-              ? "results"
-              : itemsWithChanges.length > 0 &&
-                  "testimonial" in itemsWithChanges[0]
-                ? "testimonials"
-                : "expertise"
-        }
+        itemType={detectedItemType}
       />
 
       <TabContent
         activeTab={activeTab}
-        itemType={
-          itemsWithChanges.length > 0 &&
-          "name" in itemsWithChanges[0] &&
-          "role" in itemsWithChanges[0] &&
-          !("testimonial" in itemsWithChanges[0])
-            ? "team"
-            : itemsWithChanges.length > 0 && "client" in itemsWithChanges[0]
-              ? "results"
-              : itemsWithChanges.length > 0 &&
-                  "testimonial" in itemsWithChanges[0]
-                ? "testimonials"
-                : "expertise"
-        }
+        itemType={detectedItemType}
         currentItem={currentItem}
         sortedItems={sortedItems}
         onUpdate={onUpdate}

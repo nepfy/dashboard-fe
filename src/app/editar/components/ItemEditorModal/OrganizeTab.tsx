@@ -23,22 +23,44 @@ import {
   Result,
   ExpertiseTopic,
   Testimonial,
+  StepTopic,
+  FAQItem,
 } from "#/types/template-data";
 import GrabIcon from "#/components/icons/GrabIcon";
 
 interface OrganizeTabProps {
-  itemType: "team" | "results" | "expertise" | "testimonials";
-  items: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  items: (
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+  )[];
   onUpdate: (data: {
-    reorderedItems: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+    reorderedItems: (
+      | TeamMember
+      | Result
+      | ExpertiseTopic
+      | Testimonial
+      | StepTopic
+      | FAQItem
+    )[];
   }) => void;
   setShowConfirmExclusion: (show: boolean) => void;
   onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
 interface SortableItemProps {
-  item: TeamMember | Result | ExpertiseTopic | Testimonial;
-  itemType: "team" | "results" | "expertise" | "testimonials";
+  item:
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem;
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
   onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
@@ -85,7 +107,11 @@ function SortableItem({
             ? (item as Result).client
             : itemType === "expertise"
               ? (item as ExpertiseTopic).title
-              : (item as Testimonial).name}
+              : itemType === "steps"
+                ? (item as StepTopic).title
+                : itemType === "faq"
+                  ? (item as FAQItem).question
+                  : (item as Testimonial).name}
       </div>
 
       {/* Delete Button */}

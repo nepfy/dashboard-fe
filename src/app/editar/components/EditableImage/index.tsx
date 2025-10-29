@@ -6,13 +6,22 @@ import {
   Result,
   ExpertiseTopic,
   Testimonial,
+  StepTopic,
+  FAQItem,
 } from "#/types/template-data";
 
 interface EditableImageProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  itemType: "team" | "results" | "expertise" | "testimonials";
-  items: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  items: (
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+  )[];
   currentItemId: string | null;
   onUpdateItem: (
     itemId: string,
@@ -21,9 +30,17 @@ interface EditableImageProps {
       | Partial<Result>
       | Partial<ExpertiseTopic>
       | Partial<Testimonial>
+      | Partial<StepTopic>
+      | Partial<FAQItem>
   ) => void;
   onReorderItems: (
-    items: TeamMember[] | Result[] | ExpertiseTopic[] | Testimonial[]
+    items:
+      | TeamMember[]
+      | Result[]
+      | ExpertiseTopic[]
+      | Testimonial[]
+      | StepTopic[]
+      | FAQItem[]
   ) => void;
   onUpdateSection?: (data: { hideIcon?: boolean }) => void;
   hideIcon?: boolean;

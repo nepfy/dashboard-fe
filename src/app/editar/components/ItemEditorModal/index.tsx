@@ -13,13 +13,22 @@ import {
   Result,
   ExpertiseTopic,
   Testimonial,
+  StepTopic,
+  FAQItem,
 } from "#/types/template-data";
 
 interface ItemEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  itemType: "team" | "results" | "expertise" | "testimonials";
-  items: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  items: (
+    | TeamMember
+    | Result
+    | ExpertiseTopic
+    | Testimonial
+    | StepTopic
+    | FAQItem
+  )[];
   currentItemId: string | null;
   onUpdateItem: (
     itemId: string,
@@ -28,9 +37,17 @@ interface ItemEditorModalProps {
       | Partial<Result>
       | Partial<ExpertiseTopic>
       | Partial<Testimonial>
+      | Partial<StepTopic>
+      | Partial<FAQItem>
   ) => void;
   onReorderItems: (
-    items: TeamMember[] | Result[] | ExpertiseTopic[] | Testimonial[]
+    items:
+      | TeamMember[]
+      | Result[]
+      | ExpertiseTopic[]
+      | Testimonial[]
+      | StepTopic[]
+      | FAQItem[]
   ) => void;
   onUpdateSection?: (data: { hideIcon?: boolean }) => void;
   hideIcon?: boolean;
@@ -88,7 +105,12 @@ export default function ItemEditorModal({
       newItems: [],
       sectionUpdates: undefined,
     });
-  }, [currentItemId]);
+
+    // Ensure steps always start with "conteudo" tab
+    if (itemType === "steps" && activeTab === "imagem") {
+      setActiveTab("conteudo");
+    }
+  }, [currentItemId, itemType, activeTab]);
 
   const currentItem =
     items.find((item) => item.id === selectedItemId) ||
@@ -108,7 +130,13 @@ export default function ItemEditorModal({
   const handleAddItem = () => {
     const totalItems = items.length + pendingChanges.newItems.length;
     if (totalItems < 6) {
-      const newItem: TeamMember | Result | ExpertiseTopic | Testimonial =
+      const newItem:
+        | TeamMember
+        | Result
+        | ExpertiseTopic
+        | Testimonial
+        | StepTopic
+        | FAQItem =
         itemType === "team"
           ? {
               id: `temp-${Date.now()}`,
@@ -139,15 +167,33 @@ export default function ItemEditorModal({
                   hideTitleField: false,
                   hideDescription: false,
                 }
-              : {
-                  id: `temp-${Date.now()}`,
-                  name: "",
-                  role: "",
-                  testimonial: "",
-                  photo: "",
-                  sortOrder: totalItems,
-                  hidePhoto: false,
-                };
+              : itemType === "steps"
+                ? {
+                    id: `temp-${Date.now()}`,
+                    title: "",
+                    description: "",
+                    sortOrder: totalItems,
+                    hideStepName: false,
+                    hideStepDescription: false,
+                  }
+                : itemType === "faq"
+                  ? {
+                      id: `temp-${Date.now()}`,
+                      question: "",
+                      answer: "",
+                      sortOrder: totalItems,
+                      hideQuestion: false,
+                      hideAnswer: false,
+                    }
+                  : {
+                      id: `temp-${Date.now()}`,
+                      name: "",
+                      role: "",
+                      testimonial: "",
+                      photo: "",
+                      sortOrder: totalItems,
+                      hidePhoto: false,
+                    };
 
       setPendingChanges((prev) => ({
         ...prev,
@@ -325,13 +371,22 @@ export default function ItemEditorModal({
   };
 
   const getTitle = () => {
-    return itemType === "team"
-      ? "Time"
-      : itemType === "results"
-        ? "Resultados"
-        : itemType === "expertise"
-          ? "Especialidades"
-          : "Depoimentos";
+    switch (itemType) {
+      case "team":
+        return "Time";
+      case "results":
+        return "Resultados";
+      case "expertise":
+        return "Especialidades";
+      case "testimonials":
+        return "Depoimentos";
+      case "steps":
+        return "Etapas do processo";
+      case "faq":
+        return "Perguntas Frequentes";
+      default:
+        return "Passos";
+    }
   };
 
   const getItemsWithChanges = () => {

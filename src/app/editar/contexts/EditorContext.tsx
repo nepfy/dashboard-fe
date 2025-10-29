@@ -30,6 +30,8 @@ import {
   Result,
   ExpertiseTopic,
   Testimonial,
+  StepTopic,
+  FAQItem,
 } from "#/types/template-data";
 import { useRouter } from "next/navigation";
 
@@ -101,6 +103,18 @@ interface EditorContextType {
   addTestimonialItem: () => void;
   deleteTestimonialItem: (itemId: string) => void;
   reorderTestimonialItems: (items: Testimonial[]) => void;
+
+  // Step topic CRUD operations
+  updateStepTopic: (topicId: string, data: Partial<StepTopic>) => void;
+  addStepTopic: () => void;
+  deleteStepTopic: (topicId: string) => void;
+  reorderStepTopics: (topics: StepTopic[]) => void;
+
+  // FAQ item CRUD operations
+  updateFAQItem: (itemId: string, data: Partial<FAQItem>) => void;
+  addFAQItem: () => void;
+  deleteFAQItem: (itemId: string) => void;
+  reorderFAQItems: (items: FAQItem[]) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -676,6 +690,120 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [updateSection]
   );
 
+  // Step topic CRUD operations
+  const updateStepTopic = useCallback(
+    (topicId: string, data: Partial<StepTopic>) => {
+      if (!projectData?.proposalData?.steps?.topics) return;
+
+      const updatedTopics = projectData.proposalData.steps.topics.map(
+        (topic) => (topic.id === topicId ? { ...topic, ...data } : topic)
+      );
+
+      updateSection("steps", { topics: updatedTopics });
+    },
+    [projectData, updateSection]
+  );
+
+  const addStepTopic = useCallback(() => {
+    if (!projectData?.proposalData?.steps?.topics) return;
+
+    const currentTopics = projectData.proposalData.steps.topics;
+    if (currentTopics.length >= 6) return; // Max 6 topics
+
+    const newTopic: StepTopic = {
+      id: `topic-${Date.now()}`,
+      title: "",
+      description: "",
+      hideStepName: false,
+      hideStepDescription: false,
+      sortOrder: currentTopics.length,
+    };
+
+    updateSection("steps", { topics: [...currentTopics, newTopic] });
+  }, [projectData, updateSection]);
+
+  const deleteStepTopic = useCallback(
+    (topicId: string) => {
+      if (!projectData?.proposalData?.steps?.topics) return;
+
+      const updatedTopics = projectData.proposalData.steps.topics.filter(
+        (topic) => topic.id !== topicId
+      );
+
+      updateSection("steps", { topics: updatedTopics });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderStepTopics = useCallback(
+    (topics: StepTopic[]) => {
+      const reorderedTopics = topics.map((topic, index) => ({
+        ...topic,
+        sortOrder: index,
+      }));
+
+      updateSection("steps", { topics: reorderedTopics });
+    },
+    [updateSection]
+  );
+
+  // FAQ item CRUD operations
+  const updateFAQItem = useCallback(
+    (itemId: string, data: Partial<FAQItem>) => {
+      if (!projectData?.proposalData?.faq?.items) return;
+
+      const updatedItems = projectData.proposalData.faq.items.map((item) =>
+        item.id === itemId ? { ...item, ...data } : item
+      );
+
+      updateSection("faq", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const addFAQItem = useCallback(() => {
+    if (!projectData?.proposalData?.faq?.items) return;
+
+    const currentItems = projectData.proposalData.faq.items;
+    if (currentItems.length >= 6) return; // Max 6 items
+
+    const newItem: FAQItem = {
+      id: `faq-${Date.now()}`,
+      question: "",
+      answer: "",
+      hideQuestion: false,
+      hideAnswer: false,
+      sortOrder: currentItems.length,
+    };
+
+    updateSection("faq", { items: [...currentItems, newItem] });
+  }, [projectData, updateSection]);
+
+  const deleteFAQItem = useCallback(
+    (itemId: string) => {
+      if (!projectData?.proposalData?.faq?.items) return;
+
+      const updatedItems = projectData.proposalData.faq.items.filter(
+        (item) => item.id !== itemId
+      );
+
+      updateSection("faq", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderFAQItems = useCallback(
+    (items: FAQItem[]) => {
+      const reorderedItems = items.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
+
+      updateSection("faq", { items: reorderedItems });
+    },
+    [updateSection]
+  );
+
   const value: EditorContextType = {
     projectData,
     isLoading,
@@ -721,6 +849,14 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     addTestimonialItem,
     deleteTestimonialItem,
     reorderTestimonialItems,
+    updateStepTopic,
+    addStepTopic,
+    deleteStepTopic,
+    reorderStepTopics,
+    updateFAQItem,
+    addFAQItem,
+    deleteFAQItem,
+    reorderFAQItems,
   };
 
   return (

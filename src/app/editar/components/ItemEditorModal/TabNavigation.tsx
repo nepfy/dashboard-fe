@@ -5,7 +5,13 @@ type TabType = "conteudo" | "imagem" | "organizar";
 interface TabNavigationProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
-  itemType?: "team" | "results" | "expertise" | "testimonials";
+  itemType?:
+    | "team"
+    | "results"
+    | "expertise"
+    | "testimonials"
+    | "steps"
+    | "faq";
 }
 
 export default function TabNavigation({
@@ -15,15 +21,19 @@ export default function TabNavigation({
 }: TabNavigationProps) {
   const tabs = [
     { id: "conteudo", label: "Conteúdo" },
-    {
-      id: "imagem",
-      label:
-        itemType === "expertise"
-          ? "Ícone"
-          : itemType === "testimonials"
-            ? "Imagem"
-            : "Imagem",
-    },
+    ...(itemType !== "steps" && itemType !== "faq"
+      ? [
+          {
+            id: "imagem" as const,
+            label:
+              itemType === "expertise"
+                ? "Ícone"
+                : itemType === "testimonials"
+                  ? "Imagem"
+                  : "Imagem",
+          },
+        ]
+      : []),
     { id: "organizar", label: "Organizar" },
   ];
 
@@ -33,7 +43,7 @@ export default function TabNavigation({
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id as TabType)}
-          className={`cursor-pointer rounded-[10px] border border-transparent px-4 py-3 text-sm font-medium transition-colors sm:px-5 ${
+          className={`w-full cursor-pointer rounded-[10px] border border-transparent px-4 py-3 text-sm font-medium transition-colors sm:px-5 ${
             activeTab === tab.id
               ? "bg-white-neutral-light-100 text-primary-light-500 border-white-neutral-light-300"
               : "hover:bg-white-neutral-light-300 bg-transparent text-[#6C747E]"
