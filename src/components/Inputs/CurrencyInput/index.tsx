@@ -54,8 +54,8 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 
   // Initialize display value when component mounts or value changes from outside
   useEffect(() => {
-    if (!isEditing && value) {
-      setDisplayValue(formatToCurrency(value));
+    if (!isEditing) {
+      setDisplayValue(value ? formatToCurrency(value) : "");
     }
   }, [value, isEditing]);
 

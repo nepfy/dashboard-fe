@@ -55,6 +55,14 @@ interface MainModalContentProps {
       | FAQItem
     )[];
     deletedItems: string[];
+    newItems: (
+      | TeamMember
+      | Result
+      | ExpertiseTopic
+      | Testimonial
+      | StepTopic
+      | FAQItem
+    )[];
     sectionUpdates?: { hideIcon?: boolean };
   };
   onClose: () => void;
@@ -142,8 +150,6 @@ export default function MainModalContent({
     (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
   );
 
-  console.log("itemsWithChanges", itemsWithChanges);
-
   // Helper function to determine item type based on item properties
   const getItemType = (
     items: (
@@ -210,6 +216,7 @@ export default function MainModalContent({
         selectedItemId={selectedItemId}
         onItemSelect={onItemSelect}
         onAddItem={onAddItem}
+        itemType={detectedItemType}
       />
 
       <TabNavigation
@@ -240,6 +247,7 @@ export default function MainModalContent({
         hasChanges={
           Object.keys(pendingChanges.itemUpdates || {}).length > 0 ||
           (pendingChanges.deletedItems || []).length > 0 ||
+          (pendingChanges.newItems || []).length > 0 ||
           !!pendingChanges.reorderedItems ||
           !!pendingChanges.sectionUpdates
         }

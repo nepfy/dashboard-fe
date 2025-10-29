@@ -68,15 +68,19 @@ export default function IconTab({
   const currentHideIcon =
     pendingHideIcon !== undefined ? pendingHideIcon : hideIcon;
   const [selectedIcon, setSelectedIcon] = useState<string>(
-    currentItem?.icon || ""
+    currentItem?.icon || "AwardIcon"
   );
 
   // Sync selectedIcon with currentItem when it changes (e.g., when switching between items)
   useEffect(() => {
-    if (currentItem?.icon) {
-      setSelectedIcon(currentItem.icon);
+    const defaultIcon = currentItem?.icon || "AwardIcon";
+    setSelectedIcon(defaultIcon);
+
+    // If currentItem exists but has no icon, set the default icon
+    if (currentItem && !currentItem.icon) {
+      onUpdate({ icon: "AwardIcon" });
     }
-  }, [currentItem]);
+  }, [currentItem, onUpdate]);
 
   const handleIconSelect = (iconName: string) => {
     setSelectedIcon(iconName);

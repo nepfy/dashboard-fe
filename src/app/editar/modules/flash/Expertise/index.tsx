@@ -87,7 +87,7 @@ export default function FlashExpertise({
             </span>
           </div>
 
-          <div className="mx-auto flex max-w-[1100px] flex-wrap justify-start gap-10 pb-32 sm:justify-center lg:justify-between lg:gap-25">
+          <div className="mx-auto flex max-w-[1100px] flex-wrap justify-start gap-10 pb-32 sm:justify-center lg:justify-start lg:gap-35">
             {topics?.map((topic) => (
               <div
                 key={topic.id}

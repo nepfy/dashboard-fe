@@ -56,7 +56,7 @@ export default function FlashResults({
               </p>
             </div>
 
-            <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-center gap-3 pb-30 lg:justify-start">
+            <div className={`mx-auto flex max-w-[1500px] flex-wrap items-center gap-3 pb-30 ${resultCount === 4 ? 'justify-center' : 'justify-center lg:justify-start'}`}>
               {items?.map((item) => (
                 <div
                   className={`relative mb-20 cursor-pointer rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"} `}

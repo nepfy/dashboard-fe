@@ -82,10 +82,12 @@ export default function ItemEditorModal({
       | Partial<Result>
       | Partial<ExpertiseTopic>
       | Partial<Testimonial>
+      | Partial<StepTopic>
+      | Partial<FAQItem>
     >;
-    reorderedItems?: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+    reorderedItems?: (TeamMember | Result | ExpertiseTopic | Testimonial | StepTopic | FAQItem)[];
     deletedItems: string[];
-    newItems: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
+    newItems: (TeamMember | Result | ExpertiseTopic | Testimonial | StepTopic | FAQItem)[];
     sectionUpdates?: { hideIcon?: boolean };
   }>({
     itemUpdates: {},
@@ -225,24 +227,35 @@ export default function ItemEditorModal({
       console.log("Confirming deletion of:", itemIdToDelete);
 
       setPendingChanges((prev) => {
-        const updatedDeletedItems = [...prev.deletedItems, itemIdToDelete];
+        // Check if the item to delete is a newly added item
+        const isNewItem = prev.newItems.some((item) => item.id === itemIdToDelete);
 
         // Update selectedItemId if the current item is being deleted
         if (selectedItemId === itemIdToDelete) {
-          const remainingItems = items.filter(
+          const allItems = [...items, ...prev.newItems];
+          const remainingItems = allItems.filter(
             (item) =>
               item.id !== itemIdToDelete &&
-              !updatedDeletedItems.includes(item.id!)
+              !prev.deletedItems.includes(item.id!)
           );
           setSelectedItemId(
             remainingItems.length > 0 ? remainingItems[0].id || null : null
           );
         }
 
-        return {
-          ...prev,
-          deletedItems: updatedDeletedItems,
-        };
+        if (isNewItem) {
+          // If it's a new item, just remove it from newItems
+          return {
+            ...prev,
+            newItems: prev.newItems.filter((item) => item.id !== itemIdToDelete),
+          };
+        } else {
+          // If it's an existing item, add it to deletedItems
+          return {
+            ...prev,
+            deletedItems: [...prev.deletedItems, itemIdToDelete],
+          };
+        }
       });
 
       setItemToDelete(null);

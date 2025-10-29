@@ -88,6 +88,7 @@ export default function FlashTestimonials({
             className={`border-l-[#A0A0A0] pb-24 xl:border xl:border-l xl:border-transparent xl:pb-34 xl:pl-7`}
           >
             <div
+              onClick={() => setOpenModalId(currentTestimonial?.id ?? null)}
               className={`text-[#E6E6E6 relative flex flex-col items-start rounded-[4px] text-sm font-bold hover:border-[#0170D6] hover:bg-[#0170D666] ${
                 !!openModalId
                   ? "cursor-default border border-[#0170D6] bg-[#0170D666]"
