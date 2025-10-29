@@ -1,7 +1,7 @@
 import Sparkle from "#/components/icons/Sparkle";
 import { usePersonalizeForm } from "./usePersonalization";
 import { PersonalizeModal } from "./PersonalizeModal";
-import { useUserStore } from "#/store/userStore";
+import { useUserStore } from "#/store/user.slice";
 
 interface PersonalizeProps {
   setIsModalOpen: (open: boolean) => void;
@@ -31,16 +31,11 @@ export default function Personalize({
   return (
     <div className="relative">
       <button
-        className={`flex items-center justify-center gap-2 px-4 py-3 w-full sm:w-auto cursor-pointer 
-          hover:button-inner border hover:border-white-neutral-light-300 
-          hover:text-primary-light-500 hover:bg-white-neutral-light-100 
-          transition-all duration-200 rounded-[10px]
-          ${
-            isModalOpen
-              ? "text-primary-light-500 border-white-neutral-light-300 bg-white-neutral-light-100"
-              : "text-white-neutral-light-900 bg-white-neutral-light-200 border-white-neutral-light-200"
-          }
-          `}
+        className={`hover:button-inner hover:border-white-neutral-light-300 hover:text-primary-light-500 hover:bg-white-neutral-light-100 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border px-4 py-3 transition-all duration-200 sm:w-auto ${
+          isModalOpen
+            ? "text-primary-light-500 border-white-neutral-light-300 bg-white-neutral-light-100"
+            : "text-white-neutral-light-900 bg-white-neutral-light-200 border-white-neutral-light-200"
+        } `}
         onClick={() => setIsModalOpen(true)}
       >
         <Sparkle width="16" height="16" fill="currentColor" />
