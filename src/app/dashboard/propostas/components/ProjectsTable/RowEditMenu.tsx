@@ -157,7 +157,7 @@ export default function RowEditMenu({
     trackProposalClicked({
       proposal_id: projectId,
       template_type: templateType || undefined,
-      current_status: currentStatus || undefined,
+      proposal_status: currentStatus || undefined,
     });
 
     router.push(`/editar?projectId=${projectId}&templateType=${templateType}`);

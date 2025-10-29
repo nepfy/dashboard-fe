@@ -2,6 +2,13 @@
 
 import posthog from "posthog-js";
 
+// Extend posthog type to include __loaded
+declare module "posthog-js" {
+  interface PostHog {
+    __loaded: boolean;
+  }
+}
+
 export const initPostHog = () => {
   if (typeof window === "undefined") return null;
 
@@ -14,7 +21,9 @@ export const initPostHog = () => {
     return null;
   }
 
-  if (posthog.__loaded) {
+  // Use type assertion since __loaded is added via module augmentation
+  const ph = posthog as typeof posthog & { __loaded?: boolean };
+  if (ph.__loaded) {
     return posthog;
   }
 
@@ -33,7 +42,9 @@ export const initPostHog = () => {
 
 export const getPostHog = () => {
   if (typeof window === "undefined") return null;
-  if (!posthog.__loaded) return null;
+  // Use type assertion since __loaded is added via module augmentation
+  const ph = posthog as typeof posthog & { __loaded?: boolean };
+  if (!ph.__loaded) return null;
   return posthog;
 };
 

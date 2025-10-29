@@ -38,6 +38,7 @@ export interface ProposalClickedProperties {
   proposal_id: string;
   proposal_name?: string;
   proposal_status?: string;
+  current_status?: string;
   template_type?: string;
   timestamp?: string;
 }
