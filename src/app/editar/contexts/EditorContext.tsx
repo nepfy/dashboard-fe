@@ -29,6 +29,7 @@ import {
   TeamMember,
   Result,
   ExpertiseTopic,
+  Testimonial,
 } from "#/types/template-data";
 import { useRouter } from "next/navigation";
 
@@ -88,6 +89,12 @@ interface EditorContextType {
   addExpertiseTopic: () => void;
   deleteExpertiseTopic: (topicId: string) => void;
   reorderExpertiseTopics: (topics: ExpertiseTopic[]) => void;
+
+  // Testimonial CRUD operations
+  updateTestimonialItem: (itemId: string, data: Partial<Testimonial>) => void;
+  addTestimonialItem: () => void;
+  deleteTestimonialItem: (itemId: string) => void;
+  reorderTestimonialItems: (items: Testimonial[]) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -578,6 +585,64 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [updateSection]
   );
 
+  // Testimonial CRUD operations
+  const updateTestimonialItem = useCallback(
+    (itemId: string, data: Partial<Testimonial>) => {
+      if (!projectData?.proposalData?.testimonials?.items) return;
+
+      const updatedItems = projectData.proposalData.testimonials.items.map(
+        (item) => (item.id === itemId ? { ...item, ...data } : item)
+      );
+
+      updateSection("testimonials", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const addTestimonialItem = useCallback(() => {
+    if (!projectData?.proposalData?.testimonials?.items) return;
+
+    const currentItems = projectData.proposalData.testimonials.items;
+    if (currentItems.length >= 6) return; // Max 6 testimonials
+
+    const newItem: Testimonial = {
+      id: `testimonial-${Date.now()}`,
+      name: "",
+      role: "",
+      testimonial: "",
+      photo: "",
+      hidePhoto: false,
+      sortOrder: currentItems.length,
+    };
+
+    updateSection("testimonials", { items: [...currentItems, newItem] });
+  }, [projectData, updateSection]);
+
+  const deleteTestimonialItem = useCallback(
+    (itemId: string) => {
+      if (!projectData?.proposalData?.testimonials?.items) return;
+
+      const updatedItems = projectData.proposalData.testimonials.items.filter(
+        (item) => item.id !== itemId
+      );
+
+      updateSection("testimonials", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderTestimonialItems = useCallback(
+    (items: Testimonial[]) => {
+      const reorderedItems = items.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
+
+      updateSection("testimonials", { items: reorderedItems });
+    },
+    [updateSection]
+  );
+
   const value: EditorContextType = {
     projectData,
     isLoading,
@@ -618,6 +683,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     addExpertiseTopic,
     deleteExpertiseTopic,
     reorderExpertiseTopics,
+    updateTestimonialItem,
+    addTestimonialItem,
+    deleteTestimonialItem,
+    reorderTestimonialItems,
   };
 
   return (

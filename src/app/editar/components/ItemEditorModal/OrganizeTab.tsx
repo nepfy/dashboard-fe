@@ -18,22 +18,27 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
+import {
+  TeamMember,
+  Result,
+  ExpertiseTopic,
+  Testimonial,
+} from "#/types/template-data";
 import GrabIcon from "#/components/icons/GrabIcon";
 
 interface OrganizeTabProps {
-  itemType: "team" | "results" | "expertise";
-  items: (TeamMember | Result | ExpertiseTopic)[];
+  itemType: "team" | "results" | "expertise" | "testimonials";
+  items: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
   onUpdate: (data: {
-    reorderedItems: (TeamMember | Result | ExpertiseTopic)[];
+    reorderedItems: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
   }) => void;
   setShowConfirmExclusion: (show: boolean) => void;
   onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
 interface SortableItemProps {
-  item: TeamMember | Result | ExpertiseTopic;
-  itemType: "team" | "results" | "expertise";
+  item: TeamMember | Result | ExpertiseTopic | Testimonial;
+  itemType: "team" | "results" | "expertise" | "testimonials";
   onDeleteItem: (itemId: string) => void; // Add this prop
 }
 
@@ -78,7 +83,9 @@ function SortableItem({
           ? (item as TeamMember).name
           : itemType === "results"
             ? (item as Result).client
-            : (item as ExpertiseTopic).title}
+            : itemType === "expertise"
+              ? (item as ExpertiseTopic).title
+              : (item as Testimonial).name}
       </div>
 
       {/* Delete Button */}

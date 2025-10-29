@@ -20,7 +20,7 @@ export default function EditableModal({
     const handleScrollBlock = () => {
       if (isOpen) {
         // Only block scroll on mobile viewports (< 640px)
-        const isMobile = window.innerWidth < 640;
+        const isMobile = window.innerWidth < 1024;
         if (isMobile) {
           document.body.style.overflow = "hidden";
         } else {
@@ -48,17 +48,17 @@ export default function EditableModal({
   return (
     <>
       {/* Mobile backdrop - only visible on mobile */}
-      <div className="bg-filter fixed inset-0 z-[9999] sm:hidden" />
+      <div className="bg-filter fixed inset-0 z-[9999] lg:hidden" />
 
       {/* Mobile modal container - centered on mobile */}
-      <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:hidden">
-        <div className="bg-white-neutral-light-100 h-auto w-full overflow-hidden rounded-[8px] border border-[#CDCDCD] px-4 py-6">
+      <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 lg:hidden">
+        <div className="bg-white-neutral-light-100 h-[550px] w-full max-w-[360px] overflow-hidden rounded-[8px] border border-[#CDCDCD] px-4 py-6">
           {children}
         </div>
       </div>
 
       {/* Tablet+ modal container - absolute positioning with triangle */}
-      <div className={`hidden sm:block ${className}`}>
+      <div className={`hidden lg:block ${className}`}>
         <div
           className={`absolute hidden h-0 w-0 border-t-[12px] border-r-[12px] border-b-[12px] border-t-transparent border-r-white border-b-transparent sm:block ${trianglePosition}`}
         />

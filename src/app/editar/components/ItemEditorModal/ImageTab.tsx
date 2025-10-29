@@ -4,14 +4,16 @@ import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import InfoIcon from "#/components/icons/InfoIcon";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, Testimonial } from "#/types/template-data";
 import { useImageUpload } from "#/hooks/useImageUpload";
 import UploadFileIcon from "#/components/icons/UploadFileIcon";
 
 interface ImageTabProps {
-  itemType: "team" | "results";
-  currentItem: TeamMember | Result | null;
-  onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
+  itemType: "team" | "results" | "testimonials";
+  currentItem: TeamMember | Result | Testimonial | null;
+  onUpdate: (
+    data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial>
+  ) => void;
   setShowExploreGalleryInfo: (show: boolean) => void;
   setShowPexelsGallery: (show: boolean) => void;
   setShowUploadImageInfo: (show: boolean) => void;
@@ -77,7 +79,7 @@ export default function ImageTab({
       if (result.success && result.data) {
         if (itemType === "team") {
           onUpdate({ image: result.data.url });
-        } else {
+        } else if (itemType === "results" || itemType === "testimonials") {
           onUpdate({ photo: result.data.url });
         }
       }

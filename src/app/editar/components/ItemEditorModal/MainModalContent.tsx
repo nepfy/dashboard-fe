@@ -5,22 +5,30 @@ import ItemSelector from "./ItemSelector";
 import TabNavigation from "./TabNavigation";
 import TabContent from "./TabContent";
 import SaveButton from "./SaveButton";
-import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
+import {
+  TeamMember,
+  Result,
+  ExpertiseTopic,
+  Testimonial,
+} from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
 
 interface MainModalContentProps {
   title: string;
-  items: (TeamMember | Result | ExpertiseTopic)[];
+  items: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
   selectedItemId: string | null;
-  currentItem: TeamMember | Result | ExpertiseTopic | null;
+  currentItem: TeamMember | Result | ExpertiseTopic | Testimonial | null;
   activeTab: TabType;
   pendingChanges: {
     itemUpdates: Record<
       string,
-      Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
+      | Partial<TeamMember>
+      | Partial<Result>
+      | Partial<ExpertiseTopic>
+      | Partial<Testimonial>
     >;
-    reorderedItems?: (TeamMember | Result | ExpertiseTopic)[];
+    reorderedItems?: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
     deletedItems: string[];
     sectionUpdates?: { hideIcon?: boolean };
   };
@@ -33,7 +41,15 @@ interface MainModalContentProps {
       | Partial<TeamMember>
       | Partial<Result>
       | Partial<ExpertiseTopic>
-      | { reorderedItems: (TeamMember | Result | ExpertiseTopic)[] }
+      | Partial<Testimonial>
+      | {
+          reorderedItems: (
+            | TeamMember
+            | Result
+            | ExpertiseTopic
+            | Testimonial
+          )[];
+        }
   ) => void;
   onDelete: (itemId: string) => void;
   onSave: () => void;
@@ -115,22 +131,34 @@ export default function MainModalContent({
         activeTab={activeTab}
         onTabChange={onTabChange}
         itemType={
-          itemsWithChanges.length > 0 && "name" in itemsWithChanges[0]
+          itemsWithChanges.length > 0 &&
+          "name" in itemsWithChanges[0] &&
+          "role" in itemsWithChanges[0] &&
+          !("testimonial" in itemsWithChanges[0])
             ? "team"
             : itemsWithChanges.length > 0 && "client" in itemsWithChanges[0]
               ? "results"
-              : "expertise"
+              : itemsWithChanges.length > 0 &&
+                  "testimonial" in itemsWithChanges[0]
+                ? "testimonials"
+                : "expertise"
         }
       />
 
       <TabContent
         activeTab={activeTab}
         itemType={
-          itemsWithChanges.length > 0 && "name" in itemsWithChanges[0]
+          itemsWithChanges.length > 0 &&
+          "name" in itemsWithChanges[0] &&
+          "role" in itemsWithChanges[0] &&
+          !("testimonial" in itemsWithChanges[0])
             ? "team"
             : itemsWithChanges.length > 0 && "client" in itemsWithChanges[0]
               ? "results"
-              : "expertise"
+              : itemsWithChanges.length > 0 &&
+                  "testimonial" in itemsWithChanges[0]
+                ? "testimonials"
+                : "expertise"
         }
         currentItem={currentItem}
         sortedItems={sortedItems}

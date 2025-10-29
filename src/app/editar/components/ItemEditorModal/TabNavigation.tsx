@@ -5,7 +5,7 @@ type TabType = "conteudo" | "imagem" | "organizar";
 interface TabNavigationProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
-  itemType?: "team" | "results" | "expertise";
+  itemType?: "team" | "results" | "expertise" | "testimonials";
 }
 
 export default function TabNavigation({
@@ -15,7 +15,15 @@ export default function TabNavigation({
 }: TabNavigationProps) {
   const tabs = [
     { id: "conteudo", label: "Conteúdo" },
-    { id: "imagem", label: itemType === "expertise" ? "Ícone" : "Imagem" },
+    {
+      id: "imagem",
+      label:
+        itemType === "expertise"
+          ? "Ícone"
+          : itemType === "testimonials"
+            ? "Imagem"
+            : "Imagem",
+    },
     { id: "organizar", label: "Organizar" },
   ];
 

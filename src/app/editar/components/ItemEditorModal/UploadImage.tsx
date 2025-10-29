@@ -10,14 +10,16 @@ import {
   createImage,
   getCroppedImg,
 } from "#/helpers/imageUtils";
-import { TeamMember, Result } from "#/types/template-data";
+import { TeamMember, Result, Testimonial } from "#/types/template-data";
 import { ChevronLeft } from "lucide-react";
 
 interface UploadImageProps {
   onClose: () => void;
-  itemType: "team" | "results";
-  items: (TeamMember | Result)[];
-  onUpdate: (data: Partial<TeamMember> | Partial<Result>) => void;
+  itemType: "team" | "results" | "testimonials";
+  items: (TeamMember | Result | Testimonial)[];
+  onUpdate: (
+    data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial>
+  ) => void;
 }
 
 interface CropArea {
@@ -49,7 +51,9 @@ export default function UploadImage({
     items?.filter((item) =>
       itemType === "team"
         ? !(item as TeamMember).hidePhoto && (item as TeamMember).image
-        : !(item as Result).hidePhoto && (item as Result).photo
+        : itemType === "results"
+          ? !(item as Result).hidePhoto && (item as Result).photo
+          : !(item as Testimonial).hidePhoto && (item as Testimonial).photo
     ) || [];
 
   const aspectRatio = getAspectRatio(visibleItems.length);
@@ -121,7 +125,7 @@ export default function UploadImage({
       if (result.success && result.data) {
         if (itemType === "team") {
           onUpdate({ image: result.data.url });
-        } else {
+        } else if (itemType === "results" || itemType === "testimonials") {
           onUpdate({ photo: result.data.url });
         }
         onClose();

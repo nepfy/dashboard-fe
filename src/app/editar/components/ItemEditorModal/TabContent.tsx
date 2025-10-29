@@ -4,21 +4,34 @@ import ContentTab from "./ContentTab";
 import ImageTab from "./ImageTab";
 import IconTab from "./IconTab";
 import OrganizeTab from "./OrganizeTab";
-import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
+import {
+  TeamMember,
+  Result,
+  ExpertiseTopic,
+  Testimonial,
+} from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
 
 interface TabContentProps {
   activeTab: TabType;
-  itemType: "team" | "results" | "expertise";
-  currentItem: TeamMember | Result | ExpertiseTopic | null;
-  sortedItems: (TeamMember | Result | ExpertiseTopic)[];
+  itemType: "team" | "results" | "expertise" | "testimonials";
+  currentItem: TeamMember | Result | ExpertiseTopic | Testimonial | null;
+  sortedItems: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
   onUpdate: (
     data:
       | Partial<TeamMember>
       | Partial<Result>
       | Partial<ExpertiseTopic>
-      | { reorderedItems: (TeamMember | Result | ExpertiseTopic)[] }
+      | Partial<Testimonial>
+      | {
+          reorderedItems: (
+            | TeamMember
+            | Result
+            | ExpertiseTopic
+            | Testimonial
+          )[];
+        }
   ) => void;
   onDelete: (itemId: string) => void;
   setShowExploreGalleryInfo: (show: boolean) => void;

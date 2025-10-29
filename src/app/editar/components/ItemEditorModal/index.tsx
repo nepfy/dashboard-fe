@@ -8,19 +8,30 @@ import UploadImageInfo from "./UploadImageInfo";
 import PexelsGallery from "./PexelsGallery";
 import UploadImage from "./UploadImage";
 import ConfirmExclusion from "./ConfirmExclusion";
-import { TeamMember, Result, ExpertiseTopic } from "#/types/template-data";
+import {
+  TeamMember,
+  Result,
+  ExpertiseTopic,
+  Testimonial,
+} from "#/types/template-data";
 
 interface ItemEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  itemType: "team" | "results" | "expertise";
-  items: (TeamMember | Result | ExpertiseTopic)[];
+  itemType: "team" | "results" | "expertise" | "testimonials";
+  items: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
   currentItemId: string | null;
   onUpdateItem: (
     itemId: string,
-    data: Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
+    data:
+      | Partial<TeamMember>
+      | Partial<Result>
+      | Partial<ExpertiseTopic>
+      | Partial<Testimonial>
   ) => void;
-  onReorderItems: (items: TeamMember[] | Result[] | ExpertiseTopic[]) => void;
+  onReorderItems: (
+    items: TeamMember[] | Result[] | ExpertiseTopic[] | Testimonial[]
+  ) => void;
   onUpdateSection?: (data: { hideIcon?: boolean }) => void;
   hideIcon?: boolean;
 }
@@ -50,11 +61,14 @@ export default function ItemEditorModal({
   const [pendingChanges, setPendingChanges] = useState<{
     itemUpdates: Record<
       string,
-      Partial<TeamMember> | Partial<Result> | Partial<ExpertiseTopic>
+      | Partial<TeamMember>
+      | Partial<Result>
+      | Partial<ExpertiseTopic>
+      | Partial<Testimonial>
     >;
-    reorderedItems?: (TeamMember | Result | ExpertiseTopic)[];
+    reorderedItems?: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
     deletedItems: string[];
-    newItems: (TeamMember | Result | ExpertiseTopic)[];
+    newItems: (TeamMember | Result | ExpertiseTopic | Testimonial)[];
     sectionUpdates?: { hideIcon?: boolean };
   }>({
     itemUpdates: {},
@@ -94,7 +108,7 @@ export default function ItemEditorModal({
   const handleAddItem = () => {
     const totalItems = items.length + pendingChanges.newItems.length;
     if (totalItems < 6) {
-      const newItem: TeamMember | Result | ExpertiseTopic =
+      const newItem: TeamMember | Result | ExpertiseTopic | Testimonial =
         itemType === "team"
           ? {
               id: `temp-${Date.now()}`,
@@ -115,15 +129,25 @@ export default function ItemEditorModal({
                 sortOrder: totalItems,
                 hidePhoto: false,
               }
-            : {
-                id: `temp-${Date.now()}`,
-                title: "",
-                description: "",
-                icon: "",
-                sortOrder: totalItems,
-                hideTitleField: false,
-                hideDescription: false,
-              };
+            : itemType === "expertise"
+              ? {
+                  id: `temp-${Date.now()}`,
+                  title: "",
+                  description: "",
+                  icon: "",
+                  sortOrder: totalItems,
+                  hideTitleField: false,
+                  hideDescription: false,
+                }
+              : {
+                  id: `temp-${Date.now()}`,
+                  name: "",
+                  role: "",
+                  testimonial: "",
+                  photo: "",
+                  sortOrder: totalItems,
+                  hidePhoto: false,
+                };
 
       setPendingChanges((prev) => ({
         ...prev,
@@ -176,7 +200,15 @@ export default function ItemEditorModal({
       | Partial<TeamMember>
       | Partial<Result>
       | Partial<ExpertiseTopic>
-      | { reorderedItems: (TeamMember | Result | ExpertiseTopic)[] }
+      | Partial<Testimonial>
+      | {
+          reorderedItems: (
+            | TeamMember
+            | Result
+            | ExpertiseTopic
+            | Testimonial
+          )[];
+        }
   ) => {
     if ("reorderedItems" in data) {
       setPendingChanges((prev) => ({
@@ -297,7 +329,9 @@ export default function ItemEditorModal({
       ? "Time"
       : itemType === "results"
         ? "Resultados"
-        : "Especialidades";
+        : itemType === "expertise"
+          ? "Especialidades"
+          : "Depoimentos";
   };
 
   const getItemsWithChanges = () => {
