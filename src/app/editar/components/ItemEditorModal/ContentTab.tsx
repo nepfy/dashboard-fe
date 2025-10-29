@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   TeamMember,
   Result,
@@ -37,21 +37,8 @@ export default function ContentTab({
   itemType,
   currentItem,
   onUpdate,
-  onDeleteItem, // Change this
+  onDeleteItem,
 }: ContentTabProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    role: "",
-    instagram: "",
-    investment: "",
-    roi: "",
-    title: "",
-    description: "",
-    testimonial: "",
-    question: "",
-    answer: "",
-  });
-
   const [instagramError, setInstagramError] = useState("");
 
   // Instagram username validation
@@ -77,99 +64,43 @@ export default function ContentTab({
     return ""; // Valid
   };
 
-  useEffect(() => {
-    if (currentItem) {
-      if (itemType === "team") {
-        const teamMember = currentItem as TeamMember;
-        setFormData({
-          name: teamMember.name || "",
-          role: teamMember.role || "",
-          instagram: "",
-          investment: "",
-          roi: "",
-          title: "",
-          description: "",
-          testimonial: "",
-          question: "",
-          answer: "",
-        });
-      } else if (itemType === "results") {
-        const result = currentItem as Result;
-        setFormData({
-          name: result.client || "",
-          role: "",
-          instagram: result.instagram || "",
-          investment: result.investment || "",
-          roi: result.roi || "",
-          title: "",
-          description: "",
-          testimonial: "",
-          question: "",
-          answer: "",
-        });
-      } else if (itemType === "expertise") {
-        const topic = currentItem as ExpertiseTopic;
-        setFormData({
-          name: "",
-          role: "",
-          instagram: "",
-          investment: "",
-          roi: "",
-          title: topic.title || "",
-          description: topic.description || "",
-          testimonial: "",
-          question: "",
-          answer: "",
-        });
-      } else if (itemType === "steps") {
-        const step = currentItem as StepTopic;
-        setFormData({
-          name: "",
-          role: "",
-          instagram: "",
-          investment: "",
-          roi: "",
-          title: step.title || "",
-          description: step.description || "",
-          testimonial: "",
-          question: "",
-          answer: "",
-        });
-      } else if (itemType === "faq") {
-        const faq = currentItem as FAQItem;
-        setFormData({
-          name: "",
-          role: "",
-          instagram: "",
-          investment: "",
-          roi: "",
-          title: "",
-          description: "",
-          testimonial: "",
-          question: faq.question || "",
-          answer: faq.answer || "",
-        });
-      } else {
-        const testimonial = currentItem as Testimonial;
-        setFormData({
-          name: testimonial.name || "",
-          role: testimonial.role || "",
-          instagram: "",
-          investment: "",
-          roi: "",
-          title: "",
-          description: "",
-          testimonial: testimonial.testimonial || "",
-          question: "",
-          answer: "",
-        });
-      }
+  // Derive form values directly from currentItem (which includes pending changes)
+  const getFormValue = (field: string): string => {
+    if (!currentItem) return "";
+
+    if (itemType === "team") {
+      const teamMember = currentItem as TeamMember;
+      if (field === "name") return teamMember.name || "";
+      if (field === "role") return teamMember.role || "";
+    } else if (itemType === "results") {
+      const result = currentItem as Result;
+      if (field === "name") return result.client || "";
+      if (field === "instagram") return result.instagram || "";
+      if (field === "investment") return result.investment || "";
+      if (field === "roi") return result.roi || "";
+    } else if (itemType === "expertise") {
+      const topic = currentItem as ExpertiseTopic;
+      if (field === "title") return topic.title || "";
+      if (field === "description") return topic.description || "";
+    } else if (itemType === "steps") {
+      const step = currentItem as StepTopic;
+      if (field === "title") return step.title || "";
+      if (field === "description") return step.description || "";
+    } else if (itemType === "faq") {
+      const faq = currentItem as FAQItem;
+      if (field === "question") return faq.question || "";
+      if (field === "answer") return faq.answer || "";
+    } else if (itemType === "testimonials") {
+      const testimonial = currentItem as Testimonial;
+      if (field === "name") return testimonial.name || "";
+      if (field === "role") return testimonial.role || "";
+      if (field === "testimonial") return testimonial.testimonial || "";
     }
-  }, [currentItem, itemType]);
+
+    return "";
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-
     // Validate Instagram username on change
     if (field === "instagram") {
       const error = validateInstagramUsername(value);
@@ -177,39 +108,50 @@ export default function ContentTab({
     }
 
     // Update pending changes immediately when user types
+    // Only send the specific field that changed to avoid overwriting other pending changes
     if (itemType === "team") {
-      onUpdate({
-        name: field === "name" ? value : formData.name,
-        role: field === "role" ? value : formData.role,
-      });
+      if (field === "name") {
+        onUpdate({ name: value });
+      } else if (field === "role") {
+        onUpdate({ role: value });
+      }
     } else if (itemType === "results") {
-      onUpdate({
-        client: field === "name" ? value : formData.name,
-        instagram: field === "instagram" ? value : formData.instagram,
-        investment: field === "investment" ? value : formData.investment,
-        roi: field === "roi" ? value : formData.roi,
-      });
+      if (field === "name") {
+        onUpdate({ client: value });
+      } else if (field === "instagram") {
+        onUpdate({ instagram: value });
+      } else if (field === "investment") {
+        onUpdate({ investment: value });
+      } else if (field === "roi") {
+        onUpdate({ roi: value });
+      }
     } else if (itemType === "expertise") {
-      onUpdate({
-        title: field === "title" ? value : formData.title,
-        description: field === "description" ? value : formData.description,
-      });
+      if (field === "title") {
+        onUpdate({ title: value });
+      } else if (field === "description") {
+        onUpdate({ description: value });
+      }
     } else if (itemType === "steps") {
-      onUpdate({
-        title: field === "title" ? value : formData.title,
-        description: field === "description" ? value : formData.description,
-      });
+      if (field === "title") {
+        onUpdate({ title: value });
+      } else if (field === "description") {
+        onUpdate({ description: value });
+      }
     } else if (itemType === "faq") {
-      onUpdate({
-        question: field === "question" ? value : formData.question,
-        answer: field === "answer" ? value : formData.answer,
-      });
+      if (field === "question") {
+        onUpdate({ question: value });
+      } else if (field === "answer") {
+        onUpdate({ answer: value });
+      }
     } else {
-      onUpdate({
-        name: field === "name" ? value : formData.name,
-        role: field === "role" ? value : formData.role,
-        testimonial: field === "testimonial" ? value : formData.testimonial,
-      });
+      // testimonials
+      if (field === "name") {
+        onUpdate({ name: value });
+      } else if (field === "role") {
+        onUpdate({ role: value });
+      } else if (field === "testimonial") {
+        onUpdate({ testimonial: value });
+      }
     }
   };
 
@@ -234,7 +176,7 @@ export default function ContentTab({
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={getFormValue("name")}
               onChange={(e) => handleInputChange("name", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite o nome"
@@ -250,7 +192,7 @@ export default function ContentTab({
           </label>
           <input
             type="text"
-            value={formData.role}
+            value={getFormValue("role")}
             onChange={(e) => handleInputChange("role", e.target.value)}
             className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
             placeholder="Digite o cargo"
@@ -268,7 +210,7 @@ export default function ContentTab({
             <div className="relative">
               <input
                 type="text"
-                value={formData.instagram}
+                value={getFormValue("instagram")}
                 onChange={(e) => handleInputChange("instagram", e.target.value)}
                 className={`w-[210px] rounded-[4px] border bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616] ${
                   instagramError
@@ -290,7 +232,7 @@ export default function ContentTab({
               Investimento
             </label>
             <CurrencyInput
-              value={formData.investment}
+              value={getFormValue("investment")}
               onChange={(value) => handleInputChange("investment", value)}
               placeholder="R$ 0,00"
             />
@@ -301,7 +243,7 @@ export default function ContentTab({
               Retorno
             </label>
             <CurrencyInput
-              value={formData.roi}
+              value={getFormValue("roi")}
               onChange={(value) => handleInputChange("roi", value)}
               placeholder="R$ 0,00"
             />
@@ -318,7 +260,7 @@ export default function ContentTab({
             </label>
             <input
               type="text"
-              value={formData.title}
+              value={getFormValue("title")}
               onChange={(e) => handleInputChange("title", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite o título"
@@ -330,7 +272,7 @@ export default function ContentTab({
               Descrição
             </label>
             <textarea
-              value={formData.description}
+              value={getFormValue("description")}
               onChange={(e) => handleInputChange("description", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite a descrição"
@@ -349,7 +291,7 @@ export default function ContentTab({
             </label>
             <input
               type="text"
-              value={formData.title}
+              value={getFormValue("title")}
               onChange={(e) => handleInputChange("title", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite o título do passo"
@@ -361,7 +303,7 @@ export default function ContentTab({
               Descrição
             </label>
             <textarea
-              value={formData.description}
+              value={getFormValue("description")}
               onChange={(e) => handleInputChange("description", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite a descrição do passo"
@@ -379,7 +321,7 @@ export default function ContentTab({
               Pergunta
             </label>
             <textarea
-              value={formData.question}
+              value={getFormValue("question")}
               onChange={(e) => handleInputChange("question", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite a pergunta"
@@ -392,7 +334,7 @@ export default function ContentTab({
               Resposta
             </label>
             <textarea
-              value={formData.answer}
+              value={getFormValue("answer")}
               onChange={(e) => handleInputChange("answer", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite a resposta"
@@ -411,7 +353,7 @@ export default function ContentTab({
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={getFormValue("name")}
               onChange={(e) => handleInputChange("name", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite o nome"
@@ -424,7 +366,7 @@ export default function ContentTab({
             </label>
             <input
               type="text"
-              value={formData.role}
+              value={getFormValue("role")}
               onChange={(e) => handleInputChange("role", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite o cargo"
@@ -436,7 +378,7 @@ export default function ContentTab({
               Depoimento
             </label>
             <textarea
-              value={formData.testimonial}
+              value={getFormValue("testimonial")}
               onChange={(e) => handleInputChange("testimonial", e.target.value)}
               className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
               placeholder="Digite o depoimento"

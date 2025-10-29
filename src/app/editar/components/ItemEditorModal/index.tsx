@@ -105,12 +105,14 @@ export default function ItemEditorModal({
       newItems: [],
       sectionUpdates: undefined,
     });
+  }, [currentItemId, itemType]);
 
-    // Ensure steps always start with "conteudo" tab
+  // Separate effect to handle steps tab behavior - doesn't reset pending changes
+  useEffect(() => {
     if (itemType === "steps" && activeTab === "imagem") {
       setActiveTab("conteudo");
     }
-  }, [currentItemId, itemType, activeTab]);
+  }, [itemType, activeTab]);
 
   const currentItem =
     items.find((item) => item.id === selectedItemId) ||
@@ -129,7 +131,14 @@ export default function ItemEditorModal({
 
   const handleAddItem = () => {
     const totalItems = items.length + pendingChanges.newItems.length;
-    if (totalItems < 6) {
+
+    // Define maximum items per section type
+    const maxItems =
+      itemType === "steps" || itemType === "faq" ? 10 :
+      itemType === "expertise" ? 9 :
+      6; // team, results, testimonials
+
+    if (totalItems < maxItems) {
       const newItem:
         | TeamMember
         | Result
@@ -295,44 +304,53 @@ export default function ItemEditorModal({
 
     if (!hasChanges) return;
 
-    // Process updates first
-    Object.entries(pendingChanges.itemUpdates).forEach(([itemId, updates]) => {
-      onUpdateItem(itemId, updates);
-    });
-
     // Process section updates
     if (pendingChanges.sectionUpdates && onUpdateSection) {
       onUpdateSection(pendingChanges.sectionUpdates);
     }
 
-    // Handle deletions and new items by creating a new array
+    // Handle deletions, new items, or reordering by creating/updating the full array
     if (
       pendingChanges.deletedItems.length > 0 ||
-      pendingChanges.newItems.length > 0
+      pendingChanges.newItems.length > 0 ||
+      pendingChanges.reorderedItems
     ) {
-      // Get current items and filter out deleted ones
-      const currentItems = items.filter(
-        (item) => !pendingChanges.deletedItems.includes(item.id!)
-      );
+      let finalItems;
 
-      // Apply any pending updates to remaining items
-      const updatedItems = currentItems.map((item) => ({
-        ...item,
-        ...pendingChanges.itemUpdates[item.id!],
-      }));
+      if (pendingChanges.reorderedItems) {
+        // If items were reordered, use that as the base and apply any pending updates
+        finalItems = pendingChanges.reorderedItems.map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
+      } else {
+        // Otherwise, start with current items
+        const currentItems = items.filter(
+          (item) => !pendingChanges.deletedItems.includes(item.id!)
+        );
 
-      // Add new items with their updates
-      const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
-        ...item,
-        ...pendingChanges.itemUpdates[item.id!],
-      }));
+        // Apply any pending updates to remaining items
+        const updatedItems = currentItems.map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
 
-      const finalItems = [...updatedItems, ...newItemsWithUpdates];
+        // Add new items with their updates
+        const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
+
+        finalItems = [...updatedItems, ...newItemsWithUpdates];
+      }
 
       // Use reorderItems to set the final state
       onReorderItems(finalItems);
-    } else if (pendingChanges.reorderedItems) {
-      onReorderItems(pendingChanges.reorderedItems);
+    } else {
+      // If only individual field updates (no reordering/deletion/addition), use onUpdateItem
+      Object.entries(pendingChanges.itemUpdates).forEach(([itemId, updates]) => {
+        onUpdateItem(itemId, updates);
+      });
     }
 
     setPendingChanges({

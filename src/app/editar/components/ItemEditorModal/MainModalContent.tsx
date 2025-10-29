@@ -142,6 +142,8 @@ export default function MainModalContent({
     (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
   );
 
+  console.log("itemsWithChanges", itemsWithChanges);
+
   // Helper function to determine item type based on item properties
   const getItemType = (
     items: (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ExpertiseTopic } from "#/types/template-data";
 import AwardIcon from "#/app/editar/modules/flash/Expertise/iconsList/AwardIcon";
 import BellIcon from "#/app/editar/modules/flash/Expertise/iconsList/BellIcon";
@@ -70,6 +70,13 @@ export default function IconTab({
   const [selectedIcon, setSelectedIcon] = useState<string>(
     currentItem?.icon || ""
   );
+
+  // Sync selectedIcon with currentItem when it changes (e.g., when switching between items)
+  useEffect(() => {
+    if (currentItem?.icon) {
+      setSelectedIcon(currentItem.icon);
+    }
+  }, [currentItem]);
 
   const handleIconSelect = (iconName: string) => {
     setSelectedIcon(iconName);
