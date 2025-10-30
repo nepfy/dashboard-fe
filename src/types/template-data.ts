@@ -63,6 +63,9 @@ export interface Plan extends HideableItem, SortableItem {
   planPeriod: string;
   recommended: boolean;
   buttonTitle: string;
+  buttonWhereToOpen: "link" | "whatsapp";
+  buttonHref: string;
+  buttonPhone: string;
   hideTitleField: boolean;
   hideDescription: boolean;
   hidePrice: boolean;

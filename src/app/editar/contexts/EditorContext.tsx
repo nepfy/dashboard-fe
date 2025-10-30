@@ -28,6 +28,8 @@ import {
   FAQSection,
   TeamMember,
   Result,
+  Plan,
+  PlanIncludedItem,
   ExpertiseTopic,
   Testimonial,
   StepTopic,
@@ -115,6 +117,12 @@ interface EditorContextType {
   addFAQItem: () => void;
   deleteFAQItem: (itemId: string) => void;
   reorderFAQItems: (items: FAQItem[]) => void;
+
+  // Plans CRUD operations
+  updatePlanItem: (planId: string, data: Partial<Plan>) => void;
+  addPlanItem: (initial?: Partial<Plan>) => string | undefined;
+  deletePlanItem: (planId: string) => void;
+  reorderPlanIncludedItems: (planId: string, items: PlanIncludedItem[]) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -804,6 +812,78 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [updateSection]
   );
 
+  // Plans CRUD operations
+  const updatePlanItem = useCallback(
+    (planId: string, data: Partial<Plan>) => {
+      const plans = projectData?.proposalData?.plans?.plansItems;
+      if (!plans) return;
+
+      const updatedPlans = plans.map((p) =>
+        p.id === planId ? { ...p, ...data } : p
+      );
+      updateSection("plans", { plansItems: updatedPlans });
+    },
+    [projectData, updateSection]
+  );
+
+  const addPlanItem = useCallback(
+    (initial?: Partial<Plan>) => {
+      const plans = projectData?.proposalData?.plans?.plansItems || [];
+      if (plans.length >= 3) return; // cap at 3
+
+      const newId = `plan-${Date.now()}`;
+      const newPlan: Plan = {
+        id: newId,
+        title: "",
+        description: "",
+        value: "",
+        planPeriod: "",
+        recommended: false,
+        buttonTitle: "",
+        buttonWhereToOpen: "link",
+        buttonHref: "",
+        buttonPhone: "",
+        hideTitleField: false,
+        hideDescription: false,
+        hidePrice: false,
+        hidePlanPeriod: false,
+        hideButtonTitle: false,
+        includedItems: [],
+        sortOrder: plans.length,
+        hideItem: false,
+        ...(initial || {}),
+      };
+
+      updateSection("plans", { plansItems: [...plans, newPlan] });
+      return newId;
+    },
+    [projectData, updateSection]
+  );
+
+  const deletePlanItem = useCallback(
+    (planId: string) => {
+      const plans = projectData?.proposalData?.plans?.plansItems;
+      if (!plans) return;
+
+      const updatedPlans = plans.filter((p) => p.id !== planId);
+      updateSection("plans", { plansItems: updatedPlans });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderPlanIncludedItems = useCallback(
+    (planId: string, items: PlanIncludedItem[]) => {
+      const plans = projectData?.proposalData?.plans?.plansItems;
+      if (!plans) return;
+
+      const updatedPlans = plans.map((p) =>
+        p.id === planId ? { ...p, includedItems: items } : p
+      );
+      updateSection("plans", { plansItems: updatedPlans });
+    },
+    [projectData, updateSection]
+  );
+
   const value: EditorContextType = {
     projectData,
     isLoading,
@@ -857,6 +937,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     addFAQItem,
     deleteFAQItem,
     reorderFAQItems,
+    updatePlanItem,
+    addPlanItem,
+    deletePlanItem,
+    reorderPlanIncludedItems,
   };
 
   return (
