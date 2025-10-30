@@ -20,7 +20,6 @@ export default function ContentTab({
     "Mensal" | "Anual" | "Único" | undefined
   >(undefined);
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
-  console.log(plan.recommended);
 
   return (
     <div className="mt-4 h-[340px] space-y-6 overflow-y-auto px-1 pr-2">

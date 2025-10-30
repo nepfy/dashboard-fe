@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import EditableModal from "#/app/editar/components/EditableModal";
 import CloseIcon from "#/components/icons/CloseIcon";
 import TabNavigation from "./TabNavigation";
@@ -28,8 +28,7 @@ export default function EditablePlan({
   const [showPlanInfo, setShowPlanInfo] = useState<boolean>(false);
   const [showConfirmExclusion, setShowConfirmExclusion] =
     useState<boolean>(false);
-  const { projectData, updatePlanItem, addPlanItem, deletePlanItem } =
-    useEditor();
+  const { projectData, deletePlanItem, updatePlans } = useEditor();
 
   const plans = useMemo(
     () => projectData?.proposalData?.plans?.plansItems || [],
@@ -42,23 +41,92 @@ export default function EditablePlan({
     return plans.find((p) => p.id === selectedPlanId) || plan;
   }, [plans, selectedPlanId, plan]);
 
-  const [pendingUpdates, setPendingUpdates] = useState<Partial<Plan>>({});
+  // Ensure that when the modal opens (or plan prop changes), we focus the plan passed in props
+  useEffect(() => {
+    if (isModalOpen) {
+      setSelectedPlanId(plan.id);
+    }
+  }, [isModalOpen, plan.id]);
+
+  const [pendingByPlanId, setPendingByPlanId] = useState<
+    Record<string, Partial<Plan>>
+  >({});
+  const setPendingFor = (planId: string, updates: Partial<Plan>) => {
+    setPendingByPlanId((prev) => ({
+      ...prev,
+      [planId]: { ...(prev[planId] || {}), ...updates },
+    }));
+  };
+  const getPendingFor = (planId: string | null) =>
+    (planId && pendingByPlanId[planId]) || ({} as Partial<Plan>);
 
   const hasChanges = useMemo(
-    () => Object.keys(pendingUpdates).length > 0,
-    [pendingUpdates]
+    () => Object.keys(pendingByPlanId).length > 0,
+    [pendingByPlanId]
   );
 
   const handleSave = async () => {
-    if (!selectedPlanId || !hasChanges) return;
-    if (selectedPlanId === NEW_PLAN_ID) {
-      if (plans.length >= 3) return;
-      const newId = addPlanItem({ ...pendingUpdates });
-      if (newId) setSelectedPlanId(newId);
-    } else {
-      updatePlanItem(selectedPlanId, pendingUpdates);
+    if (!hasChanges) return;
+
+    let currentPlans = plans;
+    let newlyCreatedId: string | null = null;
+
+    // Create new plan if draft exists
+    const draft = pendingByPlanId[NEW_PLAN_ID];
+    if (draft) {
+      if (currentPlans.length >= 3) return;
+      const newId = `plan-${Date.now()}`;
+      const newPlan: Plan = {
+        id: newId,
+        title: draft.title || "",
+        description: draft.description || "",
+        value: draft.value || "",
+        planPeriod: draft.planPeriod || "",
+        recommended: !!draft.recommended,
+        buttonTitle: draft.buttonTitle || "",
+        buttonWhereToOpen: draft.buttonWhereToOpen || "link",
+        buttonHref: draft.buttonHref || "",
+        buttonPhone: draft.buttonPhone || "",
+        hideTitleField: false,
+        hideDescription: false,
+        hidePrice: false,
+        hidePlanPeriod: false,
+        hideButtonTitle: false,
+        includedItems: draft.includedItems || [],
+        sortOrder: currentPlans.length,
+        hideItem: false,
+      };
+      if (draft.recommended) {
+        currentPlans = currentPlans.map((p) => ({ ...p, recommended: false }));
+      }
+      currentPlans = [...currentPlans, newPlan];
+      newlyCreatedId = newId;
     }
-    setPendingUpdates({});
+
+    // Apply updates for existing plans
+    const entries = Object.entries(pendingByPlanId).filter(
+      ([id]) => id !== NEW_PLAN_ID
+    );
+    if (entries.length > 0) {
+      const recEntry = entries.find(([, upd]) => upd.recommended === true);
+      if (recEntry) {
+        const [recId, recUpd] = recEntry;
+        currentPlans = currentPlans.map((p) =>
+          p.id === recId
+            ? { ...p, ...recUpd, recommended: true }
+            : { ...p, ...(pendingByPlanId[p.id] || {}), recommended: false }
+        );
+      } else {
+        currentPlans = currentPlans.map((p) => ({
+          ...p,
+          ...(pendingByPlanId[p.id] || {}),
+        }));
+      }
+    }
+
+    updatePlans({ plansItems: currentPlans });
+    if (newlyCreatedId) setSelectedPlanId(newlyCreatedId);
+    setPendingByPlanId({});
     setIsModalOpen(false);
   };
 
@@ -66,7 +134,11 @@ export default function EditablePlan({
     if (!selectedPlanId) return;
     deletePlanItem(selectedPlanId);
     setShowConfirmExclusion(false);
-    setPendingUpdates({});
+    setPendingByPlanId((prev) => {
+      const next = { ...prev };
+      delete next[selectedPlanId];
+      return next;
+    });
   };
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -88,7 +160,7 @@ export default function EditablePlan({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setPendingUpdates({});
+                setPendingByPlanId({});
                 setIsModalOpen(false);
               }}
               className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
@@ -103,12 +175,11 @@ export default function EditablePlan({
               selectedItemId={selectedPlanId}
               onItemSelect={(id) => {
                 setSelectedPlanId(id);
-                setPendingUpdates({});
               }}
               onAddItem={() => {
                 if (plans.length >= 3) return;
                 setSelectedPlanId(NEW_PLAN_ID);
-                setPendingUpdates({
+                setPendingFor(NEW_PLAN_ID, {
                   title: "",
                   description: "",
                   value: "",
@@ -131,12 +202,12 @@ export default function EditablePlan({
                 plan={
                   {
                     ...(selectedPlan || ({} as Plan)),
-                    ...pendingUpdates,
+                    ...getPendingFor(selectedPlanId),
                   } as Plan
                 }
                 currentItem={selectedPlan || ({} as Plan)}
                 onUpdate={(data) =>
-                  setPendingUpdates((prev) => ({ ...prev, ...data }))
+                  selectedPlanId && setPendingFor(selectedPlanId, data)
                 }
                 setShowPlanInfo={setShowPlanInfo}
                 onDeleteItem={() => setShowConfirmExclusion(true)}
@@ -145,16 +216,17 @@ export default function EditablePlan({
             {activeTab === "entregas" && (
               <DeliveriesTab
                 includedItems={
-                  (pendingUpdates.includedItems as Plan["includedItems"]) ||
+                  (getPendingFor(selectedPlanId)
+                    .includedItems as Plan["includedItems"]) ||
                   selectedPlan?.includedItems ||
                   []
                 }
-                onUpdate={({ reorderedItems }) =>
-                  setPendingUpdates((prev) => ({
-                    ...prev,
+                onUpdate={({ reorderedItems }) => {
+                  if (!selectedPlanId) return;
+                  setPendingFor(selectedPlanId, {
                     includedItems: reorderedItems,
-                  }))
-                }
+                  });
+                }}
                 onDeleteItem={() => setShowConfirmExclusion(true)}
               />
             )}
@@ -163,12 +235,12 @@ export default function EditablePlan({
                 plan={
                   {
                     ...(selectedPlan || ({} as Plan)),
-                    ...pendingUpdates,
+                    ...getPendingFor(selectedPlanId),
                   } as Plan
                 }
                 setShowInfo={setShowInfo}
                 onChange={(data) =>
-                  setPendingUpdates((prev) => ({ ...prev, ...data }))
+                  selectedPlanId && setPendingFor(selectedPlanId, data)
                 }
               />
             )}

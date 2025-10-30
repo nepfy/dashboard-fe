@@ -838,7 +838,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         description: "",
         value: "",
         planPeriod: "",
-        recommended: false,
+        recommended: !!initial?.recommended,
         buttonTitle: "",
         buttonWhereToOpen: "link",
         buttonHref: "",
@@ -854,7 +854,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         ...(initial || {}),
       };
 
-      updateSection("plans", { plansItems: [...plans, newPlan] });
+      const normalizedExisting = initial?.recommended
+        ? plans.map((p) => ({ ...p, recommended: false }))
+        : plans;
+      updateSection("plans", { plansItems: [...normalizedExisting, newPlan] });
       return newId;
     },
     [projectData, updateSection]
