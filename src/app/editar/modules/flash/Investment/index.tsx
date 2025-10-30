@@ -54,7 +54,13 @@ export default function FlashInvestment({
                 </p>
               </div>
 
-              <p className="text-[#E6E6E6]">{projectScope}</p>
+              <EditableText
+                value={projectScope || ""}
+                onChange={(newProjectScope: string) =>
+                  updateInvestment({ projectScope: newProjectScope })
+                }
+                className="w-full text-[#E6E6E6]"
+              />
             </div>
           )}
         </div>
