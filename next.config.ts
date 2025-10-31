@@ -44,7 +44,26 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*)",
+        // Allow iframe embedding for template-flash files
+        source: "/template-flash/:path*",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN", // Allow same-origin embedding
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
+        // Keep security headers for all other routes (excluding template-flash)
+        source: "/((?!template-flash).*)",
         headers: [
           {
             key: "X-Frame-Options",

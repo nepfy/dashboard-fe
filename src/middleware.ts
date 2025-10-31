@@ -76,12 +76,17 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
 
+  // Allow template-flash static files to be served without authentication
+  if (url.pathname.startsWith("/template-flash/")) {
+    return NextResponse.next();
+  }
+
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
     url.pathname.startsWith("/static/") ||
     url.pathname.match(
-      /\.(ico|png|svg|jpg|jpeg|gif|webp|js|css|woff|woff2|ttf)$/
+      /\.(ico|png|svg|jpg|jpeg|gif|webp|js|css|woff|woff2|ttf|html)$/
     )
   ) {
     return NextResponse.next();
