@@ -41,6 +41,22 @@
     }
   }
 
+  // Update title field with each word wrapped in a span
+  function updateTitleWithWordSpans(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (element && value !== null && value !== undefined) {
+      // Split by whitespace and filter out empty strings
+      const words = value
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length > 0);
+      // Wrap each word in a span and join with spaces
+      element.innerHTML = words.map((word) => `<span>${word}</span>`).join(" ");
+    } else if (!element) {
+      console.warn(`Flash template: Element not found: ${elementId}`);
+    }
+  }
+
   // Hide/show section
   function toggleSectionVisibility(sectionSelector, shouldHide) {
     const section = document.querySelector(sectionSelector);
@@ -622,7 +638,7 @@
       const intro = pd.introduction;
       updateTextField("introduction-username", intro.userName);
       updateTextField("introduction-email", intro.email);
-      updateTextField("introduction-title", intro.title);
+      updateTitleWithWordSpans("introduction-title", intro.title);
       updateTextField(
         "introduction-validity",
         formatDate(data.projectValidUntil)
@@ -640,7 +656,7 @@
 
     // About Us
     if (pd.aboutUs) {
-      updateTextField("aboutus-title", pd.aboutUs.title);
+      updateTitleWithWordSpans("aboutus-title", pd.aboutUs.title);
       toggleSectionVisibility(
         ".section_about",
         pd.aboutUs.hideSection === true
@@ -649,14 +665,14 @@
 
     // Team
     if (pd.team) {
-      updateTextField("team-title", pd.team.title);
+      updateTitleWithWordSpans("team-title", pd.team.title);
       renderTeamMembers("team-members-list", pd.team.members);
       toggleSectionVisibility(".section_team", pd.team.hideSection === true);
     }
 
     // Expertise
     if (pd.expertise) {
-      updateTextField("expertise-title", pd.expertise.title);
+      updateTitleWithWordSpans("expertise-title", pd.expertise.title);
       renderExpertiseTopics("expertise-topics-list", pd.expertise.topics);
       toggleSectionVisibility(
         ".section_expertise",
@@ -666,7 +682,7 @@
 
     // Results
     if (pd.results) {
-      updateTextField("results-title", pd.results.title);
+      updateTitleWithWordSpans("results-title", pd.results.title);
       renderResults("results-list", pd.results.items);
       toggleSectionVisibility(
         ".section_proof",
@@ -694,7 +710,7 @@
 
     // Investment
     if (pd.investment) {
-      updateTextField("investment-title", pd.investment.title);
+      updateTitleWithWordSpans("investment-title", pd.investment.title);
       updateTextField("investment-projectScope", pd.investment.projectScope);
 
       // Hide projectScope container if escope.hideSection is true or investment.hideProjectScope is true
