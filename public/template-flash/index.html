@@ -53,7 +53,41 @@
     </style>
   </head>
   <body>
-    <div class="page-wrapper">
+    <!-- Loading overlay -->
+    <div
+      id="flash-template-loading"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      "
+    >
+      <div
+        style="
+          color: #e6e6e6;
+          font-size: 18px;
+          font-family:
+            system-ui,
+            -apple-system,
+            sans-serif;
+        "
+      >
+        Carregando...
+      </div>
+    </div>
+    <div
+      class="page-wrapper"
+      id="flash-template-content"
+      style="opacity: 0; transition: opacity 0.5s ease-in"
+    >
       <div class="global-styles w-embed">
         <style>
           /* Make text look crisper and more legible in all browsers */
@@ -236,9 +270,7 @@ a,
                         <div
                           class="text-weight-medium text-size-medium"
                           id="introduction-username"
-                        >
-                          Empty Studio
-                        </div>
+                        ></div>
                       </div>
                       <nav
                         role="navigation"
@@ -246,7 +278,7 @@ a,
                         style="display: flex; align-items: center; gap: 30px"
                       >
                         <p>
-                          <span id="introduction-email">email@example.com</span>
+                          <span id="introduction-email"></span>
                         </p>
                         <div class="btn-magnetic">
                           <a
@@ -265,12 +297,11 @@ a,
                                 <p
                                   class="btn-magnetic__text-p"
                                   id="buttonconfig-buttontitle"
-                                >
-                                  Iniciar Projeto
-                                </p>
-                                <p class="btn-magnetic__text-p is--duplicate">
-                                  Iniciar Projeto
-                                </p>
+                                ></p>
+                                <p
+                                  class="btn-magnetic__text-p is--duplicate"
+                                  id="buttonconfig-buttontitle"
+                                ></p>
                               </div>
                             </div>
                           </a>
@@ -281,14 +312,12 @@ a,
                       </div>
                     </div>
                   </div>
-                  <div class="hero_heading">
-                    <h1 class="heading-style-h1" id="introduction-title">
-                      Transforme sua clínica em referência na dermatologia
-                    </h1>
+                  <div class="hero_heading" data-reveal-group="">
+                    <h1 class="heading-style-h1" id="introduction-title"></h1>
                     <div class="proposal-date">
                       <div>Proposta válida até —</div>
                       <div class="opacity-60">
-                        <div id="introduction-validity">7 Janeiro, 2025</div>
+                        <div id="introduction-validity"></div>
                       </div>
                     </div>
                   </div>
@@ -299,18 +328,10 @@ a,
                         class="hero_text-wrap is--opacity"
                         id="introduction-services"
                       >
-                        <div class="text-weight-medium">
-                          Identidade visual médica
-                        </div>
-                        <div class="text-weight-medium">
-                          Branding para clínicas
-                        </div>
-                        <div class="text-weight-medium">
-                          Direção de arte estratégica
-                        </div>
-                        <div class="text-weight-medium">
-                          Design que atrai pacientes
-                        </div>
+                        <div class="text-weight-medium"></div>
+                        <div class="text-weight-medium"></div>
+                        <div class="text-weight-medium"></div>
+                        <div class="text-weight-medium"></div>
                       </div>
                     </div>
                     <div class="hero_bottom-wrap is--right">
@@ -319,10 +340,7 @@ a,
                         <div
                           class="text-weight-medium text-size-medium"
                           id="introduction-subtitle"
-                        >
-                          Branding exclusivo que fortalece sua marca, atrai
-                          pacientes e gera retorno financeiro sólido.
-                        </div>
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -336,7 +354,7 @@ a,
                 <div class="about_component">
                   <div class="heading_content">
                     <div class="line"></div>
-                    <div class="about_content-wrap">
+                    <div class="about_content-wrap" data-reveal-group="">
                       <h2 class="heading-style-h2">
                         <span class="text-weight-semibold">Sobre nós.</span>
                         <span id="aboutus-title">
@@ -2084,6 +2102,12 @@ a,
       integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
       crossorigin="anonymous"
     ></script>
+    <script
+      src="js/data-injection.js"
+      type="text/javascript"
+      onload="console.log('data-injection.js loaded successfully')"
+      onerror="console.error('Failed to load data-injection.js')"
+    ></script>
     <script src="js/template-flash.js" type="text/javascript"></script>
     <script
       src="https://cdn.prod.website-files.com/gsap/3.13.0/gsap.min.js"
@@ -2349,11 +2373,91 @@ a,
     <!--  Elements Reveal  -->
     <script>
       gsap.registerPlugin(ScrollTrigger);
-      function initContentRevealScroll() {
+      // Store GSAP context globally for cleanup
+      let revealAnimationContext = null;
+
+      function initContentRevealScroll(isReinitialization = false) {
+        // Cleanup existing animations before reinitializing
+        if (revealAnimationContext) {
+          revealAnimationContext.revert();
+          revealAnimationContext = null;
+        }
+
+        // Clear any remaining GSAP properties on elements that might have IDs
+        // This ensures clean state when reinitializing after data injection
+        if (isReinitialization) {
+          // Kill all ScrollTriggers related to reveal groups
+          const revealGroups = document.querySelectorAll("[data-reveal-group]");
+          ScrollTrigger.getAll().forEach((trigger) => {
+            if (trigger.vars && trigger.vars.trigger) {
+              const triggerEl = trigger.vars.trigger;
+              // Check if this trigger belongs to any reveal group
+              const belongsToRevealGroup = Array.from(revealGroups).some(
+                (group) => {
+                  return group === triggerEl || group.contains(triggerEl);
+                }
+              );
+              if (belongsToRevealGroup) {
+                trigger.kill();
+              }
+            }
+          });
+
+          document
+            .querySelectorAll("[data-reveal-group]")
+            .forEach((groupEl) => {
+              const directChildren = Array.from(groupEl.children).filter(
+                (el) => el.nodeType === 1
+              );
+              directChildren.forEach((child) => {
+                // Clear GSAP properties from direct children
+                // But ONLY if they don't have IDs that are being populated
+                // Elements with IDs that get populated should not have their properties
+                // cleared here - let the animation setup handle them
+                const hasPopulatedId =
+                  child.hasAttribute("id") &&
+                  child.textContent &&
+                  child.textContent.trim().length > 0;
+
+                // Always clear properties from direct children that don't have populated IDs
+                // This ensures proper reset for elements like <h2> that contain nested elements with IDs
+                if (!hasPopulatedId) {
+                  gsap.set(child, { clearProps: "all" });
+                }
+
+                // For nested elements with IDs, only clear if they're not populated yet
+                // The parent element will handle the animation visibility for these nested elements
+                const elementsWithIds = child.querySelectorAll("[id]");
+                elementsWithIds.forEach((el) => {
+                  const isPopulated =
+                    el.textContent && el.textContent.trim().length > 0;
+                  // Don't clear properties from populated nested elements - let parent animation handle visibility
+                  // But do clear if they're empty (for fresh initialization)
+                  if (!isPopulated) {
+                    gsap.set(el, { clearProps: "all" });
+                  }
+                });
+              });
+              // Also clear from the group element itself
+              gsap.set(groupEl, { clearProps: "all" });
+            });
+          // Small delay to ensure DOM has settled after clearing properties
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              initContentRevealScrollInternal();
+              resolve();
+            }, 10);
+          });
+        } else {
+          initContentRevealScrollInternal();
+        }
+      }
+
+      function initContentRevealScrollInternal() {
         const prefersReduced = window.matchMedia(
           "(prefers-reduced-motion: reduce)"
         ).matches;
-        const ctx = gsap.context(() => {
+        revealAnimationContext = gsap.context(() => {
           document
             .querySelectorAll("[data-reveal-group]")
             .forEach((groupEl) => {
@@ -2377,7 +2481,11 @@ a,
                 (el) => el.nodeType === 1
               );
               if (!directChildren.length) {
-                gsap.set(groupEl, { y: groupDistance, autoAlpha: 0 });
+                gsap.set(groupEl, {
+                  y: groupDistance,
+                  opacity: 0,
+                  visibility: "hidden",
+                });
                 ScrollTrigger.create({
                   trigger: groupEl,
                   start: triggerStart,
@@ -2385,11 +2493,12 @@ a,
                   onEnter: () =>
                     gsap.to(groupEl, {
                       y: 0,
-                      autoAlpha: 1,
+                      opacity: 1,
+                      visibility: "visible",
                       duration: animDuration,
                       ease: animEase,
                       onComplete: () =>
-                        gsap.set(groupEl, { clearProps: "all" }),
+                        gsap.set(groupEl, { clearProps: "transform,y,x" }),
                     }),
                 });
                 return;
@@ -2424,18 +2533,83 @@ a,
                   const d = isNestedSelf
                     ? groupDistance
                     : slot.el.getAttribute("data-distance") || groupDistance;
-                  gsap.set(slot.el, { y: d, autoAlpha: 0 });
+
+                  // Check if this element has an ID and content (indicating it was populated)
+                  const hasId = slot.el.hasAttribute("id");
+                  const hasPopulatedContent =
+                    hasId &&
+                    slot.el.textContent &&
+                    slot.el.textContent.trim().length > 0;
+
+                  // For elements with IDs that have been populated, we need special handling
+                  if (hasPopulatedContent) {
+                    // First, ensure any existing GSAP properties are cleared
+                    gsap.set(slot.el, { clearProps: "all" });
+                    // Make visible temporarily to get proper dimensions for ScrollTrigger
+                    gsap.set(slot.el, {
+                      opacity: 1,
+                      visibility: "visible",
+                    });
+                    // Force a reflow to ensure dimensions are calculated
+                    void slot.el.offsetHeight;
+                    // Now hide it properly for the animation
+                    gsap.set(slot.el, {
+                      y: d,
+                      opacity: 0,
+                      visibility: "hidden",
+                    });
+                  } else {
+                    // Normal case - just set the initial hidden state
+                    gsap.set(slot.el, {
+                      y: d,
+                      opacity: 0,
+                      visibility: "hidden",
+                    });
+                  }
                 } else {
                   // Parent follows the group's distance when included, regardless of nested's data-distance
                   if (slot.includeParent)
-                    gsap.set(slot.parentEl, { y: groupDistance, autoAlpha: 0 });
+                    gsap.set(slot.parentEl, {
+                      y: groupDistance,
+                      opacity: 0,
+                      visibility: "hidden",
+                    });
                   // Children use nested group's own distance (fallback to group distance)
                   const nestedD =
                     slot.nestedEl.getAttribute("data-distance") ||
                     groupDistance;
-                  Array.from(slot.nestedEl.children).forEach((target) =>
-                    gsap.set(target, { y: nestedD, autoAlpha: 0 })
-                  );
+                  Array.from(slot.nestedEl.children).forEach((target) => {
+                    // Similar check for nested children with IDs
+                    const hasId = target.hasAttribute("id");
+                    const hasPopulatedContent =
+                      hasId &&
+                      target.textContent &&
+                      target.textContent.trim().length > 0;
+
+                    if (hasPopulatedContent) {
+                      // First clear any existing properties
+                      gsap.set(target, { clearProps: "all" });
+                      // Make visible temporarily to get proper dimensions
+                      gsap.set(target, {
+                        opacity: 1,
+                        visibility: "visible",
+                      });
+                      void target.offsetHeight; // Force reflow
+                      // Now hide it properly for the animation
+                      gsap.set(target, {
+                        y: nestedD,
+                        opacity: 0,
+                        visibility: "hidden",
+                      });
+                    } else {
+                      // Normal case - just set the initial hidden state
+                      gsap.set(target, {
+                        y: nestedD,
+                        opacity: 0,
+                        visibility: "hidden",
+                      });
+                    }
+                  });
                 }
               });
               // Extra safety: if a nested parent is included, re-assert its distance to the group's value
@@ -2444,78 +2618,332 @@ a,
                   gsap.set(slot.parentEl, { y: groupDistance });
                 }
               });
-              // Reveal sequence
-              ScrollTrigger.create({
-                trigger: groupEl,
-                start: triggerStart,
-                once: true,
-                onEnter: () => {
-                  const tl = gsap.timeline();
-                  slots.forEach((slot, slotIndex) => {
-                    const slotTime = slotIndex * groupStaggerSec;
-                    if (slot.type === "item") {
+              // Store flag to track if this is a reinitialization
+              // Check if elements have content (indicating data injection happened)
+              const hasContent = Array.from(directChildren).some((child) => {
+                const hasText =
+                  child.textContent && child.textContent.trim().length > 0;
+                const hasNestedContent =
+                  child.querySelector("[id]") &&
+                  Array.from(child.querySelectorAll("[id]")).some(
+                    (el) => el.textContent && el.textContent.trim().length > 0
+                  );
+                return hasText || hasNestedContent;
+              });
+
+              // Function to execute the reveal animation
+              const executeRevealAnimation = () => {
+                const tl = gsap.timeline();
+                slots.forEach((slot, slotIndex) => {
+                  const slotTime = slotIndex * groupStaggerSec;
+                  if (slot.type === "item") {
+                    tl.to(
+                      slot.el,
+                      {
+                        y: 0,
+                        opacity: 1,
+                        visibility: "visible",
+                        duration: animDuration,
+                        ease: animEase,
+                        onComplete: () => {
+                          // Clear transform properties
+                          gsap.set(slot.el, {
+                            clearProps: "transform,y,x",
+                          });
+                          // For elements with IDs in hero section, we need to release opacity control
+                          // so that scroll-based fadeout animations can work on them
+                          const isHeroChild = slot.el.closest(".hero_heading");
+                          const hasId = slot.el.hasAttribute("id");
+                          if (isHeroChild && hasId) {
+                            // Kill any tweens tracking opacity on this element
+                            // This allows scroll-based fadeout ScrollTriggers to control opacity
+                            gsap.killTweensOf(slot.el, "opacity");
+                            // Ensure opacity is set to 1 but not controlled by GSAP
+                            slot.el.style.opacity = "1";
+                            slot.el.style.visibility = "visible";
+                          }
+                        },
+                      },
+                      slotTime
+                    );
+                  } else {
+                    // Optionally include the parent at the same slot time (parent uses group distance)
+                    if (slot.includeParent) {
                       tl.to(
-                        slot.el,
+                        slot.parentEl,
                         {
                           y: 0,
-                          autoAlpha: 1,
+                          opacity: 1,
+                          visibility: "visible",
                           duration: animDuration,
                           ease: animEase,
-                          onComplete: () =>
-                            gsap.set(slot.el, { clearProps: "all" }),
+                          onComplete: () => {
+                            // Clear transform properties but preserve opacity for scroll-based fadeout effects
+                            // Don't clear opacity or visibility - these are needed for scroll-based effects
+                            gsap.set(slot.parentEl, {
+                              clearProps: "transform,y,x",
+                            });
+                          },
                         },
                         slotTime
                       );
-                    } else {
-                      // Optionally include the parent at the same slot time (parent uses group distance)
-                      if (slot.includeParent) {
+                    }
+                    // Nested children use nested stagger (ms → sec); fallback to group stagger
+                    const nestedMs = parseFloat(
+                      slot.nestedEl.getAttribute("data-stagger")
+                    );
+                    const nestedStaggerSec = isNaN(nestedMs)
+                      ? groupStaggerSec
+                      : nestedMs / 1000;
+                    Array.from(slot.nestedEl.children).forEach(
+                      (nestedChild, nestedIndex) => {
                         tl.to(
-                          slot.parentEl,
+                          nestedChild,
                           {
                             y: 0,
-                            autoAlpha: 1,
+                            opacity: 1,
+                            visibility: "visible",
                             duration: animDuration,
                             ease: animEase,
-                            onComplete: () =>
-                              gsap.set(slot.parentEl, { clearProps: "all" }),
+                            onComplete: () => {
+                              // Clear transform properties
+                              gsap.set(nestedChild, {
+                                clearProps: "transform,y,x",
+                              });
+                              // For nested elements with IDs in hero section, release opacity control
+                              // so that scroll-based fadeout animations can work on them
+                              const isHeroChild =
+                                nestedChild.closest(".hero_heading");
+                              const hasId = nestedChild.hasAttribute("id");
+                              if (isHeroChild && hasId) {
+                                // Kill any tweens tracking opacity on this element
+                                // This allows scroll-based fadeout ScrollTriggers to control opacity
+                                gsap.killTweensOf(nestedChild, "opacity");
+                                // Ensure opacity is set to 1 but not controlled by GSAP
+                                nestedChild.style.opacity = "1";
+                                nestedChild.style.visibility = "visible";
+                              }
+                            },
                           },
-                          slotTime
+                          slotTime + nestedIndex * nestedStaggerSec
                         );
                       }
-                      // Nested children use nested stagger (ms → sec); fallback to group stagger
-                      const nestedMs = parseFloat(
-                        slot.nestedEl.getAttribute("data-stagger")
-                      );
-                      const nestedStaggerSec = isNaN(nestedMs)
-                        ? groupStaggerSec
-                        : nestedMs / 1000;
-                      Array.from(slot.nestedEl.children).forEach(
-                        (nestedChild, nestedIndex) => {
-                          tl.to(
-                            nestedChild,
-                            {
-                              y: 0,
-                              autoAlpha: 1,
-                              duration: animDuration,
-                              ease: animEase,
-                              onComplete: () =>
-                                gsap.set(nestedChild, { clearProps: "all" }),
+                    );
+                  }
+                });
+              };
+
+              // Reveal sequence
+              const scrollTrigger = ScrollTrigger.create({
+                trigger: groupEl,
+                start: triggerStart,
+                once: true,
+                // If elements already have content, immediately show them if they're in view
+                invalidateOnRefresh: true,
+                onEnter: executeRevealAnimation,
+              });
+
+              // If elements have content and are already in view (after reinitialization),
+              // immediately trigger the animation
+              if (hasContent) {
+                // Use double requestAnimationFrame to ensure DOM and ScrollTrigger are ready
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    // Force ScrollTrigger to recalculate for this specific group
+                    // This is critical for elements with IDs that got populated
+                    scrollTrigger.refresh();
+
+                    const rect = groupEl.getBoundingClientRect();
+                    const windowHeight =
+                      window.innerHeight ||
+                      document.documentElement.clientHeight;
+
+                    // For hero section specifically, always trigger if it has content
+                    // This handles the case where introduction-title and introduction-validity
+                    // need to animate even if they're at the top of the page
+                    const isHeroSection =
+                      groupEl.classList.contains("hero_heading");
+
+                    // Check if element is already in the trigger zone
+                    // Be more lenient - if element is anywhere in viewport, trigger it
+                    // Or if it's the hero section and has any content, always trigger it
+                    const shouldTriggerImmediately =
+                      (rect.top < windowHeight && rect.bottom > 0) ||
+                      (isHeroSection && hasContent);
+
+                    if (shouldTriggerImmediately) {
+                      // Element is in view or is hero with content, trigger animation immediately
+                      // Small delay to ensure all GSAP properties are set correctly
+                      setTimeout(() => {
+                        executeRevealAnimation();
+                        // After animation completes, ensure elements with IDs in hero section
+                        // have their opacity control released so scroll-based fadeout can work
+                        if (isHeroSection) {
+                          setTimeout(
+                            () => {
+                              const elementsWithIds = Array.from(
+                                groupEl.querySelectorAll("[id]")
+                              );
+                              elementsWithIds.forEach((el) => {
+                                if (
+                                  el.textContent &&
+                                  el.textContent.trim().length > 0
+                                ) {
+                                  // Kill any tweens tracking opacity
+                                  gsap.killTweensOf(el, "opacity");
+                                  // Set opacity via style so it doesn't interfere with scroll-based animations
+                                  el.style.opacity = "1";
+                                  el.style.visibility = "visible";
+                                }
+                              });
                             },
-                            slotTime + nestedIndex * nestedStaggerSec
-                          );
+                            animDuration * 1000 + 100
+                          ); // Wait for animation to complete
                         }
-                      );
+                        // Don't kill the ScrollTrigger - it might be needed for scroll-based fadeout effects
+                        // The ScrollTrigger will remain active, but since once: true, it won't fire onEnter again
+                        // This preserves any scroll-based opacity effects that might be applied
+                      }, 50);
+                    } else {
+                      // Element is not in view, but ensure ScrollTrigger is set up correctly
+                      // This is important for sections like about that might be below the fold
+                      // Force ScrollTrigger to recalculate one more time after a delay
+                      setTimeout(() => {
+                        scrollTrigger.refresh();
+                      }, 100);
                     }
                   });
-                },
-              });
+                });
+              }
             });
         });
-        return () => ctx.revert();
       }
+
       // Initialize Content Reveal on Scroll
       document.addEventListener("DOMContentLoaded", () => {
         initContentRevealScroll();
+      });
+
+      // Reinitialize animations after data injection completes
+      // This ensures animations work correctly with dynamically populated content
+      window.addEventListener("flash-template-data-injected", () => {
+        console.log(
+          "Flash template: Reinitializing reveal animations after data injection"
+        );
+        // Use reinitialization flag to properly clean up and reset state
+        const reinitPromise = initContentRevealScroll(true);
+        if (reinitPromise && reinitPromise.then) {
+          reinitPromise.then(() => {
+            // Refresh ScrollTrigger to recalculate positions with populated content
+            // Use multiple requestAnimationFrames to ensure DOM and ScrollTrigger are ready
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                ScrollTrigger.refresh();
+                // Force ScrollTrigger to recalculate all positions
+                // This is especially important for elements with IDs that got populated
+                ScrollTrigger.getAll().forEach((trigger) => {
+                  if (trigger.vars && trigger.vars.trigger) {
+                    const triggerEl = trigger.vars.trigger;
+                    // Check if trigger is for a reveal group with populated content
+                    if (triggerEl.hasAttribute("data-reveal-group")) {
+                      const hasPopulatedIds = Array.from(
+                        triggerEl.querySelectorAll("[id]")
+                      ).some(
+                        (el) =>
+                          el.textContent && el.textContent.trim().length > 0
+                      );
+                      // If there are populated IDs, ensure the trigger recalculates
+                      if (hasPopulatedIds) {
+                        trigger.refresh();
+                      }
+                    }
+                  }
+                });
+
+                // Additional check for hero section and about section - ensure they animate if they have content
+                // This is a backup in case the inline check didn't work
+                setTimeout(() => {
+                  // Check hero section
+                  const heroHeading = document.querySelector(
+                    ".hero_heading[data-reveal-group]"
+                  );
+                  if (heroHeading) {
+                    // Check if hero has populated content with IDs
+                    const hasPopulatedIds = Array.from(
+                      heroHeading.querySelectorAll("[id]")
+                    ).some(
+                      (el) => el.textContent && el.textContent.trim().length > 0
+                    );
+
+                    if (hasPopulatedIds) {
+                      const rect = heroHeading.getBoundingClientRect();
+                      const windowHeight =
+                        window.innerHeight ||
+                        document.documentElement.clientHeight;
+
+                      // If hero is in viewport or close to it, trigger animation
+                      if (rect.bottom > -100 && rect.top < windowHeight + 100) {
+                        const triggers = ScrollTrigger.getAll();
+                        const heroTrigger = triggers.find(
+                          (t) =>
+                            t.vars &&
+                            t.vars.trigger &&
+                            t.vars.trigger === heroHeading
+                        );
+                        if (heroTrigger && heroTrigger.vars.onEnter) {
+                          // Trigger animation for hero section with populated IDs
+                          heroTrigger.vars.onEnter();
+                        }
+                      }
+                    }
+                  }
+
+                  // Check about section
+                  const aboutContentWrap = document.querySelector(
+                    ".about_content-wrap[data-reveal-group]"
+                  );
+                  if (aboutContentWrap) {
+                    // Check if about section has populated content with IDs
+                    const aboutTitle = document.getElementById("aboutus-title");
+                    const hasPopulatedContent =
+                      aboutTitle &&
+                      aboutTitle.textContent &&
+                      aboutTitle.textContent.trim().length > 0;
+
+                    if (hasPopulatedContent) {
+                      const triggers = ScrollTrigger.getAll();
+                      const aboutTrigger = triggers.find(
+                        (t) =>
+                          t.vars &&
+                          t.vars.trigger &&
+                          t.vars.trigger === aboutContentWrap
+                      );
+                      if (aboutTrigger) {
+                        // Ensure the trigger is properly set up and refresh it
+                        aboutTrigger.refresh();
+                        // If it's in view, trigger it immediately
+                        const rect = aboutContentWrap.getBoundingClientRect();
+                        const windowHeight =
+                          window.innerHeight ||
+                          document.documentElement.clientHeight;
+                        if (rect.top < windowHeight && rect.bottom > 0) {
+                          if (aboutTrigger.vars.onEnter) {
+                            aboutTrigger.vars.onEnter();
+                          }
+                        }
+                      }
+                    }
+                  }
+                }, 150);
+              });
+            });
+          });
+        } else {
+          // Fallback if promise is not returned
+          setTimeout(() => {
+            ScrollTrigger.refresh();
+          }, 60);
+        }
       });
     </script>
   </body>
