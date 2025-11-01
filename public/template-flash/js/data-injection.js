@@ -415,9 +415,254 @@
     });
   }
 
+  // Escape HTML to prevent XSS attacks
+  function escapeHtml(text) {
+    if (!text) return "";
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Generate HTML string for a single testimonial item
+  function generateTestimonialHTML(item) {
+    const testimonial = escapeHtml(item.testimonial || "");
+    const name = escapeHtml(item.name || "");
+    const role = escapeHtml(item.role || "");
+    const photo = item.photo || "";
+    const showPhoto = photo && !item.hidePhoto;
+
+    // Build photo HTML - hide image if hidePhoto is true or photo is missing
+    const photoHTML = showPhoto
+      ? `<div class="slider_image">
+          <img
+            src="${escapeHtml(photo)}"
+            loading="lazy"
+            alt=""
+            class="image"
+          />
+        </div>`
+      : `<div class="slider_image" style="display: none;">
+          <img
+            src="images/slider-1.jpg"
+            loading="lazy"
+            alt=""
+            class="image"
+          />
+        </div>`;
+
+    return `<div class="slide_wrap w-slide">
+      <div class="slide">
+        <div class="line"></div>
+        <div data-reveal-group="" class="slider_content">
+          <p class="heading-style-h3">${testimonial}</p>
+          <div class="slider_name-wrap">
+            ${photoHTML}
+            <div class="slider-name">
+              <div class="text-weight-medium">${name}</div>
+              <div class="opacity_80">${role}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Rebuild Webflow slider after content injection
+  function rebuildSlider(sliderElement) {
+    if (!sliderElement) return;
+
+    function attemptRebuild() {
+      // Strategy 1: Access Webflow store directly (independent of ix3)
+      if (window.Webflow && window.Webflow.store) {
+        const store = window.Webflow.store;
+        if (store.components && Array.isArray(store.components)) {
+          const maskElement = sliderElement.querySelector(
+            ".mask.w-slider-mask"
+          );
+
+          // Find slider component - check by class name and element matching
+          const sliderComponent = store.components.find((comp) => {
+            if (!comp || !comp.el) return false;
+            const compEl = comp.el;
+            return (
+              compEl === sliderElement ||
+              (compEl.classList && compEl.classList.contains("w-slider")) ||
+              (maskElement && compEl === maskElement) ||
+              sliderElement.contains(compEl) ||
+              (compEl.classList && compEl.classList.contains("slider"))
+            );
+          });
+
+          if (sliderComponent) {
+            // Try to destroy and reinit (most reliable)
+            if (typeof sliderComponent.destroy === "function") {
+              try {
+                sliderComponent.destroy();
+              } catch {
+                // Silently fail
+              }
+            }
+
+            // Reinitialize
+            if (typeof sliderComponent.init === "function") {
+              try {
+                sliderComponent.init();
+                return true; // Success
+              } catch {
+                // Silently fail
+              }
+            }
+
+            if (typeof sliderComponent.reinit === "function") {
+              try {
+                sliderComponent.reinit();
+                return true;
+              } catch {
+                // Silently fail
+              }
+            }
+
+            // Try refresh/update
+            if (typeof sliderComponent.refresh === "function") {
+              try {
+                sliderComponent.refresh();
+              } catch {
+                // Silently fail
+              }
+            }
+
+            // Check for internal slider object
+            if (sliderComponent.slider) {
+              const internalSlider = sliderComponent.slider;
+              if (typeof internalSlider.refresh === "function") {
+                try {
+                  internalSlider.refresh();
+                } catch {
+                  // Silently fail
+                }
+              }
+              if (typeof internalSlider.update === "function") {
+                try {
+                  internalSlider.update();
+                } catch {
+                  // Silently fail
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Strategy 2: Use ix3 API
+      if (window.Webflow && window.Webflow.require) {
+        try {
+          const ix3 = window.Webflow.require("ix3");
+          if (ix3 && ix3.ready) {
+            ix3
+              .ready()
+              .then(() => {
+                const instance = ix3.getInstance();
+                if (instance) {
+                  if (typeof instance.scheduleRebuild === "function") {
+                    instance.scheduleRebuild(sliderElement);
+                  }
+                  if (
+                    typeof instance.scheduleRebuildForElement === "function"
+                  ) {
+                    instance.scheduleRebuildForElement(sliderElement);
+                  }
+                }
+              })
+              .catch(() => {});
+          }
+        } catch {
+          // Silently fail
+        }
+      }
+
+      // Strategy 3: Trigger events
+      window.dispatchEvent(new Event("resize"));
+
+      return false;
+    }
+
+    // Also try accessing slider directly via element data properties
+    // Webflow sometimes stores component instances on the element
+    function tryDirectAccess() {
+      const maskElement = sliderElement.querySelector(".mask.w-slider-mask");
+      if (maskElement && window.$ && typeof window.$ === "function") {
+        try {
+          const $slider = window.$(sliderElement);
+          const sliderData = $slider.data();
+
+          // Look for slider instance in data - Webflow uses ".wSlider" key
+          const sliderInstance =
+            sliderData[".wSlider"] || sliderData.slider || sliderData.wSlider;
+
+          if (sliderInstance && sliderInstance.slides) {
+            // The slider instance needs to rebuild its slides collection
+            // since we added new slides to the DOM
+            const domSlides = maskElement.querySelectorAll(".w-slide");
+
+            // sliderInstance.slides is a jQuery object, not an array
+            // We need to replace it with a new jQuery collection containing all slides
+            if (sliderInstance.slides.length !== domSlides.length) {
+              // Create a new jQuery collection with all DOM slides
+              const newSlidesCollection = window.$(domSlides);
+              // Replace the slides property
+              sliderInstance.slides = newSlidesCollection;
+
+              // Reset slider index to first slide
+              if (typeof sliderInstance.index !== "undefined") {
+                sliderInstance.index = 0;
+              }
+            }
+          }
+        } catch {
+          // Silently fail
+        }
+      }
+
+      // Try triggering a custom event on the slider that might cause it to refresh
+      const refreshEvent = new CustomEvent("refresh", { bubbles: true });
+      sliderElement.dispatchEvent(refreshEvent);
+      const maskEl = sliderElement.querySelector(".mask.w-slider-mask");
+      if (maskEl) maskEl.dispatchEvent(refreshEvent);
+    }
+
+    // Try multiple times with delays
+    setTimeout(() => {
+      attemptRebuild();
+      tryDirectAccess();
+    }, 100);
+    setTimeout(() => {
+      attemptRebuild();
+      tryDirectAccess();
+    }, 300);
+    setTimeout(() => {
+      attemptRebuild();
+      tryDirectAccess();
+    }, 600);
+    setTimeout(() => {
+      attemptRebuild();
+      tryDirectAccess();
+    }, 1000);
+    setTimeout(() => {
+      attemptRebuild();
+      tryDirectAccess();
+    }, 2000);
+  }
+
   // Render testimonials list
-  function renderTestimonials(containerId, items) {
-    const container = document.getElementById(containerId);
+  function renderTestimonials(items) {
+    // Find the mask element within the testimonials container using data attribute
+    // This avoids conflicts with GSAP/slider library generated IDs on the mask element
+    const parentContainer = document.querySelector(
+      '[data-testimonials-container="true"]'
+    );
+    const container = parentContainer
+      ? parentContainer.querySelector(".mask.w-slider-mask")
+      : null;
     if (!container || !items || !Array.isArray(items)) return;
 
     // Filter out hidden items and sort
@@ -425,45 +670,79 @@
       .filter(() => true) // No hideItem for testimonials in the interface
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template (first slide)
-    const template = container.querySelector(".w-slide");
-    if (!template) return;
+    // Get the first slide as a template (preserve it for slider structure)
+    const existingSlides = container.querySelectorAll(".w-slide");
+    const templateSlide = existingSlides[0];
 
-    // Clear container
-    container.innerHTML = "";
-
-    // Clone and populate for each testimonial
-    visibleItems.forEach((item) => {
-      const clone = template.cloneNode(true);
-
-      // Update testimonial text
-      const testimonialP = clone.querySelector(".heading-style-h3");
-      if (testimonialP) {
-        testimonialP.textContent = item.testimonial || "";
+    if (!templateSlide) {
+      // If no template exists, fall back to HTML injection
+      const html = visibleItems
+        .map((item) => generateTestimonialHTML(item))
+        .join("");
+      container.innerHTML = html;
+      if (parentContainer) {
+        rebuildSlider(parentContainer);
       }
+      return;
+    }
 
-      // Update photo
-      const img = clone.querySelector(".slider_image img");
-      if (img && item.photo && !item.hidePhoto) {
-        img.src = item.photo;
-      } else if (img && item.hidePhoto) {
-        img.style.display = "none";
-      }
+    // Update the first slide with first testimonial
+    if (visibleItems.length > 0) {
+      updateSlideContent(templateSlide, visibleItems[0]);
+    }
 
-      // Update name
-      const nameDiv = clone.querySelector(".slider-name .text-weight-medium");
-      if (nameDiv) {
-        nameDiv.textContent = item.name || "";
-      }
+    // Remove all other existing slides except the first one
+    for (let i = existingSlides.length - 1; i > 0; i--) {
+      existingSlides[i].remove();
+    }
 
-      // Update role
-      const roleDiv = clone.querySelector(".slider-name .opacity_80");
-      if (roleDiv) {
-        roleDiv.textContent = item.role || "";
-      }
-
+    // Clone template and create new slides for remaining testimonials
+    for (let i = 1; i < visibleItems.length; i++) {
+      const clone = templateSlide.cloneNode(true);
+      updateSlideContent(clone, visibleItems[i]);
       container.appendChild(clone);
-    });
+    }
+
+    // Rebuild the slider after injecting new content
+    // This ensures the slider can navigate between the newly injected slides
+    if (parentContainer) {
+      rebuildSlider(parentContainer);
+    }
+  }
+
+  // Update slide content with testimonial data
+  function updateSlideContent(slideElement, item) {
+    // Update testimonial text
+    const testimonialP = slideElement.querySelector(".heading-style-h3");
+    if (testimonialP) {
+      testimonialP.textContent = item.testimonial || "";
+    }
+
+    // Update photo
+    const img = slideElement.querySelector(".slider_image img");
+    const sliderImage = slideElement.querySelector(".slider_image");
+    if (img && sliderImage) {
+      if (item.photo && !item.hidePhoto) {
+        img.src = item.photo;
+        sliderImage.style.display = "";
+      } else {
+        sliderImage.style.display = "none";
+      }
+    }
+
+    // Update name
+    const nameDiv = slideElement.querySelector(
+      ".slider-name .text-weight-medium"
+    );
+    if (nameDiv) {
+      nameDiv.textContent = item.name || "";
+    }
+
+    // Update role
+    const roleDiv = slideElement.querySelector(".slider-name .opacity_80");
+    if (roleDiv) {
+      roleDiv.textContent = item.role || "";
+    }
   }
 
   // Render steps list
@@ -1057,7 +1336,7 @@
 
     // Testimonials
     if (pd.testimonials) {
-      renderTestimonials("testimonials-list", pd.testimonials.items);
+      renderTestimonials(pd.testimonials.items);
       toggleSectionVisibility(
         ".section_tesitominal",
         pd.testimonials.hideSection === true
