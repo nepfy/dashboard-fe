@@ -14,8 +14,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   const projectData = await getProjectData(userName, projectURL);
 
-  console.log(projectData);
-
   if (!projectData) {
     notFound();
   }
