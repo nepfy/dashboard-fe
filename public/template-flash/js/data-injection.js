@@ -31,6 +31,25 @@
     }
   }
 
+  // Format number as Brazilian currency (R$ 12.500,00)
+  function formatCurrency(value) {
+    if (!value) return "";
+
+    // Convert to number, handling strings that might have formatting
+    const numValue =
+      typeof value === "string"
+        ? parseFloat(value.replace(/[^\d,.-]/g, "").replace(",", "."))
+        : parseFloat(value);
+
+    if (isNaN(numValue)) return "";
+
+    // Format with Brazilian locale: thousands separator (.) and decimal separator (,)
+    return `R$ ${numValue.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  }
+
   // Update simple text field
   function updateTextField(elementId, value) {
     const element = document.getElementById(elementId);
@@ -255,7 +274,7 @@
         ".proof_roi .roi_wrap:first-child .opacity_80"
       );
       if (investmentDiv) {
-        investmentDiv.textContent = item.investment || "";
+        investmentDiv.textContent = formatCurrency(item.investment);
       }
 
       // Update ROI
@@ -263,7 +282,7 @@
         ".proof_roi .roi_wrap:last-child .text-color-alternate"
       );
       if (roiDiv) {
-        roiDiv.textContent = item.roi || "";
+        roiDiv.textContent = formatCurrency(item.roi);
       }
 
       container.appendChild(clone);
@@ -364,8 +383,100 @@
         descP.style.display = "none";
       }
 
+      // Set up accordion click handler
+      const accordionOpen = clone.querySelector(".accordion_open");
+      if (accordionOpen) {
+        // Initially set height to 0 (closed)
+        if (typeof gsap !== "undefined") {
+          gsap.set(accordionOpen, {
+            height: 0,
+            overflow: "hidden",
+          });
+        } else {
+          accordionOpen.style.height = "0";
+          accordionOpen.style.overflow = "hidden";
+        }
+
+        // Add click handler to toggle accordion
+        clone.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          // Kill any existing animations on this element
+          if (typeof gsap !== "undefined") {
+            gsap.killTweensOf(accordionOpen);
+          }
+
+          // Check current state - use data attribute for reliable tracking
+          const isOpen = clone.dataset.isOpen === "true";
+
+          if (isOpen) {
+            // Close accordion
+            clone.dataset.isOpen = "false";
+            if (typeof gsap !== "undefined") {
+              // Get current height before animating
+              const currentHeight =
+                accordionOpen.scrollHeight || accordionOpen.offsetHeight;
+              gsap.fromTo(
+                accordionOpen,
+                { height: currentHeight },
+                {
+                  height: 0,
+                  duration: 0.4,
+                  ease: "power2.inOut",
+                }
+              );
+            } else {
+              accordionOpen.style.height = "0";
+            }
+          } else {
+            // Open accordion
+            clone.dataset.isOpen = "true";
+            if (typeof gsap !== "undefined") {
+              // Temporarily set to auto to get natural height
+              gsap.set(accordionOpen, { height: "auto" });
+              const naturalHeight = accordionOpen.scrollHeight;
+              // Reset to 0 and animate
+              gsap.set(accordionOpen, { height: 0 });
+              gsap.to(accordionOpen, {
+                height: naturalHeight,
+                duration: 0.4,
+                ease: "power2.inOut",
+              });
+            } else {
+              accordionOpen.style.height = "auto";
+            }
+          }
+        });
+      }
+
       container.appendChild(clone);
     });
+
+    // Update marquee text with step titles
+    updateStepsMarquee(visibleTopics);
+  }
+
+  // Update marquee text with step titles
+  function updateStepsMarquee(visibleTopics) {
+    // Get all visible step titles, filtering out hidden ones
+    const stepTitles = visibleTopics
+      .filter((topic) => !topic.hideStepName && topic.title)
+      .map((topic) => topic.title)
+      .filter((title) => title.trim().length > 0);
+
+    if (stepTitles.length === 0) return;
+
+    // Join titles with arrow separator
+    const marqueeText = stepTitles.join(" → ");
+
+    // Find the marquee text element in the about section
+    // It's the first .about-marquee_text element within [data-marquee-content]
+    const marqueeContent = document.querySelector(
+      "[data-marquee-content] .about-marquee_text"
+    );
+    if (marqueeContent) {
+      marqueeContent.textContent = marqueeText;
+    }
   }
 
   // Render FAQ items
@@ -409,6 +520,72 @@
       );
       if (answerP) {
         answerP.textContent = item.answer || "";
+      }
+
+      // Set up accordion click handler
+      const accordionOpen = clone.querySelector(".accordion_open");
+      if (accordionOpen) {
+        // Initially set height to 0 (closed)
+        if (typeof gsap !== "undefined") {
+          gsap.set(accordionOpen, {
+            height: 0,
+            overflow: "hidden",
+          });
+        } else {
+          accordionOpen.style.height = "0";
+          accordionOpen.style.overflow = "hidden";
+        }
+
+        // Add click handler to toggle accordion
+        clone.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          // Kill any existing animations on this element
+          if (typeof gsap !== "undefined") {
+            gsap.killTweensOf(accordionOpen);
+          }
+
+          // Check current state - use data attribute for reliable tracking
+          const isOpen = clone.dataset.isOpen === "true";
+
+          if (isOpen) {
+            // Close accordion
+            clone.dataset.isOpen = "false";
+            if (typeof gsap !== "undefined") {
+              // Get current height before animating
+              const currentHeight =
+                accordionOpen.scrollHeight || accordionOpen.offsetHeight;
+              gsap.fromTo(
+                accordionOpen,
+                { height: currentHeight },
+                {
+                  height: 0,
+                  duration: 0.4,
+                  ease: "power2.inOut",
+                }
+              );
+            } else {
+              accordionOpen.style.height = "0";
+            }
+          } else {
+            // Open accordion
+            clone.dataset.isOpen = "true";
+            if (typeof gsap !== "undefined") {
+              // Temporarily set to auto to get natural height
+              gsap.set(accordionOpen, { height: "auto" });
+              const naturalHeight = accordionOpen.scrollHeight;
+              // Reset to 0 and animate
+              gsap.set(accordionOpen, { height: 0 });
+              gsap.to(accordionOpen, {
+                height: naturalHeight,
+                duration: 0.4,
+                ease: "power2.inOut",
+              });
+            } else {
+              accordionOpen.style.height = "auto";
+            }
+          }
+        });
       }
 
       container.appendChild(clone);
@@ -476,7 +653,7 @@
         ".pricing_price .heading-style-h3.text-weight-medium"
       );
       if (priceDiv && !plan.hidePrice) {
-        priceDiv.textContent = plan.value || "";
+        priceDiv.textContent = formatCurrency(plan.value);
       } else if (priceDiv && plan.hidePrice) {
         priceDiv.style.display = "none";
       }
@@ -544,6 +721,9 @@
         } else if (plan.buttonHref) {
           buttonLink.href = plan.buttonHref;
         }
+        // Always open in a new tab
+        buttonLink.target = "_blank";
+        buttonLink.rel = "noopener noreferrer";
       }
 
       container.appendChild(clone);
@@ -583,6 +763,9 @@
       } else if (buttonConfig.buttonHref) {
         link.href = buttonConfig.buttonHref;
       }
+      // Always open in a new tab
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
     });
   }
 
