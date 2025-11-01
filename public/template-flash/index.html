@@ -265,7 +265,7 @@ a,
                     role="banner"
                     class="nav_component w-nav"
                   >
-                    <div class="nav_wrap">
+                    <div class="nav_wrap" data-reveal-group="">
                       <div class="nav_brand">
                         <div
                           class="text-weight-medium text-size-medium"
@@ -277,9 +277,6 @@ a,
                         class="nav_menu w-nav-menu"
                         style="display: flex; align-items: center; gap: 30px"
                       >
-                        <p>
-                          <span id="introduction-email"></span>
-                        </p>
                         <div class="btn-magnetic">
                           <a
                             data-magnetic-strength-inner="15"
@@ -318,18 +315,15 @@ a,
                       id="introduction-title"
                       data-reveal-group=""
                     ></h1>
-                    <div class="proposal-date">
+                    <div class="proposal-date" data-reveal-group="">
                       <div>Proposta válida até —</div>
                       <div class="opacity-60">
-                        <div
-                          id="introduction-validity"
-                          data-reveal-group=""
-                        ></div>
+                        <div id="introduction-validity"></div>
                       </div>
                     </div>
                   </div>
                   <div></div>
-                  <div class="hero_bottom">
+                  <div class="hero_bottom" data-reveal-group="">
                     <div class="hero_bottom-wrap">
                       <div class="line"></div>
                       <div
@@ -2085,7 +2079,6 @@ a,
     <script
       src="js/data-injection.js"
       type="text/javascript"
-      onload="console.log('data-injection.js loaded successfully')"
       onerror="console.error('Failed to load data-injection.js')"
     ></script>
     <script src="js/template-flash.js" type="text/javascript"></script>
@@ -2245,15 +2238,11 @@ a,
       function initMontegrapaMarquees() {
         const marqueeContainers = document.querySelectorAll("[data-marquee]");
         if (marqueeContainers.length === 0) {
-          console.log("No marquee elements found");
           return;
         }
         marqueeContainers.forEach((container) => {
           setupMarqueeElement(container);
         });
-        console.log(
-          `Initialized ${marqueeContainers.length} marquee element(s)`
-        );
       }
       // Event listeners
       window.addEventListener("resize", handleMarqueeResize());
@@ -2635,12 +2624,24 @@ a,
                           const isHeroChild = slot.el.closest(".hero_heading");
                           const hasId = slot.el.hasAttribute("id");
                           if (isHeroChild && hasId) {
-                            // Kill any tweens tracking opacity on this element
-                            // This allows scroll-based fadeout ScrollTriggers to control opacity
-                            gsap.killTweensOf(slot.el, "opacity");
-                            // Ensure opacity is set to 1 but not controlled by GSAP
-                            slot.el.style.opacity = "1";
-                            slot.el.style.visibility = "visible";
+                            // Kill any tweens tracking opacity and transform on this element
+                            // This allows scroll-based fadeout ScrollTriggers to control both
+                            gsap.killTweensOf(slot.el, "opacity,y");
+                            // Remove inline styles so scroll-based animations can control them
+                            slot.el.style.removeProperty("opacity");
+                            slot.el.style.removeProperty("visibility");
+                            slot.el.style.removeProperty("transform");
+                            // Set via GSAP temporarily, then clear so scroll animation has control
+                            gsap.set(slot.el, {
+                              opacity: 1,
+                              visibility: "visible",
+                              y: 0,
+                            });
+                            setTimeout(() => {
+                              gsap.set(slot.el, {
+                                clearProps: "opacity,visibility,transform,y",
+                              });
+                            }, 50);
                           }
                         },
                       },
@@ -2696,12 +2697,22 @@ a,
                                 nestedChild.closest(".hero_heading");
                               const hasId = nestedChild.hasAttribute("id");
                               if (isHeroChild && hasId) {
-                                // Kill any tweens tracking opacity on this element
-                                // This allows scroll-based fadeout ScrollTriggers to control opacity
-                                gsap.killTweensOf(nestedChild, "opacity");
-                                // Ensure opacity is set to 1 but not controlled by GSAP
-                                nestedChild.style.opacity = "1";
-                                nestedChild.style.visibility = "visible";
+                                // Kill any tweens tracking opacity and transform on this element
+                                // This allows scroll-based fadeout ScrollTriggers to control both
+                                gsap.killTweensOf(nestedChild, "opacity,y");
+                                // Remove inline styles so scroll-based animations can control them
+                                setTimeout(() => {
+                                  nestedChild.style.removeProperty("opacity");
+                                  nestedChild.style.removeProperty(
+                                    "visibility"
+                                  );
+                                  nestedChild.style.removeProperty("transform");
+                                  // Clear all GSAP properties so scroll animation has full control
+                                  gsap.set(nestedChild, {
+                                    clearProps:
+                                      "opacity,visibility,transform,y",
+                                  });
+                                }, 50);
                               }
                             },
                           },
@@ -2771,9 +2782,13 @@ a,
                                 ) {
                                   // Kill any tweens tracking opacity
                                   gsap.killTweensOf(el, "opacity");
-                                  // Set opacity via style so it doesn't interfere with scroll-based animations
-                                  el.style.opacity = "1";
-                                  el.style.visibility = "visible";
+                                  // Remove inline opacity styles so Webflow can control opacity for scroll fadeout
+                                  el.style.removeProperty("opacity");
+                                  el.style.removeProperty("visibility");
+                                  // Clear all GSAP properties so Webflow animations can take full control
+                                  gsap.set(el, {
+                                    clearProps: "opacity,visibility",
+                                  });
                                 }
                               });
                             },
@@ -2807,9 +2822,6 @@ a,
       // Reinitialize animations after data injection completes
       // This ensures animations work correctly with dynamically populated content
       window.addEventListener("flash-template-data-injected", () => {
-        console.log(
-          "Flash template: Reinitializing reveal animations after data injection"
-        );
         // Use reinitialization flag to properly clean up and reset state
         const reinitPromise = initContentRevealScroll(true);
         if (reinitPromise && reinitPromise.then) {
@@ -2915,6 +2927,172 @@ a,
                     }
                   }
                 }, 150);
+                // Trigger Webflow to rebuild SplitText for hero_heading after content injection
+                // This ensures SplitText properly splits text in elements with IDs that were empty on init
+                // Wait for Webflow to be ready, then rebuild multiple times to ensure it works
+                function rebuildWebflowSplitText() {
+                  const heroHeading = document.querySelector(".hero_heading");
+                  if (!heroHeading) return;
+
+                  // Check if elements with IDs have content
+                  const introTitle =
+                    document.getElementById("introduction-title");
+                  const introValidity = document.getElementById(
+                    "introduction-validity"
+                  );
+
+                  if (
+                    !introTitle?.textContent?.trim() &&
+                    !introValidity?.textContent?.trim()
+                  ) {
+                    // Content not ready yet, try again later
+                    setTimeout(rebuildWebflowSplitText, 100);
+                    return;
+                  }
+
+                  if (window.Webflow && window.Webflow.require) {
+                    try {
+                      const ix3 = window.Webflow.require("ix3");
+                      if (ix3 && ix3.ready) {
+                        ix3
+                          .ready()
+                          .then(() => {
+                            const instance = ix3.getInstance();
+                            if (instance) {
+                              // Method 1: Try scheduleRebuild if available
+                              if (
+                                typeof instance.scheduleRebuild === "function"
+                              ) {
+                                instance.scheduleRebuild(heroHeading);
+                              }
+                              // Method 2: Try scheduleRebuildForElement for nested elements
+                              if (
+                                typeof instance.scheduleRebuildForElement ===
+                                "function"
+                              ) {
+                                if (introTitle)
+                                  instance.scheduleRebuildForElement(
+                                    introTitle
+                                  );
+                                if (introValidity)
+                                  instance.scheduleRebuildForElement(
+                                    introValidity
+                                  );
+                                instance.scheduleRebuildForElement(heroHeading);
+                              }
+
+                              // Force a refresh after a delay to ensure SplitText is reapplied
+                              setTimeout(() => {
+                                // Access timeline t-ca5bcb7e which has the SplitText animation for hero_heading
+                                const timelineDef =
+                                  instance.timelineDefs?.get("t-ca5bcb7e");
+
+                                if (timelineDef && timelineDef.actions) {
+                                  // Find the action that targets .hero_heading with SplitText
+                                  const heroAction = timelineDef.actions.find(
+                                    (action) =>
+                                      action.targets &&
+                                      action.targets.some(
+                                        (target) =>
+                                          Array.isArray(target) &&
+                                          target[0] === "wf:selector" &&
+                                          target[1] === ".hero_heading"
+                                      ) &&
+                                      action.splitText &&
+                                      action.splitText.type === "words"
+                                  );
+
+                                  if (heroAction && heroAction.splitText) {
+                                    // Force rebuild of this specific timeline
+                                    if (
+                                      typeof instance.scheduleRebuild ===
+                                      "function"
+                                    ) {
+                                      instance.scheduleRebuild(timelineDef);
+                                    }
+
+                                    // Also try to rebuild the interaction that uses this timeline
+                                    // Find interaction i-d68c3e9b which uses timeline t-ca5bcb7e
+                                    const interaction =
+                                      instance.interactions?.get("i-d68c3e9b");
+                                    if (
+                                      interaction &&
+                                      typeof instance.scheduleRebuild ===
+                                        "function"
+                                    ) {
+                                      instance.scheduleRebuild(interaction);
+                                    }
+                                  }
+                                }
+
+                                // Also rebuild mobile timeline t-751b1696
+                                const mobileTimelineDef =
+                                  instance.timelineDefs?.get("t-751b1696");
+                                if (
+                                  mobileTimelineDef &&
+                                  typeof instance.scheduleRebuild === "function"
+                                ) {
+                                  instance.scheduleRebuild(mobileTimelineDef);
+                                }
+
+                                // Force a window resize event which often triggers Webflow to rebuild animations
+                                window.dispatchEvent(new Event("resize"));
+
+                                // Wait a bit then check if SplitText was applied
+                                setTimeout(() => {
+                                  const wordWrappers =
+                                    heroHeading.querySelectorAll(".w-word");
+                                  if (wordWrappers.length === 0) {
+                                    console.warn(
+                                      "SplitText still not applied after rebuild attempt"
+                                    );
+                                    // If still not working, try one more time with a longer delay
+                                    setTimeout(() => {
+                                      if (
+                                        typeof instance.scheduleRebuild ===
+                                        "function"
+                                      ) {
+                                        instance.scheduleRebuild(heroHeading);
+                                        instance.scheduleRebuild(timelineDef);
+                                      }
+                                    }, 500);
+                                  }
+                                }, 200);
+
+                                // Trigger a custom event to notify that rebuild is complete
+                                window.dispatchEvent(
+                                  new CustomEvent("__wf_splittext_rebuilt")
+                                );
+                              }, 500); // Increased delay to ensure Webflow is ready
+                            }
+                          })
+                          .catch((e) => {
+                            console.debug("Webflow ix3 ready error:", e);
+                            // Retry after delay
+                            setTimeout(rebuildWebflowSplitText, 200);
+                          });
+                      } else {
+                        // Wait for Webflow to load
+                        setTimeout(rebuildWebflowSplitText, 100);
+                      }
+                    } catch (e) {
+                      console.debug("Webflow API error:", e);
+                      // Retry after delay
+                      setTimeout(rebuildWebflowSplitText, 200);
+                    }
+                  } else {
+                    // Webflow not loaded yet, wait
+                    setTimeout(rebuildWebflowSplitText, 100);
+                  }
+                }
+
+                // Also listen for Webflow ready event as a backup
+                window.addEventListener("__wf_ix3_ready", () => {
+                  setTimeout(rebuildWebflowSplitText, 100);
+                });
+
+                // Start the rebuild process
+                setTimeout(rebuildWebflowSplitText, 200);
               });
             });
           });
@@ -2923,6 +3101,233 @@ a,
           setTimeout(() => {
             ScrollTrigger.refresh();
           }, 60);
+        }
+      });
+
+      // Custom GSAP scroll animation for hero elements with IDs
+      // This bypasses Webflow's SplitText issue by animating elements directly
+      window.addEventListener("flash-template-data-injected", () => {
+        // Function to setup scroll fade-out animation
+        const setupScrollFadeOut = () => {
+          const heroWrap = document.querySelector(".hero-wrap");
+          const introTitle = document.getElementById("introduction-title");
+          const introValidity = document.getElementById(
+            "introduction-validity"
+          );
+
+          if (!heroWrap || (!introTitle && !introValidity)) {
+            return;
+          }
+
+          // Check if elements have content
+          const hasTitleContent = introTitle?.textContent?.trim();
+          const hasValidityContent = introValidity?.textContent?.trim();
+
+          if (!hasTitleContent && !hasValidityContent) {
+            return;
+          }
+
+          // Clean up any existing ScrollTriggers for these elements
+          ScrollTrigger.getAll().forEach((trigger) => {
+            if (
+              trigger.vars?.trigger === introTitle ||
+              trigger.vars?.trigger === introValidity
+            ) {
+              trigger.kill();
+              return;
+            }
+
+            // Check if animation targets include our elements
+            if (trigger.vars?.animation) {
+              try {
+                const animation = trigger.vars.animation;
+                // Check if targets is a function or an array
+                const targets =
+                  typeof animation.targets === "function"
+                    ? animation.targets()
+                    : animation.targets || [];
+
+                // Convert to array if needed
+                const targetsArray = Array.isArray(targets)
+                  ? targets
+                  : [targets];
+
+                if (
+                  targetsArray.includes(introTitle) ||
+                  targetsArray.includes(introValidity)
+                ) {
+                  trigger.kill();
+                }
+              } catch (e) {
+                // Ignore errors when checking animation targets
+                console.debug("Error checking animation targets:", e);
+              }
+            }
+          });
+
+          // Check if we're on desktop (matching Webflow's conditionalPlayback for medium/small/tiny breakpoints)
+          const isDesktop = window.innerWidth >= 992;
+
+          // Only create animation on desktop (Webflow disables on medium/small/tiny)
+          if (!isDesktop) {
+            return;
+          }
+
+          // Create timeline for fade-out animation
+          // Match Webflow's exact scroll trigger settings
+          const fadeOutTL = gsap.timeline({
+            scrollTrigger: {
+              trigger: heroWrap,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 0.8, // Matches Webflow's scrub value
+              invalidateOnRefresh: true,
+              // Ensure it refreshes on resize
+              onUpdate: (self) => {
+                // Debug: log scroll progress if needed
+                // console.log("Scroll progress:", self.progress);
+              },
+            },
+          });
+
+          // Animate only elements with IDs inside hero_heading
+          // Note: "Proposta válida até —" is handled by Webflow's SplitText animation on .hero_heading
+          // We only need to animate the ID elements that Webflow can't animate
+          const elementsToAnimate = [];
+
+          // Add only elements with IDs that need custom animation
+          // "Proposta válida até —" is animated by Webflow's SplitText, so don't include it
+          if (introTitle && hasTitleContent) {
+            elementsToAnimate.push(introTitle);
+          }
+          if (introValidity && hasValidityContent) {
+            elementsToAnimate.push(introValidity);
+          }
+
+          if (elementsToAnimate.length > 0) {
+            // Ensure all elements start at visible state and prevent Webflow from animating them
+            elementsToAnimate.forEach((el) => {
+              // Kill ALL existing GSAP tweens and clear properties
+              gsap.killTweensOf(el);
+
+              // Clear all GSAP properties first
+              gsap.set(el, { clearProps: "all" });
+
+              // Remove any inline styles that might block animations
+              el.style.removeProperty("opacity");
+              el.style.removeProperty("visibility");
+              el.style.removeProperty("transform");
+              el.style.removeProperty("y");
+
+              // Remove any Webflow classes or attributes that might interfere
+              el.classList.remove(
+                "w-split-word",
+                "w-split-line",
+                "w-split-char"
+              );
+
+              // Set initial state - ensure elements are visible and at correct position
+              gsap.set(el, {
+                opacity: 1,
+                visibility: "visible",
+                y: 0,
+                clearProps: "", // Don't clear after setting
+              });
+
+              // Ensure element can be transformed
+              el.style.willChange = "opacity, transform";
+            });
+
+            // Create animation that matches Webflow's exact scroll behavior
+            // Separate opacity and transform animations so opacity can complete faster
+            // Opacity fades out quickly (0.29 duration) while transform continues (0.9 duration)
+            fadeOutTL.fromTo(
+              elementsToAnimate,
+              {
+                // Start state - elements visible and at original position
+                opacity: 1,
+              },
+              {
+                // Opacity fades out quickly to match Webflow's speed
+                opacity: 0,
+                duration: 0.29, // Faster opacity fade to match Webflow
+                ease: "none", // Linear - matches Webflow's ease: 0
+                immediateRender: false,
+              },
+              0.02 // Start position
+            );
+
+            // Transform animation runs in parallel but with longer duration
+            fadeOutTL.fromTo(
+              elementsToAnimate,
+              {
+                y: 0,
+              },
+              {
+                // Transform continues moving up over longer duration
+                y: "-5rem",
+                duration: 0.9, // Longer duration for transform
+                ease: "none",
+                immediateRender: false,
+              },
+              0.02 // Start at same position as opacity
+            );
+
+            // Verify the animation was created correctly
+            const st = fadeOutTL.scrollTrigger;
+            if (st) {
+              // Force an update to ensure it's active
+              st.refresh();
+            }
+          }
+
+          // Refresh ScrollTrigger to ensure it recalculates positions
+          ScrollTrigger.refresh();
+        };
+
+        // Wait for reveal animations to complete before setting up scroll animation
+        // Use multiple strategies to ensure timing is correct
+        const heroHeading = document.querySelector(
+          ".hero_heading[data-reveal-group]"
+        );
+        if (heroHeading) {
+          // Wait a bit for reveal animation to start
+          setTimeout(() => {
+            // Check if reveal animation has completed by checking if elements are visible
+            const checkAndSetup = () => {
+              const introTitle = document.getElementById("introduction-title");
+              const introValidity = document.getElementById(
+                "introduction-validity"
+              );
+
+              // Check if elements are visible (reveal animation completed)
+              const titleVisible =
+                introTitle &&
+                window.getComputedStyle(introTitle).opacity !== "0" &&
+                window.getComputedStyle(introTitle).visibility !== "hidden";
+              const validityVisible =
+                introValidity &&
+                window.getComputedStyle(introValidity).opacity !== "0" &&
+                window.getComputedStyle(introValidity).visibility !== "hidden";
+
+              if (
+                (introTitle && titleVisible) ||
+                (introValidity && validityVisible)
+              ) {
+                // Elements are visible, reveal animation likely complete
+                // Wait a bit more to ensure all cleanup is done
+                setTimeout(setupScrollFadeOut, 500);
+              } else {
+                // Check again
+                setTimeout(checkAndSetup, 200);
+              }
+            };
+
+            checkAndSetup();
+          }, 1000);
+        } else {
+          // Fallback: wait fixed time
+          setTimeout(setupScrollFadeOut, 2500);
         }
       });
     </script>
