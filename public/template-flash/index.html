@@ -2916,14 +2916,6 @@ a,
             }
           });
 
-          // Check if we're on desktop (matching Webflow's conditionalPlayback for medium/small/tiny breakpoints)
-          const isDesktop = window.innerWidth >= 992;
-
-          // Only create animation on desktop (Webflow disables on medium/small/tiny)
-          if (!isDesktop) {
-            return;
-          }
-
           // Create timeline for fade-out animation
           // Match Webflow's exact scroll trigger settings
           const fadeOutTL = gsap.timeline({
