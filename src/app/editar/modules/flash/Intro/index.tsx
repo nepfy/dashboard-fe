@@ -45,7 +45,7 @@ export default function FlashIntro({
             className="text-[#E6E6E6]"
           /> */}
           <div
-            className="relative z-5 h-auto w-auto cursor-pointer py-2"
+            className="relative z-10 h-auto w-auto cursor-pointer py-2"
             onClick={(e) => {
               e.stopPropagation();
               setIsButtonModalOpen(true);
@@ -139,6 +139,7 @@ export default function FlashIntro({
         )}
       </div>
       <div
+        className="pointer-events-none"
         style={{
           width: "120%",
           position: "absolute",

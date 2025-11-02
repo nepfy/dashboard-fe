@@ -1,10 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FormErrors } from "./types";
 import { validateSection } from "../../helpers/validation";
 import { TEMPLATES } from "./constants";
 import { useEditor } from "../../contexts/EditorContext";
 
-export const usePersonalizeForm = () => {
+interface InitialValues {
+  selectedColor: string;
+  originalPageUrl: string;
+  pagePassword: string;
+}
+
+export const usePersonalizeForm = (isModalOpen: boolean) => {
   const { projectData, updatePersonalization } = useEditor();
   const [errors, setErrors] = useState<FormErrors>({});
   const [originalPageUrl, setOriginalPageUrl] = useState(
@@ -16,6 +22,7 @@ export const usePersonalizeForm = () => {
   const [selectedColor, setSelectedColor] = useState(
     projectData?.mainColor || TEMPLATES[0].colorsList[0]
   );
+  const initialValuesRef = useRef<InitialValues | null>(null);
 
   // Update local state when projectData changes
   useEffect(() => {
@@ -25,6 +32,20 @@ export const usePersonalizeForm = () => {
       setSelectedColor(projectData.mainColor || TEMPLATES[0].colorsList[0]);
     }
   }, [projectData]);
+
+  // Track initial values when modal opens
+  useEffect(() => {
+    if (isModalOpen) {
+      initialValuesRef.current = {
+        selectedColor: projectData?.mainColor || TEMPLATES[0].colorsList[0],
+        originalPageUrl: projectData?.projectUrl || "",
+        pagePassword: projectData?.pagePassword || "",
+      };
+    } else {
+      // Reset initial values when modal closes
+      initialValuesRef.current = null;
+    }
+  }, [isModalOpen, projectData]);
 
   const clearError = (field: keyof FormErrors) => {
     if (errors[field]) {
@@ -66,12 +87,31 @@ export const usePersonalizeForm = () => {
     setSelectedColor(projectData?.mainColor || TEMPLATES[0].colorsList[0]);
     setOriginalPageUrl(projectData?.projectUrl || "");
     setPagePassword(projectData?.pagePassword || "");
+    initialValuesRef.current = null;
   };
 
   const isFormValid =
     originalPageUrl.length >= 3 &&
     pagePassword.length >= 6 &&
     /^#[0-9A-Fa-f]{6}$/.test(selectedColor);
+
+  // Check if there are changes from initial values
+  // Use useEffect to update hasChanges state when values change
+  const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    if (!initialValuesRef.current) {
+      setHasChanges(false);
+      return;
+    }
+
+    const changed =
+      selectedColor !== initialValuesRef.current.selectedColor ||
+      originalPageUrl !== initialValuesRef.current.originalPageUrl ||
+      pagePassword !== initialValuesRef.current.pagePassword;
+
+    setHasChanges(changed);
+  }, [selectedColor, originalPageUrl, pagePassword]);
 
   return {
     projectData,
@@ -87,5 +127,6 @@ export const usePersonalizeForm = () => {
     handleClose,
     updatePersonalization,
     isFormValid,
+    hasChanges,
   };
 };

@@ -26,7 +26,8 @@ export default function Personalize({
     handleSave,
     handleClose,
     isFormValid,
-  } = usePersonalizeForm();
+    hasChanges,
+  } = usePersonalizeForm(isModalOpen);
 
   return (
     <div className="relative">
@@ -52,7 +53,7 @@ export default function Personalize({
           handleSave();
           setIsModalOpen(false);
         }}
-        disabled={!isFormValid}
+        disabled={!isFormValid || !hasChanges}
         selectedColor={selectedColor}
         onColorSelect={setSelectedColor}
         userName={userData?.userName || ""}

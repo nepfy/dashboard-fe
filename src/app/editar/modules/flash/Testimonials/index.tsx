@@ -76,9 +76,9 @@ export default function FlashTestimonials({
   };
 
   return (
-    <div className="relative h-[900px] overflow-hidden bg-black">
+    <div className="relative overflow-hidden bg-black">
       {!hideSection && (
-        <div className="relative z-10 mx-auto mt-7 mb-23 max-w-[1440px] px-6 lg:px-60 lg:pt-22 xl:pb-36">
+        <div className="relative z-10 mx-auto mt-7 mb-23 h-[900px] max-w-[1440px] px-6 lg:px-60 lg:pt-22 xl:pb-36">
           <div className="mb-12 flex items-center gap-2 pl-0 xl:pl-7">
             <div className="bg-white-neutral-light-100 h-3 w-3 rounded-full" />
             <p className="text-sm font-semibold text-white">Depoimentos</p>

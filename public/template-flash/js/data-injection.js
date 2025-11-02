@@ -320,7 +320,7 @@
   }
 
   // Render expertise topics list
-  function renderExpertiseTopics(containerId, topics) {
+  function renderExpertiseTopics(containerId, topics, hideIcon) {
     const container = document.getElementById(containerId);
     if (!container || !topics || !Array.isArray(topics)) return;
 
@@ -340,15 +340,15 @@
     visibleTopics.forEach((topic) => {
       const clone = template.cloneNode(true);
 
-      // Update icon (if provided)
-      if (topic.icon) {
+      // Update icon (if provided and not globally hidden)
+      if (!hideIcon && topic.icon) {
         const iconContainer = clone.querySelector(".expertise_icon");
         if (iconContainer) {
           // Get SVG markup from icon name
           const iconSvg = getIconSvg(topic.icon);
           iconContainer.innerHTML = iconSvg;
         }
-      } else if (topic.hideIcon) {
+      } else if (hideIcon) {
         const iconContainer = clone.querySelector(".expertise_icon");
         if (iconContainer) {
           iconContainer.style.display = "none";
@@ -1344,7 +1344,11 @@
     // Expertise
     if (pd.expertise) {
       updateTitleWithWordSpans("expertise-title", pd.expertise.title);
-      renderExpertiseTopics("expertise-topics-list", pd.expertise.topics);
+      renderExpertiseTopics(
+        "expertise-topics-list",
+        pd.expertise.topics,
+        pd.expertise.hideIcon
+      );
       toggleSectionVisibility(
         ".section_expertise",
         pd.expertise.hideSection === true
