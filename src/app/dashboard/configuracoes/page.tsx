@@ -7,7 +7,7 @@ import PersonalData from "./_components/_PersonalData";
 import CompanyData from "./_components/_CompanyData";
 import ChangePassword from "./_components/_ChangePassword";
 import { useUserAccount } from "#/hooks/useUserAccount";
-import { Subscription } from "#/modules/subscription";
+// import { Subscription } from "#/modules/subscription";
 
 export default function Configurations() {
   const { isLoading } = useUserAccount();
@@ -29,12 +29,7 @@ export default function Configurations() {
     hasChanges: boolean;
   }>(null);
 
-  const tabs = [
-    "Dados pessoais",
-    "Dados empresariais",
-    "Segurança",
-    "Assinatura",
-  ];
+  const tabs = ["Dados pessoais", "Dados empresariais", "Segurança"];
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -145,11 +140,11 @@ export default function Configurations() {
           <ChangePassword />
         </div>
       )}
-      {activeTab === "Assinatura" && (
+      {/* {activeTab === "Assinatura" && (
         <div className="p-7">
           <Subscription />
         </div>
-      )}
+      )} */}
     </main>
   );
 }

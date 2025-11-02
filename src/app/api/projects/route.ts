@@ -410,15 +410,83 @@ export async function POST(request: Request) {
       );
     }
 
-    // Project duplication with template-specific data is not yet implemented
-    // TODO: Implement template-specific data duplication for flash/prime/new templates
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Duplicação de projetos não está disponível no momento. Esta funcionalidade será implementada em breve.",
-      },
-      { status: 501 } // 501 Not Implemented
+    // Fetch source projects
+    const sourceProjects = await db
+      .select()
+      .from(projectsTable)
+      .where(
+        and(
+          inArray(projectsTable.id, projectIds),
+          eq(projectsTable.personId, userId)
+        )
+      );
+
+    if (sourceProjects.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Nenhum projeto encontrado para duplicar",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Create duplicate projects
+    const duplicatedProjects = await Promise.all(
+      sourceProjects.map(async (sourceProject) => {
+        // Deep clone proposalData to avoid reference sharing
+        const clonedProposalData = sourceProject.proposalData
+          ? (JSON.parse(
+              JSON.stringify(sourceProject.proposalData)
+            ) as typeof sourceProject.proposalData)
+          : null;
+
+        // Clone buttonConfig
+        const clonedButtonConfig = sourceProject.buttonConfig
+          ? (JSON.parse(
+              JSON.stringify(sourceProject.buttonConfig)
+            ) as typeof sourceProject.buttonConfig)
+          : null;
+
+        // Create duplicate with reset fields
+        const [duplicatedProject] = await db
+          .insert(projectsTable)
+          .values({
+            personId: sourceProject.personId,
+            clientName: sourceProject.clientName,
+            projectName: sourceProject.projectName,
+            templateType: sourceProject.templateType,
+            mainColor: sourceProject.mainColor,
+            projectValidUntil: sourceProject.projectValidUntil,
+            isProposalGenerated: sourceProject.isProposalGenerated,
+            proposalData: clonedProposalData as unknown as Record<
+              string,
+              unknown
+            >,
+            buttonConfig: clonedButtonConfig as unknown as Record<
+              string,
+              unknown
+            >,
+            // Reset fields for draft status
+            projectStatus: "draft",
+            projectSentDate: null,
+            projectVisualizationDate: null,
+            projectUrl: null,
+            pagePassword: null,
+            isPublished: false,
+          })
+          .returning();
+
+        return duplicatedProject;
+      })
     );
+
+    return NextResponse.json({
+      success: true,
+      message: `${duplicatedProjects.length} projeto(s) duplicado(s) com sucesso`,
+      data: duplicatedProjects,
+      duplicatedCount: duplicatedProjects.length,
+    });
   } catch (error) {
     console.error("Error duplicating projects:", error);
     return NextResponse.json(

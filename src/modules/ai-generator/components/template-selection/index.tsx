@@ -11,6 +11,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { Template, TemplateCard } from "./partials/TemplateCard";
 import { ComingSoonCard } from "./partials/ComingSoonCard";
 import { MobileNavigation } from "./partials/MobileNavigation";
+import Modal from "#/components/Modal";
 
 interface TemplateSelectionProps {
   templates: Template[];
@@ -30,6 +31,8 @@ export default function TemplateSelection({
   );
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef<Slider>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const getSelectedColor = (template: Template) => {
     return (
@@ -59,7 +62,8 @@ export default function TemplateSelection({
 
   const handlePreviewTemplate = (templateName: string) => {
     if (templateName === "flash") {
-      window.open("/flash", "_blank", "noopener,noreferrer");
+      setModalOpen(true);
+      return;
     }
 
     if (templateName === "prime") {
@@ -96,8 +100,8 @@ export default function TemplateSelection({
   };
 
   return (
-    <div className="w-full lg:h-full lg:flex justify-center items-start xl:items-start lg:px-7 py-8">
-      <div className="hidden xl:flex flex-wrap items-end xl:justify-start gap-4 max-w-[1100px] lg:mt-0 xl:mt-0">
+    <div className="w-full items-start justify-center py-8 lg:flex lg:h-full lg:px-7 xl:items-start">
+      <div className="hidden max-w-[1100px] flex-wrap items-end gap-4 lg:mt-0 xl:mt-0 xl:flex xl:justify-start">
         {templates.map((template) => (
           <TemplateCard
             key={template.title}
@@ -117,11 +121,11 @@ export default function TemplateSelection({
       </div>
 
       {/* Mobile View */}
-      <div className="mb-8 w-full h-full xl:hidden">
+      <div className="mb-8 h-full w-full xl:hidden">
         <Slider ref={sliderRef} {...sliderSettings}>
           {templates.map((template) => (
             <div key={template.title} className="px-4">
-              <div className="mx-auto flex justify-center items-center">
+              <div className="mx-auto flex items-center justify-center">
                 <TemplateCard
                   template={template}
                   selectedColor={getSelectedColor(template)}
@@ -167,6 +171,21 @@ export default function TemplateSelection({
           height: 100%;
         }
       `}</style>
+
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        showCloseButton={false}
+        footer={false}
+        width="100%"
+      >
+        <iframe
+          ref={iframeRef}
+          src="/template-flash-visualize/index.html"
+          style={{ width: "100%", height: "100vh", border: "none" }}
+          title="Flash Template"
+        />
+      </Modal>
     </div>
   );
 }

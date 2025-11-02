@@ -1,7 +1,7 @@
 export function ValidUntilIcon() {
   return (
     <svg
-      className="w-[280px] md:w-[362px] h-auto"
+      className="h-auto w-[280px] md:w-[362px]"
       viewBox="0 0 362 155"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -25,7 +25,7 @@ export function ValidUntilIcon() {
             rx="20"
             fill="url(#paint1_linear_266_4576)"
             fillOpacity="0.9"
-            shape-rendering="crispEdges"
+            shapeRendering="crispEdges"
           />
         </g>
         <g filter="url(#filter1_f_266_4576)">

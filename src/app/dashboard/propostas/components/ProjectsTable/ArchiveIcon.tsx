@@ -25,7 +25,7 @@ export default function ArchiveIcon() {
           rx="15.75"
           fill="url(#paint1_linear_28388_28669)"
           fillOpacity="0.9"
-          shape-rendering="crispEdges"
+          shapeRendering="crispEdges"
         />
       </g>
       <path

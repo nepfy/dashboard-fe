@@ -305,7 +305,7 @@ export default function RowEditMenu({
         <Portal>
           <div
             ref={menuRef}
-            className="fixed shadow-lg border border-white-neutral-light-300 rounded-[12px] bg-white-neutral-light-100 z-50 min-w-[230px] sm:min-w-[280px]"
+            className="border-white-neutral-light-300 bg-white-neutral-light-100 fixed z-50 min-w-[230px] rounded-[12px] border shadow-lg sm:min-w-[280px]"
             style={{
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
@@ -321,20 +321,20 @@ export default function RowEditMenu({
               <div
                 className={`${
                   showStatusPanel
-                    ? "opacity-0 pointer-events-none"
+                    ? "pointer-events-none opacity-0"
                     : "opacity-100"
                 } transition-opacity duration-200`}
               >
-                <p className="font-medium text-white-neutral-light-900 px-4 py-4">
+                <p className="text-white-neutral-light-900 px-4 py-4 font-medium">
                   Opções
                 </p>
-                <div className="flex flex-col gap-1 cursor-pointer px-2">
+                <div className="flex cursor-pointer flex-col gap-1 px-2">
                   <button
                     onClick={() => handleMenuItemClick("update-status")}
                     disabled={isMenuDisabled}
-                    className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                    className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
                       isMenuDisabled
-                        ? "opacity-50 cursor-not-allowed"
+                        ? "cursor-not-allowed opacity-50"
                         : "hover:bg-white-neutral-light-300 cursor-pointer"
                     }`}
                   >
@@ -347,9 +347,9 @@ export default function RowEditMenu({
                   <button
                     onClick={() => handleMenuItemClick("duplicate")}
                     disabled={isMenuDisabled}
-                    className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                    className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
                       isMenuDisabled
-                        ? "opacity-50 cursor-not-allowed"
+                        ? "cursor-not-allowed opacity-50"
                         : "hover:bg-white-neutral-light-300 cursor-pointer"
                     }`}
                   >
@@ -360,14 +360,14 @@ export default function RowEditMenu({
                   <button
                     onClick={() => handleMenuItemClick("copy-link")}
                     disabled={isMenuDisabled}
-                    className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                    className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
                       isMenuDisabled
-                        ? "opacity-50 cursor-not-allowed"
+                        ? "cursor-not-allowed opacity-50"
                         : "hover:bg-white-neutral-light-300 cursor-pointer"
                     }`}
                   >
                     {isCopyingLink ? (
-                      <LoaderCircle className="w-4 h-4 animate-spin" />
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
                       <AnchorLinkIcon width="16" height="16" />
                     )}
@@ -376,10 +376,10 @@ export default function RowEditMenu({
 
                   {copyLinkMessage && (
                     <div
-                      className={`text-xs px-2 py-1 mx-2 rounded ${
+                      className={`mx-2 rounded px-2 py-1 text-xs ${
                         copyLinkMessage.includes("sucesso")
-                          ? "text-green-700 bg-green-100"
-                          : "text-red-700 bg-red-100"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
                       }`}
                     >
                       {copyLinkMessage}
@@ -390,9 +390,9 @@ export default function RowEditMenu({
                     <button
                       onClick={() => handleMenuItemClick("edit")}
                       disabled={isMenuDisabled}
-                      className={`text-left py-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 transition-colors ${
+                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
                         isMenuDisabled
-                          ? "opacity-50 cursor-not-allowed"
+                          ? "cursor-not-allowed opacity-50"
                           : "hover:bg-white-neutral-light-300 cursor-pointer"
                       }`}
                     >
@@ -405,9 +405,9 @@ export default function RowEditMenu({
                     <button
                       onClick={() => handleMenuItemClick("archive")}
                       disabled={isMenuDisabled}
-                      className={`text-left pb-4 pt-3 px-2 rounded-lg text-sm font-medium text-white-neutral-light-900 flex items-center gap-1 my-1 mb-2 transition-colors ${
+                      className={`text-white-neutral-light-900 my-1 mb-2 flex items-center gap-1 rounded-lg px-2 pt-3 pb-4 text-left text-sm font-medium transition-colors ${
                         isMenuDisabled
-                          ? "opacity-50 cursor-not-allowed"
+                          ? "cursor-not-allowed opacity-50"
                           : "hover:bg-white-neutral-light-300 cursor-pointer"
                       }`}
                     >
@@ -420,26 +420,26 @@ export default function RowEditMenu({
 
               {/* Status Update Panel */}
               <div
-                className={`absolute top-0 h-[350px] w-full bg-white-neutral-light-100 flex flex-col justify-between rounded-[12px] transition-opacity duration-200 ${
+                className={`bg-white-neutral-light-100 absolute top-0 flex h-[350px] w-full flex-col justify-between rounded-[12px] transition-opacity duration-200 ${
                   showStatusPanel
-                    ? "opacity-100 pointer-events-auto"
-                    : "opacity-0 pointer-events-none"
+                    ? "pointer-events-auto opacity-100"
+                    : "pointer-events-none opacity-0"
                 }`}
               >
                 <div className="flex-1">
-                  <p className="font-medium text-white-neutral-light-900 p-3 border-b border-white-neutral-light-300">
+                  <p className="text-white-neutral-light-900 border-white-neutral-light-300 border-b p-3 font-medium">
                     {viewMode === "archived"
                       ? "Restaurar Status"
                       : "Atualizar Status"}
                   </p>
 
-                  <div className="px-3 py-4 space-y-3 max-h-[240px] overflow-y-auto">
+                  <div className="max-h-[240px] space-y-3 overflow-y-auto px-3 py-4">
                     {getStatusOptions().map((option) => (
                       <label
                         key={option.value}
-                        className={`flex items-center space-x-3 p-2 rounded-lg transition-colors ${
+                        className={`flex items-center space-x-3 rounded-lg p-2 transition-colors ${
                           isProcessing
-                            ? "opacity-50 cursor-not-allowed"
+                            ? "cursor-not-allowed opacity-50"
                             : "hover:bg-white-neutral-light-200 cursor-pointer"
                         }`}
                       >
@@ -452,7 +452,7 @@ export default function RowEditMenu({
                             setSelectedStatus(e.target.value as ProjectStatus)
                           }
                           disabled={isProcessing}
-                          className="w-4 h-4 text-primary-light-400 border-white-neutral-light-300"
+                          className="text-primary-light-400 border-white-neutral-light-300 h-4 w-4"
                         />
                         <div className="flex items-center gap-2">
                           {getStatusBadge(option.value)}
@@ -462,14 +462,14 @@ export default function RowEditMenu({
                   </div>
                 </div>
 
-                <div className="p-3 border-t border-white-neutral-light-300 flex gap-2">
+                <div className="border-white-neutral-light-300 flex gap-2 border-t p-3">
                   <button
                     onClick={handleStatusSave}
                     disabled={isProcessing || !hasStatusChanged}
-                    className={`flex-1 h-[36px] text-sm font-medium rounded-[var(--radius-s)] transition-colors ${
+                    className={`h-[36px] flex-1 rounded-[var(--radius-s)] text-sm font-medium transition-colors ${
                       isProcessing || !hasStatusChanged
-                        ? "bg-gray-400 cursor-not-allowed opacity-50"
-                        : "bg-primary-light-400 hover:bg-primary-light-500 cursor-pointer button-inner-inverse text-white-neutral-light-100"
+                        ? "cursor-not-allowed bg-gray-400 opacity-50"
+                        : "bg-primary-light-400 hover:bg-primary-light-500 button-inner-inverse text-white-neutral-light-100 cursor-pointer"
                     }`}
                   >
                     {isProcessing ? "Salvando..." : "Salvar"}
@@ -478,9 +478,9 @@ export default function RowEditMenu({
                   <button
                     onClick={handleStatusCancel}
                     disabled={isProcessing}
-                    className={`flex-1 h-[36px] text-sm font-medium border rounded-[var(--radius-s)] border-white-neutral-light-300 button-inner transition-colors ${
+                    className={`border-white-neutral-light-300 button-inner h-[36px] flex-1 rounded-[var(--radius-s)] border text-sm font-medium transition-colors ${
                       isProcessing
-                        ? "bg-white-neutral-light-100 opacity-50 cursor-not-allowed"
+                        ? "bg-white-neutral-light-100 cursor-not-allowed opacity-50"
                         : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200 cursor-pointer"
                     }`}
                   >
@@ -511,7 +511,7 @@ export default function RowEditMenu({
           <ArchiveIcon />
         </div>
 
-        <div className="p-6 mb-2">
+        <div className="mb-2 p-6">
           <p className="text-white-neutral-light-500 text-sm leading-relaxed">
             {viewMode === "archived" ? (
               <>
@@ -528,20 +528,20 @@ export default function RowEditMenu({
           </p>
         </div>
 
-        <div className="flex justify-start space-x-3 p-6 border-t border-t-white-neutral-light-300">
+        <div className="border-t-white-neutral-light-300 flex justify-start space-x-3 border-t p-6">
           <button
             type="button"
             onClick={handleArchiveConfirm}
             disabled={isArchiving}
-            className={`px-4 py-2 text-sm font-medium text-white rounded-xs ${
+            className={`rounded-xs px-4 py-2 text-sm font-medium text-white ${
               isArchiving
                 ? "bg-white-neutral-light-300 cursor-not-allowed"
-                : "bg-primary-light-500 hover:bg-primary-light-600 cursor-pointer button-inner-inverse"
+                : "bg-primary-light-500 hover:bg-primary-light-600 button-inner-inverse cursor-pointer"
             }`}
           >
             {isArchiving ? (
               <div className="flex items-center">
-                <LoaderCircle className="w-4 h-4 animate-spin mr-2" />
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                 {viewMode === "archived" ? "Restaurando..." : "Arquivando..."}
               </div>
             ) : (
@@ -552,10 +552,10 @@ export default function RowEditMenu({
             type="button"
             onClick={handleArchiveCancel}
             disabled={isArchiving}
-            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
+            className={`rounded-xs border px-4 py-2 text-sm font-medium ${
               isArchiving
-                ? "text-white border-white-neutral-light-300 cursor-not-allowed"
-                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+                ? "border-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
+                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner cursor-pointer"
             }`}
           >
             Cancelar
@@ -577,26 +577,26 @@ export default function RowEditMenu({
           <DuplicateIcon />
         </div>
 
-        <p className="text-white-neutral-light-500 text-sm px-6 py-2 sm:p-6">
+        <p className="text-white-neutral-light-500 px-6 py-2 text-sm sm:p-6">
           Tem certeza que deseja duplicar esta proposta? Uma cópia será criada
           imediatamente e você poderá editar todas as informações conforme
           necessário.
         </p>
 
-        <div className="flex justify-start space-x-3 p-6 border-t border-t-white-neutral-light-300">
+        <div className="border-t-white-neutral-light-300 flex justify-start space-x-3 border-t p-6">
           <button
             type="button"
             onClick={handleDuplicateConfirm}
             disabled={isDuplicating}
-            className={`px-4 py-2 text-sm font-medium text-white rounded-xs ${
+            className={`rounded-xs px-4 py-2 text-sm font-medium text-white ${
               isDuplicating
                 ? "bg-white-neutral-light-300 cursor-not-allowed"
-                : "bg-primary-light-500 hover:bg-primary-light-600 cursor-pointer button-inner-inverse"
+                : "bg-primary-light-500 hover:bg-primary-light-600 button-inner-inverse cursor-pointer"
             }`}
           >
             {isDuplicating ? (
               <div className="flex items-center">
-                <LoaderCircle className="w-4 h-4 animate-spin mr-2" />
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                 Duplicando...
               </div>
             ) : (
@@ -607,10 +607,10 @@ export default function RowEditMenu({
             type="button"
             onClick={handleDuplicateCancel}
             disabled={isDuplicating}
-            className={`px-4 py-2 text-sm font-medium border rounded-xs ${
+            className={`rounded-xs border px-4 py-2 text-sm font-medium ${
               isDuplicating
-                ? "text-white border-white-neutral-light-300 cursor-not-allowed"
-                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 cursor-pointer button-inner"
+                ? "border-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
+                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner cursor-pointer"
             }`}
           >
             Cancelar
