@@ -13,33 +13,11 @@ export default function FlashResults({
 }: ResultSection) {
   const { updateResults, updateResultItem, reorderResultItems } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-  const visibleResults = items?.filter(
-    (result) => !result.hidePhoto && result.photo
-  );
-  const resultCount = visibleResults?.length;
-
-  const getPhotoDimensions = () => {
-    // Desktop/Tablet dimensions
-    const desktopDimensions = {
-      2: { width: 500, height: 410 },
-      3: { width: 430, height: 340 },
-      4: { width: 500, height: 410 },
-      5: { width: 430, height: 340 },
-      6: { width: 430, height: 340 },
-    }[resultCount || 0] || { width: 430, height: 340 }; // default
-
-    return {
-      desktop: desktopDimensions,
-      mobile: { width: 300, height: 435 },
-    };
-  };
-
-  const dimensions = getPhotoDimensions();
   return (
     <div className="bg-black">
       {!hideSection && (
         <div className="mx-auto max-w-[1440px] px-6 pt-7 lg:px-12 lg:pt-22 xl:px-0">
-          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#A0A0A0] pt-24 pl-5 lg:mb-43 lg:pl-10">
+          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#545257] pt-24 pl-5 lg:mb-43 lg:pl-10">
             <EditableText
               value={title || ""}
               onChange={(newTitle: string) =>
@@ -49,17 +27,19 @@ export default function FlashResults({
             />
           </div>
           <div className="px-0 lg:px-0 xl:px-8">
-            <div className="mb-4 flex items-center gap-2">
+            {/* <div className="mb-4 flex items-center gap-2">
               <div className="bg-white-neutral-light-100 h-3 w-3 rounded-full" />
               <p className="text-sm font-semibold text-white">
                 Nossos Resultados
               </p>
-            </div>
+            </div> */}
 
-            <div className={`mx-auto flex max-w-[1500px] flex-wrap items-center gap-3 pb-30 ${resultCount === 4 ? 'justify-center' : 'justify-center lg:justify-start'}`}>
+            <div
+              className={`mx-auto grid max-w-[1500px] grid-cols-1 gap-4 pb-20 lg:grid-cols-3 lg:pb-100`}
+            >
               {items?.map((item) => (
                 <div
-                  className={`relative mb-20 cursor-pointer rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"} `}
+                  className={`relative mb-20 w-full cursor-pointer rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"} `}
                   key={item.id}
                 >
                   <div
@@ -72,30 +52,14 @@ export default function FlashResults({
                     }
                   >
                     {!item.hidePhoto && item?.photo && (
-                      <div
-                        className="relative rounded-[4px]"
-                        style={{
-                          width: `${dimensions.mobile.width}px`,
-                          height: `${dimensions.mobile.height}px`,
-                        }}
-                      >
-                        <style jsx>{`
-                          @media (min-width: 640px) {
-                            div {
-                              width: ${dimensions.desktop.width}px !important;
-                              height: ${dimensions.desktop.height}px !important;
-                            }
-                          }
-                        `}</style>
-                        <div className="relative h-full w-full rounded-[4px]">
+                      <div className="relative h-[26rem] w-full overflow-hidden rounded-[4px]">
+                        <div className="relative h-full w-full">
                           <Image
                             src={item.photo || ""}
                             alt={item.client || ""}
                             fill
-                            className="rounded-[4px] object-cover"
-                            style={{
-                              aspectRatio: "auto",
-                            }}
+                            className="object-cover"
+                            sizes="(max-width: 767px) 100vw, (max-width: 991px) 727.9921875px, 854px"
                             quality={95}
                             priority={(item?.sortOrder ?? 0) < 3}
                           />

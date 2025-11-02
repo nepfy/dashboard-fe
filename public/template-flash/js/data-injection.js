@@ -62,7 +62,34 @@
   function formatDate(dateString) {
     if (!dateString) return "";
     try {
-      const date = new Date(dateString);
+      // Parse date string manually to avoid timezone issues
+      // Handles both "YYYY-MM-DD" and "YYYY-MM-DDTHH:mm:ss" formats
+      const dateMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!dateMatch) {
+        // Fallback to Date object if format doesn't match
+        const date = new Date(dateString);
+        const months = [
+          "Janeiro",
+          "Fevereiro",
+          "Março",
+          "Abril",
+          "Maio",
+          "Junho",
+          "Julho",
+          "Agosto",
+          "Setembro",
+          "Outubro",
+          "Novembro",
+          "Dezembro",
+        ];
+        return `${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`;
+      }
+
+      // Extract year, month, day from the string directly (no timezone conversion)
+      const year = parseInt(dateMatch[1], 10);
+      const month = parseInt(dateMatch[2], 10) - 1; // Month is 0-indexed
+      const day = parseInt(dateMatch[3], 10);
+
       const months = [
         "Janeiro",
         "Fevereiro",
@@ -77,7 +104,7 @@
         "Novembro",
         "Dezembro",
       ];
-      return `${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`;
+      return `${day} ${months[month]}, ${year}`;
     } catch {
       return dateString;
     }

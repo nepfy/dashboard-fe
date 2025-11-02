@@ -13,10 +13,20 @@ import {
 } from "#/types/template-data";
 import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
+import { getHeroGradientColors } from "#/helpers/colorUtils";
 
-export default function FlashFAQ({ hideSection, items }: FAQSection) {
+export default function FlashFAQ({
+  hideSection,
+  items,
+  mainColor,
+}: FAQSection) {
   const { updateFAQItem, reorderFAQItems } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+
+  // Generate gradient colors for the FAQ background
+  const defaultColor = mainColor || "#4F21A1";
+  const colors = getHeroGradientColors(defaultColor);
+  const gradientString = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, ${colors.dark} 34.22%, ${defaultColor} 64.9%, ${colors.light} 81.78%)`;
 
   return (
     <div className="relative overflow-hidden bg-black">
@@ -39,11 +49,11 @@ export default function FlashFAQ({ hideSection, items }: FAQSection) {
               >
                 <div className="flex w-full items-baseline justify-between border-b border-[#A0A0A0]/30 pb-6 last:border-b-0">
                   <span className="flex w-full items-baseline justify-between gap-10 md:w-auto md:justify-start md:gap-24">
-                    <p className="pr-2 text-[15px] text-[#E6E6E6]">
+                    <p className="pr-2 text-[15px] text-[#E6E6E6]/60">
                       0{index + 1}.
                     </p>
                     {!item.hideQuestion && (
-                      <p className="text-[18px] text-[#E6E6E6] transition-colors duration-300">
+                      <p className="text-[18px] font-bold text-[#ffffff] transition-colors duration-300">
                         {item.question}
                       </p>
                     )}
@@ -51,11 +61,10 @@ export default function FlashFAQ({ hideSection, items }: FAQSection) {
 
                   <button className="hidden text-[14px] text-[#E6E6E6] uppercase transition-colors duration-300 md:block">
                     <span className="flex items-center gap-1">
-                      Expandir
                       <span
                         className={`opacity-100 transition-opacity duration-300`}
                       >
-                        <MoveDown size={12} />
+                        <MoveDown size={16} />
                       </span>
                     </span>
                   </button>
@@ -116,9 +125,7 @@ export default function FlashFAQ({ hideSection, items }: FAQSection) {
         style={{
           width: 1148,
           height: 900,
-          background:
-            "radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)",
-
+          background: gradientString,
           filter: "blur(80px)",
           position: "absolute",
           bottom: -800,
@@ -136,9 +143,7 @@ export default function FlashFAQ({ hideSection, items }: FAQSection) {
         style={{
           width: 1400,
           height: 800,
-          background:
-            "radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)",
-
+          background: gradientString,
           filter: "blur(80px)",
           position: "absolute",
           bottom: "-48%",

@@ -5,11 +5,11 @@ import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 import EditableButton from "#/app/editar/components/EditableButton";
+import { getHeroGradientColors } from "#/helpers/colorUtils";
 
 export default function FlashIntro({
   mainColor,
   userName,
-  email,
   title,
   subtitle,
   hideSubtitle,
@@ -18,30 +18,11 @@ export default function FlashIntro({
   const { updateIntroduction, projectData } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
-  let bg;
-  if (mainColor === "#4F21A1") {
-    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`;
-  }
 
-  if (mainColor === "#BE8406") {
-    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B1B01 34.22%, #C97C00 64.9%, #CEA605 81.78%)`;
-  }
-
-  if (mainColor === "#9B3218") {
-    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B0707 34.22%, #9B3218 64.9%, #BE4E3F 81.78%)`;
-  }
-
-  if (mainColor === "#05722C") {
-    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #072B14 34.22%, #189B53 64.9%, #4ABE3F 81.78%)`;
-  }
-
-  if (mainColor === "#182E9B") {
-    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #070F2B 34.22%, #182E9B 64.9%, #443FBE 81.78%)`;
-  }
-
-  if (mainColor === "#212121") {
-    bg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #0D0D0D 34.22%, #212121 64.9%, #3A3A3A 81.78%)`;
-  }
+  // Generate gradient colors for the hero background
+  const defaultColor = mainColor || "#4F21A1";
+  const colors = getHeroGradientColors(defaultColor);
+  const gradientString = `radial-gradient(circle at 0 0, #000 7%, ${colors.dark} 35%, ${defaultColor} 68%, ${colors.light} 76%)`;
 
   return (
     <div className="relative overflow-hidden px-6 py-11 lg:px-12">
@@ -52,17 +33,17 @@ export default function FlashIntro({
             onChange={(newUserName: string) =>
               updateIntroduction({ userName: newUserName })
             }
-            className="text-lg font-semibold lg:text-base lg:font-normal"
+            className="text-lg font-medium"
           />{" "}
         </span>
         <div className="hidden items-center gap-12 lg:flex">
-          <EditableText
+          {/* <EditableText
             value={email || ""}
             onChange={(newEmail: string) =>
               updateIntroduction({ email: newEmail })
             }
             className="text-[#E6E6E6]"
-          />
+          /> */}
           <div
             className="relative z-5 h-auto w-auto cursor-pointer py-2"
             onClick={(e) => {
@@ -73,7 +54,7 @@ export default function FlashIntro({
             <div
               className={`absolute inset-0 border hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
             />
-            <p className="rounded-full bg-black p-5">
+            <p className="rounded-full bg-black px-7 py-5">
               {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
             </p>
             <EditableButton
@@ -83,21 +64,6 @@ export default function FlashIntro({
             />
           </div>
         </div>
-
-        <button
-          className="z-[900] flex h-6 w-6 cursor-pointer flex-col items-center justify-center space-y-1 lg:hidden"
-          aria-label="Toggle menu"
-        >
-          <span
-            className={`bg-white-neutral-light-100 h-[1px] w-8 transition-all duration-300`}
-          />
-          <span
-            className={`bg-white-neutral-light-100 mt-1 mb-2 h-[1px] w-8 transition-all duration-300`}
-          />
-          <span
-            className={`bg-white-neutral-light-100 h-[1px] w-8 transition-all duration-300`}
-          />
-        </button>
       </nav>
 
       <div className="mx-auto mb-24 flex max-w-[1440px] flex-col overflow-y-visible pt-30 lg:mb-0 lg:pt-60 lg:pb-39 xl:pl-30">
@@ -106,7 +72,7 @@ export default function FlashIntro({
           onChange={(newTitle: string) =>
             updateIntroduction({ title: newTitle })
           }
-          className="max-w-[1120px] text-[32px] leading-[1.3] text-[#E6E6E6] xl:text-[72px]"
+          className="max-w-[1120px] text-[43px] leading-[1.3] text-[#E6E6E6] xl:text-[72px]"
         />
 
         {projectData?.projectValidUntil && (
@@ -118,10 +84,10 @@ export default function FlashIntro({
             }}
           >
             <p
-              className={`inline w-auto cursor-pointer text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
+              className={`inline w-auto cursor-pointer text-[13px] text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] lg:text-[15px] ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
             >
               Proposta válida até -{" "}
-              <span className="font-normal text-[#E6E6E6]/40">
+              <span className="font-normal text-[#FFFFFF]">
                 {formatDateToDDDeMonthDeYYYY(
                   projectData.projectValidUntil.toString()
                 )}
@@ -136,7 +102,7 @@ export default function FlashIntro({
       </div>
 
       <div className="mx-auto flex max-w-[1440px] flex-col items-end justify-between gap-4 lg:flex-row">
-        <div className="order-2 w-full border-l border-l-[#A0A0A0] pt-22 pl-4 lg:order-1 lg:w-1/2 lg:pl-8">
+        <div className="order-2 hidden w-full pt-22 pl-0 lg:order-1 lg:block lg:w-1/2 lg:border-l lg:border-l-[#545257] lg:pl-8">
           <EditableText
             value={
               services?.map((service) => service.serviceName).join("\n") || ""
@@ -159,14 +125,14 @@ export default function FlashIntro({
           />
         </div>
         {!hideSubtitle && (
-          <div className="order-1 w-full border-l border-l-[#A0A0A0] pt-22 pl-4 lg:order-2 lg:w-1/2 lg:pl-8">
-            <span className="max-w-[400px] text-[18px] text-[#E6E6E6]">
+          <div className="order-1 w-full pt-22 pl-0 lg:order-2 lg:w-1/2 lg:border-l lg:border-l-[#545257] lg:pl-8">
+            <span className="max-w-[400px] text-[18px] text-[#ffffff]">
               <EditableText
                 value={subtitle || ""}
                 onChange={(newSubtitle: string) =>
                   updateIntroduction({ subtitle: newSubtitle })
                 }
-                className="w-full max-w-[380px] text-[18px] text-[#E6E6E6]"
+                className="w-full max-w-[380px] text-[16px] text-[#ffffff] lg:text-[18px]"
               />
             </span>
           </div>
@@ -175,15 +141,33 @@ export default function FlashIntro({
       <div
         style={{
           width: "120%",
-          height: "100%",
-          background: bg,
           position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: -1,
-          overflow: "hidden",
+          inset: "-36vw 0% 0% -10vw",
         }}
-      />
+      >
+        <div
+          style={{
+            zIndex: -1,
+            filter: "blur(110px)",
+            backgroundImage: gradientString,
+            borderRadius: "50%",
+            width: "130vw",
+            height: "130vw",
+            position: "sticky",
+            inset: "-159% 0% 0%",
+          }}
+        />
+        <div
+          style={{
+            zIndex: -2,
+            backgroundColor: "#000000",
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            inset: "0%",
+          }}
+        />
+      </div>
     </div>
   );
 }

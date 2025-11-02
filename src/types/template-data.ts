@@ -22,6 +22,7 @@ export interface FAQItem extends SortableItem {
 }
 
 export interface FAQSection extends BaseSection {
+  mainColor?: string;
   hideSection?: boolean;
   title?: string;
   items?: FAQItem[];

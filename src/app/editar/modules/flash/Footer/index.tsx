@@ -20,8 +20,8 @@ export default function FlashFooter({
     <div style={{ background: mainColor }} className="relative overflow-hidden">
       {!hideSection && (
         <>
-          <div className="mx-auto max-w-[1440px] px-6 pt-10 pb-43 lg:px-41 lg:pt-22">
-            <div className="mb-15 max-w-[1100px] lg:border-l lg:border-l-[#A0A0A0] lg:pt-11 lg:pl-10">
+          <div className="mx-auto max-w-[1440px] px-6 pt-10 pb-43 lg:px-41 lg:pt-42">
+            <div className="mb-15 max-w-[1100px] lg:border-l lg:border-l-[#545257]/40 lg:pt-11 lg:pl-10">
               <EditableText
                 value={callToAction || ""}
                 onChange={(newCallToAction: string) =>
@@ -88,7 +88,7 @@ export default function FlashFooter({
             )}
           </div>
 
-          <p className="absolute bottom-[-40px] left-1/2 m-0 -translate-x-1/2 p-0 text-[61px] text-nowrap text-[#E6E6E6] lg:bottom-[-140px] lg:text-[226px]">
+          <p className="absolute bottom-0 left-1/2 m-0 -translate-x-1/2 p-0 text-[61px] text-nowrap text-[#E6E6E6] lg:bottom-[-140px] lg:text-[226px]">
             {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
           </p>
         </>

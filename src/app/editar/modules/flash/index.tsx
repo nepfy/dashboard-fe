@@ -18,7 +18,7 @@ export default function Flash() {
     return null;
   }
   return (
-    <div className="font-manrope p-3">
+    <div className="font-manrope overflow-hidden p-3">
       <FlashIntro
         {...projectData?.proposalData?.introduction}
         mainColor={projectData?.mainColor}
@@ -50,7 +50,10 @@ export default function Flash() {
         {...projectData?.proposalData?.plans}
         mainColor={projectData?.mainColor}
       />
-      <FlashFAQ {...projectData?.proposalData?.faq} />
+      <FlashFAQ
+        {...projectData?.proposalData?.faq}
+        mainColor={projectData?.mainColor}
+      />
       <FlashFooter
         {...projectData?.proposalData?.footer}
         validity={projectData?.projectValidUntil}

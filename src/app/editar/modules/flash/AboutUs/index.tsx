@@ -78,15 +78,15 @@ export default function FlashAboutUs({
             }}
           />
           <div className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-center px-6 py-35 lg:px-12 lg:py-62 xl:px-0">
-            <div className="inline max-w-[1100px] border-l border-l-[#A0A0A0] pt-36 pl-4 lg:pl-10">
-              <div className="text-[18px] font-medium text-[#E6E6E6] lg:text-[48px]">
+            <div className="inline max-w-[1100px] border-l border-l-[#545257]/40 pt-36 pl-4 lg:pl-10">
+              <div className="text-[2.1rem] font-medium text-[#ffffff] lg:text-[48px]">
                 <span className="inline font-bold">Sobre nós.</span>{" "}
                 <EditableText
                   value={title || ""}
                   onChange={(newTitle: string) =>
                     updateAboutUs({ title: newTitle })
                   }
-                  className="inline w-full text-[18px] font-medium text-[#E6E6E6] lg:text-[48px]"
+                  className="inline w-full text-[2.1rem] font-normal text-[#ffffff] lg:text-[48px]"
                 />
               </div>
             </div>

@@ -23,7 +23,7 @@ export default function FlashSteps({
             <div className="mx-auto mb-16 flex max-w-[340px] items-end border-l border-l-[#A0A0A0] pt-14 pl-4 lg:mb-43 lg:max-w-[670px] lg:pt-30 lg:pl-20">
               <p className="gap-2 text-[32px] text-[#E6E6E6] lg:text-[72px]">
                 Como funciona em{" "}
-                <span className="inline-flex h-[27px] w-[43px] items-center justify-center rounded-full bg-black align-middle text-[14px] lg:h-[52px] lg:w-[75px] lg:text-2xl">
+                <span className="inline-flex h-[27px] w-[43px] items-center justify-center rounded-full bg-black align-middle text-[14px] lg:h-[52px] lg:w-[75px] lg:text-[34px]">
                   {topics?.length || 5}
                 </span>{" "}
                 passos simples
@@ -117,7 +117,7 @@ export default function FlashSteps({
           </div>
 
           <div className="hidden lg:block">
-            <Marquee speed={100} gradientWidth={0} autoFill>
+            <Marquee speed={0} gradientWidth={0} autoFill>
               {marquee?.map((item) => (
                 <div key={item.id} className="mr-8">
                   {!item.hideItem && (

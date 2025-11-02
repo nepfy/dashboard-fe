@@ -40,14 +40,14 @@ export default function FlashPlans({
   return (
     <div className="relative overflow-hidden bg-black">
       {!hideSection && (
-        <div className="relative z-10 mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
+        <div className="relative z-10 mx-auto max-w-[1280px] pt-10 pb-23 lg:pt-22 xl:pb-36">
           <div
-            className={`flex flex-wrap justify-center gap-6 ${plansItems && plansItems.length === 2 ? "lg:justify-start" : "lg:justify-between"}`}
+            className={`grid grid-cols-1 gap-6 lg:grid-cols-3 ${plansItems && plansItems.length === 2 ? "lg:justify-start" : "lg:justify-between"}`}
           >
             {plansItems?.map((plan) => (
               <div
                 key={plan.id}
-                className={`relative my-10 flex min-h-[600px] w-full cursor-pointer flex-col rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] md:w-[310px] lg:my-0 lg:w-[350px] ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"}`}
+                className={`relative my-10 flex w-full cursor-pointer flex-col rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] lg:my-0 ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"}`}
                 onClick={() => setOpenModalId(plan.id)}
               >
                 {plan.recommended && (
@@ -64,7 +64,7 @@ export default function FlashPlans({
                   </div>
                 )}
                 <div
-                  className="flex h-[210px] flex-col items-start justify-between rounded-[4px] p-6"
+                  className="flex flex-col items-start justify-between rounded-[4px] p-6"
                   style={{
                     background: plan.recommended ? planBg : "#111111",
                   }}
@@ -76,31 +76,28 @@ export default function FlashPlans({
                       </p>
                     )}
                     {!plan.hideDescription && (
-                      <p className="mb-4 text-sm text-[#E6E6E6]/30">
+                      <p className="mb-4 text-sm text-[#E6E6E6]">
                         {plan.description}
                       </p>
                     )}
                   </div>
                   <div className="flex items-baseline gap-4">
                     {!plan.hidePrice && (
-                      <p className="text-[32px] font-medium text-[#E6E6E6]">
+                      <p className="text-[2.5rem] font-medium text-[#E6E6E6]">
                         {formatCurrencyDisplayNoCents(plan.value)}
                       </p>
                     )}
                     {!plan.hidePlanPeriod && (
-                      <p className="text-[#E6E6E6]">/{plan.planPeriod}</p>
+                      <p className="text-[#E6E6E6]">{plan.planPeriod}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex-grow">
-                  <p className="mt-8 mb-4 px-6 text-[12px] font-semibold text-[#E6E6E6] uppercase">
-                    Incluso:
-                  </p>
+                <div className="mt-10 mb-4">
                   {plan.includedItems?.map((includedItem) => (
                     <div
                       key={includedItem.id}
-                      className="flex items-center gap-2 px-6 py-2"
+                      className="flex items-center gap-2 px-6 py-4"
                     >
                       <span className="flex h-4 w-4 items-start justify-center">
                         <Checkbox fill="rgba(230, 230, 230, 0.7)" />

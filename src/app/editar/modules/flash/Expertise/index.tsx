@@ -69,11 +69,11 @@ export default function FlashExpertise({
   };
 
   return (
-    <div className="bg-black">
+    <div className="relative z-3 bg-black">
       {!hideSection && (
-        <div className="mx-auto max-w-[1440px] px-6 pt-7 lg:px-12 xl:px-0 xl:pt-0">
-          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#A0A0A0] pt-24 pl-5 lg:mb-43 lg:pl-10">
-            <span className="h-full w-full text-[18px] text-[#E6E6E6] lg:text-[48px]">
+        <div className="mx-auto max-w-[1440px] px-6 pt-0 lg:px-12 xl:px-0 xl:pt-0">
+          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#545257] pt-24 pl-5 lg:mb-43 lg:pl-10">
+            <span className="h-full w-full text-[1.5rem] text-[#E6E6E6] lg:text-[48px]">
               <span className="block font-bold sm:inline">
                 Nossas Especializações.{" "}
               </span>
@@ -82,7 +82,7 @@ export default function FlashExpertise({
                 onChange={(newTitle: string) =>
                   updateExpertise({ title: newTitle })
                 }
-                className="inline h-full w-full text-[18px] text-[#E6E6E6] lg:text-[48px]"
+                className="inline h-full w-full text-[1.5rem] text-[#E6E6E6] lg:text-[48px]"
               />
             </span>
           </div>
@@ -91,7 +91,7 @@ export default function FlashExpertise({
             {topics?.map((topic) => (
               <div
                 key={topic.id}
-                className="text-white-neutral-light-100 relative w-[260px] cursor-pointer text-[15px]"
+                className="text-white-neutral-light-100 relative w-full cursor-pointer text-[15px] font-light lg:w-[260px]"
                 onClick={() => setOpenModalId(topic?.id ?? null)}
               >
                 <div className="mb-2 text-white">
