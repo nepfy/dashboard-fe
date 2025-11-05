@@ -101,8 +101,8 @@ export default function FlashPlans({
                   </div>
                 </div>
 
-                <div className="mt-10 mb-4 flex-grow">
-                  <p className="mb-4 px-6 text-sm text-[#ffffff]">INCLUSO:</p>
+                <div className="mt-10 mb-6 flex-grow">
+                  <p className="mb-6 px-6 text-sm text-[#ffffff]">INCLUSO:</p>
                   {plan.includedItems?.map((includedItem) => (
                     <div
                       key={includedItem.id}
@@ -120,17 +120,19 @@ export default function FlashPlans({
                   ))}
                 </div>
 
-                {!plan.hideButtonTitle && (
-                  <button
-                    className={`mt-8 w-full rounded-full py-6 font-semibold ${
-                      plan.recommended
-                        ? "bg-[#FBFBFB] text-[#171825]"
-                        : "bg-[#171825] text-[#FBFBFB]"
-                    }`}
-                  >
-                    {plan.buttonTitle}
-                  </button>
-                )}
+                <div className="px-6">
+                  {!plan.hideButtonTitle && (
+                    <button
+                      className={`mt-8 w-full rounded-full px-6 py-5 font-semibold ${
+                        plan.recommended
+                          ? "bg-[#FBFBFB] text-[#171825]"
+                          : "bg-[#171825] text-[#FBFBFB]"
+                      }`}
+                    >
+                      {plan.buttonTitle}
+                    </button>
+                  )}
+                </div>
                 <EditablePlan
                   plan={plan}
                   isModalOpen={openModalId === plan.id}

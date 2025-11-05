@@ -1886,7 +1886,7 @@ figcaption {
 }
 
 .pricing_card {
-  min-height: 720px;
+  min-height: 760px;
   flex-flow: column;
   display: flex;
   justify-content: space-between;
