@@ -18,7 +18,7 @@ export default function FlashIntro({
   const { updateIntroduction, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
-  
+
   const canEdit = activeEditingId === null;
 
   // Generate gradient colors for the hero background
@@ -112,7 +112,7 @@ export default function FlashIntro({
       </div>
 
       <div className="mx-auto flex max-w-[1440px] flex-col items-end justify-between gap-4 lg:flex-row">
-        <div className="order-2 hidden w-full pt-22 pl-0 lg:order-1 lg:block lg:w-1/2 lg:border-l lg:border-l-[#545257] lg:pl-8">
+        <div className="order-2 hidden w-full pt-22 pl-0 lg:order-1 lg:block lg:w-1/2 lg:border-l lg:border-l-[#ffffff]/50 lg:pl-8">
           <EditableText
             value={
               services?.map((service) => service.serviceName).join("\n") || ""
@@ -131,12 +131,12 @@ export default function FlashIntro({
               }));
               updateIntroduction({ services: updatedServices });
             }}
-            className="max-w-[250px] text-sm text-[#E6E6E6]"
+            className="w-full text-sm text-[#E6E6E6]"
             editingId="intro-services"
           />
         </div>
         {!hideSubtitle && (
-          <div className="order-1 w-full pt-22 pl-0 lg:order-2 lg:w-1/2 lg:border-l lg:border-l-[#545257] lg:pl-8">
+          <div className="order-1 w-full pt-22 pl-0 lg:order-2 lg:w-1/2 lg:border-l lg:border-l-[#ffffff]/50 lg:pl-8">
             <span className="max-w-[400px] text-[18px] text-[#ffffff]">
               <EditableText
                 value={subtitle || ""}

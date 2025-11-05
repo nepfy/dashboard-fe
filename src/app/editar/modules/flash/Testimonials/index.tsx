@@ -18,11 +18,12 @@ export default function FlashTestimonials({
   hideSection,
   items,
 }: TestimonialsSection) {
-  const { updateTestimonialItem, reorderTestimonialItems, activeEditingId } = useEditor();
+  const { updateTestimonialItem, reorderTestimonialItems, activeEditingId } =
+    useEditor();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-  
+
   const canEdit = activeEditingId === null;
 
   const currentTestimonial = items?.[currentIndex];
@@ -86,7 +87,7 @@ export default function FlashTestimonials({
             <p className="text-sm font-semibold text-white">Depoimentos</p>
           </div>
 
-          <div className={`border-l border-l-[#545257]/50 lg:pl-7`}>
+          <div className={`border-l border-l-[#ffffff]/50 lg:pl-7`}>
             <div
               onClick={() => {
                 if (canEdit || openModalId === currentTestimonial?.id) {
@@ -96,7 +97,9 @@ export default function FlashTestimonials({
               className={`text-[#E6E6E6 relative flex flex-col items-start rounded-[4px] text-sm font-bold ${
                 !!openModalId
                   ? "cursor-default border border-[#0170D6] bg-[#0170D666]"
-                  : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border border-transparent" : "cursor-not-allowed border border-transparent"
+                  : canEdit
+                    ? "cursor-pointer border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666]"
+                    : "cursor-not-allowed border border-transparent"
               } `}
             >
               <div

@@ -159,7 +159,7 @@ export async function PUT(
         mainColor: body.mainColor,
         projectUrl: body.projectUrl,
         pagePassword: body.pagePassword,
-        isPublished: true,
+        isPublished: body.isPublished ?? true,
         isProposalGenerated: body.isProposalGenerated,
         proposalData: body.proposalData,
         buttonConfig: body.buttonConfig,

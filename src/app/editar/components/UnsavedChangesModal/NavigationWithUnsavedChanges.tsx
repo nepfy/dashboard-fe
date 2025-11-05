@@ -16,7 +16,7 @@ type OpenModal = "personalize" | "sections" | null;
 export default function NavigationWithUnsavedChanges() {
   const [openModal, setOpenModal] = useState<OpenModal>(null);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
-  const { isDirty } = useEditor();
+  const { isDirty, saveProject, projectData } = useEditor();
   const router = useRouter();
 
   const handleLeaveClick = (e: React.MouseEvent) => {
@@ -30,18 +30,43 @@ export default function NavigationWithUnsavedChanges() {
     setShowUnsavedModal(false);
   };
 
-  const handleLeaveWithoutSaving = () => {
+  const handleSaveDraftAndLeave = async () => {
     setShowUnsavedModal(false);
-    router.push("/dashboard");
+    try {
+      // Protected statuses that should not be changed to draft
+      const protectedStatuses: string[] = [
+        "active",
+        "approved",
+        "negotiation",
+        "rejected",
+        "expired",
+      ];
+      const currentStatus = projectData?.projectStatus;
+
+      // Only set to draft if current status is not one of the protected statuses
+      const shouldSaveAsDraft =
+        !currentStatus || !protectedStatuses.includes(currentStatus);
+
+      await saveProject({
+        ...(shouldSaveAsDraft && { projectStatus: "draft" }),
+        ...(shouldSaveAsDraft && { isPublished: false }),
+        skipNavigation: true,
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      // Still navigate even if save fails
+      router.push("/dashboard");
+    }
   };
 
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden fixed top-0 left-0 right-0 z-50 sm:flex px-7 py-3 border-b border-b-white-neutral-light-300 bg-white-neutral-light-200 items-center justify-between">
+      <nav className="border-b-white-neutral-light-300 bg-white-neutral-light-200 fixed top-0 right-0 left-0 z-50 hidden items-center justify-between border-b px-7 py-3 sm:flex">
         <div className="flex items-center gap-4">
           <Logo fill="#1C1A22" />
-          <div className="border-l border-l-white-neutral-light-300 h-4" />
+          <div className="border-l-white-neutral-light-300 h-4 border-l" />
           <Personalize
             isModalOpen={openModal === "personalize"}
             setIsModalOpen={(open) => setOpenModal(open ? "personalize" : null)}
@@ -57,7 +82,7 @@ export default function NavigationWithUnsavedChanges() {
           <Link
             href="/dashboard"
             onClick={handleLeaveClick}
-            className="h-[40px] w-[40px] sm:h-[44px] sm:w-[44px] border border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 rounded-[10px] flex items-center justify-center button-inner cursor-pointer"
+            className="border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 button-inner flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-[10px] border sm:h-[44px] sm:w-[44px]"
           >
             <CloseIcon width="10" height="10" fill="#1C1A22" />
           </Link>
@@ -67,7 +92,7 @@ export default function NavigationWithUnsavedChanges() {
       <UnsavedChangesModal
         isOpen={showUnsavedModal}
         onContinue={handleContinueEditing}
-        onLeave={handleLeaveWithoutSaving}
+        onLeave={handleSaveDraftAndLeave}
       />
     </>
   );

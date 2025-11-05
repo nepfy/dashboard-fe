@@ -41,7 +41,7 @@ export async function generateMetadata({
     };
   }
 
-  const title = projectData.projectName;
+  const title = projectData.clientName;
   const description = projectData.companyName || `Detalhes da Proposta`;
 
   return {

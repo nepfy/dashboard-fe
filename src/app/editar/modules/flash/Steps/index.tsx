@@ -15,14 +15,14 @@ export default function FlashSteps({
 }: StepsSection) {
   const { updateStepTopic, reorderStepTopics, activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-  
+
   const canEdit = activeEditingId === null;
   return (
     <div style={{ background: mainColor }}>
       {!hideSection && (
         <>
           <div className="relative z-10 mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
-            <div className="mx-auto mb-16 flex max-w-[340px] items-end border-l border-l-[#A0A0A0] pt-14 pl-4 lg:mb-43 lg:max-w-[670px] lg:pt-30 lg:pl-20">
+            <div className="mx-auto mb-16 flex max-w-[340px] items-end border-l border-l-[#ffffff]/50 pt-14 pl-4 lg:mb-43 lg:max-w-[670px] lg:pt-30 lg:pl-20">
               <p className="gap-2 text-[32px] text-[#E6E6E6] lg:text-[72px]">
                 Como funciona em{" "}
                 <span className="inline-flex h-[27px] w-[43px] items-center justify-center rounded-full bg-black align-middle text-[14px] lg:h-[52px] lg:w-[75px] lg:text-[34px]">
@@ -36,7 +36,7 @@ export default function FlashSteps({
               return (
                 <div
                   key={topic.id}
-                  className={`relative mt-12 rounded-[4px] border border-transparent ${openModalId === topic.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                  className={`relative mt-12 rounded-[4px] border border-transparent ${openModalId === topic.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
                   onClick={() => {
                     if (canEdit || openModalId === topic.id) {
                       setOpenModalId(

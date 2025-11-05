@@ -17,6 +17,7 @@ export const getProjectData = cache(
       // Fetch project with user and proposal data
       const result = await db
         .select({
+          clientName: projectsTable.clientName,
           id: projectsTable.id,
           personId: projectsTable.personId,
           projectName: projectsTable.projectName,
@@ -66,6 +67,7 @@ export const getProjectData = cache(
       };
 
       const projectResult: TemplateData = {
+        clientName: project.clientName ?? "",
         id: project.id,
         personId: project.personId,
         projectName: project.projectName,

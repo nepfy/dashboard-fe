@@ -16,14 +16,14 @@ export default function FlashFooter({
   const { updateFooter, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
-  
+
   const canEdit = activeEditingId === null;
   return (
     <div style={{ background: mainColor }} className="relative overflow-hidden">
       {!hideSection && (
         <>
           <div className="mx-auto max-w-[1440px] px-6 pt-10 pb-43 lg:px-41 lg:pt-42">
-            <div className="mb-15 max-w-[1100px] lg:border-l lg:border-l-[#545257]/40 lg:pt-11 lg:pl-10">
+            <div className="mb-15 max-w-[1100px] lg:border-l lg:border-l-[#ffffff]/50 lg:pt-11 lg:pl-10">
               <EditableText
                 value={callToAction || ""}
                 onChange={(newCallToAction: string) =>

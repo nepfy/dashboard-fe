@@ -30,7 +30,13 @@ export default function EditablePlan({
   const [showPlanInfo, setShowPlanInfo] = useState<boolean>(false);
   const [showConfirmExclusion, setShowConfirmExclusion] =
     useState<boolean>(false);
-  const { projectData, deletePlanItem, updatePlans, startEditing, stopEditing } = useEditor();
+  const {
+    projectData,
+    deletePlanItem,
+    updatePlans,
+    startEditing,
+    stopEditing,
+  } = useEditor();
 
   const plans = useMemo(
     () => projectData?.proposalData?.plans?.plansItems || [],
@@ -38,10 +44,45 @@ export default function EditablePlan({
   );
   const NEW_PLAN_ID = "__new_plan__";
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(plan.id);
+  const [pendingByPlanId, setPendingByPlanId] = useState<
+    Record<string, Partial<Plan>>
+  >({});
+
   const selectedPlan = useMemo(() => {
     if (selectedPlanId === NEW_PLAN_ID) return null;
     return plans.find((p) => p.id === selectedPlanId) || plan;
   }, [plans, selectedPlanId, plan]);
+
+  // Create items list that includes existing plans plus pending draft
+  const itemsForSelector = useMemo(() => {
+    const items = [...plans];
+    const pendingDraft = pendingByPlanId[NEW_PLAN_ID];
+    if (pendingDraft) {
+      // Create a temporary plan object for the pending draft
+      const tempPlan: Plan = {
+        id: NEW_PLAN_ID,
+        title: pendingDraft.title || "",
+        description: pendingDraft.description || "",
+        value: pendingDraft.value || "",
+        planPeriod: pendingDraft.planPeriod || "",
+        recommended: !!pendingDraft.recommended,
+        buttonTitle: pendingDraft.buttonTitle || "",
+        buttonWhereToOpen: pendingDraft.buttonWhereToOpen || "link",
+        buttonHref: pendingDraft.buttonHref || "",
+        buttonPhone: pendingDraft.buttonPhone || "",
+        hideTitleField: false,
+        hideDescription: false,
+        hidePrice: false,
+        hidePlanPeriod: false,
+        hideButtonTitle: false,
+        includedItems: pendingDraft.includedItems || [],
+        sortOrder: plans.length,
+        hideItem: false,
+      };
+      items.push(tempPlan);
+    }
+    return items;
+  }, [plans, pendingByPlanId]);
 
   // Ensure that when the modal opens (or plan prop changes), we focus the plan passed in props
   useEffect(() => {
@@ -58,11 +99,14 @@ export default function EditablePlan({
       // Stop editing when modal closes
       stopEditing(editingId);
     }
-  }, [isModalOpen, plan.id, editingId, startEditing, stopEditing, setIsModalOpen]);
-
-  const [pendingByPlanId, setPendingByPlanId] = useState<
-    Record<string, Partial<Plan>>
-  >({});
+  }, [
+    isModalOpen,
+    plan.id,
+    editingId,
+    startEditing,
+    stopEditing,
+    setIsModalOpen,
+  ]);
   const setPendingFor = (planId: string, updates: Partial<Plan>) => {
     setPendingByPlanId((prev) => ({
       ...prev,
@@ -170,22 +214,22 @@ export default function EditablePlan({
             onClick={(e) => e.stopPropagation()}
           >
             <span className="text-lg font-medium text-[#2A2A2A]">Planos</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPendingByPlanId({});
-                  setIsModalOpen(false);
-                  stopEditing(editingId);
-                }}
-                className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
-              >
-                <CloseIcon width="12" height="12" fill="#1C1A22" />
-              </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setPendingByPlanId({});
+                setIsModalOpen(false);
+                stopEditing(editingId);
+              }}
+              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
+            >
+              <CloseIcon width="12" height="12" fill="#1C1A22" />
+            </button>
           </div>
 
           <div className="h-[77%]">
             <ItemSelector
-              items={plans}
+              items={itemsForSelector}
               selectedItemId={selectedPlanId}
               onItemSelect={(id) => {
                 setSelectedPlanId(id);

@@ -11,15 +11,20 @@ export default function FlashResults({
   title,
   items,
 }: ResultSection) {
-  const { updateResults, updateResultItem, reorderResultItems, activeEditingId } = useEditor();
+  const {
+    updateResults,
+    updateResultItem,
+    reorderResultItems,
+    activeEditingId,
+  } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-  
+
   const canEdit = activeEditingId === null;
   return (
     <div className="bg-black">
       {!hideSection && (
         <div className="mx-auto max-w-[1440px] px-6 pt-7 lg:px-12 lg:pt-22 xl:px-0">
-          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#545257] pt-24 pl-5 lg:mb-43 lg:pl-10">
+          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#ffffff]/50 pt-24 pl-5 lg:mb-43 lg:pl-10">
             <EditableText
               value={title || ""}
               onChange={(newTitle: string) =>
@@ -42,7 +47,7 @@ export default function FlashResults({
             >
               {items?.map((item) => (
                 <div
-                  className={`relative mb-20 w-full rounded-[4px] border border-transparent ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"} `}
+                  className={`relative mb-20 w-full rounded-[4px] border border-transparent ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"} `}
                   key={item.id}
                 >
                   <div

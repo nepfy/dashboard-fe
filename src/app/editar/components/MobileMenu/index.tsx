@@ -23,7 +23,7 @@ export default function MobileMenu({
   setOpenModal,
 }: MobileMenuProps) {
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
-  const { isDirty } = useEditor();
+  const { isDirty, saveProject, projectData } = useEditor();
   const router = useRouter();
 
   useEffect(() => {
@@ -52,20 +52,45 @@ export default function MobileMenu({
     setShowUnsavedModal(false);
   };
 
-  const handleLeaveWithoutSaving = () => {
+  const handleSaveDraftAndLeave = async () => {
     setShowUnsavedModal(false);
-    router.push("/dashboard");
+    try {
+      // Protected statuses that should not be changed to draft
+      const protectedStatuses: string[] = [
+        "active",
+        "approved",
+        "negotiation",
+        "rejected",
+        "expired",
+      ];
+      const currentStatus = projectData?.projectStatus;
+
+      // Only set to draft if current status is not one of the protected statuses
+      const shouldSaveAsDraft =
+        !currentStatus || !protectedStatuses.includes(currentStatus);
+
+      await saveProject({
+        ...(shouldSaveAsDraft && { projectStatus: "draft" }),
+        ...(shouldSaveAsDraft && { isPublished: false }),
+        skipNavigation: true,
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      // Still navigate even if save fails
+      router.push("/dashboard");
+    }
   };
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="sm:hidden fixed inset-x-0 top-[53px] z-[1000] bg-black/60 w-full h-full"
+      className="fixed inset-x-0 top-[53px] z-[1000] h-full w-full bg-black/60 sm:hidden"
       onClick={onClose}
     >
       <div
-        className="bg-white-neutral-light-200 mx-4 mt-4 rounded-[8px] p-6 shadow-lg relative z-[1000]"
+        className="bg-white-neutral-light-200 relative z-[1000] mx-4 mt-4 rounded-[8px] p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="space-y-4">
@@ -78,14 +103,14 @@ export default function MobileMenu({
             setIsModalOpen={(open) => setOpenModal(open ? "sections" : null)}
           />
 
-          <div className="border-b border-white-neutral-light-300 mt-6 mb-8" />
+          <div className="border-white-neutral-light-300 mt-6 mb-8 border-b" />
 
           <Publish />
 
           <Link
             href="/dashboard"
             onClick={handleLeaveClick}
-            className="h-[40px] w-full sm:h-[44px] text-sm border border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 rounded-[10px] flex items-center justify-center button-inner cursor-pointer"
+            className="border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 button-inner flex h-[40px] w-full cursor-pointer items-center justify-center rounded-[10px] border text-sm sm:h-[44px]"
           >
             Sair do editor
           </Link>
@@ -95,7 +120,7 @@ export default function MobileMenu({
       <UnsavedChangesModal
         isOpen={showUnsavedModal}
         onContinue={handleContinueEditing}
-        onLeave={handleLeaveWithoutSaving}
+        onLeave={handleSaveDraftAndLeave}
       />
     </div>
   );

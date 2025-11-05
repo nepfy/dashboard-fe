@@ -1427,8 +1427,7 @@ figcaption {
 }
 
 .line {
-  background-color: var(--background-color--line);
-  opacity: 0.5;
+  background-color: rgba(255, 255, 255, 0.5);
   align-self: stretch;
   width: 1px;
 }
@@ -2003,6 +2002,7 @@ figcaption {
 .footer_subtitle {
   max-width: 60ch;
   margin-left: auto;
+  margin-bottom: 60px;
 }
 
 .footer_content {

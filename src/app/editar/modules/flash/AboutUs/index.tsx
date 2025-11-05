@@ -78,7 +78,7 @@ export default function FlashAboutUs({
             }}
           />
           <div className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-center px-6 py-35 lg:px-12 lg:py-62 xl:px-0">
-            <div className="inline max-w-[1100px] border-l border-l-[#545257]/40 pt-36 pl-4 lg:pl-10">
+            <div className="inline max-w-[1100px] border-l border-l-[#ffffff]/50 pt-36 pl-4 lg:pl-10">
               <div className="text-[2.1rem] font-medium text-[#ffffff] lg:text-[48px]">
                 <span className="inline font-bold">Sobre nós.</span>{" "}
                 <EditableText

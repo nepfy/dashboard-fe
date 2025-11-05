@@ -10,6 +10,7 @@ import FlashPlans from "./Plans";
 import FlashFAQ from "./FAQ";
 import FlashFooter from "./Footer";
 import FlashTestimonials from "./Testimonials";
+import FlashScope from "./Scope";
 
 export default function Flash() {
   const { projectData } = useEditor();
@@ -45,6 +46,10 @@ export default function Flash() {
         {...projectData?.proposalData?.investment}
         mainColor={projectData?.mainColor}
         hideProjectScope={projectData?.proposalData?.escope?.hideSection}
+      />
+      <FlashScope
+        hideProjectScope={projectData?.proposalData?.escope?.hideSection}
+        projectScope={projectData?.proposalData?.investment?.projectScope}
       />
       <FlashPlans
         {...projectData?.proposalData?.plans}

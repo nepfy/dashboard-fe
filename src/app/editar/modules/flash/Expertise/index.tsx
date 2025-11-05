@@ -75,7 +75,7 @@ export default function FlashExpertise({
     <div className="relative z-3 bg-black">
       {!hideSection && (
         <div className="mx-auto max-w-[1440px] px-6 pt-0 lg:px-12 xl:px-0 xl:pt-0">
-          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#545257] pt-24 pl-5 lg:mb-43 lg:pl-10">
+          <div className="mx-auto mb-16 flex max-w-[1100px] items-end border-l border-l-[#ffffff]/50 pt-24 pl-5 lg:mb-43 lg:pl-10">
             <span className="h-full w-full text-[1.5rem] text-[#E6E6E6] lg:text-[48px]">
               <span className="block font-bold sm:inline">
                 Nossas Especializações.{" "}

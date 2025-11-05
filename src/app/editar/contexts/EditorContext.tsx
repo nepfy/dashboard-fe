@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, {
@@ -76,7 +75,11 @@ interface EditorContextType {
   }) => void;
   updateSectionVisibility: (sectionId: string, hidden: boolean) => void;
   getSectionVisibility: () => Record<string, boolean>;
-  saveProject: () => Promise<void>;
+  saveProject: (options?: {
+    projectStatus?: string;
+    isPublished?: boolean;
+    skipNavigation?: boolean;
+  }) => Promise<void>;
   revertChanges: () => void;
   setProjectData: (data: TemplateData) => void;
 
@@ -442,36 +445,58 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     return visibility;
   }, [projectData]);
 
-  const saveProject = useCallback(async () => {
-    if (!projectData || !projectData.id || isSaving) return;
+  const saveProject = useCallback(
+    async (options?: {
+      projectStatus?: string;
+      isPublished?: boolean;
+      skipNavigation?: boolean;
+    }) => {
+      if (!projectData || !projectData.id || isSaving) return;
 
-    setIsSaving(true);
-    setError(null);
+      setIsSaving(true);
+      setError(null);
 
-    try {
-      const response = await fetch(`/api/projects/${projectData.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(projectData),
-      });
+      try {
+        // Merge options into projectData if provided
+        const dataToSave = {
+          ...projectData,
+          ...(options?.projectStatus !== undefined && {
+            projectStatus: options.projectStatus,
+          }),
+          ...(options?.isPublished !== undefined && {
+            isPublished: options.isPublished,
+          }),
+        };
 
-      if (!response.ok) {
-        throw new Error(`Failed to save project: ${response.statusText}`);
+        const response = await fetch(`/api/projects/${projectData.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSave),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to save project: ${response.statusText}`);
+        }
+
+        setIsDirty(false);
+
+        // Only navigate if skipNavigation is not true
+        if (!options?.skipNavigation) {
+          router.push(
+            `/dashboard?success&project=${projectData.projectName}&projectId=${projectData.id}`
+          );
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to save project");
+        throw err;
+      } finally {
+        setIsSaving(false);
       }
-
-      setIsDirty(false);
-      router.push(
-        `/dashboard?success&project=${projectData.projectName}&projectId=${projectData.id}`
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save project");
-      throw err;
-    } finally {
-      setIsSaving(false);
-    }
-  }, [projectData, isSaving]);
+    },
+    [projectData, isSaving, router]
+  );
 
   const revertChanges = useCallback(() => {
     if (initialData) {
@@ -907,7 +932,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   const startEditing = useCallback((id: string): boolean => {
     // If another field/modal is already being edited, prevent starting a new session
     // This ensures only one field/modal can be edited at a time
-    if (activeEditingIdRef.current !== null && activeEditingIdRef.current !== id) {
+    if (
+      activeEditingIdRef.current !== null &&
+      activeEditingIdRef.current !== id
+    ) {
       return false; // Another field/modal is already being edited
     }
     // Start the new editing session

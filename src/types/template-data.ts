@@ -280,6 +280,7 @@ export interface ButtonConfig {
 
 // Main TemplateData interface
 export interface TemplateData {
+  clientName?: string;
   id?: string;
   personId?: string;
   projectName: string;
