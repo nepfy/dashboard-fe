@@ -18,7 +18,6 @@ import { PricingStep } from "#/modules/ai-generator/components/generation-steps/
 import { FinalStep } from "#/modules/ai-generator/components/generation-steps/FinalStep";
 import { Loading } from "#/modules/ai-generator/components/loading/Loading";
 import CloseIcon from "#/components/icons/CloseIcon";
-import { SaveDraftButton } from "#/modules/ai-generator/components/save-draft";
 import {
   trackProposalCreationStarted,
   trackProposalAIGenerationRequested,
@@ -143,9 +142,11 @@ export default function NepfyAIPage() {
           success: true,
         });
 
-        router.push(
-          `/dashboard?success&project=${projectName}&projectId=${result.data.project.id}`
-        );
+        setTimeout(() => {
+          router.push(
+            `/editar?projectId=${result.data.project.id}&templateType=${templateType}`
+          );
+        }, 1000);
         return;
       } else {
         console.error("Error generating proposal:", result.error);
@@ -209,7 +210,7 @@ export default function NepfyAIPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full p-7">
+      <div className="flex h-full w-full items-center justify-center p-7">
         <Loading />
       </div>
     );
@@ -217,12 +218,12 @@ export default function NepfyAIPage() {
 
   return (
     <>
-      <nav className="p-7 border-b border-b-white-neutral-light-300 bg-white-neutral-light-200 flex items-center justify-between">
+      <nav className="border-b-white-neutral-light-300 bg-white-neutral-light-200 flex items-center justify-between border-b p-7">
         <div className="flex items-center gap-2">
           <Logo fill="#1C1A22" />
 
           <p
-            className="hidden sm:block border border-white-neutral-light-300 rounded-2xs px-2 py-1 bg-white-neutral-light-200 text-xs sm:text-[16px]"
+            className="border-white-neutral-light-300 rounded-2xs bg-white-neutral-light-200 hidden border px-2 py-1 text-xs sm:block sm:text-[16px]"
             style={{
               backgroundImage: `repeating-linear-gradient(
                     45deg,
@@ -238,15 +239,15 @@ export default function NepfyAIPage() {
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
-          <SaveDraftButton
+          {/* <SaveDraftButton
             clientName={clientName}
             projectName={projectName}
             projectDescription={projectDescription}
             companyInfo={companyInfo}
-          />
+          /> */}
           <Link
             href="/dashboard"
-            className="h-[40px] w-[40px] sm:h-[44px] sm:w-[44px] border border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 rounded-[10px] flex items-center justify-center button-inner cursor-pointer"
+            className="border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 button-inner flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-[10px] border sm:h-[44px] sm:w-[44px]"
           >
             <CloseIcon width="10" height="10" fill="#1C1A22" />
           </Link>

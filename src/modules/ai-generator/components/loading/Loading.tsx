@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 
 import { Box } from "../box/Box";
-import { LoadingIcon } from "../icons/LoadingIcon";
 import { SparkleIcon } from "#/modules/ai-generator/components/icons/SparkleIcon";
+import carregando from "#/lotties/carregando.json";
+import Lottie from "lottie-react";
 
 const tips = [
   {
@@ -49,14 +50,14 @@ export function Loading() {
       title="Gerando sua proposta"
       description="Sua proposta está sendo preparada com as informações que você preencheu."
     >
-      <LoadingIcon />
-      <p className="text-white-neutral-light-500 text-sm my-6">
+      <Lottie animationData={carregando} className="w-full" />
+      <p className="text-white-neutral-light-500 my-6 text-sm">
         Esse processo leva só alguns segundos. Enquanto isso, confira algumas
         dicas para aproveitar ao máximo sua proposta.
       </p>
 
-      <div className="flex items-center gap-2 bg-[#DBD2FF1A]/90 rounded-[12px] p-4 border border-[#5639C6] button-inner">
-        <div className="h-10 w-10 hidden md:flex justify-center items-center bg-[#DBD2FF] rounded-full">
+      <div className="button-inner flex items-center gap-2 rounded-[12px] border border-[#5639C6] bg-[#DBD2FF1A]/90 p-4">
+        <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-[#DBD2FF] md:flex">
           <SparkleIcon />
         </div>
         <div className="w-[88%]">
@@ -64,10 +65,10 @@ export function Loading() {
             className="transition-opacity duration-1000 ease-in-out"
             style={{ opacity: isVisible ? 1 : 0 }}
           >
-            <p className="font-medium text-white-neutral-light-900">
+            <p className="text-white-neutral-light-900 font-medium">
               {currentTip.title}
             </p>
-            <p className="text-xs text-white-neutral-light-500">
+            <p className="text-white-neutral-light-500 text-xs">
               {currentTip.description}
             </p>
           </div>

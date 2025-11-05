@@ -86,7 +86,7 @@ export class FlashTheme {
       testimonials,
       ...(terms ? { terms: [terms] } : {}),
       faq: faq || [],
-      footer: this.generateFooter(data),
+      footer: await this.generateFooter(data, agent),
     };
   }
 
@@ -108,10 +108,9 @@ Retorne APENAS um JSON válido com:
   "title": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres",
   "subtitle": "Frase que reforça benefício, transformação e lucro com exatamente 100 caracteres",
   "services": [
-    "Serviço 1 com exatamente 30 caracteres",
-    "Serviço 2 com exatamente 30 caracteres", 
-    "Serviço 3 com exatamente 30 caracteres",
-    "Serviço 4 com exatamente 30 caracteres"
+    "Serviço 1 com exatamente uma palavra",
+    "Serviço 2 com exatamente uma palavra", 
+    "Serviço 3 com exatamente uma palavra",
   ],
   "validity": "31/10/2025",
   "buttonText": "Iniciar Projeto"
@@ -120,7 +119,7 @@ Retorne APENAS um JSON válido com:
 REGRAS OBRIGATÓRIAS:
 - title: EXATAMENTE 60 caracteres
 - subtitle: EXATAMENTE 100 caracteres  
-- services: EXATAMENTE 4 itens, cada um com EXATAMENTE 30 caracteres
+- services: EXATAMENTE 3 itens, cada um com EXATAMENTE uma palavra relacionadas ao projeto ${data.projectDescription}
 - Use linguagem imperativa e inclusiva
 - Foque em benefícios, transformação e lucro
 - NÃO mencione o nome do cliente nos textos
@@ -276,7 +275,7 @@ Retorne APENAS:
             id: crypto.randomUUID(),
             name: "Jane Doe",
             role: "CTO",
-            image: "/images/templates/flash/placeholder2.png",
+            image: "/images/templates/flash/placeholder.png",
             hideMember: false,
             sortOrder: 1,
           },
@@ -868,7 +867,7 @@ Retorne APENAS:
         "instagram": "cliente1",
         "investment": 1500,
         "roi": 2500,
-        "photo": "/images/templates/flash/placeholder3.png",
+        "photo": "/images/templates/flash/placeholder.png",
         "hidePhoto": false,
         "sortOrder": 0
       },
@@ -878,7 +877,7 @@ Retorne APENAS:
         "instagram": "cliente2",
         "investment": 2000,
         "roi": 3000,
-        "photo": "/images/templates/flash/placeholder4.png",
+        "photo": "/images/templates/flash/placeholder.png",
         "hidePhoto": false,
         "sortOrder": 1
       },
@@ -888,7 +887,7 @@ Retorne APENAS:
         "instagram": "cliente3",
         "investment": 2500,
         "roi": 4000,
-        "photo": "/images/templates/flash/placeholder5.png",
+        "photo": "/images/templates/flash/placeholder.png",
         "hidePhoto": false,
         "sortOrder": 2
       }
@@ -905,7 +904,6 @@ Retorne APENAS:
   - Os campos investment e roi devem ser valores que façam sentido para o projeto, sem exageros ou valores muito altos ou baixos.
   - Use linguagem clara e profissional
   - O campo photo deve usar essa URL: /images/templates/flash/placeholder.png
-  - O nome placeholder na URL: /images/templates/flash/placeholder.png pode variar entre placeholder, placeholder2, placeholder3, placeholder4, placeholder5.
   - Responda APENAS com o JSON válido.`;
 
     const expectedFormat = `{
@@ -997,7 +995,7 @@ Retorne APENAS:
           "name": "Jane Doe",
           "role": "CTO",
           "testimonial": "Exemplo de depoimento para mostrar o resultado do projeto desenvolvido pela empresa bem como os pontos fortes do projeto.",
-          "photo": "/images/templates/flash/placeholder2.png",
+          "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
         }
@@ -1015,7 +1013,6 @@ Retorne APENAS:
     - NÃO use vírgulas no final de arrays ou objetos
     - Nomes de propriedades exatamente como especificado
     - O campo photo deve usar essa URL: /images/templates/flash/placeholder.png 
-    - O nome placeholder na URL: /images/templates/flash/placeholder.png pode variar entre placeholder, placeholder2, placeholder3, placeholder4, placeholder5.
     - O JSON deve começar com { e terminar com }
 
     IMPORTANTE: 
@@ -1240,13 +1237,62 @@ REGRAS OBRIGATÓRIAS:
     }
   }
 
-  private generateFooter(data: FlashThemeData): FlashFooterSection {
-    console.log("Flash footer generated for", data.projectName);
-    return {
-      callToAction: "Transforme sua presença digital conosco",
-      disclaimer:
-        "Estamos à disposição para apoiar cada etapa do seu projeto. Conte com nossa equipe para garantir sucesso, impacto e crescimento contínuo, com atenção e dedicação personalizada.",
-    } as FlashFooterSection;
+  private async generateFooter(
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): Promise<FlashFooterSection> {
+    const userPrompt = `Gere APENAS um JSON válido para o footer.
+
+    PROJETO: ${data.projectName} - ${data.projectDescription}
+
+    COPIE EXATAMENTE ESTE FORMATO:
+
+    {
+      "callToAction": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres",
+      "disclaimer": "Frase que reforça benefício, transformação e lucro com exatamente 230 caracteres",
+    }
+
+    REGRAS OBRIGATÓRIAS:
+      
+    - callToAction: Máximo 60 caracteres
+    - disclaimer: Máximo 330 caracteres
+    - Use linguagem clara e profissional
+    - Responda APENAS com o JSON válido.`;
+
+    const expectedFormat = `{
+        callToAction: "string",
+        disclaimer: "string",
+      }`;
+
+    try {
+      const moaResult = await this.moaService.generateWithRetry<{
+        callToAction: string;
+        disclaimer: string;
+      }>(userPrompt, agent.systemPrompt, expectedFormat, agent.systemPrompt);
+
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Footer generated successfully");
+
+        return moaResult.result;
+      }
+
+      // Fallback to single model if MoA fails
+      console.warn("MoA failed, falling back to single model");
+      const response = await this.runLLM(userPrompt, agent.systemPrompt);
+      const parsed = JSON.parse(response) as {
+        callToAction: string;
+        disclaimer: string;
+      };
+
+      return parsed;
+    } catch (error) {
+      console.error("Flash Footer Generation Error:", error);
+      return {
+        callToAction: "Transforme sua presença digital conosco",
+        disclaimer:
+          "Estamos à disposição para apoiar cada etapa do seu projeto. Conte com nossa equipe para garantir sucesso, impacto e crescimento contínuo, com atenção e dedicação personalizada.",
+      } as FlashFooterSection;
+    }
   }
 
   private getFallbackFAQ(): FlashFAQSection {

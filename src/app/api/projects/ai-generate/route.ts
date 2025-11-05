@@ -344,7 +344,7 @@ export async function POST(request: NextRequest) {
           const simpleTimeoutPromise = new Promise<never>((_, reject) => {
             setTimeout(
               () => reject(new Error("Flash simple generation timeout")),
-              30000
+              100000
             );
           });
           const simplePromise = flashWorkflow.execute(flashData);
@@ -564,8 +564,8 @@ export async function POST(request: NextRequest) {
         planGenerationMethod: selectedPlan
           ? `count-${selectedPlan}`
           : selectedPlan && selectedPlan > 0
-          ? "array"
-          : "default",
+            ? "array"
+            : "default",
         projectCreated: true,
         projectId: newProject.id,
       },
