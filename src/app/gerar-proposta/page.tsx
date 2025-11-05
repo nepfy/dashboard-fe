@@ -123,8 +123,6 @@ export default function NepfyAIPage() {
 
       const result = await response.json();
 
-      console.log("Result:", result);
-
       if (result.success) {
         console.log("Proposal generated successfully:", result.data);
 
@@ -142,11 +140,10 @@ export default function NepfyAIPage() {
           success: true,
         });
 
-        setTimeout(() => {
-          router.push(
-            `/editar?projectId=${result.data.project.id}&templateType=${templateType}`
-          );
-        }, 1000);
+        router.push(
+          `/editar?projectId=${result.data.project.id}&templateType=${templateType}`
+        );
+
         return;
       } else {
         console.error("Error generating proposal:", result.error);
