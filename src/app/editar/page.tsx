@@ -5,6 +5,7 @@ import { LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Flash from "./modules/flash";
 import Prime from "./modules/prime";
+import Minimal from "./modules/minimal";
 import { TemplateData } from "#/types/template-data";
 import { useEditor } from "./contexts/EditorContext";
 
@@ -93,6 +94,10 @@ export default function EditarPage() {
 
   if (projectData.templateType === "prime") {
     return <Prime />;
+  }
+
+  if (projectData.templateType === "minimal") {
+    return <Minimal />;
   }
 
   // Fallback for unsupported template types
