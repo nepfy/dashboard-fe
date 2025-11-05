@@ -437,7 +437,8 @@
       if (roiDiv) {
         roiDiv.textContent = formatCurrency(item.roi);
         if (mainColor) {
-          roiDiv.style.color = mainColor;
+          const setColor = mainColor === "#212121" ? "#ffffff" : mainColor;
+          roiDiv.style.color = setColor;
         }
       }
 

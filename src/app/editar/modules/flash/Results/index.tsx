@@ -20,6 +20,10 @@ export default function FlashResults({
   } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
 
+  const setColor = mainColor === "#212121" ? "#ffffff" : mainColor;
+
+  console.log(setColor);
+
   const canEdit = activeEditingId === null;
   return (
     <div className="bg-black">
@@ -100,7 +104,7 @@ export default function FlashResults({
                         </p>
                         <p
                           className={`text-lg font-medium`}
-                          style={{ color: mainColor }}
+                          style={{ color: setColor }}
                         >
                           {formatCurrencyDisplay(item.roi ?? 0)}
                         </p>
