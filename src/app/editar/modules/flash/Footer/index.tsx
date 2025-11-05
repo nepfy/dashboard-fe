@@ -13,9 +13,11 @@ export default function FlashFooter({
   disclaimer,
   hideDisclaimer,
 }: FooterSection) {
-  const { updateFooter, projectData } = useEditor();
+  const { updateFooter, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
+  
+  const canEdit = activeEditingId === null;
   return (
     <div style={{ background: mainColor }} className="relative overflow-hidden">
       {!hideSection && (
@@ -28,6 +30,7 @@ export default function FlashFooter({
                   updateFooter({ callToAction: newCallToAction })
                 }
                 className="mb-7 w-full text-[32px] leading-[1.2] font-normal text-[#E6E6E6] lg:text-[88px]"
+                editingId="footer-callToAction"
               />
 
               {projectData?.projectValidUntil && (
@@ -35,11 +38,13 @@ export default function FlashFooter({
                   className="self-start"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIsDateModalOpen(true);
+                    if (canEdit) {
+                      setIsDateModalOpen(true);
+                    }
                   }}
                 >
                   <p
-                    className={`inline cursor-pointer text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] lg:ml-[10px] lg:pt-0 ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
+                    className={`inline text-sm font-bold text-[#E6E6E6] lg:ml-[10px] lg:pt-0 ${canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed"} ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
                   >
                     Proposta válida até -{" "}
                     <span className="font-normal text-[#E6E6E6]/40">
@@ -51,19 +56,22 @@ export default function FlashFooter({
                   <EditableDate
                     isModalOpen={isDateModalOpen}
                     setIsModalOpen={setIsDateModalOpen}
+                    editingId="footer-date"
                   />
                 </div>
               )}
 
               <div
-                className="relative z-5 mt-10 h-auto w-auto cursor-pointer py-2 lg:w-[336px]"
+                className={`relative z-5 mt-10 h-auto w-auto py-2 lg:w-[336px] ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsButtonModalOpen(true);
+                  if (canEdit) {
+                    setIsButtonModalOpen(true);
+                  }
                 }}
               >
                 <div
-                  className={`absolute inset-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
+                  className={`absolute inset-0 ${canEdit ? "hover:border-[#0170D6] hover:bg-[#0170D666]" : ""} ${isButtonModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                 />
                 <button className="mx-auto block w-full rounded-full bg-[#FBFBFB] py-4 text-sm font-semibold text-[#121212] lg:w-[326px]">
                   {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
@@ -71,6 +79,7 @@ export default function FlashFooter({
                 <EditableButton
                   isModalOpen={isButtonModalOpen}
                   setIsModalOpen={setIsButtonModalOpen}
+                  editingId="footer-button"
                 />
               </div>
             </div>
@@ -83,6 +92,7 @@ export default function FlashFooter({
                     updateFooter({ disclaimer: newDisclaimer })
                   }
                   className="w-[430px] text-[15px] text-[#E6E6E6]"
+                  editingId="footer-disclaimer"
                 />
               </div>
             )}

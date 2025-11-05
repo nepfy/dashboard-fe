@@ -87,6 +87,7 @@ export default function FlashAboutUs({
                     updateAboutUs({ title: newTitle })
                   }
                   className="inline w-full text-[2.1rem] font-normal text-[#ffffff] lg:text-[48px]"
+                  editingId="aboutUs-title"
                 />
               </div>
             </div>

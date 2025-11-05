@@ -9,14 +9,17 @@ import { useEditor } from "#/app/editar/contexts/EditorContext";
 interface EditableDateProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
+  editingId: string;
 }
 
 export default function EditableDate({
   isModalOpen,
   setIsModalOpen,
+  editingId,
 }: EditableDateProps) {
   const [tempSelectedDate, setTempSelectedDate] = useState<Date | null>(null);
-  const { projectData, updateProjectValidUntil } = useEditor();
+  const { projectData, updateProjectValidUntil, startEditing, stopEditing } =
+    useEditor();
 
   const currentDate = useMemo(() => {
     if (!projectData?.projectValidUntil) return null;
@@ -52,9 +55,26 @@ export default function EditableDate({
 
   useEffect(() => {
     if (isModalOpen) {
+      // Try to start editing when modal opens
+      const canStartEditing = startEditing(editingId);
+      if (!canStartEditing) {
+        // If another field/modal is already active, close this modal
+        setIsModalOpen(false);
+        return;
+      }
       setTempSelectedDate(currentDate);
+    } else {
+      // Stop editing when modal closes
+      stopEditing(editingId);
     }
-  }, [isModalOpen, currentDate]);
+  }, [
+    isModalOpen,
+    currentDate,
+    editingId,
+    startEditing,
+    stopEditing,
+    setIsModalOpen,
+  ]);
 
   const handleDateSelect = (date: Date) => {
     setTempSelectedDate(new Date(date));
@@ -66,6 +86,7 @@ export default function EditableDate({
       updateProjectValidUntil(dateToSave);
     }
     setIsModalOpen(false);
+    stopEditing(editingId);
   };
 
   // Check if the date has been changed
@@ -80,7 +101,11 @@ export default function EditableDate({
   };
 
   const handleOpen = () => {
-    setIsModalOpen(true);
+    // Check if we can start editing (no other field/modal is active)
+    // If another field/modal is active, do nothing
+    if (startEditing(editingId)) {
+      setIsModalOpen(true);
+    }
   };
 
   return (
@@ -101,6 +126,7 @@ export default function EditableDate({
             onClick={(e) => {
               e.stopPropagation();
               setIsModalOpen(false);
+              stopEditing(editingId);
             }}
             className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
           >

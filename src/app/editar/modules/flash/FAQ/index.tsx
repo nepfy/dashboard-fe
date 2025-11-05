@@ -20,8 +20,10 @@ export default function FlashFAQ({
   items,
   mainColor,
 }: FAQSection) {
-  const { updateFAQItem, reorderFAQItems } = useEditor();
+  const { updateFAQItem, reorderFAQItems, activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  
+  const canEdit = activeEditingId === null;
 
   // Generate gradient colors for the FAQ background
   const defaultColor = mainColor || "#4F21A1";
@@ -40,12 +42,14 @@ export default function FlashFAQ({
             return (
               <div
                 key={item.id}
-                className={`relative mt-12 cursor-pointer rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"}`}
-                onClick={() =>
-                  setOpenModalId(
-                    openModalId === item.id ? null : (item?.id ?? null)
-                  )
-                }
+                className={`relative mt-12 rounded-[4px] border border-transparent ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                onClick={() => {
+                  if (canEdit || openModalId === item.id) {
+                    setOpenModalId(
+                      openModalId === item.id ? null : (item?.id ?? null)
+                    );
+                  }
+                }}
               >
                 <div className="flex w-full items-baseline justify-between border-b border-[#A0A0A0]/30 pb-6 last:border-b-0">
                   <span className="flex w-full items-baseline justify-between gap-10 md:w-auto md:justify-start md:gap-24">
@@ -94,6 +98,7 @@ export default function FlashFAQ({
                     setIsModalOpen={(isOpen) =>
                       setOpenModalId(isOpen ? (item?.id ?? null) : null)
                     }
+                    editingId={`faq-${item.id}`}
                     itemType="faq"
                     items={items || []}
                     currentItemId={item?.id ?? null}

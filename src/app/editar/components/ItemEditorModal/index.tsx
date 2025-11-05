@@ -85,9 +85,23 @@ export default function ItemEditorModal({
       | Partial<StepTopic>
       | Partial<FAQItem>
     >;
-    reorderedItems?: (TeamMember | Result | ExpertiseTopic | Testimonial | StepTopic | FAQItem)[];
+    reorderedItems?: (
+      | TeamMember
+      | Result
+      | ExpertiseTopic
+      | Testimonial
+      | StepTopic
+      | FAQItem
+    )[];
     deletedItems: string[];
-    newItems: (TeamMember | Result | ExpertiseTopic | Testimonial | StepTopic | FAQItem)[];
+    newItems: (
+      | TeamMember
+      | Result
+      | ExpertiseTopic
+      | Testimonial
+      | StepTopic
+      | FAQItem
+    )[];
     sectionUpdates?: { hideIcon?: boolean };
   }>({
     itemUpdates: {},
@@ -136,9 +150,11 @@ export default function ItemEditorModal({
 
     // Define maximum items per section type
     const maxItems =
-      itemType === "steps" || itemType === "faq" ? 10 :
-      itemType === "expertise" ? 9 :
-      6; // team, results, testimonials
+      itemType === "steps" || itemType === "faq"
+        ? 10
+        : itemType === "expertise"
+          ? 9
+          : 6; // team, results, testimonials
 
     if (totalItems < maxItems) {
       const newItem:
@@ -228,7 +244,9 @@ export default function ItemEditorModal({
 
       setPendingChanges((prev) => {
         // Check if the item to delete is a newly added item
-        const isNewItem = prev.newItems.some((item) => item.id === itemIdToDelete);
+        const isNewItem = prev.newItems.some(
+          (item) => item.id === itemIdToDelete
+        );
 
         // Update selectedItemId if the current item is being deleted
         if (selectedItemId === itemIdToDelete) {
@@ -247,7 +265,9 @@ export default function ItemEditorModal({
           // If it's a new item, just remove it from newItems
           return {
             ...prev,
-            newItems: prev.newItems.filter((item) => item.id !== itemIdToDelete),
+            newItems: prev.newItems.filter(
+              (item) => item.id !== itemIdToDelete
+            ),
           };
         } else {
           // If it's an existing item, add it to deletedItems
@@ -361,9 +381,11 @@ export default function ItemEditorModal({
       onReorderItems(finalItems);
     } else {
       // If only individual field updates (no reordering/deletion/addition), use onUpdateItem
-      Object.entries(pendingChanges.itemUpdates).forEach(([itemId, updates]) => {
-        onUpdateItem(itemId, updates);
-      });
+      Object.entries(pendingChanges.itemUpdates).forEach(
+        ([itemId, updates]) => {
+          onUpdateItem(itemId, updates);
+        }
+      );
     }
 
     setPendingChanges({
@@ -455,7 +477,7 @@ export default function ItemEditorModal({
       <EditableModal
         isOpen={isOpen}
         className="absolute top-0 right-0 z-50 flex h-[550px] cursor-default flex-col items-stretch sm:z-12 sm:h-[650px]"
-        trianglePosition="top-[85px] left-[-8px]"
+        trianglePosition={`${itemType === "expertise" ? "top-[85px] left-[100px]" : "top-[85px] right-[-8px]"}`}
       >
         {!showExploreGalleryInfo &&
           !showPexelsGallery &&

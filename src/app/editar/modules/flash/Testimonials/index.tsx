@@ -18,10 +18,12 @@ export default function FlashTestimonials({
   hideSection,
   items,
 }: TestimonialsSection) {
-  const { updateTestimonialItem, reorderTestimonialItems } = useEditor();
+  const { updateTestimonialItem, reorderTestimonialItems, activeEditingId } = useEditor();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  
+  const canEdit = activeEditingId === null;
 
   const currentTestimonial = items?.[currentIndex];
   let bg;
@@ -86,15 +88,23 @@ export default function FlashTestimonials({
 
           <div className={`border-l border-l-[#545257]/50 lg:pl-7`}>
             <div
-              onClick={() => setOpenModalId(currentTestimonial?.id ?? null)}
-              className={`text-[#E6E6E6 relative flex flex-col items-start rounded-[4px] text-sm font-bold hover:border-[#0170D6] hover:bg-[#0170D666] ${
+              onClick={() => {
+                if (canEdit || openModalId === currentTestimonial?.id) {
+                  setOpenModalId(currentTestimonial?.id ?? null);
+                }
+              }}
+              className={`text-[#E6E6E6 relative flex flex-col items-start rounded-[4px] text-sm font-bold ${
                 !!openModalId
                   ? "cursor-default border border-[#0170D6] bg-[#0170D666]"
-                  : "cursor-pointer border border-transparent"
+                  : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border border-transparent" : "cursor-not-allowed border border-transparent"
               } `}
             >
               <div
-                onClick={() => setOpenModalId(currentTestimonial?.id ?? null)}
+                onClick={() => {
+                  if (canEdit || openModalId === currentTestimonial?.id) {
+                    setOpenModalId(currentTestimonial?.id ?? null);
+                  }
+                }}
                 className={`transition-opacity duration-800 ${
                   isTransitioning ? "opacity-0" : "opacity-100"
                 }`}
@@ -136,6 +146,7 @@ export default function FlashTestimonials({
                     isOpen ? (currentTestimonial?.id ?? null) : null
                   )
                 }
+                editingId={`testimonials-${currentTestimonial?.id}`}
                 itemType="testimonials"
                 items={items || []}
                 currentItemId={currentTestimonial?.id ?? null}

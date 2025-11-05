@@ -4,13 +4,17 @@ import StarIcon from "./StarIcon";
 import { formatCurrencyDisplayNoCents } from "#/helpers/formatCurrency";
 import { PlansSection } from "#/types/template-data";
 import EditablePlan from "#/app/editar/components/EditablePlan";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashPlans({
   mainColor,
   hideSection,
   plansItems,
 }: PlansSection) {
+  const { activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  
+  const canEdit = activeEditingId === null;
   let bg: string;
   let planBg: string;
   if (mainColor === "#4F21A1") {
@@ -47,8 +51,12 @@ export default function FlashPlans({
             {plansItems?.map((plan) => (
               <div
                 key={plan.id}
-                className={`relative my-10 flex w-full cursor-pointer flex-col rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] lg:my-0 ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"}`}
-                onClick={() => setOpenModalId(plan.id)}
+                className={`relative my-10 flex w-full flex-col rounded-[4px] border border-transparent lg:my-0 ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                onClick={() => {
+                  if (canEdit || openModalId === plan.id) {
+                    setOpenModalId(plan.id);
+                  }
+                }}
               >
                 {plan.recommended && (
                   <div
@@ -128,6 +136,7 @@ export default function FlashPlans({
                   setIsModalOpen={(isOpen) =>
                     setOpenModalId(isOpen ? (plan.id ?? null) : null)
                   }
+                  editingId={`plan-${plan.id}`}
                 />
 
                 <div

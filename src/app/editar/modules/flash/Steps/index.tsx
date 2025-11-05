@@ -13,8 +13,10 @@ export default function FlashSteps({
   topics,
   marquee,
 }: StepsSection) {
-  const { updateStepTopic, reorderStepTopics } = useEditor();
+  const { updateStepTopic, reorderStepTopics, activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  
+  const canEdit = activeEditingId === null;
   return (
     <div style={{ background: mainColor }}>
       {!hideSection && (
@@ -34,12 +36,14 @@ export default function FlashSteps({
               return (
                 <div
                   key={topic.id}
-                  className={`relative mt-12 cursor-pointer rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === topic.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"}`}
-                  onClick={() =>
-                    setOpenModalId(
-                      openModalId === topic.id ? null : (topic?.id ?? null)
-                    )
-                  }
+                  className={`relative mt-12 rounded-[4px] border border-transparent ${openModalId === topic.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                  onClick={() => {
+                    if (canEdit || openModalId === topic.id) {
+                      setOpenModalId(
+                        openModalId === topic.id ? null : (topic?.id ?? null)
+                      );
+                    }
+                  }}
                 >
                   <div className="flex w-full items-baseline justify-between border-b border-[#A0A0A0]/30 pb-6 last:border-b-0">
                     <span className="flex w-full items-baseline justify-between gap-10 md:w-auto md:justify-start md:gap-24">
@@ -101,6 +105,7 @@ export default function FlashSteps({
                       setIsModalOpen={(isOpen) =>
                         setOpenModalId(isOpen ? (topic?.id ?? null) : null)
                       }
+                      editingId={`steps-${topic.id}`}
                       itemType="steps"
                       items={topics || []}
                       currentItemId={topic?.id ?? null}

@@ -12,8 +12,11 @@ export default function FlashTeam({
   title,
   members,
 }: TeamSection) {
-  const { updateTeam, updateTeamMember, reorderTeamMembers } = useEditor();
+  const { updateTeam, updateTeamMember, reorderTeamMembers, activeEditingId } =
+    useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+
+  const canEdit = activeEditingId === null;
 
   // Generate gradient colors for the background
   const defaultColor = mainColor || "#4F21A1";
@@ -29,6 +32,7 @@ export default function FlashTeam({
                 value={title || ""}
                 onChange={(newTitle: string) => updateTeam({ title: newTitle })}
                 className="mb-21 w-full max-w-[1200px] text-[32px] text-[#E6E6E6] lg:text-[6rem]"
+                editingId="team-title"
               />
             </div>
 
@@ -57,22 +61,23 @@ export default function FlashTeam({
                 {members?.map((member) => (
                   <div
                     key={member.id}
-                    className={`relative mb-6 flex flex-col items-start rounded-[4px] border border-transparent text-sm font-bold text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] lg:mb-0 ${openModalId === member.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"}`}
-                    onClick={() => setOpenModalId(member?.id ?? null)}
+                    className={`relative mb-6 flex w-full flex-col items-start rounded-[4px] border border-transparent text-sm font-bold text-[#E6E6E6] lg:mb-0 ${openModalId === member.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                    onClick={() => {
+                      if (canEdit || openModalId === member.id) {
+                        setOpenModalId(member?.id ?? null);
+                      }
+                    }}
                   >
                     {!member.hidePhoto && member?.image && (
                       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[4px]">
-                        <div className="relative h-full w-full">
-                          <Image
-                            src={member.image || ""}
-                            alt={member.name || ""}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 767px) 100vw, (max-width: 991px) 727.9921875px, 939.9921875px"
-                            quality={95}
-                            priority={(member?.sortOrder ?? 0) < 3}
-                          />
-                        </div>
+                        <Image
+                          src={member.image || ""}
+                          alt={member.name || ""}
+                          fill
+                          className="object-cover"
+                          quality={95}
+                          priority={(member?.sortOrder ?? 0) < 3}
+                        />
                       </div>
                     )}
                     <p className="mt-3 p-0 text-[16px] font-light text-[#FFFFFF] lg:text-[20px]">
@@ -86,6 +91,7 @@ export default function FlashTeam({
                       setIsModalOpen={(isOpen) =>
                         setOpenModalId(isOpen ? (member?.id ?? null) : null)
                       }
+                      editingId={`team-${member.id}`}
                       itemType="team"
                       items={members || []}
                       currentItemId={member?.id ?? null}

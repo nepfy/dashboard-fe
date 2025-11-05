@@ -12,14 +12,16 @@ interface EditableButtonProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
   position?: "right" | "below";
+  editingId: string;
 }
 
 export default function EditableButton({
   isModalOpen,
   setIsModalOpen,
   position = "right",
+  editingId,
 }: EditableButtonProps) {
-  const { projectData, updateButtonConfig } = useEditor();
+  const { projectData, updateButtonConfig, startEditing, stopEditing } = useEditor();
 
   // Temporary state for form fields
   const [tempButtonTitle, setTempButtonTitle] = useState<string>("");
@@ -38,12 +40,22 @@ export default function EditableButton({
   // Initialize temp state when modal opens
   useEffect(() => {
     if (isModalOpen) {
+      // Try to start editing when modal opens
+      const canStartEditing = startEditing(editingId);
+      if (!canStartEditing) {
+        // If another field/modal is already active, close this modal
+        setIsModalOpen(false);
+        return;
+      }
       setTempButtonTitle(currentButtonConfig?.buttonTitle || "");
       setTempWhereToOpen(currentButtonConfig?.buttonWhereToOpen || undefined);
       setTempHref(currentButtonConfig?.buttonHref || "");
       setTempPhone(currentButtonConfig?.buttonPhone || "");
+    } else {
+      // Stop editing when modal closes
+      stopEditing(editingId);
     }
-  }, [isModalOpen, currentButtonConfig]);
+  }, [isModalOpen, currentButtonConfig, editingId, startEditing, stopEditing, setIsModalOpen]);
 
   const handleSave = () => {
     const updateData = {
@@ -55,6 +67,7 @@ export default function EditableButton({
 
     updateButtonConfig(updateData);
     setIsModalOpen(false);
+    stopEditing(editingId);
   };
 
   const hasButtonChanged = () => {
@@ -113,6 +126,7 @@ export default function EditableButton({
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsModalOpen(false);
+                  stopEditing(editingId);
                 }}
                 className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
               >

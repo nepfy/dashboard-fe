@@ -43,6 +43,7 @@ export default function FlashInvestment({
                 updateInvestment({ title: newTitle })
               }
               className="mb-21 inline w-full text-[24px] font-normal text-[#E6E6E6] lg:text-[48px]"
+              editingId="investment-title"
             />
           </div>
           {!hideProjectScope && (
@@ -60,6 +61,7 @@ export default function FlashInvestment({
                   updateInvestment({ projectScope: newProjectScope })
                 }
                 className="w-full text-[#E6E6E6]"
+                editingId="investment-projectScope"
               />
             </div>
           )}

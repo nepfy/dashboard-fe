@@ -58,12 +58,15 @@ export default function FlashExpertise({
     updateExpertiseTopic,
     reorderExpertiseTopics,
     projectData,
+    activeEditingId,
   } = useEditor();
 
   // Get the current hideIcon value from the context to ensure real-time updates
   const hideIcon =
     projectData?.proposalData?.expertise?.hideIcon ?? propHideIcon;
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+
+  const canEdit = activeEditingId === null;
   const renderIcon = (iconName: string) => {
     return iconMap[iconName as keyof typeof iconMap];
   };
@@ -83,6 +86,7 @@ export default function FlashExpertise({
                   updateExpertise({ title: newTitle })
                 }
                 className="inline h-full w-full text-[1.5rem] text-[#E6E6E6] lg:text-[48px]"
+                editingId="expertise-title"
               />
             </span>
           </div>
@@ -91,8 +95,12 @@ export default function FlashExpertise({
             {topics?.map((topic) => (
               <div
                 key={topic.id}
-                className="text-white-neutral-light-100 relative w-full cursor-pointer text-[15px] font-light lg:w-[260px]"
-                onClick={() => setOpenModalId(topic?.id ?? null)}
+                className={`text-white-neutral-light-100 relative w-full text-[15px] font-light lg:w-[260px] ${canEdit || openModalId === topic.id ? "cursor-pointer" : "cursor-not-allowed"}`}
+                onClick={() => {
+                  if (canEdit || openModalId === topic.id) {
+                    setOpenModalId(topic?.id ?? null);
+                  }
+                }}
               >
                 <div className="mb-2 text-white">
                   {!hideIcon &&
@@ -110,6 +118,7 @@ export default function FlashExpertise({
                   setIsModalOpen={(isOpen) =>
                     setOpenModalId(isOpen ? (topic?.id ?? null) : null)
                   }
+                  editingId={`expertise-${topic.id}`}
                   itemType="expertise"
                   items={topics || []}
                   currentItemId={topic?.id ?? null}

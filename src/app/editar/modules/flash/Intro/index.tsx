@@ -15,9 +15,11 @@ export default function FlashIntro({
   hideSubtitle,
   services,
 }: IntroductionSection) {
-  const { updateIntroduction, projectData } = useEditor();
+  const { updateIntroduction, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
+  
+  const canEdit = activeEditingId === null;
 
   // Generate gradient colors for the hero background
   const defaultColor = mainColor || "#4F21A1";
@@ -34,6 +36,7 @@ export default function FlashIntro({
               updateIntroduction({ userName: newUserName })
             }
             className="text-lg font-medium"
+            editingId="intro-userName"
           />{" "}
         </span>
         <div className="hidden items-center gap-12 lg:flex">
@@ -45,14 +48,16 @@ export default function FlashIntro({
             className="text-[#E6E6E6]"
           /> */}
           <div
-            className="relative z-10 h-auto w-auto cursor-pointer py-2"
+            className={`relative z-10 h-auto w-auto py-2 ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
             onClick={(e) => {
               e.stopPropagation();
-              setIsButtonModalOpen(true);
+              if (canEdit) {
+                setIsButtonModalOpen(true);
+              }
             }}
           >
             <div
-              className={`absolute inset-0 border hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
+              className={`absolute inset-0 border ${canEdit ? "hover:border-[#0170D6] hover:bg-[#0170D666]" : ""} ${isButtonModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
             />
             <p className="rounded-full bg-black px-7 py-5">
               {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
@@ -61,6 +66,7 @@ export default function FlashIntro({
               isModalOpen={isButtonModalOpen}
               setIsModalOpen={setIsButtonModalOpen}
               position="below"
+              editingId="intro-button"
             />
           </div>
         </div>
@@ -73,6 +79,7 @@ export default function FlashIntro({
             updateIntroduction({ title: newTitle })
           }
           className="max-w-[1120px] text-[43px] leading-[1.3] text-[#E6E6E6] xl:text-[72px]"
+          editingId="intro-title"
         />
 
         {projectData?.projectValidUntil && (
@@ -80,11 +87,13 @@ export default function FlashIntro({
             className="relative mt-4 self-start"
             onClick={(e) => {
               e.stopPropagation();
-              setIsDateModalOpen(true);
+              if (canEdit) {
+                setIsDateModalOpen(true);
+              }
             }}
           >
             <p
-              className={`inline w-auto cursor-pointer text-[13px] text-[#E6E6E6] hover:border-[#0170D6] hover:bg-[#0170D666] lg:text-[15px] ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
+              className={`inline w-auto text-[13px] text-[#E6E6E6] lg:text-[15px] ${canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed"} ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
             >
               Proposta válida até -{" "}
               <span className="font-normal text-[#FFFFFF]">
@@ -96,6 +105,7 @@ export default function FlashIntro({
             <EditableDate
               isModalOpen={isDateModalOpen}
               setIsModalOpen={setIsDateModalOpen}
+              editingId="intro-date"
             />
           </div>
         )}
@@ -122,6 +132,7 @@ export default function FlashIntro({
               updateIntroduction({ services: updatedServices });
             }}
             className="max-w-[250px] text-sm text-[#E6E6E6]"
+            editingId="intro-services"
           />
         </div>
         {!hideSubtitle && (
@@ -133,6 +144,7 @@ export default function FlashIntro({
                   updateIntroduction({ subtitle: newSubtitle })
                 }
                 className="w-full max-w-[380px] text-[16px] text-[#ffffff] lg:text-[18px]"
+                editingId="intro-subtitle"
               />
             </span>
           </div>

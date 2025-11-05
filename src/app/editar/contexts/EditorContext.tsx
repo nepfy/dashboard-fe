@@ -7,6 +7,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useRef,
   ReactNode,
 } from "react";
 import {
@@ -123,6 +124,13 @@ interface EditorContextType {
   addPlanItem: (initial?: Partial<Plan>) => string | undefined;
   deletePlanItem: (planId: string) => void;
   reorderPlanIncludedItems: (planId: string, items: PlanIncludedItem[]) => void;
+
+  // Editing state management
+  activeEditingId: string | null;
+  startEditing: (id: string) => boolean;
+  stopEditing: (id: string) => void;
+  isCurrentlyEditing: (id: string) => boolean;
+  getActiveEditingId: () => string | null;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -140,7 +148,15 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeEditingId, setActiveEditingId] = useState<string | null>(null);
+  const activeEditingIdRef = useRef<string | null>(null);
   const router = useRouter();
+
+  // Sync ref with state
+  useEffect(() => {
+    activeEditingIdRef.current = activeEditingId;
+  }, [activeEditingId]);
+
   // Browser-level unsaved changes warning
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -887,6 +903,40 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [projectData, updateSection]
   );
 
+  // Editing state management
+  const startEditing = useCallback((id: string): boolean => {
+    // If another field/modal is already being edited, prevent starting a new session
+    // This ensures only one field/modal can be edited at a time
+    if (activeEditingIdRef.current !== null && activeEditingIdRef.current !== id) {
+      return false; // Another field/modal is already being edited
+    }
+    // Start the new editing session
+    activeEditingIdRef.current = id;
+    setActiveEditingId(id);
+    return true;
+  }, []);
+
+  const stopEditing = useCallback((id: string) => {
+    setActiveEditingId((currentId) => {
+      if (currentId === id) {
+        activeEditingIdRef.current = null;
+        return null;
+      }
+      return currentId;
+    });
+  }, []);
+
+  const isCurrentlyEditing = useCallback(
+    (id: string): boolean => {
+      return activeEditingId === id;
+    },
+    [activeEditingId]
+  );
+
+  const getActiveEditingId = useCallback((): string | null => {
+    return activeEditingId;
+  }, [activeEditingId]);
+
   const value: EditorContextType = {
     projectData,
     isLoading,
@@ -944,6 +994,11 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     addPlanItem,
     deletePlanItem,
     reorderPlanIncludedItems,
+    activeEditingId,
+    startEditing,
+    stopEditing,
+    isCurrentlyEditing,
+    getActiveEditingId,
   };
 
   return (

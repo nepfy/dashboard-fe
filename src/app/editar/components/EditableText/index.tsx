@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 interface EditableTextProps {
   value: string;
   onChange: (newValue: string) => void;
   className?: string;
   placeholder?: string;
+  editingId: string;
 }
 
 export default function EditableText({
@@ -14,7 +16,9 @@ export default function EditableText({
   onChange,
   className = "",
   placeholder = "",
+  editingId,
 }: EditableTextProps) {
+  const { startEditing, stopEditing, activeEditingId } = useEditor();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const [isHovered, setIsHovered] = useState(false);
@@ -24,6 +28,25 @@ export default function EditableText({
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
+
+  // Cleanup: stop editing on unmount
+  useEffect(() => {
+    return () => {
+      if (isEditing) {
+        stopEditing(editingId);
+      }
+    };
+  }, [isEditing, editingId, stopEditing]);
+
+  // Stop editing if another field/modal becomes active
+  useEffect(() => {
+    if (isEditing && activeEditingId !== editingId) {
+      setIsEditing(false);
+      setIsHovered(false);
+      // Revert to original value if we lost focus to another field
+      setLocalValue(value);
+    }
+  }, [isEditing, editingId, activeEditingId, value]);
 
   // Auto-focus textarea when entering edit mode
   useEffect(() => {
@@ -38,7 +61,10 @@ export default function EditableText({
   }, [isEditing]);
 
   const handleClick = () => {
-    setIsEditing(true);
+    // Check if we can start editing (no other field/modal is active)
+    if (startEditing(editingId)) {
+      setIsEditing(true);
+    }
   };
 
   const handleSave = () => {
@@ -47,6 +73,7 @@ export default function EditableText({
     }
     setIsEditing(false);
     setIsHovered(false); // Reset hover state
+    stopEditing(editingId);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -58,6 +85,7 @@ export default function EditableText({
       setLocalValue(value);
       setIsEditing(false);
       setIsHovered(false); // Reset hover state on escape
+      stopEditing(editingId);
     }
   };
 
@@ -66,7 +94,7 @@ export default function EditableText({
   };
 
   const handleMouseEnter = () => {
-    if (!isEditing) {
+    if (!isEditing && activeEditingId === null) {
       setIsHovered(true);
     }
   };
@@ -104,10 +132,13 @@ export default function EditableText({
     );
   }
 
+  const isDisabled = activeEditingId !== null && activeEditingId !== editingId;
+  const cursorClass = isDisabled ? "cursor-not-allowed" : "cursor-pointer";
+
   return (
     <p
-      className={`${className} cursor-pointer transition-all duration-200 ${
-        isHovered && !isEditing
+      className={`${className} ${cursorClass} transition-all duration-200 ${
+        isHovered && !isEditing && !isDisabled
           ? "border border-[#0170D6] bg-[#0170D666]"
           : "border border-transparent bg-transparent"
       }`}

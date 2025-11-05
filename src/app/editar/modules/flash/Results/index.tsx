@@ -11,8 +11,10 @@ export default function FlashResults({
   title,
   items,
 }: ResultSection) {
-  const { updateResults, updateResultItem, reorderResultItems } = useEditor();
+  const { updateResults, updateResultItem, reorderResultItems, activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  
+  const canEdit = activeEditingId === null;
   return (
     <div className="bg-black">
       {!hideSection && (
@@ -24,6 +26,7 @@ export default function FlashResults({
                 updateResults({ title: newTitle })
               }
               className="text-[32px] text-[#E6E6E6] lg:text-[72px]"
+              editingId="results-title"
             />
           </div>
           <div className="px-0 lg:px-0 xl:px-8">
@@ -39,17 +42,19 @@ export default function FlashResults({
             >
               {items?.map((item) => (
                 <div
-                  className={`relative mb-20 w-full cursor-pointer rounded-[4px] border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : "cursor-pointer border-transparent bg-transparent"} `}
+                  className={`relative mb-20 w-full rounded-[4px] border border-transparent ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"} `}
                   key={item.id}
                 >
                   <div
                     key={item.id}
-                    className="relative flex flex-col items-start"
-                    onClick={() =>
-                      setOpenModalId(
-                        openModalId === item.id ? null : (item?.id ?? null)
-                      )
-                    }
+                    className={`relative flex flex-col items-start ${openModalId === item.id ? "cursor-default" : canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
+                    onClick={() => {
+                      if (canEdit || openModalId === item.id) {
+                        setOpenModalId(
+                          openModalId === item.id ? null : (item?.id ?? null)
+                        );
+                      }
+                    }}
                   >
                     {!item.hidePhoto && item?.photo && (
                       <div className="relative h-[26rem] w-full overflow-hidden rounded-[4px]">
@@ -98,6 +103,7 @@ export default function FlashResults({
                       setIsModalOpen={(isOpen) =>
                         setOpenModalId(isOpen ? (item?.id ?? null) : null)
                       }
+                      editingId={`results-${item.id}`}
                       itemType="results"
                       items={items || []}
                       currentItemId={item?.id ?? null}

@@ -18,17 +18,19 @@ export default function EditablePlan({
   plan,
   isModalOpen,
   setIsModalOpen,
+  editingId,
 }: {
   plan: Plan;
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
+  editingId: string;
 }) {
   const [activeTab, setActiveTab] = useState<TabType>("conteudo");
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [showPlanInfo, setShowPlanInfo] = useState<boolean>(false);
   const [showConfirmExclusion, setShowConfirmExclusion] =
     useState<boolean>(false);
-  const { projectData, deletePlanItem, updatePlans } = useEditor();
+  const { projectData, deletePlanItem, updatePlans, startEditing, stopEditing } = useEditor();
 
   const plans = useMemo(
     () => projectData?.proposalData?.plans?.plansItems || [],
@@ -44,9 +46,19 @@ export default function EditablePlan({
   // Ensure that when the modal opens (or plan prop changes), we focus the plan passed in props
   useEffect(() => {
     if (isModalOpen) {
+      // Try to start editing when modal opens
+      const canStartEditing = startEditing(editingId);
+      if (!canStartEditing) {
+        // If another field/modal is already active, close this modal
+        setIsModalOpen(false);
+        return;
+      }
       setSelectedPlanId(plan.id);
+    } else {
+      // Stop editing when modal closes
+      stopEditing(editingId);
     }
-  }, [isModalOpen, plan.id]);
+  }, [isModalOpen, plan.id, editingId, startEditing, stopEditing, setIsModalOpen]);
 
   const [pendingByPlanId, setPendingByPlanId] = useState<
     Record<string, Partial<Plan>>
@@ -128,6 +140,7 @@ export default function EditablePlan({
     if (newlyCreatedId) setSelectedPlanId(newlyCreatedId);
     setPendingByPlanId({});
     setIsModalOpen(false);
+    stopEditing(editingId);
   };
 
   const handleDelete = async () => {
@@ -157,16 +170,17 @@ export default function EditablePlan({
             onClick={(e) => e.stopPropagation()}
           >
             <span className="text-lg font-medium text-[#2A2A2A]">Planos</span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setPendingByPlanId({});
-                setIsModalOpen(false);
-              }}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
-            >
-              <CloseIcon width="12" height="12" fill="#1C1A22" />
-            </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPendingByPlanId({});
+                  setIsModalOpen(false);
+                  stopEditing(editingId);
+                }}
+                className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
+              >
+                <CloseIcon width="12" height="12" fill="#1C1A22" />
+              </button>
           </div>
 
           <div className="h-[77%]">
