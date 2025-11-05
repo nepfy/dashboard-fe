@@ -33,7 +33,10 @@ export default function Flash() {
         mainColor={projectData?.mainColor}
       />
       <FlashExpertise {...projectData?.proposalData?.expertise} />
-      <FlashResults {...projectData?.proposalData?.results} />
+      <FlashResults
+        {...projectData?.proposalData?.results}
+        mainColor={projectData?.mainColor}
+      />
       <FlashTestimonials
         {...projectData?.proposalData?.testimonials}
         mainColor={projectData?.mainColor}

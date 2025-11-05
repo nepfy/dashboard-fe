@@ -179,6 +179,7 @@ export interface Result extends HideableItem, SortableItem {
 }
 
 export interface ResultSection extends HideableItem, SortableItem {
+  mainColor?: string;
   hideSection?: boolean;
   title?: string;
   items?: Result[];

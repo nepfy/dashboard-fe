@@ -13,7 +13,7 @@ export default function FlashPlans({
 }: PlansSection) {
   const { activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-  
+
   const canEdit = activeEditingId === null;
   let bg: string;
   let planBg: string;
@@ -51,7 +51,7 @@ export default function FlashPlans({
             {plansItems?.map((plan) => (
               <div
                 key={plan.id}
-                className={`relative my-10 flex w-full flex-col rounded-[4px] border border-transparent lg:my-0 ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                className={`relative my-10 flex w-full flex-col justify-between rounded-[4px] border border-transparent lg:my-0 ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
                 onClick={() => {
                   if (canEdit || openModalId === plan.id) {
                     setOpenModalId(plan.id);
@@ -72,7 +72,7 @@ export default function FlashPlans({
                   </div>
                 )}
                 <div
-                  className="flex flex-col items-start justify-between rounded-[4px] p-6"
+                  className="flex min-h-[220px] flex-col items-start justify-between rounded-[4px] p-6"
                   style={{
                     background: plan.recommended ? planBg : "#111111",
                   }}
@@ -101,17 +101,18 @@ export default function FlashPlans({
                   </div>
                 </div>
 
-                <div className="mt-10 mb-4">
+                <div className="mt-10 mb-4 flex-grow">
+                  <p className="mb-4 px-6 text-sm text-[#ffffff]">INCLUSO:</p>
                   {plan.includedItems?.map((includedItem) => (
                     <div
                       key={includedItem.id}
-                      className="flex items-center gap-2 px-6 py-4"
+                      className="flex items-center gap-2 px-6 py-3"
                     >
                       <span className="flex h-4 w-4 items-start justify-center">
                         <Checkbox fill="rgba(230, 230, 230, 0.7)" />
                       </span>
                       {!includedItem.hideDescription && (
-                        <p className="text-sm text-[#E6E6E6]/70">
+                        <p className="text-sm text-[#e6e6e6]">
                           {includedItem.description}
                         </p>
                       )}
@@ -121,10 +122,10 @@ export default function FlashPlans({
 
                 {!plan.hideButtonTitle && (
                   <button
-                    className={`mt-8 w-full rounded-full py-4 font-semibold ${
+                    className={`mt-8 w-full rounded-full py-6 font-semibold ${
                       plan.recommended
-                        ? "bg-[#FBFBFB] text-[#121212]"
-                        : "bg-[#121212] text-[#FBFBFB]"
+                        ? "bg-[#FBFBFB] text-[#171825]"
+                        : "bg-[#171825] text-[#FBFBFB]"
                     }`}
                   >
                     {plan.buttonTitle}

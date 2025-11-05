@@ -7,6 +7,7 @@ import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 
 export default function FlashResults({
+  mainColor,
   hideSection,
   title,
   items,
@@ -97,7 +98,10 @@ export default function FlashResults({
                         <p className="text-lg font-semibold text-[#E6E6E6]">
                           Retorno
                         </p>
-                        <p className="text-lg font-medium text-[#C085FD]">
+                        <p
+                          className={`text-lg font-medium`}
+                          style={{ color: mainColor }}
+                        >
                           {formatCurrencyDisplay(item.roi ?? 0)}
                         </p>
                       </span>

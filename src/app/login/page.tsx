@@ -58,9 +58,11 @@ export default function Login() {
         });
         router.push("/");
       } else {
+        setIsLoading(false);
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (err: unknown) {
+      setIsLoading(false);
       if (
         err instanceof Error &&
         "errors" in err &&
@@ -101,17 +103,17 @@ export default function Login() {
   };
 
   return (
-    <div className="grid place-items-center pb-0 pt-0 h-screen min-h-[800px]">
+    <div className="grid h-screen min-h-[800px] place-items-center pt-0 pb-0">
       <Navbar />
-      <div className="flex items-center justify-center gap-0 w-full h-full relative">
+      <div className="relative flex h-full w-full items-center justify-center gap-0">
         <IntroSlider />
 
-        <div className="flex items-center justify-center pt-[78px] sm:pt-0 px-8 sm:p-0 mb-6 sm:mb-0 w-full lg:w-1/2">
+        <div className="mb-6 flex w-full items-center justify-center px-8 pt-[78px] sm:mb-0 sm:p-0 sm:pt-0 lg:w-1/2">
           <div className="w-full max-w-[480px] space-y-8">
             <FormHeader title="Entrar" description="Acesse sua conta Nepfy!" />
 
             <form className="space-y-3" onSubmit={handleSubmit}>
-              <div className="space-y-2 relative">
+              <div className="relative space-y-2">
                 <MailEnvelope
                   className="absolute right-4 bottom-[34px] z-40"
                   width="20"
@@ -129,12 +131,12 @@ export default function Login() {
                 />
               </div>
               {emailAddress.trim() !== "" && !isEmailValid && (
-                <div className="text-red-500 text-sm">
+                <div className="text-sm text-red-500">
                   Por favor, insira um email válido
                 </div>
               )}
 
-              <div className="space-y-2 relative">
+              <div className="relative space-y-2">
                 <PasswordInput
                   label="Senha"
                   id="password"
@@ -156,7 +158,7 @@ export default function Login() {
                   />
                 </div>
                 <Link href="/recuperar-conta">
-                  <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
+                  <p className="inline-block font-medium text-[var(--color-primary-light-400)] hover:underline">
                     Esqueceu a senha?
                   </p>
                 </Link>
@@ -164,7 +166,7 @@ export default function Login() {
 
               <button
                 type="submit"
-                className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] cursor-pointer`}
+                className={`mt-4 h-[54px] w-full cursor-pointer rounded-[var(--radius-s)] bg-[var(--color-primary-light-400)] px-4 py-3 font-medium text-white transition-colors hover:bg-[var(--color-primary-light-500)]`}
                 disabled={!isEmailValid || !password.trim()}
               >
                 {isLoading ? (
@@ -177,7 +179,7 @@ export default function Login() {
               </button>
             </form>
             {error && (
-              <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
+              <div className="border-red-light-50 rounded-2xl border bg-red-100 px-6 py-3 text-red-700">
                 {error}
               </div>
             )}
@@ -187,7 +189,7 @@ export default function Login() {
                 <div className="w-full border-t border-[var(--color-white-neutral-light-300)]"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[var(--color-white-neutral-light-200)] text-[var(--color-white-neutral-light-500)]">
+                <span className="bg-[var(--color-white-neutral-light-200)] px-2 text-[var(--color-white-neutral-light-500)]">
                   ou
                 </span>
               </div>
@@ -196,7 +198,7 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full py-3 px-4 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] hover:bg-[var(--color-white-neutral-light-200)] transition-colors flex items-center justify-center gap-2 h-[54px] cursor-pointer"
+              className="flex h-[54px] w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] px-4 py-3 font-medium text-[var(--color-white-neutral-light-800)] transition-colors hover:bg-[var(--color-white-neutral-light-200)]"
             >
               <GoogleLogo />
               Fazer login com o Google
@@ -205,7 +207,7 @@ export default function Login() {
             <div className="text-center text-[var(--color-white-neutral-light-500)]">
               Você é novo aqui?{" "}
               <Link href="/criar-conta">
-                <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
+                <p className="inline-block font-medium text-[var(--color-primary-light-400)] hover:underline">
                   Criar conta
                 </p>
               </Link>

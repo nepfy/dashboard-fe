@@ -378,7 +378,7 @@
   }
 
   // Render results list
-  function renderResults(containerId, items) {
+  function renderResults(containerId, items, mainColor) {
     const container = document.getElementById(containerId);
     if (!container || !items || !Array.isArray(items)) return;
 
@@ -436,6 +436,9 @@
       );
       if (roiDiv) {
         roiDiv.textContent = formatCurrency(item.roi);
+        if (mainColor) {
+          roiDiv.style.color = mainColor;
+        }
       }
 
       container.appendChild(clone);
@@ -1130,6 +1133,14 @@
         periodDiv.style.display = "none";
       }
 
+      // Update "INCLUSO:" label
+      const inclusoLabel = clone.querySelector(
+        ".pricing_bottom .text-style-allcaps"
+      );
+      if (inclusoLabel) {
+        inclusoLabel.textContent = "INCLUSO:";
+      }
+
       // Update included items
       const includedContainer = clone.querySelector(".pricing_item-wrap");
       if (includedContainer && plan.includedItems) {
@@ -1358,7 +1369,7 @@
     // Results
     if (pd.results) {
       updateTitleWithWordSpans("results-title", pd.results.title);
-      renderResults("results-list", pd.results.items);
+      renderResults("results-list", pd.results.items, data.mainColor);
       toggleSectionVisibility(
         ".section_proof",
         pd.results.hideSection === true

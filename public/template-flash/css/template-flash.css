@@ -1847,6 +1847,7 @@ figcaption {
   z-index: 2;
   background-color: var(--background-color--background-primary);
   margin-top: -12vw;
+  padding-bottom: 6rem;
   position: relative;
   overflow: clip;
 }
@@ -1854,7 +1855,7 @@ figcaption {
 .pricing_component {
   z-index: 3;
   padding-top: 12rem;
-  padding-bottom: 12rem;
+  margin-bottom: 12rem;
   position: relative;
 }
 
@@ -1885,8 +1886,10 @@ figcaption {
 }
 
 .pricing_card {
+  min-height: 720px;
   flex-flow: column;
   display: flex;
+  justify-content: space-between;
   position: relative;
 }
 
@@ -1899,6 +1902,8 @@ figcaption {
   margin-bottom: 1rem;
   padding: 1.5rem;
   display: flex;
+  justify-content: space-between;
+  min-height: 260px;
 }
 
 .pricing_top.is--best-offer {
@@ -1916,6 +1921,8 @@ figcaption {
   flex-flow: column;
   padding: 1rem;
   display: flex;
+  justify-content: start;
+  flex: 1;
 }
 
 .pricing_item {
