@@ -22,6 +22,9 @@ import {
   savePrimeTemplateData,
 } from "#/lib/db/proposal-save-handler";
 
+// Set max duration to 5 minutes (300 seconds) to allow for long-running AI workflows
+export const maxDuration = 300;
+
 export interface NepfyAIRequestData {
   userName: string;
   userEmail: string;
@@ -330,21 +333,21 @@ export async function POST(request: NextRequest) {
       let result: FlashWorkflowResult;
 
       try {
-        // 45s timeout for main flash workflow (increased for new models)
+        // 180s timeout for main flash workflow (increased to accommodate actual execution time ~142s)
         const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error("Flash AI timeout")), 45000);
+          setTimeout(() => reject(new Error("Flash AI timeout")), 180000);
         });
         const flashPromise = flashWorkflow.execute(flashData);
         result = await Promise.race([flashPromise, timeoutPromise]);
         generationType = "flash-workflow";
       } catch (workflowError) {
         console.error("Flash workflow error:", workflowError);
-        // Fallback to simple generation (30s timeout)
+        // Fallback to simple generation (240s timeout)
         try {
           const simpleTimeoutPromise = new Promise<never>((_, reject) => {
             setTimeout(
               () => reject(new Error("Flash simple generation timeout")),
-              100000
+              240000
             );
           });
           const simplePromise = flashWorkflow.execute(flashData);
