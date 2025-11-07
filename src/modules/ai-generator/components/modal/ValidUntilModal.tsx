@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import Modal from "#/modules/ai-generator/components/modal/Modal";
 import CloseIcon from "#/components/icons/CloseIcon";
 import Calendar from "#/app/editar/components/Calendar";
