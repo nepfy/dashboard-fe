@@ -4,6 +4,10 @@ import { FlashProposal } from "../templates/flash/flash-template";
 import { BaseThemeData } from "./base-theme";
 import { generateJSONRetryPrompt } from "./json-utils";
 import { MOAService } from "../services/moa-service";
+import {
+  templateConfigManager,
+  type TemplateConfig,
+} from "../config/template-config";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {
@@ -16,9 +20,12 @@ export interface FlashThemeData extends BaseThemeData {
   mainColor: string;
 }
 
+type FlashSectionKey = keyof TemplateConfig["sections"];
+
 export class FlashTheme {
   private sections: FlashSection[] = [];
   private moaService: MOAService;
+  private templateConfig: TemplateConfig;
 
   constructor(private together: Together) {
     this.moaService = new MOAService(together, {
@@ -33,6 +40,378 @@ export class FlashTheme {
       temperature: 0.7,
       maxTokens: 2000,
     });
+
+    const config = templateConfigManager.getConfig("flash");
+    if (!config) {
+      throw new Error("Flash template configuration not found");
+    }
+    this.templateConfig = config;
+  }
+
+  private getSectionConfig(sectionKey: FlashSectionKey) {
+    return this.templateConfig.sections[sectionKey];
+  }
+
+  private getSectionPrompt(
+    sectionKey: FlashSectionKey,
+    data: FlashThemeData
+  ): string {
+    const sectionConfig = this.getSectionConfig(sectionKey);
+    if (!sectionConfig || !("prompt" in sectionConfig)) {
+      throw new Error(`Prompt for section ${sectionKey} not found in config`);
+    }
+
+    const promptTemplate = sectionConfig.prompt as string;
+    return this.applyPromptReplacements(promptTemplate, data);
+  }
+
+  private getSectionExpectedFormat(sectionKey: FlashSectionKey): string | null {
+    const sectionConfig = this.getSectionConfig(sectionKey);
+    if (sectionConfig && "expectedFormat" in sectionConfig) {
+      return sectionConfig.expectedFormat as string;
+    }
+    return null;
+  }
+
+  private applyPromptReplacements(
+    prompt: string,
+    data: FlashThemeData
+  ): string {
+    const replacements: Record<string, string> = {
+      clientName: data.clientName ?? "",
+      projectName: data.projectName ?? "",
+      projectDescription: data.projectDescription ?? "",
+      companyInfo: data.companyInfo ?? "",
+      clientDescription: data.clientDescription ?? "",
+      selectedPlans: Array.isArray(data.selectedPlans)
+        ? data.selectedPlans.join(", ")
+        : data.selectedPlans !== undefined
+          ? String(data.selectedPlans)
+          : "",
+      userName: data.userName ?? "",
+      userEmail: data.userEmail ?? "",
+    };
+
+    return Object.entries(replacements).reduce((acc, [key, value]) => {
+      const pattern = new RegExp(`\\{${key}\\}`, "g");
+      return acc.replace(pattern, value);
+    }, prompt);
+  }
+
+  private ensureExactLength(value: string, expected: number, label: string) {
+    ensureCondition(
+      value.length === expected,
+      `${label} must contain exactly ${expected} characters`
+    );
+  }
+
+  private ensureArrayLength<T>(
+    list: T[] | undefined,
+    expected: number,
+    label: string
+  ) {
+    ensureCondition(
+      Array.isArray(list) && list.length === expected,
+      `${label} must contain exactly ${expected} items`
+    );
+  }
+
+  private ensureArrayRange<T>(
+    list: T[] | undefined,
+    min: number,
+    max: number,
+    label: string
+  ) {
+    ensureCondition(
+      Array.isArray(list) && list.length >= min && list.length <= max,
+      `${label} must contain between ${min} and ${max} items`
+    );
+  }
+
+  private validateIntroductionSection(section: FlashIntroductionSection): void {
+    this.ensureExactLength(section.title, 60, "introduction.title");
+    this.ensureExactLength(section.subtitle, 100, "introduction.subtitle");
+    this.ensureArrayLength(section.services, 4, "introduction.services");
+
+    section.services.forEach((service, index) => {
+      this.ensureExactLength(service, 30, `introduction.services[${index}]`);
+    });
+
+    ensureCondition(
+      section.validity === "15 dias",
+      'introduction.validity must be the fixed string "15 dias"'
+    );
+    ensureCondition(
+      section.buttonText === "Solicitar Proposta",
+      'introduction.buttonText must be the fixed string "Solicitar Proposta"'
+    );
+  }
+
+  private validateAboutUsSection(section: FlashAboutUsSection): void {
+    this.ensureExactLength(section.title, 155, "aboutUs.title");
+    this.ensureExactLength(section.supportText, 70, "aboutUs.supportText");
+    this.ensureExactLength(section.subtitle, 250, "aboutUs.subtitle");
+  }
+
+  private validateTeamSection(section: FlashTeamSection): void {
+    this.ensureExactLength(section.title, 55, "team.title");
+  }
+
+  private validateSpecialtiesSection(section: FlashSpecialtiesSection): void {
+    this.ensureArrayRange(section.topics, 6, 9, "specialties.topics");
+    this.ensureExactLength(section.title, 140, "specialties.title");
+
+    section.topics.forEach((topic, index) => {
+      this.ensureExactLength(
+        topic.title,
+        50,
+        `specialties.topics[${index}].title`
+      );
+      this.ensureExactLength(
+        topic.description,
+        100,
+        `specialties.topics[${index}].description`
+      );
+    });
+  }
+
+  private validateStepsSection(section: FlashStepsSection): void {
+    ensureCondition(
+      section.title === "Nosso Processo",
+      'steps.title must be exactly "Nosso Processo"'
+    );
+    this.ensureExactLength(section.introduction, 100, "steps.introduction");
+    ensureCondition(
+      Array.isArray(section.topics) && section.topics.length === 5,
+      "steps.topics must contain exactly 5 items"
+    );
+
+    section.topics.forEach((topic, index) => {
+      this.ensureExactLength(topic.title, 40, `steps.topics[${index}].title`);
+      this.ensureExactLength(
+        topic.description,
+        240,
+        `steps.topics[${index}].description`
+      );
+    });
+  }
+
+  private validateScopeSection(section: FlashScopeSection): void {
+    this.ensureExactLength(section.content, 350, "scope.content");
+  }
+
+  private parseCurrencyValue(value: string): number {
+    const numeric = value.replace(/[^\d,]/g, "").replace(",", ".");
+    return Number(numeric);
+  }
+
+  private validateInvestmentSection(
+    section: FlashInvestmentSection,
+    expectedPlans: number
+  ): void {
+    this.ensureExactLength(section.title, 85, "investment.title");
+    this.ensureArrayRange(
+      section.deliverables,
+      2,
+      5,
+      "investment.deliverables"
+    );
+
+    section.deliverables.forEach((deliverable, index) => {
+      ensureCondition(
+        deliverable.title.length <= 30,
+        `investment.deliverables[${index}].title must contain at most 30 characters`
+      );
+      ensureCondition(
+        deliverable.description.length <= 330,
+        `investment.deliverables[${index}].description must contain at most 330 characters`
+      );
+    });
+
+    const planCount = section.plansItems?.length ?? 0;
+    ensureCondition(
+      planCount > 0 && planCount <= 3,
+      "investment.plansItems must contain between 1 and 3 plans"
+    );
+
+    const normalizedExpectedPlans =
+      expectedPlans > 0
+        ? Math.min(Math.max(expectedPlans, 1), 3)
+        : expectedPlans;
+
+    if (normalizedExpectedPlans > 0) {
+      ensureCondition(
+        planCount === normalizedExpectedPlans,
+        "investment.plansItems must match the selectedPlans amount (bounded between 1 and 3)"
+      );
+    }
+
+    const allowedPeriods = [
+      "Mensal",
+      "Trimestral",
+      "Semestral",
+      "Anual",
+      "Único",
+    ];
+
+    const recommendedPlans = section.plansItems.filter(
+      (plan) => plan.recommended === true
+    );
+    ensureCondition(
+      recommendedPlans.length === 1,
+      "Exactly one plan must be marked as recommended"
+    );
+
+    const highestValuePlan = section.plansItems.reduce((prev, current) => {
+      const prevValue = this.parseCurrencyValue(prev.value);
+      const currentValue = this.parseCurrencyValue(current.value);
+      return currentValue > prevValue ? current : prev;
+    });
+
+    ensureCondition(
+      highestValuePlan.recommended,
+      "Only the highest value plan can be marked as recommended"
+    );
+
+    section.plansItems.forEach((plan, index) => {
+      this.ensureExactLength(
+        plan.title,
+        20,
+        `investment.plansItems[${index}].title`
+      );
+      this.ensureExactLength(
+        plan.description,
+        95,
+        `investment.plansItems[${index}].description`
+      );
+      ensureCondition(
+        /^R\$\d{1,3}(?:\.\d{3})?(?:,\d{2})?$/.test(plan.value) &&
+          plan.value.length <= 11,
+        `investment.plansItems[${index}].value must follow the format R$X.XXX (max 11 characters)`
+      );
+      ensureCondition(
+        plan.buttonTitle.length <= 25,
+        `investment.plansItems[${index}].buttonTitle must contain at most 25 characters`
+      );
+      ensureCondition(
+        allowedPeriods.includes(plan.planPeriod),
+        `investment.plansItems[${index}].planPeriod must be one of ${allowedPeriods.join(
+          ", "
+        )}`
+      );
+
+      ensureCondition(
+        plan.sortOrder === index,
+        `investment.plansItems[${index}].sortOrder must be sequential starting at 0`
+      );
+
+      ensureCondition(
+        plan.hideTitleField === false &&
+          plan.hideDescription === false &&
+          plan.hidePrice === false &&
+          plan.hidePlanPeriod === false &&
+          plan.hideButtonTitle === false,
+        `investment.plansItems[${index}] hide* fields must all be false`
+      );
+
+      this.ensureArrayRange(
+        plan.includedItems,
+        3,
+        6,
+        `investment.plansItems[${index}].includedItems`
+      );
+
+      plan.includedItems.forEach((item, itemIndex) => {
+        ensureCondition(
+          item.description.length <= 45,
+          `investment.plansItems[${index}].includedItems[${itemIndex}].description must contain at most 45 characters`
+        );
+        ensureCondition(
+          item.hideItem === false,
+          `investment.plansItems[${index}].includedItems[${itemIndex}].hideItem must be false`
+        );
+        ensureCondition(
+          item.sortOrder === itemIndex,
+          `investment.plansItems[${index}].includedItems[${itemIndex}].sortOrder must be sequential starting at 0`
+        );
+      });
+    });
+  }
+
+  private validateTermsSection(section: FlashTermsSection): void {
+    this.ensureExactLength(section.title, 30, "terms.title");
+    this.ensureExactLength(section.description, 180, "terms.description");
+  }
+
+  private validateFAQSection(faq: FlashFAQSection): void {
+    this.ensureArrayLength(faq, 10, "faq");
+    faq.forEach((item, index) => {
+      this.ensureExactLength(item.question, 100, `faq[${index}].question`);
+      this.ensureExactLength(item.answer, 300, `faq[${index}].answer`);
+    });
+  }
+
+  private normalizeInvestmentSection(
+    section: FlashInvestmentSection,
+    selectedPlans: number
+  ): FlashInvestmentSection {
+    const normalizedPlans = (section.plansItems ?? []).map((plan, index) => ({
+      ...plan,
+      id: plan.id ?? crypto.randomUUID(),
+      hideTitleField: plan.hideTitleField ?? false,
+      hideDescription: plan.hideDescription ?? false,
+      hidePrice: plan.hidePrice ?? false,
+      hidePlanPeriod: plan.hidePlanPeriod ?? false,
+      hideButtonTitle: plan.hideButtonTitle ?? false,
+      sortOrder: index,
+      includedItems: (plan.includedItems ?? []).map((item, itemIndex) => ({
+        ...item,
+        id: item.id ?? crypto.randomUUID(),
+        hideItem: item.hideItem ?? false,
+        sortOrder: item.sortOrder ?? itemIndex,
+      })),
+    }));
+
+    const normalized: FlashInvestmentSection = {
+      ...section,
+      plansItems: normalizedPlans,
+    };
+
+    this.validateInvestmentSection(normalized, selectedPlans);
+    return normalized;
+  }
+
+  private normalizeFAQSection(entries: FlashFAQSection): FlashFAQSection {
+    const normalized = entries.map((item) => ({
+      ...item,
+      id: item.id ?? crypto.randomUUID(),
+    }));
+
+    this.validateFAQSection(normalized);
+    return normalized;
+  }
+
+  private composeExactLengthText(base: string, length: number): string {
+    let text = base.replace(/\s+/g, " ").trim();
+    const filler = " -";
+
+    if (text.length > length) {
+      return text.slice(0, length);
+    }
+
+    while (text.length < length) {
+      const remaining = length - text.length;
+      const addition =
+        remaining >= filler.length ? filler : filler.slice(0, remaining);
+      text += addition;
+    }
+
+    return text;
+  }
+
+  private validateFooterSection(section: FlashFooterSection): void {
+    this.ensureExactLength(section.callToAction, 35, "footer.callToAction");
+    this.ensureExactLength(section.disclaimer, 330, "footer.disclaimer");
   }
 
   async generateFlashProposal(
@@ -94,43 +473,20 @@ export class FlashTheme {
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashIntroductionSection> {
-    const userPrompt = `DADOS DO PROJETO:
-- Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
-- Descrição: ${data.projectDescription}
-- Sobre o Cliente: ${data.clientDescription || "Não informado"}
-- Empresa: ${data.companyInfo}
-
-Crie uma introdução impactante e personalizada para este projeto específico seguindo rigorosamente os limites de caracteres.
-
-Retorne APENAS um JSON válido com:
-{
-  "title": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres",
-  "subtitle": "Frase que reforça benefício, transformação e lucro com exatamente 100 caracteres",
+    const userPrompt = this.getSectionPrompt("introduction", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("introduction") ??
+      `{
+  "title": "string (exactly 60 characters, Title Case, premium tone)",
+  "subtitle": "string (exactly 100 characters, sensory premium tone)",
   "services": [
-    "Serviço 1 com exatamente uma palavra",
-    "Serviço 2 com exatamente uma palavra", 
-    "Serviço 3 com exatamente uma palavra",
+    "string (exactly 30 characters)",
+    "string (exactly 30 characters)",
+    "string (exactly 30 characters)",
+    "string (exactly 30 characters)"
   ],
-  "validity": "31/10/2025",
-  "buttonText": "Iniciar Projeto"
-}
-
-REGRAS OBRIGATÓRIAS:
-- title: EXATAMENTE 60 caracteres
-- subtitle: EXATAMENTE 100 caracteres  
-- services: EXATAMENTE 3 itens, cada um com EXATAMENTE uma palavra relacionadas ao projeto ${data.projectDescription}
-- Use linguagem imperativa e inclusiva
-- Foque em benefícios, transformação e lucro
-- NÃO mencione o nome do cliente nos textos
-- Responda APENAS com o JSON válido.`;
-
-    const expectedFormat = `{
-  "title": "string (exactly 60 characters)",
-  "subtitle": "string (exactly 100 characters)",
-  "services": ["string (30 chars)", "string (30 chars)", "string (30 chars)", "string (30 chars)"],
-  "validity": "string",
-  "buttonText": "string"
+  "validity": "15 dias",
+  "buttonText": "Solicitar Proposta"
 }`;
 
     try {
@@ -144,7 +500,7 @@ REGRAS OBRIGATÓRIAS:
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Introduction generated successfully");
-        return {
+        const section: FlashIntroductionSection = {
           userName: data.userName,
           email: data.userEmail || "",
           title: moaResult.result.title,
@@ -153,6 +509,8 @@ REGRAS OBRIGATÓRIAS:
           validity: moaResult.result.validity,
           buttonText: moaResult.result.buttonText,
         };
+        this.validateIntroductionSection(section);
+        return section;
       }
 
       // Fallback to single model if MoA fails
@@ -160,7 +518,7 @@ REGRAS OBRIGATÓRIAS:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashIntroductionSection;
 
-      return {
+      const section: FlashIntroductionSection = {
         userName: data.userName,
         email: data.userEmail || "",
         title: parsed.title,
@@ -169,6 +527,8 @@ REGRAS OBRIGATÓRIAS:
         validity: parsed.validity,
         buttonText: parsed.buttonText,
       };
+      this.validateIntroductionSection(section);
+      return section;
     } catch (error) {
       console.error("Flash Introduction Generation Error:", error);
       throw error;
@@ -179,33 +539,10 @@ REGRAS OBRIGATÓRIAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashAboutUsSection> {
-    const userPrompt = `Crie uma seção "Sobre Nós" única e personalizada para nossa empresa no projeto ${
-      data.projectName
-    } de ${data.clientName}.
-
-DADOS DO PROJETO:
-- Cliente: ${data.clientName}
-- Projeto: ${data.projectName}
-- Descrição: ${data.projectDescription}
-- Sobre o Cliente: ${data.clientDescription || "Não informado"}
-- Empresa: ${data.companyInfo}
-
-Retorne APENAS um JSON válido com:
-{
-  "title": "Título que mostra transformação, valor e benefício com exatamente 155 caracteres",
-  "supportText": "Texto de apoio com exatamente 70 caracteres",
-  "subtitle": "Subtítulo detalhado com exatamente 250 caracteres"
-}
-
-REGRAS OBRIGATÓRIAS:
-- title: EXATAMENTE 155 caracteres
-- supportText: EXATAMENTE 70 caracteres
-- subtitle: EXATAMENTE 250 caracteres
-- Foque em transformação, impacto e lucro
-- Use linguagem natural, próxima e confiante
-- Responda APENAS com o JSON válido.`;
-
-    const expectedFormat = `{
+    const userPrompt = this.getSectionPrompt("aboutUs", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("aboutUs") ??
+      `{
   "title": "string (exactly 155 characters)",
   "supportText": "string (exactly 70 characters)",
   "subtitle": "string (exactly 250 characters)"
@@ -222,6 +559,7 @@ REGRAS OBRIGATÓRIAS:
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA AboutUs generated successfully");
+        this.validateAboutUsSection(moaResult.result);
         return moaResult.result;
       }
 
@@ -230,11 +568,13 @@ REGRAS OBRIGATÓRIAS:
       const response = await this.runLLM(userPrompt, agent.systemPrompt);
       const parsed = JSON.parse(response) as FlashAboutUsSection;
 
-      return {
+      const section: FlashAboutUsSection = {
         title: parsed.title,
         supportText: parsed.supportText,
         subtitle: parsed.subtitle,
       };
+      this.validateAboutUsSection(section);
+      return section;
     } catch (error) {
       console.error("Flash About Us Generation Error:", error);
       throw error;
@@ -245,50 +585,37 @@ REGRAS OBRIGATÓRIAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashTeamSection> {
-    const userPrompt = `Responda APENAS com JSON válido. Crie o título da seção "Time" (máximo 60 caracteres):
-- Linguagem: Português brasileiro
-- Tom: Empático, moderno, acessível, profissional e impactante
-- Foco: Mostrar dedicação, proximidade e confiança
-- Use primeira pessoa do plural
-
-Retorne APENAS:
-{
-  "title": "Título que mostra dedicação, proximidade e confiança"
+    const userPrompt = this.getSectionPrompt("team", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("team") ??
+      `{
+  "title": "string (exactly 55 characters)"
 }`;
 
     try {
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashTeamSection;
+      const moaResult = await this.moaService.generateWithRetry<{
+        title: string;
+      }>(userPrompt, agent.systemPrompt, expectedFormat, agent.systemPrompt);
 
-      return {
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Team generated successfully");
+        const section: FlashTeamSection = {
+          title: moaResult.result.title,
+          members: [],
+        };
+        this.validateTeamSection(section);
+        return section;
+      }
+
+      console.warn("MoA failed, falling back to single model");
+      const response = await this.runLLM(userPrompt, agent.systemPrompt);
+      const parsed = JSON.parse(response) as { title: string };
+      const section: FlashTeamSection = {
         title: parsed.title,
-        members: [
-          {
-            id: crypto.randomUUID(),
-            name: "John Doe",
-            role: "CEO",
-            image: "/images/templates/flash/placeholder.png",
-            hideMember: false,
-            sortOrder: 0,
-          },
-          {
-            id: crypto.randomUUID(),
-            name: "Jane Doe",
-            role: "CTO",
-            image: "/images/templates/flash/placeholder.png",
-            hideMember: false,
-            sortOrder: 1,
-          },
-          {
-            id: crypto.randomUUID(),
-            name: "John Doe",
-            role: "CFO",
-            image: "/images/templates/flash/placeholder.png",
-            hideMember: false,
-            sortOrder: 0,
-          },
-        ],
+        members: [],
       };
+      this.validateTeamSection(section);
+      return section;
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
       throw error;
@@ -299,82 +626,18 @@ Retorne APENAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashSpecialtiesSection> {
-    // Normalize project name to prevent CAPS leakage
-    const { cleanProjectNameForProposal } = await import(
-      "../utils/project-name-handler"
-    );
-    const normalizedProjectName = cleanProjectNameForProposal(data.projectName);
-
-    const userPrompt = `Gere APENAS um JSON válido para especialidades.
-
-    PROJETO: ${normalizedProjectName} - ${data.projectDescription}
-
-    COPIE EXATAMENTE ESTE FORMATO:
-
+    const userPrompt = this.getSectionPrompt("specialties", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("specialties") ??
+      `{
+  "title": "string (exactly 140 characters)",
+  "topics": [
     {
-      "title": "Aplicamos estratégias que unem tecnologia, análise e execução, garantindo performance digital e resultados reais.",
-      "topics": [
-        {
-          "id": "uuid-7",
-          "icon": "DiamondIcon",
-          "title": "Desenvolvimento web responsivo",
-          "description": "Sites otimizados que convertem visitantes em clientes com performance superior."
-        },
-        {
-          "id": "uuid-7",
-          "icon": "DiamondIcon",
-          "title": "Sistemas de agendamento",
-          "description": "Plataformas personalizadas que automatizam e organizam seus agendamentos."
-        },
-        {
-          "id": "uuid-7",
-          "icon": "DiamondIcon",
-          "title": "Integrações avançadas",
-          "description": "Conectamos ferramentas para criar fluxos de trabalho mais eficientes."
-        },
-        { 
-          "id": "uuid-7",
-          "icon": "DiamondIcon",
-          "title": "Otimização de performance",
-          "description": "Aceleramos carregamento e melhoramos experiência do usuário."
-        },
-        {
-          "id": "uuid-7",
-          "icon": "DiamondIcon",
-          "title": "Segurança e proteção",
-          "description": "Implementamos medidas robustas para proteger dados e operações."
-        },
-        {
-          "id": "uuid-7",
-          "icon": "DiamondIcon",
-          "title": "Suporte técnico especializado",
-          "description": "Equipe dedicada para garantir funcionamento perfeito e contínuo."
-        }
-      ]
+      "title": "string (exactly 50 characters)",
+      "description": "string (exactly 100 characters)"
     }
-
-    REGRAS OBRIGATÓRIAS:
-    - EXATAMENTE 6 tópicos
-    - Cada tópico deve ter id, icon, title e description
-    - O campo id deve ser uma string
-    - O campo id deve ser um UUID válido
-    - O campo icon deve ser uma string e deve ser um dos seguintes valores: DiamondIcon, CircleIcon, BubblesIcon, ClockIcon, HexagonalIcon, SwitchIcon, ThunderIcon, GlobeIcon, BellIcon ou GearIcon. Escolha um valor aleatório para cada tópico
-    - O campo title deve ser uma string
-    - O campo description deve ser uma string
-    - Use linguagem profissional e focada em resultados
-    - Responda APENAS com o JSON válido.`;
-
-    const expectedFormat = `{
-      "title": "string (max 140 characters)",
-      "topics": [
-        {
-          "id": "string",
-          "icon": "DiamondIcon | CircleIcon | BubblesIcon | ClockIcon | HexagonalIcon | SwitchIcon | ThunderIcon | GlobeIcon | BellIcon | GearIcon",
-          "title": "string (max 50 characters)",
-          "description": "string (max 100 characters)"
-        }
-      ]
-    }`;
+  ]
+}`;
 
     try {
       const moaResult =
@@ -387,14 +650,7 @@ Retorne APENAS:
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Specialties generated successfully");
-
-        ensureCondition(
-          Array.isArray(moaResult.result.topics) &&
-            moaResult.result.topics.length >= 6 &&
-            moaResult.result.topics.length <= 9,
-          "specialties.topics must contain between 6 and 9 items"
-        );
-
+        this.validateSpecialtiesSection(moaResult.result);
         return moaResult.result;
       }
 
@@ -405,13 +661,7 @@ Retorne APENAS:
         agent.systemPrompt
       );
 
-      ensureCondition(
-        Array.isArray(parsed.topics) &&
-          parsed.topics.length >= 6 &&
-          parsed.topics.length <= 9,
-        "specialties.topics must contain between 6 and 9 items"
-      );
-
+      this.validateSpecialtiesSection(parsed);
       return parsed;
     } catch (error) {
       console.error("Flash Specialties Generation Error:", error);
@@ -423,95 +673,24 @@ Retorne APENAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashStepsSection> {
-    const userPrompt = `Gere APENAS um JSON válido para etapas do processo.
-
-    PROJETO: ${data.projectName} - ${data.projectDescription}
-
-    COPIE EXATAMENTE ESTE FORMATO:
-
+    const userPrompt = this.getSectionPrompt("steps", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("steps") ??
+      `{
+  "title": "Nosso Processo",
+  "introduction": "string (exactly 100 characters)",
+  "topics": [
     {
-      "title": "Nosso processo",
-      "introduction": "Desenvolvemos soluções inovadoras com foco em resultados e impacto contínuo.",
-      "topics": [
-        {
-          "id": "uuid-7",
-          "title": "Análise e planejamento estratégico",
-          "description": "Identificamos as necessidades da sua marca para criar uma estratégia personalizada que maximize resultados e garanta o sucesso do seu projeto digital."
-        },
-        {
-          "id": "uuid-7",
-          "title": "Elaboração de layout e design",
-          "description": "Criamos layouts atraentes e funcionais que refletem a imagem da sua marca e apresentam seu negócio de forma clara e profissional."
-        },
-        {
-          "id": "uuid-7",
-          "title": "Desenvolvimento da funcionalidade",
-          "description": "Implementamos todas as funcionalidades necessárias para que seu site funcione perfeitamente e atenda às suas necessidades específicas."
-        },
-        {
-          "id": "uuid-7",
-          "title": "Testes e otimização da experiência",
-          "description": "Realizamos testes rigorosos para garantir que o site seja fácil de navegar, intuitivo e performe bem em todos os dispositivos."
-        },
-        {
-          "id": "uuid-7",
-          "title": "Deploy finalizado e entrega completa",
-          "description": "Implementamos seu projeto com segurança, configuramos os sistemas necessários para funcionar de forma integrada e eficiente."
-        }
-      ],
-      "marquee": [
-        {
-          "id": "uuid-7",
-          "text": "Nosso processo",
-          "hideItem": false,
-          "sortOrder": 0
-        },
-        {
-          "id": "uuid-7",
-          "text": "Estratégia",
-          "hideItem": false,
-          "sortOrder": 1
-        },
-        {
-          "id": "uuid-7",
-          "text": "Design",
-          "hideItem": false,
-          "sortOrder": 2
-        },
-      ]
+      "title": "string (exactly 40 characters)",
+      "description": "string (exactly 240 characters)"
     }
-
-    REGRAS OBRIGATÓRIAS:
-    - EXATAMENTE 5 etapas
-    - O campo id deve ser uma string
-    - O campo id deve ser um UUID válido
-    - O campo Text deve ser o nome da etapa
-    - O campo hideItem deve ser um booleano
-    - O campo sortOrder deve ser um número
-    - O campo sortOrder deve ser um número
-    - Cada etapa deve ter title e description
-    - Use linguagem profissional e focada em processo
-    - Responda APENAS com o JSON válido.`;
-
-    const expectedFormat = `{
-      "title": "string (max 50 characters)",
-      "introduction": "string (max 200 characters)",
-      "topics": [
-        {
-          id: "string",
-          "title": "string (max 40 characters)",
-          "description": "string (max 240 characters)"
-        }
-      ],
-      "marquee": [
-        {
-          "id": "uuid-7",
-          "text": "string",
-          "hideItem": false,
-          "sortOrder": number
-        }
-      ]
-    }`;
+  ],
+  "marquee": [
+    {
+      "text": "string"
+    }
+  ]
+}`;
 
     try {
       const moaResult =
@@ -524,13 +703,7 @@ Retorne APENAS:
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Steps generated successfully");
-
-        ensureCondition(
-          Array.isArray(moaResult.result.topics) &&
-            moaResult.result.topics.length === 5,
-          "steps.topics must contain exactly 5 items"
-        );
-
+        this.validateStepsSection(moaResult.result);
         return moaResult.result;
       }
 
@@ -541,11 +714,7 @@ Retorne APENAS:
         agent.systemPrompt
       );
 
-      ensureCondition(
-        Array.isArray(parsed.topics) && parsed.topics.length === 5,
-        "steps.topics must contain exactly 5 items"
-      );
-
+      this.validateStepsSection(parsed);
       return parsed;
     } catch (error) {
       console.error("Flash Steps Generation Error:", error);
@@ -557,28 +726,34 @@ Retorne APENAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashScopeSection> {
-    const userPrompt = `Gere APENAS um JSON válido para o escopo do projeto.
-
-    PROJETO: ${data.projectName} - ${data.projectDescription}
-
-    COPIE EXATAMENTE ESTE FORMATO:
-
-    {
-      "content": "Nosso projeto integra soluções digitais estratégicas que ampliam resultados e fortalecem a presença online. Desenvolvemos sistemas robustos que entregam performance, conversão e crescimento sustentável para seu negócio."
-    }
-
-    REGRAS OBRIGATÓRIAS:
-    - content: Máximo 350 caracteres
-    - Foque em benefícios do investimento e entregas
-    - Use linguagem profissional e focada em resultados
-    - Responda APENAS com o JSON válido.`;
+    const userPrompt = this.getSectionPrompt("scope", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("scope") ??
+      `{
+  "content": "string (exactly 350 characters)"
+}`;
 
     try {
+      const moaResult =
+        await this.moaService.generateWithRetry<FlashScopeSection>(
+          userPrompt,
+          agent.systemPrompt,
+          expectedFormat,
+          agent.systemPrompt
+        );
+
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Scope generated successfully");
+        this.validateScopeSection(moaResult.result);
+        return moaResult.result;
+      }
+
+      console.warn("MoA failed, falling back to single model");
       const parsed = await this.runLLMWithJSONRetry<FlashScopeSection>(
         userPrompt,
         agent.systemPrompt
       );
-
+      this.validateScopeSection(parsed);
       return parsed;
     } catch (error) {
       console.error("Flash Scope Generation Error:", error);
@@ -591,203 +766,43 @@ Retorne APENAS:
     agent: BaseAgentConfig
   ): Promise<FlashInvestmentSection> {
     console.log("data.selectedPlans", data.selectedPlans);
-    const userPrompt = `Gere APENAS um JSON válido para investimento.
-
-    PROJETO: ${data.projectName} - ${data.projectDescription}
-    PLANOS: ${data.selectedPlans}
-
-    COPIE EXATAMENTE ESTE FORMATO:
-
+    const userPrompt = this.getSectionPrompt("investment", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("investment") ??
+      `{
+  "title": "string (exactly 85 characters)",
+  "deliverables": [
     {
-      "title": "Planejamento para gerar impacto digital, valor e reconhecimento duradouro",
-      "deliverables": [
+      "title": "string (max 30 characters)",
+      "description": "string (max 330 characters)"
+    }
+  ],
+  "plansItems": [
+    {
+      "id": "string",
+      "title": "string (exactly 20 characters)",
+      "description": "string (exactly 95 characters)",
+      "value": "string (<= 11 characters, formato R$X.XXX)",
+      "planPeriod": "string",
+      "buttonTitle": "string (max 25 characters)",
+      "recommended": boolean,
+      "hideTitleField": boolean,
+      "hideDescription": boolean,
+      "hidePrice": boolean,
+      "hidePlanPeriod": boolean,
+      "hideButtonTitle": boolean,
+      "sortOrder": number,
+      "includedItems": [
         {
-          "title": "Site institucional completo",
-          "description": "Desenvolvimento de site responsivo com design profissional, otimizado para conversão e performance, personalizado para seu negócio."
-        },
-        {
-          "title": "Sistema de gestão integrado",
-          "description": "Plataforma personalizada para gestão de conteúdo e funcionalidades com painel administrativo intuitivo e seguro."
-        }
-      ],
-      "plansItems": [
-        {
-          "id": "uuid-7",
-          "title": "Plano Essencial",
-          "description": "Impulsione resultados com soluções digitais que ampliam performance e conversão",
-          "value": 4000,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "hidePrice": false,
-          "hidePlanPeriod": false,
-          "hideButtonTitle": false,
-          "buttonTitle": "Assinar",
-          "planPeriod": "Mensal",
-          "recommended": boolean,
-          "sortOrder": 0,
-          "includedItems": [
-            {
-              "id": "uuid-1-1",
-              "description": "Site responsivo completo",
-              "hideItem": false,
-              "sortOrder": 0
-            },
-            {
-              "id": "uuid-1-2",
-              "description": "Sistema de gestão",
-              "hideItem": false,
-              "sortOrder": 1
-            },
-            {
-              "id": "uuid-1-3",
-              "description": "Otimização SEO básica",
-              "hideItem": false,
-              "sortOrder": 2
-            }
-          ]
-        },
-        {
-          "id": "uuid-7",
-          "title": "Plano Executivo", 
-          "description": "Acelere crescimento com integrações avançadas e automações inteligentes",
-          "value": "7200",
-          "hideTitleField": false,
-          "hideDescription": false,
-          "hidePrice": false,
-          "hidePlanPeriod": false,
-          "hideButtonTitle": false,
-          "buttonTitle": "Assinar",
-          "planPeriod": "Anual",
-          "recommended": boolean,
-          "sortOrder": 1,
-          "includedItems": [
-            {
-              "id": "uuid-2-1",
-              "description": "Tudo do Essencial",
-              "hideItem": false,
-              "sortOrder": 0
-            },
-            {
-              "id": "uuid-2-2",
-              "description": "Integrações avançadas",
-              "hideItem": false,
-              "sortOrder": 1
-            },
-            {
-              "id": "uuid-2-3",
-              "description": "Automações personalizadas",
-              "hideItem": false,
-              "sortOrder": 2
-            }
-          ]
-        },
-        {
-          "id": "uuid-7",
-          "title": "Plano Premium",
-          "description": "Transforme seu negócio com soluções digitais avançadas e personalizadas",
-          "value": 8000,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "hidePrice": false,
-          "hidePlanPeriod": false,
-          "hideButtonTitle": false,
-          "buttonTitle": "Assinar",
-          "planPeriod": "Único",
-          "recommended": boolean,
-          "sortOrder": 0,
-          "includedItems": [
-            {
-              "id": "uuid-3-1",
-              "description": "Tudo do Plano Executivo",
-              "hideItem": false,
-              "sortOrder": 0
-            },
-            {
-              "id": "uuid-3-2",
-              "description": "Integrações avançadas",
-              "hideItem": false,
-              "sortOrder": 1
-            },
-            {
-              "id": "uuid-3-3",
-              "description": "Automações personalizadas",
-              "hideItem": false,
-              "sortOrder": 2
-            }
-          ]
+          "id": "string",
+          "description": "string (max 45 characters)",
+          "hideItem": boolean,
+          "sortOrder": number
         }
       ]
     }
-
-    REGRAS CRÍTICAS:
-    - O campo title não pode conter a palavra "Investimento" em qualquer parte do texto.
-    - Crie os planos baseados na quantidade de planos selecionados: ${data.selectedPlans}
-    - includedItems: 3 a 6 itens por plano
-    - Use valores realistas
-    - Caso tenha 1 plano, o primeiro plano deve ter o campo planPeriod como "Mensal"
-    - Caso tenha 2 planos, o segundo plano deve ter o campo planPeriod como "Anual"
-    - Caso tenha 3 planos, o terceiro plano deve ter o campo planPeriod como "Único"
-    - O campo value deve ser um número
-    - O campo includedItems deve ser um array de objetos com id, description, hideItem e sortOrder
-    - O campo hideItem deve ser um booleano
-    - O campo sortOrder deve ser um número
-    - O campo id deve ser uma string
-    - O campo description deve ser uma string
-    - O campo description do plansItems deve ter no máximo 180 caracteres e também ser variado para cada plano
-    - O campo description do includedItems deve ter no máximo 45 caracteres
-    - O campo buttonTitle deve ser "Assinar" ou "Contratar" (sem aspas)
-    - O plano com o campo planPeriod como "Anual" deve marcar o campo recommended como true
-    - O campo title dos planos devem ser variados para cada plano
-    - Retorne APENAS o JSON válido
-    - NÃO inclua texto explicativo antes ou depois
-    - Use APENAS aspas duplas (") para strings
-    - NÃO use vírgulas no final de arrays ou objetos
-    - Valores numéricos sem aspas (value: 4000, não "4000")
-    - Nomes de propriedades exatamente como especificado
-    - O JSON deve começar com { e terminar com }
-    - Use IDs únicos simples como "uuid-1", "uuid-2", etc.
-
-    IMPORTANTE: 
-    - Use as informações específicas do projeto: ${data.projectDescription}
-    - Personalize para o cliente: ${data.clientName}
-    - NÃO mencione "metodologia FLASH" ou termos genéricos
-    
-    - Responda APENAS com o JSON válido, sem explicações ou texto adicional.`;
-
-    const expectedFormat = `{
-      "title": "string",
-      "deliverables": [
-        {
-          "title": "string",
-          "description": "string"
-        }
-      ],
-      "plansItems": [
-        {
-          "id": "string",
-          "title": "string",
-          "description": "string",
-          "value": number,
-          "hideTitleField": boolean,
-          "hideDescription": boolean,
-          "hidePrice": boolean,
-          "hidePlanPeriod": boolean,
-          "hideButtonTitle": boolean,
-          "buttonTitle": "string",
-          "planPeriod": "string",
-          "recommended": boolean,
-          "sortOrder": number,
-          "includedItems": [
-            {
-              "id": "string",
-              "description": "string",
-              "hideItem": boolean,
-              "sortOrder": number
-            }
-          ]
-        }
-      ]
-    }`;
+  ]
+}`;
 
     try {
       const moaResult =
@@ -801,20 +816,10 @@ Retorne APENAS:
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Investment generated successfully");
 
-        // Generate proper UUIDs for the investment items
-        const investmentWithUUIDs = {
-          ...moaResult.result,
-          plansItems: moaResult.result.plansItems.map((plan) => ({
-            ...plan,
-            id: crypto.randomUUID(),
-            includedItems: plan.includedItems.map((item) => ({
-              ...item,
-              id: crypto.randomUUID(),
-            })),
-          })),
-        };
-
-        return investmentWithUUIDs;
+        return this.normalizeInvestmentSection(
+          moaResult.result,
+          data.selectedPlans
+        );
       }
 
       // Fallback to single model if MoA fails
@@ -824,25 +829,7 @@ Retorne APENAS:
         agent.systemPrompt
       );
 
-      ensureCondition(
-        Array.isArray(parsed.plansItems) && parsed.plansItems.length > 0,
-        "investment.plans must include at least one item"
-      );
-
-      // Generate proper UUIDs for the investment items
-      const investmentWithUUIDs = {
-        ...parsed,
-        plansItems: parsed.plansItems.map((plan) => ({
-          ...plan,
-          id: crypto.randomUUID(),
-          includedItems: plan.includedItems.map((item) => ({
-            ...item,
-            id: crypto.randomUUID(),
-          })),
-        })),
-      };
-
-      return investmentWithUUIDs;
+      return this.normalizeInvestmentSection(parsed, data.selectedPlans);
     } catch (error) {
       console.error("Flash Investment Generation Error:", error);
       throw error;
@@ -1085,29 +1072,35 @@ Retorne APENAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashTermsSection> {
-    const userPrompt = `Gere APENAS um JSON válido para termos e condições.
-
-PROJETO: ${data.projectName} - ${data.projectDescription}
-
-COPIE EXATAMENTE ESTE FORMATO:
-
-{
-  "title": "Termos e Condições",
-  "description": "Estes termos regem a prestação de serviços de desenvolvimento web e design. O projeto será desenvolvido conforme especificações acordadas, com prazo de entrega de 30 dias úteis. Incluímos 2 revisões gratuitas e suporte técnico por 30 dias após a entrega. Pagamento: 50% na assinatura do contrato e 50% na entrega final."
-}
-
-REGRAS OBRIGATÓRIAS:
-- description: Máximo 500 caracteres
-- Inclua informações essenciais sobre prazo, pagamento e suporte
-- Use linguagem clara e profissional
-- Responda APENAS com o JSON válido.`;
+    const userPrompt = this.getSectionPrompt("terms", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("terms") ??
+      `{
+  "title": "string (exactly 30 characters)",
+  "description": "string (exactly 180 characters)"
+}`;
 
     try {
+      const moaResult =
+        await this.moaService.generateWithRetry<FlashTermsSection>(
+          userPrompt,
+          agent.systemPrompt,
+          expectedFormat,
+          agent.systemPrompt
+        );
+
+      if (moaResult.success && moaResult.result) {
+        console.log("✅ MoA Terms generated successfully");
+        this.validateTermsSection(moaResult.result);
+        return moaResult.result;
+      }
+
+      console.warn("MoA failed, falling back to single model");
       const parsed = await this.runLLMWithJSONRetry<FlashTermsSection>(
         userPrompt,
         agent.systemPrompt
       );
-
+      this.validateTermsSection(parsed);
       return parsed;
     } catch (error) {
       console.error("Flash Terms Generation Error:", error);
@@ -1119,80 +1112,14 @@ REGRAS OBRIGATÓRIAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashFAQSection> {
-    const userPrompt = `Gere APENAS um JSON válido para perguntas frequentes.
-
-PROJETO: ${data.projectName} - ${data.projectDescription}
-
-COPIE EXATAMENTE ESTE FORMATO:
-
-{
+    const userPrompt = this.getSectionPrompt("faq", data);
+    const expectedFormat =
+      this.getSectionExpectedFormat("faq") ??
+      `{
   "faq": [
     {
-      "id": "uuid-1",
-      "question": "Como vocês garantem que o projeto será entregue no prazo?",
-      "answer": "Utilizamos metodologias ágeis e planejamento detalhado para garantir entregas pontuais. Nossa equipe trabalha com cronogramas realistas e comunicação constante."
-    },
-    {
-      "id": "uuid-2",
-      "question": "Posso solicitar alterações durante o desenvolvimento?",
-      "answer": "Sim, incluímos ciclos de revisão e ajustes para garantir que o resultado final atenda perfeitamente às suas expectativas e necessidades."
-    },
-    {
-      "id": "uuid-3",
-      "question": "Qual é o prazo médio para entrega do projeto?",
-      "answer": "O prazo médio é de 30 dias úteis, variando conforme a complexidade do projeto. Sempre informamos o cronograma detalhado antes do início."
-    },
-    {
-      "id": "uuid-4",
-      "question": "Vocês oferecem suporte após a entrega?",
-      "answer": "Sim, incluímos suporte técnico gratuito por 30 dias após a entrega, além de manutenção e atualizações conforme necessário."
-    },
-    {
-      "id": "uuid-5",
-      "question": "Como funciona o processo de pagamento?",
-      "answer": "O pagamento é dividido em duas parcelas: 50% na assinatura do contrato e 50% na entrega final do projeto."
-    },
-    {
-      "id": "uuid-6",
-      "question": "Posso ver o progresso do projeto durante o desenvolvimento?",
-      "answer": "Sim, mantemos comunicação constante e fornecemos relatórios de progresso regulares para que você acompanhe cada etapa."
-    },
-    {
-      "id": "uuid-7",
-      "question": "Vocês trabalham com projetos de qualquer tamanho?",
-      "answer": "Sim, atendemos desde pequenos sites institucionais até grandes plataformas complexas, sempre adaptando nossa abordagem às suas necessidades."
-    },
-    {
-      "id": "uuid-8",
-      "question": "Qual é a garantia oferecida?",
-      "answer": "Oferecemos garantia de 90 dias para correção de bugs e ajustes necessários, além do suporte técnico incluído no projeto."
-    },
-    {
-      "id": "uuid-9",
-      "question": "Posso solicitar funcionalidades adicionais depois?",
-      "answer": "Sim, podemos desenvolver funcionalidades adicionais conforme suas necessidades, com orçamento e prazo específicos para cada nova demanda."
-    },
-    {
-      "id": "uuid-10",
-      "question": "Como vocês garantem a segurança do projeto?",
-      "answer": "Implementamos as melhores práticas de segurança, incluindo certificados SSL, backups regulares e monitoramento contínuo para proteger seus dados."
-    }
-  ]
-}
-
-REGRAS OBRIGATÓRIAS:
-- EXATAMENTE 10 perguntas e respostas
-- Cada pergunta deve ter question e answer
-- Use linguagem clara e profissional
-- Foque em dúvidas comuns sobre desenvolvimento web
-- Responda APENAS com o JSON válido.`;
-
-    const expectedFormat = `{
-  "faq": [
-    {
-      "id": "string",
-      "question": "string",
-      "answer": "string"
+      "question": "string (exactly 100 characters)",
+      "answer": "string (exactly 300 characters)"
     }
   ]
 }`;
@@ -1205,13 +1132,7 @@ REGRAS OBRIGATÓRIAS:
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA FAQ generated successfully");
 
-        // Generate proper UUIDs for the FAQ items
-        const faqWithUUIDs = moaResult.result.faq.map((item) => ({
-          ...item,
-          id: crypto.randomUUID(),
-        }));
-
-        return faqWithUUIDs;
+        return this.normalizeFAQSection(moaResult.result.faq);
       }
 
       // Fallback to single model if MoA fails
@@ -1224,13 +1145,7 @@ REGRAS OBRIGATÓRIAS:
         return this.getFallbackFAQ();
       }
 
-      // Generate proper UUIDs for the FAQ items
-      const faqWithUUIDs = parsed.faq.map((item) => ({
-        ...item,
-        id: crypto.randomUUID(),
-      }));
-
-      return faqWithUUIDs;
+      return this.normalizeFAQSection(parsed.faq);
     } catch (error) {
       console.error("Flash FAQ Generation Error:", error);
       return this.getFallbackFAQ();
@@ -1241,28 +1156,27 @@ REGRAS OBRIGATÓRIAS:
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashFooterSection> {
-    const userPrompt = `Gere APENAS um JSON válido para o footer.
+    const userPrompt = `Gere APENAS um JSON válido para o rodapé.
 
-    PROJETO: ${data.projectName} - ${data.projectDescription}
+PROJETO: ${data.projectName} - ${data.projectDescription}
 
-    COPIE EXATAMENTE ESTE FORMATO:
+Retorne:
+{
+  "callToAction": "Frase imperativa, inclusiva e direta com exatamente 35 caracteres, tom premium e convidativo",
+  "disclaimer": "Mensagem com exatamente 330 caracteres reforçando disponibilidade, cuidado artesanal e suporte contínuo"
+}
 
-    {
-      "callToAction": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres",
-      "disclaimer": "Frase que reforça benefício, transformação e lucro com exatamente 230 caracteres",
-    }
-
-    REGRAS OBRIGATÓRIAS:
-      
-    - callToAction: Máximo 60 caracteres
-    - disclaimer: Máximo 330 caracteres
-    - Use linguagem clara e profissional
-    - Responda APENAS com o JSON válido.`;
+REGRAS OBRIGATÓRIAS:
+- callToAction: EXATAMENTE 35 caracteres, tom imperativo, sofisticado e humano
+- disclaimer: EXATAMENTE 330 caracteres, tom empático, sensorial e profissional
+- Foque em proximidade, acompanhamento e segurança
+- Evite clichês como \"melhor escolha\" ou \"sucesso garantido\"
+- Responda APENAS com o JSON válido, sem comentários adicionais.`;
 
     const expectedFormat = `{
-        callToAction: "string",
-        disclaimer: "string",
-      }`;
+  "callToAction": "string (exactly 35 characters)",
+  "disclaimer": "string (exactly 330 characters)"
+}`;
 
     try {
       const moaResult = await this.moaService.generateWithRetry<{
@@ -1273,7 +1187,12 @@ REGRAS OBRIGATÓRIAS:
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Footer generated successfully");
 
-        return moaResult.result;
+        const footer: FlashFooterSection = {
+          callToAction: moaResult.result.callToAction,
+          disclaimer: moaResult.result.disclaimer,
+        };
+        this.validateFooterSection(footer);
+        return footer;
       }
 
       // Fallback to single model if MoA fails
@@ -1284,80 +1203,100 @@ REGRAS OBRIGATÓRIAS:
         disclaimer: string;
       };
 
-      return parsed;
+      const footer: FlashFooterSection = {
+        callToAction: parsed.callToAction,
+        disclaimer: parsed.disclaimer,
+      };
+      this.validateFooterSection(footer);
+      return footer;
     } catch (error) {
       console.error("Flash Footer Generation Error:", error);
-      return {
-        callToAction: "Transforme sua presença digital conosco",
-        disclaimer:
-          "Estamos à disposição para apoiar cada etapa do seu projeto. Conte com nossa equipe para garantir sucesso, impacto e crescimento contínuo, com atenção e dedicação personalizada.",
-      } as FlashFooterSection;
+      const fallback: FlashFooterSection = {
+        callToAction: this.composeExactLengthText(
+          "Confie em nós para transformar cada detalhe",
+          35
+        ),
+        disclaimer: this.composeExactLengthText(
+          "Estamos ao seu lado em cada decisão, oferecendo acompanhamento dedicado, ajustes ágeis e orientações criteriosas. Nosso compromisso é transformar sua visão em realidade acolhedora, com transparência, carinho e uma equipe inteira pronta para apoiar você em cada etapa estratégica.",
+          330
+        ),
+      };
+      this.validateFooterSection(fallback);
+      return fallback;
     }
   }
 
   private getFallbackFAQ(): FlashFAQSection {
-    return [
+    const baseEntries = [
       {
-        id: crypto.randomUUID(),
-        question: "Como vocês garantem que o projeto será entregue no prazo?",
+        question:
+          "Como garantem que o cronograma será cumprido sem comprometer a qualidade em cada entrega prevista?",
         answer:
-          "Utilizamos metodologias ágeis e planejamento detalhado para garantir entregas pontuais. Nossa equipe trabalha com cronogramas realistas e comunicação constante.",
+          "Trabalhamos com cronogramas detalhados, reuniões de checkpoint e líderes dedicados por frente. Monitoramos indicadores de progresso diariamente, antecipamos riscos com planos de contingência e comunicamos qualquer ajuste com total transparência, garantindo que qualidade e prazo avancem juntos com tranquilidade.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Posso solicitar alterações durante o desenvolvimento?",
+        question:
+          "Quais tipos de ajustes posso solicitar durante o desenvolvimento sem custos adicionais extras?",
         answer:
-          "Sim, incluímos ciclos de revisão e ajustes para garantir que o resultado final atenda perfeitamente às suas expectativas e necessidades.",
+          "Incluímos ciclos de validação a cada etapa-chave para alinhar expectativas. Ajustes que mantêm o escopo definido, refinam conteúdos, cores, tipografia ou fluxos previstos já estão cobertos. Alterações estruturais significativas ou acréscimos de funcionalidades são avaliados com novo orçamento claro e prazos realistas.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Qual é o prazo médio para entrega do projeto?",
+        question:
+          "Quanto tempo em média leva a entrega do projeto completo do briefing à implantação final?",
         answer:
-          "O prazo médio é de 30 dias úteis, variando conforme a complexidade do projeto. Sempre informamos o cronograma detalhado antes do início.",
+          "Projetos residenciais completos costumam levar entre seis e oito semanas. Iniciamos com um briefing profundo, validamos diretrizes criativas, desenvolvemos plantas e layouts, apresentamos moodboards, refinamos escolhas e conduzimos reuniões semanais para que cada decisão avance com segurança, sem atropelar detalhes fundamentais.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Vocês oferecem suporte após a entrega?",
+        question:
+          "Que tipo de suporte acompanham o cliente após a apresentação final da proposta?",
         answer:
-          "Sim, incluímos suporte técnico gratuito por 30 dias após a entrega, além de manutenção e atualizações conforme necessário.",
+          "Oferecemos acompanhamento dedicado por trinta dias corridos após a entrega para orientar implementações, responder dúvidas e ajustar detalhes finos. Mantemos canal direto de comunicação, enviamos materiais organizados e indicamos fornecedores confiáveis sempre que necessário para garantir execução impecável.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Como funciona o processo de pagamento?",
+        question:
+          "Como estruturam o processo de pagamento para que eu possa planejar o investimento?",
         answer:
-          "O pagamento é dividido em duas parcelas: 50% na assinatura do contrato e 50% na entrega final do projeto.",
+          "Trabalhamos com divisão em duas parcelas iguais: cinquenta por cento na assinatura para reservar calendário e iniciar a imersão; cinquenta por cento na entrega completa, após validação de cada etapa. Caso precise, avaliamos parcelamentos adicionais com contrato formal e cronograma financeiro customizado.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Posso ver o progresso do projeto durante o desenvolvimento?",
+        question:
+          "Vou acompanhar o progresso do trabalho ou receberei apenas a entrega final pronta?",
         answer:
-          "Sim, mantemos comunicação constante e fornecemos relatórios de progresso regulares para que você acompanhe cada etapa.",
+          "Você participa de marcos estratégicos previamente agendados. Compartilhamos apresentações intermediárias, plantas evolutivas e moodboards interativos, sempre com espaço para feedbacks. Além disso, disponibilizamos área centralizada com arquivos atualizados e comentários registrados para consulta a qualquer momento.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Vocês trabalham com projetos de qualquer tamanho?",
+        question:
+          "Trabalham apenas com projetos completos ou também apoiam demandas pontuais específicas?",
         answer:
-          "Sim, atendemos desde pequenos sites institucionais até grandes plataformas complexas, sempre adaptando nossa abordagem às suas necessidades.",
+          "Atuamos em projetos residenciais completos, mas também desenhamos pacotes pontuais quando o contexto exige foco em ambientes-chave, revisões de layout ou consultorias específicas. Avaliamos cada solicitação, ajustamos escopo, garantimos coerência estética e mantemos o mesmo padrão estratégico em qualquer formato.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Qual é a garantia oferecida?",
+        question:
+          "Existe alguma forma de garantia sobre a consistência das decisões e materiais propostos?",
         answer:
-          "Oferecemos garantia de 90 dias para correção de bugs e ajustes necessários, além do suporte técnico incluído no projeto.",
+          "Sim. Documentamos todas as escolhas com memoriais descritivos, especificações de materiais e orientações claras para fornecedores. Caso identifique qualquer divergência dentro de noventa dias, reavaliamos juntos e propomos ajustes pontuais sem custos, assegurando que a execução reflita exatamente o conceito aprovado.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Posso solicitar funcionalidades adicionais depois?",
+        question:
+          "Posso solicitar novos ambientes ou mudanças grandes após a aprovação inicial sem retrabalho total?",
         answer:
-          "Sim, podemos desenvolver funcionalidades adicionais conforme suas necessidades, com orçamento e prazo específicos para cada nova demanda.",
+          "Podemos incorporar novos ambientes mediante aditivo simples. Mantemos todo o estudo organizado em camadas, o que facilita evoluir o escopo sem recomeçar. Alinhamos impacto em prazo e investimento antes de seguir, garantindo previsibilidade e mantendo coerência estética entre as áreas originais e as recém-incluídas.",
       },
       {
-        id: crypto.randomUUID(),
-        question: "Como vocês garantem a segurança do projeto?",
+        question:
+          "Como asseguram a segurança das informações compartilhadas durante nosso projeto?",
         answer:
-          "Implementamos as melhores práticas de segurança, incluindo certificados SSL, backups regulares e monitoramento contínuo para proteger seus dados.",
+          "Utilizamos plataformas seguras para armazenar plantas e referências, adotamos controle de acesso restrito e realizamos backups automáticos. Compartilhamos documentos sensíveis apenas através de canais criptografados e seguimos cláusulas contratuais de confidencialidade rígidas para proteger dados pessoais e estratégicos.",
       },
     ];
+
+    const faq = baseEntries.map((entry) => ({
+      id: crypto.randomUUID(),
+      question: this.composeExactLengthText(entry.question, 100),
+      answer: this.composeExactLengthText(entry.answer, 300),
+    }));
+
+    return this.normalizeFAQSection(faq);
   }
 
   private async runLLM(
