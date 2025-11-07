@@ -124,7 +124,7 @@ export default function IconTab({
       </div>
 
       {/* Icon Toggle */}
-      <div className="relative z-10 flex items-center gap-4">
+      <div className="relative z-10 flex items-center gap-4 pb-6">
         <label className="text-sm font-medium text-[#2A2A2A]">
           Ativar ícone
         </label>

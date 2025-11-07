@@ -20,7 +20,7 @@ export default function ExploreGalleryInfo({
         </span>
       </div>
 
-      <div className="h-[90%]">
+      <div className="mb-14 flex flex-1 flex-col gap-2">
         <p className="text-primary-light-500 mb-4 font-medium">
           Aqui você encontra uma seleção de imagens gratuitas do Pexels, um dos
           maiores bancos de fotos do mundo.

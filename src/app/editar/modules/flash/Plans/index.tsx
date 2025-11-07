@@ -44,7 +44,7 @@ export default function FlashPlans({
   return (
     <div className="relative overflow-hidden bg-black">
       {!hideSection && (
-        <div className="relative z-10 mx-auto max-w-[1280px] pt-10 pb-23 lg:pt-22 xl:pb-36">
+        <div className="relative z-1 mx-auto max-w-[1280px] pt-10 pb-23 lg:pt-22 xl:pb-36">
           <div
             className={`grid grid-cols-1 gap-6 lg:grid-cols-3 ${plansItems && plansItems.length === 2 ? "lg:justify-start" : "lg:justify-between"}`}
           >

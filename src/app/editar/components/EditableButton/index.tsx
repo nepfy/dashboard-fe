@@ -21,7 +21,8 @@ export default function EditableButton({
   position = "right",
   editingId,
 }: EditableButtonProps) {
-  const { projectData, updateButtonConfig, startEditing, stopEditing } = useEditor();
+  const { projectData, updateButtonConfig, startEditing, stopEditing } =
+    useEditor();
 
   // Temporary state for form fields
   const [tempButtonTitle, setTempButtonTitle] = useState<string>("");
@@ -55,7 +56,14 @@ export default function EditableButton({
       // Stop editing when modal closes
       stopEditing(editingId);
     }
-  }, [isModalOpen, currentButtonConfig, editingId, startEditing, stopEditing, setIsModalOpen]);
+  }, [
+    isModalOpen,
+    currentButtonConfig,
+    editingId,
+    startEditing,
+    stopEditing,
+    setIsModalOpen,
+  ]);
 
   const handleSave = () => {
     const updateData = {
@@ -103,6 +111,8 @@ export default function EditableButton({
   return (
     <EditableModal
       isOpen={isModalOpen}
+      preferredPlacement={position === "below" ? "bottom" : "right"}
+      offset={position === "below" ? { left: -100 } : undefined}
       className={`absolute flex h-[480px] w-[350px] cursor-default flex-col items-stretch justify-center ${
         position === "right"
           ? "sm:inset-auto sm:top-[-130px] sm:right-[-360px]"
@@ -275,7 +285,7 @@ export default function EditableButton({
                   : "cursor-not-allowed bg-gray-200 text-gray-400"
               }`}
             >
-              Alterar
+              Salvar Alterações
             </button>
           </>
         )}

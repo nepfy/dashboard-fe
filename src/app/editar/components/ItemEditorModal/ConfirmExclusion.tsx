@@ -7,7 +7,7 @@ export default function ConfirmExclusion({
 }) {
   return (
     <div
-      className="bg-white-neutral-light-100 flex h-full w-full flex-col items-center justify-between pt-2"
+      className="bg-white-neutral-light-100 flex h-full min-h-[355px] w-full flex-col items-center justify-between pt-2"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="mb-6 flex w-full flex-shrink-0 items-center justify-between border-b border-b-[#E0E3E9] pb-6">
@@ -16,7 +16,7 @@ export default function ConfirmExclusion({
         </span>
       </div>
 
-      <div className="mr-10 flex h-[90%] flex-col gap-2">
+      <div className="mr-10 flex flex-1 flex-col gap-2">
         <p className="text-white-neutral-light-900 font-bold">
           Tem certeza de que deseja excluir este item de forma permanente?
         </p>

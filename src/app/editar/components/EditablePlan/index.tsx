@@ -203,9 +203,9 @@ export default function EditablePlan({
 
   return (
     <EditableModal
-      className="absolute top-0 right-[-140px] z-50 flex h-[550px] cursor-default flex-col items-stretch sm:z-12 sm:h-[650px]"
-      trianglePosition="top-[85px] left-[-8px]"
+      className="flex h-[550px] cursor-default flex-col items-stretch sm:h-[650px]"
       isOpen={isModalOpen}
+      preferredPlacement="right"
     >
       {!showInfo && !showPlanInfo && !showConfirmExclusion && (
         <>
@@ -317,7 +317,7 @@ export default function EditablePlan({
                   : "cursor-not-allowed bg-gray-400"
               }`}
             >
-              Alterar
+              Salvar Alterações
             </button>
           </div>
         </>

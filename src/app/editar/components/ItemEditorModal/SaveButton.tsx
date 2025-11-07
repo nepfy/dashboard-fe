@@ -17,7 +17,7 @@ export default function SaveButton({ onSave, hasChanges }: SaveButtonProps) {
             : "cursor-not-allowed bg-gray-400 opacity-50"
         }`}
       >
-        Alterar
+        Salvar Alterações
       </button>
     </div>
   );

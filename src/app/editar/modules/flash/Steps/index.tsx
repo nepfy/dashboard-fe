@@ -99,23 +99,22 @@ export default function FlashSteps({
                   </button>
 
                   {/* EditableImage for step editing */}
-                  <div>
-                    <EditableImage
-                      isModalOpen={openModalId === topic.id}
-                      setIsModalOpen={(isOpen) =>
-                        setOpenModalId(isOpen ? (topic?.id ?? null) : null)
-                      }
-                      editingId={`steps-${topic.id}`}
-                      itemType="steps"
-                      items={topics || []}
-                      currentItemId={topic?.id ?? null}
-                      onUpdateItem={updateStepTopic}
-                      onReorderItems={reorderStepTopics}
-                    />
-                    <div
-                      className={`absolute top-0 left-0 z-10 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === topic.id ? "bg-[#0170D666]" : "bg-transparent"}`}
-                    />
-                  </div>
+
+                  <EditableImage
+                    isModalOpen={openModalId === topic.id}
+                    setIsModalOpen={(isOpen) =>
+                      setOpenModalId(isOpen ? (topic?.id ?? null) : null)
+                    }
+                    editingId={`steps-${topic.id}`}
+                    itemType="steps"
+                    items={topics || []}
+                    currentItemId={topic?.id ?? null}
+                    onUpdateItem={updateStepTopic}
+                    onReorderItems={reorderStepTopics}
+                  />
+                  <div
+                    className={`absolute top-0 left-0 z-10 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === topic.id ? "bg-[#0170D666]" : "bg-transparent"}`}
+                  />
                 </div>
               );
             })}

@@ -120,7 +120,7 @@ export default function PexelsGallery({
 
   return (
     <div
-      className="bg-white-neutral-light-100 flex h-full w-full flex-col pt-2"
+      className="bg-white-neutral-light-100 flex h-[493px] w-full flex-col pt-2"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Header */}

@@ -20,7 +20,7 @@ export default function UploadImageInfo({
         </span>
       </div>
 
-      <div className="h-[90%]">
+      <div className="mb-14 flex flex-1 flex-col gap-2">
         <p className="text-primary-light-500 mb-4 font-medium">
           Faça upload de uma imagem do seu dispositivo para personalizar ainda
           mais seu projeto.

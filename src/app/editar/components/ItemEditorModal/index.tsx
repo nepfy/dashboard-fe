@@ -476,8 +476,8 @@ export default function ItemEditorModal({
     <>
       <EditableModal
         isOpen={isOpen}
-        className="absolute top-0 right-0 z-50 flex h-[550px] cursor-default flex-col items-stretch sm:z-12 sm:h-[650px]"
-        trianglePosition={`${itemType === "expertise" ? "top-[85px] left-[100px]" : "top-[85px] right-[-8px]"}`}
+        className="flex min-h-[355px] cursor-default flex-col items-stretch"
+        preferredPlacement="right"
       >
         {!showExploreGalleryInfo &&
           !showPexelsGallery &&

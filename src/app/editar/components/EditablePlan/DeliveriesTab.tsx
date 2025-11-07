@@ -200,7 +200,7 @@ export default function DeliveriesTab({
 
   return (
     <div className="mt-4 h-[72%] space-y-3 overflow-y-auto">
-      <div className="space-y-4">
+      <div className="space-y-4 pb-14">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

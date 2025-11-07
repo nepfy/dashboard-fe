@@ -22,7 +22,7 @@ export default function FlashFAQ({
 }: FAQSection) {
   const { updateFAQItem, reorderFAQItems, activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-  
+
   const canEdit = activeEditingId === null;
 
   // Generate gradient colors for the FAQ background
@@ -33,7 +33,7 @@ export default function FlashFAQ({
   return (
     <div className="relative overflow-hidden bg-black">
       {!hideSection && (
-        <div className="relative z-10 mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
+        <div className="relative z-1 mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
           <p className="max-w-[1055px] pb-21 text-[32px] font-normal text-[#E6E6E6] lg:text-[72px]">
             Perguntas
             <br /> Frequentes
@@ -42,7 +42,7 @@ export default function FlashFAQ({
             return (
               <div
                 key={item.id}
-                className={`relative mt-12 rounded-[4px] border border-transparent ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] border-transparent bg-transparent" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                className={`relative mt-12 rounded-[4px] border border-transparent ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
                 onClick={() => {
                   if (canEdit || openModalId === item.id) {
                     setOpenModalId(
@@ -92,34 +92,33 @@ export default function FlashFAQ({
                 </button>
 
                 {/* EditableImage for FAQ editing */}
-                <div>
-                  <EditableImage
-                    isModalOpen={openModalId === item.id}
-                    setIsModalOpen={(isOpen) =>
-                      setOpenModalId(isOpen ? (item?.id ?? null) : null)
-                    }
-                    editingId={`faq-${item.id}`}
-                    itemType="faq"
-                    items={items || []}
-                    currentItemId={item?.id ?? null}
-                    onUpdateItem={updateFAQItem}
-                    onReorderItems={
-                      reorderFAQItems as (
-                        items: (
-                          | TeamMember
-                          | Result
-                          | ExpertiseTopic
-                          | Testimonial
-                          | StepTopic
-                          | FAQItem
-                        )[]
-                      ) => void
-                    }
-                  />
-                  <div
-                    className={`absolute top-0 left-0 z-10 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === item.id ? "bg-[#0170D666]" : "bg-transparent"}`}
-                  />
-                </div>
+
+                <EditableImage
+                  isModalOpen={openModalId === item.id}
+                  setIsModalOpen={(isOpen) =>
+                    setOpenModalId(isOpen ? (item?.id ?? null) : null)
+                  }
+                  editingId={`faq-${item.id}`}
+                  itemType="faq"
+                  items={items || []}
+                  currentItemId={item?.id ?? null}
+                  onUpdateItem={updateFAQItem}
+                  onReorderItems={
+                    reorderFAQItems as (
+                      items: (
+                        | TeamMember
+                        | Result
+                        | ExpertiseTopic
+                        | Testimonial
+                        | StepTopic
+                        | FAQItem
+                      )[]
+                    ) => void
+                  }
+                />
+                <div
+                  className={`absolute top-0 left-0 z-10 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === item.id ? "bg-[#0170D666]" : "bg-transparent"}`}
+                />
               </div>
             );
           })}

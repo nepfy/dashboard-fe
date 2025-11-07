@@ -81,7 +81,7 @@ export const formatDateToDDMonYYYY = (dateString: string): string => {
 };
 
 /**
- * Formats a date string to "DD de MONTH de YYYY" format in Portuguese
+ * Formats a date string to "D MONTH, YYYY" format (month in Portuguese)
  * @param dateString - ISO date string
  * @returns Formatted date string
  */
@@ -111,11 +111,11 @@ export const formatDateToDDDeMonthDeYYYY = (dateString: string): string => {
       return "Data inválida";
     }
 
-    const day = date.getDate().toString().padStart(2, "0");
+    const day = date.getDate().toString();
     const month = MONTH_NAMES_PT_FULL[date.getMonth()];
     const year = date.getFullYear();
 
-    return `${day} de ${month} de ${year}`;
+    return `${day} ${month}, ${year}`;
   } catch (error) {
     console.error("Error formatting date:", error, "Input:", dateString);
     return "Data inválida";

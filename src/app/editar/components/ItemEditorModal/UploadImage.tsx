@@ -5,11 +5,7 @@ import Cropper from "react-easy-crop";
 import CloseIcon from "#/components/icons/CloseIcon";
 import UploadFileIcon from "#/components/icons/UploadFileIcon";
 import { useImageUpload } from "#/hooks/useImageUpload";
-import {
-  getAspectRatio,
-  createImage,
-  getCroppedImg,
-} from "#/helpers/imageUtils";
+import { createImage, getCroppedImg } from "#/helpers/imageUtils";
 import { TeamMember, Result, Testimonial } from "#/types/template-data";
 import { ChevronLeft } from "lucide-react";
 
@@ -32,7 +28,6 @@ interface CropArea {
 export default function UploadImage({
   onClose,
   itemType,
-  items,
   onUpdate,
 }: UploadImageProps) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -45,18 +40,6 @@ export default function UploadImage({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadImage, isUploading, uploadError } = useImageUpload();
-
-  // Calculate aspect ratio based on visible items count
-  const visibleItems =
-    items?.filter((item) =>
-      itemType === "team"
-        ? !(item as TeamMember).hidePhoto && (item as TeamMember).image
-        : itemType === "results"
-          ? !(item as Result).hidePhoto && (item as Result).photo
-          : !(item as Testimonial).hidePhoto && (item as Testimonial).photo
-    ) || [];
-
-  const aspectRatio = getAspectRatio(visibleItems.length);
 
   const onCropComplete = useCallback(
     (croppedArea: CropArea, croppedAreaPixels: CropArea) => {
@@ -227,13 +210,14 @@ export default function UploadImage({
           </div>
         ) : (
           /* Image Cropping Area */
-          <div className="flex flex-1 flex-col">
-            <div className="relative min-h-0 flex-1">
+          <div className="flex h-[351px] w-full flex-col">
+            <div className="relative h-full w-full">
               <Cropper
                 image={imageSrc}
                 crop={crop}
                 zoom={zoom}
-                aspect={aspectRatio}
+                aspect={4 / 3}
+                objectFit="horizontal-cover"
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
                 onZoomChange={setZoom}
@@ -243,6 +227,12 @@ export default function UploadImage({
                     width: "100%",
                     height: "100%",
                     position: "relative",
+                    backgroundColor: "transparent",
+                  },
+                  mediaStyle: {
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
                   },
                 }}
               />
@@ -276,7 +266,7 @@ export default function UploadImage({
         )}
 
         {/* Action Buttons */}
-        <div className="border-white-neutral-light-300 flex flex-col gap-2 border-t pt-4">
+        <div className="border-white-neutral-light-300 mt-14 flex flex-col gap-2 border-t pt-4">
           <button
             onClick={imageSrc ? handleReset : onClose}
             className="bg-white-neutral-light-100 border-white-neutral-light-300 button-inner text-white-neutral-light-900 hover:bg-white-neutral-light-200 flex w-full transform cursor-pointer items-center justify-center rounded-[12px] border px-6 py-3.5 text-sm font-medium transition-all duration-200"

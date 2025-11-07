@@ -112,8 +112,7 @@ export default function EditableDate({
     <div className="relative inline w-full" onClick={handleOpen}>
       <EditableModal
         isOpen={isModalOpen}
-        className="absolute top-[-100px] flex w-[350px] items-center justify-center sm:inset-auto sm:top-[-150px] sm:left-[25px]"
-        trianglePosition="top-[150px] left-[-8px]"
+        className="flex w-[350px] items-center justify-center"
       >
         <div
           className="mb-6 flex w-full items-center justify-between border-b border-b-[#E0E3E9] pb-6"
@@ -153,7 +152,7 @@ export default function EditableDate({
               : "cursor-not-allowed bg-gray-200 text-gray-400"
           }`}
         >
-          Alterar
+          Salvar Alterações
         </button>
       </EditableModal>
     </div>

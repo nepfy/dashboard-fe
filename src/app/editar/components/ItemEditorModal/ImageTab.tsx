@@ -119,7 +119,7 @@ export default function ImageTab({
   };
 
   return (
-    <div className="mb-20 space-y-6 sm:mb-0">
+    <div className="mb-20 min-h-[351px] space-y-6 sm:mb-0">
       {/* Gallery Section - Placeholder */}
       <div>
         <div className="mb-2 flex items-center gap-2">

@@ -190,7 +190,7 @@ export default function OrganizeTab({
   }
 
   return (
-    <div className="mt-4 space-y-3 overflow-y-auto">
+    <div className="mt-4 max-h-[300px] space-y-3 overflow-y-auto pb-14">
       <div className="space-y-4">
         <DndContext
           sensors={sensors}
