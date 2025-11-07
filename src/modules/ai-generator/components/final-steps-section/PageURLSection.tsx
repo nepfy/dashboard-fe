@@ -20,6 +20,7 @@ interface PageURLSectionProps {
     isDuplicate: boolean;
     message?: string;
   }) => void;
+  skipInitialValidation?: boolean;
 }
 
 export function PageURLSection({
@@ -31,6 +32,7 @@ export function PageURLSection({
   isPublished,
   errorMessage,
   onValidationStateChange,
+  skipInitialValidation = false,
 }: PageURLSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
@@ -39,6 +41,7 @@ export function PageURLSection({
   >();
   const [internalError, setInternalError] = useState<string | undefined>();
   const validationCallbackRef = useRef(onValidationStateChange);
+  const [hasUserEdited, setHasUserEdited] = useState(!skipInitialValidation);
 
   useEffect(() => {
     validationCallbackRef.current = onValidationStateChange;
@@ -53,6 +56,9 @@ export function PageURLSection({
     const sanitizedValue = sanitizeInput(e.target.value);
     setOriginalPageUrl(sanitizedValue);
     clearError("originalPageUrl");
+    if (!hasUserEdited) {
+      setHasUserEdited(true);
+    }
   };
 
   const combinedError = useMemo(() => {
@@ -68,6 +74,10 @@ export function PageURLSection({
         isChecking: false,
         isDuplicate: false,
       });
+      return;
+    }
+
+    if (!hasUserEdited) {
       return;
     }
 
@@ -167,7 +177,7 @@ export function PageURLSection({
       controller.abort();
       window.clearTimeout(timeoutId);
     };
-  }, [originalPageUrl, disabled]);
+  }, [originalPageUrl, disabled, hasUserEdited]);
 
   return (
     <div className="mb-6">

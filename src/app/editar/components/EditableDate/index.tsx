@@ -114,46 +114,48 @@ export default function EditableDate({
         isOpen={isModalOpen}
         className="flex w-[350px] items-center justify-center"
       >
-        <div
-          className="mb-6 flex w-full items-center justify-between border-b border-b-[#E0E3E9] pb-6"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <span className="text-lg font-medium text-[#2A2A2A]">
-            Validade da proposta
+        <div>
+          <div
+            className="mb-6 flex w-full items-center justify-between border-b border-b-[#E0E3E9] pb-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="text-lg font-medium text-[#2A2A2A]">
+              Validade da proposta
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModalOpen(false);
+                stopEditing(editingId);
+              }}
+              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
+            >
+              <CloseIcon width="12" height="12" fill="#1C1A22" />
+            </button>
+          </div>
+
+          <span onClick={(e) => e.stopPropagation()}>
+            <Calendar
+              selectedDate={tempSelectedDate}
+              onDateSelect={handleDateSelect}
+            />
           </span>
+
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setIsModalOpen(false);
-              stopEditing(editingId);
+              handleSave();
             }}
-            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-[4px] border border-[#DBDDDF] bg-[#F7F6FD] p-1.5"
+            disabled={!hasDateChanged()}
+            className={`mt-6 flex w-full transform items-center justify-center gap-1 rounded-[12px] px-6 py-3.5 text-sm font-medium transition-all duration-200 ${
+              hasDateChanged()
+                ? "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
+                : "cursor-not-allowed bg-gray-200 text-gray-400"
+            }`}
           >
-            <CloseIcon width="12" height="12" fill="#1C1A22" />
+            Salvar Alterações
           </button>
         </div>
-
-        <span onClick={(e) => e.stopPropagation()}>
-          <Calendar
-            selectedDate={tempSelectedDate}
-            onDateSelect={handleDateSelect}
-          />
-        </span>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSave();
-          }}
-          disabled={!hasDateChanged()}
-          className={`mt-6 flex w-full transform items-center justify-center gap-1 rounded-[12px] px-6 py-3.5 text-sm font-medium transition-all duration-200 ${
-            hasDateChanged()
-              ? "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
-              : "cursor-not-allowed bg-gray-200 text-gray-400"
-          }`}
-        >
-          Salvar Alterações
-        </button>
       </EditableModal>
     </div>
   );

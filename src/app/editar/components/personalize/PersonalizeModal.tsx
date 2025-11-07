@@ -74,6 +74,7 @@ export const PersonalizeModal = ({
         clearError={(field: string) => clearError(field as keyof FormErrors)}
         errorMessage={errorMessage}
         onValidationStateChange={onUrlValidationStateChange}
+        skipInitialValidation
       />
 
       <PasswordSection

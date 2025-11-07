@@ -22,6 +22,7 @@ function MainDomainHome() {
 
   useEffect(() => {
     if (isLoaded && user) {
+      console.log("user", user);
       const onboardingComplete = user?.publicMetadata?.onboardingComplete;
 
       if (onboardingComplete) {
@@ -34,7 +35,7 @@ function MainDomainHome() {
 
   if (!isLoaded) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="flex h-screen items-center justify-center">
         <p>Carregando, por favor aguarde!</p>
       </div>
     );
@@ -75,7 +76,7 @@ export default function Home() {
   // Loading state while determining domain
   if (isMainDomain === null) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="flex h-screen items-center justify-center">
         <p>Carregando...</p>
       </div>
     );
@@ -85,7 +86,7 @@ export default function Home() {
   // If we reach here on a subdomain, something went wrong
   if (!isMainDomain) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="flex h-screen items-center justify-center">
         <p>Página não encontrada</p>
       </div>
     );
