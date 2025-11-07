@@ -22,8 +22,6 @@ export default function FlashResults({
 
   const setColor = mainColor === "#212121" ? "#ffffff" : mainColor;
 
-  console.log(setColor);
-
   const canEdit = activeEditingId === null;
   return (
     <div className="bg-black">

@@ -208,16 +208,20 @@ export function PageURLSection({
 
         <span className="text-white-neutral-light-600">.nepfy.com</span>
       </div>
-      {isChecking && !combinedError ? (
+
+      <div className="h-[18px]">
         <div className="text-white-neutral-light-500 mt-2 text-xs">
-          Verificando disponibilidade...
+          {isChecking && !combinedError ? (
+            <span>Verificando disponibilidade...</span>
+          ) : null}
         </div>
-      ) : null}
-      {combinedError ? (
-        <div className="mt-2 text-xs text-red-500" role="alert">
-          {combinedError}
-        </div>
-      ) : null}
+
+        {combinedError ? (
+          <div className="mt-2 text-xs text-red-500" role="alert">
+            {combinedError}
+          </div>
+        ) : null}
+      </div>
       <div className="mt-2 flex justify-end">
         <div
           className={`font-satoshi text-xs ${
