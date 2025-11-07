@@ -21,6 +21,7 @@ import {
   saveFlashTemplateData,
   savePrimeTemplateData,
 } from "#/lib/db/proposal-save-handler";
+import { ButtonConfig } from "#/types/template-data";
 
 // Set max duration to 5 minutes (300 seconds) to allow for long-running AI workflows
 export const maxDuration = 300;
@@ -41,6 +42,7 @@ export interface NepfyAIRequestData {
   includeFAQ?: boolean;
   templateType?: string;
   mainColor?: string;
+  buttonConfig?: ButtonConfig;
   originalPageUrl?: string;
   pagePassword?: string;
   validUntil?: string;
@@ -122,6 +124,12 @@ async function createOrUpdateProjectFromAIResult(
     pagePassword: requestData.pagePassword || null,
     isPublished: false,
     isProposalGenerated: true,
+    buttonConfig: requestData.buttonConfig || {
+      buttonTitle: "Iniciar Projeto",
+      buttonWhereToOpen: "link",
+      buttonHref: "#",
+      buttonPhone: "",
+    },
   };
 
   let project;
