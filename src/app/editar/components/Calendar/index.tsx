@@ -149,13 +149,13 @@ export default function Calendar({
         <div className="flex">
           <button
             onClick={handlePreviousMonth}
-            className="text-white-neutral-light-800 flex h-6 w-6 items-center justify-center rounded text-[24px] hover:bg-gray-100"
+            className="text-white-neutral-light-800 flex h-6 w-6 items-center justify-center rounded text-[20px] hover:bg-gray-100"
           >
             &lt;
           </button>
           <button
             onClick={handleNextMonth}
-            className="text-white-neutral-light-800 flex h-6 w-6 items-center justify-center rounded text-[24px] hover:bg-gray-100"
+            className="text-white-neutral-light-800 flex h-6 w-6 items-center justify-center rounded text-[20px] hover:bg-gray-100"
           >
             &gt;
           </button>
