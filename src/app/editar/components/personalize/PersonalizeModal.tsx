@@ -6,6 +6,12 @@ import Modal from "../Modal";
 import { FormErrors } from "./types";
 import { TEMPLATES } from "./constants";
 
+interface UrlValidationState {
+  isChecking: boolean;
+  isDuplicate: boolean;
+  message?: string;
+}
+
 interface PersonalizeModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,6 +26,8 @@ interface PersonalizeModalProps {
   setPagePassword: (password: string) => void;
   clearError: (field: keyof FormErrors) => void;
   isPublished: boolean;
+  errorMessage?: string;
+  onUrlValidationStateChange?: (state: UrlValidationState) => void;
 }
 
 export const PersonalizeModal = ({
@@ -36,6 +44,8 @@ export const PersonalizeModal = ({
   setPagePassword,
   clearError,
   isPublished,
+  errorMessage,
+  onUrlValidationStateChange,
 }: PersonalizeModalProps) => {
   return (
     <Modal
@@ -62,6 +72,8 @@ export const PersonalizeModal = ({
         originalPageUrl={originalPageUrl}
         setOriginalPageUrl={setOriginalPageUrl}
         clearError={(field: string) => clearError(field as keyof FormErrors)}
+        errorMessage={errorMessage}
+        onValidationStateChange={onUrlValidationStateChange}
       />
 
       <PasswordSection

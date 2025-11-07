@@ -16,6 +16,7 @@ export default function Personalize({
 
   const {
     projectData,
+    errors,
     originalPageUrl,
     setOriginalPageUrl,
     pagePassword,
@@ -27,6 +28,7 @@ export default function Personalize({
     handleClose,
     isFormValid,
     hasChanges,
+    handleUrlValidationStateChange,
   } = usePersonalizeForm(isModalOpen);
 
   return (
@@ -63,6 +65,8 @@ export default function Personalize({
         setPagePassword={setPagePassword}
         clearError={clearError}
         isPublished={projectData?.isPublished || false}
+        errorMessage={errors.originalPageUrl}
+        onUrlValidationStateChange={handleUrlValidationStateChange}
       />
     </div>
   );

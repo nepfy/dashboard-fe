@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box } from "#/modules/ai-generator/components/box/Box";
 import { PageURLSection } from "#/modules/ai-generator/components/final-steps-section/PageURLSection";
 import { PasswordSection } from "#/modules/ai-generator/components/final-steps-section/PasswordSection";
@@ -19,6 +19,12 @@ interface FormErrors {
 
 const MIN_URL_LENGTH = 3;
 const MIN_PASSWORD_LENGTH = 6;
+
+interface UrlValidationState {
+  isChecking: boolean;
+  isDuplicate: boolean;
+  message?: string;
+}
 
 export function FinalStep({
   handleGenerateProposal,
@@ -44,6 +50,42 @@ export function FinalStep({
   setValidUntil: (date: string) => void;
 }) {
   const [errors, setErrors] = useState<FormErrors>({});
+  const [urlValidationState, setUrlValidationState] =
+    useState<UrlValidationState>({
+      isChecking: false,
+      isDuplicate: false,
+      message: undefined,
+    });
+  const lastValidationMessageRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    setErrors((prev) => {
+      const lastMessage = lastValidationMessageRef.current;
+
+      if (urlValidationState.message) {
+        lastValidationMessageRef.current = urlValidationState.message;
+
+        if (prev.originalPageUrl === urlValidationState.message) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          originalPageUrl: urlValidationState.message,
+        };
+      }
+
+      if (lastMessage && prev.originalPageUrl === lastMessage) {
+        const rest = { ...prev };
+        delete rest.originalPageUrl;
+        lastValidationMessageRef.current = undefined;
+        return rest;
+      }
+
+      lastValidationMessageRef.current = undefined;
+      return prev;
+    });
+  }, [urlValidationState.message]);
 
   const validatePassword = (password: string): PasswordValidation => ({
     minLength: password.length >= MIN_PASSWORD_LENGTH,
@@ -61,6 +103,14 @@ export function FinalStep({
         delete newErrors[field];
         return newErrors;
       });
+      if (field === "originalPageUrl") {
+        lastValidationMessageRef.current = undefined;
+        setUrlValidationState((prev) => ({
+          ...prev,
+          message: undefined,
+          isDuplicate: false,
+        }));
+      }
     }
   };
 
@@ -71,6 +121,11 @@ export function FinalStep({
       newErrors.originalPageUrl = "O campo 'URL personalizada' é obrigatório";
     } else if (originalPageUrl?.length < MIN_URL_LENGTH) {
       newErrors.originalPageUrl = "A URL deve ter pelo menos 3 caracteres";
+    } else if (urlValidationState.isDuplicate) {
+      newErrors.originalPageUrl =
+        "Você já está usando essa URL em outra proposta";
+    } else if (urlValidationState.message) {
+      newErrors.originalPageUrl = urlValidationState.message;
     }
 
     if (pagePassword?.length === 0) {
@@ -95,7 +150,7 @@ export function FinalStep({
     validUntil;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-140px)]">
+    <div className="flex min-h-[calc(100vh-140px)] flex-col items-center justify-center">
       <Box
         title="Acesso"
         description="Personalize e proteja sua proposta com segurança"
@@ -110,7 +165,12 @@ export function FinalStep({
           }
           handleGenerateProposal();
         }}
-        disabled={!isFormValid}
+        disabled={
+          !isFormValid ||
+          urlValidationState.isDuplicate ||
+          urlValidationState.isChecking ||
+          Boolean(urlValidationState.message)
+        }
         step={step}
       >
         <PageURLSection
@@ -119,6 +179,10 @@ export function FinalStep({
           originalPageUrl={originalPageUrl}
           setOriginalPageUrl={setOriginalPageUrl}
           clearError={(field: string) => clearError(field as keyof FormErrors)}
+          errorMessage={errors.originalPageUrl}
+          onValidationStateChange={(state) => {
+            setUrlValidationState(state);
+          }}
         />
 
         <PasswordSection
