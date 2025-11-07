@@ -95,11 +95,11 @@ export default function DashboardProjectView({
     icon: React.ReactNode;
     isLoading?: boolean;
   }) => (
-    <div className="bg-white-neutral-light-100 rounded-2xs p-6 h-[170px] border border-white-neutral-light-300 flex flex-col justify-between">
+    <div className="bg-white-neutral-light-100 rounded-2xs border-white-neutral-light-300 flex h-[170px] flex-col justify-between border p-6">
       <div className="flex items-center justify-between">
         <p className="text-white-neutral-light-900 font-medium">{title}</p>
         <Link href="/dashboard/propostas">
-          <div className="border border-white-neutral-light-300 bg-white-neutral-light-200 rounded-[10px] w-[32px] h-[32px] flex items-center justify-center">
+          <div className="border-white-neutral-light-300 bg-white-neutral-light-200 flex h-[32px] w-[32px] items-center justify-center rounded-[10px] border">
             {icon}
           </div>
         </Link>
@@ -108,8 +108,8 @@ export default function DashboardProjectView({
       <div>
         {isLoading ? (
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-24"></div>
+            <div className="mb-2 h-8 w-16 rounded bg-gray-200"></div>
+            <div className="h-4 w-24 rounded bg-gray-200"></div>
           </div>
         ) : (
           <>
@@ -134,14 +134,14 @@ export default function DashboardProjectView({
         Visão geral do seu pipeline de venda
       </p>
 
-      <div className="my-4 rounded-2xs bg-primary-light-300 w-full h-[220px] p-6 flex flex-col justify-between gap-4 relative">
-        <p className="text-white-neutral-light-100 text-2xl font-medium max-w-[390px]">
+      <div className="rounded-2xs bg-primary-light-300 relative my-4 flex h-[220px] w-full flex-col justify-between gap-4 p-6">
+        <p className="text-white-neutral-light-100 max-w-[390px] text-2xl font-medium">
           Gere uma proposta <br /> completa e visualmente
           <br /> impactante
         </p>
 
-        <div className="w-full flex items-center justify-start gap-2 flex-wrap">
-          <Link href="/dashboard/propostas" className={BUTTON_CLASS}>
+        <div className="flex w-full flex-wrap items-center justify-start gap-2">
+          <Link href="/gerar-proposta" className={BUTTON_CLASS}>
             <Sparkle width="18" height="18" fill="#1C1A22" />
             Criar Propostas
           </Link>
@@ -151,7 +151,7 @@ export default function DashboardProjectView({
       </div>
 
       {isMobile ? (
-        <div className="slider-container relative w-full mt-4">
+        <div className="slider-container relative mt-4 w-full">
           <Slider {...sliderSettings}>
             <div className="pr-4">
               <ProposalCard
@@ -175,7 +175,7 @@ export default function DashboardProjectView({
           </Slider>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="mt-4 grid grid-cols-2 gap-4">
           <ProposalCard
             title="Propostas enviadas"
             count={statistics?.sentProjectsCount || 0}

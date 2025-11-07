@@ -36,6 +36,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const [displayValue, setDisplayValue] = useState("");
   const dateInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [supportsShowPicker, setSupportsShowPicker] = useState<boolean>(true);
 
   // Mapeamento dos meses em português
   const monthNames = [
@@ -69,6 +70,20 @@ const DatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
+  // Verifica suporte ao método showPicker
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.type = "date";
+    const supports =
+      typeof (input as HTMLInputElement & { showPicker?: () => void })
+        .showPicker === "function";
+    setSupportsShowPicker(supports);
+  }, []);
+
   // Atualiza o valor exibido quando o value prop muda
   useEffect(() => {
     if (value) {
@@ -93,16 +108,40 @@ const DatePicker: React.FC<DatePickerProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const openNativePicker = (): boolean => {
+    if (disabled || !dateInputRef.current) {
+      return false;
+    }
+
+    setIsOpen(true);
+
+    const picker = dateInputRef.current as HTMLInputElement & {
+      showPicker?: () => void;
+    };
+
+    if (supportsShowPicker && picker.showPicker) {
+      picker.showPicker();
+    } else {
+      picker.focus();
+      picker.click();
+    }
+
+    return true;
+  };
+
   const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (!disabled) {
-      setIsOpen(true);
-      // Abre o seletor de data nativo
-      if (dateInputRef.current) {
-        dateInputRef.current.showPicker?.();
-      }
+    if (!openNativePicker()) {
+      onClick?.(e);
+      return;
     }
     onClick?.(e);
+  };
+
+  const handleCalendarClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openNativePicker();
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,7 +168,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     <div className="block w-full" ref={containerRef}>
       <label
         htmlFor={inputName}
-        className="text-[var(--color-white-neutral-light-700)] text-sm font-medium flex items-center justify-between"
+        className="flex items-center justify-between text-sm font-medium text-[var(--color-white-neutral-light-700)]"
       >
         {label}
         {info && (
@@ -151,21 +190,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
           onBlur={onBlur}
           readOnly
           disabled={disabled}
-          className={`w-full px-4 py-3 mt-1.5 rounded-[var(--radius-s)] pr-12
-                      border bg-white-neutral-light-100
-                      placeholder:text-[var(--color-white-neutral-light-400)] 
-                      focus:outline-none cursor-pointer
-            ${
-              disabled
-                ? "opacity-50 cursor-not-allowed"
-                : "text-white-neutral-light-800"
-            }
-            ${
-              error
-                ? "border-red-700"
-                : "focus:border-[var(--color-primary-light-400)] border-white-neutral-light-300"
-            }
-          `}
+          className={`bg-white-neutral-light-100 mt-1.5 w-full cursor-pointer rounded-[var(--radius-s)] border px-4 py-3 pr-12 placeholder:text-[var(--color-white-neutral-light-400)] focus:outline-none ${
+            disabled
+              ? "cursor-not-allowed opacity-50"
+              : "text-white-neutral-light-800"
+          } ${
+            error
+              ? "border-red-700"
+              : "border-white-neutral-light-300 focus:border-[var(--color-primary-light-400)]"
+          } ${supportsShowPicker ? "" : "pointer-events-none"} `}
         />
 
         {/* Input de data oculto (para funcionalidade nativa) */}
@@ -174,12 +207,14 @@ const DatePicker: React.FC<DatePickerProps> = ({
           type="date"
           value={value || ""}
           onChange={handleDateChange}
-          className="absolute inset-0 opacity-0 pointer-events-none"
-          tabIndex={-1}
+          className={`absolute inset-0 h-full w-full opacity-0 ${
+            supportsShowPicker ? "pointer-events-none" : "cursor-pointer"
+          }`}
+          tabIndex={supportsShowPicker ? -1 : 0}
         />
 
         {/* Ícones do lado direito */}
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+        <div className="absolute top-1/2 right-3 flex -translate-y-1/2 transform items-center gap-2">
           {displayValue && !disabled && (
             <button
               type="button"
@@ -192,6 +227,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
           )}
           <Calendar
             size={16}
+            role="button"
+            aria-label="Abrir seletor de data"
+            tabIndex={-1}
+            onClick={handleCalendarClick}
             className="text-white-neutral-light-900 cursor-pointer"
           />
         </div>
@@ -199,10 +238,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
       <div className="mt-2 flex items-center justify-between">
         {infoText && (
-          <div className="text-gray-500 rounded-md text-xs">{infoText}</div>
+          <div className="rounded-md text-xs text-gray-500">{infoText}</div>
         )}
         {error && (
-          <div className="text-red-700 rounded-md text-sm font-medium">
+          <div className="rounded-md text-sm font-medium text-red-700">
             {error}
           </div>
         )}
