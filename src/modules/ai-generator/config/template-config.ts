@@ -495,31 +495,29 @@ REGRAS OBRIGATÓRIAS:
 
       terms: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para termos e condições.
+        prompt: `Gere APENAS um JSON válido para termos e condições respeitando limites de tamanho sem ultrapassar.
 
 PROJETO: {projectName} - {projectDescription}
 
-COPIE EXATAMENTE ESTE FORMATO:
-
+Retorne:
 {
-  "title": "Termos e Condições",
-  "description": "Estes termos regem a prestação de serviços de desenvolvimento web e design. O projeto será desenvolvido conforme especificações acordadas, com prazo de entrega de 30 dias úteis. Incluímos 2 revisões gratuitas e suporte técnico por 30 dias após a entrega. Pagamento: 50% na assinatura do contrato e 50% na entrega final."
+  "title": "Título com no máximo 30 caracteres, direto e elegante",
+  "description": "Texto contínuo com no máximo 180 caracteres, mencionando prazo, pagamento e suporte com tom confiante"
 }
 
 REGRAS OBRIGATÓRIAS:
-- title: EXATAMENTE 30 caracteres
-- description: EXATAMENTE 180 caracteres
+- NUNCA ultrapassar 30 caracteres no title (planeje antes de escrever)
+- NUNCA ultrapassar 180 caracteres na description (planeje antes de escrever)
 - Inclua prazo, pagamento e suporte no texto com tom confiante e refinado
-- Planeje a contagem antes de escrever; não corte texto
 - Use linguagem clara, objetiva, profissional e sofisticada
 - Responda APENAS com o JSON válido.`,
         expectedFormat: `{
-  "title": "string (exactly 30 characters)",
-  "description": "string (exactly 180 characters)"
+  "title": "string (maximum 30 characters, premium tone)",
+  "description": "string (maximum 180 characters, premium tone)"
 }`,
         rules: [
-          "title: EXATAMENTE 30 caracteres",
-          "description: EXATAMENTE 180 caracteres",
+          "title: NUNCA ultrapassar 30 caracteres",
+          "description: NUNCA ultrapassar 180 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
           "Incluir prazo, pagamento e suporte com tom confiante e refinado",
           "Linguagem clara, profissional e sofisticada",

@@ -346,8 +346,8 @@ export class FlashTheme {
   }
 
   private validateTermsSection(section: FlashTermsSection): void {
-    this.ensureExactLength(section.title, 30, "terms.title");
-    this.ensureExactLength(section.description, 180, "terms.description");
+    this.ensureMaxLength(section.title, 30, "terms.title");
+    this.ensureMaxLength(section.description, 180, "terms.description");
   }
 
   private validateFAQSection(faq: FlashFAQSection): void {
@@ -1083,8 +1083,8 @@ export class FlashTheme {
     const expectedFormat =
       this.getSectionExpectedFormat("terms") ??
       `{
-  "title": "string (exactly 30 characters)",
-  "description": "string (exactly 180 characters)"
+  "title": "string (maximum 30 characters, premium tone)",
+  "description": "string (maximum 180 characters, premium tone)"
 }`;
 
     try {
