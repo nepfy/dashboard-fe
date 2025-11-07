@@ -126,9 +126,9 @@ async function createOrUpdateProjectFromAIResult(
     isProposalGenerated: true,
     buttonConfig: requestData.buttonConfig || {
       buttonTitle: "Iniciar Projeto",
-      buttonWhereToOpen: "link",
-      buttonHref: "#",
-      buttonPhone: "",
+      buttonWhereToOpen: null,
+      buttonHref: null,
+      buttonPhone: null,
     },
   };
 

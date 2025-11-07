@@ -2082,6 +2082,26 @@ figcaption {
   position: relative;
 }
 
+.btn-magnetic.is-disabled,
+.btn-magnetic.is-disabled .btn-magnetic__click {
+  cursor: default;
+}
+
+.btn-magnetic.is-disabled .btn-magnetic__click {
+  pointer-events: none;
+}
+
+.btn-magnetic.is-disabled .btn-magnetic__fill,
+.btn-magnetic.is-disabled .btn-magnetic__content {
+  transform: none !important;
+  transition: none !important;
+}
+
+.btn-magnetic.is-disabled .btn-magnetic__click .btn-magnetic__text-p,
+.btn-magnetic.is-disabled .btn-magnetic__click:hover .btn-magnetic__text-p {
+  transform: translateY(0) rotate(0.001deg) !important;
+}
+
 .btn-magnetic__content.is--footer {
   padding-left: 7rem;
   padding-right: 7rem;

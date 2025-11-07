@@ -1234,6 +1234,12 @@
   function updateButtons(buttonConfig) {
     if (!buttonConfig) return;
 
+    const normalizedWhereToOpen =
+      typeof buttonConfig.buttonWhereToOpen === "string"
+        ? buttonConfig.buttonWhereToOpen.trim()
+        : "";
+    const shouldDisableButtons = normalizedWhereToOpen === "";
+
     // Update all buttons with id="buttonconfig-buttontitle"
     const buttons = document.querySelectorAll("#buttonconfig-buttontitle");
     buttons.forEach((button) => {
@@ -1250,8 +1256,14 @@
     });
 
     // Update button links
-    const buttonLinks = document.querySelectorAll(".btn-magnetic__click");
-    buttonLinks.forEach((link) => {
+    const buttonWrappers = Array.from(
+      document.querySelectorAll(".btn-magnetic")
+    ).filter((wrapper) => wrapper.querySelector("#buttonconfig-buttontitle"));
+
+    buttonWrappers.forEach((wrapper) => {
+      const link = wrapper.querySelector(".btn-magnetic__click");
+      if (!link) return;
+
       if (
         buttonConfig.buttonWhereToOpen === "whatsapp" &&
         buttonConfig.buttonPhone
@@ -1266,6 +1278,19 @@
       // Always open in a new tab
       link.target = "_blank";
       link.rel = "noopener noreferrer";
+
+      if (shouldDisableButtons) {
+        link.removeAttribute("href");
+        link.removeAttribute("target");
+        link.removeAttribute("rel");
+        link.setAttribute("aria-disabled", "true");
+        link.setAttribute("tabindex", "-1");
+      } else {
+        link.removeAttribute("aria-disabled");
+        link.removeAttribute("tabindex");
+      }
+
+      wrapper.classList.toggle("is-disabled", shouldDisableButtons);
     });
   }
 

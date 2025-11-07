@@ -26,10 +26,10 @@ export default function Publish() {
     <button
       onClick={handlePublish}
       disabled={!isDirty || isSaving}
-      className={`flex w-full transform cursor-pointer items-center justify-center rounded-[12px] px-5 py-3 text-sm font-medium shadow-lg transition-all duration-200 hover:shadow-xl sm:w-auto ${
+      className={`flex w-full transform items-center justify-center rounded-[12px] px-5 py-3 text-sm font-medium shadow-lg transition-all duration-200 hover:shadow-xl sm:w-auto ${
         !isDirty || isSaving
           ? "cursor-not-allowed bg-gray-400 text-gray-200"
-          : "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
+          : "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
       }`}
     >
       {isSaving ? "Salvando..." : showSuccess ? "Salvo!" : "Publicar"}
