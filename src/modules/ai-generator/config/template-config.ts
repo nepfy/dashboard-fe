@@ -221,7 +221,7 @@ REGRAS OBRIGATÓRIAS:
 
       team: {
         enabled: true,
-        prompt: `Responda APENAS com JSON válido. Gere o título da seção "Time" com exatamente 55 caracteres:
+        prompt: `Responda APENAS com JSON válido. Gere o título da seção "Time" com no máximo 55 caracteres (ideal manter entre 50 e 55 sem ultrapassar):
 - Linguagem: Português brasileiro
 - Tom: Empático, moderno, acessível, profissional e impactante
 - Foco: Mostrar dedicação, proximidade e confiança
@@ -229,20 +229,20 @@ REGRAS OBRIGATÓRIAS:
 
 Retorne APENAS:
 {
-  "title": "Título com exatamente 55 caracteres, mostrando dedicação, proximidade e confiança"
+  "title": "Título com no máximo 55 caracteres, mostrando dedicação, proximidade e confiança"
 }
 
 REGRAS OBRIGATÓRIAS:
-- EXATAMENTE 55 caracteres
+- NUNCA ultrapassar 55 caracteres (planeje antes de escrever)
 - Mostrar dedicação, proximidade e confiança
 - Use primeira pessoa do plural
 - Planeje a contagem antes de escrever; não corte texto ao final
 - Utilize tom premium e sofisticado sem perder naturalidade`,
         expectedFormat: `{
-  "title": "string (exactly 55 characters)"
+  "title": "string (maximum 55 characters, premium tone)"
 }`,
         rules: [
-          "title: EXATAMENTE 55 caracteres",
+          "title: NUNCA ultrapassar 55 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
           "Mostrar dedicação, proximidade e confiança",
           "Usar primeira pessoa do plural",

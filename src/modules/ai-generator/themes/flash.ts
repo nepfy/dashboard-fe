@@ -105,6 +105,13 @@ export class FlashTheme {
     );
   }
 
+  private ensureMaxLength(value: string, max: number, label: string) {
+    ensureCondition(
+      value.length <= max,
+      `${label} must contain at most ${max} characters`
+    );
+  }
+
   private ensureArrayLength<T>(
     list: T[] | undefined,
     expected: number,
@@ -154,7 +161,7 @@ export class FlashTheme {
   }
 
   private validateTeamSection(section: FlashTeamSection): void {
-    this.ensureExactLength(section.title, 55, "team.title");
+    this.ensureMaxLength(section.title, 55, "team.title");
   }
 
   private validateSpecialtiesSection(section: FlashSpecialtiesSection): void {
@@ -589,7 +596,7 @@ export class FlashTheme {
     const expectedFormat =
       this.getSectionExpectedFormat("team") ??
       `{
-  "title": "string (exactly 55 characters)"
+  "title": "string (maximum 55 characters, premium tone)"
 }`;
 
     try {
