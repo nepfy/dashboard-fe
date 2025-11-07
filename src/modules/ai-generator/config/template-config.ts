@@ -130,12 +130,12 @@ export const defaultTemplateConfigs: Record<string, TemplateConfig> = {
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
-Gere a introdução planejando cada frase para já nascer com o tamanho exato descrito abaixo. NÃO corte texto depois de escrever; produza diretamente com a contagem correta de caracteres.
+Gere a introdução planejando cada frase para já nascer com o tamanho exato descrito abaixo. NÃO corte texto depois de escrever; produza diretamente com a contagem correta de caracteres. Use linguagem premium, sensorial e acolhedora, mantendo sofisticação sem soar artificial.
 
 Retorne APENAS um JSON válido com:
 {
-  "title": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres",
-  "subtitle": "Frase sobre benefício, transformação e bem-estar com exatamente 100 caracteres",
+  "title": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres, em Title Case e transmitindo exclusividade imediata",
+  "subtitle": "Frase sobre benefício, transformação e bem-estar com exatamente 100 caracteres, evocando cuidado artesanal e impacto concreto",
   "services": [
     "Serviço 1 com exatamente 30 caracteres",
     "Serviço 2 com exatamente 30 caracteres",
@@ -147,17 +147,18 @@ Retorne APENAS um JSON válido com:
 }
 
 REGRAS OBRIGATÓRIAS:
-- title: EXATAMENTE 60 caracteres, tom imperativo e inclusivo
-- subtitle: EXATAMENTE 100 caracteres, reforçando transformação, impacto e bem-estar
+- title: EXATAMENTE 60 caracteres, tom imperativo, inclusivo e sofisticado; usar Title Case e evitar clichês
+- subtitle: EXATAMENTE 100 caracteres, reforçando transformação, impacto e bem-estar com linguagem sensorial premium
 - services: EXATAMENTE 4 itens, cada um com EXATAMENTE 30 caracteres
 - validity: manter exatamente "15 dias"
 - buttonText: manter exatamente "Solicitar Proposta"
 - Produza o texto já com o tamanho correto, sem truncar ou cortar manualmente
+- Utilize vocabulário preciso, elegante e humano; evite palavras genéricas como "melhor", "completo" ou "rápido"
 - NÃO mencione o nome do cliente, mantenha linguagem humana e calorosa
 - Responda APENAS com o JSON válido, sem comentários ou texto adicional.`,
         expectedFormat: `{
-  "title": "string (exactly 60 characters)",
-  "subtitle": "string (exactly 100 characters)",
+  "title": "string (exactly 60 characters, Title Case, premium tone)",
+  "subtitle": "string (exactly 100 characters, sensory premium tone)",
   "services": [
     "string (exactly 30 characters)",
     "string (exactly 30 characters)",
@@ -168,11 +169,11 @@ REGRAS OBRIGATÓRIAS:
   "buttonText": "Solicitar Proposta"
 }`,
         rules: [
-          "title: EXATAMENTE 60 caracteres, imperativo e inclusivo",
-          "subtitle: EXATAMENTE 100 caracteres, evidenciando transformação, impacto e bem-estar",
+          "title: EXATAMENTE 60 caracteres, imperativo, inclusivo e sofisticado",
+          "subtitle: EXATAMENTE 100 caracteres, linguagem sensorial premium",
           "services: EXATAMENTE 4 itens, cada um com EXATAMENTE 30 caracteres",
-          "validity: manter \"15 dias\"",
-          "buttonText: manter \"Solicitar Proposta\"",
+          'validity: manter "15 dias"',
+          'buttonText: manter "Solicitar Proposta"',
           "Planeje o tamanho antes de escrever; não corte texto",
           "Não mencionar o nome do cliente nos textos",
         ],
@@ -200,8 +201,8 @@ REGRAS OBRIGATÓRIAS:
 - supportText: EXATAMENTE 70 caracteres
 - subtitle: EXATAMENTE 250 caracteres
 - Antecipe o tamanho antes de escrever; não gere texto maior para depois cortar
-- Foque em transformação, impacto, confiança e benefício contínuo
-- Use linguagem natural, próxima, calorosa e confiante
+- Foque em transformação, impacto, confiança e benefício contínuo com vocabulário premium, sensorial e autoral
+- Use linguagem natural, próxima, calorosa, confiante e sofisticada
 - Responda APENAS com o JSON válido.`,
         expectedFormat: `{
   "title": "string (exactly 155 characters)",
@@ -213,8 +214,8 @@ REGRAS OBRIGATÓRIAS:
           "supportText: EXATAMENTE 70 caracteres",
           "subtitle: EXATAMENTE 250 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
-          "Foque em transformação, impacto, confiança e benefício contínuo",
-          "Use linguagem natural, próxima e confiante",
+          "Foque em transformação, impacto, confiança e benefício contínuo com vocabulário premium",
+          "Use linguagem natural, próxima, calorosa e confiante, mantendo sofisticação",
         ],
       },
 
@@ -235,7 +236,8 @@ REGRAS OBRIGATÓRIAS:
 - EXATAMENTE 55 caracteres
 - Mostrar dedicação, proximidade e confiança
 - Use primeira pessoa do plural
-- Planeje a contagem antes de escrever; não corte texto ao final`,
+- Planeje a contagem antes de escrever; não corte texto ao final
+- Utilize tom premium e sofisticado sem perder naturalidade`,
         expectedFormat: `{
   "title": "string (exactly 55 characters)"
 }`,
@@ -270,7 +272,7 @@ REGRAS OBRIGATÓRIAS:
 - topic.title: EXATAMENTE 50 caracteres cada
 - topic.description: EXATAMENTE 100 caracteres cada
 - Planeje o texto para nascer com o tamanho correto; não corte ou trunque
-- Linguagem profissional, calorosa e orientada a impacto e bem-estar
+- Linguagem profissional, calorosa, sofisticada e orientada a impacto e bem-estar
 - Responda APENAS com o JSON válido, sem comentários.`,
         expectedFormat: `{
   "title": "string (exactly 140 characters)",
@@ -287,7 +289,7 @@ REGRAS OBRIGATÓRIAS:
           "topic.title: EXATAMENTE 50 caracteres",
           "topic.description: EXATAMENTE 100 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
-          "Linguagem profissional, calorosa e orientada a resultados",
+          "Linguagem profissional, calorosa, sofisticada e orientada a resultados",
         ],
         minTopics: 6,
         maxTopics: 9,
@@ -302,7 +304,7 @@ PROJETO: {projectName} - {projectDescription}
 Retorne:
 {
   "title": "Nosso Processo",
-  "introduction": "Frase com exatamente 100 caracteres explicando o ritmo ágil e cuidadoso",
+  "introduction": "Frase com exatamente 100 caracteres explicando o ritmo ágil, cuidadoso e sofisticado",
   "topics": [
     {
       "title": "Título da etapa com exatamente 40 caracteres",
@@ -318,7 +320,7 @@ Retorne:
 
 REGRAS OBRIGATÓRIAS:
 - Título fixo: "Nosso Processo"
-- introduction: EXATAMENTE 100 caracteres
+- introduction: EXATAMENTE 100 caracteres, tom premium e acolhedor
 - topics: EXATAMENTE 5 itens
 - topic.title: EXATAMENTE 40 caracteres
 - topic.description: EXATAMENTE 240 caracteres
@@ -342,7 +344,7 @@ REGRAS OBRIGATÓRIAS:
 }`,
         rules: [
           "title fixo: Nosso Processo",
-          "introduction: EXATAMENTE 100 caracteres",
+          "introduction: EXATAMENTE 100 caracteres com tom premium e acolhedor",
           "topics: EXATAMENTE 5 itens",
           "topic.title: EXATAMENTE 40 caracteres",
           "topic.description: EXATAMENTE 240 caracteres",
@@ -366,8 +368,8 @@ COPIE EXATAMENTE ESTE FORMATO:
 
 REGRAS OBRIGATÓRIAS:
 - content: EXATAMENTE 350 caracteres
-- Foque em benefícios do investimento e entregas
-- Use linguagem profissional e focada em resultados
+- Foque em benefícios do investimento e entregas com narrativa premium e sensorial
+- Use linguagem profissional, calorosa e focada em resultados tangíveis
 - Planeje o texto para atingir 350 caracteres sem cortes
 - Responda APENAS com o JSON válido.`,
         expectedFormat: `{
@@ -376,8 +378,8 @@ REGRAS OBRIGATÓRIAS:
         rules: [
           "content: EXATAMENTE 350 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
-          "Foque em benefícios do investimento e entregas",
-          "Use linguagem profissional e focada em resultados",
+          "Foque em benefícios do investimento e entregas com narrativa premium",
+          "Use linguagem profissional, calorosa e focada em resultados",
         ],
       },
 
@@ -437,6 +439,7 @@ REGRAS OBRIGATÓRIAS:
 - Inclua hideItem e sortOrder em cada includedItem (hideItem false; sortOrder crescente)
 - sortOrder: utilize números inteiros iniciando em 0 em ordem crescente
 - Planeje o tamanho antes de escrever; não corte texto
+- Linguagem sofisticada, sedutora e orientada a valor percebido
 - Responda APENAS com o JSON válido, sem comentários.`,
         expectedFormat: `{
   "title": "string (exactly 85 characters)",
@@ -486,6 +489,7 @@ REGRAS OBRIGATÓRIAS:
           "IDs únicos para planos e itens; sortOrder sequencial iniciando em 0",
           "Campos hide* devem ser false; includedItems com hideItem false",
           "Planeje a contagem antes de escrever; não cortar texto",
+          "Linguagem sofisticada, sedutora e orientada a valor percebido",
         ],
       },
 
@@ -505,9 +509,9 @@ COPIE EXATAMENTE ESTE FORMATO:
 REGRAS OBRIGATÓRIAS:
 - title: EXATAMENTE 30 caracteres
 - description: EXATAMENTE 180 caracteres
-- Inclua prazo, pagamento e suporte no texto
+- Inclua prazo, pagamento e suporte no texto com tom confiante e refinado
 - Planeje a contagem antes de escrever; não corte texto
-- Use linguagem clara, objetiva e profissional
+- Use linguagem clara, objetiva, profissional e sofisticada
 - Responda APENAS com o JSON válido.`,
         expectedFormat: `{
   "title": "string (exactly 30 characters)",
@@ -517,8 +521,8 @@ REGRAS OBRIGATÓRIAS:
           "title: EXATAMENTE 30 caracteres",
           "description: EXATAMENTE 180 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
-          "Incluir prazo, pagamento e suporte",
-          "Linguagem clara e profissional",
+          "Incluir prazo, pagamento e suporte com tom confiante e refinado",
+          "Linguagem clara, profissional e sofisticada",
         ],
       },
 
@@ -580,7 +584,7 @@ REGRAS OBRIGATÓRIAS:
 - question: EXATAMENTE 100 caracteres
 - answer: EXATAMENTE 300 caracteres
 - Cada pergunta deve ter question e answer
-- Use linguagem clara, acolhedora e profissional
+- Use linguagem clara, acolhedora, profissional e sofisticada
 - Foque em dúvidas comuns do cliente para este projeto
 - Planeje a contagem antes de escrever; não corte texto
 - Responda APENAS com o JSON válido.`,
@@ -597,7 +601,7 @@ REGRAS OBRIGATÓRIAS:
           "question: EXATAMENTE 100 caracteres",
           "answer: EXATAMENTE 300 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
-          "Use linguagem clara, acolhedora e profissional",
+          "Use linguagem clara, acolhedora, profissional e sofisticada",
           "Foque em dúvidas comuns do cliente para este projeto",
         ],
         exactQuestions: 10,
