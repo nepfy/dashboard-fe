@@ -60,8 +60,11 @@ export default function TemplateSelection({
     }
   };
 
+  const [previewTemplate, setPreviewTemplate] = useState<string>("flash");
+
   const handlePreviewTemplate = (templateName: string) => {
-    if (templateName === "flash") {
+    if (templateName === "flash" || templateName === "minimal") {
+      setPreviewTemplate(templateName);
       setModalOpen(true);
       return;
     }
@@ -72,10 +75,6 @@ export default function TemplateSelection({
 
     if (templateName === "grid") {
       window.open("/grid", "_blank", "noopener,noreferrer");
-    }
-
-    if (templateName === "minimal") {
-      window.open("/minimal", "_blank", "noopener,noreferrer");
     }
   };
 
@@ -181,9 +180,13 @@ export default function TemplateSelection({
       >
         <iframe
           ref={iframeRef}
-          src="/template-flash-visualize/index.html"
+          src={
+            previewTemplate === "minimal"
+              ? "/template-minimal/index.html"
+              : "/template-flash-visualize/index.html"
+          }
           style={{ width: "100%", height: "100vh", border: "none" }}
-          title="Flash Template"
+          title={`${previewTemplate.charAt(0).toUpperCase() + previewTemplate.slice(1)} Template`}
         />
       </Modal>
     </div>
