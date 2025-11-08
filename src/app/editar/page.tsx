@@ -91,6 +91,10 @@ export default function EditarPage() {
     return <Flash />;
   }
 
+  if (projectData.templateType === "minimal") {
+    return <Flash />; // Temporarily using Flash editor for Minimal (same structure)
+  }
+
   if (projectData.templateType === "prime") {
     return <Prime />;
   }

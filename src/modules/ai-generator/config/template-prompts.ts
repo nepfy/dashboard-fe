@@ -1,7 +1,7 @@
 export interface TemplateConfig {
   id: string;
   name: string;
-  type: "flash" | "prime" | "grid";
+  type: "flash" | "minimal" | "prime" | "grid";
   status: "active" | "inactive";
   description: string;
   lastUpdated: string;
@@ -658,6 +658,499 @@ REGRAS RÍGIDAS
         callToAction: "Transforme sua presença digital conosco",
         disclaimer:
           "Estamos à disposição para apoiar cada etapa do seu projeto. Conte com nossa equipe para garantir sucesso, impacto e crescimento contínuo, com atenção e dedicação personalizada.",
+      },
+    },
+
+    agentOverrides: {},
+  },
+
+  minimal: {
+    id: "minimal",
+    name: "Minimal",
+    type: "minimal",
+    status: "active",
+    description:
+      "Template minimalista com design limpo e foco em conteúdo essencial",
+    lastUpdated: "2025-01-15",
+
+    moa: {
+      enabled: true,
+      referenceModels: [
+        "Qwen/Qwen2.5-72B-Instruct-Turbo",
+        "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "deepseek-ai/DeepSeek-V3.1",
+        "Qwen/Qwen2.5-7B-Instruct-Turbo",
+      ],
+      aggregatorModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      maxRetries: 2,
+      temperature: 0.7,
+      maxTokens: 2000,
+    },
+
+    sections: {
+      introduction: {
+        enabled: true,
+        prompt: `Gere uma introdução minimalista e direta para a proposta.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+- Usuário: {userName}
+- Email: {userEmail}
+
+FORMATO:
+{
+  "userName": "{userName}",
+  "email": "{userEmail}",
+  "title": "Título direto e claro com até 120 caracteres",
+  "subtitle": "Subtítulo explicativo com até 200 caracteres",
+  "hideSubtitle": false,
+  "services": [
+    { "id": "1", "serviceName": "Serviço 1 com até 50 caracteres", "sortOrder": 1 },
+    { "id": "2", "serviceName": "Serviço 2 com até 50 caracteres", "sortOrder": 2 },
+    { "id": "3", "serviceName": "Serviço 3 com até 50 caracteres", "sortOrder": 3 }
+  ]
+}
+
+REGRAS:
+- Linguagem direta e profissional
+- Evite excesso de adjetivos
+- Foco em benefícios concretos
+- Máximo 3-4 serviços principais`,
+        expectedFormat: `{
+  "userName": "string",
+  "email": "string",
+  "title": "string (max 120 chars)",
+  "subtitle": "string (max 200 chars)",
+  "hideSubtitle": false,
+  "services": [{"id": "string", "serviceName": "string (max 50 chars)", "sortOrder": number}]
+}`,
+        rules: [
+          "title: até 120 caracteres, direto e claro",
+          "subtitle: até 200 caracteres",
+          "services: 3-4 itens, cada um com até 50 caracteres",
+          "Tom profissional e minimalista",
+        ],
+      },
+
+      aboutUs: {
+        enabled: true,
+        prompt: `Crie uma seção "Sobre" minimalista.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+
+FORMATO:
+{
+  "hideSection": false,
+  "title": "Descrição da missão/proposta de valor com até 200 caracteres"
+}
+
+REGRAS:
+- Linguagem direta e autêntica
+- Foco na proposta de valor
+- Evite clichês e jargões`,
+        expectedFormat: `{
+  "hideSection": false,
+  "title": "string (max 200 chars)"
+}`,
+        rules: [
+          "title: até 200 caracteres",
+          "Mensagem clara e direta",
+          "Tom autêntico",
+        ],
+      },
+
+      team: {
+        enabled: true,
+        prompt: `Gere a seção de equipe minimalista.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+- Usuário: {userName}
+
+FORMATO:
+{
+  "hideSection": false,
+  "title": "Título da seção com até 100 caracteres",
+  "members": [
+    {
+      "id": "1",
+      "name": "Nome completo",
+      "role": "Cargo/função com até 50 caracteres",
+      "image": "/images/templates/flash/placeholder.png",
+      "sortOrder": 1
+    }
+  ]
+}
+
+REGRAS:
+- 2-3 membros principais
+- Cargos claros e diretos
+- Se houver userName, inclua como primeiro membro`,
+        expectedFormat: `{
+  "hideSection": false,
+  "title": "string (max 100 chars)",
+  "members": [{"id": "string", "name": "string", "role": "string (max 50 chars)", "image": "string", "sortOrder": number}]
+}`,
+        rules: [
+          "title: até 100 caracteres",
+          "2-3 membros",
+          "Cargos diretos e claros",
+        ],
+      },
+
+      specialties: {
+        enabled: true,
+        prompt: `Gere seção de expertise/áreas de atuação.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+
+FORMATO:
+{
+  "hideSection": false,
+  "title": "Título da seção com até 100 caracteres",
+  "hideIcon": false,
+  "topics": [
+    {
+      "id": "1",
+      "icon": "StarIcon",
+      "title": "Título da área com até 60 caracteres",
+      "description": "Descrição direta com até 250 caracteres",
+      "sortOrder": 1
+    }
+  ]
+}
+
+ÍCONES DISPONÍVEIS:
+AwardIcon, BellIcon, BulbIcon, DiamondIcon, EyeIcon, FolderIcon, GearIcon, GlobeIcon, HeartIcon, HexagonalIcon, KeyIcon, PlayIcon, StarIcon, ThunderIcon
+
+REGRAS:
+- 3-6 áreas de expertise
+- Descrições diretas e práticas
+- Ícones relevantes para cada área`,
+        expectedFormat: `{
+  "hideSection": false,
+  "title": "string (max 100 chars)",
+  "hideIcon": false,
+  "topics": [{"id": "string", "icon": "string", "title": "string (max 60 chars)", "description": "string (max 250 chars)", "sortOrder": number}]
+}`,
+        rules: [
+          "title: até 100 caracteres",
+          "3-6 topics",
+          "Descrições práticas e diretas",
+        ],
+        minTopics: 3,
+        maxTopics: 8,
+      },
+
+      steps: {
+        enabled: true,
+        prompt: `Gere seção de processo/metodologia.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+
+FORMATO:
+{
+  "hideSection": false,
+  "topics": [
+    {
+      "id": "1",
+      "title": "Nome da etapa com até 50 caracteres",
+      "description": "Descrição da etapa com até 400 caracteres",
+      "sortOrder": 1
+    }
+  ]
+}
+
+REGRAS:
+- 3-5 etapas principais
+- Títulos concisos
+- Descrições claras e práticas`,
+        expectedFormat: `{
+  "hideSection": false,
+  "topics": [{"id": "string", "title": "string (max 50 chars)", "description": "string (max 400 chars)", "sortOrder": number}]
+}`,
+        rules: [
+          "3-5 etapas",
+          "Títulos concisos (até 50 caracteres)",
+          "Descrições práticas (até 400 caracteres)",
+        ],
+        exactSteps: 5,
+      },
+
+      results: {
+        enabled: true,
+        prompt: `Gere seção de resultados/cases.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+
+FORMATO:
+{
+  "hideSection": false,
+  "title": "Título da seção com até 100 caracteres",
+  "items": [
+    {
+      "id": "1",
+      "client": "Nome do cliente com até 50 caracteres",
+      "instagram": "usuário_instagram",
+      "investment": "12000.00",
+      "roi": "480000.00",
+      "photo": "/images/templates/flash/placeholder2.png",
+      "sortOrder": 1
+    }
+  ]
+}
+
+REGRAS:
+- 2-3 casos de sucesso
+- Valores realistas baseados no contexto
+- Instagram opcional`,
+        expectedFormat: `{
+  "hideSection": false,
+  "title": "string (max 100 chars)",
+  "items": [{"id": "string", "client": "string (max 50 chars)", "instagram": "string", "investment": "string", "roi": "string", "photo": "string", "sortOrder": number}]
+}`,
+        rules: [
+          "title: até 100 caracteres",
+          "2-3 items",
+          "Valores realistas e contextuais",
+        ],
+      },
+
+      testimonials: {
+        enabled: true,
+        prompt: `Gere seção de depoimentos.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+
+FORMATO:
+{
+  "hideSection": false,
+  "items": [
+    {
+      "id": "1",
+      "name": "Nome completo com até 50 caracteres",
+      "role": "Cargo/função com até 50 caracteres",
+      "testimonial": "Depoimento autêntico e específico com até 400 caracteres",
+      "photo": "/images/templates/flash/placeholder4.jpg",
+      "sortOrder": 1
+    }
+  ]
+}
+
+REGRAS:
+- 2-3 depoimentos
+- Testemunhos autênticos e específicos
+- Evite clichês genéricos`,
+        expectedFormat: `{
+  "hideSection": false,
+  "items": [{"id": "string", "name": "string (max 50 chars)", "role": "string (max 50 chars)", "testimonial": "string (max 400 chars)", "photo": "string", "sortOrder": number}]
+}`,
+        rules: [
+          "2-3 items",
+          "Depoimentos específicos e autênticos",
+          "Evite linguagem genérica",
+        ],
+      },
+
+      plans: {
+        enabled: true,
+        prompt: `Gere {selectedPlans} planos de investimento (mínimo 1, máximo 3).
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+- Número de planos solicitados: {selectedPlans}
+
+FORMATO:
+{
+  "hideSection": false,
+  "plansItems": [
+    {
+      "id": "1",
+      "title": "Nome do plano com até 50 caracteres",
+      "description": "Descrição do plano com até 150 caracteres",
+      "value": 4500.00,
+      "planPeriod": "mensal",
+      "recommended": false,
+      "sortOrder": 1,
+      "includedItems": [
+        {
+          "id": "1",
+          "description": "Item incluído com até 100 caracteres",
+          "sortOrder": 1
+        }
+      ]
+    }
+  ]
+}
+
+REGRAS CRÍTICAS:
+- Gere EXATAMENTE {selectedPlans} planos (se não especificado, gere 3)
+- APENAS O PLANO DE MAIOR VALOR pode ter recommended: true
+- Outros planos devem ter recommended: false
+- Valores crescentes do menor para o maior plano
+- 3-6 itens incluídos por plano
+- planPeriod: "mensal", "trimestral", "semestral", "anual" ou "projeto completo"
+- Valores realistas baseados no contexto do projeto`,
+        expectedFormat: `{
+  "hideSection": false,
+  "plansItems": [{"id": "string", "title": "string (max 50 chars)", "description": "string (max 150 chars)", "value": number, "planPeriod": "string", "recommended": boolean, "sortOrder": number, "includedItems": [{"id": "string", "description": "string (max 100 chars)", "sortOrder": number}]}]
+}`,
+        rules: [
+          "Gerar EXATAMENTE {selectedPlans} planos",
+          "Apenas o plano de maior valor pode ser recommended: true",
+          "Valores crescentes",
+          "3-6 itens incluídos por plano",
+          "Valores realistas",
+        ],
+      },
+
+      scope: {
+        enabled: false,
+        prompt: "",
+        expectedFormat: "",
+        rules: [],
+      },
+
+      investment: {
+        enabled: true,
+        prompt: `Gere seção de investimento minimalista.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+- Planos: {selectedPlans}
+
+FORMATO:
+{
+  "hideSection": false,
+  "title": "Título sobre investimento com até 150 caracteres",
+  "projectScope": "Descrição do escopo com até 200 caracteres",
+  "hideProjectScope": false
+}
+
+REGRAS:
+- Título claro e direto
+- Escopo conciso e objetivo`,
+        expectedFormat: `{
+  "hideSection": false,
+  "title": "string (max 150 chars)",
+  "projectScope": "string (max 200 chars)",
+  "hideProjectScope": false
+}`,
+        rules: [
+          "title: até 150 caracteres",
+          "projectScope: até 200 caracteres",
+          "Tom profissional e direto",
+        ],
+      },
+
+      terms: {
+        enabled: false,
+        prompt: "",
+        expectedFormat: "",
+        rules: [],
+      },
+
+      faq: {
+        enabled: true,
+        prompt: `Gere seção de FAQ minimalista.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+
+FORMATO:
+{
+  "hideSection": false,
+  "items": [
+    {
+      "id": "1",
+      "question": "Pergunta direta com até 150 caracteres",
+      "answer": "Resposta clara e objetiva com até 500 caracteres",
+      "sortOrder": 1
+    }
+  ]
+}
+
+REGRAS:
+- 4-6 perguntas essenciais
+- Respostas diretas e práticas
+- Evite jargões técnicos desnecessários`,
+        expectedFormat: `{
+  "hideSection": false,
+  "items": [{"id": "string", "question": "string (max 150 chars)", "answer": "string (max 500 chars)", "sortOrder": number}]
+}`,
+        rules: [
+          "4-6 perguntas",
+          "Perguntas diretas (até 150 caracteres)",
+          "Respostas práticas (até 500 caracteres)",
+        ],
+        exactQuestions: 5,
+      },
+
+      footer: {
+        enabled: true,
+        prompt: `Gere footer minimalista.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+
+FORMATO:
+{
+  "callToAction": "Mensagem de chamada para ação com até 100 caracteres",
+  "disclaimer": "Texto de rodapé/aviso com até 300 caracteres",
+  "hideCallToAction": false,
+  "hideDisclaimer": false
+}
+
+REGRAS:
+- Call to action direto e convidativo
+- Disclaimer objetivo e profissional`,
+        expectedFormat: `{
+  "callToAction": "string (max 100 chars)",
+  "disclaimer": "string (max 300 chars)",
+  "hideCallToAction": false,
+  "hideDisclaimer": false
+}`,
+        rules: [
+          "callToAction: até 100 caracteres",
+          "disclaimer: até 300 caracteres",
+          "Tom profissional",
+        ],
       },
     },
 

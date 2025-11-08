@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import FlashTemplate from "#/app/project/components/Templates/Flash";
+import MinimalTemplate from "#/app/project/components/Templates/Minimal";
 import { getProjectData } from "#/app/project/services/project-data";
 
 type ProjectPageProps = {
@@ -18,6 +19,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
+  // Render appropriate template based on templateType
+  if (projectData.templateType === "minimal") {
+    return <MinimalTemplate data={projectData} />;
+  }
+
+  // Default to Flash template
   return (
     <>
       <FlashTemplate data={projectData} />
