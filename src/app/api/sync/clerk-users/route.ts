@@ -1,11 +1,11 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { db } from "@/lib/db";
-import { persons } from "@/lib/db/schema/persons";
+import { db } from "#/lib/db";
+import { personUserTable } from "#/lib/db/schema/users";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 /**
- * Sync all Clerk users to the persons table
+ * Sync all Clerk users to the person_user table
  * This endpoint should be called once to backfill existing users
  */
 export async function POST() {
@@ -36,29 +36,30 @@ export async function POST() {
           continue;
         }
 
-        // Check if user already exists
+        // Check if user already exists by clerkUserId
         const existingPerson = await db
           .select()
-          .from(persons)
-          .where(eq(persons.clerkUserId, user.id))
+          .from(personUserTable)
+          .where(eq(personUserTable.clerkUserId, user.id))
           .limit(1);
 
         const userData = {
           clerkUserId: user.id,
           email: primaryEmail.emailAddress,
-          name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || primaryEmail.emailAddress,
+          firstName: user.firstName || null,
+          lastName: user.lastName || null,
         };
 
         if (existingPerson.length > 0) {
           // Update existing user
           await db
-            .update(persons)
+            .update(personUserTable)
             .set(userData)
-            .where(eq(persons.clerkUserId, user.id));
+            .where(eq(personUserTable.clerkUserId, user.id));
           updated++;
         } else {
           // Create new user
-          await db.insert(persons).values(userData);
+          await db.insert(personUserTable).values(userData);
           created++;
         }
 

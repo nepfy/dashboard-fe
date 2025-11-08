@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { projects } from "@/lib/db/schema/projects";
+import { db } from "#/lib/db";
+import { projectsTable } from "#/lib/db/schema/projects";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -17,12 +17,12 @@ export async function GET(request: Request) {
     // Try to select a project with button_config
     const project = await db
       .select({
-        id: projects.id,
-        projectName: projects.projectName,
-        buttonConfig: projects.buttonConfig,
+        id: projectsTable.id,
+        projectName: projectsTable.projectName,
+        buttonConfig: projectsTable.buttonConfig,
       })
-      .from(projects)
-      .where(eq(projects.id, projectId))
+      .from(projectsTable)
+      .where(eq(projectsTable.id, projectId))
       .limit(1);
 
     if (project.length === 0) {

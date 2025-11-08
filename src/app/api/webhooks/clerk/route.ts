@@ -4,7 +4,7 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { ClerkStripeSyncService } from "#/lib/services/clerk-stripe-sync";
 import { db } from "#/lib/db";
-import { persons } from "#/lib/db/schema/persons";
+import { personUserTable } from "#/lib/db/schema/users";
 import { eq } from "drizzle-orm";
 
 const webhookSecret = process.env.CLERK_WEBHOOK_SECRET!;
@@ -62,11 +62,12 @@ export async function POST(req: Request) {
         return new NextResponse("No primary email found", { status: 400 });
       }
 
-      // Create user in persons table
-      await db.insert(persons).values({
+      // Create user in person_user table
+      await db.insert(personUserTable).values({
         clerkUserId: id,
         email: primaryEmail.email_address,
-        name: `${first_name || ""} ${last_name || ""}`.trim() || primaryEmail.email_address,
+        firstName: first_name || null,
+        lastName: last_name || null,
       });
 
       console.log(`Created person record for user ${id}`);
@@ -93,14 +94,15 @@ export async function POST(req: Request) {
       );
 
       if (primaryEmail) {
-        // Update user in persons table
+        // Update user in person_user table
         await db
-          .update(persons)
+          .update(personUserTable)
           .set({
             email: primaryEmail.email_address,
-            name: `${first_name || ""} ${last_name || ""}`.trim() || primaryEmail.email_address,
+            firstName: first_name || null,
+            lastName: last_name || null,
           })
-          .where(eq(persons.clerkUserId, id));
+          .where(eq(personUserTable.clerkUserId, id));
 
         console.log(`Updated person record for user ${id}`);
       }
@@ -119,11 +121,11 @@ export async function POST(req: Request) {
     const { id } = evt.data;
 
     try {
-      // Soft delete user in persons table (if you have deleted_at column)
+      // Soft delete user in person_user table (if you have deleted_at column)
       // Or hard delete if preferred
       await db
-        .delete(persons)
-        .where(eq(persons.clerkUserId, id));
+        .delete(personUserTable)
+        .where(eq(personUserTable.clerkUserId, id));
 
       console.log(`Deleted person record for user ${id}`);
 

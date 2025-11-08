@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
-import { db } from "@/lib/db";
-import { persons } from "@/lib/db/schema/persons";
+import { db } from "#/lib/db";
+import { personUserTable } from "#/lib/db/schema/users";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -19,19 +19,20 @@ export async function GET() {
     // Try to find user in database
     const personResult = await db
       .select({
-        id: persons.id,
-        email: persons.email,
-        clerkUserId: persons.clerkUserId,
-        name: persons.name,
+        id: personUserTable.id,
+        email: personUserTable.email,
+        clerkUserId: personUserTable.clerkUserId,
+        firstName: personUserTable.firstName,
+        lastName: personUserTable.lastName,
       })
-      .from(persons)
-      .where(eq(persons.clerkUserId, clerkUserId))
+      .from(personUserTable)
+      .where(eq(personUserTable.clerkUserId, clerkUserId))
       .limit(1);
 
     // Also check if there are any persons at all
     const allPersonsCount = await db
-      .select({ id: persons.id })
-      .from(persons)
+      .select({ id: personUserTable.id })
+      .from(personUserTable)
       .limit(10);
 
     return NextResponse.json({
