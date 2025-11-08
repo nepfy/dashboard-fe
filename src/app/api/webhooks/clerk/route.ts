@@ -120,6 +120,11 @@ export async function POST(req: Request) {
   if (eventType === "user.deleted") {
     const { id } = evt.data;
 
+    if (!id) {
+      console.error("No user ID provided for user.deleted event");
+      return new NextResponse("No user ID provided", { status: 400 });
+    }
+
     try {
       // Soft delete user in person_user table (if you have deleted_at column)
       // Or hard delete if preferred
