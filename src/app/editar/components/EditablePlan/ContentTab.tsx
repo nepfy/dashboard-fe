@@ -22,7 +22,7 @@ export default function ContentTab({
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
 
   return (
-    <div className="mt-4 h-[340px] space-y-6 overflow-y-auto px-1 pr-2">
+    <div className="mt-4 h-[340px] space-y-6 overflow-y-auto px-1 pr-2 pb-14">
       <div className="relative z-10 flex items-center justify-between gap-4">
         <label className="relative flex items-center gap-2 text-sm font-medium text-[#2A2A2A]">
           Definir como melhor plano
@@ -186,7 +186,7 @@ export default function ContentTab({
         />
       </div>
 
-      <div className="flex items-center justify-center pt-4 pb-14">
+      <div className="mb-14 flex items-center justify-center pt-4">
         <button
           onClick={() => onDeleteItem()}
           className="text-white-neutral-light-900 flex cursor-pointer items-center gap-2 text-sm font-medium hover:text-red-700"
