@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "migrations": "npx drizzle-kit generate",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
