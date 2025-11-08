@@ -83,11 +83,13 @@ export const TemplateCard = ({
     {/* Preview - Agora com imagem */}
     <div className="rounded-2xs h-[190px] m-2 overflow-hidden">
       <Image
+        key={`${template.title}-${selectedColor}`}
         src={getImagePath(template.title, selectedColor)}
         alt={`Preview do template ${template.title}`}
         width={324}
         height={190}
         className="w-full h-full object-cover rounded-2xs"
+        unoptimized
       />
     </div>
 

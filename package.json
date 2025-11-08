@@ -63,6 +63,7 @@
     "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
+    "puppeteer": "^24.29.1",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
     "typescript": "^5"
