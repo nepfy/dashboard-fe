@@ -1,0 +1,155 @@
+import { useState } from "react";
+import Checkbox from "#/components/icons/Checkbox";
+import StarIcon from "./StarIcon";
+import { formatCurrencyDisplayNoCents } from "#/helpers/formatCurrency";
+import { PlansSection } from "#/types/template-data";
+import EditablePlan from "#/app/editar/components/EditablePlan";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
+
+export default function FlashPlans({
+  mainColor,
+  hideSection,
+  plansItems,
+}: PlansSection) {
+  const { activeEditingId } = useEditor();
+  const [openModalId, setOpenModalId] = useState<string | null>(null);
+
+  const canEdit = activeEditingId === null;
+  let bg: string;
+  let planBg: string;
+  if (mainColor === "#4F21A1") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #200D42 0.01%, #4F21A1 41.86%, #A46EDB 81.78%)`;
+    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`;
+  }
+  if (mainColor === "#BE8406") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #2B1B01 0.01%, #BE8406 41.86%, #CEA605 81.78%)`;
+    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B1B01 34.22%, #BE8406 64.9%, #CEA605 81.78%)`;
+  }
+  if (mainColor === "#9B3218") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #2B0707 0.01%, #9B3218 41.86%, #BE4E3F 81.78%)`;
+    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B0707 34.22%, #9B3218 64.9%, #BE4E3F 81.78%)`;
+  }
+  if (mainColor === "#05722C") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #072B14 0.01%, #05722C 41.86%, #4ABE3F 81.78%)`;
+    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #072B14 34.22%, #05722C 64.9%, #4ABE3F 81.78%)`;
+  }
+  if (mainColor === "#182E9B") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #070F2B 0.01%, #182E9B 41.86%, #443FBE 81.78%)`;
+    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #070F2B 34.22%, #182E9B 64.9%, #443FBE 81.78%)`;
+  }
+  if (mainColor === "#212121") {
+    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #0D0D0D 0.01%, #212121 41.86%, #3A3A3A 81.78%)`;
+    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #0D0D0D 34.22%, #212121 64.9%, #3A3A3A 81.78%)`;
+  }
+  return (
+    <div className="relative overflow-hidden bg-black">
+      {!hideSection && (
+        <div className="relative z-10 mx-auto max-w-[1280px] pt-10 pb-23 lg:pt-22 xl:pb-36">
+          <div
+            className={`grid grid-cols-1 gap-6 px-4 lg:grid-cols-3 lg:px-0 ${plansItems && plansItems.length === 2 ? "lg:justify-start" : "lg:justify-between"}`}
+          >
+            {plansItems?.map((plan) => (
+              <div
+                key={plan.id}
+                className={`relative my-10 flex w-full flex-col justify-between rounded-[4px] border border-transparent lg:my-0 ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                onClick={() => {
+                  if (canEdit || openModalId === plan.id) {
+                    setOpenModalId(plan.id);
+                  }
+                }}
+              >
+                {plan.recommended && (
+                  <div
+                    className="absolute top-[-44px] left-0 flex h-[37px] w-[145px] items-center justify-center gap-2 rounded-[4px]"
+                    style={{
+                      background: bg,
+                    }}
+                  >
+                    <StarIcon />
+                    <p className="text-[14px] font-semibold text-[#E6E6E6]">
+                      Melhor Oferta
+                    </p>
+                  </div>
+                )}
+                <div
+                  className="flex min-h-[220px] flex-col items-start justify-between rounded-[4px] p-6"
+                  style={{
+                    background: plan.recommended ? planBg : "#111111",
+                  }}
+                >
+                  <div>
+                    {!plan.hideTitleField && (
+                      <p className="text-[24px] font-bold text-[#E6E6E6]">
+                        {plan.title}
+                      </p>
+                    )}
+                    {!plan.hideDescription && (
+                      <p className="mb-4 text-sm text-[#E6E6E6]">
+                        {plan.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-baseline gap-4">
+                    {!plan.hidePrice && (
+                      <p className="text-[2.5rem] font-medium text-[#E6E6E6]">
+                        {formatCurrencyDisplayNoCents(plan.value)}
+                      </p>
+                    )}
+                    {!plan.hidePlanPeriod && (
+                      <p className="text-[#E6E6E6]">{plan.planPeriod}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-10 mb-6 flex-grow">
+                  <p className="mb-6 px-6 text-sm text-[#ffffff]">INCLUSO:</p>
+                  {plan.includedItems?.map((includedItem) => (
+                    <div
+                      key={includedItem.id}
+                      className="flex items-center gap-2 px-6 py-3"
+                    >
+                      <span className="flex h-4 w-4 items-start justify-center">
+                        <Checkbox fill="rgba(230, 230, 230, 0.7)" />
+                      </span>
+                      {!includedItem.hideDescription && (
+                        <p className="text-sm text-[#e6e6e6]">
+                          {includedItem.description}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="px-6">
+                  {!plan.hideButtonTitle && (
+                    <button
+                      className={`mt-8 w-full rounded-full px-6 py-5 font-semibold ${
+                        plan.recommended
+                          ? "bg-[#FBFBFB] text-[#171825]"
+                          : "bg-[#171825] text-[#FBFBFB]"
+                      }`}
+                    >
+                      {plan.buttonTitle}
+                    </button>
+                  )}
+                </div>
+                <EditablePlan
+                  plan={plan}
+                  isModalOpen={openModalId === plan.id}
+                  setIsModalOpen={(isOpen) =>
+                    setOpenModalId(isOpen ? (plan.id ?? null) : null)
+                  }
+                  editingId={`plan-${plan.id}`}
+                />
+
+                <div
+                  className={`absolute top-0 left-0 z-6 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === plan.id ? "bg-[#0170D666]" : "bg-transparent"}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

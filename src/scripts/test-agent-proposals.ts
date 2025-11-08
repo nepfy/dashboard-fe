@@ -50,7 +50,7 @@ const templateArg =
       ? "prime"
       : args.includes("--minimal")
         ? "minimal"
-        : undefined);
+      : undefined);
 const supportedTemplates = new Set(["flash", "prime", "minimal"]);
 const templateFilter = supportedTemplates.has(templateArg ?? "")
   ? (templateArg as "flash" | "prime" | "minimal")
@@ -522,7 +522,7 @@ async function testAgentProposals() {
           ? (workflowResult as FlashWorkflowResult).proposal
           : testCase.template === "minimal"
             ? (workflowResult as MinimalWorkflowResult).proposal
-            : (workflowResult as PrimeWorkflowResult).data;
+          : (workflowResult as PrimeWorkflowResult).data;
 
       if (!proposalPayload) {
         console.error("❌ Workflow retornou proposta vazia");

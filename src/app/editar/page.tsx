@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Flash from "./modules/flash";
+import Minimal from "./modules/minimal";
 import Prime from "./modules/prime";
 import { TemplateData } from "#/types/template-data";
 import { useEditor } from "./contexts/EditorContext";
@@ -92,7 +93,7 @@ export default function EditarPage() {
   }
 
   if (projectData.templateType === "minimal") {
-    return <Flash />; // Temporarily using Flash editor for Minimal (same structure)
+    return <Minimal />;
   }
 
   if (projectData.templateType === "prime") {

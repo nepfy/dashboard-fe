@@ -1,0 +1,45 @@
+import React from "react";
+
+interface IconProps {
+  fill?: string;
+  width?: string;
+  height?: string;
+  className?: string;
+}
+
+const BellIcon: React.FC<IconProps> = ({
+  fill = "black",
+  width = "33",
+  height = "33",
+  className,
+}) => (
+  <svg
+    width={width}
+    height={height}
+    viewBox="0 0 33 33"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M11.6999 13.5965V15.9121C11.6999 16.4009 11.4915 17.146 11.2432 17.5627L10.3217 19.0931C9.75284 20.0385 10.1455 21.0882 11.1871 21.4407C14.6404 22.5945 18.3662 22.5945 21.8196 21.4407C22.7891 21.1202 23.2137 19.9744 22.6849 19.0931L21.7635 17.5627C21.5231 17.146 21.3148 16.4009 21.3148 15.9121V13.5965C21.3148 10.9524 19.1514 8.78906 16.5073 8.78906C13.8552 8.78906 11.6999 10.9444 11.6999 13.5965Z"
+      stroke={fill}
+      strokeWidth="1.20187"
+      strokeLinecap="round"
+    />
+    <path
+      d="M17.2208 8.86104C16.4516 8.76489 15.7145 8.82098 15.0254 9.02129C15.2578 8.42837 15.8346 8.01172 16.5077 8.01172C17.1807 8.01172 17.7576 8.42837 17.99 9.02129C17.7416 8.94917 17.4852 8.89309 17.2208 8.86104Z"
+      stroke={fill}
+      strokeWidth="1.20187"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M18.911 21.7305C18.911 23.0525 17.8293 24.1342 16.5072 24.1342C15.8502 24.1342 15.2413 23.8618 14.8086 23.4291C14.3759 22.9964 14.1035 22.3875 14.1035 21.7305"
+      stroke={fill}
+      strokeWidth="1.20187"
+    />
+  </svg>
+);
+
+export default BellIcon;
