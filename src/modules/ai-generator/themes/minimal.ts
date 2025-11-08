@@ -459,13 +459,44 @@ export class MinimalTheme {
     sections.results = {
       hideSection: false,
       title: "Resultados Alcançados",
-      items: [],
+      items: [
+        {
+          id: crypto.randomUUID(),
+          client: "Cliente Exemplo",
+          investment: "R$ 10.000",
+          roi: "+150%",
+          photo: "",
+          instagram: "@clienteexemplo",
+          hidePhoto: false,
+          hideItem: false,
+          sortOrder: 0,
+        },
+      ],
     };
 
     // TODO: Add testimonials section when template config is updated
     sections.testimonials = {
       hideSection: false,
-      items: [],
+      items: [
+        {
+          id: crypto.randomUUID(),
+          name: "João Silva",
+          role: "CEO, Empresa Exemplo",
+          testimonial: "Excelente trabalho! Superou nossas expectativas e entregou resultados incríveis para nosso negócio.",
+          photo: "",
+          hidePhoto: false,
+          sortOrder: 0,
+        },
+        {
+          id: crypto.randomUUID(),
+          name: "Maria Santos",
+          role: "Gerente de Marketing, Outra Empresa",
+          testimonial: "Profissionalismo e qualidade em cada etapa do projeto. Recomendo fortemente!",
+          photo: "",
+          hidePhoto: false,
+          sortOrder: 1,
+        },
+      ],
     };
 
     // Generate steps
@@ -491,9 +522,33 @@ export class MinimalTheme {
     );
 
     // TODO: Add plans section when template config is updated
+    const planCount = Math.min(Math.max(data.selectedPlans || 1, 1), 3);
+    const placeholderPlans = [];
+    for (let i = 0; i < planCount; i++) {
+      placeholderPlans.push({
+        id: crypto.randomUUID(),
+        title: `Plano ${i + 1}`,
+        description: "Descrição do plano",
+        value: (i + 1) * 1000,
+        planPeriod: "mensal",
+        recommended: i === planCount - 1, // Last plan is recommended
+        buttonTitle: "Contratar",
+        buttonWhereToOpen: "_blank",
+        buttonHref: "#",
+        buttonPhone: "",
+        hideTitleField: false,
+        hideDescription: false,
+        hidePrice: false,
+        hidePlanPeriod: false,
+        hideButtonTitle: false,
+        hideItem: false,
+        sortOrder: i,
+        includedItems: [],
+      });
+    }
     sections.plans = {
       hideSection: false,
-      plansItems: [],
+      plansItems: placeholderPlans,
     };
 
     // Generate FAQ
