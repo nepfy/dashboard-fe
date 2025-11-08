@@ -82,6 +82,7 @@ async function getUserIdFromEmail(emailAddress: string): Promise<{
 
 type AIResult =
   | FlashWorkflowResult
+  | MinimalWorkflowResult
   | PrimeWorkflowResult
   | WorkflowResult
   | Record<string, unknown>;

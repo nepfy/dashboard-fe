@@ -1,6 +1,5 @@
 import {
   BaseTemplateData,
-  BaseProposal,
   BaseSection,
   baseTemplateConfig,
   validateCharacterLimit,
@@ -204,7 +203,7 @@ export interface MinimalFooterSection {
 }
 
 // Complete Minimal Proposal
-export interface MinimalProposal extends BaseProposal {
+export interface MinimalProposal {
   introduction: MinimalIntroductionSection;
   aboutUs: MinimalAboutUsSection;
   team: MinimalTeamSection;

@@ -481,7 +481,7 @@ function convertMinimalToProposalData(
   return {
     introduction: {
       userName: proposal.introduction.userName,
-      email: proposal.introduction.email,
+      email: proposal.introduction.email || "",
       buttonTitle: "Solicitar Proposta",
       title: proposal.introduction.title,
       validity: requestData.validUntil || new Date().toISOString(),
@@ -607,6 +607,15 @@ function convertMinimalToProposalData(
         value: String(plan.value),
         planPeriod: plan.planPeriod || "mensal",
         recommended: plan.recommended || false,
+        buttonTitle: plan.buttonTitle || "Solicitar Proposta",
+        buttonWhereToOpen: plan.buttonWhereToOpen || "link",
+        buttonHref: plan.buttonHref || "",
+        buttonPhone: plan.buttonPhone || "",
+        hideTitleField: plan.hideTitleField || false,
+        hideDescription: plan.hideDescription || false,
+        hidePrice: plan.hidePrice || false,
+        hidePlanPeriod: plan.hidePlanPeriod || false,
+        hideButtonTitle: plan.hideButtonTitle || false,
         hideItem: plan.hideItem || false,
         sortOrder: plan.sortOrder || index,
         includedItems: plan.includedItems?.map((item, itemIndex) => ({
@@ -615,6 +624,7 @@ function convertMinimalToProposalData(
           description: item.description,
           hideItem: item.hideItem || false,
           sortOrder: item.sortOrder || itemIndex,
+          hideDescription: false,
         })),
       })),
     },

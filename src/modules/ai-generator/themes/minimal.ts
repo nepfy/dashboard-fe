@@ -15,16 +15,6 @@ function ensureCondition(condition: boolean, message: string): void {
   }
 }
 
-function ensureItemsHaveIds<T extends Record<string, unknown>>(
-  items: T | T[]
-): (T & { id: string })[] {
-  const itemsArray = Array.isArray(items) ? items : [items];
-  return itemsArray.map((item) => ({
-    ...item,
-    id: (item.id as string | undefined) || crypto.randomUUID(),
-  }));
-}
-
 export interface MinimalThemeData extends BaseThemeData {
   templateType: "minimal";
   mainColor: string;
@@ -218,8 +208,7 @@ export class MinimalTheme {
   }
 
   private validateInvestmentSection(
-    section: MinimalProposal["investment"],
-    expectedPlans: number
+    section: MinimalProposal["investment"]
   ): void {
     this.ensureMaxLength(section.title, 150, "investment.title");
     if (section.projectScope) {
@@ -265,7 +254,7 @@ export class MinimalTheme {
 
     if (highestValuePlan) {
       ensureCondition(
-        highestValuePlan.recommended,
+        highestValuePlan.recommended || false,
         "Only the highest value plan can be marked as recommended"
       );
     }
@@ -314,7 +303,7 @@ export class MinimalTheme {
     this.validateResultsSection(proposal.results);
     this.validateTestimonialsSection(proposal.testimonials);
     this.validateStepsSection(proposal.steps);
-    this.validateInvestmentSection(proposal.investment, expectedPlans);
+    this.validateInvestmentSection(proposal.investment);
     this.validatePlansSection(proposal.plans, expectedPlans);
     this.validateFAQSection(proposal.faq);
     this.validateFooterSection(proposal.footer);
@@ -360,7 +349,7 @@ export class MinimalTheme {
           userPrompt = generateJSONRetryPrompt(
             userPrompt,
             lastError.message,
-            attempt
+            String(attempt)
           );
         }
       }
@@ -458,39 +447,25 @@ export class MinimalTheme {
     );
 
     // Generate expertise
-    const expertisePrompt = this.getSectionPrompt("expertise", data);
-    const expertiseSystemPrompt = this.buildSystemPrompt(agent, "expertise");
+    const expertisePrompt = this.getSectionPrompt("specialties", data);
+    const expertiseSystemPrompt = this.buildSystemPrompt(agent, "specialties");
     const expertiseResult = await this.runLLMWithJSONRetry<MinimalProposal["expertise"]>(
       expertisePrompt,
       expertiseSystemPrompt
     );
-    sections.expertise = {
-      ...expertiseResult,
-      topics: ensureItemsHaveIds(expertiseResult.topics || []),
-    };
+    sections.expertise = expertiseResult;
 
-    // Generate results
-    const resultsPrompt = this.getSectionPrompt("results", data);
-    const resultsSystemPrompt = this.buildSystemPrompt(agent, "results");
-    const resultsResult = await this.runLLMWithJSONRetry<MinimalProposal["results"]>(
-      resultsPrompt,
-      resultsSystemPrompt
-    );
+    // TODO: Add results section when template config is updated
     sections.results = {
-      ...resultsResult,
-      items: ensureItemsHaveIds(resultsResult.items || []),
+      hideSection: false,
+      title: "Resultados Alcançados",
+      items: [],
     };
 
-    // Generate testimonials
-    const testimonialsPrompt = this.getSectionPrompt("testimonials", data);
-    const testimonialsSystemPrompt = this.buildSystemPrompt(agent, "testimonials");
-    const testimonialsResult = await this.runLLMWithJSONRetry<MinimalProposal["testimonials"]>(
-      testimonialsPrompt,
-      testimonialsSystemPrompt
-    );
+    // TODO: Add testimonials section when template config is updated
     sections.testimonials = {
-      ...testimonialsResult,
-      items: ensureItemsHaveIds(testimonialsResult.items || []),
+      hideSection: false,
+      items: [],
     };
 
     // Generate steps
@@ -500,10 +475,7 @@ export class MinimalTheme {
       stepsPrompt,
       stepsSystemPrompt
     );
-    sections.steps = {
-      ...stepsResult,
-      topics: ensureItemsHaveIds(stepsResult.topics || []),
-    };
+    sections.steps = stepsResult;
 
     // Escope (static section)
     sections.escope = {
@@ -518,19 +490,10 @@ export class MinimalTheme {
       investmentSystemPrompt
     );
 
-    // Generate plans
-    const plansPrompt = this.getSectionPrompt("plans", data);
-    const plansSystemPrompt = this.buildSystemPrompt(agent, "plans");
-    const plansResult = await this.runLLMWithJSONRetry<MinimalProposal["plans"]>(
-      plansPrompt,
-      plansSystemPrompt
-    );
+    // TODO: Add plans section when template config is updated
     sections.plans = {
-      ...plansResult,
-      plansItems: ensureItemsHaveIds(plansResult.plansItems || []).map(plan => ({
-        ...plan,
-        includedItems: ensureItemsHaveIds(plan.includedItems || []),
-      })),
+      hideSection: false,
+      plansItems: [],
     };
 
     // Generate FAQ
@@ -540,18 +503,16 @@ export class MinimalTheme {
       faqPrompt,
       faqSystemPrompt
     );
-    sections.faq = {
-      ...faqResult,
-      items: ensureItemsHaveIds(faqResult.items || []),
-    };
+    sections.faq = faqResult;
 
-    // Generate footer
-    const footerPrompt = this.getSectionPrompt("footer", data);
-    const footerSystemPrompt = this.buildSystemPrompt(agent, "footer");
-    sections.footer = await this.runLLMWithJSONRetry(
-      footerPrompt,
-      footerSystemPrompt
-    );
+    // Footer (static section - uses config values)
+    const config = templateConfigManager.getConfig("minimal");
+    sections.footer = {
+      callToAction: config?.sections?.footer?.callToAction || "Vamos transformar sua ideia em realidade?",
+      disclaimer: config?.sections?.footer?.disclaimer || "Esta proposta é válida pelo período indicado.",
+      hideCallToAction: false,
+      hideDisclaimer: false,
+    };
 
     return sections as MinimalProposal;
   }
