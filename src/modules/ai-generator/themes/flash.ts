@@ -1548,7 +1548,6 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashTermsSection> {
-    const userPrompt = this.getSectionPrompt("terms", data);
     const expectedFormat =
       this.getSectionExpectedFormat("terms") ??
       `[
@@ -1559,33 +1558,23 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
 ]`;
 
     try {
-      const moaResult =
-        await this.moaService.generateWithRetry<FlashTermsSection>(
-          userPrompt,
-          agent.systemPrompt,
-          expectedFormat,
-          agent.systemPrompt
-        );
+      const section = await this.generateSectionWithValidation<
+        FlashTermsSection | { title: string; description: string },
+        FlashTermsSection
+      >({
+        sectionKey: "terms",
+        data,
+        agent,
+        expectedFormat,
+        transform: (raw) => {
+          // ensureItemsHaveIds handles both arrays and single objects
+          return ensureItemsHaveIds(raw);
+        },
+        validate: (section) => this.validateTermsSection(section),
+      });
 
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA Terms generated successfully");
-        
-        // ensureItemsHaveIds now handles both arrays and single objects
-        const resultWithIds = ensureItemsHaveIds(moaResult.result);
-        this.validateTermsSection(resultWithIds);
-        return resultWithIds;
-      }
-
-      console.warn("MoA failed, falling back to single model");
-      const parsed = await this.runLLMWithJSONRetry<FlashTermsSection>(
-        userPrompt,
-        agent.systemPrompt
-      );
-      
-      // ensureItemsHaveIds now handles both arrays and single objects
-      const parsedWithIds = ensureItemsHaveIds(parsed);
-      this.validateTermsSection(parsedWithIds);
-      return parsedWithIds;
+      console.log("✅ MoA Terms generated successfully");
+      return section;
     } catch (error) {
       console.error("Flash Terms Generation Error:", error);
       throw error;
