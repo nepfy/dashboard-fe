@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2025-11-08T04:11:27.553Z",
-  "totalTests": 14,
-  "successful": 12,
-  "failed": 2,
-  "averageScore": 8.900000000000002,
+  "generatedAt": "2025-11-08T09:00:49.430Z",
+  "totalTests": 1,
+  "successful": 1,
+  "failed": 0,
+  "averageScore": 8.9,
   "results": [
     {
-      "agent": "Marketing Digital Flash",
-      "template": "flash",
+      "agent": "Marketing Digital Minimal",
+      "template": "minimal",
       "service": "marketing-digital",
       "success": true,
       "analysis": {
@@ -16,158 +16,7 @@
         "personalizationScore": 10,
         "overallScore": 8.9
       },
-      "filename": "marketing-digital-flash-proposal.json"
-    },
-    {
-      "agent": "Agências & Consultoria Flash",
-      "template": "flash",
-      "service": "agencias-consultoria",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "agencias-consultoria-flash-proposal.json"
-    },
-    {
-      "agent": "Designer Flash",
-      "template": "flash",
-      "service": "designer",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "designer-flash-proposal.json"
-    },
-    {
-      "agent": "Desenvolvedor Flash",
-      "template": "flash",
-      "service": "desenvolvedor",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "desenvolvedor-flash-proposal.json"
-    },
-    {
-      "agent": "Arquiteto Flash",
-      "template": "flash",
-      "service": "arquiteto",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "arquiteto-flash-proposal.json"
-    },
-    {
-      "agent": "Fotógrafo Flash",
-      "template": "flash",
-      "service": "photography",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "photography-flash-proposal.json"
-    },
-    {
-      "success": false,
-      "error": "Agente não encontrado"
-    },
-    {
-      "agent": "Marketing Digital Prime",
-      "template": "prime",
-      "service": "marketing-digital",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "marketing-digital-prime-proposal.json"
-    },
-    {
-      "agent": "Agências & Consultoria Prime",
-      "template": "prime",
-      "service": "agencias-consultoria",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "agencias-consultoria-prime-proposal.json"
-    },
-    {
-      "agent": "Designer Prime",
-      "template": "prime",
-      "service": "designer",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "designer-prime-proposal.json"
-    },
-    {
-      "agent": "Desenvolvedor Prime",
-      "template": "prime",
-      "service": "desenvolvedor",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "desenvolvedor-prime-proposal.json"
-    },
-    {
-      "agent": "Arquiteto Prime",
-      "template": "prime",
-      "service": "arquiteto",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "arquiteto-prime-proposal.json"
-    },
-    {
-      "agent": "Fotógrafo Prime",
-      "template": "prime",
-      "service": "photography",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "photography-prime-proposal.json"
-    },
-    {
-      "success": false,
-      "error": "Agente não encontrado"
+      "filename": "marketing-digital-minimal-proposal.json"
     }
   ]
 }
