@@ -51,9 +51,12 @@ export type {
 // ============================================================================
 
 // Flash Template
-export {
+export type {
   FlashProposal,
   FlashTemplateData,
+} from "./templates/flash";
+
+export {
   flashTemplateConfig,
   validateFlashCharacterLimits,
   getFlashTemplateDefaults,
@@ -70,10 +73,13 @@ export {
 } from "./templates/flash/constants";
 
 // Base Template
-export {
+export type {
   BaseTemplateData,
   BaseProposal,
   BaseSection,
+} from "./templates/base/base-template";
+
+export {
   baseTemplateConfig,
   validateCharacterLimit,
   truncateText,
@@ -86,28 +92,34 @@ export {
 // THEMES (Geração)
 // ============================================================================
 
-export {
+export type {
   FlashTheme,
-  FlashTemplateWorkflow,
-  type FlashThemeData,
-  type FlashIntroductionSection,
-  type FlashAboutUsSection,
-  type FlashTeamSection,
-  type FlashSpecialtiesSection,
-  type FlashStepsSection,
-  type FlashScopeSection,
-  type FlashInvestmentSection,
-  type FlashResultsSection,
-  type FlashTestimonialsSection,
-  type FlashTermsSection,
-  type FlashFAQSection,
-  type FlashFooterSection,
-  type FlashWorkflowResult,
+  FlashThemeData,
+  FlashIntroductionSection,
+  FlashAboutUsSection,
+  FlashTeamSection,
+  FlashSpecialtiesSection,
+  FlashStepsSection,
+  FlashScopeSection,
+  FlashInvestmentSection,
+  FlashResultsSection,
+  FlashTestimonialsSection,
+  FlashTermsSection,
+  FlashFAQSection,
+  FlashFooterSection,
+  FlashWorkflowResult,
 } from "./themes/flash";
 
 export {
+  FlashTemplateWorkflow,
+} from "./themes/flash";
+
+export type {
   BaseThemeData,
   BaseThemeConfig,
+} from "./themes/base-theme";
+
+export {
   baseThemeConfig,
   generateThemeCSS,
   validateThemeData,
@@ -128,10 +140,13 @@ export {
 // CONFIG
 // ============================================================================
 
+export type {
+  TemplateConfigManager,
+} from "./config/template-prompts";
+
 export {
   templateConfigManager,
   defaultTemplateConfigs,
-  TemplateConfigManager,
 } from "./config/template-prompts";
 
 // ============================================================================
