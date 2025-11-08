@@ -1,155 +1,290 @@
-import { useState } from "react";
-import Checkbox from "#/components/icons/Checkbox";
-import StarIcon from "./StarIcon";
-import { formatCurrencyDisplayNoCents } from "#/helpers/formatCurrency";
-import { PlansSection } from "#/types/template-data";
-import EditablePlan from "#/app/editar/components/EditablePlan";
-import { useEditor } from "#/app/editar/contexts/EditorContext";
+"use client";
 
-export default function FlashPlans({
-  mainColor,
-  hideSection,
+import { useState } from "react";
+import { PlansSection } from "#/types/template-data";
+import EditableImage from "#/app/editar/components/EditableImage";
+import { useEditor } from "../../../contexts/EditorContext";
+
+interface MinimalPlansProps extends PlansSection {
+  mainColor?: string;
+}
+
+export default function MinimalPlans({
   plansItems,
-}: PlansSection) {
+  hideSection,
+  mainColor = "#000000",
+}: MinimalPlansProps) {
   const { activeEditingId } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
 
   const canEdit = activeEditingId === null;
-  let bg: string;
-  let planBg: string;
-  if (mainColor === "#4F21A1") {
-    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #200D42 0.01%, #4F21A1 41.86%, #A46EDB 81.78%)`;
-    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #200D42 34.22%, #4F21A1 64.9%, #A46EDB 81.78%)`;
-  }
-  if (mainColor === "#BE8406") {
-    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #2B1B01 0.01%, #BE8406 41.86%, #CEA605 81.78%)`;
-    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B1B01 34.22%, #BE8406 64.9%, #CEA605 81.78%)`;
-  }
-  if (mainColor === "#9B3218") {
-    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #2B0707 0.01%, #9B3218 41.86%, #BE4E3F 81.78%)`;
-    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #2B0707 34.22%, #9B3218 64.9%, #BE4E3F 81.78%)`;
-  }
-  if (mainColor === "#05722C") {
-    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #072B14 0.01%, #05722C 41.86%, #4ABE3F 81.78%)`;
-    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #072B14 34.22%, #05722C 64.9%, #4ABE3F 81.78%)`;
-  }
-  if (mainColor === "#182E9B") {
-    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #070F2B 0.01%, #182E9B 41.86%, #443FBE 81.78%)`;
-    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #070F2B 34.22%, #182E9B 64.9%, #443FBE 81.78%)`;
-  }
-  if (mainColor === "#212121") {
-    bg = `radial-gradient(125.86% 306.44% at 7.59% 24.32%, #000000 0%, #0D0D0D 0.01%, #212121 41.86%, #3A3A3A 81.78%)`;
-    planBg = `radial-gradient(104.7% 303.34% at 7.84% 26.05%, #000000 0%, #0D0D0D 34.22%, #212121 64.9%, #3A3A3A 81.78%)`;
-  }
+
+  // Placeholder functions for plan editing
+  const updatePlanItem = (planId: string, data: never) => {
+    console.log('Update plan:', planId, data);
+    // Will be implemented later
+  };
+
+  const reorderPlanItems = (items: never[]) => {
+    console.log('Reorder plans:', items);
+    // Will be implemented later
+  };
+
+  if (hideSection || !plansItems || plansItems.length === 0) return null;
+
   return (
-    <div className="relative overflow-hidden bg-black">
-      {!hideSection && (
-        <div className="relative z-10 mx-auto max-w-[1280px] pt-10 pb-23 lg:pt-22 xl:pb-36">
-          <div
-            className={`grid grid-cols-1 gap-6 px-4 lg:grid-cols-3 lg:px-0 ${plansItems && plansItems.length === 2 ? "lg:justify-start" : "lg:justify-between"}`}
-          >
-            {plansItems?.map((plan) => (
-              <div
-                key={plan.id}
-                className={`relative my-10 flex w-full flex-col justify-between rounded-[4px] border border-transparent lg:my-0 ${openModalId === plan.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
-                onClick={() => {
-                  if (canEdit || openModalId === plan.id) {
-                    setOpenModalId(plan.id);
-                  }
-                }}
-              >
-                {plan.recommended && (
-                  <div
-                    className="absolute top-[-44px] left-0 flex h-[37px] w-[145px] items-center justify-center gap-2 rounded-[4px]"
-                    style={{
-                      background: bg,
-                    }}
-                  >
-                    <StarIcon />
-                    <p className="text-[14px] font-semibold text-[#E6E6E6]">
-                      Melhor Oferta
-                    </p>
-                  </div>
-                )}
+    <>
+      <style jsx global>{`
+        .section_plans {
+          background-color: ${mainColor};
+          color: #fbfbfb;
+          padding: 8rem 0;
+        }
+        
+        .plans-heading {
+          text-align: center;
+          margin-bottom: 4rem;
+        }
+        
+        .plans-title {
+          font-size: 3rem;
+          font-weight: 300;
+          line-height: 1.3;
+          margin: 0 0 1rem;
+          color: #fbfbfb;
+        }
+        
+        .plans-subtitle {
+          font-size: 1.25rem;
+          font-weight: 300;
+          color: rgba(255, 255, 255, .6);
+        }
+        
+        .invest-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 2rem;
+          max-width: 75rem;
+          margin: 0 auto;
+        }
+        
+        .invest-card {
+          background: rgba(255, 255, 255, .02);
+          border: 1px solid rgba(255, 255, 255, .1);
+          border-radius: 1rem;
+          padding: 2.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          transition: all .3s;
+          position: relative;
+        }
+        
+        .invest-card:hover {
+          background: rgba(255, 255, 255, .05);
+          border-color: rgba(255, 255, 255, .2);
+        }
+        
+        .invest-card.recommended {
+          background: rgba(79, 33, 161, .1);
+          border-color: #4F21A1;
+        }
+        
+        .invest-top {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .plan-name {
+          font-size: 1.125rem;
+          font-weight: 500;
+          color: #fbfbfb;
+        }
+        
+        .plan-price {
+          font-size: 3rem;
+          font-weight: 600;
+          color: #fbfbfb;
+          line-height: 1;
+        }
+        
+        .invest-button-wrap {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        
+        .plan-description {
+          font-size: 1rem;
+          line-height: 1.6;
+          color: rgba(255, 255, 255, .7);
+        }
+        
+        .btn-animate-chars {
+          width: 100%;
+          padding: 1rem 2rem;
+          background: rgba(255, 255, 255, .05);
+          border: 1px solid rgba(255, 255, 255, .2);
+          border-radius: .5rem;
+          color: #fbfbfb;
+          font-size: 1rem;
+          font-weight: 500;
+          text-align: center;
+          cursor: pointer;
+          transition: all .3s;
+        }
+        
+        .btn-animate-chars:hover {
+          background: rgba(255, 255, 255, .1);
+          border-color: rgba(255, 255, 255, .4);
+        }
+        
+        .invest-card.recommended .btn-animate-chars {
+          background: #4F21A1;
+          border-color: #4F21A1;
+        }
+        
+        .invest-card.recommended .btn-animate-chars:hover {
+          background: #5e28b8;
+          border-color: #5e28b8;
+        }
+        
+        .invest-divider {
+          height: 1px;
+          background: rgba(255, 255, 255, .1);
+        }
+        
+        .invest-incluse {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .text-style-allcaps {
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, .5);
+        }
+        
+        .invest-feature {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        
+        .invest-list {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+        
+        .invest-icon {
+          width: 1.25rem;
+          height: 1.25rem;
+          flex-shrink: 0;
+          margin-top: 0.125rem;
+        }
+        
+        @media screen and (max-width: 767px) {
+          .section_plans {
+            padding: 5rem 0;
+          }
+          .plans-title {
+            font-size: 2rem;
+          }
+          .invest-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+
+      <section className="section_plans">
+        <div className="padding-global">
+          <div className="container-large">
+            <div className="plans-heading">
+              <h2 className="plans-title">
+                Escolha o plano que acompanha seu momento, e torne sua operação em impulso real
+              </h2>
+              <p className="plans-subtitle">
+                Você está escolhendo não apenas um produto, mas sim um parceiro.
+              </p>
+            </div>
+
+            <div className="invest-grid">
+              {plansItems.map((plan) => (
                 <div
-                  className="flex min-h-[220px] flex-col items-start justify-between rounded-[4px] p-6"
-                  style={{
-                    background: plan.recommended ? planBg : "#111111",
+                  key={plan.id}
+                  className={`invest-card ${plan.recommended ? 'recommended' : ''} ${
+                    openModalId === plan.id
+                      ? "border-[#0170D6]"
+                      : canEdit
+                        ? "cursor-pointer"
+                        : "cursor-not-allowed"
+                  }`}
+                  onClick={() => {
+                    if (canEdit || openModalId === plan.id) {
+                      setOpenModalId(plan?.id ?? null);
+                    }
                   }}
                 >
-                  <div>
-                    {!plan.hideTitleField && (
-                      <p className="text-[24px] font-bold text-[#E6E6E6]">
-                        {plan.title}
-                      </p>
-                    )}
-                    {!plan.hideDescription && (
-                      <p className="mb-4 text-sm text-[#E6E6E6]">
-                        {plan.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-baseline gap-4">
-                    {!plan.hidePrice && (
-                      <p className="text-[2.5rem] font-medium text-[#E6E6E6]">
-                        {formatCurrencyDisplayNoCents(plan.value)}
-                      </p>
-                    )}
-                    {!plan.hidePlanPeriod && (
-                      <p className="text-[#E6E6E6]">{plan.planPeriod}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-10 mb-6 flex-grow">
-                  <p className="mb-6 px-6 text-sm text-[#ffffff]">INCLUSO:</p>
-                  {plan.includedItems?.map((includedItem) => (
-                    <div
-                      key={includedItem.id}
-                      className="flex items-center gap-2 px-6 py-3"
-                    >
-                      <span className="flex h-4 w-4 items-start justify-center">
-                        <Checkbox fill="rgba(230, 230, 230, 0.7)" />
-                      </span>
-                      {!includedItem.hideDescription && (
-                        <p className="text-sm text-[#e6e6e6]">
-                          {includedItem.description}
-                        </p>
+                  <div className="invest-top">
+                    <div className="plan-name">{plan.title}</div>
+                    <div className="plan-price">
+                      R$ {plan.value?.toLocaleString() || '0'}
+                      {plan.planPeriod && (
+                        <span style={{ fontSize: '1rem', fontWeight: 400, marginLeft: '0.5rem' }}>
+                          /{plan.planPeriod}
+                        </span>
                       )}
                     </div>
-                  ))}
-                </div>
+                  </div>
 
-                <div className="px-6">
-                  {!plan.hideButtonTitle && (
-                    <button
-                      className={`mt-8 w-full rounded-full px-6 py-5 font-semibold ${
-                        plan.recommended
-                          ? "bg-[#FBFBFB] text-[#171825]"
-                          : "bg-[#171825] text-[#FBFBFB]"
-                      }`}
-                    >
-                      {plan.buttonTitle}
+                  <div className="invest-button-wrap">
+                    <div className="plan-description">{plan.description}</div>
+                    <button className="btn-animate-chars">
+                      {plan.buttonTitle || 'Contratar Plano'}
                     </button>
-                  )}
-                </div>
-                <EditablePlan
-                  plan={plan}
-                  isModalOpen={openModalId === plan.id}
-                  setIsModalOpen={(isOpen) =>
-                    setOpenModalId(isOpen ? (plan.id ?? null) : null)
-                  }
-                  editingId={`plan-${plan.id}`}
-                />
+                  </div>
 
-                <div
-                  className={`absolute top-0 left-0 z-6 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === plan.id ? "bg-[#0170D666]" : "bg-transparent"}`}
-                />
-              </div>
-            ))}
+                  <div className="invest-divider"></div>
+
+                  <div className="invest-incluse">
+                    <div className="text-style-allcaps">O que está incluso:</div>
+                    <div className="invest-feature">
+                      {plan.includedItems?.map((item) => (
+                        <div key={item.id} className="invest-list">
+                          <svg className="invest-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <div className="text-size-regular">{item.description}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <EditableImage
+                    isModalOpen={openModalId === plan.id}
+                    setIsModalOpen={(isOpen) =>
+                      setOpenModalId(isOpen ? (plan?.id ?? null) : null)
+                    }
+                    editingId={`plans-${plan.id}`}
+                    // @ts-expect-error - Type mismatch for plans
+                    itemType="plans"
+                    items={plansItems || []}
+                    currentItemId={plan?.id ?? null}
+                    // @ts-expect-error - Type mismatch
+                    onUpdateItem={updatePlanItem}
+                    // @ts-expect-error - Type mismatch
+                    onReorderItems={reorderPlanItems}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      )}
-    </div>
+      </section>
+    </>
   );
 }

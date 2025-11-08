@@ -23,19 +23,13 @@ export default function MinimalIntro({
 
   const canEdit = activeEditingId === null;
 
-  if (!title) return null;
-
   return (
     <>
-      {/* CSS do Webflow Minimal */}
-      <style jsx>{`
-        @import url('/template-minimal/css/normalize.css');
-        @import url('/template-minimal/css/components.css');
-        @import url('/template-minimal/css/empty-studio.css');
-        
+      <style jsx global>{`
         .section_hero {
           position: relative;
           background-color: ${mainColor};
+          min-height: 100vh;
         }
         
         .nav_component {
@@ -46,11 +40,6 @@ export default function MinimalIntro({
         .padding-global {
           padding-left: 2.5rem;
           padding-right: 2.5rem;
-        }
-        
-        .padding-section-large {
-          padding-top: 8rem;
-          padding-bottom: 8rem;
         }
         
         .container-large {
@@ -69,24 +58,9 @@ export default function MinimalIntro({
         }
         
         .nav_brand {
-          z-index: 3;
-          position: relative;
-        }
-        
-        .text-weight-medium {
+          color: #fbfbfb;
           font-weight: 500;
-        }
-        
-        .text-size-medium {
           font-size: 1.125rem;
-          line-height: 1.5;
-        }
-        
-        .nav_menu {
-          z-index: 2;
-          justify-content: space-between;
-          align-items: center;
-          display: flex;
         }
         
         .btn-animate-chars {
@@ -98,6 +72,8 @@ export default function MinimalIntro({
           text-decoration: none;
           display: inline-block;
           transition: border-color .3s;
+          background: transparent;
+          cursor: pointer;
         }
         
         .btn-animate-chars:hover {
@@ -105,10 +81,13 @@ export default function MinimalIntro({
         }
         
         .btn-animate-chars__text {
-          position: relative;
-          z-index: 2;
-          color: var(--white);
+          color: #fbfbfb;
           font-size: 1rem;
+        }
+        
+        .padding-section-large {
+          padding-top: 8rem;
+          padding-bottom: 8rem;
         }
         
         .hero_component {
@@ -131,12 +110,12 @@ export default function MinimalIntro({
         }
         
         .heading-style-h1 {
-          color: var(--white);
-          margin-top: 0;
-          margin-bottom: 0;
+          color: #fbfbfb;
+          margin: 0;
           font-size: 4.5rem;
           font-weight: 300;
           line-height: 1.2;
+          font-family: Overusedgrotesk, Arial, sans-serif;
         }
         
         .text-weight-light {
@@ -148,6 +127,7 @@ export default function MinimalIntro({
           height: 4rem;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           border-radius: 50%;
+          flex-shrink: 0;
         }
         
         .heading-line {
@@ -165,32 +145,54 @@ export default function MinimalIntro({
         .text-size-regular {
           font-size: 1rem;
           line-height: 1.5;
+          color: #fbfbfb;
         }
         
         .text-color-grey {
           color: rgba(255, 255, 255, .5);
         }
         
-        .edit-button {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          background: rgba(255, 255, 255, .1);
-          border: 1px solid rgba(255, 255, 255, .2);
-          border-radius: .5rem;
-          padding: .5rem .75rem;
-          cursor: pointer;
-          opacity: 0;
-          transition: opacity .2s, background .2s;
-          z-index: 100;
+        .marquee_component {
+          position: relative;
+          overflow: hidden;
+          margin-top: 4rem;
         }
         
-        .section_hero:hover .edit-button {
-          opacity: 1;
+        .marquee_content {
+          display: flex;
+          gap: 1rem;
+          animation: marquee 30s linear infinite;
         }
         
-        .edit-button:hover {
-          background: rgba(255, 255, 255, .2);
+        .marquee_item {
+          display: flex;
+          gap: 1rem;
+          flex-shrink: 0;
+        }
+        
+        .marquee-img {
+          width: 72.5rem;
+          height: 45rem;
+          border-radius: 1rem;
+          overflow: hidden;
+          background: rgba(255, 255, 255, .05);
+          flex-shrink: 0;
+        }
+        
+        .marquee-img img,
+        .marquee-img video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
         
         @media screen and (max-width: 991px) {
@@ -203,6 +205,10 @@ export default function MinimalIntro({
           .padding-section-large {
             padding-top: 5rem;
             padding-bottom: 5rem;
+          }
+          .marquee-img {
+            width: 50rem;
+            height: 31.25rem;
           }
         }
         
@@ -222,6 +228,11 @@ export default function MinimalIntro({
             padding-left: 1.5rem;
             padding-right: 1.5rem;
           }
+          .marquee-img {
+            width: 100vw;
+            height: auto;
+            aspect-ratio: 16/10;
+          }
         }
       `}</style>
 
@@ -233,42 +244,39 @@ export default function MinimalIntro({
               <div className="nav_wrap">
                 <div className="nav_brand">
                   <EditableText
-                    value={userName || ""}
+                    value={userName || "Your Name"}
                     onChange={(newUserName: string) =>
                       updateIntroduction({ userName: newUserName })
                     }
-                    className="text-weight-medium text-size-medium"
+                    className="nav_brand"
                     editingId="intro-userName"
                   />
                 </div>
-                <nav className="nav_menu">
-                  <div
-                    className={`btn-animate-chars ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (canEdit) {
-                        setIsButtonModalOpen(true);
-                      }
-                    }}
-                    style={{
-                      position: "relative",
-                      border: isButtonModalOpen
-                        ? "1px solid #0170D6"
-                        : "1px solid rgba(255, 255, 255, .2)",
-                      background: isButtonModalOpen ? "#0170D666" : "transparent",
-                    }}
-                  >
-                    <span className="btn-animate-chars__text text-size-regular">
-                      {projectData?.buttonConfig?.buttonTitle || "Start Project"}
-                    </span>
-                    <EditableButton
-                      isModalOpen={isButtonModalOpen}
-                      setIsModalOpen={setIsButtonModalOpen}
-                      position="below"
-                      editingId="intro-button"
-                    />
-                  </div>
-                </nav>
+                <div
+                  className={`btn-animate-chars ${canEdit ? "" : "cursor-not-allowed"}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (canEdit) {
+                      setIsButtonModalOpen(true);
+                    }
+                  }}
+                  style={{
+                    border: isButtonModalOpen
+                      ? "1px solid #0170D6"
+                      : "1px solid rgba(255, 255, 255, .2)",
+                    background: isButtonModalOpen ? "#0170D666" : "transparent",
+                  }}
+                >
+                  <span className="btn-animate-chars__text">
+                    {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
+                  </span>
+                  <EditableButton
+                    isModalOpen={isButtonModalOpen}
+                    setIsModalOpen={setIsButtonModalOpen}
+                    position="below"
+                    editingId="intro-button"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -280,10 +288,10 @@ export default function MinimalIntro({
             <div className="hero_component">
               <div className="hero_left">
                 <div className="heading-wrap">
-                  <h1 className="heading-style-h1 text-weight-light">Hello,</h1>
+                  <h1 className="heading-style-h1 text-weight-light">Olá,</h1>
                   <div className="heading-client-image"></div>
                   <EditableText
-                    value={userName || ""}
+                    value={userName || "Cliente"}
                     onChange={(newUserName: string) =>
                       updateIntroduction({ userName: newUserName })
                     }
@@ -293,7 +301,7 @@ export default function MinimalIntro({
                 </div>
                 <h1 className="heading-line">—</h1>
                 <EditableText
-                  value={title || ""}
+                  value={title || "Título da sua proposta aqui"}
                   onChange={(newTitle: string) =>
                     updateIntroduction({ title: newTitle })
                   }
@@ -304,7 +312,7 @@ export default function MinimalIntro({
               <div className="hero_right">
                 {projectData?.projectValidUntil && (
                   <div
-                    className={`text-size-regular text-weight-light ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
+                    className={`text-size-regular ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (canEdit) {
@@ -319,7 +327,7 @@ export default function MinimalIntro({
                       padding: "4px",
                     }}
                   >
-                    Proposal — <span className="text-color-grey">
+                    Proposta — <span className="text-color-grey">
                       {formatDateToDDDeMonthDeYYYY(
                         projectData.projectValidUntil.toString()
                       )}
@@ -331,6 +339,48 @@ export default function MinimalIntro({
                     />
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Marquee */}
+        <div className="marquee_component">
+          <div className="marquee_content">
+            <div className="marquee_item">
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img1.jpg" alt="" />
+              </div>
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img2.jpg" alt="" />
+              </div>
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img4.jpg" alt="" />
+              </div>
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img6.jpg" alt="" />
+              </div>
+            </div>
+            <div className="marquee_item">
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img1.jpg" alt="" />
+              </div>
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img2.jpg" alt="" />
+              </div>
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img4.jpg" alt="" />
+              </div>
+              <div className="marquee-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/template-minimal/images/img6.jpg" alt="" />
               </div>
             </div>
           </div>

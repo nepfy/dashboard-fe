@@ -16,29 +16,14 @@ export default function MinimalAboutUs({
 }: MinimalAboutUsProps) {
   const { updateAboutUs } = useEditor();
 
-  if (hideSection || !title) return null;
+  if (hideSection) return null;
 
   return (
     <>
-      <style jsx>{`
+      <style jsx global>{`
         .section_about {
-          position: relative;
           background-color: ${mainColor};
-          color: var(--white);
-        }
-        
-        .padding-global {
-          padding-left: 2.5rem;
-          padding-right: 2.5rem;
-        }
-        
-        .container-large {
-          width: 100%;
-          max-width: 90rem;
-          margin-left: auto;
-          margin-right: auto;
-          padding-top: 8rem;
-          padding-bottom: 8rem;
+          color: #fbfbfb;
         }
         
         .about_component {
@@ -51,6 +36,7 @@ export default function MinimalAboutUs({
           display: grid;
           grid-template-columns: 1fr 2fr;
           gap: 4rem;
+          align-items: flex-start;
         }
         
         .about-heading_left {
@@ -59,30 +45,9 @@ export default function MinimalAboutUs({
           gap: 1rem;
         }
         
-        .text-weight-light {
-          font-weight: 300;
-        }
-        
-        .text-size-regular {
-          font-size: 1rem;
-          line-height: 1.5;
-        }
-        
-        .text-color-grey {
-          color: rgba(255, 255, 255, .5);
-        }
-        
         .about-heading_title {
           display: flex;
           align-items: flex-start;
-        }
-        
-        .heading-style-h1 {
-          color: var(--white);
-          margin: 0;
-          font-size: 3.5rem;
-          font-weight: 300;
-          line-height: 1.2;
         }
         
         .about-content {
@@ -91,38 +56,110 @@ export default function MinimalAboutUs({
           gap: 2rem;
         }
         
-        .about-text {
+        .about-dev,
+        .about-design {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1rem;
+        }
+        
+        .about-video {
+          width: 100%;
+          aspect-ratio: 16/10;
+          border-radius: 1rem;
+          overflow: hidden;
+          background: rgba(255, 255, 255, .05);
+        }
+        
+        .about-video img,
+        .about-video video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .about-paragraph {
+          font-size: 1rem;
+          line-height: 1.6;
+          color: rgba(255, 255, 255, .8);
+        }
+        
+        .about-marquee {
+          margin-top: 4rem;
+          padding: 2rem 0;
+          border-top: 1px solid rgba(255, 255, 255, .1);
+          border-bottom: 1px solid rgba(255, 255, 255, .1);
+          overflow: hidden;
+        }
+        
+        .about-marquee_text {
+          font-size: 1.5rem;
+          font-weight: 300;
+          color: rgba(255, 255, 255, .6);
+          white-space: nowrap;
+          animation: marquee 20s linear infinite;
+        }
+        
+        .section_partners {
+          background-color: #fbfbfb;
+          color: #040404;
+          padding: 8rem 0;
+        }
+        
+        .partners-component {
+          display: flex;
+          flex-direction: column;
+          gap: 3rem;
+        }
+        
+        .partners-heading {
+          max-width: 50rem;
+        }
+        
+        .heading-style-h2 {
+          font-size: 2.5rem;
+          font-weight: 400;
+          line-height: 1.3;
+          margin: 0;
+        }
+        
+        .text-weight-normal {
+          font-weight: 400;
+        }
+        
+        .partners-paragraph {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          max-width: 45rem;
         }
         
         .text-size-medium {
           font-size: 1.125rem;
           line-height: 1.6;
-          color: rgba(255, 255, 255, .8);
+          color: rgba(4, 4, 4, .7);
         }
         
-        .edit-button {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          background: rgba(255, 255, 255, .1);
-          border: 1px solid rgba(255, 255, 255, .2);
+        .partners-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 2rem;
+          margin-top: 2rem;
+        }
+        
+        .partners-logo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.5rem;
+          border: 1px solid rgba(4, 4, 4, .1);
           border-radius: .5rem;
-          padding: .5rem .75rem;
-          cursor: pointer;
-          opacity: 0;
-          transition: opacity .2s, background .2s;
-          z-index: 100;
+          opacity: .6;
+          transition: opacity .3s;
         }
         
-        .section_about:hover .edit-button {
+        .partners-logo:hover {
           opacity: 1;
-        }
-        
-        .edit-button:hover {
-          background: rgba(255, 255, 255, .2);
         }
         
         @media screen and (max-width: 991px) {
@@ -133,36 +170,34 @@ export default function MinimalAboutUs({
           .about-content {
             grid-template-columns: 1fr;
           }
-          .heading-style-h1 {
-            font-size: 2.5rem;
+          .heading-style-h2 {
+            font-size: 2rem;
           }
         }
         
         @media screen and (max-width: 767px) {
-          .padding-global {
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
+          .section_partners {
+            padding: 5rem 0;
           }
-          .container-large {
-            padding-top: 5rem;
-            padding-bottom: 5rem;
+          .heading-style-h2 {
+            font-size: 1.75rem;
           }
-          .heading-style-h1 {
-            font-size: 2rem;
+          .partners-grid {
+            grid-template-columns: repeat(2, 1fr);
           }
         }
       `}</style>
 
       <section className="section_about">
-        <div className="padding-global">
+        <div className="padding-global" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
           <div className="container-large">
             <div className="about_component">
               <div className="about-heading">
                 <div className="about-heading_left">
-                  <div className="text-weight-light text-size-regular">
+                  <div className="text-size-regular text-weight-light">
                     Proposal — <span className="text-color-grey">June 22, 2025</span>
                   </div>
-                  {subtitle && !hideSection && (
+                  {subtitle && (
                     <EditableText
                       value={subtitle}
                       onChange={(newSubtitle: string) =>
@@ -175,13 +210,78 @@ export default function MinimalAboutUs({
                 </div>
                 <div className="about-heading_title">
                   <EditableText
-                    value={title || ""}
+                    value={title || "Título da seção sobre"}
                     onChange={(newTitle: string) =>
                       updateAboutUs({ title: newTitle })
                     }
                     className="heading-style-h1 text-weight-light"
                     editingId="aboutUs-title"
                   />
+                </div>
+              </div>
+
+              <div className="about-content">
+                <div className="about-dev">
+                  <div className="about-video">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/template-minimal/images/img1.jpg" alt="" />
+                  </div>
+                  <div className="about-paragraph">
+                    <p>We&apos;re a creative studio focused on bringing brands to life through thoughtful design and smart technology.</p>
+                  </div>
+                </div>
+                <div className="about-design">
+                  <div className="about-video">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/template-minimal/images/img2.jpg" alt="" />
+                  </div>
+                  <div className="about-paragraph">
+                    <p>We&apos;re a creative studio focused on bringing brands to life through thoughtful design and smart technology.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="about-marquee">
+          <div className="marquee_content">
+            <div className="about-marquee_text">
+              Brand Design → Design Systems → UI Design → Webflow Development
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section_partners">
+        <div className="padding-global">
+          <div className="container-large">
+            <div className="partners-component">
+              <div className="partners-heading">
+                <h2 className="heading-style-h2 text-weight-normal">
+                  We recognized a gap in the creative industry—small businesses often struggle to find high-quality, yet affordable, design solutions. That&apos;s why we exist.
+                </h2>
+              </div>
+              <div className="partners-paragraph">
+                <p className="text-size-medium">
+                  Your website is most likely the first point of contact someone will have with your brand. Cut through the noise and stand out from the crowd by creating a website that will help you achieve your business goals while showing who you are in a way people will not forget.
+                </p>
+                <p className="text-size-medium">
+                  Design is about creating experiences, making the lives of people easier, or even making it fun when you&apos;re not having the best day. With that in mind, we provide services to be your partner on your next project.
+                </p>
+              </div>
+              <div className="partners-grid">
+                <div className="partners-logo">
+                  <span style={{ fontSize: '1.5rem', fontWeight: 500 }}>Logo</span>
+                </div>
+                <div className="partners-logo">
+                  <span style={{ fontSize: '1.5rem', fontWeight: 500 }}>Logo</span>
+                </div>
+                <div className="partners-logo">
+                  <span style={{ fontSize: '1.5rem', fontWeight: 500 }}>Logo</span>
+                </div>
+                <div className="partners-logo">
+                  <span style={{ fontSize: '1.5rem', fontWeight: 500 }}>Logo</span>
                 </div>
               </div>
             </div>
