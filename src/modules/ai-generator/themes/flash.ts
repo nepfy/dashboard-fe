@@ -136,12 +136,12 @@ export class FlashTheme {
   }
 
   private validateIntroductionSection(section: FlashIntroductionSection): void {
-    this.ensureExactLength(section.title, 60, "introduction.title");
-    this.ensureExactLength(section.subtitle, 100, "introduction.subtitle");
+    this.ensureMaxLength(section.title, 60, "introduction.title");
+    this.ensureMaxLength(section.subtitle, 100, "introduction.subtitle");
     this.ensureArrayLength(section.services, 4, "introduction.services");
 
     section.services.forEach((service, index) => {
-      this.ensureExactLength(service, 30, `introduction.services[${index}]`);
+      this.ensureMaxLength(service, 30, `introduction.services[${index}]`);
     });
 
     ensureCondition(
@@ -155,9 +155,9 @@ export class FlashTheme {
   }
 
   private validateAboutUsSection(section: FlashAboutUsSection): void {
-    this.ensureExactLength(section.title, 155, "aboutUs.title");
-    this.ensureExactLength(section.supportText, 70, "aboutUs.supportText");
-    this.ensureExactLength(section.subtitle, 250, "aboutUs.subtitle");
+    this.ensureMaxLength(section.title, 155, "aboutUs.title");
+    this.ensureMaxLength(section.supportText, 70, "aboutUs.supportText");
+    this.ensureMaxLength(section.subtitle, 250, "aboutUs.subtitle");
   }
 
   private validateTeamSection(section: FlashTeamSection): void {
@@ -166,15 +166,15 @@ export class FlashTheme {
 
   private validateSpecialtiesSection(section: FlashSpecialtiesSection): void {
     this.ensureArrayRange(section.topics, 6, 9, "specialties.topics");
-    this.ensureExactLength(section.title, 140, "specialties.title");
+    this.ensureMaxLength(section.title, 140, "specialties.title");
 
     section.topics.forEach((topic, index) => {
-      this.ensureExactLength(
+      this.ensureMaxLength(
         topic.title,
         50,
         `specialties.topics[${index}].title`
       );
-      this.ensureExactLength(
+      this.ensureMaxLength(
         topic.description,
         100,
         `specialties.topics[${index}].description`
@@ -187,15 +187,15 @@ export class FlashTheme {
       section.title === "Nosso Processo",
       'steps.title must be exactly "Nosso Processo"'
     );
-    this.ensureExactLength(section.introduction, 100, "steps.introduction");
+    this.ensureMaxLength(section.introduction, 100, "steps.introduction");
     ensureCondition(
       Array.isArray(section.topics) && section.topics.length === 5,
       "steps.topics must contain exactly 5 items"
     );
 
     section.topics.forEach((topic, index) => {
-      this.ensureExactLength(topic.title, 40, `steps.topics[${index}].title`);
-      this.ensureExactLength(
+      this.ensureMaxLength(topic.title, 40, `steps.topics[${index}].title`);
+      this.ensureMaxLength(
         topic.description,
         240,
         `steps.topics[${index}].description`
@@ -204,7 +204,7 @@ export class FlashTheme {
   }
 
   private validateScopeSection(section: FlashScopeSection): void {
-    this.ensureExactLength(section.content, 350, "scope.content");
+    this.ensureMaxLength(section.content, 350, "scope.content");
   }
 
   private parseCurrencyValue(value: string): number {
@@ -216,7 +216,7 @@ export class FlashTheme {
     section: FlashInvestmentSection,
     expectedPlans: number
   ): void {
-    this.ensureExactLength(section.title, 85, "investment.title");
+    this.ensureMaxLength(section.title, 85, "investment.title");
     this.ensureArrayRange(
       section.deliverables,
       2,
@@ -225,13 +225,15 @@ export class FlashTheme {
     );
 
     section.deliverables.forEach((deliverable, index) => {
-      ensureCondition(
-        deliverable.title.length <= 30,
-        `investment.deliverables[${index}].title must contain at most 30 characters`
+      this.ensureMaxLength(
+        deliverable.title,
+        30,
+        `investment.deliverables[${index}].title`
       );
-      ensureCondition(
-        deliverable.description.length <= 330,
-        `investment.deliverables[${index}].description must contain at most 330 characters`
+      this.ensureMaxLength(
+        deliverable.description,
+        360,
+        `investment.deliverables[${index}].description`
       );
     });
 
@@ -281,14 +283,14 @@ export class FlashTheme {
     );
 
     section.plansItems.forEach((plan, index) => {
-      this.ensureExactLength(
+      this.ensureMaxLength(
         plan.title,
         20,
         `investment.plansItems[${index}].title`
       );
-      this.ensureExactLength(
+      this.ensureMaxLength(
         plan.description,
-        95,
+        140,
         `investment.plansItems[${index}].description`
       );
       ensureCondition(
@@ -353,8 +355,8 @@ export class FlashTheme {
   private validateFAQSection(faq: FlashFAQSection): void {
     this.ensureArrayLength(faq, 10, "faq");
     faq.forEach((item, index) => {
-      this.ensureExactLength(item.question, 100, `faq[${index}].question`);
-      this.ensureExactLength(item.answer, 300, `faq[${index}].answer`);
+      this.ensureMaxLength(item.question, 100, `faq[${index}].question`);
+      this.ensureMaxLength(item.answer, 300, `faq[${index}].answer`);
     });
   }
 
@@ -417,8 +419,8 @@ export class FlashTheme {
   }
 
   private validateFooterSection(section: FlashFooterSection): void {
-    this.ensureExactLength(section.callToAction, 35, "footer.callToAction");
-    this.ensureExactLength(section.disclaimer, 330, "footer.disclaimer");
+    this.ensureMaxLength(section.callToAction, 35, "footer.callToAction");
+    this.ensureMaxLength(section.disclaimer, 330, "footer.disclaimer");
   }
 
   async generateFlashProposal(
@@ -484,13 +486,13 @@ export class FlashTheme {
     const expectedFormat =
       this.getSectionExpectedFormat("introduction") ??
       `{
-  "title": "string (exactly 60 characters, Title Case, premium tone)",
-  "subtitle": "string (exactly 100 characters, sensory premium tone)",
+  "title": "string (maximum 60 characters, Title Case, premium tone)",
+  "subtitle": "string (maximum 100 characters, sensory premium tone)",
   "services": [
-    "string (exactly 30 characters)",
-    "string (exactly 30 characters)",
-    "string (exactly 30 characters)",
-    "string (exactly 30 characters)"
+    "string (maximum 30 characters)",
+    "string (maximum 30 characters)",
+    "string (maximum 30 characters)",
+    "string (maximum 30 characters)"
   ],
   "validity": "15 dias",
   "buttonText": "Solicitar Proposta"
@@ -550,9 +552,9 @@ export class FlashTheme {
     const expectedFormat =
       this.getSectionExpectedFormat("aboutUs") ??
       `{
-  "title": "string (exactly 155 characters)",
-  "supportText": "string (exactly 70 characters)",
-  "subtitle": "string (exactly 250 characters)"
+  "title": "string (maximum 155 characters)",
+  "supportText": "string (maximum 70 characters)",
+  "subtitle": "string (maximum 250 characters)"
 }`;
 
     try {
@@ -685,11 +687,11 @@ export class FlashTheme {
       this.getSectionExpectedFormat("steps") ??
       `{
   "title": "Nosso Processo",
-  "introduction": "string (exactly 100 characters)",
+  "introduction": "string (maximum 100 characters)",
   "topics": [
     {
-      "title": "string (exactly 40 characters)",
-      "description": "string (exactly 240 characters)"
+      "title": "string (maximum 40 characters)",
+      "description": "string (maximum 240 characters)"
     }
   ],
   "marquee": [
@@ -737,7 +739,7 @@ export class FlashTheme {
     const expectedFormat =
       this.getSectionExpectedFormat("scope") ??
       `{
-  "content": "string (exactly 350 characters)"
+  "content": "string (maximum 350 characters, premium tone)"
 }`;
 
     try {
@@ -1125,8 +1127,8 @@ export class FlashTheme {
       `{
   "faq": [
     {
-      "question": "string (exactly 100 characters)",
-      "answer": "string (exactly 300 characters)"
+      "question": "string (maximum 100 characters)",
+      "answer": "string (maximum 300 characters)"
     }
   ]
 }`;
@@ -1163,26 +1165,26 @@ export class FlashTheme {
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashFooterSection> {
-    const userPrompt = `Gere APENAS um JSON válido para o rodapé.
+    const userPrompt = `Gere APENAS um JSON válido para o rodapé, garantindo que os textos não ultrapassem os limites.
 
 PROJETO: ${data.projectName} - ${data.projectDescription}
 
 Retorne:
 {
-  "callToAction": "Frase imperativa, inclusiva e direta com exatamente 35 caracteres, tom premium e convidativo",
-  "disclaimer": "Mensagem com exatamente 330 caracteres reforçando disponibilidade, cuidado artesanal e suporte contínuo"
+  "callToAction": "Frase imperativa, inclusiva e direta com no máximo 35 caracteres, tom premium e convidativo",
+  "disclaimer": "Mensagem com no máximo 330 caracteres reforçando disponibilidade, cuidado artesanal e suporte contínuo"
 }
 
 REGRAS OBRIGATÓRIAS:
-- callToAction: EXATAMENTE 35 caracteres, tom imperativo, sofisticado e humano
-- disclaimer: EXATAMENTE 330 caracteres, tom empático, sensorial e profissional
+- callToAction: NUNCA ultrapassar 35 caracteres, tom imperativo, sofisticado e humano
+- disclaimer: NUNCA ultrapassar 330 caracteres, tom empático, sensorial e profissional
 - Foque em proximidade, acompanhamento e segurança
 - Evite clichês como \"melhor escolha\" ou \"sucesso garantido\"
 - Responda APENAS com o JSON válido, sem comentários adicionais.`;
 
     const expectedFormat = `{
-  "callToAction": "string (exactly 35 characters)",
-  "disclaimer": "string (exactly 330 characters)"
+  "callToAction": "string (maximum 35 characters)",
+  "disclaimer": "string (maximum 330 characters)"
 }`;
 
     try {

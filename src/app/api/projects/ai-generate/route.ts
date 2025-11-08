@@ -217,6 +217,7 @@ export async function POST(request: NextRequest) {
       projectName,
       projectDescription,
       clientDescription,
+      detailedClientInfo,
       companyInfo,
       selectedPlan,
       planDetails = "",
@@ -225,6 +226,9 @@ export async function POST(request: NextRequest) {
       templateType = "flash",
       mainColor = "#3B82F6",
     } = body;
+
+    const effectiveClientDescription =
+      clientDescription ?? detailedClientInfo ?? "";
 
     console.log("Debug - Extracted values:", {
       selectedService,
@@ -326,7 +330,7 @@ export async function POST(request: NextRequest) {
         clientName,
         projectName,
         projectDescription,
-        clientDescription,
+        clientDescription: effectiveClientDescription,
         selectedPlans: defaultPlans as number,
         planDetails: planDetails,
         includeTerms,
@@ -408,7 +412,7 @@ export async function POST(request: NextRequest) {
         clientName,
         projectName,
         projectDescription,
-        clientDescription,
+        clientDescription: effectiveClientDescription,
         selectedPlans: defaultPlans,
         planDetails,
         includeTerms,

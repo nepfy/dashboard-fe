@@ -130,26 +130,26 @@ export const defaultTemplateConfigs: Record<string, TemplateConfig> = {
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
-Gere a introdução planejando cada frase para já nascer com o tamanho exato descrito abaixo. NÃO corte texto depois de escrever; produza diretamente com a contagem correta de caracteres. Use linguagem premium, sensorial e acolhedora, mantendo sofisticação sem soar artificial.
+Gere a introdução planejando cada frase para nascer dentro dos limites abaixo sem ultrapassar. NÃO corte texto depois de escrever; produza diretamente com a contagem final desejada. Use linguagem premium, sensorial e acolhedora, mantendo sofisticação sem soar artificial.
 
 Retorne APENAS um JSON válido com:
 {
-  "title": "Frase imperativa, inclusiva e direta com exatamente 60 caracteres, em Title Case e transmitindo exclusividade imediata",
-  "subtitle": "Frase sobre benefício, transformação e bem-estar com exatamente 100 caracteres, evocando cuidado artesanal e impacto concreto",
+  "title": "Frase imperativa, inclusiva e direta com no máximo 60 caracteres, em Title Case e transmitindo exclusividade imediata",
+  "subtitle": "Frase sobre benefício, transformação e bem-estar com no máximo 100 caracteres, evocando cuidado artesanal e impacto concreto",
   "services": [
-    "Serviço 1 com exatamente 30 caracteres",
-    "Serviço 2 com exatamente 30 caracteres",
-    "Serviço 3 com exatamente 30 caracteres",
-    "Serviço 4 com exatamente 30 caracteres"
+    "Serviço 1 com no máximo 30 caracteres",
+    "Serviço 2 com no máximo 30 caracteres",
+    "Serviço 3 com no máximo 30 caracteres",
+    "Serviço 4 com no máximo 30 caracteres"
   ],
   "validity": "15 dias",
   "buttonText": "Solicitar Proposta"
 }
 
 REGRAS OBRIGATÓRIAS:
-- title: EXATAMENTE 60 caracteres, tom imperativo, inclusivo e sofisticado; usar Title Case e evitar clichês
-- subtitle: EXATAMENTE 100 caracteres, reforçando transformação, impacto e bem-estar com linguagem sensorial premium
-- services: EXATAMENTE 4 itens, cada um com EXATAMENTE 30 caracteres
+- NUNCA ultrapassar 60 caracteres no title; tom imperativo, inclusivo e sofisticado em Title Case
+- NUNCA ultrapassar 100 caracteres no subtitle; reforçar transformação, impacto e bem-estar com linguagem sensorial premium
+- services: EXATAMENTE 4 itens, cada um com NO MÁXIMO 30 caracteres
 - validity: manter exatamente "15 dias"
 - buttonText: manter exatamente "Solicitar Proposta"
 - Produza o texto já com o tamanho correto, sem truncar ou cortar manualmente
@@ -157,24 +157,24 @@ REGRAS OBRIGATÓRIAS:
 - NÃO mencione o nome do cliente, mantenha linguagem humana e calorosa
 - Responda APENAS com o JSON válido, sem comentários ou texto adicional.`,
         expectedFormat: `{
-  "title": "string (exactly 60 characters, Title Case, premium tone)",
-  "subtitle": "string (exactly 100 characters, sensory premium tone)",
+  "title": "string (maximum 60 characters, Title Case, premium tone)",
+  "subtitle": "string (maximum 100 characters, sensory premium tone)",
   "services": [
-    "string (exactly 30 characters)",
-    "string (exactly 30 characters)",
-    "string (exactly 30 characters)",
-    "string (exactly 30 characters)"
+    "string (maximum 30 characters)",
+    "string (maximum 30 characters)",
+    "string (maximum 30 characters)",
+    "string (maximum 30 characters)"
   ],
   "validity": "15 dias",
   "buttonText": "Solicitar Proposta"
 }`,
         rules: [
-          "title: EXATAMENTE 60 caracteres, imperativo, inclusivo e sofisticado",
-          "subtitle: EXATAMENTE 100 caracteres, linguagem sensorial premium",
-          "services: EXATAMENTE 4 itens, cada um com EXATAMENTE 30 caracteres",
+          "title: NUNCA ultrapassar 60 caracteres, imperativo, inclusivo e sofisticado",
+          "subtitle: NUNCA ultrapassar 100 caracteres, linguagem sensorial premium",
+          "services: EXATAMENTE 4 itens, cada um com NO MÁXIMO 30 caracteres",
           'validity: manter "15 dias"',
           'buttonText: manter "Solicitar Proposta"',
-          "Planeje o tamanho antes de escrever; não corte texto",
+          "Planeje o tamanho antes de escrever; não cortar texto",
           "Não mencionar o nome do cliente nos textos",
         ],
       },
@@ -189,30 +189,30 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
-Retorne APENAS um JSON válido com cada campo já escrito no comprimento exato solicitado. Não corte texto ao final; pense no número de caracteres antes de escrever.
+Retorne APENAS um JSON válido com cada campo respeitando o limite máximo solicitado. Não corte texto ao final; planeje o número de caracteres antes de escrever.
 {
-  "title": "Título que mostra transformação, valor e benefício com exatamente 155 caracteres",
-  "supportText": "Texto de apoio com exatamente 70 caracteres",
-  "subtitle": "Subtítulo detalhado com exatamente 250 caracteres"
+  "title": "Título que mostra transformação, valor e benefício com no máximo 155 caracteres",
+  "supportText": "Texto de apoio com no máximo 70 caracteres",
+  "subtitle": "Subtítulo detalhado com no máximo 250 caracteres"
 }
 
 REGRAS OBRIGATÓRIAS:
-- title: EXATAMENTE 155 caracteres
-- supportText: EXATAMENTE 70 caracteres
-- subtitle: EXATAMENTE 250 caracteres
+- NUNCA ultrapassar 155 caracteres no title
+- NUNCA ultrapassar 70 caracteres no supportText
+- NUNCA ultrapassar 250 caracteres no subtitle
 - Antecipe o tamanho antes de escrever; não gere texto maior para depois cortar
 - Foque em transformação, impacto, confiança e benefício contínuo com vocabulário premium, sensorial e autoral
 - Use linguagem natural, próxima, calorosa, confiante e sofisticada
 - Responda APENAS com o JSON válido.`,
         expectedFormat: `{
-  "title": "string (exactly 155 characters)",
-  "supportText": "string (exactly 70 characters)",
-  "subtitle": "string (exactly 250 characters)"
+  "title": "string (maximum 155 characters)",
+  "supportText": "string (maximum 70 characters)",
+  "subtitle": "string (maximum 250 characters)"
 }`,
         rules: [
-          "title: EXATAMENTE 155 caracteres",
-          "supportText: EXATAMENTE 70 caracteres",
-          "subtitle: EXATAMENTE 250 caracteres",
+          "title: NUNCA ultrapassar 155 caracteres",
+          "supportText: NUNCA ultrapassar 70 caracteres",
+          "subtitle: NUNCA ultrapassar 250 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
           "Foque em transformação, impacto, confiança e benefício contínuo com vocabulário premium",
           "Use linguagem natural, próxima, calorosa e confiante, mantendo sofisticação",
@@ -251,43 +251,43 @@ REGRAS OBRIGATÓRIAS:
 
       specialties: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para a seção "Especialidades" cumprindo rigorosamente os limites.
+        prompt: `Gere APENAS um JSON válido para a seção "Especialidades" cumprindo rigorosamente os limites máximos.
 
 PROJETO: {projectName} - {projectDescription}
 
 Retorne:
 {
-  "title": "Frase com exatamente 140 caracteres demonstrando autoridade e resultados comprovados",
+  "title": "Frase com no máximo 140 caracteres demonstrando autoridade e resultados comprovados",
   "topics": [
     {
-      "title": "Título com exatamente 50 caracteres",
-      "description": "Descrição com exatamente 100 caracteres"
+      "title": "Título com no máximo 50 caracteres",
+      "description": "Descrição com no máximo 100 caracteres"
     }
   ]
 }
 
 REGRAS OBRIGATÓRIAS:
 - Gere entre 6 e 9 tópicos exclusivos
-- title: EXATAMENTE 140 caracteres
-- topic.title: EXATAMENTE 50 caracteres cada
-- topic.description: EXATAMENTE 100 caracteres cada
-- Planeje o texto para nascer com o tamanho correto; não corte ou trunque
+- NUNCA ultrapassar 140 caracteres no title
+- topic.title: NUNCA ultrapassar 50 caracteres cada
+- topic.description: NUNCA ultrapassar 100 caracteres cada
+- Planeje o texto para nascer dentro do limite; não corte ou trunque
 - Linguagem profissional, calorosa, sofisticada e orientada a impacto e bem-estar
 - Responda APENAS com o JSON válido, sem comentários.`,
         expectedFormat: `{
-  "title": "string (exactly 140 characters)",
+  "title": "string (maximum 140 characters)",
   "topics": [
     {
-      "title": "string (exactly 50 characters)",
-      "description": "string (exactly 100 characters)"
+      "title": "string (maximum 50 characters)",
+      "description": "string (maximum 100 characters)"
     }
   ]
 }`,
         rules: [
-          "Título principal: EXATAMENTE 140 caracteres",
+          "Título principal: NUNCA ultrapassar 140 caracteres",
           "Gerar entre 6 e 9 tópicos",
-          "topic.title: EXATAMENTE 50 caracteres",
-          "topic.description: EXATAMENTE 100 caracteres",
+          "topic.title: NUNCA ultrapassar 50 caracteres",
+          "topic.description: NUNCA ultrapassar 100 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
           "Linguagem profissional, calorosa, sofisticada e orientada a resultados",
         ],
@@ -297,18 +297,18 @@ REGRAS OBRIGATÓRIAS:
 
       steps: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para a seção "Processo" respeitando os limites exatos.
+        prompt: `Gere APENAS um JSON válido para a seção "Processo" respeitando os limites máximos.
 
 PROJETO: {projectName} - {projectDescription}
 
 Retorne:
 {
   "title": "Nosso Processo",
-  "introduction": "Frase com exatamente 100 caracteres explicando o ritmo ágil, cuidadoso e sofisticado",
+  "introduction": "Frase com no máximo 100 caracteres explicando o ritmo ágil, cuidadoso e sofisticado",
   "topics": [
     {
-      "title": "Título da etapa com exatamente 40 caracteres",
-      "description": "Descrição da etapa com exatamente 240 caracteres"
+      "title": "Título da etapa com no máximo 40 caracteres",
+      "description": "Descrição da etapa com no máximo 240 caracteres"
     }
   ],
   "marquee": [
@@ -320,20 +320,20 @@ Retorne:
 
 REGRAS OBRIGATÓRIAS:
 - Título fixo: "Nosso Processo"
-- introduction: EXATAMENTE 100 caracteres, tom premium e acolhedor
+- introduction: NUNCA ultrapassar 100 caracteres, tom premium e acolhedor
 - topics: EXATAMENTE 5 itens
-- topic.title: EXATAMENTE 40 caracteres
-- topic.description: EXATAMENTE 240 caracteres
+- topic.title: NUNCA ultrapassar 40 caracteres
+- topic.description: NUNCA ultrapassar 240 caracteres
 - Planeje a contagem antes de escrever; não corte texto
 - Use linguagem profissional, transparente e acolhedora
 - Responda APENAS com o JSON válido.`,
         expectedFormat: `{
   "title": "Nosso Processo",
-  "introduction": "string (exactly 100 characters)",
+  "introduction": "string (maximum 100 characters)",
   "topics": [
     {
-      "title": "string (exactly 40 characters)",
-      "description": "string (exactly 240 characters)"
+      "title": "string (maximum 40 characters)",
+      "description": "string (maximum 240 characters)"
     }
   ],
   "marquee": [
@@ -344,10 +344,10 @@ REGRAS OBRIGATÓRIAS:
 }`,
         rules: [
           "title fixo: Nosso Processo",
-          "introduction: EXATAMENTE 100 caracteres com tom premium e acolhedor",
+          "introduction: NUNCA ultrapassar 100 caracteres com tom premium e acolhedor",
           "topics: EXATAMENTE 5 itens",
-          "topic.title: EXATAMENTE 40 caracteres",
-          "topic.description: EXATAMENTE 240 caracteres",
+          "topic.title: NUNCA ultrapassar 40 caracteres",
+          "topic.description: NUNCA ultrapassar 240 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
           "Linguagem profissional, transparente e acolhedora",
         ],
@@ -356,27 +356,26 @@ REGRAS OBRIGATÓRIAS:
 
       scope: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para o escopo do projeto.
+        prompt: `Gere APENAS um JSON válido para o escopo do projeto, mantendo o texto dentro do limite máximo.
 
 PROJETO: {projectName} - {projectDescription}
 
-COPIE EXATAMENTE ESTE FORMATO:
-
+Retorne:
 {
-  "content": "Nosso projeto integra soluções digitais estratégicas que ampliam resultados e fortalecem a presença online. Desenvolvemos sistemas robustos que entregam performance, conversão e crescimento sustentável para seu negócio."
+  "content": "Parágrafo contínuo com no máximo 350 caracteres, destacando benefícios, entregas e narrativa premium"
 }
 
 REGRAS OBRIGATÓRIAS:
-- content: EXATAMENTE 350 caracteres
+- NUNCA ultrapassar 350 caracteres no content (ideal manter entre 320 e 350 sem exceder)
 - Foque em benefícios do investimento e entregas com narrativa premium e sensorial
 - Use linguagem profissional, calorosa e focada em resultados tangíveis
-- Planeje o texto para atingir 350 caracteres sem cortes
+- Planeje o texto para já nascer dentro do limite; não escreva para depois cortar
 - Responda APENAS com o JSON válido.`,
         expectedFormat: `{
-  "content": "string (exactly 350 characters)"
+  "content": "string (maximum 350 characters, premium tone)"
 }`,
         rules: [
-          "content: EXATAMENTE 350 caracteres",
+          "content: NUNCA ultrapassar 350 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
           "Foque em benefícios do investimento e entregas com narrativa premium",
           "Use linguagem profissional, calorosa e focada em resultados",
@@ -385,27 +384,27 @@ REGRAS OBRIGATÓRIAS:
 
       investment: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para a seção "Investimento" obedecendo todos os limites de caracteres.
+        prompt: `Gere APENAS um JSON válido para a seção "Investimento" obedecendo todos os limites máximos de caracteres.
 
 PROJETO: {projectName} - {projectDescription}
 PLANOS SELECIONADOS: {selectedPlans}
 
 Retorne:
 {
-  "title": "Frase com exatamente 85 caracteres apresentando valor, impacto e personalização do orçamento",
+  "title": "Frase com no máximo 85 caracteres apresentando valor, impacto e personalização do orçamento",
   "deliverables": [
     {
-      "title": "Título com até 30 caracteres",
-      "description": "Descrição com até 330 caracteres, tom imperativo destacando impacto, transformação e bem-estar"
+      "title": "Título com no máximo 30 caracteres",
+      "description": "Descrição com no máximo 360 caracteres, tom imperativo destacando impacto, transformação e bem-estar"
     }
   ],
   "plansItems": [
     {
-      "title": "Título do plano com exatamente 20 caracteres",
-      "description": "Descrição com exatamente 95 caracteres",
+      "title": "Título do plano com no máximo 20 caracteres",
+      "description": "Descrição com no máximo 140 caracteres",
       "value": "Formato R$X.XXX (máximo 11 caracteres)",
       "planPeriod": "Mensal | Trimestral | Semestral | Anual | Único",
-      "buttonTitle": "CTA curta (até 25 caracteres)",
+      "buttonTitle": "CTA curta (no máximo 25 caracteres)",
       "recommended": true,
       "hideTitleField": false,
       "hideDescription": false,
@@ -424,16 +423,16 @@ Retorne:
 }
 
 REGRAS OBRIGATÓRIAS:
-- title: EXATAMENTE 85 caracteres
-- deliverables: 2 a 5 itens; cada title até 30 caracteres e description até 330 caracteres
+- title: NUNCA ultrapassar 85 caracteres
+- deliverables: 2 a 5 itens; cada title no máximo 30 caracteres e description no máximo 360 caracteres
 - plansItems: quantidade deve respeitar {selectedPlans} (mínimo 1, máximo 3)
-- plan.title: EXATAMENTE 20 caracteres
-- plan.description: EXATAMENTE 95 caracteres
+- plan.title: NUNCA ultrapassar 20 caracteres
+- plan.description: NUNCA ultrapassar 140 caracteres
 - plan.value: string no formato R$X.XXX (máximo 11 caracteres, exemplo "R$8.500")
-- plan.buttonTitle: CTA imperativa até 25 caracteres
+- plan.buttonTitle: CTA imperativa no máximo 25 caracteres
 - plan.planPeriod: defina coerente com o plano (ex.: "Mensal", "Anual", "Único")
 - plan.recommended: apenas um plano deve ser true (use o de maior valor)
-- includedItems: 3 a 6 itens por plano, description até 45 caracteres
+- includedItems: 3 a 6 itens por plano, description no máximo 45 caracteres
 - Gere IDs únicos para planos e itens; mantenha sortOrder sequencial a partir de 0
 - Inclua os campos hideTitleField, hideDescription, hidePrice, hidePlanPeriod e hideButtonTitle como false
 - Inclua hideItem e sortOrder em cada includedItem (hideItem false; sortOrder crescente)
@@ -442,21 +441,21 @@ REGRAS OBRIGATÓRIAS:
 - Linguagem sofisticada, sedutora e orientada a valor percebido
 - Responda APENAS com o JSON válido, sem comentários.`,
         expectedFormat: `{
-  "title": "string (exactly 85 characters)",
+  "title": "string (maximum 85 characters)",
   "deliverables": [
     {
-      "title": "string (max 30 characters)",
-      "description": "string (max 330 characters)"
+      "title": "string (maximum 30 characters)",
+      "description": "string (maximum 360 characters)"
     }
   ],
   "plansItems": [
     {
       "id": "string",
-      "title": "string (exactly 20 characters)",
-      "description": "string (exactly 95 characters)",
+      "title": "string (maximum 20 characters)",
+      "description": "string (maximum 140 characters)",
       "value": "string (<= 11 characters, formato R$X.XXX)",
       "planPeriod": "string",
-      "buttonTitle": "string (max 25 characters)",
+      "buttonTitle": "string (maximum 25 characters)",
       "recommended": boolean,
       "hideTitleField": boolean,
       "hideDescription": boolean,
@@ -526,61 +525,24 @@ REGRAS OBRIGATÓRIAS:
 
       faq: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para perguntas frequentes.
+        prompt: `Gere APENAS um JSON válido para perguntas frequentes, respeitando limites máximos.
 
 PROJETO: {projectName} - {projectDescription}
 
-COPIE EXATAMENTE ESTE FORMATO:
-
+Retorne:
 {
   "faq": [
     {
-      "question": "Como vocês garantem que o projeto será entregue no prazo?",
-      "answer": "Utilizamos metodologias ágeis e planejamento detalhado para garantir entregas pontuais. Nossa equipe trabalha com cronogramas realistas e comunicação constante."
-    },
-    {
-      "question": "Posso solicitar alterações durante o desenvolvimento?",
-      "answer": "Sim, incluímos ciclos de revisão e ajustes para garantir que o resultado final atenda perfeitamente às suas expectativas e necessidades."
-    },
-    {
-      "question": "Qual é o prazo médio para entrega do projeto?",
-      "answer": "O prazo médio é de 30 dias úteis, variando conforme a complexidade do projeto. Sempre informamos o cronograma detalhado antes do início."
-    },
-    {
-      "question": "Vocês oferecem suporte após a entrega?",
-      "answer": "Sim, incluímos suporte técnico gratuito por 30 dias após a entrega, além de manutenção e atualizações conforme necessário."
-    },
-    {
-      "question": "Como funciona o processo de pagamento?",
-      "answer": "O pagamento é dividido em duas parcelas: 50% na assinatura do contrato e 50% na entrega final do projeto."
-    },
-    {
-      "question": "Posso ver o progresso do projeto durante o desenvolvimento?",
-      "answer": "Sim, mantemos comunicação constante e fornecemos relatórios de progresso regulares para que você acompanhe cada etapa."
-    },
-    {
-      "question": "Vocês trabalham com projetos de qualquer tamanho?",
-      "answer": "Sim, atendemos desde pequenos sites institucionais até grandes plataformas complexas, sempre adaptando nossa abordagem às suas necessidades."
-    },
-    {
-      "question": "Qual é a garantia oferecida?",
-      "answer": "Oferecemos garantia de 90 dias para correção de bugs e ajustes necessários, além do suporte técnico incluído no projeto."
-    },
-    {
-      "question": "Posso solicitar funcionalidades adicionais depois?",
-      "answer": "Sim, podemos desenvolver funcionalidades adicionais conforme suas necessidades, com orçamento e prazo específicos para cada nova demanda."
-    },
-    {
-      "question": "Como vocês garantem a segurança do projeto?",
-      "answer": "Implementamos as melhores práticas de segurança, incluindo certificados SSL, backups regulares e monitoramento contínuo para proteger seus dados."
+      "question": "Pergunta com no máximo 100 caracteres",
+      "answer": "Resposta com no máximo 300 caracteres"
     }
   ]
 }
 
 REGRAS OBRIGATÓRIAS:
 - EXATAMENTE 10 perguntas e respostas
-- question: EXATAMENTE 100 caracteres
-- answer: EXATAMENTE 300 caracteres
+- question: NUNCA ultrapassar 100 caracteres
+- answer: NUNCA ultrapassar 300 caracteres
 - Cada pergunta deve ter question e answer
 - Use linguagem clara, acolhedora, profissional e sofisticada
 - Foque em dúvidas comuns do cliente para este projeto
@@ -589,15 +551,15 @@ REGRAS OBRIGATÓRIAS:
         expectedFormat: `{
   "faq": [
     {
-      "question": "string (exactly 100 characters)",
-      "answer": "string (exactly 300 characters)"
+      "question": "string (maximum 100 characters)",
+      "answer": "string (maximum 300 characters)"
     }
   ]
 }`,
         rules: [
           "EXATAMENTE 10 perguntas e respostas",
-          "question: EXATAMENTE 100 caracteres",
-          "answer: EXATAMENTE 300 caracteres",
+          "question: NUNCA ultrapassar 100 caracteres",
+          "answer: NUNCA ultrapassar 300 caracteres",
           "Planeje a contagem antes de escrever; não cortar texto",
           "Use linguagem clara, acolhedora, profissional e sofisticada",
           "Foque em dúvidas comuns do cliente para este projeto",

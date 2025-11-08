@@ -13,7 +13,8 @@ Ao longo da nossa trajetória, acumulamos diversos cases de sucesso em diferente
   projectName: "Site Institucional",
   projectDescription:
     "Desenvolvimento de um site institucional moderno, funcional e responsivo para apresentar a empresa, seus produtos e diferenciais. O objetivo é fortalecer a presença digital da marca, transmitir credibilidade e facilitar o contato e o relacionamento com novos clientes e parceiros comerciais.",
-  clientDescription: undefined,
+  clientDescription:
+    "Empresa especializada na comercialização de ferragens, ferramentas e materiais para construção. Atua há anos no setor, atendendo tanto o público profissional quanto o consumidor final, com foco em qualidade, variedade de produtos e atendimento personalizado.",
   selectedPlans: 2,
   planDetails: "",
   includeTerms: true,
@@ -38,7 +39,8 @@ async function main() {
       process.exit(1);
     }
 
-    const { introduction, aboutUs, team, terms } = result.proposal;
+    const { introduction, aboutUs, team, terms, scope, steps, investment } =
+      result.proposal;
 
     console.log("✅ Flash workflow completed successfully.");
 
@@ -64,9 +66,71 @@ async function main() {
       console.log("AboutUs subtitle length:", aboutUs.subtitle.length);
     }
 
-    if (terms) {
-      console.log("Terms title length:", terms.title.length);
-      console.log("Terms description length:", terms.description.length);
+    const termsArray = Array.isArray(terms) ? terms : terms ? [terms] : [];
+    if (termsArray.length > 0) {
+      termsArray.forEach((term, index) => {
+        console.log(`Terms ${index + 1} title length:`, term.title.length);
+        console.log(
+          `Terms ${index + 1} description length:`,
+          term.description.length
+        );
+      });
+    }
+
+    if (scope) {
+      console.log("Scope content length:", scope.content.length);
+    }
+
+    if (steps) {
+      console.log("Steps introduction length:", steps.introduction.length);
+      steps.topics.forEach((topic, index) => {
+        console.log(
+          `Steps topic ${index + 1} title length:`,
+          topic.title.length
+        );
+        console.log(
+          `Steps topic ${index + 1} description length:`,
+          topic.description.length
+        );
+      });
+    }
+
+    if (investment) {
+      console.log("Investment title length:", investment.title.length);
+      investment.deliverables?.forEach((deliverable, index) => {
+        if (deliverable?.title) {
+          console.log(
+            `Deliverable ${index + 1} title length:`,
+            deliverable.title.length
+          );
+        }
+        if (deliverable?.description) {
+          console.log(
+            `Deliverable ${index + 1} description length:`,
+            deliverable.description.length
+          );
+        }
+      });
+      investment.plansItems?.forEach((plan, index) => {
+        if (plan?.title) {
+          console.log(`Plan ${index + 1} title length:`, plan.title.length);
+        }
+        if (plan?.description) {
+          console.log(
+            `Plan ${index + 1} description length:`,
+            plan.description.length
+          );
+        }
+        if (plan?.value) {
+          console.log(`Plan ${index + 1} value length:`, plan.value.length);
+        }
+        if (plan?.buttonTitle) {
+          console.log(
+            `Plan ${index + 1} button title length:`,
+            plan.buttonTitle.length
+          );
+        }
+      });
     }
   } catch (error) {
     console.error("❌ Error running Flash workflow script:", error);
