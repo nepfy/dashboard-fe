@@ -147,6 +147,7 @@ export interface FlashProposal extends BaseProposal {
 
   // Terms and Conditions (optional)
   terms?: Array<{
+    id?: string;
     title: string; // 30 chars
     description: string; // 180 chars
   }>;

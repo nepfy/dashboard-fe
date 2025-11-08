@@ -15,6 +15,15 @@ function ensureCondition(condition: boolean, message: string): void {
   }
 }
 
+function ensureItemsHaveIds<T extends Record<string, unknown>>(
+  items: T[]
+): (T & { id: string })[] {
+  return items.map((item) => ({
+    ...item,
+    id: (item.id as string | undefined) || crypto.randomUUID(),
+  }));
+}
+
 export interface FlashThemeData extends BaseThemeData {
   templateType: "flash";
   mainColor: string;
@@ -349,8 +358,11 @@ export class FlashTheme {
   }
 
   private validateTermsSection(section: FlashTermsSection): void {
-    this.ensureMaxLength(section.title, 30, "terms.title");
-    this.ensureMaxLength(section.description, 180, "terms.description");
+    this.ensureArrayRange(section, 1, 3, "terms");
+    section.forEach((term, index) => {
+      this.ensureMaxLength(term.title, 30, `terms[${index}].title`);
+      this.ensureMaxLength(term.description, 180, `terms[${index}].description`);
+    });
   }
 
   private validateFAQSection(faq: FlashFAQSection): void {
@@ -938,7 +950,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       investment,
       results,
       testimonials,
-      ...(terms ? { terms: [terms] } : {}),
+      ...(terms ? { terms } : {}),
       faq: faq || [],
       footer: await this.generateFooter(data, agent),
     };
@@ -1077,8 +1089,12 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Specialties generated successfully");
-        this.validateSpecialtiesSection(moaResult.result);
-        return moaResult.result;
+        const resultWithIds = {
+          ...moaResult.result,
+          topics: ensureItemsHaveIds(moaResult.result.topics || []),
+        };
+        this.validateSpecialtiesSection(resultWithIds);
+        return resultWithIds;
       }
 
       // Fallback to single model if MoA fails
@@ -1088,8 +1104,12 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         agent.systemPrompt
       );
 
-      this.validateSpecialtiesSection(parsed);
-      return parsed;
+      const parsedWithIds = {
+        ...parsed,
+        topics: ensureItemsHaveIds(parsed.topics || []),
+      };
+      this.validateSpecialtiesSection(parsedWithIds);
+      return parsedWithIds;
     } catch (error) {
       console.error("Flash Specialties Generation Error:", error);
       throw error;
@@ -1141,6 +1161,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
               : "Detalhamos como conduzimos esta etapa para preservar ritmo, transparência e alto impacto.";
 
           return {
+            id: (source as { id?: string }).id || crypto.randomUUID(),
             title: baseTitle,
             description: baseDescription,
           };
@@ -1150,7 +1171,9 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           title: "Nosso Processo",
           introduction: raw.introduction ?? "",
           topics: normalizedTopics,
-          marquee: Array.isArray(raw.marquee) ? raw.marquee : [],
+          marquee: Array.isArray(raw.marquee)
+            ? ensureItemsHaveIds(raw.marquee)
+            : [],
         };
       },
       validate: (section) => this.validateStepsSection(section),
@@ -1487,10 +1510,12 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     const userPrompt = this.getSectionPrompt("terms", data);
     const expectedFormat =
       this.getSectionExpectedFormat("terms") ??
-      `{
-  "title": "string (maximum 30 characters, premium tone)",
-  "description": "string (maximum 180 characters, premium tone)"
-}`;
+      `[
+  {
+    "title": "string (maximum 30 characters, premium tone)",
+    "description": "string (maximum 180 characters, premium tone)"
+  }
+]`;
 
     try {
       const moaResult =
@@ -1503,8 +1528,9 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Terms generated successfully");
-        this.validateTermsSection(moaResult.result);
-        return moaResult.result;
+        const resultWithIds = ensureItemsHaveIds(moaResult.result);
+        this.validateTermsSection(resultWithIds);
+        return resultWithIds;
       }
 
       console.warn("MoA failed, falling back to single model");
@@ -1512,8 +1538,9 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         userPrompt,
         agent.systemPrompt
       );
-      this.validateTermsSection(parsed);
-      return parsed;
+      const parsedWithIds = ensureItemsHaveIds(parsed);
+      this.validateTermsSection(parsedWithIds);
+      return parsedWithIds;
     } catch (error) {
       console.error("Flash Terms Generation Error:", error);
       throw error;
@@ -2001,10 +2028,11 @@ export interface FlashTestimonialsSection {
   }>;
 }
 
-export interface FlashTermsSection {
+export type FlashTermsSection = Array<{
+  id?: string;
   title: string;
   description: string;
-}
+}>;
 
 export type FlashFAQSection = Array<{
   id: string;
