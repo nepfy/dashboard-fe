@@ -404,7 +404,7 @@ export default function EditableModal({
         {arrowNode}
         <div
           ref={panelRef}
-          className={`bg-white-neutral-light-100 min-h-[355px] w-full overflow-hidden rounded-[8px] px-4 py-6 sm:w-[360px] ${className ?? ""}`}
+          className={`bg-white-neutral-light-100 h-[550px] w-full overflow-hidden rounded-[8px] px-4 py-6 sm:w-[360px] ${className ?? ""}`}
           style={panelStyle}
         >
           {children}
