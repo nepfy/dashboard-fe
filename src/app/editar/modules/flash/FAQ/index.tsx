@@ -33,7 +33,7 @@ export default function FlashFAQ({
   return (
     <div className="relative overflow-hidden bg-black">
       {!hideSection && (
-        <div className="relative z-1 mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
+        <div className="relative mx-auto max-w-[1440px] px-6 pt-10 pb-23 lg:px-41 lg:pt-22 xl:pb-36">
           <p className="max-w-[1055px] pb-21 text-[32px] font-normal text-[#E6E6E6] lg:text-[72px]">
             Perguntas
             <br /> Frequentes

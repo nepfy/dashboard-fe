@@ -477,7 +477,9 @@ export default function ItemEditorModal({
       <EditableModal
         isOpen={isOpen}
         className="flex min-h-[355px] cursor-default flex-col items-stretch"
-        preferredPlacement="right"
+        preferredPlacement={
+          itemType === "steps" || itemType === "faq" ? "top" : "right"
+        }
       >
         {!showExploreGalleryInfo &&
           !showPexelsGallery &&
