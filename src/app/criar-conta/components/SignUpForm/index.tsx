@@ -52,6 +52,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 }) => {
   const { signUp, isLoaded: clerkLoaded } = useSignUp();
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const passwordsMatch = password === confirmPassword;
@@ -92,6 +93,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         return;
       }
 
+      setIsLoading(true);
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
@@ -99,6 +101,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         legalAccepted: termsAccepted,
       });
     } catch (err) {
+      setIsLoading(false);
       if (
         err instanceof Error &&
         "errors" in err &&
@@ -106,13 +109,15 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
       ) {
         setError?.("Ocorreu um erro ao conectar com Google. Tente novamente.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <>
       <form className="space-y-3 overflow-x-scroll" onSubmit={onSubmit}>
-        <div className="space-y-2 relative">
+        <div className="relative space-y-2">
           <MailEnvelope
             className="absolute right-4 bottom-[34px] z-40"
             width="20"
@@ -130,7 +135,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
           />
         </div>
         {emailAddress.trim() !== "" && !isEmailValid && (
-          <div className="text-red-500 text-sm">
+          <div className="text-sm text-red-500">
             Por favor, insira um email válido
           </div>
         )}
@@ -164,21 +169,26 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
           }
         />
         {showPasswordMismatchError && (
-          <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
+          <div className="border-red-light-50 rounded-2xl border bg-red-100 px-6 py-3 text-red-700">
             As senhas não coincidem
           </div>
         )}
         {error && (
-          <div className="px-6 py-3 bg-red-100 text-red-700 rounded-2xl border border-red-light-50">
+          <div className="border-red-light-50 rounded-2xl border bg-red-100 px-6 py-3 text-red-700">
             {error}
           </div>
         )}
 
         <button
           type="submit"
-          className={`w-full py-3 px-4 text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px] cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)]`}
+          disabled={isLoading || !isLoaded}
+          className={`mt-4 h-[54px] w-full cursor-pointer rounded-[var(--radius-s)] bg-[var(--color-primary-light-400)] px-4 py-3 font-medium text-white transition-colors hover:bg-[var(--color-primary-light-500)]`}
         >
-          Criar conta
+          {isLoading || !isLoaded ? (
+            <LoaderCircle className="animate-spin" />
+          ) : (
+            "Criar conta"
+          )}
         </button>
       </form>
 
@@ -187,7 +197,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
           <div className="w-full border-t border-[var(--color-white-neutral-light-300)]"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-[var(--color-white-neutral-light-200)] text-[var(--color-white-neutral-light-500)]">
+          <span className="bg-[var(--color-white-neutral-light-200)] px-2 text-[var(--color-white-neutral-light-500)]">
             ou
           </span>
         </div>
@@ -198,18 +208,18 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
           disabled={!termsAccepted}
           type="button"
           onClick={handleGoogleSignUp}
-          className="w-full py-3 px-4 rounded-[var(--radius-s)] font-medium border border-[var(--color-white-neutral-light-300)] transition-colors flex items-center justify-center gap-2 bg-[var(--color-white-neutral-light-100)] text-[var(--color-white-neutral-light-800)] cursor-pointer hover:bg-[var(--color-white-neutral-light-200)]"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] px-4 py-3 font-medium text-[var(--color-white-neutral-light-800)] transition-colors hover:bg-[var(--color-white-neutral-light-200)]"
         >
           <GoogleLogo />
           Continuar com o Google
         </button>
       </div>
 
-      <div className="flex justify-center items-center">
-        <p className="text-[10px] text-white-neutral-light-600">
+      <div className="flex items-center justify-center">
+        <p className="text-white-neutral-light-600 text-[10px]">
           Ao criar uma conta, você concorda com os{" "}
           <Link href="/termos-de-uso">
-            <span className="text-[10px] text-white-neutral-light-600 underline">
+            <span className="text-white-neutral-light-600 text-[10px] underline">
               Termos de uso
             </span>
           </Link>
@@ -219,8 +229,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
       <div className="text-center text-[var(--color-white-neutral-light-500)]">
         Já possui uma conta?{" "}
         <Link href="/">
-          <p className="text-[var(--color-primary-light-400)] hover:underline inline-block font-medium">
-            {!isLoaded ? (
+          <p className="inline-block font-medium text-[var(--color-primary-light-400)] hover:underline">
+            {isLoading || !isLoaded ? (
               <LoaderCircle className="animate-spin" />
             ) : (
               "Faça login"

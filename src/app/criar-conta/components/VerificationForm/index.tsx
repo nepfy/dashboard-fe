@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { TextField } from "#/components/Inputs";
@@ -18,10 +18,12 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
   setError,
 }) => {
   const { signUp, setActive } = useSignUp();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!isLoaded) return;
 
@@ -41,8 +43,11 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
         router.push("/onboarding");
       }
     } catch (err: unknown) {
+      setIsLoading(false);
       console.error(JSON.stringify(err, null, 2));
       setError?.("Código incorreto.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,15 +68,17 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
       <button
         type="submit"
         disabled={code.length !== 6}
-        className={`w-full py-3 px-4 bg-[var(--color-primary-light-400)] text-white rounded-[var(--radius-s)] font-medium transition-colors mt-4 h-[54px]
-        ${
-          code.length !== 6
-            ? "bg-gray-400 cursor-not-allowed"
-            : "hover:bg-[var(--color-primary-light-500)] cursor-pointer"
-        }
-          `}
+        className={`mt-4 h-[54px] w-full rounded-[var(--radius-s)] bg-[var(--color-primary-light-400)] px-4 py-3 font-medium text-white transition-colors ${
+          code.length !== 6 || isLoading
+            ? "cursor-not-allowed bg-gray-400"
+            : "cursor-pointer hover:bg-[var(--color-primary-light-500)]"
+        } `}
       >
-        {!isLoaded ? <LoaderCircle className="animate-spin" /> : "Verificar"}
+        {!isLoaded || isLoading ? (
+          <LoaderCircle className="animate-spin" />
+        ) : (
+          "Verificar"
+        )}
       </button>
       <div id="clerk-captcha" />
     </form>
