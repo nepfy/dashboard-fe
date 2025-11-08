@@ -87,7 +87,7 @@ export default function FlashTestimonials({
             <p className="text-sm font-semibold text-white">Depoimentos</p>
           </div>
 
-          <div className={`border-l border-l-[#ffffff]/50 lg:pl-7`}>
+          <div className={`border-l border-l-[#ffffff]/50 pl-5 lg:pl-7`}>
             <div
               onClick={() => {
                 if (canEdit || openModalId === currentTestimonial?.id) {
