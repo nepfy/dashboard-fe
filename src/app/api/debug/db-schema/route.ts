@@ -42,7 +42,7 @@ export async function GET() {
       database: dbInfo,
       buttonConfigExists: columnCheck.length > 0,
       totalColumns: allColumns.length,
-      columns: allColumns.map((col: any) => ({
+      columns: allColumns.map((col) => ({
         name: col.column_name,
         type: col.data_type,
       })),
