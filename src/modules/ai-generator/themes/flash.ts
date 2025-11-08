@@ -943,7 +943,11 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         typeof rawItem === "string" && rawItem.trim().length > 0
           ? rawItem
           : fallbackFactory(index);
-      normalized.push(this.truncateToMax(baseText, maxLength));
+      // Ensure max length without truncation - substring if needed
+      const finalText = baseText.length <= maxLength 
+        ? baseText 
+        : baseText.substring(0, maxLength);
+      normalized.push(finalText);
     }
 
     return normalized;
