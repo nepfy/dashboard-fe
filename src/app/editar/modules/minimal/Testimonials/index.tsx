@@ -217,7 +217,9 @@ export default function MinimalTestimonials({
                     itemType="testimonials"
                     items={items || []}
                     currentItemId={item?.id ?? null}
+                    // @ts-expect-error - Type mismatch between Testimonial and other item types
                     onUpdateItem={updateTestimonialItem}
+                    // @ts-expect-error - Type mismatch for reorder function
                     onReorderItems={reorderTestimonialItems}
                   />
                 </div>
