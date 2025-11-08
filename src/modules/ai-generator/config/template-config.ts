@@ -493,26 +493,34 @@ REGRAS RÍGIDAS
 
       terms: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para termos e condições dentro dos limites abaixo.
+        prompt: `Gere APENAS um JSON válido (ARRAY) para termos e condições dentro dos limites abaixo.
 
 PROJETO: {projectName} - {projectDescription}
 
-FORMATO OBRIGATÓRIO
-{
-  "title": "Título objetivo com ATÉ 30 caracteres",
-  "description": "Texto corrido abordando prazo, pagamento e suporte com ATÉ 180 caracteres"
-}
+FORMATO OBRIGATÓRIO (deve ser um ARRAY com 1-3 itens)
+[
+  {
+    "title": "Título objetivo com ATÉ 30 caracteres",
+    "description": "Texto corrido abordando prazo, pagamento e suporte com ATÉ 180 caracteres"
+  }
+]
 
 REGRAS RÍGIDAS
+- CRÍTICO: Retorne um ARRAY (com colchetes []), não um objeto
+- Gere 1-3 termos diferentes (ex: Prazo, Pagamento, Suporte)
 - Planeje a frase completa antes de responder; não gere acima do limite.
 - Tonalidade premium, transparente e confiante. Utilize verbos no presente.
-- Evite listas, marcadores ou múltiplas frases curtas.
-- Responda apenas com o JSON final.`,
-        expectedFormat: `{
-  "title": "string (maximum 30 characters, premium tone)",
-  "description": "string (maximum 180 characters, premium tone)"
-}`,
+- Evite listas, marcadores ou múltiplas frases curtas dentro da description.
+- Responda apenas com o JSON final (array).`,
+        expectedFormat: `[
+  {
+    "title": "string (maximum 30 characters, premium tone)",
+    "description": "string (maximum 180 characters, premium tone)"
+  }
+]`,
         rules: [
+          "DEVE ser um ARRAY (com colchetes [])",
+          "1-3 termos diferentes",
           "title: no máximo 30 caracteres",
           "description: no máximo 180 caracteres",
           "Planejar contagem antes de escrever",

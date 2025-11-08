@@ -16,9 +16,12 @@ function ensureCondition(condition: boolean, message: string): void {
 }
 
 function ensureItemsHaveIds<T extends Record<string, unknown>>(
-  items: T[]
+  items: T | T[]
 ): (T & { id: string })[] {
-  return items.map((item) => ({
+  // If items is not an array, convert it to an array with single item
+  const itemsArray = Array.isArray(items) ? items : [items];
+  
+  return itemsArray.map((item) => ({
     ...item,
     id: (item.id as string | undefined) || crypto.randomUUID(),
   }));
@@ -1566,6 +1569,8 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
 
       if (moaResult.success && moaResult.result) {
         console.log("✅ MoA Terms generated successfully");
+        
+        // ensureItemsHaveIds now handles both arrays and single objects
         const resultWithIds = ensureItemsHaveIds(moaResult.result);
         this.validateTermsSection(resultWithIds);
         return resultWithIds;
@@ -1576,6 +1581,8 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         userPrompt,
         agent.systemPrompt
       );
+      
+      // ensureItemsHaveIds now handles both arrays and single objects
       const parsedWithIds = ensureItemsHaveIds(parsed);
       this.validateTermsSection(parsedWithIds);
       return parsedWithIds;
