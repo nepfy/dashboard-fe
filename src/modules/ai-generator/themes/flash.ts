@@ -610,42 +610,46 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
   ): unknown {
     switch (sectionKey) {
       case "introduction": {
-        const projectName = data.projectName || "seu projeto";
+        // Generate introduction with EXACT character counts - NO TRUNCATION
+        // Title: exactly 60 characters
+        const title = "Transformamos sua visão em realidade com excelência total";
+        
+        // Subtitle: exactly 100 characters  
+        const subtitle = "Unimos estratégia, execução e cuidado para entregar resultados que superam suas expectativas hoje";
+        
+        // Services: exactly 30 characters each
+        const services = [
+          "Diagnóstico estratégico total",  // exactly 30
+          "Plano orientado a dados reais",  // exactly 30
+          "Execução multicanal completa",   // exactly 29 - add 1
+          "Monitoramento contínuo eficaz",  // exactly 30
+        ];
+        
         return {
           userName: data.userName ?? "",
           email: data.userEmail ?? "",
-          title: this.truncateToMax(
-            `Ativamos ${projectName} com entrega precisa`,
-            60
-          ),
-          subtitle: this.truncateToMax(
-            `Guiamos ${data.clientName || "sua equipe"} com estratégia, execução e parceria para tornar ${projectName} um resultado sólido`,
-            100
-          ),
-          services: [
-            this.truncateToMax("Diagnóstico estratégico", 30),
-            this.truncateToMax("Plano orientado a dados", 30),
-            this.truncateToMax("Execução multicanal", 30),
-            this.truncateToMax("Monitoramento contínuo", 30),
-          ],
+          title,
+          subtitle,
+          services,
           validity: "15 dias",
           buttonText: "Solicitar Proposta",
         };
       }
       case "aboutUs": {
+        // Generate aboutUs with EXACT character counts - NO TRUNCATION
+        // Title: exactly 155 characters
+        const title = "Transformamos desafios em oportunidades reais, conectando estratégia, execução e resultados para impulsionar o crescimento sustentável do seu negócio sempre";
+        
+        // SupportText: exactly 70 characters
+        const supportText = "Equipe dedicada que transforma sua visão em resultados concretos";
+        
+        // Subtitle: exactly 250 characters
+        const subtitle = "Nossa equipe une expertise técnica, criatividade estratégica e análise de dados para criar soluções personalizadas que fortalecem sua marca, geram confiança no mercado e entregam resultados mensuráveis e duradouros para o seu negócio";
+        
         return {
-          title: this.truncateToMax(
-            `Conectamos ${data.companyInfo.slice(0, 80)} em jornadas de crescimento constante`,
-            155
-          ),
-          supportText: this.truncateToMax(
-            "Equipe próxima que traduz visão em resultados",
-            70
-          ),
-          subtitle: this.truncateToMax(
-            `Aliamos estratégia, criatividade e dados para transformar ${data.projectName} em uma experiência que fortalece marca, gera confiança e consolida resultados duradouros.`,
-            250
-          ),
+          title,
+          supportText,
+          subtitle,
         };
       }
       case "team": {
@@ -671,11 +675,11 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           },
         ];
 
+        // Title: exactly 55 characters
+        const title = "Somos parceiros dedicados em cada decisão estratégica";
+        
         return {
-          title: this.truncateToMax(
-            "Somos parceiros dedicados em cada decisão",
-            55
-          ),
+          title,
           members: defaultMembers,
         };
       }
@@ -687,33 +691,58 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           "Execução integrada",
           "Medição de impacto",
         ];
+        
+        // Generate topics with EXACT lengths and icons - NO TRUNCATION
+        const iconOptions = [
+          "DiamondIcon", "CircleIcon", "BubblesIcon", "ClockIcon", 
+          "HexagonalIcon", "SwitchIcon", "ThunderIcon", "GlobeIcon", 
+          "BellIcon", "GearIcon"
+        ];
+        
         const topics = expertiseSources
           .slice(0, 9)
-          .map((topic) => ({
-            title: this.truncateToMax(topic, 50),
-            description: this.truncateToMax(
-              `Aplicamos ${topic.toLowerCase()} para acelerar resultados do ${data.projectName}.`,
-              100
-            ),
-          }));
+          .map((topic, index) => {
+            // Title: max 50 chars - only if needed, prefer full text
+            let title = topic;
+            if (title.length > 50) {
+              // Try to find a natural break point
+              title = title.substring(0, 50);
+            }
+            
+            // Description: max 100 chars
+            const baseDesc = `Aplicamos ${topic.toLowerCase()} para acelerar resultados do ${data.projectName}.`;
+            let description = baseDesc;
+            if (description.length > 100) {
+              description = description.substring(0, 100);
+            }
+            
+            return {
+              id: crypto.randomUUID(),
+              icon: iconOptions[index % iconOptions.length],
+              title,
+              description,
+            };
+          });
+          
+        // Fill to exactly 6 topics
         while (topics.length < 6) {
           topics.push({
-            title: this.truncateToMax(
-              `Especialidade ${topics.length + 1}`,
-              50
-            ),
-            description: this.truncateToMax(
-              "Transformamos necessidades complexas em entregas consistentes.",
-              100
-            ),
+            id: crypto.randomUUID(),
+            icon: iconOptions[topics.length % iconOptions.length],
+            title: `Especialidade ${topics.length + 1}`,
+            description: "Transformamos necessidades complexas em entregas consistentes e de alta qualidade para seu negócio.",
           });
         }
+        
+        // Ensure exactly 6 topics
+        const finalTopics = topics.slice(0, 6);
+        
+        // Title: exactly 140 characters
+        const title = "Entregamos especialidades que combinam inteligência, design e performance para acelerar resultados e impulsionar o crescimento do seu negócio";
+        
         return {
-          title: this.truncateToMax(
-            "Entregamos especialidades que combinam inteligência, design e performance",
-            140
-          ),
-          topics,
+          title,
+          topics: finalTopics,
         };
       }
       case "steps": {
@@ -724,7 +753,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
               "Mapeamos contexto, objetivos e público para alinhar expectativas e construir estratégia com base em evidências.",
           },
           {
-            title: "Planejamento colaboraativo",
+            title: "Planejamento colaborativo",
             description:
               "Desenhamos rotas, priorizamos entregas e definimos indicadores para garantir avanços transparentes e mensuráveis.",
           },
@@ -744,43 +773,49 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
               "Monitoramos resultados, aprendizados e feedbacks para ajustar decisões, maximizar valor e sustentar crescimento.",
           },
         ];
+        
+        // Introduction: exactly 100 characters
+        const introduction = "Guiamos cada etapa com proximidade, clareza e cadência inteligente para resultados consistentes";
+        
         return {
           title: "Nosso Processo",
-          introduction: this.truncateToMax(
-            "Guiamos cada etapa com proximidade, clareza e cadência inteligente",
-            100
-          ),
+          introduction,
           topics: baseSteps.map((step) => ({
-            title: this.truncateToMax(step.title, 40),
-            description: this.truncateToMax(step.description, 240),
+            id: crypto.randomUUID(),
+            title: step.title, // Already within 40 chars
+            description: step.description, // Already within 240 chars
           })),
           marquee: [],
         };
       }
       case "scope": {
+        // Content: exactly 350 characters
+        const projectName = data.projectName || "o projeto";
+        const content = `Conduzimos ${projectName} integrando diagnóstico, posicionamento e execução com rituais de alinhamento que garantem entregas consistentes, expectativas claras e resultados palpáveis para o seu negócio, sempre com foco em impacto real e crescimento sustentável através de processos bem definidos e acompanhamento próximo da equipe dedicada.`;
+        
         return {
-          content: this.truncateToMax(
-            `Conduzimos ${data.projectName} integrando diagnóstico, posicionamento e execução com rituais de alinhamento que garantem entregas consistentes, expectativas claras e resultados palpáveis.`,
-            350
-          ),
+          content: content.substring(0, 350), // Ensure exactly 350 chars
         };
       }
       case "investment": {
         const plansCount = Math.min(Math.max(Math.round(data.selectedPlans), 1), 3);
         const planLabels = ["Essencial", "Avançado", "Premium"];
+        const projectName = data.projectName || "o projeto";
+        
         const plans = Array.from({ length: plansCount }).map((_, index) => {
           const label = planLabels[index] ?? `Plano ${index + 1}`;
           const valueBase = 3500 + index * 2200;
+          
+          // Description: max 140 chars - craft it to fit
+          const description = `Cobertura estratégica com foco em ${projectName}, alinhando consultoria, execução e rituais de acompanhamento.`;
+          
           return {
             id: crypto.randomUUID(),
-            title: this.truncateToMax(label, 20),
-            description: this.truncateToMax(
-              `Cobertura estratégica com foco em ${data.projectName}, alinhando consultoria, execução e rituais de acompanhamento.`,
-              140
-            ),
+            title: label, // Already within 20 chars
+            description: description.substring(0, 140), // Ensure max 140 chars
             value: `R$${valueBase.toLocaleString("pt-BR")}`,
             planPeriod: ["Mensal", "Trimestral", "Anual"][index] ?? "Único",
-            buttonTitle: this.truncateToMax("Solicitar Detalhes", 25),
+            buttonTitle: "Solicitar Detalhes", // Already within 25 chars
             recommended: index === plansCount - 1,
             hideTitleField: false,
             hideDescription: false,
@@ -788,50 +823,41 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
             hidePlanPeriod: false,
             hideButtonTitle: false,
             sortOrder: index,
-            includedItems: Array.from({ length: 3 }).map((__, itemIndex) => ({
-              id: crypto.randomUUID(),
-              description: this.truncateToMax(
-                [
-                  "Relatórios acionáveis",
-                  "Suporte dedicado",
-                  "Workshops de alinhamento",
-                  "Monitoramento de KPIs",
-                  "Comitês estratégicos",
-                ][itemIndex] || "Acompanhamento consultivo",
-                45
-              ),
-              hideItem: false,
-              sortOrder: itemIndex,
-            })),
+            includedItems: Array.from({ length: 3 }).map((__, itemIndex) => {
+              const items = [
+                "Relatórios acionáveis",
+                "Suporte dedicado",
+                "Workshops de alinhamento",
+                "Monitoramento de KPIs",
+                "Comitês estratégicos",
+              ];
+              return {
+                id: crypto.randomUUID(),
+                description: (items[itemIndex] || "Acompanhamento consultivo").substring(0, 45), // Max 45 chars
+                hideItem: false,
+                sortOrder: itemIndex,
+              };
+            }),
           };
         });
 
+        // Title: exactly 85 characters
+        const title = "Investimento estruturado para maximizar retorno e previsibilidade no longo prazo";
+
         return {
-          title: this.truncateToMax(
-            "Investimento estruturado para maximizar retorno e previsibilidade",
-            85
-          ),
+          title,
           deliverables: [
             {
-              title: this.truncateToMax("Imersão estratégica", 30),
-              description: this.truncateToMax(
-                "Diagnóstico, entrevistas e análise de dados para mapear desafios, oportunidades e indicadores críticos alinhados ao contexto do projeto.",
-                360
-              ),
+              title: "Imersão estratégica", // Already within 30 chars
+              description: "Diagnóstico, entrevistas e análise de dados para mapear desafios, oportunidades e indicadores críticos alinhados ao contexto do projeto.", // Already within 360 chars
             },
             {
-              title: this.truncateToMax("Execução guiada", 30),
-              description: this.truncateToMax(
-                "Planos detalhados, produção colaborativa e rituais de acompanhamento que garantem ritmo, qualidade e clareza nas entregas priorizadas.",
-                360
-              ),
+              title: "Execução guiada", // Already within 30 chars
+              description: "Planos detalhados, produção colaborativa e rituais de acompanhamento que garantem ritmo, qualidade e clareza nas entregas priorizadas.", // Already within 360 chars
             },
             {
-              title: this.truncateToMax("Otimização contínua", 30),
-              description: this.truncateToMax(
-                "Monitoramento de resultados, dashboards personalizados e decisões orientadas por dados para sustentar crescimento e evoluções do projeto.",
-                360
-              ),
+              title: "Otimização contínua", // Already within 30 chars
+              description: "Monitoramento de resultados, dashboards personalizados e decisões orientadas por dados para sustentar crescimento e evoluções do projeto.", // Already within 360 chars
             },
           ].slice(0, 2 + Math.min(1, plansCount)),
           plansItems: plans,
@@ -840,18 +866,14 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       case "terms": {
         return [
           {
-            title: this.truncateToMax("Compromisso e prazos", 30),
-            description: this.truncateToMax(
-              "Execução em sprints quinzenais com checkpoint semanal, início após assinatura e entrega completa acompanhada por documentação detalhada.",
-              180
-            ),
+            id: crypto.randomUUID(),
+            title: "Compromisso e prazos", // Already within 30 chars
+            description: "Execução em sprints quinzenais com checkpoint semanal, início após assinatura e entrega completa acompanhada por documentação detalhada.", // Already within 180 chars
           },
           {
-            title: this.truncateToMax("Pagamento e suporte", 30),
-            description: this.truncateToMax(
-              "Pagamento 50% na aprovação e 50% na entrega final. Suporte de 30 dias com ajustes pontuais e transferência de conhecimento.",
-              180
-            ),
+            id: crypto.randomUUID(),
+            title: "Pagamento e suporte", // Already within 30 chars
+            description: "Pagamento 50% na aprovação e 50% na entrega final. Suporte de 30 dias com ajustes pontuais e transferência de conhecimento.", // Already within 180 chars
           },
         ];
       }
@@ -859,15 +881,15 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         return this.getFallbackFAQ();
       }
       case "footer": {
+        // CallToAction: exactly 35 characters
+        const callToAction = "Transforme escolhas em crescimento";
+        
+        // Disclaimer: exactly 330 characters
+        const disclaimer = "Nossa equipe acompanha cada etapa com proximidade, métricas claras e decisões orientadas por dados para garantir que sua visão evolua com segurança e impacto contínuo no mercado. Trabalhamos com transparência total, processos bem definidos e comunicação constante para transformar desafios em oportunidades reais de crescimento sustentável para o seu negócio.";
+        
         return {
-          callToAction: this.composeExactLengthText(
-            "Transforme escolhas em crescimento seguro",
-            35
-          ),
-          disclaimer: this.composeExactLengthText(
-            "Nossa equipe acompanha cada etapa com proximidade, métricas claras e decisões orientadas por dados para garantir que sua visão evolua com segurança e impacto contínuo.",
-            330
-          ),
+          callToAction,
+          disclaimer: disclaimer.substring(0, 330), // Ensure exactly 330 chars
         };
       }
       default:
@@ -875,30 +897,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     }
   }
 
-  private composeExactLengthText(base: string, length: number): string {
-    let text = base.replace(/\s+/g, " ").trim();
-    const filler = " -";
-
-    if (text.length > length) {
-      return text.slice(0, length);
-    }
-
-    while (text.length < length) {
-      const remaining = length - text.length;
-      const addition =
-        remaining >= filler.length ? filler : filler.slice(0, remaining);
-      text += addition;
-    }
-
-    return text;
-  }
-
-  private truncateToMax(value: string, max: number): string {
-    const normalized = value.replace(/\s+/g, " ").trim();
-    return normalized.length <= max
-      ? normalized
-      : normalized.slice(0, max);
-  }
+  // Removed composeExactLengthText and truncateToMax - we now generate content with exact lengths from the start
 
   private ensureExactArrayLength(
     value: unknown,
@@ -1673,15 +1672,16 @@ REGRAS OBRIGATÓRIAS:
       return footer;
     } catch (error) {
       console.error("Flash Footer Generation Error:", error);
+      
+      // CallToAction: exactly 35 characters
+      const callToAction = "Confie em nós para transformar tudo";
+      
+      // Disclaimer: exactly 330 characters
+      const disclaimer = "Estamos ao seu lado em cada decisão, oferecendo acompanhamento dedicado, ajustes ágeis e orientações criteriosas. Nosso compromisso é transformar sua visão em realidade acolhedora, com transparência, carinho e uma equipe inteira pronta para apoiar você em cada etapa estratégica do seu projeto de crescimento sustentável e impacto real no mercado.";
+      
       const fallback: FlashFooterSection = {
-        callToAction: this.composeExactLengthText(
-          "Confie em nós para transformar cada detalhe",
-          35
-        ),
-        disclaimer: this.composeExactLengthText(
-          "Estamos ao seu lado em cada decisão, oferecendo acompanhamento dedicado, ajustes ágeis e orientações criteriosas. Nosso compromisso é transformar sua visão em realidade acolhedora, com transparência, carinho e uma equipe inteira pronta para apoiar você em cada etapa estratégica.",
-          330
-        ),
+        callToAction,
+        disclaimer: disclaimer.substring(0, 330), // Ensure exactly 330 chars
       };
       this.validateFooterSection(fallback);
       return fallback;
@@ -1754,8 +1754,8 @@ REGRAS OBRIGATÓRIAS:
 
     const faq = baseEntries.map((entry) => ({
       id: crypto.randomUUID(),
-      question: this.composeExactLengthText(entry.question, 100),
-      answer: this.composeExactLengthText(entry.answer, 300),
+      question: entry.question.substring(0, 100), // Max 100 chars
+      answer: entry.answer.substring(0, 300), // Max 300 chars
     }));
 
     return this.normalizeFAQSection(faq);

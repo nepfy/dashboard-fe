@@ -24,33 +24,33 @@
     "introduction": {
       "userName": "",
       "email": "",
-      "title": "Elevamos sua presença visual no mercado",
-      "subtitle": "Transformamos marcas com experiências visuais que ampliam autoridade",
+      "title": "Elevamos sua presença visual com excelência total",
+      "subtitle": "Unimos estratégia, execução e cuidado para entregar resultados que superam suas expectativas",
       "services": [
-        "Identidade visual sofisticada",
+        "Identidade visual estratégica",
         "Paleta de cores harmoniosa",
         "Tipografia estratégica",
-        "Manual de marca completo"
+        "Manual de marca personalizado"
       ],
       "validity": "15 dias",
       "buttonText": "Solicitar Proposta"
     },
     "aboutUs": {
-      "title": "Transformamos sua startup em uma referência visual",
-      "supportText": "Experiência e criatividade unidas",
-      "subtitle": "Com abordagem estratégica e personalizada, criamos identidade visual que captura a essência da sua startup, posicionando-a como líder no setor de tecnologia, garantindo reconhecimento, autoridade e resultados visuais impactantes e sustentáveis."
+      "title": "Transformamos sua marca em referência visual",
+      "supportText": "Elevando sua presença",
+      "subtitle": "Nossa equipe cria soluções visuais únicas, aumentando valor e reconhecimento para startups, com design estratégico e criativo que captura atenção e gera resultados."
     },
     "team": {
-      "title": "Nós crescemos junto com você em design",
+      "title": "Nós crescemos junto com você, lado a lado",
       "members": [
         {
-          "name": "Luana Oliveira",
+          "name": "Luiza Oliveira",
           "role": "Diretora de Design",
           "image": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "c95bf250-ac96-412a-8fb3-80c7874ce9ea"
+          "id": "c88f62fd-1598-44ad-810f-ca9cbbabd684"
         },
         {
           "name": "Pedro Silva",
@@ -59,113 +59,123 @@
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "172d9fd0-ffe7-4e5f-828b-6c24184d2187"
+          "id": "ce23a893-111d-44a2-8b20-8b8f2d198643"
         },
         {
-          "name": "Beatriz Lima",
+          "name": "Beatriz Martins",
           "role": "Especialista em Branding",
           "image": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "ae9096e3-2b2d-4d88-b14c-9f1cdc30aeb3"
+          "id": "4377da69-6502-4cf8-ba59-0aca09fe2bf5"
         }
       ]
     },
     "specialties": {
-      "title": "Identidades visuais estratégicas",
+      "title": "Desenvolvemos identidades visuais que unem criatividade e estratégia, garantindo reconhecimento e resultados tangíveis.",
       "topics": [
         {
-          "title": "Design de Marca",
-          "description": "Criação de identidades fortes e visuais",
-          "id": "89a9bff4-27d7-489d-81fc-859c34ed2575"
+          "id": "uuid-1",
+          "icon": "DiamondIcon",
+          "title": "Logotipo inovador",
+          "description": "Logo que se destaca, construindo reconhecimento e memória visual."
         },
         {
-          "title": "Logo Inovador",
-          "description": "Logotipo que se destaca e se integra",
-          "id": "5a91801c-464f-4880-bc94-4f1264993bba"
+          "id": "uuid-2",
+          "icon": "CircleIcon",
+          "title": "Paleta de cores única",
+          "description": "Cores que se harmonizam, criando identidade exclusiva e forte."
         },
         {
-          "title": "Paleta de Cores Única",
-          "description": "Cores que transmitem a essência da marca",
-          "id": "a400b3f7-7415-4da9-a17f-1302c3142129"
+          "id": "uuid-3",
+          "icon": "BubblesIcon",
+          "title": "Tipografia distintiva",
+          "description": "Tipos que se destacam, transmitindo confiança e profissionalismo."
         },
         {
-          "title": "Tipografia Marcante",
-          "description": "Fontes que conferem personalidade ao design",
-          "id": "68ac811e-c621-4a90-9a72-bef53f174e5e"
+          "id": "uuid-4",
+          "icon": "ClockIcon",
+          "title": "Manual de estilo completo",
+          "description": "Guia detalhado para manter coerência visual e identidade consistente."
         },
         {
-          "title": "Material Gráfico Sofisticado",
-          "description": "Formatos gráficos atraentes e funcionais",
-          "id": "3b510ec6-7a5f-4b76-a6e7-5ef2a0df552e"
+          "id": "uuid-5",
+          "icon": "HexagonalIcon",
+          "title": "Material gráfico diversificado",
+          "description": "Apresentações, cartões de visita e outros recursos visuais impactantes."
         },
         {
-          "title": "Manual de Marca Detalhado",
-          "description": "Guia para manter consistência visual em todas as aplicações",
-          "id": "434e4b7c-66c1-4f5c-b34e-eea5d4fa2468"
+          "id": "uuid-6",
+          "icon": "SwitchIcon",
+          "title": "Adaptação para múltiplos canais",
+          "description": "Identidade visual otimizada para sites, redes sociais e materiais impressos."
         }
       ]
     },
     "steps": {
       "title": "Nosso Processo",
-      "introduction": "Cuidado e transparência",
+      "introduction": "Cuidadosamente planejado",
       "topics": [
         {
-          "id": "f52fb3bd-4592-485e-afe7-13c77c3b24b4",
-          "title": "Entendendo",
-          "description": "Analisamos sua marca e mercado para criar uma identidade visual que ressoa com seu público-alvo e estabelece presença no mercado de forma consistente."
+          "id": "50b77d14-9a94-4da6-b344-25af82995f09",
+          "title": "Imersão estratégica",
+          "description": "Analisamos a essência da sua startup, valores e público-alvo para criar uma identidade visual coerente e estratégica, considerando tendências e concorrentes."
         },
         {
-          "id": "b527e731-f3bc-4c4f-a9e4-6ad57d88b3b5",
-          "title": "Conceituando",
-          "description": "Desenvolvemos direções visuais distintas que traduzem sua estratégia em identidade, capturando inovação tecnológica com abordagens visuais modernas e memoráveis."
+          "id": "d3d51fd8-bfab-4f3f-9142-d10dc5064fd5",
+          "title": "Moodboard criativo",
+          "description": "Desenvolvemos um moodboard que reflete a personalidade da marca, servindo como base para as decisões de design e garantindo uma direção clara para o projeto."
         },
         {
-          "id": "77642e4d-3375-444f-af2a-783ebc253c6b",
-          "title": "Desenvolvendo",
-          "description": "Refinamos a direção escolhida em todos os elementos: logo, paleta cromática, tipografia e aplicações, garantindo coerência e impacto visual em todas as plataformas."
+          "id": "4cab3b66-0b1a-4dc7-a561-9376f7ac3fc8",
+          "title": "Desenvolvimento de logo",
+          "description": "Projetamos um logo que captura a essência da sua startup, garantindo reconhecimento e memória visual, com apresentações claras e justificativas para cada escolha."
         },
         {
-          "id": "d7d4139a-1614-41b4-9c5f-a9cadc29353a",
-          "title": "Aplicando",
-          "description": "Criamos materiais gráficos e digitais que demonstram a versatilidade da marca, desenvolvendo aplicações práticas que mostram como sua identidade se adapta a diferentes contextos e suportes."
+          "id": "b9066688-3cb5-46d4-90d5-a8cb19be7e4b",
+          "title": "Definição de paleta e tipografia",
+          "description": "Estabelecemos uma paleta de cores e tipografia que transmitem a mensagem e o estilo da sua marca de forma consistente, considerando a aplicação em diversos materiais e plataformas."
         },
         {
-          "id": "cfb05fa7-c84e-4737-bb5a-cf87225e41a4",
-          "title": "Entregando",
-          "description": "Elaboramos manual completo com diretrizes de uso para garantir consistência futura, entregando todos os arquivos e orientações necessárias para implementação imediata da identidade visual completa."
+          "id": "44338086-ae8f-4fb5-9305-5f4dcbd1892b",
+          "title": "Manual de marca completo",
+          "description": "Elaboramos um manual de marca detalhado, detalhando o uso correto da identidade visual, paleta de cores, tipografia e outros elementos, para garantir a consistência da imagem da startup."
         }
       ],
       "marquee": []
     },
     "scope": {
-      "content": "Nós criamos uma identidade visual estratégica para sua startup de tecnologia, combinando logo impactante, paleta de cores exclusiva, tipografia personalizada e materiais gráficos para estabelecer presença visual forte, garantindo reconhecimento, autoridade e consistência através de um manual de marca detalhado e personalizado."
+      "content": "Desenvolvemos identidade visual completa para sua startup de tecnologia, criando logo, paleta de cores, tipografia e materiais gráficos coesos, com manual de marca para estabelecer presença visual forte, impulsionando reconhecimento e crescimento sustentável com autoridade e impacto no mercado."
     },
     "investment": {
-      "title": "Investimento Estratégico",
+      "title": "Investimento em Identidade Visual",
       "deliverables": [
         {
           "title": "Identidade Visual",
-          "description": "Desenvolva uma identidade visual forte e coerente que impulse seu negócio."
+          "description": "Desenvolvemos identidade visual completa para startups de tecnologia, incluindo logo, paleta de cores, tipografia e material gráfico, garantindo presença visual forte e reconhecimento no mercado."
         },
         {
           "title": "Manual de Marca",
-          "description": "Estabeleça diretrizes claras para uso da marca e preserve a identidade visual."
+          "description": "Criamos manual de marca detalhado para garantir aplicação coerente da identidade visual em todas as plataformas, assegurando profissionalismo e fortalecimento contínuo da presença visual."
         },
         {
-          "title": "Acompanhamento",
-          "description": "Conte com o apoio de nossos especialistas em design para garantir a implementação eficaz."
+          "title": "Materiais Gráficos",
+          "description": "Produzimos materiais visuais alinhados aos objetivos de negócio, criando conexão emocional com o público e ampliando engajamento de forma mensurável."
+        },
+        {
+          "title": "Apoio ao Lançamento",
+          "description": "Oferecemos suporte na fase de lançamento, ajudando a criar uma estratégia de comunicação eficaz para apresentar a nova identidade visual ao público-alvo."
         }
       ],
       "plansItems": [
         {
-          "id": "plano-essencial",
-          "title": "Essencial",
-          "description": "Identidade visual básica para startups em fase inicial.",
+          "id": "plano-basico",
+          "title": "Básico",
+          "description": "Solução básica para startups com orçamento limitado.",
           "value": "R$2.500",
           "planPeriod": "Único",
-          "buttonTitle": "Iniciar",
+          "buttonTitle": "Escolher",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -175,32 +185,32 @@
           "sortOrder": 0,
           "includedItems": [
             {
-              "id": "essencial-1",
-              "description": "Logo",
+              "id": "item1",
+              "description": "Criar logo",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "essencial-2",
-              "description": "Paleta de Cores",
+              "id": "item2",
+              "description": "Definir paleta de cores",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "essencial-3",
-              "description": "Tipografia",
+              "id": "item3",
+              "description": "Selecionar tipografia",
               "hideItem": false,
               "sortOrder": 2
             }
           ]
         },
         {
-          "id": "plano-completo",
-          "title": "Completo",
-          "description": "Pacote completo de identidade visual com manual da marca.",
-          "value": "R$4.000",
+          "id": "plano-avancado",
+          "title": "Avançado",
+          "description": "Desenvolvimento de identidade visual completa.",
+          "value": "R$4.500",
           "planPeriod": "Único",
-          "buttonTitle": "Contratar",
+          "buttonTitle": "Escolher",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -210,26 +220,26 @@
           "sortOrder": 1,
           "includedItems": [
             {
-              "id": "completo-1",
-              "description": "Manual de Marca",
+              "id": "item4",
+              "description": "Manual de marca",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "completo-2",
-              "description": "Materiais Gráficos",
+              "id": "item5",
+              "description": "Materiais gráficos",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "completo-3",
-              "description": "Acompanhamento",
+              "id": "item6",
+              "description": "Apoio ao lançamento",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "completo-4",
-              "description": "Otimização",
+              "id": "item7",
+              "description": "Acompanhamento",
               "hideItem": false,
               "sortOrder": 3
             }
@@ -238,10 +248,10 @@
         {
           "id": "plano-premium",
           "title": "Premium",
-          "description": "Solução completa com suporte estratégico e aplicações ilimitadas.",
-          "value": "R$6.000",
+          "description": "Criação de identidade visual personalizada e premium.",
+          "value": "R$6.500",
           "planPeriod": "Único",
-          "buttonTitle": "Investir",
+          "buttonTitle": "Escolher",
           "recommended": true,
           "hideTitleField": false,
           "hideDescription": false,
@@ -251,32 +261,32 @@
           "sortOrder": 2,
           "includedItems": [
             {
-              "id": "premium-1",
-              "description": "Identidade Visual Completa",
+              "id": "item8",
+              "description": "Análise de mercado",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "premium-2",
-              "description": "Suporte Exclusivo",
+              "id": "item9",
+              "description": "Estratégia de comunicação",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "premium-3",
-              "description": "Revisões Ilimitadas",
+              "id": "item10",
+              "description": "Identidade visual completa",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "premium-4",
-              "description": "Garantia",
+              "id": "item11",
+              "description": "Apoio exclusivo",
               "hideItem": false,
               "sortOrder": 3
             },
             {
-              "id": "premium-5",
-              "description": "Treinamento",
+              "id": "item12",
+              "description": "Acompanhamento personalizado",
               "hideItem": false,
               "sortOrder": 4
             }
@@ -285,34 +295,34 @@
       ]
     },
     "results": {
-      "title": "Resultados que transformam negócios",
+      "title": "Resultados visuais sólidos construídos com estratégia e parceria",
       "items": [
         {
-          "id": "994e9092-d9fb-4bdf-b313-6240bea43475",
-          "client": "Inovatech",
+          "id": "1ad3f092-74a4-4f8d-94b1-5a899f6a1869",
+          "client": "InovaTech",
           "instagram": "inovatech",
-          "investment": 2000,
-          "roi": 3500,
+          "investment": 1500,
+          "roi": 2500,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "ad278c90-43b1-4c5f-94c6-60b22f8b759d",
-          "client": "TechStart",
-          "instagram": "techstart",
-          "investment": 2500,
-          "roi": 4000,
+          "id": "4419cce9-9b1f-4f34-8119-178ac1d6b661",
+          "client": "TechGrowth",
+          "instagram": "techgrowth",
+          "investment": 2000,
+          "roi": 3000,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
         },
         {
-          "id": "00036620-64ae-456c-a247-f068332255cb",
-          "client": "NexaLab",
-          "instagram": "nexalab",
-          "investment": 3000,
-          "roi": 5000,
+          "id": "8eab24c2-1e30-4f85-af1e-1f5564219a85",
+          "client": "DigitalSolutions",
+          "instagram": "digitalsolutions",
+          "investment": 2500,
+          "roi": 4000,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 2
@@ -323,19 +333,19 @@
       "title": "Depoimentos",
       "items": [
         {
-          "id": "ced4dc0a-f04d-4f53-8188-e7c78f551472",
-          "name": "Luana Oliveira",
-          "role": "Diretora de Marketing",
-          "testimonial": "A criação da identidade visual nos ajudou a estabelecer uma presença forte no mercado",
+          "id": "78679ed3-5caf-4371-a08f-9343ec11987e",
+          "name": "Pedro Santos",
+          "role": "CEO",
+          "testimonial": "A identidade visual criada fortaleceu nossa presença no mercado.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "c146bf1e-ec8d-4a0f-8a46-e10d9ce82c1b",
-          "name": "Eduardo Silva",
-          "role": "Fundador",
-          "testimonial": "A identidade visual criada foi fundamental para o sucesso da nossa startup",
+          "id": "c3175b09-f53e-43ba-857c-e7cdb7ffd37c",
+          "name": "Julia Oliveira",
+          "role": "Diretora de Comunicação",
+          "testimonial": "O manual de marca foi essencial para manter a coerência visual.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
@@ -345,70 +355,70 @@
     "terms": [
       {
         "title": "Prazo",
-        "description": "Entregamos em até 30 dias com qualidade e atendimento.",
-        "id": "566bb43a-7ff0-4152-85ba-ef86d3480d63"
+        "description": "Entregamos em até 30 dias úteis com suporte",
+        "id": "e66f613f-b313-40a9-9f4c-8a8fdb9631ff"
       },
       {
         "title": "Pagamento",
-        "description": "Pagamento flexível em até 3x sem juros, com transparência.",
-        "id": "9c7a64de-d23e-4085-863e-a3bd18a73116"
+        "description": "Pagamento em até 3x sem juros, com transparência",
+        "id": "6c2e6f6e-1b1b-4d7b-bd24-689f1ab87746"
       },
       {
         "title": "Suporte",
-        "description": "Oferecemos suporte por 30 dias após entrega, sem custos.",
-        "id": "f1222769-b11e-4ae4-aaf4-18edd98b8489"
+        "description": "Oferecemos suporte por 60 dias após entrega, com ajustes",
+        "id": "d363a36f-cf89-4a8c-bde3-ce2e55ea4be5"
       }
     ],
     "faq": [
       {
         "question": "O que é identidade visual?",
-        "answer": "A identidade visual é a representação da sua marca, incluindo logo, cores e tipografia, criada para estabelecer uma presença forte no mercado e transmitir sua mensagem de forma clara e consistente, garantindo reconhecimento e autoridade."
+        "answer": "A identidade visual é o conjunto de elementos que definem a imagem de uma marca, incluindo logo, cores, tipografia e materiais gráficos, essenciais para estabelecer uma presença forte no mercado e aumentar o reconhecimento."
       },
       {
-        "question": "Qual é o prazo para entrega?",
-        "answer": "O prazo é de 30 a 60 dias, garantindo que sua identidade visual esteja pronta e alinhada às suas expectativas, com entregas de alta qualidade e atenção aos detalhes."
+        "question": "Como vocês garantem a consistência?",
+        "answer": "Criamos um manual de marca detalhado que define regras claras para o uso de logotipos, paletas de cores, tipografia e outros elementos visuais, garantindo consistência em todas as plataformas e materiais."
       },
       {
-        "question": "Posso solicitar ajustes sem custos?",
-        "answer": "Sim, incluímos ciclos de ajustes para garantir que cada criação esteja perfeita e atenda às suas necessidades, sem custos extras, dentro do escopo definido."
+        "question": "Qual é o papel da tipografia?",
+        "answer": "A tipografia desempenha um papel crucial na identidade visual, pois ajuda a comunicar a personalidade e os valores da marca, além de influenciar a legibilidade e a estética geral dos materiais de comunicação, tornando-a única e reconhecível."
       },
       {
-        "question": "O que inclui o pacote de identidade visual?",
-        "answer": "Inclui logo, paleta de cores, tipografia, material gráfico e manual de marca para estabelecer uma presença visual forte no mercado, com soluções criativas e estratégicas que elevam sua marca."
+        "question": "Como é definida a paleta de cores?",
+        "answer": "Desenvolvemos paletas baseadas em psicologia das cores, tendências do setor tech e diferenciação competitiva, considerando a emoção e a mensagem que cada cor transmite, garantindo uma identidade visual coesa e impactante."
       },
       {
-        "question": "Como é a entrega dos materiais?",
-        "answer": "Entregamos todos os materiais em formatos digitais e físicos, garantindo que você possa utilizar em qualquer canal, com flexibilidade e versatilidade para atender às suas necessidades de comunicação."
+        "question": "O que inclui o manual de marca?",
+        "answer": "O manual de marca inclui diretrizes detalhadas para a aplicação da identidade visual em todas as plataformas e materiais, garantindo consistência e ajudando a manter a integridade da marca em todos os contextos."
       },
       {
-        "question": "Posso fazer ajustes após a entrega?",
-        "answer": "Sim, oferecemos suporte pós-entrega para garantir que você possa fazer ajustes e otimizar o uso de sua identidade visual, com assistência personalizada e atenção aos detalhes."
+        "question": "Como é o processo de criação do logo?",
+        "answer": "Coletamos informações sobre a marca, conceituamos e apresentamos opções para a escolha do cliente antes de finalizar o design, garantindo que o logo seja único, memorável e reflita a essência da marca."
       },
       {
-        "question": "Qual é o prazo para início do projeto?",
-        "answer": "Agendamos o início do projeto conforme sua disponibilidade, garantindo que seu projeto seja priorizado e iniciado de forma eficiente, com um cronograma personalizado para atender às suas necessidades."
+        "question": "Posso solicitar ajustes sem custos adicionais?",
+        "answer": "Sim, incluímos ciclos de ajustes para garantir que cada criação esteja alinhada às suas expectativas, entregando resultados de alta qualidade e satisfazendo as necessidades da marca sem custos extras."
       },
       {
-        "question": "Como é a comunicação durante o projeto?",
-        "answer": "Manteremos comunicação constante, agendando reuniões regulares e atualizações para garantir que seu projeto esteja no caminho certo, com transparência e colaboração efetiva em cada etapa."
+        "question": "Como mantenho a consistência visual?",
+        "answer": "Incluímos um manual de marca completo que detalha todas as regras de aplicação da identidade visual para manter consistência, além de oferecer suporte contínuo para garantir que a marca mantenha sua presença forte e coesa em todos os contextos."
       },
       {
-        "question": "Qual é o suporte pós-entrega?",
-        "answer": "Oferecemos suporte pós-entrega, respondendo dúvidas e fornecendo assistência para que você use seus materiais da melhor forma, com atenção personalizada e compromisso com a satisfação do cliente."
+        "question": "Qual é o formato do material gráfico?",
+        "answer": "Oferecemos formatos digitais e impressos, como slides, banners, e-mail marketing e cartões de visita, garantindo que a marca tenha uma presença visual forte e consistente em todas as plataformas e materiais."
       },
       {
-        "question": "Como garantem a qualidade do design?",
-        "answer": "Nossos designers são especialistas com portfólios robustos e clientes satisfeitos, garantindo que cada criação atenda aos mais altos padrões de qualidade e eficácia visual, com soluções inovadoras e estratégicas que elevam sua marca."
+        "question": "Como é a entrega final?",
+        "answer": "Entregamos o projeto em formato digital e impresso, incluindo todos os arquivos necessários e o manual de marca, garantindo que a marca tenha tudo o que precisa para manter sua identidade visual forte e consistente no mercado."
       }
     ],
     "footer": {
-      "callToAction": "Eleve sua marca",
-      "disclaimer": "Estamos dedicados a acompanhar cada etapa do seu projeto, garantindo uma presença visual forte e impactante com cuidado artesanal e suporte contínuo."
+      "callToAction": "Elevamos Juntos",
+      "disclaimer": "Estamos ao seu lado, comprometidos em oferecer soluções personalizadas e suporte contínuo para o crescimento da sua marca, com cuidado e atenção em cada detalhe."
     }
   },
   "workflowMetadata": {
     "sections": [],
-    "generationTime": 44925
+    "generationTime": 42602
   },
-  "generatedAt": "2025-11-08T03:26:50.184Z"
+  "generatedAt": "2025-11-08T04:03:59.063Z"
 }

@@ -21,15 +21,291 @@
     "mainColor": "#D97706"
   },
   "proposal": {
-    "success": false,
-    "templateType": "prime",
-    "data": {},
-    "metadata": {
-      "service": "arquiteto",
-      "agent": "Especialista em Arquitetura",
-      "timestamp": "2025-11-08T00:55:51.611Z",
-      "generationType": "prime-workflow-failed"
+    "introduction": {
+      "title": "Elevamos Residência de Alto Padrão com liderança inteligente",
+      "subtitle": "Entregamos visão, precisão e impacto para transformar decisões em lucro previsível e sustentável · ·",
+      "services": [
+        "Consultoria estratégica · · · ",
+        "Design premium autoral · · · ·",
+        "Execução multidisciplinar · · ",
+        "Inteligência de crescimento · "
+      ],
+      "validity": "22/11/2025",
+      "buttonText": "Descobrir agora"
+    },
+    "aboutUs": {
+      "title": "Novo título com exatamente 155 caracteres que é uma descrição curta de um produto ou serviço",
+      "supportText": "Novo supportText com exatamente 70 caracteres que é uma breve explicação",
+      "subtitle": "Novo subtítulo com exatamente 250 caracteres que é uma descrição detalhada de um produto ou serviço que visa chamar a atenção do usuário"
+    },
+    "team": {
+      "title": "Crescemos lado a lado em cada decisão estratégica · · · · · ",
+      "subtitle": "Nossa equipe multidisciplinar integra estratégia, criação e tecnologia para conduzir transformações com proximidade, con"
+    },
+    "specialties": {
+      "title": "Arquitetura de Excelência: Projetos Personalizados de Alto Padrão com Sustentabilidade e Design Inovador para Residência Isabela Martins, com Certificação e Automação Inteligente",
+      "topics": [
+        {
+          "title": "Design Arquitetônico Exclusivo e Sustentável com Luxo Contemporâneo",
+          "description": "Projeto sob medida que integra forma e função com materiais nobres, criando uma residência única que reflete o estilo de vida premium do cliente, com foco em sustentabilidade e eficiência energética."
+        },
+        {
+          "title": "Interiores Customizados com Acabamentos de Alta Qualidade e Luxo Sofisticado",
+          "description": "Seleção criteriosa de materiais premium, marcenaria artesanal e revestimentos exclusivos para ambientes sofisticados e funcionais, melhorando a qualidade de vida dos moradores com design inovador."
+        },
+        {
+          "title": "Paisagismo Integrado com Projeto de Áreas Externas Premium e Sustentáveis",
+          "description": "Criação de jardins elaborados, terraços e áreas de lazer que harmonizam arquitetura e natureza em um terreno de 1000m², com foco em sustentabilidade e preservação ambiental, garantindo ambientes externos agradáveis."
+        },
+        {
+          "title": "Automação Residencial Completa com Tecnologia de Ponta Integrada e Inteligente",
+          "description": "Sistema inteligente para controle de iluminação, climatização, segurança e entretenimento, proporcionando conforto, eficiência e segurança, com tecnologias avançadas e sustentáveis para maior eficiência energética."
+        },
+        {
+          "title": "Certificação Sustentável com Estratégias de Ecoeficiência Aplicada e Reconhecimento Internacional",
+          "description": "Implementação de soluções verdes para eficiência energética, gestão hídrica e conforto térmico, com selo de sustentabilidade e reconhecimento internacional, garantindo a residência como um modelo de sustentabilidade e responsabilidade ambiental."
+        },
+        {
+          "title": "Estudo de Insolação e Ventilação Natural para Conforto Ambiental e Eficiência Energética",
+          "description": "Otimização da orientação solar e fluxo de ar para garantir ambientes saudáveis, reduzir consumo energético e melhorar a qualidade de vida dos moradores, com foco em sustentabilidade e eficiência energética, criando ambientes confortáveis e saudáveis."
+        },
+        {
+          "title": "Projeto Luminotécnico Premium com Iluminação Cênica e Funcional para Ambientes Únicos",
+          "description": "Sistema de iluminação elaborado que valoriza a arquitetura, cria atmosferas e atende às necessidades específicas de cada ambiente, com tecnologias avançadas e sustentáveis para maior eficiência energética e conforto, melhorando a experiência dos moradores."
+        },
+        {
+          "title": "Gerenciamento de Projeto com Metodologia PRIME e Acompanhamento Personalizado",
+          "description": "Coordenação integral do projeto com cronograma detalhado, controle orçamentário e supervisão de todas as etapas construtivas, garantindo a entrega no prazo, dentro do orçamento e com qualidade superior, com foco em satisfação do cliente e sustentabilidade."
+        },
+        {
+          "title": "Consultoria em Aquisição de Materiais e Mobiliário de Design Exclusivo e Sustentável",
+          "description": "Seleção e curadoria de peças autorais, fornecedores premium e itens customizados para compor ambientes únicos e valorizados, com foco em sustentabilidade e responsabilidade ambiental, garantindo a residência como um modelo de excelência e sustentabilidade, melhorando a qualidade de vida dos moradores."
+        }
+      ]
+    },
+    "steps": {
+      "introduction": "Desenhamos e operamos um processo prime que combina estratégia, estética e performance sem comprometer ritmo ou qualidad",
+      "title": "Como conduzimos sua transformação PRIME · · · · · ",
+      "topics": [
+        {
+          "title": "Imersão estratégica 360º · · · · · · · · · · ",
+          "description": "Conduzimos entrevistas, análises e benchmarks para mapear ambições, público, contexto competitivo e métricas prioritárias que orientarão todas as escolhas futuras. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · "
+        },
+        {
+          "title": "Direção criativa colaborativa · · · · · · · ·",
+          "description": "Cocriamos conceitos e narrativas visuais com stakeholders, garantindo que identidade, tom e postura traduzam confiança, sofisticação e diferenciação real. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+        },
+        {
+          "title": "Blueprint de experiência premium · · · · · · ",
+          "description": "Desenhamos jornadas, touchpoints e guidelines que conectam marca, tecnologia e operação em experiências premium consistentes e escaláveis. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+        },
+        {
+          "title": "Execução guiada e orquestrada · · · · · · · ·",
+          "description": "Lideramos cronogramas, squads e parceiros para assegurar entregas impecáveis, comunicação transparente e tomada de decisão baseada em dados. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+        },
+        {
+          "title": "Monitoramento com ajustes contínuos · · · · ·",
+          "description": "Avaliamos performance, feedbacks e indicadores em ciclos contínuos, ajustando estratégias e materiais para preservar excelência e maximizar ROI. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+        }
+      ],
+      "marquee": []
+    },
+    "scope": {
+      "content": "Nosso projeto premium reúne estratégias digitais avançadas que elevam sua autoridade e ampliam suas oportunidades de crescimento sustentável. Através de campanhas inteligentes, conteúdos direcionados e automações otimizadas, entregamos resultados sólidos, aceleramos a conquista de clientes e fortalecemos o posicionamento no mercado de forma consistente e mensurável."
+    },
+    "investment": {
+      "title": "Investimento PRIME que alia consultoria, criação e operação para gerar impacto mensurável. · · · · · · · · · · · · · · ·",
+      "deliverables": [
+        {
+          "title": "Imersão e diagnóstico · · · · · · · · · · · · · · · · · · · ",
+          "description": "Processo investigativo premium com entrevistas, análise de dados e benchmarks para mapear contexto, priorizar oportunidades e definir estratégias de alto impacto. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+        },
+        {
+          "title": "Direção criativa · · · · · · · · · · · · · · · · · · · · · ·",
+          "description": "Criação de conceitos, sistemas visuais e narrativas que traduzem valor, exclusividade e diferenciação em todas as interações com o público. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · "
+        },
+        {
+          "title": "Orquestração prime · · · · · · · · · · · · · · · · · · · · ·",
+          "description": "Gestão de implementação com squads multidisciplinares, fornecedores selecionados e indicadores de qualidade para sustentar ritmo e excelência. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+        }
+      ],
+      "plansItems": [
+        {
+          "title": "Plano Essencial · · · · · · · · · · · · · · · · · · · · · · ",
+          "description": "Estrutura premium com diagnóstico aprofundado, plataforma estratégica e suporte consultivo dedicado. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+          "value": "R$18.500,00",
+          "planPeriod": "Mensal",
+          "buttonTitle": "Solicitar Proposta",
+          "recommended": false,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 0,
+          "includedItems": [
+            {
+              "description": "Diagnóstico e posicionamento · · · · · · · · · · · · · · · ·",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "description": "Jornadas e roteiros estratégicos · · · · · · · · · · · · · ·",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "description": "Guidelines executáveis · · · · · · · · · · · · · · · · · · ·",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "description": "Rituais de acompanhamento · · · · · · · · · · · · · · · · · ",
+              "hideItem": false,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "title": "Plano Evolution · · · · · · · · · · · · · · · · · · · · · · ",
+          "description": "Inclui todo o Essencial e adiciona squads criativos, prototipagem avançada e playbooks de ativação. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+          "value": "R$28.900,00",
+          "planPeriod": "Mensal",
+          "buttonTitle": "Solicitar Proposta",
+          "recommended": false,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 1,
+          "includedItems": [
+            {
+              "description": "Equipe criativa dedicada · · · · · · · · · · · · · · · · · ·",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "description": "Prototipagem interativa · · · · · · · · · · · · · · · · · · ",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "description": "Playbooks de ativação · · · · · · · · · · · · · · · · · · · ",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "description": "Gestão de fornecedores · · · · · · · · · · · · · · · · · · ·",
+              "hideItem": false,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "title": "Plano Prime · · · · · · · · · · · · · · · · · · · · · · · · ",
+          "description": "Cobertura total com governança, inteligência de dados, programas de relacionamento e suporte expandido. · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+          "value": "R$38.900,00",
+          "planPeriod": "Mensal",
+          "buttonTitle": "Solicitar Proposta",
+          "recommended": true,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 2,
+          "includedItems": [
+            {
+              "description": "Comitê estratégico mensal · · · · · · · · · · · · · · · · · ",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "description": "Dashboards de performance · · · · · · · · · · · · · · · · · ",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "description": "Programas de relacionamento · · · · · · · · · · · · · · · · ",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "description": "Suporte prioritário 24h · · · · · · · · · · · · · · · · · · ",
+              "hideItem": false,
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "title": "Confidencialidade e propriedade intelectual · · · · · · · · · · · · · · · · · · ",
+        "description": "Todos os ativos criados permanecem exclusivos do cliente mediante contrato; referências sensíveis são tratadas sob sigilo permanente. · · · · · · · · · · · · · · · · · · · · · · · "
+      },
+      {
+        "title": "Cronograma e aprovações coordenadas · · · · · · · · · · · · · · · · · · · · · · ",
+        "description": "Etapas são validadas em sprints quinzenais com checkpoints executivos; ajustes fora de escopo são orçados separadamente. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "title": "Modelo financeiro e condições especiais · · · · · · · · · · · · · · · · · · · · ",
+        "description": "Pagamento em três parcelas alinhadas às fases estratégicas; condições diferenciadas mediante assinatura anual do programa PRIME. · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      }
+    ],
+    "faq": [
+      {
+        "question": "Como garantem aderência às metas estratégicas do projeto? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+        "answer": "Conectamos objetivos executivos a indicadores claros, rituais de governança e entregas mensuráveis em cada sprint. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "Qual é o nível de envolvimento requerido da nossa equipe? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+        "answer": "Trabalhamos com squads híbridos, mantendo board e líderes próximos via comitês estratégicos e workshops colaborativos. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "Como asseguram consistência visual e narrativa globalmente? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+        "answer": "Documentamos guidelines detalhados, produzimos kits operacionais e treinamos times internos para replicar padrões prime. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "É possível integrar o programa aos parceiros atuais? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+        "answer": "Sim. Orquestramos fornecedores existentes, incorporamos novos especialistas quando necessário e mantemos alinhamento centralizado. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "Quais ferramentas utilizam para monitorar performance? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+        "answer": "Disponibilizamos dashboards proprietários, integrações com BI do cliente e relatórios executivos em ciclos de revisão. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "Como lidam com ajustes e escopos emergentes? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+        "answer": "Utilizamos matrizes de priorização e backlogs de oportunidades, aprovados em comitês bimestrais para preservar foco e ROI. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "Qual suporte é oferecido após a implementação inicial? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+        "answer": "Mantemos programa de sustentação com squads on-demand, atualizações de narrativa e capacitação contínua das equipes. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "Existe cobertura para expansão internacional? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+        "answer": "Adaptamos narrativas, assets e operações a mercados globais, coordenando traduções culturais e parceiros locais. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
+      },
+      {
+        "question": "Como garantem proteção das informações estratégicas? · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+        "answer": "Aplicamos protocolos de confidencialidade, ambientes seguros e controles de acesso para todas as frentes do programa. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · "
+      },
+      {
+        "question": "Qual diferencial do método PRIME frente a consultorias tradicionais? · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+        "answer": "Integramos estratégia, criação e operação em um único fluxo, reduzindo silos, acelerando entregas e aumentando previsibilidade. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · "
+      }
+    ],
+    "footer": {
+      "callToAction": "Eleve sua visão prime com uma equipe dedicada ao extraordinário · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+      "contactInfo": "Estamos prontos para conduzir sua transformação. Contato prioritário: prime@nepfy.com | +55 11 4000-2025. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · "
     }
   },
-  "generatedAt": "2025-11-08T00:55:51.611Z"
+  "workflowMetadata": {
+    "service": "arquiteto",
+    "agent": "Especialista em Arquitetura",
+    "timestamp": "2025-11-08T04:10:05.712Z",
+    "generationType": "prime-workflow"
+  },
+  "generatedAt": "2025-11-08T04:10:05.712Z"
 }

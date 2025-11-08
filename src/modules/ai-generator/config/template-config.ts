@@ -131,7 +131,11 @@ export const defaultTemplateConfigs: Record<string, TemplateConfig> = {
 - Empresa: {companyInfo}
 
 OBJETIVO
-Gerar textos premium com CONTAGEM EXATA de caracteres desde a concepção. Planeje cada frase antes de escrever. NÃO gere conteúdo maior para depois cortar.
+Gerar textos premium, ÚNICOS e com VALOR REAL, com CONTAGEM EXATA de caracteres desde a concepção. 
+- Cada proposta deve ser DIFERENTE e PERSONALIZADA para o contexto específico
+- Evite frases genéricas ou repetitivas entre propostas
+- Crie conteúdo que demonstre EXPERTISE e CONHECIMENTO do setor
+- Planeje cada frase antes de escrever. NÃO gere conteúdo maior para depois cortar.
 
 FORMATO OBRIGATÓRIO
 {
@@ -152,11 +156,40 @@ REGRAS RÍGIDAS
 - title: Escreva uma frase e conte. Se tiver 58 ou 62 caracteres, REESCREVA até ter EXATAMENTE 60.
 - subtitle: Escreva uma frase e conte. Se tiver 98 ou 103 caracteres, REESCREVA até ter EXATAMENTE 100.
 - services[]: Cada item deve ter EXATAMENTE 30 caracteres. Conte cada um individualmente.
-- EXEMPLO: "Design de identidade visual" tem 29 caracteres. "Design de identidade visuais" tem 30.
 - Não utilize aspas extras, emojis ou caracteres especiais fora do padrão ASCII básico.
 - Não mencione diretamente {clientName} ou {projectName} no título, subtítulo ou serviços.
 - Mantenha tom humano, acolhedor e de alto padrão; evite termos vazios como "melhor", "rápido" ou "completo".
-- Responda apenas com o JSON final, sem comentários, textos adicionais ou linhas em branco externas.`,
+- Responda apenas com o JSON final, sem comentários, textos adicionais ou linhas em branco externas.
+
+EXEMPLOS CORRETOS (conte os caracteres):
+
+✅ TITLE (60 chars):
+"Elevamos sua presença visual no mercado com excelência" = 60 chars ✓
+"Transformamos sua visão em realidade com excelência total" = 60 chars ✓
+
+❌ TITLE ERRADO:
+"Ativamos Estratégia de Marketing Digital Completa com entreg" = 61 chars (TRUNCADO!)
+"Transforme Seu Lar Com Elegância E Funcional" = 46 chars (MUITO CURTO!)
+
+✅ SUBTITLE (100 chars):
+"Unimos estratégia, execução e cuidado para entregar resultados que superam suas expectativas hoje" = 100 chars ✓
+"Transformamos marcas com experiências visuais que ampliam autoridade e geram impacto no mercado" = 97 chars (adicione 3!)
+
+✅ SERVICES (30 chars cada):
+"Diagnóstico estratégico total" = 30 chars ✓
+"Plano orientado a dados reais" = 30 chars ✓
+"Execução multicanal integrada" = 30 chars ✓
+"Monitoramento contínuo eficaz" = 30 chars ✓
+
+❌ SERVICES ERRADO:
+"Design de Interiores Exclus" = 27 chars (TRUNCADO!)
+"Arquitetura Residencial" = 23 chars (MUITO CURTO!)
+
+PROCESSO:
+1. Escreva o texto
+2. Conte MANUALMENTE os caracteres
+3. Se não bater EXATAMENTE, REESCREVA (não trunce!)
+4. Valide novamente antes de enviar`,
         expectedFormat: `{
   "title": "string (exactly 60 characters, Title Case, premium tone)",
   "subtitle": "string (exactly 100 characters, sensory premium tone)",
@@ -191,6 +224,8 @@ DADOS DO PROJETO:
 - Empresa: {companyInfo}
 
 ORIENTAÇÕES CRÍTICAS
+- CONTEÚDO ÚNICO: Cada proposta deve ser DIFERENTE e PERSONALIZADA. Evite frases genéricas ou clichês.
+- Demonstre EXPERTISE REAL do setor específico do projeto (ex: arquitetura, design, marketing, etc.)
 - Planeje cada campo para ficar DENTRO do limite máximo antes de escrever (não gere para cortar depois).
 - Utilize linguagem sensorial, humana e confiante, deixando claro valor, transformação e proximidade.
 - Evite repetir o nome do cliente em todos os campos; use pronomes ou termos como "sua equipe".
@@ -277,27 +312,68 @@ Retorne APENAS um JSON válido com:
 
 PROJETO: {projectName} - {projectDescription}
 
-FORMATO OBRIGATÓRIO
+COPIE EXATAMENTE ESTE FORMATO:
 {
-  "title": "Frase que demonstre autoridade e resultados, com ATÉ 140 caracteres",
+  "title": "Aplicamos estratégias que unem tecnologia, análise e execução, garantindo performance digital e resultados reais.",
   "topics": [
     {
-      "title": "Título da especialidade com ATÉ 50 caracteres",
-      "description": "Descrição complementar com ATÉ 100 caracteres"
+      "id": "uuid-1",
+      "icon": "DiamondIcon",
+      "title": "Desenvolvimento web responsivo",
+      "description": "Sites otimizados que convertem visitantes em clientes com performance superior."
+    },
+    {
+      "id": "uuid-2",
+      "icon": "CircleIcon",
+      "title": "Sistemas de agendamento",
+      "description": "Plataformas personalizadas que automatizam e organizam seus agendamentos."
+    },
+    {
+      "id": "uuid-3",
+      "icon": "BubblesIcon",
+      "title": "Integrações avançadas",
+      "description": "Conectamos ferramentas para criar fluxos de trabalho mais eficientes."
+    },
+    { 
+      "id": "uuid-4",
+      "icon": "ClockIcon",
+      "title": "Otimização de performance",
+      "description": "Aceleramos carregamento e melhoramos experiência do usuário."
+    },
+    {
+      "id": "uuid-5",
+      "icon": "HexagonalIcon",
+      "title": "Segurança e proteção",
+      "description": "Implementamos medidas robustas para proteger dados e operações."
+    },
+    {
+      "id": "uuid-6",
+      "icon": "SwitchIcon",
+      "title": "Suporte técnico especializado",
+      "description": "Equipe dedicada para garantir funcionamento perfeito e contínuo."
     }
   ]
 }
 
-REGRAS RÍGIDAS
-- Gere EXATAMENTE 6 tópicos exclusivos (mantém margem dentro do intervalo permitido).
-- Planeje cada campo para já nascer dentro do limite máximo; não escreva para cortar.
-- Utilize verbos fortes, linguagem sofisticada e orientada a impacto.
-- Evite repetir expressões ou listar entregas.
-- Responda somente com o JSON final (sem comentários).`,
+REGRAS OBRIGATÓRIAS:
+- EXATAMENTE 6 tópicos únicos e relevantes ao projeto
+- Cada tópico DEVE ter: id (UUID válido), icon, title e description
+- O campo icon DEVE ser um dos seguintes: DiamondIcon, CircleIcon, BubblesIcon, ClockIcon, HexagonalIcon, SwitchIcon, ThunderIcon, GlobeIcon, BellIcon ou GearIcon
+- Escolha ícones DIFERENTES para cada tópico (varie os ícones)
+- title: ATÉ 50 caracteres - seja específico e impactante
+- description: ATÉ 100 caracteres - foque em valor e resultados
+- title do objeto principal: ATÉ 140 caracteres
+- Planeje cada campo para já nascer dentro do limite; não escreva para depois cortar
+- Use linguagem profissional, sofisticada e focada em resultados REAIS
+- Cada especialidade deve ser ÚNICA - evite repetições entre propostas
+- Adapte as especialidades ao contexto específico do projeto
+- Responda APENAS com o JSON válido`,
         expectedFormat: `{
-  "title": "string (maximum 140 characters)",
+  "title": "string (maximum 140 characters, premium tone)",
   "topics": [
     {
+      "id": "string (valid UUID)",
+      "icon": "string (one of: DiamondIcon, CircleIcon, BubblesIcon, ClockIcon, HexagonalIcon, SwitchIcon, ThunderIcon, GlobeIcon, BellIcon, GearIcon)",
       "title": "string (maximum 50 characters)",
       "description": "string (maximum 100 characters)"
     }
@@ -306,10 +382,14 @@ REGRAS RÍGIDAS
         rules: [
           "Título principal: no máximo 140 caracteres",
           "Gerar exatamente 6 tópicos",
+          "Cada tópico deve ter: id (UUID), icon, title, description",
+          "icon: escolher entre DiamondIcon, CircleIcon, BubblesIcon, ClockIcon, HexagonalIcon, SwitchIcon, ThunderIcon, GlobeIcon, BellIcon, GearIcon",
+          "Variar os ícones entre os tópicos",
           "topic.title: no máximo 50 caracteres",
           "topic.description: no máximo 100 caracteres",
           "Planejar contagem antes de responder",
-          "Linguagem profissional, calorosa e sofisticada",
+          "Conteúdo único e adaptado ao projeto",
+          "Linguagem profissional, sofisticada e focada em resultados",
         ],
         minTopics: 6,
         maxTopics: 9,
@@ -335,6 +415,8 @@ FORMATO OBRIGATÓRIO
 }
 
 REGRAS RÍGIDAS
+- CONTEÚDO ÚNICO: Crie etapas ESPECÍFICAS para o tipo de projeto. Evite processos genéricos.
+- Demonstre CONHECIMENTO REAL do setor (ex: para design, fale de moodboards; para dev, de sprints)
 - Gere EXATAMENTE 5 tópicos (0 a 4 no sortOrder). Cada título deve ser curto (substantivo + verbo ou benefício).
 - Planeje a contagem de cada frase antes de escrever; não exceda os limites.
 - Evite bullets ou listas internas; use frases corridas.
@@ -546,7 +628,9 @@ FORMATO OBRIGATÓRIO
 }
 
 REGRAS RÍGIDAS
-- Gere EXATAMENTE 10 pares pergunta e resposta.
+- CONTEÚDO ÚNICO: Crie perguntas ESPECÍFICAS para o tipo de projeto. Evite FAQs genéricas.
+- Demonstre EXPERTISE do setor nas respostas (ex: para arquitetura, fale de plantas e moodboards)
+- Gere EXATAMENTE 10 pares pergunta e resposta RELEVANTES ao contexto.
 - Cada question deve ser frase direta, sem ponto de interrogação duplicado.
 - Cada answer deve ser frase(s) corridas em parágrafo único (sem bullets), trazendo benefício concreto ou reforço do processo.
 - Planeje a contagem antes de escrever; não gere acima dos limites.

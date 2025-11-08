@@ -1,85 +1,85 @@
 {
   "agent": {
-    "id": "desenvolvedor-prime-agent",
-    "name": "Especialista em Desenvolvimento",
-    "sector": "Tecnologia e Desenvolvimento",
+    "id": "photography-prime-agent",
+    "name": "Fotógrafo Premium",
+    "sector": "Fotografia",
     "template": "prime"
   },
   "testData": {
-    "companyInfo": "Tech Solutions Elite - Desenvolvedores especializados em soluções tecnológicas de alto padrão para empresas que buscam inovação e excelência. Utilizamos arquiteturas escaláveis, metodologias ágeis e tecnologias de ponta.",
-    "clientName": "Mariana Rocha",
-    "projectName": "Plataforma SaaS Avançada",
-    "projectDescription": "Desenvolvimento de plataforma SaaS completa para gestão de clínicas médicas, incluindo sistema de agendamentos, prontuários eletrônicos, telemedicina, integração com sistemas de pagamento e aplicativo mobile nativo.",
+    "companyInfo": "Atelier Fotográfico Premium - Estúdio especializado em fotografia de alto padrão para marcas de luxo e eventos exclusivos. Nossa metodologia PRIME combina arte, técnica e storytelling para criar imagens impactantes e memoráveis.",
+    "clientName": "Gabriel Souza",
+    "projectName": "Campanha Premium de Marca",
+    "projectDescription": "Produção fotográfica completa para campanha de marca de joias de luxo, incluindo fotos de produtos, lifestyle, retratos executivos e material para redes sociais, site e catálogo premium.",
     "selectedPlans": [
       "Básico",
       "Intermediário",
       "Avançado"
     ],
-    "planDetails": "Soluções tecnológicas premium que geram eficiência máxima e lucro escalável",
+    "planDetails": "Fotografia premium que gera visibilidade excepcional e valor comercial",
     "includeTerms": true,
     "includeFAQ": true,
-    "mainColor": "#059669"
+    "mainColor": "#DC2626"
   },
   "proposal": {
     "introduction": {
-      "title": "Novo título com exatamente 60 caracteres",
-      "subtitle": "Novo subtítulo com exatamente 100 caracteres",
+      "title": "Elevamos Campanha Premium de Marca com liderança inteligente",
+      "subtitle": "Entregamos visão, precisão e impacto para transformar decisões em lucro previsível e sustentável · ·",
       "services": [
-        "Serviço 1 com exatamente 30 caracteres",
-        "Serviço 2 com exatamente 30 caracteres",
-        "Serviço 3 com exatamente 30 caracteres",
-        "Serviço 4 com exatamente 30 caracteres"
+        "Consultoria estratégica · · · ",
+        "Design premium autoral · · · ·",
+        "Execução multidisciplinar · · ",
+        "Inteligência de crescimento · "
       ],
-      "validity": "dd/mm/aaaa",
-      "buttonText": "texto"
+      "validity": "22/11/2025",
+      "buttonText": "Descobrir agora"
     },
     "aboutUs": {
-      "title": "Novo título com exatamente 155 caracteres que é bem longo para um título mas é necessário",
-      "supportText": "Novo supportText com exatamente 70 caracteres que é muito curto mas é necessário",
-      "subtitle": "Novo subtítulo com exatamente 250 caracteres que é muito longo e precisa ser cortado para ser lido facilmente"
+      "title": "Guiamos Gabriel Souza com estratégia premium, clareza e ritmo decisivo · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ",
+      "supportText": "Construímos confiança que acelera evolução constante · · · · · · · · ·",
+      "subtitle": "Combinamos consultoria, design e execução orientados por dados para transformar ambições em crescimento sólido, experiências memoráveis e presença dominante em cada ponto de contato. · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·"
     },
     "team": {
       "title": "Crescemos lado a lado em cada decisão estratégica · · · · · ",
       "subtitle": "Nossa equipe multidisciplinar integra estratégia, criação e tecnologia para conduzir transformações com proximidade, con"
     },
     "specialties": {
-      "title": "Elevando a Gestão de Clínicas Médicas com Soluções SaaS de Alto Padrão - Excelência em Desenvolvimento e Inovação Tecnológica para Mariana Rocha",
+      "title": "Fotografia de Luxo para Campanha Premium de Joias: Resultados Excepcionais com Atelier Fotográfico Premium e Gabriel Souza, Entregando Imagens Impactantes e Memoráveis",
       "topics": [
         {
-          "title": "Arquitetura de Sistemas Escaláveis para Plataformas SaaS Avançadas",
-          "description": "Desenvolvimento de infraestrutura robusta e eficiente, garantindo performance e escalabilidade para atender a demanda crescente de usuários de clínicas médicas."
+          "title": "Fotografia de Produtos de Joias de Luxo com Iluminação Especializada",
+          "description": "Captura de detalhes com precisão e arte, destacando a beleza e luxo dos produtos de joias com equipamentos de ponta e técnicas avançadas."
         },
         {
-          "title": "Sistema de Agendamentos Inteligentes e Integrados com Telemedicina",
-          "description": "Criação de um agendador avançado, com notificações automatizadas, gerenciamento de horários e sincronização em tempo real para consultas presenciais e online."
+          "title": "Lifestyle e Moda de Luxo: Fotografia de Ambientes Sofisticados",
+          "description": "Criando cenas de luxo e sofisticação para destacar a marca de joias, com atenção ao design e à estética de alto padrão e narrativa visual."
         },
         {
-          "title": "Prontuários Eletrônicos de Saúde Seguros e Completos com HL7 e FHIR",
-          "description": "Implementação de um sistema de prontuários eletrônicos interoperáveis, com criptografia de dados, conformidade regulatória e acesso fácil para profissionais de saúde, seguindo padrões HL7 e FHIR."
+          "title": "Retratos Executivos de Alto Nível com Iluminação Cinematográfica",
+          "description": "Capturando a essência e personalidade dos executivos, transmitindo confiança e autoridade, com técnica e arte fotográfica de alta qualidade."
         },
         {
-          "title": "Telemedicina Avançada com Integração de Vídeo e Áudio de Alta Qualidade",
-          "description": "Desenvolvimento de uma plataforma de telemedicina com tecnologia de vídeo e áudio de alta definição, integração com prontuários eletrônicos e suporte a múltiplos dispositivos para consultas online seguras."
+          "title": "Material para Redes Sociais: Conteúdo Visual Atraente e Engajador",
+          "description": "Desenvolvendo estratégias visuais para aumentar o engajamento e alcance nas redes sociais, com foco em qualidade e estética de luxo e storytelling."
         },
         {
-          "title": "Integração com Sistemas de Pagamento Online Seguros e Confiáveis",
-          "description": "Desenvolvimento de integrações seguras com gateways de pagamento, facilitando a gestão financeira das clínicas e garantindo a segurança das transações online, com emissão automatizada de notas fiscais."
+          "title": "Fotografia para Catálogo Premium: Imagens de Alto Padrão e Qualidade",
+          "description": "Criando imagens de produtos de joias de luxo para catálogos, com atenção ao detalhe e à apresentação de alta qualidade e layout sofisticado."
         },
         {
-          "title": "Aplicativo Mobile Nativo para Clínicas Médicas com Funcionalidades Completas",
-          "description": "Criação de um aplicativo mobile nativo, com interface intuitiva, funcionalidades completas, otimização para dispositivos móveis e sincronização em tempo real para pacientes e profissionais de saúde."
+          "title": "Iluminação Avançada para Joias: Técnicas Especializadas",
+          "description": "Técnicas de iluminação avançadas para realçar o brilho, o corte e a textura das joias, criando imagens que capturam a essência do luxo e sofisticação."
         },
         {
-          "title": "Metodologias Ágeis e Gestão de Projetos Personalizadas",
-          "description": "Aplicação de metodologias ágeis como Scrum e Kanban, garantindo entregas rápidas, flexibilidade no desenvolvimento do projeto e qualidade superior, com foco nas necessidades específicas das clínicas médicas."
+          "title": "Composição e Estilo Artístico: Fotografia de Luxo",
+          "description": "Composição cuidadosa e estilo artístico para criar imagens que não apenas mostram, mas também contam histórias de elegância e sofisticação, com foco em detalhe e precisão."
         },
         {
-          "title": "Segurança de Dados e Conformidade Regulatória com LGPD e GDPR",
-          "description": "Implementação de medidas de segurança robustas, conformidade com regulamentações como LGPD e GDPR, protegendo dados sensíveis e garantindo a privacidade dos pacientes, com criptografia de ponta e acesso controlado."
+          "title": "Edição e Pós-Produção Premium: Qualidade Exceptional",
+          "description": "Edição profissional e pós-produção de alta qualidade, garantindo que cada imagem atenda aos mais altos padrões de acabamento e detalhamento, com correção de cores precisa."
         },
         {
-          "title": "Suporte Técnico Especializado e Manutenção Contínua para Plataformas SaaS",
-          "description": "Oferecimento de suporte técnico especializado, manutenção contínua, garantindo o funcionamento ideal, a evolução da plataforma e a satisfação dos usuários, com monitoramento em tempo real e atualizações regulares."
+          "title": "Gestão de Projetos Fotográficos: Excelência Técnica e Artística",
+          "description": "Gestão completa do projeto, desde a concepção até a entrega, garantindo que todos os aspectos sejam executados com excelência e precisão, com foco em resultados excepcionais."
         }
       ]
     },
@@ -302,10 +302,10 @@
     }
   },
   "workflowMetadata": {
-    "service": "desenvolvedor",
-    "agent": "Especialista em Desenvolvimento",
-    "timestamp": "2025-11-08T04:09:12.559Z",
+    "service": "photography",
+    "agent": "Fotógrafo Premium",
+    "timestamp": "2025-11-08T04:11:26.843Z",
     "generationType": "prime-workflow"
   },
-  "generatedAt": "2025-11-08T04:09:12.559Z"
+  "generatedAt": "2025-11-08T04:11:26.843Z"
 }

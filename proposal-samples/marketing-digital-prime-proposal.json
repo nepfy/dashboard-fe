@@ -30,56 +30,56 @@
         "Serviço 3 com exatamente 30 caracteres",
         "Serviço 4 com exatamente 30 caracteres"
       ],
-      "validity": "",
-      "buttonText": ""
+      "validity": "dd/mm/aaaa",
+      "buttonText": "\"Clique aqui\""
     },
     "aboutUs": {
-      "title": "Novo título com exatamente 155 caracteres: é um exemplo de título bem definido e conciso",
-      "supportText": "Novo supportText com exatamente 70 caracteres: este texto deve ser útil",
-      "subtitle": "Novo subtítulo com exatamente 250 caracteres: é um exemplo de subtítulo que explica um pouco mais do que o título"
+      "title": "Novo título com exatamente 155 caracteres de comprimento",
+      "supportText": "Novo supportText com exatamente 70 caracteres de texto",
+      "subtitle": "Novo subtítulo com exatamente 250 caracteres de descrição"
     },
     "team": {
       "title": "Crescemos lado a lado em cada decisão estratégica · · · · · ",
       "subtitle": "Nossa equipe multidisciplinar integra estratégia, criação e tecnologia para conduzir transformações com proximidade, con"
     },
     "specialties": {
-      "title": "Estratégia Premium de Marketing Digital para Clínicas Estéticas: Posicionamento de Marca, Campanhas Multicanal, Automação Avançada e Análise de Performance para ROI Superior e Crescimento Sustentável",
+      "title": "Estratégia Premium de Marketing Digital para Clínicas Estéticas: Resultados Garantidos com Análise Avançada e Otimização Contínua para Maior Conversão e ROI Superior em 180 Caracteres",
       "topics": [
         {
-          "title": "Posicionamento Estratégico de Marca Premium para Clínicas Estéticas",
-          "description": "Desenvolvimento de identidade visual e narrativa de marca para estabelecer liderança e autoridade no mercado estético com foco em exclusividade e sofisticação"
+          "title": "Posicionamento Estratégico de Marca Premium em Estética com Alto Impacto",
+          "description": "Desenvolvimento de identidade visual e narrativa premium para posicionar a rede como referência no mercado estético, com diferenciais exclusivos e valor percebido elevado, melhorando a autoridade e o reconhecimento da marca."
         },
         {
-          "title": "Campanhas Multicanal Integradas para Clínicas Estéticas de Luxo",
-          "description": "Estratégias avançadas em Google Ads, Meta Ads e LinkedIn com segmentação precisa para captação de clientes de alto valor no setor estético e maximizar alcance e engajamento"
+          "title": "Campanhas Multicanal Integradas para Alto Impacto e Conversão",
+          "description": "Estratégias coordenadas em Google Ads, redes sociais, email marketing e mídia programática para maximizar alcance e engajamento do público-alvo premium, aumentando a visibilidade e a conversão de leads."
         },
         {
-          "title": "Automação Avançada de Marketing e Vendas para Clínicas Estéticas",
-          "description": "Implementação de fluxos automatizados premium para nutrição de leads, agendamentos e fidelização com personalização em massa e otimização de processos"
+          "title": "Automação Avançada de Jornada do Cliente Estético com Tecnologias de Ponta",
+          "description": "Implementação de fluxos automatizados de nutrição, remarketing e conversão com triggers comportamentais para maximizar vendas e fidelização, melhorando a eficiência do funil de vendas e a experiência do cliente."
         },
         {
-          "title": "Otimização de Conversão e CRO Avançado para Clínicas Estéticas",
-          "description": "Análise e implementação de melhorias contínuas em landing pages, formulários e jornada do cliente para maximizar taxas de conversão e ROI"
+          "title": "Otimização de Conversão (CRO) para Procedimentos Estéticos com Foco em ROI",
+          "description": "Análise e melhorias contínuas em landing pages, formulários e UX para aumentar taxas de agendamento e reduzir custo por aquisição, garantindo um retorno sobre investimento superior e uma experiência de usuário premium."
         },
         {
-          "title": "Gestão de Reputação Digital Premium para Clínicas Estéticas",
-          "description": "Estratégia completa para monitoramento, gestão e melhoria da reputação online nas principais plataformas e review sites para clínicas estéticas de luxo"
+          "title": "Gestão de Tráfego Pago com Foco em ROI Premium e Otimização Avançada",
+          "description": "Otimização avançada de campanhas segmentadas por procedimento, perfil demográfico e comportamento para maximizar retorno sobre investimento, melhorando a eficiência e a rentabilidade das ações de marketing."
         },
         {
-          "title": "Conteúdo Estratégico para Autoridade e Diferenciação",
-          "description": "Desenvolvimento de conteúdo premium especializado para posicionamento como autoridade no mercado estético e médico e diferenciação da concorrência"
+          "title": "Estratégia de Conteúdo Premium para Autoridade e Educação em Estética",
+          "description": "Desenvolvimento de conteúdo especializado em estética com foco em educar, engajar e converter público-alvo através de valor agregado, fortalecendo a autoridade e atração da marca no mercado estético."
         },
         {
-          "title": "Análise Preditiva e Inteligência de Mercado para Clínicas Estéticas",
-          "description": "Utilização de dados avançados e IA para prever tendências, comportamentos e oportunidades no mercado estético premium e tomar decisões informadas"
+          "title": "Analytics Avançado e Mensuração de Performance com KPIs Específicos",
+          "description": "Implementação de dashboards customizados e relatórios de performance com KPIs específicos para clínicas estéticas e ROI detalhado, garantindo uma visão clara e precisa do desempenho da estratégia de marketing."
         },
         {
-          "title": "Estratégia de Retenção e Fidelização Premium para Clínicas Estéticas",
-          "description": "Programas exclusivos de fidelização e retenção com personalização avançada para aumento do lifetime value dos clientes e manutenção da base de clientes"
+          "title": "Estratégia de Remarketing Inteligente para Leads Qualificados e Fidelização",
+          "description": "Segmentação avançada de audiências e campanhas personalizadas para reconquistar leads qualificados e aumentar taxas de conversão, melhorando a fidelização e a retenção de clientes."
         },
         {
-          "title": "Dashboard de Performance e ROI em Tempo Real para Clínicas Estéticas",
-          "description": "Plataforma exclusiva com métricas avançadas, KPI's personalizados e relatórios automatizados para decisões estratégicas e otimização contínua do desempenho"
+          "title": "Gestão de Reputação Online e Reviews Premium para Construir Confiança",
+          "description": "Estratégia proativa de monitoramento, resposta e incentivo a reviews positivos para construir confiança e autoridade digital, melhorando a reputação online e a credibilidade da marca no mercado estético."
         }
       ]
     },
@@ -304,8 +304,8 @@
   "workflowMetadata": {
     "service": "marketing-digital",
     "agent": "Especialista em Marketing Digital",
-    "timestamp": "2025-11-08T03:30:01.929Z",
+    "timestamp": "2025-11-08T04:06:17.202Z",
     "generationType": "prime-workflow"
   },
-  "generatedAt": "2025-11-08T03:30:01.929Z"
+  "generatedAt": "2025-11-08T04:06:17.202Z"
 }

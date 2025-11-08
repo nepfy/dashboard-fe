@@ -24,148 +24,154 @@
     "introduction": {
       "userName": "",
       "email": "",
-      "title": "Transforme Seu Lar Com Elegância E Funcional",
-      "subtitle": "Criamos ambientes que unem estética, conforto e funcionalidade para você e sua família sempre com",
+      "title": "Transforme Seu Espaço Com Funcionalidade",
+      "subtitle": "Unimos estética, conforto e bem-estar para criar ambientes únicos e funcionais para você",
       "services": [
-        "Arquitetura Residencial",
-        "Design de Interiores Exclus",
-        "Planejamento de Espaços",
-        "Acompanhamento de Obra"
+        "Projeto Arquitetônico Completo",
+        "Design de Interiores Personal",
+        "Especificações Técnicas Detal",
+        "Acompanhamento de Obra Cuidado"
       ],
       "validity": "15 dias",
       "buttonText": "Solicitar Proposta"
     },
     "aboutUs": {
       "title": "Transformamos espaços em lares contemporâneos",
-      "supportText": "Confiança e expertise",
-      "subtitle": "Criamos ambientes funcionais e esteticamente agradáveis, valorizando cada detalhe para entrega de projetos residenciais de alta qualidade, sustentabilidade e conforto."
+      "supportText": "Experiência e confiança",
+      "subtitle": "Nossa equipe cria projetos que unem estética, funcionalidade e sustentabilidade, garantindo conforto e bem-estar em cada detalhe, refletindo seu estilo de vida único"
     },
     "team": {
-      "title": "Trabalhamos juntos para criar lares perfeitos",
+      "title": "Dedicação e parceria para seu lar",
       "members": [
         {
-          "name": "Luiza Silva",
+          "name": "Luiza Oliveira",
           "role": "Arquiteta Responsável",
           "image": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "87f428cc-a7a7-45b2-9d66-25d69ab261fe"
+          "id": "33cb11c1-be3b-44e8-8265-b6ec3491865c"
         },
         {
-          "name": "Pedro Martins",
-          "role": "Engenheiro Civil",
-          "image": "/images/templates/flash/placeholder.png",
-          "hidePhoto": false,
-          "hideMember": false,
-          "sortOrder": 0,
-          "id": "c082517b-8365-49e3-8f8d-07972ec48101"
-        },
-        {
-          "name": "Beatriz Oliveira",
+          "name": "Pedro Silva",
           "role": "Designer de Interiores",
           "image": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "f83659d5-7466-4b56-9192-77561d891a84"
+          "id": "d110aaf2-5026-418b-b80c-67d870ed2c97"
+        },
+        {
+          "name": "Rafael Martins",
+          "role": "Engenheiro Civil",
+          "image": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "hideMember": false,
+          "sortOrder": 0,
+          "id": "7c865809-e0d8-49df-be30-8f42e2dc3408"
         }
       ]
     },
     "specialties": {
-      "title": "Transformamos espaços em lares contemporâneos",
+      "title": "Especialistas em projetos de arquitetura contemporânea",
       "topics": [
         {
-          "title": "Arquitetura Inovadora",
-          "description": "Projetos que unem estética e funcionalidade",
-          "id": "2a1d794f-f32a-47da-bdf5-662626ee475b"
+          "id": "uuid-1",
+          "icon": "DiamondIcon",
+          "title": "Arquitetura inovadora",
+          "description": "Projetos que unem estética e funcionalidade."
         },
         {
-          "title": "Design de Interiores",
-          "description": "Ambientes personalizados e esteticamente atraentes",
-          "id": "54163429-b64c-4f9e-b05c-d9deace17a14"
+          "id": "uuid-2",
+          "icon": "CircleIcon",
+          "title": "Plantas otimizadas",
+          "description": "Distribuição espacial que maximiza conforto."
         },
         {
-          "title": "Sustentabilidade",
-          "description": "Soluções ecoeficientes para residências eficientes",
-          "id": "a8eaa175-9fa1-411a-acdf-bebb33c2e257"
+          "id": "uuid-3",
+          "icon": "BubblesIcon",
+          "title": "Elevações precisas",
+          "description": "Detalhes que valorizam a fachada e estética."
         },
         {
-          "title": "Otimização Espacial",
-          "description": "Distribuição inteligente para confort e produtividade",
-          "id": "3a0b0cc6-1326-49d3-8ec7-3922db215820"
+          "id": "uuid-4",
+          "icon": "ClockIcon",
+          "title": "Acompanhamento de obra",
+          "description": "Supervisão constante para garantir qualidade."
         },
         {
-          "title": "Acompanhamento de Obra",
-          "description": "Garantimos qualidade e fidelidade ao projeto original",
-          "id": "714b8d23-de1c-4187-9b17-eab19f99f804"
+          "id": "uuid-5",
+          "icon": "GlobeIcon",
+          "title": "Integração com terreno",
+          "description": "Projeto que dialoga com o entorno de 500m²."
         },
         {
-          "title": "Soluções Personalizadas",
-          "description": "Atenção individualizada para cada projeto único",
-          "id": "8497e2cf-727b-4aeb-8fa9-3d2adeeaf52e"
+          "id": "uuid-6",
+          "icon": "ThunderIcon",
+          "title": "Gestão de projeto eficiente",
+          "description": "Coordenação completa até entrega final."
         }
       ]
     },
     "steps": {
       "title": "Nosso Processo",
-      "introduction": "Criando com cuidado",
+      "introduction": "Cuidado e precisão",
       "topics": [
         {
-          "id": "d751a554-b505-4ee5-98ca-79790bbb27c6",
-          "title": "Entendendo",
-          "description": "Entendemos suas necessidades e desejos, traduzindo cada detalhe em soluções funcionais e estéticas para sua casa contemporânea de 200m², garantindo que cada decisão traga conforto, beleza e valorização do seu espaço."
+          "id": "3de4d7e9-de69-42ad-9826-00b17667de87",
+          "title": "Análise do Terreno",
+          "description": "Entendemos a topografia e potencial do terreno de 500m²"
         },
         {
-          "id": "7778e437-6540-4c1b-bbc0-54e838d27e8e",
-          "title": "Projetando",
-          "description": "Desenvolvemos plantas, elevações e especificações técnicas personalizadas para sua residência unifamiliar, considerando o terreno de 500m² e as melhores práticas de arquitetura contemporânea para maximizar a funcionalidade e o conforto."
+          "id": "683da980-ca21-4cb1-91fb-a8acccf8371c",
+          "title": "Criação de Conceito",
+          "description": "Desenvolvemos um conceito para a residência unifamiliar de 200m², integrando design moderno"
         },
         {
-          "id": "e8790b64-f36c-41d4-b904-92ef0f60be1d",
-          "title": "Acompanhando",
-          "description": "Acompanhamos a obra de perto, garantindo que cada etapa seja executada com precisão e cuidado, desde a fundação até a entrega final, para que você possa desfrutar de seu lar sonhado com segurança e qualidade."
+          "id": "f020aac9-c270-4f63-b7ad-aa7a8fd822b4",
+          "title": "Desenho de Plantas",
+          "description": "Criamos plantas personalizadas para a residência, considerando funcionalidade e estética"
         },
         {
-          "id": "7ae072b1-2611-4ec6-a54c-f24999747e5c",
-          "title": "Otimizando",
-          "description": "Otimizamos cada detalhe do projeto para maximizar a funcionalidade e o conforto do espaço, considerando a iluminação natural, a ventilação e a sustentabilidade, para criar um ambiente acolhedor, saudável e que atenda às suas necessidades."
+          "id": "125a8d54-cc52-4f1b-a0fe-dec42375b1f7",
+          "title": "Especificações Técnicas",
+          "description": "Elaboramos especificações técnicas para garantir a qualidade da construção"
         },
         {
-          "id": "dc013c28-4dc7-4fdb-9c5d-e391a8170d33",
-          "title": "Entregando",
-          "description": "Entregamos o projeto finalizado com todos os detalhes e especificações necessárias para a construção de sua casa contemporânea, garantindo que você possa aproveitar ao máximo seu novo lar, com conforto, beleza e funcionalidade integradas."
+          "id": "c1486717-23ef-4a3b-a955-3979d7e64984",
+          "title": "Acompanhamento",
+          "description": "Acompanhamos a obra para garantir que tudo seja executado conforme o projeto"
         }
       ],
       "marquee": []
     },
     "scope": {
-      "content": "Nós transformamos seu terreno de 500m² em uma residência unifamiliar contemporânea de 200m², com projeto arquitetônico completo, plantas, elevações e especificações técnicas precisas, garantindo um lar que une beleza, funcionalidade e conforto, superando suas expectativas."
+      "content": "Transformamos seu terreno de 500m² em uma residência unifamiliar contemporânea de 200m², com projeto arquitetônico completo, plantas, elevações e especificações técnicas precisas, garantindo um espaço funcional, estético e personalizado, com acompanhamento de obra detalhado para criar um lar único e acolhedor."
     },
     "investment": {
-      "title": "Investimento Personalizado",
+      "title": "Investimento em Casa Contemporânea",
       "deliverables": [
         {
           "title": "Projeto Arquitetônico",
-          "description": "Desenvolvemos projeto arquitetônico completo, incluindo plantas, elevações e especificações técnicas, garantindo um lar contemporâneo funcional e esteticamente agradável."
+          "description": "Desenvolvemos um projeto arquitetônico completo e personalizado para sua residência, considerando todas as suas necessidades e desejos."
         },
         {
           "title": "Acompanhamento de Obra",
-          "description": "Oferecemos acompanhamento de obra personalizado, assegurando que cada etapa seja concluída com qualidade e atenção."
+          "description": "Fornecemos acompanhamento de obra especializado, garantindo que cada detalhe seja executado com precisão e cuidado."
         },
         {
-          "title": "Design de Interiores",
-          "description": "Criamos um design de interiores personalizado, combinando estética e funcionalidade para cada ambiente."
+          "title": "Consultoria de Design",
+          "description": "Oferecemos consultoria de design de interiores personalizada, ajudando a escolher materiais, cores e móveis."
         }
       ],
       "plansItems": [
         {
           "id": "1",
           "title": "Básico",
-          "description": "Projeto arquitetônico básico para residência unifamiliar.",
-          "value": "R$5.000",
+          "description": "Projeto arquitetônico básico para residências pequenas",
+          "value": "R$7.000",
           "planPeriod": "Único",
-          "buttonTitle": "Contratar",
+          "buttonTitle": "Escolher",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -175,20 +181,20 @@
           "sortOrder": 0,
           "includedItems": [
             {
-              "id": "1.1",
-              "description": "Plantas arquitetônicas",
+              "id": "1",
+              "description": "Plantas",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "1.2",
-              "description": "Elevações",
+              "id": "2",
+              "description": "Especificações",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "1.3",
-              "description": "Acompanhamento básico",
+              "id": "3",
+              "description": "Acompanhamento",
               "hideItem": false,
               "sortOrder": 2
             }
@@ -196,11 +202,11 @@
         },
         {
           "id": "2",
-          "title": "Completo",
-          "description": "Projeto arquitetônico completo com design de interiores.",
-          "value": "R$8.500",
+          "title": "Avançado",
+          "description": "Projeto arquitetônico avançado para residências médias",
+          "value": "R$10.500",
           "planPeriod": "Único",
-          "buttonTitle": "Contratar",
+          "buttonTitle": "Escolher",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -210,26 +216,26 @@
           "sortOrder": 1,
           "includedItems": [
             {
-              "id": "2.1",
-              "description": "Projeto arquitetônico",
+              "id": "4",
+              "description": "Projeto de interiores",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "2.2",
-              "description": "Design de interiores",
+              "id": "5",
+              "description": "Análise de iluminação",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "2.3",
-              "description": "Acompanhamento de obra",
+              "id": "6",
+              "description": "Acompanhamento avançado",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "2.4",
-              "description": "Consultoria de materiais",
+              "id": "7",
+              "description": "Consultoria",
               "hideItem": false,
               "sortOrder": 3
             }
@@ -238,10 +244,10 @@
         {
           "id": "3",
           "title": "Premium",
-          "description": "Projeto arquitetônico de alta gama com acompanhamento integral.",
-          "value": "R$10.500",
+          "description": "Projeto arquitetônico premium para residências grandes",
+          "value": "R$14.000",
           "planPeriod": "Único",
-          "buttonTitle": "Contratar",
+          "buttonTitle": "Escolher",
           "recommended": true,
           "hideTitleField": false,
           "hideDescription": false,
@@ -251,32 +257,32 @@
           "sortOrder": 2,
           "includedItems": [
             {
-              "id": "3.1",
-              "description": "Projeto arquitetônico exclusivo",
+              "id": "8",
+              "description": "Projeto personalizado",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "3.2",
-              "description": "Design de interiores personalizado",
+              "id": "9",
+              "description": "Análise de sustentabilidade",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "3.3",
-              "description": "Acompanhamento de obra dedicado",
+              "id": "10",
+              "description": "Acompanhamento premium",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "3.4",
-              "description": "Consultoria de materiais de luxo",
+              "id": "11",
+              "description": "Consultoria de design",
               "hideItem": false,
               "sortOrder": 3
             },
             {
-              "id": "3.5",
-              "description": "Apoio técnico premium",
+              "id": "12",
+              "description": "Entrega de projetos",
               "hideItem": false,
               "sortOrder": 4
             }
@@ -285,34 +291,34 @@
       ]
     },
     "results": {
-      "title": "Projetos que transformam espaços",
+      "title": "Resultados que transformam lares",
       "items": [
         {
-          "id": "e0455743-a694-4420-9af1-3a91fe78351e",
-          "client": "Cliente 1",
-          "instagram": "cliente1",
-          "investment": 1200,
-          "roi": 1800,
+          "id": "4ef112e8-aab2-40a3-86f0-9f7055e4582e",
+          "client": "Família Silva",
+          "instagram": "Família Silva",
+          "investment": 8000,
+          "roi": 12000,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "4c4cfc61-a188-408d-875d-6dd9d89e584e",
-          "client": "Cliente 2",
-          "instagram": "cliente2",
-          "investment": 1500,
-          "roi": 2200,
+          "id": "1efd59b4-10ae-4604-b40b-9aef8da30003",
+          "client": "Casa dos Sonhos",
+          "instagram": "Casa dos Sonhos",
+          "investment": 10000,
+          "roi": 15000,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
         },
         {
-          "id": "6f805812-280f-409d-be7c-a20de5c606b2",
-          "client": "Cliente 3",
-          "instagram": "cliente3",
-          "investment": 1800,
-          "roi": 2800,
+          "id": "cddf3c4e-1cd9-4ede-9526-03da307749fa",
+          "client": "Lar Contemporâneo",
+          "instagram": "Lar Contemporâneo",
+          "investment": 12000,
+          "roi": 18000,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 2
@@ -323,7 +329,7 @@
       "title": "Depoimentos",
       "items": [
         {
-          "id": "a0bdc028-8004-40a3-a286-dfb616550b91",
+          "id": "44a0d92d-a97d-4709-aaba-3a634a8d0275",
           "name": "Luiz Fernandes",
           "role": "Gerente de Projetos",
           "testimonial": "O projeto arquitetônico completo para minha residência contemporânea foi entregue com excelência.",
@@ -332,10 +338,10 @@
           "sortOrder": 0
         },
         {
-          "id": "ccd46693-b2de-4f60-a242-3f83407121af",
-          "name": "Beatriz Sousa",
-          "role": "Arquiteta",
-          "testimonial": "A equipe desenvolveu um projeto personalizado que atendeu às minhas necessidades.",
+          "id": "69124e50-3e68-4c42-8414-e27d7e17019e",
+          "name": "Beatriz Souza",
+          "role": "Diretora de Desenvolvimento",
+          "testimonial": "A equipe foi fundamental para desenvolver meu projeto de residência unifamiliar.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
@@ -345,70 +351,70 @@
     "terms": [
       {
         "title": "Prazo",
-        "description": "Entregamos projetos em até 30 dias, garantindo qualidade e atenção",
-        "id": "723441d5-8561-4d8f-923b-e7ab420b4ac2"
+        "description": "Entregamos projetos em até 90 dias, garantindo qualidade, precisão e suporte contínuo.",
+        "id": "9c4a31f2-e1df-41c1-a41a-e7870c52ea1b"
       },
       {
         "title": "Pagamento",
-        "description": "Oferecemos parcelamento flexível para facilitar o investimento",
-        "id": "bb888684-a134-44c2-8a5e-3f659b8ebbef"
+        "description": "Oferecemos pagamento parcelado em até 10x sem juros, com entrada de 30% e parcelas mensais flexíveis.",
+        "id": "589eb148-400a-42f6-a04e-c71ff4557ec3"
       },
       {
         "title": "Suporte",
-        "description": "Fornecemos suporte técnico durante o projeto",
-        "id": "700c898d-6255-4def-9f8f-79643c74eb64"
+        "description": "Fornecemos suporte técnico especializado e acompanhamento de obra, esclarecendo dúvidas e garantindo satisfação.",
+        "id": "240d2aa2-7e07-44ee-96f0-2c4e3470575c"
       }
     ],
     "faq": [
       {
-        "question": "O que é um projeto arquitetônico?",
-        "answer": "Um projeto arquitetônico é um plano detalhado que define a estrutura, layout e design de uma construção, garantindo funcionalidade, estética e segurança, atendendo às necessidades e preferências do cliente."
+        "question": "O que é um projeto arquitetônico completo",
+        "answer": "Um projeto arquitetônico completo para uma residência unifamiliar contemporânea de 200m² inclui plantas, elevações, especificações técnicas e acompanhamento de obra, garantindo um resultado personalizado e funcional, com atenção a detalhes de estética e sustentabilidade."
       },
       {
-        "question": "Qual o prazo para entrega do projeto?",
-        "answer": "O projeto será entregue em até 60 dias, garantindo que cada detalhe esteja perfeito e alinhado às suas necessidades, com acompanhamento detalhado durante a construção."
+        "question": "Como são desenvolvidas as plantas",
+        "answer": "Nossos arquitetos criam plantas que maximizam a utilização do espaço, integrando áreas de convívio, circulação e privacidade, garantindo funcionalidade e estética, além de considerar a sustentabilidade e o bem-estar dos moradores."
       },
       {
-        "question": "Vocês fornecem acompanhamento durante a obra?",
-        "answer": "Sim, oferecemos acompanhamento detalhado durante a construção, garantindo que todas as especificações e detalhes sejam seguidos com precisão, assegurando a qualidade e a satisfação do resultado final."
+        "question": "Quais materiais são recomendados",
+        "answer": "Recomendamos materiais modernos e sustentáveis, como concreto aparente, vidro e madeira, que proporcionam durabilidade, beleza e harmonia com o ambiente, além de valorizar a residência e reduzir o impacto ambiental."
       },
       {
-        "question": "Como garantem a funcionalidade dos espaços?",
-        "answer": "Nós desenvolvemos projetos pensando na rotina e nas necessidades de cada família, otimizando espaços para maior praticidade e conforto, criando ambientes que unem beleza, conforto e inovação."
+        "question": "Como a iluminação natural é considerada",
+        "answer": "A iluminação natural é fundamental; projetamos janelas estrategicamente posicionadas para maximizar a entrada de luz, reduzir a necessidade de iluminação artificial e criar ambientes aconchegantes e energéticos, melhorando a qualidade de vida dos moradores."
       },
       {
-        "question": "Posso solicitar ajustes no projeto?",
-        "answer": "Sim, incluímos ciclos de ajustes para garantir que cada detalhe esteja alinhado aos seus desejos, com segurança de que sua casa será transformada conforme suas expectativas, sem custos extras dentro do escopo definido."
+        "question": "O projeto inclui soluções de sustentabilidade",
+        "answer": "Sim, incorporamos soluções sustentáveis como coleta de água da chuva, sistemas de energia solar e materiais recicláveis, reduzindo o impacto ambiental e gerando economia a longo prazo, além de melhorar a eficiência energética da residência."
       },
       {
-        "question": "Vocês consideram a sustentabilidade no projeto?",
-        "answer": "Sim, incorporamos soluções sustentáveis, como sistemas de captação de água da chuva e iluminação natural, para criar uma casa que é tanto bonita quanto eficiente e responsável com o meio ambiente."
+        "question": "Como o projeto considera a integração entre espaços",
+        "answer": "Projetamos áreas de transição como varandas e jardins internos para criar uma conexão fluida entre o interior e o exterior, ampliando a sensação de espaço e promovendo o bem-estar dos moradores, além de valorizar a residência."
       },
       {
-        "question": "Quais materiais são utilizados no projeto?",
-        "answer": "Utilizamos materiais de alta qualidade e durabilidade, como madeira nobre, vidro temperado e metais resistentes, garantindo que sua casa seja não só bela, mas também robusta e duradoura."
+        "question": "O projeto contempla a acessibilidade",
+        "answer": "Sim, garantimos que todos os ambientes sejam acessíveis, com larguras de corredores e portas adequadas, além de rampas e barras de apoio, visando atender às necessidades de todos os moradores e promover a inclusão."
       },
       {
-        "question": "Como vocês garantem a privacidade no projeto?",
-        "answer": "Projetamos espaços com atenção especial à privacidade, utilizando elementos como jardins verticais, muros estrategicamente posicionados e janelas com design exclusivo, para criar um lar seguro e acolhedor."
+        "question": "Como o design de interiores é integrado",
+        "answer": "O design de interiores é pensado em conjunto com a arquitetura para criar ambientes harmônicos, utilizando moodboards para definir a paleta de cores, materiais e mobiliário, garantindo uma experiência visual e sensorial única e personalizada."
       },
       {
-        "question": "Vocês fazem a integração com a paisagem do terreno?",
-        "answer": "Sim, integramos a arquitetura com a paisagem do terreno, criando uma harmonia perfeita entre a casa e o ambiente natural, valorizando o imóvel e proporcionando uma experiência de vida única e agradável."
+        "question": "O projeto inclui consultoria de paisagismo",
+        "answer": "Sim, oferecemos consultoria de paisagismo para criar um jardim que complementa a arquitetura da casa, pensado para criar áreas de lazer, relaxamento e privacidade, valorizando o espaço externo e melhorando a qualidade de vida dos moradores."
       },
       {
-        "question": "Como é o processo de pagamento?",
-        "answer": "Oferecemos parcelamento com boleto, cartão de crédito ou débito, e transferência bancária, com opções personalizadas para atender às necessidades de cada cliente, garantindo flexibilidade e tranquilidade."
+        "question": "Como o acompanhamento de obra é realizado",
+        "answer": "Realizamos visitas periódicas ao canteiro para monitorar o andamento das obras, garantindo que tudo esteja conforme o projeto, e estamos disponíveis para resolver quaisquer dúvidas, garantindo a qualidade da execução e a satisfação do cliente."
       }
     ],
     "footer": {
-      "callToAction": "Crie seu lar",
-      "disclaimer": "Estamos ao seu lado, oferecendo suporte personalizado e acompanhamento contínuo para garantir a transformação do seu espaço com cuidado e dedicação."
+      "callToAction": "Transforme",
+      "disclaimer": "Estamos ao seu lado, garantindo cuidado e suporte contínuo para uma experiência única."
     }
   },
   "workflowMetadata": {
     "sections": [],
-    "generationTime": 49040
+    "generationTime": 36567
   },
-  "generatedAt": "2025-11-08T03:28:26.131Z"
+  "generatedAt": "2025-11-08T04:04:58.951Z"
 }

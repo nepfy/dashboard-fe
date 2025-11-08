@@ -24,152 +24,158 @@
     "introduction": {
       "userName": "",
       "email": "",
-      "title": "Ativamos Site Institucional Consultivo com entrega precisa",
-      "subtitle": "Guiamos Augusto Ferragens com estratégia, execução e parceria para tornar Site Institucional Consult",
+      "title": "Elevamos sua presença visual com excelência agora",
+      "subtitle": "Unimos estratégia, execução e cuidado para entregar resultados que superam suas expectativas hoje",
       "services": [
-        "Diagnóstico estratégico",
-        "Plano orientado a dados",
-        "Execução multicanal",
-        "Monitoramento contínuo"
+        "Diagnóstico estratégico total",
+        "Plano orientado a dados reais",
+        "Execução multicanal integrada",
+        "Monitoramento contínuo eficaz"
       ],
       "validity": "15 dias",
       "buttonText": "Solicitar Proposta"
     },
     "aboutUs": {
-      "title": "Elevamos sua marca como referência digital",
+      "title": "Elevamos sua autoridade digital com estratégias consultivas inovadoras",
       "supportText": "Conectando dados e criatividade",
-      "subtitle": "Com mais de 10 anos de experiência, desenvolvemos estratégias digitais que destacam diferenciais e aceleram resultados de negócios, impulsionando o crescimento sustentável."
+      "subtitle": "Com mais de 10 anos de experiência, sua equipe ganha uma parceria confiável para acelerar resultados de negócios, conectando estratégia, design e performance em soluções industriais."
     },
     "team": {
       "title": "Nós crescemos junto com você, lado a lado em cada etapa",
       "members": [
         {
-          "name": "Luiz Felipe Silva",
-          "role": "Gerente de Projetos Digitais",
+          "name": "Ana Carolina Santos",
+          "role": "Gerente de Projetos",
           "image": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "fe9e3da5-a469-432b-a967-8f00ee9c958d"
+          "id": "b7b6ad7c-b5e2-4650-91d3-b7a07afbab2a"
         },
         {
-          "name": "Beatriz Oliveira",
-          "role": "Especialista em Experiência do Usuário",
+          "name": "Mariana Oliveira",
+          "role": "Especialista em UX/UI",
           "image": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "e33ec797-5a5b-4488-bf5d-eea8ea440584"
+          "id": "75462a80-1c8e-4e09-9c76-d837c66087ec"
         },
         {
-          "name": "Pedro Henrique Martins",
-          "role": "Desenvolvedor Front-end",
+          "name": "Rafael Souza",
+          "role": "Desenvolvedor Web",
           "image": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "hideMember": false,
           "sortOrder": 0,
-          "id": "64976926-ef3e-4406-a238-c41cf216fe14"
+          "id": "3116f5cc-39ca-4d9b-a615-11e1946f9bb0"
         }
       ]
     },
     "specialties": {
-      "title": "Estratégias digitais para liderança industrial",
+      "title": "Estratégias digitais para Excelência Industrial",
       "topics": [
         {
-          "title": "Experiência Digital",
-          "description": "Criação de jornadas imersivas e envolventes.",
-          "id": "e095f127-1b8c-43fb-9e5d-ff3fc4716446"
+          "id": "4c1a5d16-0a8c-4c7a-8b51-3f0c3d6b8e3b",
+          "icon": "DiamondIcon",
+          "title": "Desenvolvimento Web",
+          "description": "Sites institucionais para marcas líderes."
         },
         {
-          "title": "Posicionamento",
-          "description": "Autoridade e referência no mercado industrial.",
-          "id": "03a2cc97-7bc3-4f0d-9c6d-5a069ad982b1"
+          "id": "629c7d1c-2e3c-4f07-9d5f-5d7b1d8c9f1b",
+          "icon": "GlobeIcon",
+          "title": "Apresentação de cases",
+          "description": "Destaque de projetos com resultados mensuráveis."
         },
         {
-          "title": "Cases de Sucesso",
-          "description": "Resultados concretos e confiabilidade demonstrados.",
-          "id": "029965b6-d459-4deb-ae51-74e5755d96b8"
+          "id": "73b0c7d5-3e4d-4f6a-9b5e-6d7c1d8b9f2b",
+          "icon": "BubblesIcon",
+          "title": "Soluções personalizadas",
+          "description": "Desenvolvimento de funcionalidades para necessidades industriais."
         },
         {
-          "title": "Diferenciais",
-          "description": "Valores únicos destacados estrategicamente.",
-          "id": "bc575f0d-5ece-47f4-8f81-752ef8ca96c6"
+          "id": "84b1c7d8-4e5e-4f8b-9c5f-7d8c1d9b9f3b",
+          "icon": "ThunderIcon",
+          "title": "Canais de atendimento",
+          "description": "Sistemas que facilitam contato e convertem oportunidades."
         },
         {
-          "title": "Conteúdo Estratégico",
-          "description": "Educação e inspiração para liderança.",
-          "id": "6d95e1cd-e0e0-438e-b7d6-44ae46fc84de"
+          "id": "95b2c7d9-5e6f-4faa-9d5e-8d8c1d9b9f4b",
+          "icon": "CircleIcon",
+          "title": "Otimização para conversão",
+          "description": "Estratégias que transformam tráfego em leads qualificados."
         },
         {
-          "title": "Otimização SEO",
-          "description": "Visibilidade e alcance digitais maximizados.",
-          "id": "d2e64d01-4d62-4a6f-97c9-e6a0ddaa97e4"
+          "id": "a6b3c7da-6e7g-4fb5-9e5f-9d8c1d9b9f5b",
+          "icon": "BellIcon",
+          "title": "Gestão de conteúdo",
+          "description": "Conteúdo técnico que demonstra autoridade e atrai o público-alvo."
         }
       ]
     },
     "steps": {
       "title": "Nosso Processo",
-      "introduction": "Trabalhamos com cuidado e ritmo",
+      "introduction": "Avançamos com precisão",
       "topics": [
         {
-          "id": "8a0a0008-aa01-4d81-bb43-bd1007114143",
-          "title": "Análise Estratégica",
-          "description": "Analisamos seu negócio e mercado, identificando oportunidades estratégicas para criar soluções personalizadas que atendam às suas necessidades específicas e gerem resultados mensuráveis e impacto duradouro."
+          "id": "4005b407-2d0e-4d39-afda-b508c4b87b4b",
+          "title": "Análise Industrial",
+          "description": "Mapeamos mercado e objetivos para criar estratégia digital personalizada."
         },
         {
-          "id": "84ae80c0-7978-463e-a3bd-c53d32dc1f26",
-          "title": "Desenvolvimento Personalizado",
-          "description": "Desenvolvemos soluções personalizadas que destacam diferenciais, cases e canais de atendimento, criando experiências digitais consultivas inovadoras e eficazes que posicionam a marca como referência em soluções industriais."
+          "id": "13967fee-b80d-4a78-be0b-b590f03ad314",
+          "title": "Arquitetura de Conteúdo",
+          "description": "Desenvolvemos estrutura de informações técnicas e cases que demonstram expertise."
         },
         {
-          "id": "8ec65cb2-9ef2-416f-bb43-dbec5914f829",
-          "title": "Criação de Conteúdo",
-          "description": "Criamos conteúdos estratégicos e direcionados que ampliam autoridade e oportunidades, gerando resultados concretos e crescimento sustentável do seu negócio, com foco em soluções industriais e experiências digitais consultivas."
+          "id": "370304f5-3691-4212-b646-047454d4eba3",
+          "title": "Design Técnico",
+          "description": "Criamos interfaces intuitivas que destacam soluções complexas de forma clara."
         },
         {
-          "id": "44e02d28-4720-457b-b157-71eff73b7984",
-          "title": "Implementação e Testes",
-          "description": "Implementamos e testamos as soluções desenvolvidas, garantindo que atendam às necessidades do seu negócio e gerem os resultados esperados, com monitoramento contínuo e ajustes para otimizar o desempenho e o impacto."
+          "id": "8e7c254c-010b-4294-8e15-f284ca2c8fa3",
+          "title": "Desenvolvimento Robusto",
+          "description": "Implementamos tecnologias otimizadas para garantir velocidade e segurança."
         },
         {
-          "id": "a6bafdc8-bd22-4ab5-b8f4-641438f60072",
-          "title": "Acompanhamento e Otimização",
-          "description": "Acompanhamos e otimizamos as soluções implementadas, garantindo que continuem gerando resultados e crescimento sustentável, com análise de desempenho e ajustes estratégicos para manter a marca como referência em soluções industriais."
+          "id": "344dc4e0-343e-4d6b-89e4-ee34ca91ffaa",
+          "title": "Validação Estratégica",
+          "description": "Realizamos testes rigorosos para garantir funcionalidade e performance."
         }
       ],
       "marquee": []
     },
     "scope": {
-      "content": "Nós criamos um site institucional consultivo que posiciona sua marca como referência em soluções industriais, destacando diferenciais únicos e cases de sucesso, com canais de atendimento eficientes para engajar e converter visitantes em clientes fiéis, ampliando autoridade e crescimento sustentável."
+      "content": "Nós criamos uma experiência digital consultiva premium, posicionando sua marca como referência em soluções industriais, destacando diferenciais, cases de sucesso e canais de atendimento personalizados, para elevar sua autoridade, atrair leads qualificados e garantir resultados mensuráveis e impacto duradouro."
     },
     "investment": {
       "title": "Investimento Estratégico",
       "deliverables": [
         {
           "title": "Site Institucional",
-          "description": "Desenvolvemos uma experiência digital consultiva que posiciona sua marca como referência em soluções industriais, destacando diferenciais, cases e canais de atendimento para atrair e engajar o público-alvo."
+          "description": "Crie uma experiência digital consultiva que posicione sua marca como referência em soluções industriais, destacando diferenciais e cases de sucesso."
         },
         {
-          "title": "Diferenciais Destacados",
-          "description": "Destacamos os pontos fortes e únicos da sua marca para construir confiança e credibilidade, apresentando resultados reais de projetos anteriores."
+          "title": "Experiência do Usuário",
+          "description": "Desenvolva uma plataforma que ofereça navegação intuitiva e conteúdos estratégicos, melhorando a experiência do cliente e aumentando a conversão de leads em vendas."
         },
         {
-          "title": "Cases de Sucesso",
-          "description": "Apresentamos histórias de sucesso visuais e narrativas que demonstram seu know-how e posicionam sua marca como autoridade no setor industrial."
+          "title": "Gestão de Projeto",
+          "description": "Garanta entrega dentro do prazo e orçamento com acompanhamento dedicado em cada fase, desde o planejamento estratégico até a implementação e otimização contínua."
         },
         {
-          "title": "Canais de Atendimento",
-          "description": "Facilitamos a comunicação e o atendimento ao cliente, otimizando a conversão e a satisfação com guias para integração de canais de atendimento."
+          "title": "Análise de Resultados",
+          "description": "Acompanhe e ajuste estratégias com base em análises detalhadas de resultados, identificando oportunidades de melhoria e maximizando o impacto e o lucro."
         }
       ],
       "plansItems": [
         {
-          "id": "basico",
+          "id": "plano-basico",
           "title": "Básico",
-          "description": "Plano ideal para iniciar com soluções essenciais, incluindo conceito de site, conteúdo estratégico e design responsivo.",
-          "value": "R$5.900",
+          "description": "Site institucional com design responsivo e funcionalidades básicas.",
+          "value": "R$3.500",
           "planPeriod": "Único",
-          "buttonTitle": "Escolher",
+          "buttonTitle": "Contratar",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -179,32 +185,32 @@
           "sortOrder": 0,
           "includedItems": [
             {
-              "id": "siteCreation",
-              "description": "Criar site institucional",
+              "id": "item-1",
+              "description": "Design responsivo",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "differentials",
-              "description": "Destacar diferenciais",
+              "id": "item-2",
+              "description": "Páginas essenciais",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "cases",
-              "description": "Apresentar cases",
+              "id": "item-3",
+              "description": "SEO básico",
               "hideItem": false,
               "sortOrder": 2
             }
           ]
         },
         {
-          "id": "avancado",
+          "id": "plano-avancado",
           "title": "Avançado",
-          "description": "Plano completo com soluções estratégicas e otimizadas, incluindo criação de cases, canais de atendimento e SEO básico.",
-          "value": "R$9.900",
+          "description": "Plataforma completa com recursos avançados para posicionamento e geração de leads.",
+          "value": "R$6.000",
           "planPeriod": "Único",
-          "buttonTitle": "Escolher",
+          "buttonTitle": "Contratar",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -214,38 +220,38 @@
           "sortOrder": 1,
           "includedItems": [
             {
-              "id": "siteCreation",
-              "description": "Criar site institucional",
+              "id": "item-4",
+              "description": "Design personalizado",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "differentials",
-              "description": "Destacar diferenciais",
+              "id": "item-5",
+              "description": "Páginas avançadas",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "cases",
-              "description": "Apresentar cases",
+              "id": "item-6",
+              "description": "SEO avançado",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "channels",
-              "description": "Integrar canais de atendimento",
+              "id": "item-7",
+              "description": "Análise de resultados",
               "hideItem": false,
               "sortOrder": 3
             }
           ]
         },
         {
-          "id": "premium",
+          "id": "plano-premium",
           "title": "Premium",
-          "description": "Plano premium com soluções integradas e personalizadas, incluindo personalização avançada, treinamento em UX/UI e análise de SEO.",
-          "value": "R$14.900",
+          "description": "Solução completa com experiência consultiva avançada e maximização de resultados.",
+          "value": "R$9.500",
           "planPeriod": "Único",
-          "buttonTitle": "Escolher",
+          "buttonTitle": "Contratar",
           "recommended": true,
           "hideTitleField": false,
           "hideDescription": false,
@@ -255,40 +261,34 @@
           "sortOrder": 2,
           "includedItems": [
             {
-              "id": "siteCreation",
-              "description": "Criar site institucional",
+              "id": "item-8",
+              "description": "Design exclusivo",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "differentials",
-              "description": "Destacar diferenciais",
+              "id": "item-9",
+              "description": "Páginas ilimitadas",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "cases",
-              "description": "Apresentar cases",
+              "id": "item-10",
+              "description": "SEO otimizado",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "channels",
-              "description": "Integrar canais de atendimento",
+              "id": "item-11",
+              "description": "Suporte 24/7",
               "hideItem": false,
               "sortOrder": 3
             },
             {
-              "id": "optimization",
-              "description": "Otimizar SEO",
+              "id": "item-12",
+              "description": "Análise de resultados detalhada",
               "hideItem": false,
               "sortOrder": 4
-            },
-            {
-              "id": "analytics",
-              "description": "Implementar analytics",
-              "hideItem": false,
-              "sortOrder": 5
             }
           ]
         }
@@ -298,31 +298,31 @@
       "title": "Resultados que transformam negócios",
       "items": [
         {
-          "id": "665eb7f5-c12a-4de8-a5e7-586f942d2727",
-          "client": "Cliente 1",
-          "instagram": "cliente1",
-          "investment": 1500,
-          "roi": 2500,
+          "id": "8b924bc3-3d3d-4373-b9dd-20f1336555fe",
+          "client": "Indústria Inovadora",
+          "instagram": "industriainovadora",
+          "investment": 1200,
+          "roi": 1800,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "90415b91-ab02-4fed-8f3a-57aa2f0c7b6f",
-          "client": "Cliente 2",
-          "instagram": "cliente2",
-          "investment": 2000,
-          "roi": 3000,
+          "id": "a10a70bf-3d45-45a6-816e-f574db4156d5",
+          "client": "Soluções Industriais Avançadas",
+          "instagram": "solucoesindustriaisavancadas",
+          "investment": 1500,
+          "roi": 2200,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
         },
         {
-          "id": "7171e867-c51d-4eda-8188-5a740a0b76cd",
-          "client": "Cliente 3",
-          "instagram": "cliente3",
-          "investment": 2500,
-          "roi": 4000,
+          "id": "6717ae06-bd2f-46f0-bc62-733169feeeff",
+          "client": "Consultoria Técnica Especializada",
+          "instagram": "consultoriatecnicaespecializada",
+          "investment": 1000,
+          "roi": 1500,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 2
@@ -333,19 +333,19 @@
       "title": "Depoimentos",
       "items": [
         {
-          "id": "bae36a7d-51ac-4804-a14b-7d50c9b450cc",
-          "name": "Luiz Silva",
-          "role": "Gerente de Projetos",
-          "testimonial": "A criação da experiência digital consultiva foi fundamental.",
+          "id": "a9810226-5c84-48ae-90ce-5b5465eff14e",
+          "name": "Rafaela Silva",
+          "role": "Diretora de Marketing",
+          "testimonial": "A criação do site consultivo transformou nossa presença online.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "c62ebe1d-6da8-4f64-b89a-876a88e4c857",
-          "name": "Maria Oliveira",
-          "role": "Diretora de Marketing",
-          "testimonial": "A experiência digital consultiva nos ajudou a destacar diferenciais.",
+          "id": "dbb2fbeb-4b0e-4939-aa7c-1bf08ae83104",
+          "name": "Carlos Ferreira",
+          "role": "Gerente de Projetos",
+          "testimonial": "O novo site consultivo elevou a percepção da nossa marca.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
@@ -355,70 +355,70 @@
     "terms": [
       {
         "title": "Prazo",
-        "description": "Entregamos o projeto em até 60 dias úteis, com acompanhamento constante e suporte personalizado durante todo o processo, garantindo qualidade e atenção aos detalhes.",
-        "id": "3bbddf28-ed30-49da-b167-e0c662677735"
+        "description": "Desenvolvemos soluções personalizadas em até 12 semanas, garantindo entrega rápida e eficaz, com prazos flexíveis conforme necessário.",
+        "id": "d2ce2d6a-00b6-4549-90df-2cf0d8f21675"
       },
       {
         "title": "Pagamento",
-        "description": "Oferecemos opções de pagamento flexíveis, com até 3 parcelas sem juros, via cartão de crédito ou à vista via boleto bancário, com total transparência e segurança.",
-        "id": "6b21c87d-c6ff-4454-a446-ac6df115cae5"
+        "description": "Oferecemos opções de pagamento flexíveis, permitindo que você escolha o plano que melhor se adequa às suas necessidades financeiras, com parcelas divididas de forma transparente.",
+        "id": "bd5e8746-2ff8-4b8a-b423-1ed78f459f74"
       },
       {
         "title": "Suporte",
-        "description": "Fornecemos suporte técnico especializado por 30 dias após a entrega, respondendo a todas as suas dúvidas e necessidades de forma rápida e eficiente, para garantir total satisfação.",
-        "id": "77069d15-12aa-44bc-8ddb-5228da59f0c7"
+        "description": "Fornecemos suporte técnico especializado e dedicado, respondendo às suas dúvidas e necessidades de forma ágil e eficiente, com 30 dias de suporte pós-entrega garantido.",
+        "id": "7e6f387c-48d1-4019-92e5-543ccc64014d"
       }
     ],
     "faq": [
       {
-        "question": "O que é um site institucional consultivo?",
-        "answer": "Um site que destaca soluções industriais, diferenciando a marca e destacando cases e canais de atendimento, aumentando a visibilidade e o reconhecimento da empresa no mercado."
+        "question": "O que é site institucional?",
+        "answer": "Um site que apresenta soluções consultivas, destacando diferenciais e cases, posicionando a marca como referência em soluções industriais."
       },
       {
-        "question": "Como o site ajudará a minha marca?",
-        "answer": "Posicionará sua marca como referência em soluções industriais, destacando diferenciais e cases para atrair clientes qualificados, melhorando a experiência do usuário e aumentando as vendas."
+        "question": "Como destacar diferenciais?",
+        "answer": "Destacamos diferenciais com casos de sucesso e canais de atendimento personalizados, melhorando a experiência do usuário."
       },
       {
-        "question": "Quais diferenciais o site terá?",
-        "answer": "Diferenciais que destacam soluções consultivas, cases de sucesso e canais de atendimento personalizados, demonstrando a expertise e as conquistas da empresa no mercado industrial."
+        "question": "Qual a importância do design?",
+        "answer": "O design moderno e profissional reflete a imagem da marca, aprimorando a experiência do usuário e aumentando a credibilidade."
       },
       {
-        "question": "Como será a estrutura do site?",
-        "answer": "Com seções sobre soluções industriais, cases de sucesso, diferenciais e canais de atendimento para uma experiência consultiva, garantindo que os visitantes encontrem rapidamente as informações e soluções que buscam."
+        "question": "O site terá SEO?",
+        "answer": "Sim, o site será otimizado com técnicas de SEO, incluindo palavras-chave relevantes, para melhorar a visibilidade nos motores de busca."
       },
       {
-        "question": "Quanto tempo leva para criar o site?",
-        "answer": "Leva cerca de 3 a 6 meses, com etapas claras de mapeamento de necessidades, criação e entrega, garantindo que o site seja desenvolvido de forma eficaz e dentro do prazo estabelecido."
+        "question": "Como será a experiência do usuário?",
+        "answer": "A experiência do usuário será intuitiva, com design responsivo e navegação fácil, garantindo engajamento contínuo e conversões."
       },
       {
-        "question": "O site será responsivo para dispositivos móveis?",
-        "answer": "Sim, o site será totalmente responsivo, garantindo uma experiência consistente e otimizada em todos os dispositivos, desde smartphones até desktops, aumentando o engajamento e as conversões de clientes industriais."
+        "question": "Haverá integração com CRM?",
+        "answer": "Sim, a integração com CRM permitirá um atendimento personalizado, agilizando processos e proporcionando uma experiência contínua."
       },
       {
-        "question": "Como será feita a manutenção do site?",
-        "answer": "A manutenção do site será feita por meio de atualizações regulares de conteúdo, correções de bugs e melhorias contínuas, garantindo que o site permaneça atualizado e funcional, além de ser compatível com as últimas tecnologias."
+        "question": "O site terá blog?",
+        "answer": "Sim, o blog permitirá a publicação de artigos técnicos, tendências e insights, reforçando a posição da marca como líder de pensamento."
       },
       {
-        "question": "Quais são os benefícios do site?",
-        "answer": "Os benefícios do site incluem o aumento da visibilidade e do reconhecimento da empresa, a geração de leads qualificados, o aumento das vendas e a melhoria da experiência do usuário, que serão alcançados por meio da criação de uma plataforma digital eficaz e atraente."
+        "question": "Como medir o sucesso?",
+        "answer": "Medimos o sucesso do site com métricas de desempenho e feedback de usuários, garantindo ajustes contínuos para melhorar a experiência."
       },
       {
-        "question": "Como será medida a eficácia do site?",
-        "answer": "A eficácia do site será medida por meio de indicadores como o número de visitas, tempo de permanência no site, taxas de conversão e engajamento, que serão monitorados e analisados regularmente para garantir que o site esteja atingindo seus objetivos."
+        "question": "Haverá suporte técnico?",
+        "answer": "Sim, oferecemos suporte técnico especializado para garantir a evolução constante da plataforma e resolver qualquer problema que surja."
       },
       {
-        "question": "Há suporte técnico após o lançamento?",
-        "answer": "Sim, oferecemos suporte contínuo com manutenção preventiva, atualizações e otimizações para garantir performance máxima e segurança do seu site institucional, além de fornecer assistência técnica para resolver qualquer problema que possa surgir."
+        "question": "Posso solicitar ajustes?",
+        "answer": "Sim, incluímos ciclos de ajustes para garantir que o resultado final esteja alinhado às suas expectativas, sem custos extras."
       }
     ],
     "footer": {
-      "callToAction": "Evolua conosco",
-      "disclaimer": "Estamos ao seu lado, oferecendo suporte personalizado e acompanhamento contínuo para garantir seu crescimento digital com segurança e proximidade."
+      "callToAction": "Elevamos sua marca",
+      "disclaimer": "Estamos ao seu lado, oferecendo suporte personalizado e cuidado contínuo para o crescimento da sua empresa, com proximidade e segurança."
     }
   },
   "workflowMetadata": {
     "sections": [],
-    "generationTime": 32785
+    "generationTime": 75428
   },
-  "generatedAt": "2025-11-08T03:26:04.079Z"
+  "generatedAt": "2025-11-08T04:03:15.256Z"
 }
