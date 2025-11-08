@@ -49,13 +49,8 @@ export const colorToImageName: Record<string, string> = {
   "#5E4D35": "marrom",
   "#7C4257": "rosa",
 
-  // Minimal
+  // Minimal (compartilha cores com Flash, exceto preto)
   "#000000": "preto",
-  "#4F21A1": "roxo",
-  "#BE8406": "amarelo",
-  "#9B3218": "vermelho",
-  "#05722C": "verde",
-  "#182E9B": "azul",
 };
 
 export const getImagePath = (templateName: string, color: string): string => {

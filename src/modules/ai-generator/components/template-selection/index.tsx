@@ -182,7 +182,7 @@ export default function TemplateSelection({
           ref={iframeRef}
           src={
             previewTemplate === "minimal"
-              ? "/template-minimal/index.html"
+              ? "/template-minimal-visualize/index.html"
               : "/template-flash-visualize/index.html"
           }
           style={{ width: "100%", height: "100vh", border: "none" }}
