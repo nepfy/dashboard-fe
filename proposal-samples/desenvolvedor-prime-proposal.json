@@ -1,7 +1,7 @@
 {
   "agent": {
     "id": "desenvolvedor-prime-agent",
-    "name": "Especialista em Desenvolvimento Prime",
+    "name": "Especialista em Desenvolvimento",
     "sector": "Tecnologia e Desenvolvimento",
     "template": "prime"
   },
@@ -21,196 +21,15 @@
     "mainColor": "#059669"
   },
   "proposal": {
-    "success": true,
+    "success": false,
     "templateType": "prime",
-    "data": {
-      "introduction": {
-        "title": "Desenvolvimento Avançado com Qualidade Premium",
-        "subtitle": "Transforme sua empresa com soluções inovadoras e de alta performance",
-        "services": [
-          "Desenvolvimento Web Premium",
-          "App Mobile Avançado",
-          "Sistema Customizado",
-          "Integração de APIs"
-        ],
-        "validity": "09/10/2025",
-        "buttonText": "Iniciar Projeto Premium"
-      },
-      "aboutUs": {
-        "title": "Desenvolvimento Premium: Tecnologia Avançada, Qualidade Excepcional",
-        "supportText": "Especialistas em tecnologia de ponta",
-        "subtitle": "Nossa equipe de especialistas em desenvolvimento premium combina tecnologia de ponta com qualidade excepcional para criar soluções personalizadas que atendem às necessidades únicas de cada cliente. Com uma abordagem centrada no cliente e uma paixão por inovação, estamos comprometidos em fornecer experiências de usuário inovadoras e soluções escaláveis que geram valor duradouro."
-      },
-      "specialties": {
-        "title": "Especialidades PRIME",
-        "topics": [
-          {
-            "title": "Desenvolvimento de Software Ágil",
-            "description": "Desenvolvemos soluções personalizadas com metodologia ágil, garantindo qualidade e atenção aos detalhes."
-          },
-          {
-            "title": "Arquitetura de Software Robusta",
-            "description": "Criamos soluções escaláveis e robustas, com arquitetura de software personalizada para atender às necessidades do cliente."
-          },
-          {
-            "title": "Integração de Sistemas Completa",
-            "description": "Integramos sistemas e tecnologias para criar soluções unificadas e eficientes, reduzindo custos e aumentando produtividade."
-          },
-          {
-            "title": "Segurança Digital Avançada",
-            "description": "Garantimos a segurança dos dados e sistemas, com soluções de segurança digital personalizadas e atualizadas."
-          },
-          {
-            "title": "UX e Design de Experiência",
-            "description": "Criamos experiências de usuário inovadoras e atraentes, com design de interface personalizado e focado em resultados."
-          },
-          {
-            "title": "Desenvolvimento de Aplicativos Móveis",
-            "description": "Desenvolvemos aplicativos móveis personalizados, com design e funcionalidade focados em resultados e experiência do usuário."
-          },
-          {
-            "title": "Inteligência Artificial e Machine Learning",
-            "description": "Integramos inteligência artificial e machine learning em nossas soluções, para criar experiências de usuário mais personalizadas e eficientes."
-          },
-          {
-            "title": "Análise de Dados e Ciência de Dados",
-            "description": "Analisamos dados para criar insights valiosos, com soluções de ciência de dados personalizadas e atualizadas."
-          },
-          {
-            "title": "Testes de Software e Qualidade",
-            "description": "Garantimos a qualidade dos nossos produtos, com testes de software rigorosos e processos de qualidade personalizados."
-          }
-        ]
-      },
-      "steps": {
-        "introduction": "Desenvolvendo soluções de tecnologia com qualidade superior",
-        "title": "Processo PRIME",
-        "topics": [
-          {
-            "title": "Análise de Requisitos",
-            "description": "Entendemos as necessidades do cliente e definimos os requisitos do projeto, garantindo uma solução personalizada e eficaz."
-          },
-          {
-            "title": "Design e Arquitetura",
-            "description": "Desenvolvemos um design e arquitetura robusta e escalável, garantindo que a solução seja fácil de usar e manter."
-          },
-          {
-            "title": "Desenvolvimento de Solução",
-            "description": "Implementamos a solução utilizando as melhores práticas de desenvolvimento, garantindo que seja segura, escalável e fácil de manter."
-          },
-          {
-            "title": "Testes e Qualidade",
-            "description": "Realizamos testes rigorosos para garantir que a solução seja estável, segura e atenda às necessidades do cliente."
-          },
-          {
-            "title": "Implantação e Suporte",
-            "description": "Implantamos a solução no ambiente do cliente e fornecemos suporte contínuo para garantir que ela continue a atender às necessidades do negócio."
-          }
-        ]
-      },
-      "investment": {
-        "title": "Investimento em Tecnologia e Desenvolvimento",
-        "deliverables": [
-          {
-            "title": "Análise de Requisitos",
-            "description": "Desenvolvimento de um documento detalhado que define as necessidades e requisitos do projeto, garantindo a qualidade e eficiência do desenvolvimento."
-          },
-          {
-            "title": "Design de Interface",
-            "description": "Criação de uma interface de usuário intuitiva e atraente que atende às necessidades do cliente e garante uma experiência de usuário premium."
-          },
-          {
-            "title": "Testes de Qualidade",
-            "description": "Execução de testes rigorosos para garantir a qualidade e estabilidade do produto, garantindo que ele atenda às expectativas do cliente."
-          }
-        ],
-        "plans": [
-          {
-            "title": "Básico",
-            "description": "Plano básico que inclui análise de requisitos, design de interface e testes de qualidade.",
-            "value": "R$ 5.000",
-            "topics": [
-              "Desenvolvimento de uma plataforma SaaS básica",
-              "Suporte técnico básico",
-              "Atualizações de segurança"
-            ]
-          },
-          {
-            "title": "Intermediário",
-            "description": "Plano intermediário que inclui análise de requisitos, design de interface, testes de qualidade e suporte técnico avançado.",
-            "value": "R$ 10.000",
-            "topics": [
-              "Desenvolvimento de uma plataforma SaaS avançada",
-              "Suporte técnico avançado",
-              "Atualizações de segurança e manutenção"
-            ]
-          },
-          {
-            "title": "Avançado",
-            "description": "Plano avançado que inclui análise de requisitos, design de interface, testes de qualidade, suporte técnico avançado e consultoria em tecnologia.",
-            "value": "R$ 20.000",
-            "topics": [
-              "Desenvolvimento de uma plataforma SaaS personalizada",
-              "Suporte técnico premium",
-              "Atualizações de segurança e manutenção avançadas"
-            ]
-          }
-        ]
-      },
-      "terms": [
-        {
-          "title": "Prazo de Entrega",
-          "description": "O prazo de entrega é de 30 dias corridos, a contar da data de assinatura do contrato."
-        },
-        {
-          "title": "Garantia de Qualidade",
-          "description": "A Mariana Rocha garante que a plataforma SaaS Avançada atenderá aos requisitos técnicos e funcionais definidos no contrato."
-        },
-        {
-          "title": "Responsabilidade",
-          "description": "A Mariana Rocha é responsável por qualquer dano ou perda causado pela plataforma SaaS Avançada, desde que seja resultado de falha ou erro de sua parte."
-        },
-        {
-          "title": "Direitos Autorais",
-          "description": "A Mariana Rocha reserva todos os direitos autorais sobre a plataforma SaaS Avançada, incluindo designs, layouts e códigos-fonte."
-        },
-        {
-          "title": "Atualizações e Suporte",
-          "description": "A Mariana Rocha fornecerá atualizações e suporte técnico para a plataforma SaaS Avançada durante o período de 12 meses após a entrega."
-        }
-      ],
-      "faq": [
-        {
-          "question": "Qual é o processo de entrega de soluções premium?",
-          "answer": "Nossa metodologia PRIME garante um processo detalhado e personalizado para cada projeto, garantindo qualidade superior e atenção aos detalhes."
-        },
-        {
-          "question": "Como você garante a segurança e a privacidade dos dados?",
-          "answer": "Implementamos medidas de segurança robustas e seguimos as melhores práticas de privacidade para proteger os dados dos nossos clientes."
-        },
-        {
-          "question": "O que é o suporte técnico oferecido após a entrega da solução?",
-          "answer": "Nossa equipe de suporte técnico está disponível para ajudar com qualquer dúvida ou problema que você possa ter após a entrega da solução."
-        },
-        {
-          "question": "Como você garante a escalabilidade e a flexibilidade da solução?",
-          "answer": "Desenvolvemos soluções escaláveis e flexíveis que podem ser adaptadas às necessidades do nosso cliente, garantindo que a solução continue a atender às necessidades do negócio."
-        },
-        {
-          "question": "O que é o processo de revisão e atualização da solução?",
-          "answer": "Nossa equipe de revisão e atualização trabalha em estreita colaboração com o nosso cliente para garantir que a solução continue a atender às necessidades do negócio e seja atualizada regularmente."
-        }
-      ],
-      "footer": {
-        "callToAction": "Desenvolva com qualidade, cresça com PRIME"
-      }
-    },
+    "data": {},
     "metadata": {
       "service": "desenvolvedor",
-      "agent": "Especialista em Desenvolvimento Prime",
-      "timestamp": "2025-09-09T20:10:41.318Z",
-      "generationType": "prime-workflow"
+      "agent": "Especialista em Desenvolvimento",
+      "timestamp": "2025-11-08T00:55:49.123Z",
+      "generationType": "prime-workflow-failed"
     }
   },
-  "generatedAt": "2025-09-09T20:10:41.318Z"
+  "generatedAt": "2025-11-08T00:55:49.123Z"
 }

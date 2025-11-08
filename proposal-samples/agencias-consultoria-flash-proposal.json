@@ -1,0 +1,374 @@
+{
+  "agent": {
+    "id": "agencias-consultoria-flash-agent",
+    "name": "Especialista em Agências e Consultoria",
+    "sector": "Agências e Consultoria",
+    "template": "flash"
+  },
+  "testData": {
+    "companyInfo": "Com mais de 10 anos de experiência em estratégia e posicionamento digital, conectamos dados, criatividade e performance para acelerar resultados de negócios B2B e B2C.",
+    "clientName": "Augusto Ferragens",
+    "projectName": "Site Institucional Consultivo",
+    "projectDescription": "Criação de experiência digital consultiva para posicionar a marca como referência em soluções industriais, destacando diferenciais, cases e canais de atendimento.",
+    "selectedPlans": [
+      "Discovery",
+      "Growth",
+      "Enterprise"
+    ],
+    "planDetails": "Planos sob medida para conduzir crescimento consultivo com indicadores e narrativas que humanizam a marca",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#4F21A1"
+  },
+  "proposal": {
+    "introduction": {
+      "userName": "",
+      "email": "",
+      "title": "Construa Autoridade Digital Com Estratégias Inovadoras",
+      "subtitle": "Elevamos Sua Presença Online, Destacando Diferenciais, Gerando Leads Qualificados E Aumentando Recei",
+      "services": [
+        "Experiência Digital Consultiva",
+        "Posicionamento De Marca Forte ",
+        "Conteúdos Estratégicos E Cases",
+        "Canais De Atendimento Otimizad"
+      ],
+      "validity": "15 dias",
+      "buttonText": "Solicitar Proposta"
+    },
+    "aboutUs": {
+      "title": "Transformamos sua presença digital em autoridade industrial",
+      "supportText": "Conectamos dados e criatividade",
+      "subtitle": "Com mais de 10 anos de experiência, criamos experiências digitais consultivas que destacam diferenciais e cases de sucesso, posicionando sua marca como referência em soluções industriais de forma eficaz."
+    },
+    "team": {
+      "title": "Nós crescemos junto com você, lado a lado em cada etapa",
+      "members": []
+    },
+    "specialties": {
+      "title": "Elevamos marcas industriais com soluções digitais",
+      "topics": [
+        {
+          "title": "Experiência Digital",
+          "description": "Ambientes imersivos que engajam"
+        },
+        {
+          "title": "Posicionamento Estratégico",
+          "description": "Liderança com insights personalizados"
+        },
+        {
+          "title": "Conteúdo Consultivo",
+          "description": "Expertise em soluções industriais"
+        },
+        {
+          "title": "Otimização de Canais",
+          "description": "Interacao efetiva com clientes"
+        },
+        {
+          "title": "Análise de Desempenho",
+          "description": "Métricas precisas para evolução"
+        },
+        {
+          "title": "Inovação Tecnológica",
+          "description": "Soluções personalizadas para resultados"
+        }
+      ]
+    },
+    "steps": {
+      "title": "Nosso Processo",
+      "introduction": "Cuidadoso e estratégico",
+      "topics": [
+        {
+          "title": "Análise Estratégica",
+          "description": "Identificamos necessidades e oportunidades para criar soluções personalizadas que atendam aos objetivos do seu negócio, destacando diferenciais e cases de sucesso."
+        },
+        {
+          "title": "Desenvolvimento de Conteúdo",
+          "description": "Criamos conteúdos atraentes e estratégicos que destacam a marca como referência em soluções industriais, incluindo textos, imagens e vídeos de alta qualidade."
+        },
+        {
+          "title": "Design de Experiência",
+          "description": "Projetamos uma experiência digital consultiva intuitiva e agradável, facilitando a navegação e o acesso às informações mais relevantes, melhorando a interação com o usuário."
+        },
+        {
+          "title": "Implementação Tecnológica",
+          "description": "Desenvolvemos e implementamos soluções tecnológicas inovadoras e seguras, garantindo a estabilidade e o desempenho do site institucional, além de canais de atendimento eficazes."
+        },
+        {
+          "title": "Monitoramento e Otimização",
+          "description": "Acompanhamos e analisamos o desempenho do site, identificando oportunidades de melhoria e aplicando ajustes para garantir a continuidade do sucesso e o crescimento da marca."
+        }
+      ],
+      "marquee": []
+    },
+    "scope": {
+      "content": "Nós desenvolvemos uma experiência digital consultiva premium, posicionando sua marca como referência em soluções industriais, destacando diferenciais, cases de sucesso e canais de atendimento personalizados, para impulsionar resultados, consolidar autoridade e gerar conexões qualificadas no mercado."
+    },
+    "investment": {
+      "title": "Investimento Estratégico",
+      "deliverables": [
+        {
+          "title": "Análise",
+          "description": "Desenvolvemos estratégias personalizadas para aumentar a visibilidade e o impacto da sua marca, com foco em soluções industriais inovadoras e experiências digitais consultivas de alta qualidade."
+        },
+        {
+          "title": "Desenvolvimento",
+          "description": "Criamos uma experiência digital consultiva única, posicionando a marca como referência em soluções industriais, com canais de atendimento eficazes e uma presença online robusta."
+        },
+        {
+          "title": "Otimização",
+          "description": "Otimizamos o site institucional para melhor desempenho, garantindo uma experiência do usuário excepcional, com velocidade, segurança e usabilidade."
+        }
+      ],
+      "plansItems": [
+        {
+          "id": "1",
+          "title": "Básico",
+          "description": "Site institucional básico com design responsivo e conteúdo padrão.",
+          "value": "R$2.900",
+          "planPeriod": "Único",
+          "buttonTitle": "Contratar",
+          "recommended": false,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 0,
+          "includedItems": [
+            {
+              "id": "1-1",
+              "description": "Design Responsivo",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "1-2",
+              "description": "Conteúdo Padrão",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "1-3",
+              "description": "Suporte Técnico",
+              "hideItem": false,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "Avançado",
+          "description": "Desenvolvimento de site institucional avançado com design personalizado e recursos interativos.",
+          "value": "R$5.000",
+          "planPeriod": "Único",
+          "buttonTitle": "Contratar",
+          "recommended": false,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 1,
+          "includedItems": [
+            {
+              "id": "2-1",
+              "description": "Design Personalizado",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "2-2",
+              "description": "Recursos Interativos",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "2-3",
+              "description": "Suporte Premium",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "id": "2-4",
+              "description": "Otimização para SEO",
+              "hideItem": false,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "title": "Premium",
+          "description": "Criação de experiência digital consultiva completa, com site institucional personalizado e suporte exclusivo.",
+          "value": "R$10.000",
+          "planPeriod": "Único",
+          "buttonTitle": "Contratar",
+          "recommended": true,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 2,
+          "includedItems": [
+            {
+              "id": "3-1",
+              "description": "Estratégias de Marketing",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "3-2",
+              "description": "Otimização para SEO",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "3-3",
+              "description": "Suporte Exclusivo",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "id": "3-4",
+              "description": "Análise de Desempenho",
+              "hideItem": false,
+              "sortOrder": 3
+            },
+            {
+              "id": "3-5",
+              "description": "Ajustes Estratégicos",
+              "hideItem": false,
+              "sortOrder": 4
+            }
+          ]
+        }
+      ]
+    },
+    "results": {
+      "title": "Resultados que transformam negócios",
+      "items": [
+        {
+          "id": "32dcfe19-bc9c-49d0-a219-29dc4b8fa911",
+          "client": "Indústria Nova",
+          "instagram": "industrianova",
+          "investment": 1500,
+          "roi": 2500,
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 0
+        },
+        {
+          "id": "fb0411cf-85e4-4c07-a2ef-78eefd2ca983",
+          "client": "Soluções Inovadoras",
+          "instagram": "solucoesinovadoras",
+          "investment": 2000,
+          "roi": 3000,
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "cdb5bd5e-0669-4a31-b18c-eeab9cda4d30",
+          "client": "Consultoria Empresarial",
+          "instagram": "consultoriaempresarial",
+          "investment": 2500,
+          "roi": 4000,
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 2
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Depoimentos",
+      "items": [
+        {
+          "id": "d39658ce-1214-437a-93ee-005ac81affc0",
+          "name": "Carlos Silva",
+          "role": "Diretor de Operações",
+          "testimonial": "O site consultivo transformou nossa presença digital.",
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 0
+        },
+        {
+          "id": "ebc35ecd-5ac5-415a-8ce3-9304a40fdaee",
+          "name": "Ana Costa",
+          "role": "Gerente de Marketing",
+          "testimonial": "O site institucional elevou nosso posicionamento.",
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 1
+        }
+      ]
+    },
+    "terms": [
+      {
+        "title": "Condições",
+        "description": "Entregamos o site em até 60 dias, com pagamentos em 3x sem juros, suporte técnico e ajustes inclusos por 30 dias após a entrega, garantindo transparência e excelência."
+      }
+    ],
+    "faq": [
+      {
+        "question": "O que é um site institucional?",
+        "answer": "Um site institucional é uma plataforma digital que apresenta a identidade, missão e valores de uma empresa, destacando produtos e serviços de forma clara e atraente, proporcionando uma experiência de navegação agradável e intuitiva.",
+        "id": "7c6522a2-2c8b-4114-b838-a8d8d65712a4"
+      },
+      {
+        "question": "Qual é o objetivo do site?",
+        "answer": "O objetivo é posicionar sua marca como referência em soluções industriais, aumentando visibilidade, confiança e atratividade para clientes potenciais, através de uma experiência digital consultiva personalizada.",
+        "id": "648b07f0-59e8-476e-a93a-e198f9f32c3f"
+      },
+      {
+        "question": "Como é criada a experiência digital?",
+        "answer": "Desenvolvemos um site com insights personalizados, soluções e canais de atendimento direcionados, proporcionando uma experiência consultiva que converte visitantes em leads qualificados e parcerias comerciais.",
+        "id": "8c43a37e-8459-47e7-b6c1-26cfa7ab2511"
+      },
+      {
+        "question": "O site inclui casos de sucesso?",
+        "answer": "Sim, incluímos casos de sucesso para demonstrar como nossas soluções funcionam na prática, aumentando credibilidade e autoridade setorial, com storytelling visual e dados mensuráveis.",
+        "id": "0d7a3b52-9462-42b2-b031-96db6eb892cb"
+      },
+      {
+        "question": "É importante ter um site institucional?",
+        "answer": "Sim, um site institucional é crucial para aumentar presença online, melhorar imagem e reputação, além de fornecer uma plataforma para comunicação de produtos e serviços, ajudando a atrair novos clientes e aumentar vendas.",
+        "id": "fbca1483-3903-4684-9445-1d27b8c74ba9"
+      },
+      {
+        "question": "Como o site é otimizado para buscadores?",
+        "answer": "Implementamos técnicas de SEO avançadas, como otimização de metadados, conteúdo de qualidade e estrutura de URL amigável, para melhorar visibilidade e posição nos resultados de busca, garantindo mais tráfego qualificado.",
+        "id": "4b8f209e-b890-4895-88b7-e62094681f13"
+      },
+      {
+        "question": "O site é responsivo e seguro?",
+        "answer": "Sim, o site é totalmente responsivo, garantindo uma experiência ótima em qualquer dispositivo, e implementamos medidas de segurança avançadas, como SSL e proteção contra ataques, para garantir confiabilidade e proteção contra riscos cibernéticos.",
+        "id": "0596e289-c82f-47ed-ba10-7abbdcfef050"
+      },
+      {
+        "question": "Qual é o processo de desenvolvimento?",
+        "answer": "O processo envolve análise de necessidades, criação de estrutura, desenvolvimento, testes e entrega final, garantindo qualidade e satisfação, com acompanhamento contínuo e aprovações em cada fase do processo.",
+        "id": "98d3909e-cefb-49f7-84ff-5b6b50ac7dd3"
+      },
+      {
+        "question": "Posso solicitar ajustes após a entrega?",
+        "answer": "Sim, incluímos ciclos de ajustes para garantir que o resultado final esteja alinhado às suas expectativas, com suporte contínuo para ajustes e atualizações, garantindo que seu site esteja sempre atualizado e alinhado às suas necessidades.",
+        "id": "82ae468f-e1cb-42d4-b07d-0dc09bbd708c"
+      },
+      {
+        "question": "Como medir o sucesso do site?",
+        "answer": "O sucesso do site pode ser medido através da análise de métricas como tráfego, engajamento e conversões, além de realizar testes e ajustes contínuos para otimizar a experiência do usuário e melhorar os resultados, garantindo um retorno sobre o investimento mensurável.",
+        "id": "d12889b8-75c4-46d7-bde2-31b9b22be2c4"
+      }
+    ],
+    "footer": {
+      "callToAction": "Crie conosco",
+      "disclaimer": "Estamos ao seu lado, oferecendo suporte personalizado e cuidado contínuo para o crescimento da sua marca, garantindo experiências digitais excepcionais e resultados mensuráveis com segurança e proximidade."
+    }
+  },
+  "workflowMetadata": {
+    "sections": [],
+    "generationTime": 20584
+  },
+  "generatedAt": "2025-11-08T01:54:55.006Z"
+}

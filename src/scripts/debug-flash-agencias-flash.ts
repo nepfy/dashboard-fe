@@ -28,7 +28,10 @@ Ao longo da nossa trajetória, acumulamos diversos cases de sucesso em diferente
 async function main() {
   try {
     if (!process.env.TOGETHER_API_KEY) {
-      throw new Error("Missing TOGETHER_API_KEY in environment variables.");
+      console.warn(
+        "⚠️ Missing TOGETHER_API_KEY in environment variables. Falling back to mock generation."
+      );
+      process.env.TOGETHER_API_KEY = "mock";
     }
 
     const workflow = new FlashTemplateWorkflow();

@@ -1,18 +1,62 @@
 #!/usr/bin/env tsx
 
 import { getAgentByServiceAndTemplate } from "#/modules/ai-generator/agents";
-import { FlashTemplateWorkflow } from "#/modules/ai-generator/themes/flash";
-import { PrimeTemplateWorkflow } from "#/modules/ai-generator/themes/prime";
+import {
+  FlashTemplateWorkflow,
+  type FlashWorkflowResult,
+} from "#/modules/ai-generator/themes/flash";
+import {
+  PrimeTemplateWorkflow,
+  type PrimeWorkflowResult,
+} from "#/modules/ai-generator/themes/prime";
 // Define the service types used in the database
 type DatabaseServiceType =
   | "marketing-digital"
   | "designer"
   | "desenvolvedor"
   | "arquiteto"
-  | "fotógrafo"
-  | "médico";
+  | "photography"
+  | "agencias-consultoria";
 import fs from "fs";
 import path from "path";
+
+const args = process.argv.slice(2);
+
+function getArgValue(flag: string): string | undefined {
+  const prefix = `${flag}=`;
+  const match = args.find((arg) => arg.startsWith(prefix));
+  if (match) {
+    return match.slice(prefix.length);
+  }
+  return undefined;
+}
+
+if (!process.env.TOGETHER_API_KEY) {
+  console.warn(
+    "⚠️ Missing TOGETHER_API_KEY. Using mock key to enable offline fallbacks."
+  );
+  process.env.TOGETHER_API_KEY = "mock";
+}
+
+const templateArg =
+  getArgValue("--template") ??
+  (args.includes("--flash")
+    ? "flash"
+    : args.includes("--prime")
+      ? "prime"
+      : undefined);
+const supportedTemplates = new Set(["flash", "prime"]);
+const templateFilter = supportedTemplates.has(templateArg ?? "")
+  ? (templateArg as "flash" | "prime")
+  : undefined;
+
+if (templateArg && !templateFilter) {
+  console.warn(
+    `⚠️ Unsupported template filter "${templateArg}". Valid options are "flash" or "prime".`
+  );
+}
+
+const serviceFilter = getArgValue("--service") as DatabaseServiceType | undefined;
 
 interface TestCase {
   service: DatabaseServiceType;
@@ -23,7 +67,7 @@ interface TestCase {
     clientName: string;
     projectName: string;
     projectDescription: string;
-    selectedPlans: string[];
+    selectedPlans: number | string | string[];
     planDetails: string;
     includeTerms: boolean;
     includeFAQ: boolean;
@@ -50,6 +94,25 @@ const testCases: TestCase[] = [
       includeTerms: true,
       includeFAQ: true,
       mainColor: "#3B82F6",
+    },
+  },
+  {
+    service: "agencias-consultoria",
+    template: "flash",
+    name: "Agências & Consultoria Flash",
+    testData: {
+      companyInfo:
+        "Com mais de 10 anos de experiência em estratégia e posicionamento digital, conectamos dados, criatividade e performance para acelerar resultados de negócios B2B e B2C.",
+      clientName: "Augusto Ferragens",
+      projectName: "Site Institucional Consultivo",
+      projectDescription:
+        "Criação de experiência digital consultiva para posicionar a marca como referência em soluções industriais, destacando diferenciais, cases e canais de atendimento.",
+      selectedPlans: ["Discovery", "Growth", "Enterprise"],
+      planDetails:
+        "Planos sob medida para conduzir crescimento consultivo com indicadores e narrativas que humanizam a marca",
+      includeTerms: true,
+      includeFAQ: true,
+      mainColor: "#4F21A1",
     },
   },
   {
@@ -110,7 +173,7 @@ const testCases: TestCase[] = [
     },
   },
   {
-    service: "fotógrafo",
+    service: "photography",
     template: "flash",
     name: "Fotógrafo Flash",
     testData: {
@@ -129,23 +192,6 @@ const testCases: TestCase[] = [
     },
   },
   {
-    service: "médico",
-    template: "flash",
-    name: "Médico Flash",
-    testData: {
-      companyInfo:
-        "Clínica Saúde Total - Especializada em atendimento personalizado e de qualidade. Oferecemos consultas, exames diagnósticos e procedimentos com foco na saúde e bem-estar dos pacientes. Nossa equipe médica é altamente qualificada e experiente.",
-      clientName: "Roberto Lima",
-      projectName: "Check-up Executivo",
-      projectDescription:
-        "Programa completo de check-up executivo para empresário de 45 anos, incluindo consultas especializadas, exames laboratoriais, cardiológicos e orientações para estilo de vida saudável.",
-      selectedPlans: ["Consultation", "Checkup", "Premium"],
-      planDetails:
-        "Cuidado médico que promove saúde, autoestima e qualidade de vida",
-      includeTerms: true,
-      includeFAQ: true,
-      mainColor: "#06B6D4",
-    },
   },
   // Prime Agents
   {
@@ -165,6 +211,25 @@ const testCases: TestCase[] = [
       includeTerms: true,
       includeFAQ: true,
       mainColor: "#7C3AED",
+    },
+  },
+  {
+    service: "agencias-consultoria",
+    template: "prime",
+    name: "Agências & Consultoria Prime",
+    testData: {
+      companyInfo:
+        "Boutique estratégica que combina consultoria de crescimento, branding e performance para marcas que buscam diferenciação premium.",
+      clientName: "Grupo Valorem",
+      projectName: "Reposicionamento Consultivo Premium",
+      projectDescription:
+        "Programa completo de reposicionamento e aceleração comercial para holding de empresas de serviços consultivos, com foco em pipeline high-ticket e expansão Latam.",
+      selectedPlans: ["Essencial", "Avançado", "Prime"],
+      planDetails:
+        "Planos modulados para elevar percepção de valor, previsibilidade de receita e fortalecimento institucional",
+      includeTerms: true,
+      includeFAQ: true,
+      mainColor: "#5B21B6",
     },
   },
   {
@@ -225,7 +290,7 @@ const testCases: TestCase[] = [
     },
   },
   {
-    service: "fotógrafo",
+    service: "photography",
     template: "prime",
     name: "Fotógrafo Prime",
     testData: {
@@ -244,23 +309,6 @@ const testCases: TestCase[] = [
     },
   },
   {
-    service: "médico",
-    template: "prime",
-    name: "Médico Prime",
-    testData: {
-      companyInfo:
-        "Clínica de Excelência Médica - Centro médico premium especializado em atendimento personalizado e de alta qualidade. Nossa metodologia PRIME combina expertise médica, tecnologia avançada e cuidado humanizado para promover saúde plena e bem-estar.",
-      clientName: "Dr. Eduardo Pereira",
-      projectName: "Programa de Medicina Preventiva Premium",
-      projectDescription:
-        "Desenvolvimento de programa completo de medicina preventiva premium para executivos, incluindo avaliação de risco cardiovascular, check-up genético, medicina integrativa e acompanhamento personalizado com foco em longevidade e qualidade de vida.",
-      selectedPlans: ["Básico", "Intermediário", "Avançado"],
-      planDetails:
-        "Cuidado médico premium que promove saúde plena e transformação de vidas",
-      includeTerms: true,
-      includeFAQ: true,
-      mainColor: "#0891B2",
-    },
   },
 ];
 
@@ -269,7 +317,7 @@ async function generateProposal(
   testData: any,
   template: string,
   service: string
-) {
+): Promise<FlashWorkflowResult | PrimeWorkflowResult | null> {
   try {
     let workflow;
     if (template === "flash") {
@@ -280,21 +328,69 @@ async function generateProposal(
       throw new Error(`Unknown template: ${template}`);
     }
 
-    const result = await workflow.execute({
+    const normalizedSelectedPlans = normalizeSelectedPlans(
+      testData.selectedPlans
+    );
+
+    const payload = {
       ...testData,
+      selectedPlans: normalizedSelectedPlans,
+      selectedPlansLabels: Array.isArray(testData.selectedPlans)
+        ? testData.selectedPlans
+        : undefined,
+      planDetails:
+        typeof testData.planDetails === "string" ? testData.planDetails : "",
       templateType: template,
       selectedService: service, // Add the missing field
-    });
+    };
 
-    return result;
+    const result = await workflow.execute(payload);
+
+    return result as FlashWorkflowResult | PrimeWorkflowResult;
   } catch (error) {
     console.error(`Error generating proposal for ${agent.name}:`, error);
     return null;
   }
 }
 
+function normalizeSelectedPlans(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return clampPlans(value);
+  }
+
+  if (Array.isArray(value)) {
+    return clampPlans(value.length);
+  }
+
+  const parsed = Number(value);
+  if (Number.isFinite(parsed)) {
+    return clampPlans(parsed);
+  }
+
+  return 1;
+}
+
+function clampPlans(count: number): number {
+  const rounded = Math.round(count);
+  if (rounded < 1) {
+    return 1;
+  }
+  if (rounded > 3) {
+    return 3;
+  }
+  return rounded;
+}
+
 async function testAgentProposals() {
   console.log("🧪 Testando geração de propostas para todos os agentes...\n");
+
+  if (templateFilter) {
+    console.log(`🔍 Filtro de template aplicado: ${templateFilter}`);
+  }
+
+  if (serviceFilter) {
+    console.log(`🔍 Filtro de serviço aplicado: ${serviceFilter}`);
+  }
 
   const results: any[] = [];
   const outputDir = path.join(process.cwd(), "proposal-samples");
@@ -304,7 +400,22 @@ async function testAgentProposals() {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  for (const testCase of testCases) {
+  const filteredCases = testCases.filter((testCase) => {
+    if (templateFilter && testCase.template !== templateFilter) {
+      return false;
+    }
+    if (serviceFilter && testCase.service !== serviceFilter) {
+      return false;
+    }
+    return true;
+  });
+
+  if (filteredCases.length === 0) {
+    console.warn("⚠️ Nenhum caso de teste correspondeu aos filtros fornecidos.");
+    return;
+  }
+
+  for (const testCase of filteredCases) {
     console.log(`\n📋 TESTE: ${testCase.name}`);
     console.log("=".repeat(60));
 
@@ -317,6 +428,13 @@ async function testAgentProposals() {
 
       if (!agent) {
         console.error(`❌ Agente não encontrado: ${testCase.name}`);
+        results.push({
+          agent: testCase.name,
+          template: testCase.template,
+          service: testCase.service,
+          success: false,
+          error: "Agente não encontrado",
+        });
         continue;
       }
 
@@ -327,15 +445,55 @@ async function testAgentProposals() {
 
       // Generate proposal
       console.log("⏳ Gerando proposta...");
-      const proposal = await generateProposal(
+      const workflowResult = await generateProposal(
         agent,
         testCase.testData,
         testCase.template,
         testCase.service
       );
 
-      if (!proposal) {
-        console.error("❌ Falha ao gerar proposta");
+      if (!workflowResult) {
+        console.error("❌ Falha ao gerar proposta (erro desconhecido)");
+        results.push({
+          agent: testCase.name,
+          template: testCase.template,
+          service: testCase.service,
+          success: false,
+          error: "Workflow retornou nulo",
+        });
+        continue;
+      }
+
+      if (!workflowResult.success) {
+        const errorMessage =
+          "error" in workflowResult && workflowResult.error
+            ? workflowResult.error
+            : "Workflow falhou sem mensagem detalhada";
+        console.error(`❌ Falha ao gerar proposta: ${errorMessage}`);
+        results.push({
+          agent: testCase.name,
+          template: testCase.template,
+          service: testCase.service,
+          success: false,
+          error: errorMessage,
+        });
+        continue;
+      }
+
+      const proposalPayload =
+        testCase.template === "flash"
+          ? (workflowResult as FlashWorkflowResult).proposal
+          : (workflowResult as PrimeWorkflowResult).data;
+
+      if (!proposalPayload) {
+        console.error("❌ Workflow retornou proposta vazia");
+        results.push({
+          agent: testCase.name,
+          template: testCase.template,
+          service: testCase.service,
+          success: false,
+          error: "Proposta vazia",
+        });
         continue;
       }
 
@@ -353,7 +511,8 @@ async function testAgentProposals() {
           template: testCase.template,
         },
         testData: testCase.testData,
-        proposal: proposal,
+        proposal: proposalPayload,
+        workflowMetadata: workflowResult.metadata,
         generatedAt: new Date().toISOString(),
       };
 
@@ -361,12 +520,23 @@ async function testAgentProposals() {
       console.log(`💾 Proposta salva em: ${filepath}`);
 
       // Analyze proposal structure
-      const analysis = analyzeProposal(proposal, testCase.template);
-      console.log("📊 Análise da proposta:");
-      console.log(`   Estrutura: ${analysis.structureScore}/10`);
-      console.log(`   Conteúdo: ${analysis.contentScore}/10`);
-      console.log(`   Personalização: ${analysis.personalizationScore}/10`);
-      console.log(`   Qualidade geral: ${analysis.overallScore}/10`);
+      let analysis;
+      try {
+        analysis = analyzeProposal(proposalPayload, testCase.template);
+        console.log("📊 Análise da proposta:");
+        console.log(`   Estrutura: ${analysis.structureScore}/10`);
+        console.log(`   Conteúdo: ${analysis.contentScore}/10`);
+        console.log(`   Personalização: ${analysis.personalizationScore}/10`);
+        console.log(`   Qualidade geral: ${analysis.overallScore}/10`);
+      } catch (analysisError) {
+        console.error(
+          "⚠️ Falha ao analisar a proposta:",
+          analysisError instanceof Error
+            ? analysisError.message
+            : String(analysisError)
+        );
+        analysis = null;
+      }
 
       results.push({
         agent: testCase.name,

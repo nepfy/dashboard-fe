@@ -26,6 +26,7 @@ export class FlashTheme {
   private sections: FlashSection[] = [];
   private moaService: MOAService;
   private templateConfig: TemplateConfig;
+  private static readonly VALIDATION_MAX_ATTEMPTS = 3;
 
   constructor(private together: Together) {
     this.moaService = new MOAService(together, {
@@ -400,6 +401,430 @@ export class FlashTheme {
     return normalized;
   }
 
+  private buildPromptWithValidationFeedback(
+    basePrompt: string,
+    feedbackMessage: string,
+    attempt: number
+  ): string {
+    const sanitizedFeedback = feedbackMessage.replace(/\s+/g, " ").trim();
+
+    return `${basePrompt}
+
+ATENÇÃO EXTRA (tentativa ${attempt + 1}):
+- Motivo da rejeição anterior: ${sanitizedFeedback}
+- Reescreva completamente o conteúdo planejando cada frase para já nascer dentro dos limites informados acima.
+- Não reutilize o texto anterior; gere uma nova versão alinhada às regras.
+- Responda APENAS com o JSON válido solicitado.`;
+  }
+
+  private async generateSectionContent<T>(
+    prompt: string,
+    agent: BaseAgentConfig,
+    expectedFormat: string
+  ): Promise<T> {
+    const moaResult = await this.moaService.generateWithRetry<T>(
+      prompt,
+      agent.systemPrompt,
+      expectedFormat,
+      agent.systemPrompt
+    );
+
+    if (moaResult.success && moaResult.result) {
+      return moaResult.result;
+    }
+
+    console.warn(
+      "⚠️ MoA não conseguiu gerar a seção. Tentando via modelo individual com retry controlado."
+    );
+
+    return await this.runLLMWithJSONRetry<T>(prompt, agent.systemPrompt);
+  }
+
+  private async generateSectionWithValidation<T, R>({
+    sectionKey,
+    data,
+    agent,
+    expectedFormat,
+    validate,
+    transform,
+  }: {
+    sectionKey: FlashSectionKey;
+    data: FlashThemeData;
+    agent: BaseAgentConfig;
+    expectedFormat: string;
+    validate: (section: R) => void;
+    transform?: (raw: T) => R;
+  }): Promise<R> {
+    const basePrompt = this.getSectionPrompt(sectionKey, data);
+    let feedbackMessage: string | null = null;
+    let lastError: unknown = null;
+
+    for (
+      let attempt = 0;
+      attempt < FlashTheme.VALIDATION_MAX_ATTEMPTS;
+      attempt++
+    ) {
+      const prompt =
+        attempt === 0 || !feedbackMessage
+          ? basePrompt
+          : this.buildPromptWithValidationFeedback(
+              basePrompt,
+              feedbackMessage,
+              attempt
+            );
+
+      let rawSection: T;
+
+      try {
+        rawSection = await this.generateSectionContent<T>(
+          prompt,
+          agent,
+          expectedFormat
+        );
+      } catch (generationError) {
+        lastError = generationError;
+        const isCreditLimit =
+          generationError instanceof Error &&
+          generationError.message.toLowerCase().includes("credit limit");
+
+        if (isCreditLimit) {
+          console.warn(
+            `⚠️ Limite de crédito atingido na seção ${sectionKey}. Aplicando fallback offline.`
+          );
+          const fallbackSection = this.getFallbackSection(
+            sectionKey,
+            data,
+            agent
+          ) as T;
+          const processedFallback = transform
+            ? transform(fallbackSection)
+            : ((fallbackSection as unknown) as R);
+          validate(processedFallback);
+          return processedFallback;
+        }
+
+        feedbackMessage =
+          generationError instanceof Error
+            ? generationError.message
+            : String(generationError);
+        console.warn(
+          `⚠️ Geração da seção ${sectionKey} falhou na tentativa ${
+            attempt + 1
+          }: ${feedbackMessage}`
+        );
+        continue;
+      }
+
+      let processedSection: R;
+      try {
+        processedSection = transform
+          ? transform(rawSection)
+          : ((rawSection as unknown) as R);
+      } catch (transformError) {
+        lastError = transformError;
+        feedbackMessage =
+          transformError instanceof Error
+            ? transformError.message
+            : "Falha ao estruturar a seção gerada.";
+        console.warn(
+          `⚠️ Não foi possível estruturar a seção ${sectionKey} na tentativa ${
+            attempt + 1
+          }: ${feedbackMessage}`
+        );
+        continue;
+      }
+
+      try {
+        validate(processedSection);
+
+        if (attempt > 0) {
+          console.log(
+            `✅ Seção ${sectionKey} regenerada com sucesso na tentativa ${
+              attempt + 1
+            }`
+          );
+        }
+
+        return processedSection;
+      } catch (validationError) {
+        lastError = validationError;
+        feedbackMessage =
+          validationError instanceof Error
+            ? validationError.message
+            : "O conteúdo não respeitou as regras de validação.";
+
+        console.warn(
+          `⚠️ Seção ${sectionKey} inválida na tentativa ${
+            attempt + 1
+          }: ${feedbackMessage}`
+        );
+      }
+    }
+
+    throw lastError instanceof Error
+      ? lastError
+      : new Error(
+          `Falha ao gerar a seção ${sectionKey} após multiples tentativas`
+        );
+  }
+
+  private getFallbackSection(
+    sectionKey: FlashSectionKey,
+    data: FlashThemeData,
+    agent: BaseAgentConfig
+  ): unknown {
+    switch (sectionKey) {
+      case "introduction": {
+        const projectName = data.projectName || "seu projeto";
+        return {
+          userName: data.userName ?? "",
+          email: data.userEmail ?? "",
+          title: this.truncateToMax(
+            `Ativamos ${projectName} com entrega precisa`,
+            60
+          ),
+          subtitle: this.truncateToMax(
+            `Guiamos ${data.clientName || "sua equipe"} com estratégia, execução e parceria para tornar ${projectName} um resultado sólido`,
+            100
+          ),
+          services: [
+            this.truncateToMax("Diagnóstico estratégico", 30),
+            this.truncateToMax("Plano orientado a dados", 30),
+            this.truncateToMax("Execução multicanal", 30),
+            this.truncateToMax("Monitoramento contínuo", 30),
+          ],
+          validity: "15 dias",
+          buttonText: "Solicitar Proposta",
+        };
+      }
+      case "aboutUs": {
+        return {
+          title: this.truncateToMax(
+            `Conectamos ${data.companyInfo.slice(0, 80)} em jornadas de crescimento constante`,
+            155
+          ),
+          supportText: this.truncateToMax(
+            "Equipe próxima que traduz visão em resultados",
+            70
+          ),
+          subtitle: this.truncateToMax(
+            `Aliamos estratégia, criatividade e dados para transformar ${data.projectName} em uma experiência que fortalece marca, gera confiança e consolida resultados duradouros.`,
+            250
+          ),
+        };
+      }
+      case "team": {
+        return {
+          title: this.truncateToMax(
+            "Somos parceiros dedicados em cada decisão",
+            55
+          ),
+          members: [],
+        };
+      }
+      case "specialties": {
+        const expertiseSources = [
+          ...(agent.expertise || []),
+          ...(agent.commonServices || []),
+          "Estratégia personalizada",
+          "Execução integrada",
+          "Medição de impacto",
+        ];
+        const topics = expertiseSources
+          .slice(0, 9)
+          .map((topic, index) => ({
+            title: this.truncateToMax(topic, 50),
+            description: this.truncateToMax(
+              `Aplicamos ${topic.toLowerCase()} para acelerar resultados do ${data.projectName}.`,
+              100
+            ),
+          }));
+        while (topics.length < 6) {
+          topics.push({
+            title: this.truncateToMax(
+              `Especialidade ${topics.length + 1}`,
+              50
+            ),
+            description: this.truncateToMax(
+              "Transformamos necessidades complexas em entregas consistentes.",
+              100
+            ),
+          });
+        }
+        return {
+          title: this.truncateToMax(
+            "Entregamos especialidades que combinam inteligência, design e performance",
+            140
+          ),
+          topics,
+        };
+      }
+      case "steps": {
+        const baseSteps = [
+          {
+            title: "Imersão e diagnóstico",
+            description:
+              "Mapeamos contexto, objetivos e público para alinhar expectativas e construir estratégia com base em evidências.",
+          },
+          {
+            title: "Planejamento colaboraativo",
+            description:
+              "Desenhamos rotas, priorizamos entregas e definimos indicadores para garantir avanços transparentes e mensuráveis.",
+          },
+          {
+            title: "Criação e validação",
+            description:
+              "Construímos narrativas, ativos e fluxos com ciclos de aprovação que mantêm a equipe próxima e confiante.",
+          },
+          {
+            title: "Implementação guiada",
+            description:
+              "Coordenamos implementação com parceiros, calibramos recursos e acompanhamos adoção técnica e humana.",
+          },
+          {
+            title: "Otimização contínua",
+            description:
+              "Monitoramos resultados, aprendizados e feedbacks para ajustar decisões, maximizar valor e sustentar crescimento.",
+          },
+        ];
+        return {
+          title: "Nosso Processo",
+          introduction: this.truncateToMax(
+            "Guiamos cada etapa com proximidade, clareza e cadência inteligente",
+            100
+          ),
+          topics: baseSteps.map((step) => ({
+            title: this.truncateToMax(step.title, 40),
+            description: this.truncateToMax(step.description, 240),
+          })),
+          marquee: [],
+        };
+      }
+      case "scope": {
+        return {
+          content: this.truncateToMax(
+            `Conduzimos ${data.projectName} integrando diagnóstico, posicionamento e execução com rituais de alinhamento que garantem entregas consistentes, expectativas claras e resultados palpáveis.`,
+            350
+          ),
+        };
+      }
+      case "investment": {
+        const plansCount =
+          typeof data.selectedPlans === "number"
+            ? this.clampPlans(data.selectedPlans)
+            : Array.isArray(data.selectedPlans)
+              ? this.clampPlans(data.selectedPlans.length)
+              : 3;
+        const planLabels = Array.isArray(data.selectedPlans)
+          ? data.selectedPlans
+          : ["Essencial", "Avançado", "Premium"];
+        const plans = Array.from({ length: plansCount }).map((_, index) => {
+          const label = planLabels[index] ?? `Plano ${index + 1}`;
+          const valueBase = 3500 + index * 2200;
+          return {
+            id: crypto.randomUUID(),
+            title: this.truncateToMax(label, 20),
+            description: this.truncateToMax(
+              `Cobertura estratégica com foco em ${data.projectName}, alinhando consultoria, execução e rituais de acompanhamento.`,
+              140
+            ),
+            value: `R$${valueBase.toLocaleString("pt-BR")}`,
+            planPeriod: ["Mensal", "Trimestral", "Anual"][index] ?? "Único",
+            buttonTitle: this.truncateToMax("Solicitar Detalhes", 25),
+            recommended: index === plansCount - 1,
+            hideTitleField: false,
+            hideDescription: false,
+            hidePrice: false,
+            hidePlanPeriod: false,
+            hideButtonTitle: false,
+            sortOrder: index,
+            includedItems: Array.from({ length: 3 }).map((__, itemIndex) => ({
+              id: crypto.randomUUID(),
+              description: this.truncateToMax(
+                [
+                  "Relatórios acionáveis",
+                  "Suporte dedicado",
+                  "Workshops de alinhamento",
+                  "Monitoramento de KPIs",
+                  "Comitês estratégicos",
+                ][itemIndex] || "Acompanhamento consultivo",
+                45
+              ),
+              hideItem: false,
+              sortOrder: itemIndex,
+            })),
+          };
+        });
+
+        return {
+          title: this.truncateToMax(
+            "Investimento estruturado para maximizar retorno e previsibilidade",
+            85
+          ),
+          deliverables: [
+            {
+              title: this.truncateToMax("Imersão estratégica", 30),
+              description: this.truncateToMax(
+                "Diagnóstico, entrevistas e análise de dados para mapear desafios, oportunidades e indicadores críticos alinhados ao contexto do projeto.",
+                360
+              ),
+            },
+            {
+              title: this.truncateToMax("Execução guiada", 30),
+              description: this.truncateToMax(
+                "Planos detalhados, produção colaborativa e rituais de acompanhamento que garantem ritmo, qualidade e clareza nas entregas priorizadas.",
+                360
+              ),
+            },
+            {
+              title: this.truncateToMax("Otimização contínua", 30),
+              description: this.truncateToMax(
+                "Monitoramento de resultados, dashboards personalizados e decisões orientadas por dados para sustentar crescimento e evoluções do projeto.",
+                360
+              ),
+            },
+          ].slice(0, 2 + Math.min(1, plansCount)),
+          plansItems: plans,
+        };
+      }
+      case "terms": {
+        return [
+          {
+            title: this.truncateToMax("Compromisso e prazos", 30),
+            description: this.truncateToMax(
+              "Execução em sprints quinzenais com checkpoint semanal, início após assinatura e entrega completa acompanhada por documentação detalhada.",
+              180
+            ),
+          },
+          {
+            title: this.truncateToMax("Pagamento e suporte", 30),
+            description: this.truncateToMax(
+              "Pagamento 50% na aprovação e 50% na entrega final. Suporte de 30 dias com ajustes pontuais e transferência de conhecimento.",
+              180
+            ),
+          },
+        ];
+      }
+      case "faq": {
+        return this.getFallbackFAQ();
+      }
+      case "footer": {
+        return {
+          callToAction: this.composeExactLengthText(
+            "Transforme escolhas em crescimento seguro",
+            35
+          ),
+          disclaimer: this.composeExactLengthText(
+            "Nossa equipe acompanha cada etapa com proximidade, métricas claras e decisões orientadas por dados para garantir que sua visão evolua com segurança e impacto contínuo.",
+            330
+          ),
+        };
+      }
+      default:
+        return {};
+    }
+  }
+
   private composeExactLengthText(base: string, length: number): string {
     let text = base.replace(/\s+/g, " ").trim();
     const filler = " -";
@@ -416,6 +841,34 @@ export class FlashTheme {
     }
 
     return text;
+  }
+
+  private truncateToMax(value: string, max: number): string {
+    const normalized = value.replace(/\s+/g, " ").trim();
+    return normalized.length <= max
+      ? normalized
+      : normalized.slice(0, max);
+  }
+
+  private ensureExactArrayLength(
+    value: unknown,
+    expectedLength: number,
+    maxLength: number,
+    fallbackFactory: (index: number) => string
+  ): string[] {
+    const items = Array.isArray(value) ? value : [];
+    const normalized: string[] = [];
+
+    for (let index = 0; index < expectedLength; index += 1) {
+      const rawItem = items[index];
+      const baseText =
+        typeof rawItem === "string" && rawItem.trim().length > 0
+          ? rawItem
+          : fallbackFactory(index);
+      normalized.push(this.truncateToMax(baseText, maxLength));
+    }
+
+    return normalized;
   }
 
   private validateFooterSection(section: FlashFooterSection): void {
@@ -486,8 +939,8 @@ export class FlashTheme {
     const expectedFormat =
       this.getSectionExpectedFormat("introduction") ??
       `{
-  "title": "string (maximum 60 characters, Title Case, premium tone)",
-  "subtitle": "string (maximum 100 characters, sensory premium tone)",
+  "title": "string (maximum 60 characters)",
+  "subtitle": "string (maximum 100 characters)",
   "services": [
     "string (maximum 30 characters)",
     "string (maximum 30 characters)",
@@ -498,57 +951,36 @@ export class FlashTheme {
   "buttonText": "Solicitar Proposta"
 }`;
 
-    try {
-      const moaResult =
-        await this.moaService.generateWithRetry<FlashIntroductionSection>(
-          userPrompt,
-          agent.systemPrompt,
-          expectedFormat,
-          agent.systemPrompt
-        );
-
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA Introduction generated successfully");
-        const section: FlashIntroductionSection = {
-          userName: data.userName,
-          email: data.userEmail || "",
-          title: moaResult.result.title,
-          subtitle: moaResult.result.subtitle,
-          services: moaResult.result.services,
-          validity: moaResult.result.validity,
-          buttonText: moaResult.result.buttonText,
-        };
-        this.validateIntroductionSection(section);
-        return section;
-      }
-
-      // Fallback to single model if MoA fails
-      console.warn("MoA failed, falling back to single model");
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashIntroductionSection;
-
-      const section: FlashIntroductionSection = {
-        userName: data.userName,
-        email: data.userEmail || "",
-        title: parsed.title,
-        subtitle: parsed.subtitle,
-        services: parsed.services,
-        validity: parsed.validity,
-        buttonText: parsed.buttonText,
-      };
-      this.validateIntroductionSection(section);
-      return section;
-    } catch (error) {
-      console.error("Flash Introduction Generation Error:", error);
-      throw error;
-    }
+    return await this.generateSectionWithValidation<
+      FlashIntroductionSection,
+      FlashIntroductionSection
+    >({
+      sectionKey: "introduction",
+      data,
+      agent,
+      expectedFormat,
+      transform: (raw) => ({
+        userName: data.userName ?? raw.userName ?? "",
+        email: data.userEmail ?? raw.email ?? "",
+        title: this.truncateToMax(raw.title ?? "", 60),
+        subtitle: this.truncateToMax(raw.subtitle ?? "", 100),
+        services: this.ensureExactArrayLength(
+          raw.services ?? [],
+          4,
+          30,
+          (index) => `Serviço ${index + 1}`
+        ),
+        validity: "15 dias",
+        buttonText: "Solicitar Proposta",
+      }),
+      validate: (section) => this.validateIntroductionSection(section),
+    });
   }
 
   private async generateAboutUs(
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashAboutUsSection> {
-    const userPrompt = this.getSectionPrompt("aboutUs", data);
     const expectedFormat =
       this.getSectionExpectedFormat("aboutUs") ??
       `{
@@ -558,32 +990,16 @@ export class FlashTheme {
 }`;
 
     try {
-      const moaResult =
-        await this.moaService.generateWithRetry<FlashAboutUsSection>(
-          userPrompt,
-          agent.systemPrompt,
-          expectedFormat,
-          agent.systemPrompt
-        );
-
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA AboutUs generated successfully");
-        this.validateAboutUsSection(moaResult.result);
-        return moaResult.result;
-      }
-
-      // Fallback to single model if MoA fails
-      console.warn("MoA failed, falling back to single model");
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as FlashAboutUsSection;
-
-      const section: FlashAboutUsSection = {
-        title: parsed.title,
-        supportText: parsed.supportText,
-        subtitle: parsed.subtitle,
-      };
-      this.validateAboutUsSection(section);
-      return section;
+      return await this.generateSectionWithValidation<
+        FlashAboutUsSection,
+        FlashAboutUsSection
+      >({
+        sectionKey: "aboutUs",
+        data,
+        agent,
+        expectedFormat,
+        validate: (section) => this.validateAboutUsSection(section),
+      });
     } catch (error) {
       console.error("Flash About Us Generation Error:", error);
       throw error;
@@ -594,7 +1010,6 @@ export class FlashTheme {
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashTeamSection> {
-    const userPrompt = this.getSectionPrompt("team", data);
     const expectedFormat =
       this.getSectionExpectedFormat("team") ??
       `{
@@ -602,28 +1017,22 @@ export class FlashTheme {
 }`;
 
     try {
-      const moaResult = await this.moaService.generateWithRetry<{
-        title: string;
-      }>(userPrompt, agent.systemPrompt, expectedFormat, agent.systemPrompt);
-
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA Team generated successfully");
-        const section: FlashTeamSection = {
-          title: moaResult.result.title,
+      const section = await this.generateSectionWithValidation<
+        { title: string },
+        FlashTeamSection
+      >({
+        sectionKey: "team",
+        data,
+        agent,
+        expectedFormat,
+        transform: (raw) => ({
+          title: this.truncateToMax(raw.title ?? "", 55),
           members: [],
-        };
-        this.validateTeamSection(section);
-        return section;
-      }
+        }),
+        validate: (processedSection) => this.validateTeamSection(processedSection),
+      });
 
-      console.warn("MoA failed, falling back to single model");
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as { title: string };
-      const section: FlashTeamSection = {
-        title: parsed.title,
-        members: [],
-      };
-      this.validateTeamSection(section);
+      console.log("✅ MoA Team generated successfully");
       return section;
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
@@ -682,7 +1091,6 @@ export class FlashTheme {
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashStepsSection> {
-    const userPrompt = this.getSectionPrompt("steps", data);
     const expectedFormat =
       this.getSectionExpectedFormat("steps") ??
       `{
@@ -701,73 +1109,68 @@ export class FlashTheme {
   ]
 }`;
 
-    try {
-      const moaResult =
-        await this.moaService.generateWithRetry<FlashStepsSection>(
-          userPrompt,
-          agent.systemPrompt,
-          expectedFormat,
-          agent.systemPrompt
-        );
+    return await this.generateSectionWithValidation<
+      FlashStepsSection,
+      FlashStepsSection
+    >({
+      sectionKey: "steps",
+      data,
+      agent,
+      expectedFormat,
+      transform: (raw) => {
+        const topicsRaw = Array.isArray(raw.topics) ? raw.topics : [];
+        const normalizedTopics = Array.from({ length: 5 }).map((_, index) => {
+          const source = topicsRaw[index] ?? {};
+          const baseTitle =
+            typeof source.title === "string" && source.title.trim().length > 0
+              ? source.title
+              : `Etapa ${index + 1}`;
+          const baseDescription =
+            typeof source.description === "string" &&
+            source.description.trim().length > 0
+              ? source.description
+              : "Detalhamos como conduzimos esta etapa para preservar ritmo, transparência e alto impacto.";
 
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA Steps generated successfully");
-        this.validateStepsSection(moaResult.result);
-        return moaResult.result;
-      }
+          return {
+            title: this.truncateToMax(baseTitle, 40),
+            description: this.truncateToMax(baseDescription, 240),
+          };
+        });
 
-      // Fallback to single model if MoA fails
-      console.warn("MoA failed, falling back to single model");
-      const parsed = await this.runLLMWithJSONRetry<FlashStepsSection>(
-        userPrompt,
-        agent.systemPrompt
-      );
-
-      this.validateStepsSection(parsed);
-      return parsed;
-    } catch (error) {
-      console.error("Flash Steps Generation Error:", error);
-      throw error;
-    }
+        return {
+          title: "Nosso Processo",
+          introduction: this.truncateToMax(raw.introduction ?? "", 100),
+          topics: normalizedTopics,
+          marquee: Array.isArray(raw.marquee) ? raw.marquee : [],
+        };
+      },
+      validate: (section) => this.validateStepsSection(section),
+    });
   }
 
   private async generateScope(
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashScopeSection> {
-    const userPrompt = this.getSectionPrompt("scope", data);
     const expectedFormat =
       this.getSectionExpectedFormat("scope") ??
       `{
   "content": "string (maximum 350 characters, premium tone)"
 }`;
 
-    try {
-      const moaResult =
-        await this.moaService.generateWithRetry<FlashScopeSection>(
-          userPrompt,
-          agent.systemPrompt,
-          expectedFormat,
-          agent.systemPrompt
-        );
-
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA Scope generated successfully");
-        this.validateScopeSection(moaResult.result);
-        return moaResult.result;
-      }
-
-      console.warn("MoA failed, falling back to single model");
-      const parsed = await this.runLLMWithJSONRetry<FlashScopeSection>(
-        userPrompt,
-        agent.systemPrompt
-      );
-      this.validateScopeSection(parsed);
-      return parsed;
-    } catch (error) {
-      console.error("Flash Scope Generation Error:", error);
-      throw error;
-    }
+    return await this.generateSectionWithValidation<
+      FlashScopeSection,
+      FlashScopeSection
+    >({
+      sectionKey: "scope",
+      data,
+      agent,
+      expectedFormat,
+      transform: (raw) => ({
+        content: this.truncateToMax(raw.content ?? "", 350),
+      }),
+      validate: (section) => this.validateScopeSection(section),
+    });
   }
 
   private async generateInvestment(
@@ -775,7 +1178,6 @@ export class FlashTheme {
     agent: BaseAgentConfig
   ): Promise<FlashInvestmentSection> {
     console.log("data.selectedPlans", data.selectedPlans);
-    const userPrompt = this.getSectionPrompt("investment", data);
     const expectedFormat =
       this.getSectionExpectedFormat("investment") ??
       `{
@@ -814,31 +1216,23 @@ export class FlashTheme {
 }`;
 
     try {
-      const moaResult =
-        await this.moaService.generateWithRetry<FlashInvestmentSection>(
-          userPrompt,
-          agent.systemPrompt,
-          expectedFormat,
-          agent.systemPrompt
-        );
+      const section = await this.generateSectionWithValidation<
+        FlashInvestmentSection,
+        FlashInvestmentSection
+      >({
+        sectionKey: "investment",
+        data,
+        agent,
+        expectedFormat,
+        transform: (raw) =>
+          this.normalizeInvestmentSection(raw, data.selectedPlans),
+        validate: () => {
+          /* normalização já executa validação detalhada */
+        },
+      });
 
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA Investment generated successfully");
-
-        return this.normalizeInvestmentSection(
-          moaResult.result,
-          data.selectedPlans
-        );
-      }
-
-      // Fallback to single model if MoA fails
-      console.warn("MoA failed, falling back to single model");
-      const parsed = await this.runLLMWithJSONRetry<FlashInvestmentSection>(
-        userPrompt,
-        agent.systemPrompt
-      );
-
-      return this.normalizeInvestmentSection(parsed, data.selectedPlans);
+      console.log("✅ MoA Investment generated successfully");
+      return section;
     } catch (error) {
       console.error("Flash Investment Generation Error:", error);
       throw error;

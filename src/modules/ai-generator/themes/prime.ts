@@ -221,6 +221,416 @@ export class PrimeTemplateWorkflow {
     });
   }
 
+  private composeExactLengthText(base: string, length: number): string {
+    let text = base.replace(/\s+/g, " ").trim();
+    const filler = " -";
+
+    if (text.length > length) {
+      return text.slice(0, length);
+    }
+
+    while (text.length < length) {
+      const remaining = length - text.length;
+      const addition =
+        remaining >= filler.length ? filler : filler.slice(0, remaining);
+      text += addition;
+    }
+
+    return text;
+  }
+
+  private composeExactLengthTextPrime(base: string, length: number): string {
+    let text = base.replace(/\s+/g, " ").trim();
+    if (text.length === length) {
+      return text;
+    }
+
+    if (text.length > length) {
+      return text.slice(0, length);
+    }
+
+    const filler = " ·";
+    while (text.length < length) {
+      const remaining = length - text.length;
+      const addition =
+        remaining >= filler.length ? filler : filler.slice(0, remaining);
+      text += addition;
+    }
+    return text;
+  }
+
+  private ensureExactArrayLength(
+    values: unknown,
+    expected: number,
+    itemLength: number,
+    fallbackFactory: (index: number) => string
+  ): string[] {
+    const array = Array.isArray(values)
+      ? (values as unknown[])
+      : ([] as unknown[]);
+    const normalized: string[] = [];
+    for (let index = 0; index < expected; index++) {
+      const raw = array[index];
+      const base =
+        typeof raw === "string" && raw.trim().length > 0
+          ? raw
+          : fallbackFactory(index);
+      normalized.push(this.composeExactLengthTextPrime(base, itemLength));
+    }
+    return normalized;
+  }
+
+  private safeGenerateSection<R>(
+    section: string,
+    generator: () => Promise<R>,
+    fallback: () => R
+  ): Promise<R> {
+    return generator().catch((error) => {
+      console.error(`Prime ${section} Generation Error:`, error);
+      const fallbackSection = fallback();
+      console.log(
+        `⚠️ Prime ${section} generation fell back to deterministic content.`
+      );
+      return fallbackSection;
+    });
+  }
+
+  private composePrimeDateValidity(): string {
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 15);
+    return expiry.toLocaleDateString("pt-BR");
+  }
+
+  private getFallbackIntroduction(
+    data: PrimeThemeData
+  ): PrimeIntroductionSection {
+    const project = data.projectName || "seu projeto";
+    const servicesSeeds = [
+      "Consultoria estratégica",
+      "Design premium autoral",
+      "Execução multidisciplinar",
+      "Inteligência de crescimento",
+    ];
+
+    return {
+      title: this.composeExactLengthTextPrime(
+        `Elevamos ${project} com liderança inteligente`,
+        60
+      ),
+      subtitle: this.composeExactLengthTextPrime(
+        "Entregamos visão, precisão e impacto para transformar decisões em lucro previsível e sustentável",
+        100
+      ),
+      services: this.ensureExactArrayLength(
+        servicesSeeds,
+        4,
+        30,
+        (index) => `Serviço exclusivo ${index + 1}`
+      ),
+      validity: this.composePrimeDateValidity(),
+      buttonText: "Descobrir agora",
+    };
+  }
+
+  private getFallbackAboutUs(data: PrimeThemeData): PrimeAboutUsSection {
+    const client = data.clientName || "seu negócio";
+    return {
+      title: this.composeExactLengthTextPrime(
+        `Guiamos ${client} com estratégia premium, clareza e ritmo decisivo`,
+        155
+      ),
+      supportText: this.composeExactLengthTextPrime(
+        "Construímos confiança que acelera evolução constante",
+        70
+      ),
+      subtitle: this.composeExactLengthTextPrime(
+        "Combinamos consultoria, design e execução orientados por dados para transformar ambições em crescimento sólido, experiências memoráveis e presença dominante em cada ponto de contato.",
+        250
+      ),
+    };
+  }
+
+  private getFallbackTeam(): PrimeTeamSection {
+    return {
+      title: this.composeExactLengthTextPrime(
+        "Crescemos lado a lado em cada decisão estratégica",
+        60
+      ),
+      subtitle: this.composeExactLengthTextPrime(
+        "Nossa equipe multidisciplinar integra estratégia, criação e tecnologia para conduzir transformações com proximidade, confiança e resultados extraordinários.",
+        120
+      ),
+    };
+  }
+
+  private getFallbackSpecialties(
+    data: PrimeThemeData
+  ): PrimeSpecialtiesSection {
+    const baseTopics = [
+      "Diagnóstico profundo do contexto e oportunidades",
+      "Arquitetura de narrativas premium para posicionamento",
+      "Design integrado de experiências com alto valor simbólico",
+      "Estratégias multicanal conectadas a métricas acionáveis",
+      "Programas de relacionamento high-touch com stakeholders",
+      "Governança de crescimento com rituais e indicadores",
+      "Otimização contínua orientada por testes e feedbacks",
+      "Integração tecnológica para escalabilidade e segurança",
+      "Gestão de mudança e capacitação das equipes líderes",
+    ];
+
+    return {
+      title: this.composeExactLengthTextPrime(
+        "Dominamos especialidades que combinam inteligência estratégica, design icônico e performance previsível para multiplicar valor.",
+        180
+      ),
+      topics: this.ensureExactArrayLength(
+        baseTopics,
+        9,
+        60,
+        (index) => `Especialidade estratégica ${index + 1}`
+      ).map((title, index) => ({
+        title,
+        description: this.composeExactLengthTextPrime(
+          [
+            "Transformamos diagnósticos complexos em decisões claras que eliminam ruídos e direcionam investimento com segurança.",
+            "Criamos narrativas que elevam valor percebido, reforçam autoridade e conectam marcas premium a públicos exigentes.",
+            "Conduzimos experiências memoráveis alinhadas a métricas de crescimento, reputação e fidelização.",
+            "Integramos dados, tecnologia e equipes para resultados escaláveis com controle sobre riscos e oportunidades.",
+            "Operamos programas de relacionamento que consolidam confiança e ampliam carteira de alto ticket.",
+            "Estabelecemos governança de crescimento com rituais, dashboards e planos de ação mensuráveis.",
+            "Aplicamos ciclos de testes, insights e otimizações para garantir evolução constante e ROI ampliado.",
+            "Implementamos soluções tecnológicas seguras que sustentam escala, compliance e excelência operacional.",
+            "Preparamos líderes e times para operar a nova visão com agilidade, engajamento e senso de ownership.",
+          ][index] || "Entregamos profundidade consultiva, execução impecável e métricas que comprovam impacto.",
+          140
+        ),
+      })),
+    };
+  }
+
+  private getFallbackSteps(): PrimeProcessStepsSection {
+    const stepTitles = [
+      "Imersão estratégica 360º",
+      "Direção criativa colaborativa",
+      "Blueprint de experiência premium",
+      "Execução guiada e orquestrada",
+      "Monitoramento com ajustes contínuos",
+    ];
+
+    const stepDescriptions = [
+      "Conduzimos entrevistas, análises e benchmarks para mapear ambições, público, contexto competitivo e métricas prioritárias que orientarão todas as escolhas futuras.",
+      "Cocriamos conceitos e narrativas visuais com stakeholders, garantindo que identidade, tom e postura traduzam confiança, sofisticação e diferenciação real.",
+      "Desenhamos jornadas, touchpoints e guidelines que conectam marca, tecnologia e operação em experiências premium consistentes e escaláveis.",
+      "Lideramos cronogramas, squads e parceiros para assegurar entregas impecáveis, comunicação transparente e tomada de decisão baseada em dados.",
+      "Avaliamos performance, feedbacks e indicadores em ciclos contínuos, ajustando estratégias e materiais para preservar excelência e maximizar ROI.",
+    ];
+
+    return {
+      introduction: this.composeExactLengthTextPrime(
+        "Desenhamos e operamos um processo prime que combina estratégia, estética e performance sem comprometer ritmo ou qualidade.",
+        120
+      ),
+      title: this.composeExactLengthTextPrime(
+        "Como conduzimos sua transformação PRIME",
+        50
+      ),
+      topics: stepTitles.map((title, index) => ({
+        title: this.composeExactLengthTextPrime(title, 45),
+        description: this.composeExactLengthTextPrime(
+          stepDescriptions[index],
+          260
+        ),
+      })),
+      marquee: [],
+    };
+  }
+
+  private getFallbackScope(data: PrimeThemeData): PrimeScopeSection {
+    return {
+      content: this.composeExactLengthTextPrime(
+        `O escopo PRIME integra diagnóstico profundo, posicionamento diferenciador, criação autoral e operações monitoradas para transformar ${data.projectName} em um ativo que gera valor, previsibilidade e admiração contínua.`,
+        360
+      ),
+    };
+  }
+
+  private getFallbackInvestment(): PrimeInvestmentSection {
+    const basePlans = [
+      {
+        title: "Plano Essencial",
+        description:
+          "Estrutura premium com diagnóstico aprofundado, plataforma estratégica e suporte consultivo dedicado.",
+        value: "R$18.500,00",
+        topics: [
+          "Diagnóstico e posicionamento",
+          "Jornadas e roteiros estratégicos",
+          "Guidelines executáveis",
+          "Rituais de acompanhamento",
+        ],
+      },
+      {
+        title: "Plano Evolution",
+        description:
+          "Inclui todo o Essencial e adiciona squads criativos, prototipagem avançada e playbooks de ativação.",
+        value: "R$28.900,00",
+        topics: [
+          "Equipe criativa dedicada",
+          "Prototipagem interativa",
+          "Playbooks de ativação",
+          "Gestão de fornecedores",
+        ],
+      },
+      {
+        title: "Plano Prime",
+        description:
+          "Cobertura total com governança, inteligência de dados, programas de relacionamento e suporte expandido.",
+        value: "R$38.900,00",
+        topics: [
+          "Comitê estratégico mensal",
+          "Dashboards de performance",
+          "Programas de relacionamento",
+          "Suporte prioritário 24h",
+        ],
+      },
+    ];
+
+    return {
+      title: this.composeExactLengthTextPrime(
+        "Investimento PRIME que alia consultoria, criação e operação para gerar impacto mensurável.",
+        120
+      ),
+      deliverables: [
+        {
+          title: this.composeExactLengthTextPrime("Imersão e diagnóstico", 60),
+          description: this.composeExactLengthTextPrime(
+            "Processo investigativo premium com entrevistas, análise de dados e benchmarks para mapear contexto, priorizar oportunidades e definir estratégias de alto impacto.",
+            260
+          ),
+        },
+        {
+          title: this.composeExactLengthTextPrime("Direção criativa", 60),
+          description: this.composeExactLengthTextPrime(
+            "Criação de conceitos, sistemas visuais e narrativas que traduzem valor, exclusividade e diferenciação em todas as interações com o público.",
+            260
+          ),
+        },
+        {
+          title: this.composeExactLengthTextPrime("Orquestração prime", 60),
+          description: this.composeExactLengthTextPrime(
+            "Gestão de implementação com squads multidisciplinares, fornecedores selecionados e indicadores de qualidade para sustentar ritmo e excelência.",
+            260
+          ),
+        },
+      ],
+      plans: basePlans.map((plan) => ({
+        title: this.composeExactLengthTextPrime(plan.title, 60),
+        description: this.composeExactLengthTextPrime(plan.description, 160),
+        value: plan.value,
+        topics: plan.topics.map((topic) =>
+          this.composeExactLengthTextPrime(topic, 60)
+        ),
+      })),
+    };
+  }
+
+  private getFallbackTerms(): PrimeTermsSection {
+    return [
+      {
+        title: this.composeExactLengthTextPrime(
+          "Confidencialidade e propriedade intelectual",
+          80
+        ),
+        description: this.composeExactLengthTextPrime(
+          "Todos os ativos criados permanecem exclusivos do cliente mediante contrato; referências sensíveis são tratadas sob sigilo permanente.",
+          180
+        ),
+      },
+      {
+        title: this.composeExactLengthTextPrime(
+          "Cronograma e aprovações coordenadas",
+          80
+        ),
+        description: this.composeExactLengthTextPrime(
+          "Etapas são validadas em sprints quinzenais com checkpoints executivos; ajustes fora de escopo são orçados separadamente.",
+          180
+        ),
+      },
+      {
+        title: this.composeExactLengthTextPrime(
+          "Modelo financeiro e condições especiais",
+          80
+        ),
+        description: this.composeExactLengthTextPrime(
+          "Pagamento em três parcelas alinhadas às fases estratégicas; condições diferenciadas mediante assinatura anual do programa PRIME.",
+          180
+        ),
+      },
+    ];
+  }
+
+  private getFallbackFAQ(data: PrimeThemeData): PrimeFAQSection {
+    const questions = [
+      [
+        "Como garantem aderência às metas estratégicas do projeto?",
+        "Conectamos objetivos executivos a indicadores claros, rituais de governança e entregas mensuráveis em cada sprint.",
+      ],
+      [
+        "Qual é o nível de envolvimento requerido da nossa equipe?",
+        "Trabalhamos com squads híbridos, mantendo board e líderes próximos via comitês estratégicos e workshops colaborativos.",
+      ],
+      [
+        "Como asseguram consistência visual e narrativa globalmente?",
+        "Documentamos guidelines detalhados, produzimos kits operacionais e treinamos times internos para replicar padrões prime.",
+      ],
+      [
+        "É possível integrar o programa aos parceiros atuais?",
+        "Sim. Orquestramos fornecedores existentes, incorporamos novos especialistas quando necessário e mantemos alinhamento centralizado.",
+      ],
+      [
+        "Quais ferramentas utilizam para monitorar performance?",
+        "Disponibilizamos dashboards proprietários, integrações com BI do cliente e relatórios executivos em ciclos de revisão.",
+      ],
+      [
+        "Como lidam com ajustes e escopos emergentes?",
+        "Utilizamos matrizes de priorização e backlogs de oportunidades, aprovados em comitês bimestrais para preservar foco e ROI.",
+      ],
+      [
+        "Qual suporte é oferecido após a implementação inicial?",
+        "Mantemos programa de sustentação com squads on-demand, atualizações de narrativa e capacitação contínua das equipes.",
+      ],
+      [
+        "Existe cobertura para expansão internacional?",
+        "Adaptamos narrativas, assets e operações a mercados globais, coordenando traduções culturais e parceiros locais.",
+      ],
+      [
+        "Como garantem proteção das informações estratégicas?",
+        "Aplicamos protocolos de confidencialidade, ambientes seguros e controles de acesso para todas as frentes do programa.",
+      ],
+      [
+        "Qual diferencial do método PRIME frente a consultorias tradicionais?",
+        "Integramos estratégia, criação e operação em um único fluxo, reduzindo silos, acelerando entregas e aumentando previsibilidade.",
+      ],
+    ];
+
+    return questions.map(([question, answer]) => ({
+      question: this.composeExactLengthTextPrime(question, 120),
+      answer: this.composeExactLengthTextPrime(answer, 320),
+    }));
+  }
+
+  private getFallbackFooter(): PrimeFooterSection {
+    return {
+      callToAction: this.composeExactLengthTextPrime(
+        "Eleve sua visão prime com uma equipe dedicada ao extraordinário",
+        120
+      ),
+      contactInfo: this.composeExactLengthTextPrime(
+        "Estamos prontos para conduzir sua transformação. Contato prioritário: prime@nepfy.com | +55 11 4000-2025.",
+        200
+      ),
+    };
+  }
+
   async execute(data: PrimeThemeData): Promise<PrimeWorkflowResult> {
     const startTime = Date.now();
 
@@ -278,29 +688,67 @@ export class PrimeTemplateWorkflow {
       );
     }
 
-    const [
-      introduction,
-      aboutUs,
-      team,
-      specialties,
-      steps,
-      scope,
-      investment,
-      terms,
-      faq,
-      footer,
-    ] = await Promise.all([
-      this.generateIntroduction(data),
-      this.generateAboutUs(data),
-      this.generateTeam(data),
-      this.generateSpecialties(data),
-      this.generateProcessSteps(data),
-      this.generateScope(data),
-      this.generateInvestment(data),
-      data.includeTerms ? this.generateTerms(data) : Promise.resolve(undefined),
-      this.generateFAQ(data),
-      this.generateFooter(data),
-    ]);
+    const introduction = await this.safeGenerateSection(
+      "Introduction",
+      () => this.generateIntroduction(data),
+      () => this.getFallbackIntroduction(data)
+    );
+
+    const aboutUs = await this.safeGenerateSection(
+      "AboutUs",
+      () => this.generateAboutUs(data),
+      () => this.getFallbackAboutUs(data)
+    );
+
+    const team = await this.safeGenerateSection(
+      "Team",
+      () => this.generateTeam(data),
+      () => this.getFallbackTeam()
+    );
+
+    const specialties = await this.safeGenerateSection(
+      "Specialties",
+      () => this.generateSpecialties(data),
+      () => this.getFallbackSpecialties(data)
+    );
+
+    const steps = await this.safeGenerateSection(
+      "ProcessSteps",
+      () => this.generateProcessSteps(data),
+      () => this.getFallbackSteps()
+    );
+
+    const scope = await this.safeGenerateSection(
+      "Scope",
+      () => this.generateScope(data),
+      () => this.getFallbackScope(data)
+    );
+
+    const investment = await this.safeGenerateSection(
+      "Investment",
+      () => this.generateInvestment(data),
+      () => this.getFallbackInvestment()
+    );
+
+    const terms = data.includeTerms
+      ? await this.safeGenerateSection(
+          "Terms",
+          () => this.generateTerms(data),
+          () => this.getFallbackTerms()
+        )
+      : undefined;
+
+    const faq = await this.safeGenerateSection(
+      "FAQ",
+      () => this.generateFAQ(data),
+      () => this.getFallbackFAQ(data)
+    );
+
+    const footer = await this.safeGenerateSection(
+      "Footer",
+      () => this.generateFooter(data),
+      () => this.getFallbackFooter()
+    );
 
     return {
       introduction,

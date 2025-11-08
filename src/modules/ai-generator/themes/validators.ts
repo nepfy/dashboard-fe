@@ -50,8 +50,8 @@ export function validateMaxLengthWithWarning(
   const str = ensureString(value, field);
   if (str.length > maxLength) {
     return {
-      value: str.substring(0, maxLength), // Truncate to max length
-      warning: `${field} exceeded maximum length of ${maxLength} characters (had ${str.length}), truncated.`,
+      value: str,
+      warning: `${field} exceeded maximum length of ${maxLength} characters (had ${str.length}). Regenerate the content keeping the limit in mind.`,
     };
   }
   return { value: str };

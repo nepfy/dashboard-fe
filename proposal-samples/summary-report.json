@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2025-09-09T20:10:59.224Z",
-  "totalTests": 12,
-  "successful": 12,
+  "generatedAt": "2025-11-08T01:57:43.215Z",
+  "totalTests": 6,
+  "successful": 6,
   "failed": 0,
-  "averageScore": 8.900000000000002,
+  "averageScore": 8.9,
   "results": [
     {
       "agent": "Marketing Digital Flash",
@@ -17,6 +17,19 @@
         "overallScore": 8.9
       },
       "filename": "marketing-digital-flash-proposal.json"
+    },
+    {
+      "agent": "Agências & Consultoria Flash",
+      "template": "flash",
+      "service": "agencias-consultoria",
+      "success": true,
+      "analysis": {
+        "structureScore": 6.7,
+        "contentScore": 10,
+        "personalizationScore": 10,
+        "overallScore": 8.9
+      },
+      "filename": "agencias-consultoria-flash-proposal.json"
     },
     {
       "agent": "Designer Flash",
@@ -60,7 +73,7 @@
     {
       "agent": "Fotógrafo Flash",
       "template": "flash",
-      "service": "fotógrafo",
+      "service": "photography",
       "success": true,
       "analysis": {
         "structureScore": 6.7,
@@ -68,98 +81,7 @@
         "personalizationScore": 10,
         "overallScore": 8.9
       },
-      "filename": "fotógrafo-flash-proposal.json"
-    },
-    {
-      "agent": "Médico Flash",
-      "template": "flash",
-      "service": "médico",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "médico-flash-proposal.json"
-    },
-    {
-      "agent": "Marketing Digital Prime",
-      "template": "prime",
-      "service": "marketing-digital",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "marketing-digital-prime-proposal.json"
-    },
-    {
-      "agent": "Designer Prime",
-      "template": "prime",
-      "service": "designer",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "designer-prime-proposal.json"
-    },
-    {
-      "agent": "Desenvolvedor Prime",
-      "template": "prime",
-      "service": "desenvolvedor",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "desenvolvedor-prime-proposal.json"
-    },
-    {
-      "agent": "Arquiteto Prime",
-      "template": "prime",
-      "service": "arquiteto",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "arquiteto-prime-proposal.json"
-    },
-    {
-      "agent": "Fotógrafo Prime",
-      "template": "prime",
-      "service": "fotógrafo",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "fotógrafo-prime-proposal.json"
-    },
-    {
-      "agent": "Médico Prime",
-      "template": "prime",
-      "service": "médico",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "médico-prime-proposal.json"
+      "filename": "photography-flash-proposal.json"
     }
   ]
 }

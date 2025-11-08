@@ -1,7 +1,7 @@
 {
   "agent": {
     "id": "designer-flash-agent",
-    "name": "Especialista em Design Flash",
+    "name": "Especialista em Design",
     "sector": "Design e Comunicação Visual",
     "template": "flash"
   },
@@ -21,328 +21,358 @@
     "mainColor": "#8B5CF6"
   },
   "proposal": {
-    "finalProposal": {
-      "introduction": {
-        "title": "Transforme sua Startup",
-        "subtitle": "Crie uma presença visual forte no mercado com nossa identidade visual completa",
-        "services": [
-          "Identidade Visual Completa",
-          "Branding Completo",
-          "Design de UX/UI",
-          "Material Gráfico"
-        ],
-        "validity": "09/10/2025",
-        "buttonText": "Iniciar Projeto"
-      },
-      "aboutUs": {
-        "title": "Studio Criativo Design: Transformando Ideias em Experiências Visuais",
-        "supportText": "Transformando startups e empresas em crescimento.",
-        "subtitle": "Com expertise em identidade visual e branding, nossa equipe está aqui para ajudar João Santos a estabelecer uma presença visual forte no mercado com a Identidade Visual Completa."
-      },
-      "specialties": {
-        "title": "Identidade Visual Profissional",
-        "topics": [
-          {
-            "title": "Criação de Logotipo Inovador",
-            "description": "Desenvolvimento de logotipos únicos e memoráveis para startups de tecnologia, equilibrando originalidade e coerência com a marca."
-          },
-          {
-            "title": "Paleta de Cores e Tipografia",
-            "description": "Elaboração de paletes de cores e seleção de tipografias que refletem a personalidade e os valores da startup de tecnologia, fortalecendo a identidade visual."
-          },
-          {
-            "title": "Material Gráfico e Manual de Marca",
-            "description": "Criação de materiais gráficos consistentes e um manual de marca que oriente a equipe sobre a utilização correta da identidade visual, estabelecendo uma presença visual forte no mercado."
-          }
-        ]
-      },
-      "steps": {
-        "introduction": "Transformamos a identidade visual de João Santos em uma marca inovadora",
-        "title": "Nossa Abordagem Estratégica",
-        "topics": [
-          {
-            "title": "Análise de Marca",
-            "description": "Entendemos a essência da startup de tecnologia de João Santos e identificamos oportunidades para criar uma identidade visual única"
-          },
-          {
-            "title": "Design de Identidade Visual",
-            "description": "Criamos um conjunto coerente de elementos visuais, incluindo logo, paleta de cores, tipografia e material gráfico, para estabelecer uma presença visual forte no mercado"
-          }
-        ]
-      },
-      "investment": {
-        "title": "Identidade Visuais Transformadoras para Sucesso",
-        "deliverables": [
-          {
-            "title": "Logo Empresarial Impactante",
-            "description": "Desenvolvimento de um logo único e memorável para João Santos, que comunica a essência da startup de tecnologia"
-          },
-          {
-            "title": "Paleta de Cores e Tipografia",
-            "description": "Definição de uma paleta de cores e tipografia coerentes com a marca, garantindo uma presença visual uniforme nos materiais gráficos"
-          },
-          {
-            "title": "Material Gráfico Completo",
-            "description": "Criação de materiais gráficos personalizados, incluindo cartões de visita, folhetos e banners, para fortalecer a imagem da marca"
-          },
-          {
-            "title": "Manual de Marca",
-            "description": "Elaboração de um manual de marca detalhado, fornecendo orientações para o uso correto dos elementos visuais da marca"
-          },
-          {
-            "title": "Guia de Uso das Ferramentas",
-            "description": "Desenvolvimento de um guia de uso das ferramentas de design e marketing, ajudando João Santos a manter a consistência da marca"
-          },
-          {
-            "title": "Revisão e Ajustes",
-            "description": "Inclusão de revisões e ajustes finais, garantindo que a identidade visual seja perfeita e atenda às necessidades de João Santos"
-          }
-        ],
-        "plans": [
-          {
-            "title": "Logo",
-            "description": "Desenvolvimento de um logo empresarial impactante e único",
-            "value": "R$ 499",
-            "topics": [
-              "Criação de logo único",
-              "Paleta de cores básica",
-              "Tipografia simples"
-            ]
-          },
-          {
-            "title": "Complete",
-            "description": "Desenvolvimento de uma identidade visual completa, incluindo logo, paleta de cores, tipografia e material gráfico",
-            "value": "R$ 1.299",
-            "topics": [
-              "Criação de logo único",
-              "Paleta de cores completa",
-              "Tipografia personalizada",
-              "Materiais gráficos",
-              "Manual de marca"
-            ]
-          },
-          {
-            "title": "Premium",
-            "description": "Desenvolvimento de uma identidade visual premium, incluindo tudo do plano completo, mais guia de uso das ferramentas e revisão final",
-            "value": "R$ 2.499",
-            "topics": [
-              "Criação de logo único",
-              "Paleta de cores completa",
-              "Tipografia personalizada",
-              "Materiais gráficos",
-              "Manual de marca",
-              "Guia de uso das ferramentas",
-              "Revisão final"
-            ]
-          }
-        ]
-      },
-      "terms": [
-        {
-          "title": "Prazo de Entrega para Identidade Visual Completa",
-          "description": "Entregar documento final completo em até 15 dias úteis após aprovação dos rascunhos finais, considerando feedbacks contínuos de João Santos."
-        },
-        {
-          "title": "Forma de Pagamento",
-          "description": "Pagamento à vista no momento da assinatura do contrato, ou parcelado em até 3 vezes iguais, com 30% de depósito inicial e 70% no prazo de 7 dias corridos após a data de assinatura."
-        }
+    "introduction": {
+      "userName": "",
+      "email": "",
+      "title": "Acelere Seu Impacto Visual Com Design",
+      "subtitle": "Transformamos Sua Presença No Mercado Com Soluções Visuais Inovadoras E Resultados Mensuráveis",
+      "services": [
+        "Identidade Visual Forte E Memo",
+        "Experiências De Usuário Intuit",
+        "Direção De Arte Estratégica",
+        "Conteúdos Visuais Atraentes"
       ],
-      "faq": [
-        {
-          "question": "Qual é o custo total do pacote de identidade visual completa?",
-          "answer": "O valor total do pacote de identidade visual completa é de R$15.000,00, que inclui logo, paleta de cores, tipografia, material gráfico e manual de marca."
-        },
-        {
-          "question": "Quantos dias de entrega podem eu esperar após a aprovação dos conceitos?",
-          "answer": "Depois de aprovar os conceitos, podemos entregar a identidade visual completa dentro de 7 a 10 dias úteis, dependendo da complexidade do projeto."
-        },
-        {
-          "question": "Posso alterar os planos de identidade visual completa após assinar o contrato?",
-          "answer": "Sim, é possível alterar os planos após assinar o contrato, mas é necessário comunicar essas mudanças antes da entrega final do projeto."
-        },
-        {
-          "question": "Quem é o contato principal durante todo o processo de criação da identidade visual completa?",
-          "answer": "João Santos será o nosso contato principal durante todo o processo de criação da identidade visual completa, garantindo uma comunicação eficaz e transparente."
-        },
-        {
-          "question": "Como posso pagar o projeto de identidade visual completa?",
-          "answer": "É possível pagar o projeto de identidade visual completa mediante depósito bancário ou transferência online, conforme acordado com nossa equipe."
-        }
-      ],
-      "footer": {
-        "thanks": "Obrigado pela confiança!",
-        "followUp": "Vamos começar agora?",
-        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Identidade Visual Completa para João Santos.",
-        "validity": "24/09/2025",
-        "callToAction": "Iniciar Projeto",
-        "contactInfo": "Entre em contato para mais detalhes"
-      }
+      "validity": "15 dias",
+      "buttonText": "Solicitar Proposta"
     },
-    "sections": [
-      {
-        "title": "Transforme sua Startup",
-        "subtitle": "Crie uma presença visual forte no mercado com nossa identidade visual completa",
-        "services": [
-          "Identidade Visual Completa",
-          "Branding Completo",
-          "Design de UX/UI",
-          "Material Gráfico"
-        ],
-        "validity": "09/10/2025",
-        "buttonText": "Iniciar Projeto"
-      },
-      {
-        "title": "Studio Criativo Design: Transformando Ideias em Experiências Visuais",
-        "supportText": "Transformando startups e empresas em crescimento.",
-        "subtitle": "Com expertise em identidade visual e branding, nossa equipe está aqui para ajudar João Santos a estabelecer uma presença visual forte no mercado com a Identidade Visual Completa."
-      },
-      {
-        "title": "Identidade Visual Profissional",
-        "topics": [
-          {
-            "title": "Criação de Logotipo Inovador",
-            "description": "Desenvolvimento de logotipos únicos e memoráveis para startups de tecnologia, equilibrando originalidade e coerência com a marca."
-          },
-          {
-            "title": "Paleta de Cores e Tipografia",
-            "description": "Elaboração de paletes de cores e seleção de tipografias que refletem a personalidade e os valores da startup de tecnologia, fortalecendo a identidade visual."
-          },
-          {
-            "title": "Material Gráfico e Manual de Marca",
-            "description": "Criação de materiais gráficos consistentes e um manual de marca que oriente a equipe sobre a utilização correta da identidade visual, estabelecendo uma presença visual forte no mercado."
-          }
-        ]
-      },
-      {
-        "introduction": "Transformamos a identidade visual de João Santos em uma marca inovadora",
-        "title": "Nossa Abordagem Estratégica",
-        "topics": [
-          {
-            "title": "Análise de Marca",
-            "description": "Entendemos a essência da startup de tecnologia de João Santos e identificamos oportunidades para criar uma identidade visual única"
-          },
-          {
-            "title": "Design de Identidade Visual",
-            "description": "Criamos um conjunto coerente de elementos visuais, incluindo logo, paleta de cores, tipografia e material gráfico, para estabelecer uma presença visual forte no mercado"
-          }
-        ]
-      },
-      {
-        "title": "Identidade Visuais Transformadoras para Sucesso",
-        "deliverables": [
-          {
-            "title": "Logo Empresarial Impactante",
-            "description": "Desenvolvimento de um logo único e memorável para João Santos, que comunica a essência da startup de tecnologia"
-          },
-          {
-            "title": "Paleta de Cores e Tipografia",
-            "description": "Definição de uma paleta de cores e tipografia coerentes com a marca, garantindo uma presença visual uniforme nos materiais gráficos"
-          },
-          {
-            "title": "Material Gráfico Completo",
-            "description": "Criação de materiais gráficos personalizados, incluindo cartões de visita, folhetos e banners, para fortalecer a imagem da marca"
-          },
-          {
-            "title": "Manual de Marca",
-            "description": "Elaboração de um manual de marca detalhado, fornecendo orientações para o uso correto dos elementos visuais da marca"
-          },
-          {
-            "title": "Guia de Uso das Ferramentas",
-            "description": "Desenvolvimento de um guia de uso das ferramentas de design e marketing, ajudando João Santos a manter a consistência da marca"
-          },
-          {
-            "title": "Revisão e Ajustes",
-            "description": "Inclusão de revisões e ajustes finais, garantindo que a identidade visual seja perfeita e atenda às necessidades de João Santos"
-          }
-        ],
-        "plans": [
-          {
-            "title": "Logo",
-            "description": "Desenvolvimento de um logo empresarial impactante e único",
-            "value": "R$ 499",
-            "topics": [
-              "Criação de logo único",
-              "Paleta de cores básica",
-              "Tipografia simples"
-            ]
-          },
-          {
-            "title": "Complete",
-            "description": "Desenvolvimento de uma identidade visual completa, incluindo logo, paleta de cores, tipografia e material gráfico",
-            "value": "R$ 1.299",
-            "topics": [
-              "Criação de logo único",
-              "Paleta de cores completa",
-              "Tipografia personalizada",
-              "Materiais gráficos",
-              "Manual de marca"
-            ]
-          },
-          {
-            "title": "Premium",
-            "description": "Desenvolvimento de uma identidade visual premium, incluindo tudo do plano completo, mais guia de uso das ferramentas e revisão final",
-            "value": "R$ 2.499",
-            "topics": [
-              "Criação de logo único",
-              "Paleta de cores completa",
-              "Tipografia personalizada",
-              "Materiais gráficos",
-              "Manual de marca",
-              "Guia de uso das ferramentas",
-              "Revisão final"
-            ]
-          }
-        ]
-      },
-      [
+    "aboutUs": {
+      "title": "Transformamos sua marca em ícone visual",
+      "supportText": "Experiências visuais de impacto",
+      "subtitle": "Nossa equipe cria identidades visuais fortes, personalizadas e focadas em resultados, estabelecendo presença no mercado e autoridade duradoura para sua equipe."
+    },
+    "team": {
+      "title": "Nós crescemos junto com você, lado a lado em cada criaç",
+      "members": []
+    },
+    "specialties": {
+      "title": "Estratégias visuais de impacto",
+      "topics": [
         {
-          "title": "Prazo de Entrega para Identidade Visual Completa",
-          "description": "Entregar documento final completo em até 15 dias úteis após aprovação dos rascunhos finais, considerando feedbacks contínuos de João Santos."
+          "title": "Identidade visual",
+          "description": "Criação de marcas fortes e coerentes"
         },
         {
-          "title": "Forma de Pagamento",
-          "description": "Pagamento à vista no momento da assinatura do contrato, ou parcelado em até 3 vezes iguais, com 30% de depósito inicial e 70% no prazo de 7 dias corridos após a data de assinatura."
+          "title": "Design estratégico",
+          "description": "Desenvolvimento de soluções visuais inovadoras"
+        },
+        {
+          "title": "Experiência do usuário",
+          "description": "Interfaces intuitivas e atraentes"
+        },
+        {
+          "title": "Comunicação visual",
+          "description": "Materiais gráficos impactantes e consistentes"
+        },
+        {
+          "title": "Direção de arte",
+          "description": "Conceito e execução de projetos visuais de alto nível"
+        },
+        {
+          "title": "Inovação visual",
+          "description": "Solções criativas para desafios visuais complexos"
+        }
+      ]
+    },
+    "steps": {
+      "title": "Nosso Processo",
+      "introduction": "Cuidado e excelência",
+      "topics": [
+        {
+          "title": "Descoberta",
+          "description": "Analisamos sua startup para entender missão, valores e público-alvo, criando base sólida para identidade visual que garanta reconhecimento e impacto sustentável."
+        },
+        {
+          "title": "Concepção",
+          "description": "Desenvolvemos conceitos inovadores que combinam criatividade e estratégia, resultando em identidade visual completa e coesa que reflete essência da marca e seu posicionamento único."
+        },
+        {
+          "title": "Criação",
+          "description": "Criamos elementos visuais como logotipos, paletas de cores e tipografias coerentes com estratégia de marca, garantindo presença visual forte e memorável que ressoa com público-alvo."
+        },
+        {
+          "title": "Refinamento",
+          "description": "Aprimoramos detalhes para garantir que identidade visual atenda aos mais altos padrões de qualidade e eficácia, assegurando que cada elemento contribua para construção de marca sólida e reconhecida."
+        },
+        {
+          "title": "Entrega",
+          "description": "Entregamos arquivos e orientações necessárias para implementação bem-sucedida da identidade visual, garantindo consistência e impacto em todas as touchpoints da sua startup."
         }
       ],
-      [
+      "marquee": []
+    },
+    "scope": {
+      "content": "Nós criamos uma identidade visual completa e estratégica para sua startup de tecnologia, garantindo presença visual forte e consistente no mercado com logo, paleta de cores, tipografia e material gráfico, além de um manual de marca detalhado para elevar autoridade e reconhecimento de forma sustentável."
+    },
+    "investment": {
+      "title": "Investimento Estratégico",
+      "deliverables": [
         {
-          "question": "Qual é o custo total do pacote de identidade visual completa?",
-          "answer": "O valor total do pacote de identidade visual completa é de R$15.000,00, que inclui logo, paleta de cores, tipografia, material gráfico e manual de marca."
+          "title": "Identidade Visual",
+          "description": "Crie uma marca forte com design personalizado, aumentando reconhecimento e presença no mercado de forma eficaz e rápida, com soluções visuais que captam atenção e geram valor."
         },
         {
-          "question": "Quantos dias de entrega podem eu esperar após a aprovação dos conceitos?",
-          "answer": "Depois de aprovar os conceitos, podemos entregar a identidade visual completa dentro de 7 a 10 dias úteis, dependendo da complexidade do projeto."
+          "title": "Manual de Marca",
+          "description": "Desenvolva um guia completo para aplicação da identidade visual, garantindo consistência em todas as plataformas e materiais, com diretrizes claras para sua equipe."
         },
         {
-          "question": "Posso alterar os planos de identidade visual completa após assinar o contrato?",
-          "answer": "Sim, é possível alterar os planos após assinar o contrato, mas é necessário comunicar essas mudanças antes da entrega final do projeto."
+          "title": "Materiais Gráficos",
+          "description": "Receba materiais gráficos personalizados, como cartões de visita, folders e banners, para fortalecer a presença da marca em eventos e redes sociais, com design impactante e profissional."
         },
         {
-          "question": "Quem é o contato principal durante todo o processo de criação da identidade visual completa?",
-          "answer": "João Santos será o nosso contato principal durante todo o processo de criação da identidade visual completa, garantindo uma comunicação eficaz e transparente."
-        },
-        {
-          "question": "Como posso pagar o projeto de identidade visual completa?",
-          "answer": "É possível pagar o projeto de identidade visual completa mediante depósito bancário ou transferência online, conforme acordado com nossa equipe."
+          "title": "Paleta de Cores",
+          "description": "Defina uma paleta de cores única e impactante, refletindo a essência da marca e aumentando o engajamento do público-alvo, com cores harmoniosas e memoráveis."
         }
       ],
+      "plansItems": [
+        {
+          "id": "1",
+          "title": "Básico",
+          "description": "Identidade visual básica",
+          "value": "R$2.500",
+          "planPeriod": "Único",
+          "buttonTitle": "Contrate",
+          "recommended": false,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 0,
+          "includedItems": [
+            {
+              "id": "1.1",
+              "description": "Design de logo",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "1.2",
+              "description": "Paleta de cores",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "1.3",
+              "description": "Tipografia",
+              "hideItem": false,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "Avançado",
+          "description": "Identidade visual completa",
+          "value": "R$4.000",
+          "planPeriod": "Único",
+          "buttonTitle": "Contrate",
+          "recommended": false,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 1,
+          "includedItems": [
+            {
+              "id": "2.1",
+              "description": "Design de logo",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "2.2",
+              "description": "Manual de marca",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "2.3",
+              "description": "Materiais gráficos",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "id": "2.4",
+              "description": "Paleta de cores",
+              "hideItem": false,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "title": "Premium",
+          "description": "Solução máxima",
+          "value": "R$6.000",
+          "planPeriod": "Único",
+          "buttonTitle": "Contrate",
+          "recommended": true,
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "sortOrder": 2,
+          "includedItems": [
+            {
+              "id": "3.1",
+              "description": "Design de logo",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "3.2",
+              "description": "Manual de marca",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "3.3",
+              "description": "Materiais gráficos",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "id": "3.4",
+              "description": "Paleta de cores",
+              "hideItem": false,
+              "sortOrder": 3
+            },
+            {
+              "id": "3.5",
+              "description": "Suporte personalizado",
+              "hideItem": false,
+              "sortOrder": 4
+            }
+          ]
+        }
+      ]
+    },
+    "results": {
+      "title": "Resultados que transformam negócios",
+      "items": [
+        {
+          "id": "4085cfa3-4835-4d2a-9e3c-13d426009211",
+          "client": "Tecnologia Inovadora",
+          "instagram": "tecnologia_inovadora",
+          "investment": 1500,
+          "roi": 3500,
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 0
+        },
+        {
+          "id": "40eac09b-3f3f-4a1d-834f-6e97d870ff4e",
+          "client": "StartUP Futura",
+          "instagram": "startup_futura",
+          "investment": 2000,
+          "roi": 4000,
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "f3497083-61ee-4e92-ab6e-7f838097dd76",
+          "client": "InovaTech",
+          "instagram": "inovatech",
+          "investment": 2500,
+          "roi": 5000,
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 2
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Depoimentos",
+      "items": [
+        {
+          "id": "8bb80f40-57e5-4827-bacc-5bdb43f340a0",
+          "name": "Luiz Silva",
+          "role": "Diretor de Marketing",
+          "testimonial": "A identidade visual completa ajudou a estabelecer nossa presença.",
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 0
+        },
+        {
+          "id": "97aea29d-8e68-43d3-951b-0d2af5f8ef86",
+          "name": "Maria Oliveira",
+          "role": "Gerente de Design",
+          "testimonial": "O resultado final foi incrível, novo visual para nossa startup.",
+          "photo": "/images/templates/flash/placeholder.png",
+          "hidePhoto": false,
+          "sortOrder": 1
+        }
+      ]
+    },
+    "terms": [
       {
-        "thanks": "Obrigado pela confiança!",
-        "followUp": "Vamos começar agora?",
-        "disclaimer": "Esta proposta é válida por 15 dias a partir da data de emissão. Entre em contato para esclarecer dúvidas ou solicitar ajustes. Nossa equipe está pronta para transformar sua visão em realidade com o projeto Identidade Visual Completa para João Santos.",
-        "validity": "24/09/2025",
-        "callToAction": "Iniciar Projeto",
-        "contactInfo": "Entre em contato para mais detalhes"
+        "title": "Identidade Visual",
+        "description": "Entregamos em 30 dias, com pagamento flexível e suporte contínuo, garantindo sucesso visual e presença de marca forte."
       }
     ],
-    "metadata": {
-      "totalSections": 8,
-      "executionTime": 4953,
-      "model": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-      "templateType": "flash",
-      "aiGenerated": true,
-      "fallbackUsed": false
+    "faq": [
+      {
+        "id": "a3f555f7-9a16-4394-a666-787df804749a",
+        "question": "Como garantem que o cronograma será cumprido sem comprometer a qualidade em cada entrega prevista? -",
+        "answer": "Trabalhamos com cronogramas detalhados, reuniões de checkpoint e líderes dedicados por frente. Monitoramos indicadores de progresso diariamente, antecipamos riscos com planos de contingência e comunicamos qualquer ajuste com total transparência, garantindo que qualidade e prazo avancem juntos com tr"
+      },
+      {
+        "id": "dd0413cc-bac7-45c8-9714-c8f1a31c192d",
+        "question": "Quais tipos de ajustes posso solicitar durante o desenvolvimento sem custos adicionais extras? - - -",
+        "answer": "Incluímos ciclos de validação a cada etapa-chave para alinhar expectativas. Ajustes que mantêm o escopo definido, refinam conteúdos, cores, tipografia ou fluxos previstos já estão cobertos. Alterações estruturais significativas ou acréscimos de funcionalidades são avaliados com novo orçamento claro "
+      },
+      {
+        "id": "cb57be26-9273-44ef-bbe5-d6fc9e0780e3",
+        "question": "Quanto tempo em média leva a entrega do projeto completo do briefing à implantação final? - - - - - ",
+        "answer": "Projetos residenciais completos costumam levar entre seis e oito semanas. Iniciamos com um briefing profundo, validamos diretrizes criativas, desenvolvemos plantas e layouts, apresentamos moodboards, refinamos escolhas e conduzimos reuniões semanais para que cada decisão avance com segurança, sem at"
+      },
+      {
+        "id": "f7e240e5-f73c-464a-a547-9a8f27bfcd59",
+        "question": "Que tipo de suporte acompanham o cliente após a apresentação final da proposta? - - - - - - - - - - ",
+        "answer": "Oferecemos acompanhamento dedicado por trinta dias corridos após a entrega para orientar implementações, responder dúvidas e ajustar detalhes finos. Mantemos canal direto de comunicação, enviamos materiais organizados e indicamos fornecedores confiáveis sempre que necessário para garantir execução i"
+      },
+      {
+        "id": "59d2366c-6ae3-40c0-a743-503e20733a23",
+        "question": "Como estruturam o processo de pagamento para que eu possa planejar o investimento? - - - - - - - - -",
+        "answer": "Trabalhamos com divisão em duas parcelas iguais: cinquenta por cento na assinatura para reservar calendário e iniciar a imersão; cinquenta por cento na entrega completa, após validação de cada etapa. Caso precise, avaliamos parcelamentos adicionais com contrato formal e cronograma financeiro customi"
+      },
+      {
+        "id": "020c7524-3b9f-45b3-b0bd-a531ddc59a35",
+        "question": "Vou acompanhar o progresso do trabalho ou receberei apenas a entrega final pronta? - - - - - - - - -",
+        "answer": "Você participa de marcos estratégicos previamente agendados. Compartilhamos apresentações intermediárias, plantas evolutivas e moodboards interativos, sempre com espaço para feedbacks. Além disso, disponibilizamos área centralizada com arquivos atualizados e comentários registrados para consulta a q"
+      },
+      {
+        "id": "dd45711c-1880-4d35-a26a-69f05c04485c",
+        "question": "Trabalham apenas com projetos completos ou também apoiam demandas pontuais específicas? - - - - - - ",
+        "answer": "Atuamos em projetos residenciais completos, mas também desenhamos pacotes pontuais quando o contexto exige foco em ambientes-chave, revisões de layout ou consultorias específicas. Avaliamos cada solicitação, ajustamos escopo, garantimos coerência estética e mantemos o mesmo padrão estratégico em qua"
+      },
+      {
+        "id": "ae4e2053-4187-4575-91a2-900d0bb3963c",
+        "question": "Existe alguma forma de garantia sobre a consistência das decisões e materiais propostos? - - - - - -",
+        "answer": "Sim. Documentamos todas as escolhas com memoriais descritivos, especificações de materiais e orientações claras para fornecedores. Caso identifique qualquer divergência dentro de noventa dias, reavaliamos juntos e propomos ajustes pontuais sem custos, assegurando que a execução reflita exatamente o "
+      },
+      {
+        "id": "19a98968-6a3e-4ece-8de8-398422e196f5",
+        "question": "Posso solicitar novos ambientes ou mudanças grandes após a aprovação inicial sem retrabalho total? -",
+        "answer": "Podemos incorporar novos ambientes mediante aditivo simples. Mantemos todo o estudo organizado em camadas, o que facilita evoluir o escopo sem recomeçar. Alinhamos impacto em prazo e investimento antes de seguir, garantindo previsibilidade e mantendo coerência estética entre as áreas originais e as "
+      },
+      {
+        "id": "3d7ca34b-3ad6-4aa3-85f6-b9efed1ab9df",
+        "question": "Como asseguram a segurança das informações compartilhadas durante nosso projeto? - - - - - - - - - -",
+        "answer": "Utilizamos plataformas seguras para armazenar plantas e referências, adotamos controle de acesso restrito e realizamos backups automáticos. Compartilhamos documentos sensíveis apenas através de canais criptografados e seguimos cláusulas contratuais de confidencialidade rígidas para proteger dados pe"
+      }
+    ],
+    "footer": {
+      "callToAction": "Eleve sua marca",
+      "disclaimer": "Estamos ao seu lado, oferecendo suporte personalizado e cuidado artesanal para garantir sua satisfação e crescimento contínuo com identidade visual premium."
     }
   },
-  "generatedAt": "2025-09-09T20:09:45.343Z"
+  "workflowMetadata": {
+    "sections": [],
+    "generationTime": 45549
+  },
+  "generatedAt": "2025-11-08T01:55:41.731Z"
 }

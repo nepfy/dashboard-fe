@@ -1,7 +1,7 @@
 {
   "agent": {
     "id": "arquiteto-prime-agent",
-    "name": "Especialista em Arquitetura Prime",
+    "name": "Especialista em Arquitetura",
     "sector": "Arquitetura e Construção",
     "template": "prime"
   },
@@ -21,199 +21,15 @@
     "mainColor": "#D97706"
   },
   "proposal": {
-    "success": true,
+    "success": false,
     "templateType": "prime",
-    "data": {
-      "introduction": {
-        "title": "Residência de Alto Padrão",
-        "subtitle": "Transforme seu espaço com qualidade premium e atenção aos detalhes",
-        "services": [
-          "Projeto Residencial Premium",
-          "Arquitetura Comercial",
-          "Design de Interiores",
-          "Paisagismo"
-        ],
-        "validity": "09/10/2025",
-        "buttonText": "Iniciar Projeto Premium"
-      },
-      "aboutUs": {
-        "title": "Especialistas em projetos arquitetônicos de alto padrão, criando espaços únicos e inovadores",
-        "supportText": "Excelência técnica e criatividade em cada detalhe",
-        "subtitle": "Nossa equipe de especialistas em arquitetura e construção trabalha em estreita colaboração para criar projetos personalizados que atendam às necessidades únicas de cada cliente, combinando a mais alta qualidade técnica com a criatividade e inovação necessárias para criar espaços verdadeiramente únicos e inovadores."
-      },
-      "specialties": {
-        "title": "Especialidades PRIME",
-        "topics": [
-          {
-            "title": "Projetos Arquitetônicos Personalizados",
-            "description": "Criação de projetos arquitetônicos exclusivos e personalizados para residências de alto padrão."
-          },
-          {
-            "title": "Design de Espaços Internos",
-            "description": "Desenvolvimento de soluções de design de espaços internos que atendam às necessidades e estilo do cliente."
-          },
-          {
-            "title": "Paisagismo e Jardins",
-            "description": "Criação de paisagens e jardins que se integram perfeitamente ao projeto arquitetônico e ao estilo do cliente."
-          },
-          {
-            "title": "Otimização de Espaços",
-            "description": "Análise e otimização de espaços para maximizar a funcionalidade e a estética do projeto."
-          },
-          {
-            "title": "Escolha de Materiais e Produtos",
-            "description": "Seleção de materiais e produtos de alta qualidade para garantir a durabilidade e a estética do projeto."
-          },
-          {
-            "title": "Ergonomia e Sustentabilidade",
-            "description": "Desenvolvimento de soluções que priorizem a ergonomia e a sustentabilidade no projeto arquitetônico."
-          },
-          {
-            "title": "Reformas e Renovações",
-            "description": "Realização de reformas e renovações de espaços existentes para atender às necessidades do cliente."
-          },
-          {
-            "title": "Gestão de Projetos",
-            "description": "Gestão de projetos arquitetônicos de alto padrão, garantindo prazos, orçamentos e qualidade."
-          },
-          {
-            "title": "Consultoria em Arquitetura",
-            "description": "Consultoria em arquitetura para ajudar os clientes a tomar decisões informadas sobre seus projetos."
-          }
-        ]
-      },
-      "steps": {
-        "introduction": "Desenvolvemos projetos personalizados com qualidade superior e atenção aos detalhes.",
-        "title": "Processo PRIME",
-        "topics": [
-          {
-            "title": "Definição do Projeto",
-            "description": "Reunião com o cliente para entender necessidades e objetivos, definição do orçamento e escolha de materiais."
-          },
-          {
-            "title": "Desenvolvimento do Projeto",
-            "description": "Criação de projetos arquitetônicos e de construção, incluindo detalhes de design e funcionalidade."
-          },
-          {
-            "title": "Aprovação e Revisão",
-            "description": "Revisão e aprovação do projeto pelo cliente, com ajustes e melhorias necessárias."
-          },
-          {
-            "title": "Execução do Projeto",
-            "description": "Implementação do projeto, incluindo a construção e instalação de materiais e equipamentos."
-          },
-          {
-            "title": "Entrega e Manutenção",
-            "description": "Entrega do projeto finalizado, com garantia e manutenção para garantir a qualidade e durabilidade do trabalho."
-          }
-        ]
-      },
-      "investment": {
-        "title": "Investimento em Arquitetura e Construção",
-        "deliverables": [
-          {
-            "title": "Plano de Arquitetura",
-            "description": "Desenvolvimento de um plano de arquitetura personalizado com foco em qualidade premium e atenção aos detalhes."
-          },
-          {
-            "title": "Projeto de Interiores",
-            "description": "Criação de um projeto de interiores que atenda às necessidades e preferências do cliente, com foco em qualidade premium e atenção aos detalhes."
-          },
-          {
-            "title": "Supervisão de Construção",
-            "description": "Supervisão da construção da residência, garantindo que o projeto seja executado com qualidade premium e atenção aos detalhes."
-          }
-        ],
-        "plans": [
-          {
-            "title": "Básico",
-            "description": "Plano básico que inclui o desenvolvimento de um plano de arquitetura e projeto de interiores.",
-            "value": "R$ 10.000",
-            "topics": [
-              "Desenvolvimento de plano de arquitetura",
-              "Projeto de interiores",
-              "Revisão e ajustes"
-            ]
-          },
-          {
-            "title": "Intermediário",
-            "description": "Plano intermediário que inclui o desenvolvimento de um plano de arquitetura, projeto de interiores e supervisão da construção.",
-            "value": "R$ 20.000",
-            "topics": [
-              "Desenvolvimento de plano de arquitetura",
-              "Projeto de interiores",
-              "Supervisão da construção",
-              "Revisão e ajustes"
-            ]
-          },
-          {
-            "title": "Avançado",
-            "description": "Plano avançado que inclui o desenvolvimento de um plano de arquitetura, projeto de interiores, supervisão da construção e revisão final do projeto.",
-            "value": "R$ 30.000",
-            "topics": [
-              "Desenvolvimento de plano de arquitetura",
-              "Projeto de interiores",
-              "Supervisão da construção",
-              "Revisão final do projeto",
-              "Revisão e ajustes"
-            ]
-          }
-        ]
-      },
-      "terms": [
-        {
-          "title": "Prazo de Entrega",
-          "description": "O prazo de entrega do projeto é de 120 dias, contados a partir da data de assinatura da proposta."
-        },
-        {
-          "title": "Pagamento",
-          "description": "O pagamento deve ser realizado em 3 parcelas, com valor de R$ 50.000,00 cada, a cada 40 dias."
-        },
-        {
-          "title": "Cancelamento",
-          "description": "O cliente pode cancelar o contrato a qualquer momento, sem penalidades, mediante notificação por escrito."
-        },
-        {
-          "title": "Direitos Autorais",
-          "description": "Todos os direitos autorais sobre o projeto são de propriedade da Isabela Martins."
-        },
-        {
-          "title": "Responsabilidades",
-          "description": "A empresa é responsável por garantir a qualidade e a segurança do projeto, e pelo cumprimento das normas e regulamentações aplicáveis."
-        }
-      ],
-      "faq": [
-        {
-          "question": "Qual é o processo de trabalho da equipe PRIME?",
-          "answer": "Nossa equipe trabalha de forma detalhada e personalizada, garantindo que cada projeto seja entregue com qualidade superior e resultados excepcionais."
-        },
-        {
-          "question": "Como a PRIME garante a qualidade dos materiais utilizados?",
-          "answer": "Nossa equipe seleciona apenas os melhores materiais de alta qualidade, garantindo que cada detalhe seja perfeito e atenda às expectativas do cliente."
-        },
-        {
-          "question": "O que acontece se eu precisar de alterações no projeto?",
-          "answer": "A PRIME oferece revisões ilimitadas e ajustes personalizados, garantindo que o projeto seja entregue exatamente como você deseja."
-        },
-        {
-          "question": "Como a PRIME garante a segurança e a higiene durante a construção?",
-          "answer": "Nossa equipe segue todas as normas de segurança e higiene, garantindo um ambiente de trabalho seguro e saudável para todos."
-        },
-        {
-          "question": "Qual é o prazo de entrega do projeto?",
-          "answer": "A PRIME trabalha em prazos personalizados para cada projeto, garantindo que seja entregue dentro do tempo estabelecido e atendendo às expectativas do cliente."
-        }
-      ],
-      "footer": {
-        "callToAction": "Desenvolva seu lar com qualidade premium e resultados excepcionais"
-      }
-    },
+    "data": {},
     "metadata": {
       "service": "arquiteto",
-      "agent": "Especialista em Arquitetura Prime",
-      "timestamp": "2025-09-09T20:10:48.692Z",
-      "generationType": "prime-workflow"
+      "agent": "Especialista em Arquitetura",
+      "timestamp": "2025-11-08T00:55:51.611Z",
+      "generationType": "prime-workflow-failed"
     }
   },
-  "generatedAt": "2025-09-09T20:10:48.692Z"
+  "generatedAt": "2025-11-08T00:55:51.611Z"
 }
