@@ -49,7 +49,8 @@ export async function GET() {
     const userData = {
       ...personData[0],
       // Use Clerk data if database fields are null/empty
-      firstName: personData[0].firstName || user.firstName || null,
+      // If both are null, extract name from email
+      firstName: personData[0].firstName || user.firstName || emailAddress.split('@')[0] || 'Usuário',
       lastName: personData[0].lastName || user.lastName || null,
       email: personData[0].email || emailAddress,
       companyData: companyData.length > 0 ? companyData[0] : null,
@@ -144,7 +145,8 @@ export async function PUT(request: Request) {
     const result = {
       ...updatedUser[0],
       // Merge with Clerk data
-      firstName: updatedUser[0].firstName || user.firstName || null,
+      // If both are null, extract name from email
+      firstName: updatedUser[0].firstName || user.firstName || emailAddress.split('@')[0] || 'Usuário',
       lastName: updatedUser[0].lastName || user.lastName || null,
       email: updatedUser[0].email || emailAddress,
       companyData: updatedCompany.length > 0 ? updatedCompany[0] : null,

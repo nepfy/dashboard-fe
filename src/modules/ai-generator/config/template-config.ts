@@ -581,10 +581,10 @@ PROJETO: {projectName} - {projectDescription}
 
 FORMATO OBRIGATÓRIO (deve ser um ARRAY com 1-3 itens)
 [
-  {
+{
     "title": "Título objetivo com ATÉ 30 caracteres",
     "description": "Texto corrido abordando prazo, pagamento e suporte com ATÉ 180 caracteres"
-  }
+}
 ]
 
 REGRAS RÍGIDAS
@@ -596,8 +596,8 @@ REGRAS RÍGIDAS
 - Responda apenas com o JSON final (array).`,
         expectedFormat: `[
   {
-    "title": "string (maximum 30 characters, premium tone)",
-    "description": "string (maximum 180 characters, premium tone)"
+  "title": "string (maximum 30 characters, premium tone)",
+  "description": "string (maximum 180 characters, premium tone)"
   }
 ]`,
         rules: [

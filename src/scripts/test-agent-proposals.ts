@@ -523,11 +523,11 @@ async function testAgentProposals() {
       let analysis;
       try {
         analysis = analyzeProposal(proposalPayload, testCase.template);
-        console.log("📊 Análise da proposta:");
-        console.log(`   Estrutura: ${analysis.structureScore}/10`);
-        console.log(`   Conteúdo: ${analysis.contentScore}/10`);
-        console.log(`   Personalização: ${analysis.personalizationScore}/10`);
-        console.log(`   Qualidade geral: ${analysis.overallScore}/10`);
+      console.log("📊 Análise da proposta:");
+      console.log(`   Estrutura: ${analysis.structureScore}/10`);
+      console.log(`   Conteúdo: ${analysis.contentScore}/10`);
+      console.log(`   Personalização: ${analysis.personalizationScore}/10`);
+      console.log(`   Qualidade geral: ${analysis.overallScore}/10`);
       } catch (analysisError) {
         console.error(
           "⚠️ Falha ao analisar a proposta:",

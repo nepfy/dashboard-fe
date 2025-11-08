@@ -785,7 +785,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           if (title.length > 50) {
             // Try to find a natural break point
             title = title.substring(0, 50);
-          }
+    }
 
           // Description: max 100 chars
           const baseDesc = `Aplicamos ${topic.toLowerCase()} para acelerar resultados do ${data.projectName}.`;
@@ -1106,7 +1106,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       sectionKey: "introduction",
       data,
       agent,
-      expectedFormat,
+          expectedFormat,
       transform: (raw) => ({
         userName: data.userName ?? raw.userName ?? "",
         email: data.userEmail ?? raw.email ?? "",
@@ -1143,7 +1143,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         sectionKey: "aboutUs",
         data,
         agent,
-        expectedFormat,
+          expectedFormat,
         validate: (section) => this.validateAboutUsSection(section),
       });
     } catch (error) {
@@ -1172,7 +1172,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     try {
       const section = await this.generateSectionWithValidation<
         {
-          title: string;
+        title: string;
           members?: Array<{ name: string; role: string; image?: string }>;
         },
         FlashTeamSection
@@ -1198,7 +1198,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           this.validateTeamSection(processedSection),
       });
 
-      console.log("✅ MoA Team generated successfully");
+        console.log("✅ MoA Team generated successfully");
       return section;
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
@@ -1290,7 +1290,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       sectionKey: "steps",
       data,
       agent,
-      expectedFormat,
+          expectedFormat,
       transform: (raw) => {
         const topicsRaw = Array.isArray(raw.topics) ? raw.topics : [];
         const normalizedTopics = Array.from({ length: 5 }).map((_, index) => {
@@ -1342,7 +1342,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       sectionKey: "scope",
       data,
       agent,
-      expectedFormat,
+          expectedFormat,
       transform: (raw) => ({
         content: raw.content ?? "",
       }),
@@ -1400,7 +1400,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         sectionKey: "investment",
         data,
         agent,
-        expectedFormat,
+          expectedFormat,
         transform: (raw) =>
           this.normalizeInvestmentSection(raw, data.selectedPlans),
         validate: () => {
@@ -1408,7 +1408,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         },
       });
 
-      console.log("✅ MoA Investment generated successfully");
+        console.log("✅ MoA Investment generated successfully");
       return section;
     } catch (error) {
       console.error("Flash Investment Generation Error:", error);
@@ -1656,8 +1656,8 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       this.getSectionExpectedFormat("terms") ??
       `[
   {
-    "title": "string (maximum 30 characters, premium tone)",
-    "description": "string (maximum 180 characters, premium tone)"
+  "title": "string (maximum 30 characters, premium tone)",
+  "description": "string (maximum 180 characters, premium tone)"
   }
 ]`;
 
@@ -1669,7 +1669,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         sectionKey: "terms",
         data,
         agent,
-        expectedFormat,
+          expectedFormat,
         transform: (raw) => {
           // ensureItemsHaveIds handles both arrays and single objects
           return ensureItemsHaveIds(raw);
@@ -1677,7 +1677,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         validate: (section) => this.validateTermsSection(section),
       });
 
-      console.log("✅ MoA Terms generated successfully");
+        console.log("✅ MoA Terms generated successfully");
       return section;
     } catch (error) {
       console.error("Flash Terms Generation Error:", error);
@@ -1711,7 +1711,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       transform: (raw) => {
         if (!Array.isArray(raw.faq) || raw.faq.length === 0) {
           throw new Error("FAQ must contain at least 1 item");
-        }
+      }
         return raw.faq;
       },
       validate: (section) => this.validateFAQSection(section),
