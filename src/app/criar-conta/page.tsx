@@ -57,16 +57,22 @@ export default function CreateAccount() {
   const isEmailValid =
     emailAddress.trim() === "" || validateEmail(emailAddress);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (!isLoaded || !signUp) {
+      setError(
+        "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
+      );
+      return;
+    }
 
-    if (!isLoaded) return;
     if (!isFormValid()) {
       setError(
         "Por favor, preencha todos os campos corretamente para criar sua conta."
       );
       return;
     }
+
+    setError("");
 
     try {
       await signUp.create({
@@ -80,6 +86,7 @@ export default function CreateAccount() {
       });
 
       setPendingVerification(true);
+      setEmailCode("");
     } catch (err: unknown) {
       if (
         err instanceof Error &&
@@ -114,18 +121,18 @@ export default function CreateAccount() {
 
   if (!isLoaded)
     return (
-      <div className="grid place-items-center pt-20 pb-10 sm:pb-0 sm:pt-0 sm:min-h-screen">
+      <div className="grid place-items-center pt-20 pb-10 sm:min-h-screen sm:pt-0 sm:pb-0">
         <LoaderCircle className="animate-spin" />
       </div>
     );
 
   return (
-    <div className="grid place-items-center pb-0 pt-0 h-screen">
+    <div className="grid h-screen place-items-center pt-0 pb-0">
       <Navbar />
-      <div className="flex items-center justify-center gap-0 w-full h-full relative">
+      <div className="relative flex h-full w-full items-center justify-center gap-0">
         <IntroSlider />
 
-        <div className="flex items-center justify-center pt-[106px] lg:pt-0 px-8 sm:p-0 mb-6 sm:mb-0 w-full lg:w-1/2">
+        <div className="mb-6 flex w-full items-center justify-center px-8 pt-[106px] sm:mb-0 sm:p-0 lg:w-1/2 lg:pt-0">
           <div className="w-full max-w-[480px] space-y-8">
             <FormHeader
               title="Criar conta"

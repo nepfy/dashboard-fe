@@ -25,10 +25,16 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
     e.preventDefault();
     setIsLoading(true);
 
-    if (!isLoaded) return;
+    if (!isLoaded || !signUp) {
+      setIsLoading(false);
+      setError?.(
+        "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
+      );
+      return;
+    }
 
     try {
-      const completeSignUp = await signUp?.attemptEmailAddressVerification({
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
 
@@ -43,7 +49,6 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
         router.push("/onboarding");
       }
     } catch (err: unknown) {
-      setIsLoading(false);
       console.error(JSON.stringify(err, null, 2));
       setError?.("Código incorreto.");
     } finally {
@@ -67,11 +72,11 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
       </div>
       <button
         type="submit"
-        disabled={code.length !== 6}
-        className={`mt-4 h-[54px] w-full rounded-[var(--radius-s)] bg-[var(--color-primary-light-400)] px-4 py-3 font-medium text-white transition-colors ${
-          code.length !== 6 || isLoading
+        disabled={code.length !== 6 || isLoading || !isLoaded}
+        className={`mt-4 flex h-[54px] w-full items-center justify-center rounded-[var(--radius-s)] px-4 py-3 font-medium text-white transition-colors ${
+          code.length !== 6 || isLoading || !isLoaded
             ? "cursor-not-allowed bg-gray-400"
-            : "cursor-pointer hover:bg-[var(--color-primary-light-500)]"
+            : "cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)]"
         } `}
       >
         {!isLoaded || isLoading ? (

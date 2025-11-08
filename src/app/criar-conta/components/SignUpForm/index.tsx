@@ -24,7 +24,7 @@ type SignUpFormProps = {
   showConfirmPassword: boolean;
   setShowConfirmPassword: (show: boolean) => void;
   termsAccepted: boolean;
-  onSubmit: (e: React.FormEvent) => Promise<void>;
+  onSubmit: () => Promise<void>;
   isEmailValid?: boolean;
   isLoaded?: boolean;
   error?: string;
@@ -52,8 +52,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 }) => {
   const { signUp, isLoaded: clerkLoaded } = useSignUp();
   const [showTooltip, setShowTooltip] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOAuthLoading, setIsOAuthLoading] = useState(false);
 
   const passwordsMatch = password === confirmPassword;
   const showPasswordMismatchError =
@@ -79,21 +80,34 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
     };
   }, [showTooltip]);
 
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isSubmitting) return;
+
+    setError?.("");
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleGoogleSignUp = async () => {
-    if (!termsAccepted) {
+    if (!termsAccepted || isOAuthLoading) return;
+
+    if (!clerkLoaded || !signUp) {
+      setError?.(
+        "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
+      );
       return;
     }
 
-    try {
-      if (!clerkLoaded || !signUp) {
-        if (setError)
-          setError(
-            "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
-          );
-        return;
-      }
+    setError?.("");
+    setIsOAuthLoading(true);
 
-      setIsLoading(true);
+    try {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
@@ -101,7 +115,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         legalAccepted: termsAccepted,
       });
     } catch (err) {
-      setIsLoading(false);
       if (
         err instanceof Error &&
         "errors" in err &&
@@ -110,13 +123,13 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         setError?.("Ocorreu um erro ao conectar com Google. Tente novamente.");
       }
     } finally {
-      setIsLoading(false);
+      setIsOAuthLoading(false);
     }
   };
 
   return (
     <>
-      <form className="space-y-3 overflow-x-scroll" onSubmit={onSubmit}>
+      <form className="space-y-3 overflow-x-scroll" onSubmit={handleFormSubmit}>
         <div className="relative space-y-2">
           <MailEnvelope
             className="absolute right-4 bottom-[34px] z-40"
@@ -181,10 +194,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 
         <button
           type="submit"
-          disabled={isLoading || !isLoaded}
-          className={`mt-4 h-[54px] w-full cursor-pointer rounded-[var(--radius-s)] bg-[var(--color-primary-light-400)] px-4 py-3 font-medium text-white transition-colors hover:bg-[var(--color-primary-light-500)]`}
+          disabled={isSubmitting || !isLoaded}
+          className={`mt-4 flex h-[54px] w-full items-center justify-center rounded-[var(--radius-s)] px-4 py-3 font-medium text-white transition-colors ${
+            isSubmitting || !isLoaded
+              ? "cursor-not-allowed bg-gray-400"
+              : "cursor-pointer bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)]"
+          }`}
         >
-          {isLoading || !isLoaded ? (
+          {isSubmitting || !isLoaded ? (
             <LoaderCircle className="animate-spin" />
           ) : (
             "Criar conta"
@@ -205,13 +222,23 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 
       <div className="relative flex flex-col justify-end">
         <button
-          disabled={!termsAccepted}
+          disabled={!termsAccepted || isOAuthLoading}
           type="button"
           onClick={handleGoogleSignUp}
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] px-4 py-3 font-medium text-[var(--color-white-neutral-light-800)] transition-colors hover:bg-[var(--color-white-neutral-light-200)]"
+          className={`flex w-full items-center justify-center gap-2 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] px-4 py-3 font-medium text-[var(--color-white-neutral-light-800)] transition-colors ${
+            !termsAccepted || isOAuthLoading
+              ? "cursor-not-allowed opacity-70"
+              : "cursor-pointer hover:bg-[var(--color-white-neutral-light-200)]"
+          }`}
         >
-          <GoogleLogo />
-          Continuar com o Google
+          {isOAuthLoading ? (
+            <LoaderCircle className="animate-spin" />
+          ) : (
+            <>
+              <GoogleLogo />
+              Continuar com o Google
+            </>
+          )}
         </button>
       </div>
 
@@ -230,11 +257,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         Já possui uma conta?{" "}
         <Link href="/">
           <p className="inline-block font-medium text-[var(--color-primary-light-400)] hover:underline">
-            {isLoading || !isLoaded ? (
-              <LoaderCircle className="animate-spin" />
-            ) : (
-              "Faça login"
-            )}
+            Faça login
           </p>
         </Link>
       </div>
