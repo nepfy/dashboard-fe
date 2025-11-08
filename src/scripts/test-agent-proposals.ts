@@ -9,6 +9,10 @@ import {
   PrimeTemplateWorkflow,
   type PrimeWorkflowResult,
 } from "#/modules/ai-generator/themes/prime";
+import {
+  MinimalTemplateWorkflow,
+  type MinimalWorkflowResult,
+} from "#/modules/ai-generator/themes/minimal";
 // Define the service types used in the database
 type DatabaseServiceType =
   | "marketing-digital"
@@ -44,15 +48,17 @@ const templateArg =
     ? "flash"
     : args.includes("--prime")
       ? "prime"
-      : undefined);
-const supportedTemplates = new Set(["flash", "prime"]);
+      : args.includes("--minimal")
+        ? "minimal"
+        : undefined);
+const supportedTemplates = new Set(["flash", "prime", "minimal"]);
 const templateFilter = supportedTemplates.has(templateArg ?? "")
-  ? (templateArg as "flash" | "prime")
+  ? (templateArg as "flash" | "prime" | "minimal")
   : undefined;
 
 if (templateArg && !templateFilter) {
   console.warn(
-    `⚠️ Unsupported template filter "${templateArg}". Valid options are "flash" or "prime".`
+    `⚠️ Unsupported template filter "${templateArg}". Valid options are "flash", "prime", or "minimal".`
   );
 }
 
@@ -60,13 +66,14 @@ const serviceFilter = getArgValue("--service") as DatabaseServiceType | undefine
 
 interface TestCase {
   service: DatabaseServiceType;
-  template: "flash" | "prime";
+  template: "flash" | "prime" | "minimal";
   name: string;
   testData: {
     companyInfo: string;
     clientName: string;
     projectName: string;
     projectDescription: string;
+    clientDescription?: string;
     selectedPlans: number | string | string[];
     planDetails: string;
     includeTerms: boolean;
@@ -189,6 +196,27 @@ const testCases: TestCase[] = [
       includeTerms: true,
       includeFAQ: true,
       mainColor: "#EF4444",
+    },
+  },
+  // Minimal Agents
+  {
+    service: "marketing-digital",
+    template: "minimal",
+    name: "Marketing Digital Minimal",
+    testData: {
+      companyInfo:
+        "Agência Digital Inovadora - Especialistas em crescimento de negócios online com 5 anos de experiência. Nossa equipe é composta por especialistas em SEO, Google Ads, redes sociais e automação de marketing.",
+      clientName: "Felipe Ferragens",
+      projectName: "Site Institucional",
+      projectDescription:
+        "Desenvolvimento de um site institucional moderno, funcional e responsivo para apresentar a empresa, seus produtos e diferenciais. O objetivo é fortalecer a presença digital da marca, transmitir credibilidade e facilitar o contato e o relacionamento com novos clientes e parceiros comerciais.",
+      clientDescription:
+        "Empresa especializada na comercialização de ferragens, ferramentas e materiais para construção. Atua há anos no setor, atendendo tanto o público profissional quanto o consumidor final, com foco em qualidade, variedade de produtos e atendimento personalizado.",
+      selectedPlans: 2,
+      planDetails: "",
+      includeTerms: true,
+      includeFAQ: true,
+      mainColor: "#182E9B",
     },
   },
   {
@@ -317,13 +345,15 @@ async function generateProposal(
   testData: any,
   template: string,
   service: string
-): Promise<FlashWorkflowResult | PrimeWorkflowResult | null> {
+): Promise<FlashWorkflowResult | PrimeWorkflowResult | MinimalWorkflowResult | null> {
   try {
     let workflow;
     if (template === "flash") {
       workflow = new FlashTemplateWorkflow();
     } else if (template === "prime") {
       workflow = new PrimeTemplateWorkflow();
+    } else if (template === "minimal") {
+      workflow = new MinimalTemplateWorkflow();
     } else {
       throw new Error(`Unknown template: ${template}`);
     }
@@ -341,12 +371,14 @@ async function generateProposal(
       planDetails:
         typeof testData.planDetails === "string" ? testData.planDetails : "",
       templateType: template,
-      selectedService: service, // Add the missing field
+      selectedService: service,
+      userName: "Caio Alcantara",
+      userEmail: "alcantaracaiolucas@gmail.com",
     };
 
     const result = await workflow.execute(payload);
 
-    return result as FlashWorkflowResult | PrimeWorkflowResult;
+    return result as FlashWorkflowResult | PrimeWorkflowResult | MinimalWorkflowResult;
   } catch (error) {
     console.error(`Error generating proposal for ${agent.name}:`, error);
     return null;
@@ -464,7 +496,12 @@ async function testAgentProposals() {
         continue;
       }
 
-      if (!workflowResult.success) {
+      // Check success based on template type
+      const isSuccess = testCase.template === "minimal"
+        ? (workflowResult as MinimalWorkflowResult).status === "success"
+        : "success" in workflowResult && workflowResult.success;
+
+      if (!isSuccess) {
         const errorMessage =
           "error" in workflowResult && workflowResult.error
             ? workflowResult.error
@@ -483,7 +520,9 @@ async function testAgentProposals() {
       const proposalPayload =
         testCase.template === "flash"
           ? (workflowResult as FlashWorkflowResult).proposal
-          : (workflowResult as PrimeWorkflowResult).data;
+          : testCase.template === "minimal"
+            ? (workflowResult as MinimalWorkflowResult).proposal
+            : (workflowResult as PrimeWorkflowResult).data;
 
       if (!proposalPayload) {
         console.error("❌ Workflow retornou proposta vazia");

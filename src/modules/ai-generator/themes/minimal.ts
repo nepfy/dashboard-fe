@@ -455,48 +455,122 @@ export class MinimalTheme {
     );
     sections.expertise = expertiseResult;
 
-    // TODO: Add results section when template config is updated
+    // Generate results section
+    const resultsPrompt = `Com base nas informações do projeto, gere 2-3 cases de sucesso relevantes para o setor de ${agent.sector}.
+
+Informações do projeto:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Descrição: ${data.projectDescription}
+
+Para cada case, forneça:
+- Nome do cliente (empresa/pessoa real desse setor)
+- Investimento aproximado (valor realista)
+- ROI ou resultado alcançado (porcentagem ou métrica)
+- Instagram (opcional, formato @usuario)
+
+Formato JSON esperado:
+{
+  "title": "Resultados Comprovados",
+  "items": [
+    {
+      "client": "Nome do Cliente",
+      "investment": "R$ X.XXX",
+      "roi": "+X%",
+      "instagram": "@usuario"
+    }
+  ]
+}`;
+    
+    const resultsSystemPrompt = `Você é um especialista em ${agent.sector} gerando cases de sucesso realistas e inspiradores.
+    
+REGRAS:
+- Gere 2-3 cases de sucesso
+- Use nomes de empresas/clientes realistas do setor
+- Investimentos devem ser proporcionais ao projeto
+- ROI deve ser realista (50%-300%)
+- Instagram é opcional`;
+
+    const resultsResult = await this.runLLMWithJSONRetry<{
+      title: string;
+      items: Array<{
+        client: string;
+        investment: string;
+        roi: string;
+        instagram?: string;
+      }>;
+    }>(resultsPrompt, resultsSystemPrompt);
+
     sections.results = {
       hideSection: false,
-      title: "Resultados Alcançados",
-      items: [
-        {
-          id: crypto.randomUUID(),
-          client: "Cliente Exemplo",
-          investment: "R$ 10.000",
-          roi: "+150%",
-          photo: "",
-          instagram: "@clienteexemplo",
-          hidePhoto: false,
-          hideItem: false,
-          sortOrder: 0,
-        },
-      ],
+      title: resultsResult.title,
+      items: resultsResult.items.map((item, index) => ({
+        id: crypto.randomUUID(),
+        client: item.client,
+        investment: item.investment,
+        roi: item.roi,
+        photo: "",
+        instagram: item.instagram || "",
+        hidePhoto: false,
+        hideItem: false,
+        sortOrder: index,
+      })),
     };
 
-    // TODO: Add testimonials section when template config is updated
+    // Generate testimonials section
+    const testimonialsPrompt = `Gere 2-3 depoimentos realistas de clientes satisfeitos para o setor de ${agent.sector}.
+
+Informações do projeto:
+- Cliente: ${data.clientName}
+- Projeto: ${data.projectName}
+- Empresa: ${data.companyInfo}
+
+Para cada depoimento:
+- Nome completo do cliente
+- Cargo e empresa (máx 50 caracteres)
+- Depoimento autêntico (MÁXIMO 350 caracteres) destacando resultados específicos
+
+Formato JSON:
+{
+  "items": [
+    {
+      "name": "Nome Completo",
+      "role": "Cargo, Empresa",
+      "testimonial": "Depoimento com MÁXIMO 350 caracteres..."
+    }
+  ]
+}`;
+
+    const testimonialsSystemPrompt = `Você é um especialista em ${agent.sector} criando depoimentos autênticos e convincentes.
+
+REGRAS OBRIGATÓRIAS:
+- 2-3 depoimentos
+- Nomes brasileiros realistas
+- role: máximo 50 caracteres
+- testimonial: MÁXIMO 350 caracteres (CONTE OS CARACTERES ANTES DE GERAR!)
+- Depoimentos específicos com resultados mensuráveis
+- Tom profissional mas humanizado
+- Seja conciso e direto`;
+
+    const testimonialsResult = await this.runLLMWithJSONRetry<{
+      items: Array<{
+        name: string;
+        role: string;
+        testimonial: string;
+      }>;
+    }>(testimonialsPrompt, testimonialsSystemPrompt);
+
     sections.testimonials = {
       hideSection: false,
-      items: [
-        {
-          id: crypto.randomUUID(),
-          name: "João Silva",
-          role: "CEO, Empresa Exemplo",
-          testimonial: "Excelente trabalho! Superou nossas expectativas e entregou resultados incríveis para nosso negócio.",
-          photo: "",
-          hidePhoto: false,
-          sortOrder: 0,
-        },
-        {
-          id: crypto.randomUUID(),
-          name: "Maria Santos",
-          role: "Gerente de Marketing, Outra Empresa",
-          testimonial: "Profissionalismo e qualidade em cada etapa do projeto. Recomendo fortemente!",
-          photo: "",
-          hidePhoto: false,
-          sortOrder: 1,
-        },
-      ],
+      items: testimonialsResult.items.map((item, index) => ({
+        id: crypto.randomUUID(),
+        name: item.name,
+        role: item.role,
+        testimonial: item.testimonial,
+        photo: "",
+        hidePhoto: false,
+        sortOrder: index,
+      })),
     };
 
     // Generate steps
@@ -525,6 +599,17 @@ export class MinimalTheme {
     const planCount = Math.min(Math.max(data.selectedPlans || 1, 1), 3);
     const placeholderPlans = [];
     for (let i = 0; i < planCount; i++) {
+      const includedItemsCount = 3 + i; // 3, 4, 5 items per plan
+      const includedItems = [];
+      for (let j = 0; j < includedItemsCount; j++) {
+        includedItems.push({
+          id: crypto.randomUUID(),
+          description: `Item incluído ${j + 1}`,
+          hideItem: false,
+          sortOrder: j,
+        });
+      }
+      
       placeholderPlans.push({
         id: crypto.randomUUID(),
         title: `Plano ${i + 1}`,
@@ -543,7 +628,7 @@ export class MinimalTheme {
         hideButtonTitle: false,
         hideItem: false,
         sortOrder: i,
-        includedItems: [],
+        includedItems: includedItems,
       });
     }
     sections.plans = {

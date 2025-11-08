@@ -737,7 +737,7 @@ REGRAS:
 
       aboutUs: {
         enabled: true,
-        prompt: `Crie uma seção "Sobre" minimalista.
+        prompt: `Crie uma seção "Sobre" minimalista e personalizada.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -748,21 +748,27 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
-  "title": "Descrição da missão/proposta de valor com até 200 caracteres"
+  "title": "Proposta de valor clara e direta (até 100 caracteres)",
+  "subtitle": "Descrição detalhada conectando a empresa ao projeto do cliente. DEVE mencionar {clientName} de forma natural (até 250 caracteres)"
 }
 
 REGRAS:
+- title: proposta de valor clara (até 100 caracteres)
+- subtitle: OBRIGATÓRIO incluir o nome do cliente ({clientName}) de forma natural
+- subtitle: explicar como vamos ajudar especificamente este cliente (até 250 caracteres)
 - Linguagem direta e autêntica
-- Foco na proposta de valor
+- Foco na proposta de valor personalizada
 - Evite clichês e jargões`,
         expectedFormat: `{
   "hideSection": false,
-  "title": "string (max 200 chars)"
+  "title": "string (max 100 chars)",
+  "subtitle": "string (max 250 chars, must mention client name)"
 }`,
         rules: [
-          "title: até 200 caracteres",
+          "title: até 100 caracteres",
+          "subtitle: até 250 caracteres, DEVE mencionar o cliente",
           "Mensagem clara e direta",
-          "Tom autêntico",
+          "Tom autêntico e personalizado",
         ],
       },
 
