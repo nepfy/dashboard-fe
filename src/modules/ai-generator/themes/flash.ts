@@ -26,7 +26,7 @@ export class FlashTheme {
   private sections: FlashSection[] = [];
   private moaService: MOAService;
   private templateConfig: TemplateConfig;
-  private static readonly VALIDATION_MAX_ATTEMPTS = 3;
+  private static readonly VALIDATION_MAX_ATTEMPTS = 5;
 
   constructor(private together: Together) {
     this.moaService = new MOAService(together, {
@@ -561,11 +561,31 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       }
     }
 
-    throw lastError instanceof Error
-      ? lastError
-      : new Error(
-          `Falha ao gerar a seção ${sectionKey} após multiples tentativas`
-        );
+    // Se todas as tentativas falharem, usa fallback offline
+    console.warn(
+      `⚠️ Todas as ${FlashTheme.VALIDATION_MAX_ATTEMPTS} tentativas falharam para ${sectionKey}. Usando fallback offline.`
+    );
+    const fallbackSection = this.getFallbackSection(
+      sectionKey,
+      data,
+      agent
+    ) as T;
+    const processedFallback = transform
+      ? transform(fallbackSection)
+      : ((fallbackSection as unknown) as R);
+    
+    // Valida o fallback também
+    try {
+      validate(processedFallback);
+      return processedFallback;
+    } catch {
+      // Se até o fallback falhar, lança o erro original
+      throw lastError instanceof Error
+        ? lastError
+        : new Error(
+            `Falha ao gerar a seção ${sectionKey} após múltiplas tentativas`
+          );
+    }
   }
 
   private getFallbackSection(
@@ -1504,7 +1524,6 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashFAQSection> {
-    const userPrompt = this.getSectionPrompt("faq", data);
     const expectedFormat =
       this.getSectionExpectedFormat("faq") ??
       `{
@@ -1516,32 +1535,22 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
   ]
 }`;
 
-    try {
-      const moaResult = await this.moaService.generateWithRetry<{
-        faq: FlashFAQSection;
-      }>(userPrompt, agent.systemPrompt, expectedFormat, agent.systemPrompt);
-
-      if (moaResult.success && moaResult.result) {
-        console.log("✅ MoA FAQ generated successfully");
-
-        return this.normalizeFAQSection(moaResult.result.faq);
-      }
-
-      // Fallback to single model if MoA fails
-      console.warn("MoA failed, falling back to single model");
-      const response = await this.runLLM(userPrompt, agent.systemPrompt);
-      const parsed = JSON.parse(response) as { faq: FlashFAQSection };
-
-      if (!Array.isArray(parsed.faq) || parsed.faq.length === 0) {
-        console.warn("Flash FAQ: No valid FAQ items found, using fallback");
-        return this.getFallbackFAQ();
-      }
-
-      return this.normalizeFAQSection(parsed.faq);
-    } catch (error) {
-      console.error("Flash FAQ Generation Error:", error);
-      return this.getFallbackFAQ();
-    }
+    return await this.generateSectionWithValidation<
+      { faq: FlashFAQSection },
+      FlashFAQSection
+    >({
+      sectionKey: "faq",
+      data,
+      agent,
+      expectedFormat,
+      transform: (raw) => {
+        if (!Array.isArray(raw.faq) || raw.faq.length === 0) {
+          throw new Error("FAQ must contain at least 1 item");
+        }
+        return raw.faq;
+      },
+      validate: (section) => this.validateFAQSection(section),
+    });
   }
 
   private async generateFooter(

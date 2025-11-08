@@ -1,36 +1,10 @@
 {
-  "generatedAt": "2025-11-08T02:16:25.860Z",
-  "totalTests": 6,
-  "successful": 6,
+  "generatedAt": "2025-11-08T02:55:35.795Z",
+  "totalTests": 1,
+  "successful": 1,
   "failed": 0,
   "averageScore": 8.9,
   "results": [
-    {
-      "agent": "Marketing Digital Flash",
-      "template": "flash",
-      "service": "marketing-digital",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "marketing-digital-flash-proposal.json"
-    },
-    {
-      "agent": "Agências & Consultoria Flash",
-      "template": "flash",
-      "service": "agencias-consultoria",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "agencias-consultoria-flash-proposal.json"
-    },
     {
       "agent": "Designer Flash",
       "template": "flash",
@@ -43,45 +17,6 @@
         "overallScore": 8.9
       },
       "filename": "designer-flash-proposal.json"
-    },
-    {
-      "agent": "Desenvolvedor Flash",
-      "template": "flash",
-      "service": "desenvolvedor",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "desenvolvedor-flash-proposal.json"
-    },
-    {
-      "agent": "Arquiteto Flash",
-      "template": "flash",
-      "service": "arquiteto",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "arquiteto-flash-proposal.json"
-    },
-    {
-      "agent": "Fotógrafo Flash",
-      "template": "flash",
-      "service": "photography",
-      "success": true,
-      "analysis": {
-        "structureScore": 6.7,
-        "contentScore": 10,
-        "personalizationScore": 10,
-        "overallScore": 8.9
-      },
-      "filename": "photography-flash-proposal.json"
     }
   ]
 }

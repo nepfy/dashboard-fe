@@ -148,11 +148,14 @@ FORMATO OBRIGATÓRIO
 }
 
 REGRAS RÍGIDAS
-- Valide a contagem de caracteres de cada campo ANTES de responder (inclua espaços).
+- CRÍTICO: Conte MANUALMENTE cada caractere (incluindo espaços) ANTES de finalizar cada campo.
+- title: Escreva uma frase e conte. Se tiver 58 ou 62 caracteres, REESCREVA até ter EXATAMENTE 60.
+- subtitle: Escreva uma frase e conte. Se tiver 98 ou 103 caracteres, REESCREVA até ter EXATAMENTE 100.
+- services[]: Cada item deve ter EXATAMENTE 30 caracteres. Conte cada um individualmente.
+- EXEMPLO: "Design de identidade visual" tem 29 caracteres. "Design de identidade visuais" tem 30.
 - Não utilize aspas extras, emojis ou caracteres especiais fora do padrão ASCII básico.
 - Não mencione diretamente {clientName} ou {projectName} no título, subtítulo ou serviços.
 - Mantenha tom humano, acolhedor e de alto padrão; evite termos vazios como "melhor", "rápido" ou "completo".
-- services deve conter EXATAMENTE 4 itens de 30 caracteres cada.
 - Responda apenas com o JSON final, sem comentários, textos adicionais ou linhas em branco externas.`,
         expectedFormat: `{
   "title": "string (exactly 60 characters, Title Case, premium tone)",
