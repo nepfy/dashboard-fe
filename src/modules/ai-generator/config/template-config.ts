@@ -224,29 +224,50 @@ REGRAS RÍGIDAS
 
       team: {
         enabled: true,
-        prompt: `Gere apenas JSON válido contendo o título da seção "Time".
+        prompt: `Gere título e membros da equipe para o projeto.
 
-DADOS DO PROJETO (referência de tom):
+DADOS DO PROJETO:
 - Cliente: {clientName}
 - Projeto: {projectName}
+- Descrição: {projectDescription}
 - Empresa: {companyInfo}
+{userName ? \`- Nome do responsável: {userName}\` : ""}
 
-REGRAS DE ESCRITA
-- Use primeira pessoa do plural, tom premium, confiável e acolhedor.
-- Planeje o texto para ter EXATAMENTE 55 caracteres (contando espaços). Não gere para cortar.
-- Não utilize aspas extras, emojis ou pontuação redundante.
+IMPORTANTE:
+- Gere 2-3 membros da equipe baseado no contexto do projeto
+- Use nomes realistas e profissionais
+- Os cargos devem ser relevantes para o tipo de projeto
+- Se houver nome do responsável, inclua-o como primeiro membro
+- Todos os membros devem usar a imagem: /images/templates/flash/placeholder.png
+- O título deve ter EXATAMENTE 55 caracteres
 
-RETORNE:
+Retorne APENAS um JSON válido com:
 {
-  "title": "Frase em primeira pessoa com EXATAMENTE 55 caracteres"
+  "title": "Frase sobre parceria e dedicação, MÁXIMO 55 caracteres",
+  "members": [
+    {
+      "name": "Nome completo do membro",
+      "role": "Cargo/função",
+      "image": "/images/templates/flash/placeholder.png"
+    }
+  ]
 }`,
         expectedFormat: `{
-  "title": "string (exactly 55 characters, premium tone)"
+  "title": "string (exactly 55 characters, premium tone)",
+  "members": [
+    {
+      "name": "string (full name)",
+      "role": "string (job title/role)",
+      "image": "/images/templates/flash/placeholder.png"
+    }
+  ]
 }`,
         rules: [
           "title: exatamente 55 caracteres",
-          "Manter tom empático e profissional",
-          "Usar primeira pessoa do plural",
+          "members: 2-3 membros com nomes realistas",
+          "Cargos relevantes ao tipo de projeto",
+          "Incluir responsável se disponível",
+          "Usar imagem placeholder padrão",
         ],
       },
 

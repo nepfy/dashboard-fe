@@ -1375,9 +1375,7 @@
     if (pd.team) {
       updateTitleWithWordSpans("team-title", pd.team.title);
       renderTeamMembers("team-members-list", pd.team.members);
-      // Hide section if no members or hideSection is true
-      const hasMembers = pd.team.members && pd.team.members.length > 0;
-      toggleSectionVisibility(".section_team", pd.team.hideSection === true || !hasMembers);
+      toggleSectionVisibility(".section_team", pd.team.hideSection === true);
     }
 
     // Expertise

@@ -22,12 +22,9 @@ export default function FlashTeam({
   const defaultColor = mainColor || "#4F21A1";
   const colors = getHeroGradientColors(defaultColor);
 
-  // Hide section if there are no members
-  const hasMembers = members && members.length > 0;
-
   return (
     <>
-      {!hideSection && hasMembers && (
+      {!hideSection && (
         <div className="relative overflow-hidden bg-black pb-20 lg:pb-70">
           <div className="relative z-10 mx-auto mb-20 max-w-[1380px] pt-31 lg:mb-180">
             <div className="px-6 lg:px-0">

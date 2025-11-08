@@ -646,12 +646,34 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         };
       }
       case "team": {
+        // Generate 2-3 team members based on project context
+        const defaultMembers = [
+          {
+            id: crypto.randomUUID(),
+            name: data.userName || "Responsável pelo Projeto",
+            role: "Líder de Projeto",
+            image: "/images/templates/flash/placeholder.png",
+            hidePhoto: false,
+            hideMember: false,
+            sortOrder: 0,
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Especialista Técnico",
+            role: "Coordenador de Execução",
+            image: "/images/templates/flash/placeholder.png",
+            hidePhoto: false,
+            hideMember: false,
+            sortOrder: 1,
+          },
+        ];
+
         return {
           title: this.truncateToMax(
             "Somos parceiros dedicados em cada decisão",
             55
           ),
-          members: [],
+          members: defaultMembers,
         };
       }
       case "specialties": {
@@ -1034,12 +1056,19 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     const expectedFormat =
       this.getSectionExpectedFormat("team") ??
       `{
-  "title": "string (maximum 55 characters, premium tone)"
+  "title": "string (maximum 55 characters, premium tone)",
+  "members": [
+    {
+      "name": "string (full name)",
+      "role": "string (job title/role)",
+      "image": "/images/templates/flash/placeholder.png"
+    }
+  ]
 }`;
 
     try {
       const section = await this.generateSectionWithValidation<
-        { title: string },
+        { title: string; members?: Array<{ name: string; role: string; image?: string }> },
         FlashTeamSection
       >({
         sectionKey: "team",
@@ -1048,7 +1077,16 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         expectedFormat,
         transform: (raw) => ({
           title: raw.title ?? "",
-          members: [],
+          members: ensureItemsHaveIds(
+            (raw.members || []).map((member) => ({
+              name: member.name,
+              role: member.role,
+              image: member.image || "/images/templates/flash/placeholder.png",
+              hidePhoto: false,
+              hideMember: false,
+              sortOrder: 0,
+            }))
+          ),
         }),
         validate: (processedSection) => this.validateTeamSection(processedSection),
       });
