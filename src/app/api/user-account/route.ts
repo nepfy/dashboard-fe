@@ -15,7 +15,8 @@ export async function GET() {
       );
     }
 
-    const emailAddress = user?.emailAddresses[0]?.emailAddress;
+    const clerkUserId = user.id;
+    const emailAddress = user.emailAddresses[0]?.emailAddress;
 
     if (!emailAddress) {
       return NextResponse.json(
@@ -24,10 +25,11 @@ export async function GET() {
       );
     }
 
+    // Search by clerkUserId instead of email
     const personData = await db
       .select()
       .from(personUserTable)
-      .where(eq(personUserTable.email, emailAddress))
+      .where(eq(personUserTable.clerkUserId, clerkUserId))
       .limit(1);
 
     if (personData.length === 0) {
@@ -43,8 +45,13 @@ export async function GET() {
       .where(eq(companyUserTable.personId, personData[0].id))
       .limit(1);
 
+    // Merge Clerk data with database data (Clerk data takes precedence for name/email)
     const userData = {
       ...personData[0],
+      // Use Clerk data if database fields are null/empty
+      firstName: personData[0].firstName || user.firstName || null,
+      lastName: personData[0].lastName || user.lastName || null,
+      email: personData[0].email || emailAddress,
       companyData: companyData.length > 0 ? companyData[0] : null,
       unsafeMetadata: user.unsafeMetadata,
       publicMetadata: user.publicMetadata,
@@ -72,7 +79,8 @@ export async function PUT(request: Request) {
       );
     }
 
-    const emailAddress = user?.emailAddresses[0]?.emailAddress;
+    const clerkUserId = user.id;
+    const emailAddress = user.emailAddresses[0]?.emailAddress;
 
     if (!emailAddress) {
       return NextResponse.json(
@@ -84,13 +92,14 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { companyData, ...personData } = body;
 
+    // Update by clerkUserId instead of email
     const updatedUser = await db
       .update(personUserTable)
       .set({
         ...personData,
         updated_at: new Date(),
       })
-      .where(eq(personUserTable.email, emailAddress))
+      .where(eq(personUserTable.clerkUserId, clerkUserId))
       .returning();
 
     if (updatedUser.length === 0) {
@@ -134,6 +143,10 @@ export async function PUT(request: Request) {
 
     const result = {
       ...updatedUser[0],
+      // Merge with Clerk data
+      firstName: updatedUser[0].firstName || user.firstName || null,
+      lastName: updatedUser[0].lastName || user.lastName || null,
+      email: updatedUser[0].email || emailAddress,
       companyData: updatedCompany.length > 0 ? updatedCompany[0] : null,
       unsafeMetadata: user.unsafeMetadata,
       publicMetadata: user.publicMetadata,
