@@ -14,7 +14,10 @@
     "check-migration": "npx tsx src/scripts/check-migration.ts",
     "verify-agents": "npx tsx src/scripts/verify-migration-completeness.ts",
     "list-db-agents": "npx tsx src/scripts/check-db-agents.ts",
-    "test-db-agents": "npx tsx src/scripts/test-database-agents.ts",
+    "test-agents": "npx tsx src/scripts/test-agent-proposals.ts",
+    "test-minimal": "npx tsx src/scripts/test-agent-proposals.ts --template=minimal",
+    "test-flash": "npx tsx src/scripts/test-agent-proposals.ts --template=flash",
+    "test-prime": "npx tsx src/scripts/test-agent-proposals.ts --template=prime",
     "prepare": "husky"
   },
   "dependencies": {
