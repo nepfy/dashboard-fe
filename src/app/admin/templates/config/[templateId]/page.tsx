@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { TemplateConfig } from "#/modules/ai-generator/config/template-config";
+import type { TemplateConfig } from "#/modules/ai-generator/config/template-prompts";
 
 export default function TemplateConfigDetailPage() {
   const params = useParams();

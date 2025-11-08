@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
-import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-config";
+import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-constraints";
 import AgentForm from "./AgentForm";
 
 interface AgentEditorProps {

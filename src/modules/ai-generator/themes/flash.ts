@@ -7,7 +7,7 @@ import { MOAService } from "../services/moa-service";
 import {
   templateConfigManager,
   type TemplateConfig,
-} from "../config/template-config";
+} from "../config/template-prompts";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {

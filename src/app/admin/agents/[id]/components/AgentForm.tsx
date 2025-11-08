@@ -1,7 +1,7 @@
 "use client";
 
 import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
-import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-config";
+import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-constraints";
 
 interface AgentFormProps {
   agent: DatabaseAgentConfig;

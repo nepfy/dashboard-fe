@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { TemplateConfig } from "#/modules/ai-generator/config/template-config";
+import type { TemplateConfig } from "#/modules/ai-generator/config/template-prompts";
 
 export default function TemplateConfigPage() {
   const [configs, setConfigs] = useState<TemplateConfig[]>([]);

@@ -2,7 +2,7 @@ import {
   TemplateConfig,
   TemplateFieldConstraint,
   TemplateSectionConfig,
-} from "../../agents/base/template-config";
+} from "../../agents/base/template-constraints";
 
 const exact = (limit: number): TemplateFieldConstraint => ({
   id: "",
@@ -42,60 +42,62 @@ function section(
     : sectionConfig;
 }
 
-export const flashTemplateConfigV1: TemplateConfig = {
+export const primeTemplateConfigV1: TemplateConfig = {
   version: "1.0.0",
-  templateType: "flash",
+  templateType: "prime",
   structure: [
     {
       id: "introduction",
       title: "Introdução",
-      description: "Abertura concisa e energética com CTA imediato.",
+      description: "Abertura impactante com CTA e benefícios-chave.",
     },
     {
       id: "aboutUs",
       title: "Sobre Nós",
       description:
-        "Resumo direto sobre posicionamento, impacto e diferenciais.",
+        "Apresentação institucional com foco em diferenciais premium.",
     },
     {
       id: "team",
-      title: "Time",
-      description: "Equipe essencial destacada em uma única frase.",
+      title: "Equipe",
+      description:
+        "Equipe dedicada com papéis e especialidades complementares.",
     },
     {
       id: "specialties",
       title: "Especialidades",
-      description: "Tópicos enxutos apresentando competências principais.",
+      description:
+        "Competências principais estruturadas em tópicos detalhados.",
     },
     {
       id: "steps",
       title: "Processo",
-      description: "Processo compacto com cinco etapas principais.",
+      description: "Metodologia prime com etapas claras e orientadas a valor.",
     },
     {
       id: "scope",
       title: "Escopo",
-      description: "Parágrafo único consolidando o escopo proposto.",
+      description: "Resumo consolidado do escopo do projeto.",
     },
     {
       id: "investment",
       title: "Investimento",
-      description: "Planos e entregáveis com foco em agilidade e valor.",
+      description: "Planos, entregáveis e valores estruturados.",
     },
     {
       id: "terms",
-      title: "Termos",
-      description: "Termos opcionais em formato resumido.",
+      title: "Termos e Condições",
+      description: "Condições contratuais opcionais.",
     },
     {
       id: "faq",
       title: "FAQ",
-      description: "Perguntas frequentes para eliminar objeções rapidamente.",
+      description: "Perguntas frequentes para reduzir objeções.",
     },
     {
       id: "footer",
       title: "Rodapé",
-      description: "CTA objetivo e disclaimer informativo.",
+      description: "Call to action final e dados de contato.",
     },
   ],
   sections: {
@@ -108,43 +110,43 @@ export const flashTemplateConfigV1: TemplateConfig = {
             exact(60),
             "title",
             "Título",
-            "Frase de impacto com energia e foco em ação."
+            "Frase imperativa, inclusiva e direta."
           ),
           subtitle: withMeta(
             exact(100),
             "subtitle",
             "Subtítulo",
-            "Resumo do diferencial em uma frase decisiva."
+            "Benefício principal com foco em transformação e lucro."
           ),
           validity: withMeta(
             max(30),
             "validity",
             "Validade",
-            "Prazo ou condição de aprovação."
+            "Texto curto indicando prazo de validade."
           ),
           buttonText: withMeta(
-            max(20),
+            max(25),
             "buttonText",
-            "Texto do botão",
-            "CTA muito curto orientado à ação."
+            "Texto do Botão",
+            "CTA concisa orientada à ação."
           ),
         },
         collections: {
           services: {
             id: "services",
-            label: "Serviços",
+            label: "Serviços em destaque",
             itemType: "string",
             exactItems: 4,
             stringItem: withMeta(
               exact(30),
               "service",
               "Serviço",
-              "Entrega ou benefício."
+              "Descrição curta do serviço/diferencial."
             ),
           },
         },
       },
-      "Mensagem inicial direta e orientada a resultado."
+      "Apresentação inicial com benefícios e CTA."
     ),
     aboutUs: section(
       {
@@ -154,24 +156,24 @@ export const flashTemplateConfigV1: TemplateConfig = {
           title: withMeta(
             exact(155),
             "title",
-            "Título",
-            "Headline sobre posicionamento e impacto."
+            "Título principal",
+            "Frase premium destacando posicionamento e valor."
           ),
           supportText: withMeta(
             exact(70),
             "supportText",
             "Texto de apoio",
-            "Frase curta gerando conexão imediata."
+            "Frase curta que gera proximidade e confiança."
           ),
           subtitle: withMeta(
             exact(250),
             "subtitle",
             "Descrição",
-            "Parágrafo mostrando credibilidade e diferenciação."
+            "Parágrafo sobre metodologia, diferenciais e impacto gerado."
           ),
         },
       },
-      "Apresentação rápida e objetiva."
+      "Contexto institucional detalhado."
     ),
     team: section(
       {
@@ -179,14 +181,20 @@ export const flashTemplateConfigV1: TemplateConfig = {
         label: "Equipe",
         fields: {
           title: withMeta(
-            exact(55),
+            exact(60),
             "title",
             "Título",
-            "Frase única destacando o time."
+            "Headline sobre atuação colaborativa."
+          ),
+          subtitle: withMeta(
+            exact(120),
+            "subtitle",
+            "Subtítulo",
+            "Descrição sobre senioridade e abordagem da equipe."
           ),
         },
       },
-      "Equipe em uma única linha."
+      "Apresenta a equipe responsável pela entrega."
     ),
     specialties: section(
       {
@@ -194,10 +202,10 @@ export const flashTemplateConfigV1: TemplateConfig = {
         label: "Especialidades",
         fields: {
           title: withMeta(
-            exact(140),
+            exact(180),
             "title",
             "Título",
-            "Frase sobre a atuação multidisciplinar."
+            "Frase destacando expertise combinada."
           ),
         },
         collections: {
@@ -205,26 +213,25 @@ export const flashTemplateConfigV1: TemplateConfig = {
             id: "topics",
             label: "Especialidades",
             itemType: "object",
-            minItems: 6,
-            maxItems: 9,
+            exactItems: 9,
             fields: {
               title: withMeta(
-                exact(50),
+                exact(60),
                 "title",
                 "Título",
                 "Nome da especialidade."
               ),
               description: withMeta(
-                exact(100),
+                exact(140),
                 "description",
                 "Descrição",
-                "Resumo muito objetivo sobre a entrega."
+                "Detalhe sobre como a especialidade gera valor."
               ),
             },
           },
         },
       },
-      "Especialidades em formato enxuto."
+      "Lista estruturada de áreas de atuação."
     ),
     steps: section(
       {
@@ -232,37 +239,42 @@ export const flashTemplateConfigV1: TemplateConfig = {
         label: "Processo",
         fields: {
           introduction: withMeta(
-            exact(100),
+            exact(120),
             "introduction",
             "Introdução",
-            "Contexto geral sobre a abordagem."
+            "Resumo do fluxo de trabalho prime."
           ),
-          title: withMeta(max(60), "title", "Título", "Título fixo ou curto."),
+          title: withMeta(
+            max(80),
+            "title",
+            "Título",
+            "Headline da etapa (permite texto fixo)."
+          ),
         },
         collections: {
           topics: {
             id: "topics",
             label: "Etapas",
             itemType: "object",
-            exactItems: 5,
+            exactItems: 6,
             fields: {
               title: withMeta(
-                exact(40),
+                exact(45),
                 "title",
                 "Nome da etapa",
-                "Ação principal da fase."
+                "Título curto com ação principal."
               ),
               description: withMeta(
-                exact(240),
+                exact(260),
                 "description",
                 "Descrição",
-                "Resumo objetivo dos passos."
+                "Explica atividades, entregas e diferenciais da fase."
               ),
             },
           },
         },
       },
-      "Processo reduzido com etapas fixas."
+      "Passo a passo detalhado do processo prime."
     ),
     scope: section(
       {
@@ -270,14 +282,14 @@ export const flashTemplateConfigV1: TemplateConfig = {
         label: "Escopo",
         fields: {
           content: withMeta(
-            exact(350),
+            exact(400),
             "content",
             "Texto",
-            "Parágrafo único conectando entregas e resultados."
+            "Parágrafo consolidando escopo e entregas principais."
           ),
         },
       },
-      "Escopo sintético."
+      "Escopo textual enxuto e objetivo."
     ),
     investment: section(
       {
@@ -285,10 +297,10 @@ export const flashTemplateConfigV1: TemplateConfig = {
         label: "Investimento",
         fields: {
           title: withMeta(
-            exact(85),
+            exact(95),
             "title",
             "Título",
-            "Título com foco em ROI rápido."
+            "Frase sobre visão estratégica do investimento."
           ),
         },
         collections: {
@@ -298,16 +310,16 @@ export const flashTemplateConfigV1: TemplateConfig = {
             itemType: "object",
             fields: {
               title: withMeta(
-                max(30),
+                exact(35),
                 "title",
                 "Título",
-                "Nome curto do entregável."
+                "Nome do entregável."
               ),
               description: withMeta(
-                max(330),
+                exact(350),
                 "description",
                 "Descrição",
-                "Resumo objetivo do entregável."
+                "Detalhamento do entregável principal."
               ),
             },
           },
@@ -315,19 +327,19 @@ export const flashTemplateConfigV1: TemplateConfig = {
             id: "plans",
             label: "Planos",
             itemType: "object",
-            maxItems: 3,
+            exactItems: 3,
             fields: {
               title: withMeta(
-                exact(20),
+                exact(25),
                 "title",
                 "Nome do plano",
                 "Nome curto do plano."
               ),
               description: withMeta(
-                exact(95),
+                exact(110),
                 "description",
                 "Descrição",
-                "Descrição breve do plano."
+                "Explica cobertura e benefícios do plano."
               ),
               value: withMeta(
                 max(11),
@@ -341,43 +353,43 @@ export const flashTemplateConfigV1: TemplateConfig = {
                 id: "topics",
                 label: "Itens incluídos",
                 itemType: "string",
-                minItems: 3,
+                minItems: 4,
                 maxItems: 6,
                 stringItem: withMeta(
-                  max(45),
+                  max(50),
                   "topic",
                   "Item",
-                  "Entrega ou benefício objetivo."
+                  "Benefício ou entrega adicional."
                 ),
               },
             },
           },
         },
       },
-      "Investimento com foco em tomada de decisão rápida."
+      "Planos com entregáveis e diferenciais."
     ),
     terms: section(
       {
         id: "terms",
-        label: "Termos",
+        label: "Termos e Condições",
         collections: {
           items: {
             id: "items",
             label: "Termos",
             itemType: "object",
             fields: {
-              title: withMeta(exact(30), "title", "Título", "Nome do termo."),
+              title: withMeta(exact(35), "title", "Título", "Título do termo."),
               description: withMeta(
-                exact(180),
+                exact(200),
                 "description",
                 "Descrição",
-                "Detalhamento objetivo do termo."
+                "Conteúdo do termo."
               ),
             },
           },
         },
       },
-      "Termos opcionais tecidos de forma direta."
+      "Termos contratuais (opcional)."
     ),
     faq: section(
       {
@@ -386,27 +398,27 @@ export const flashTemplateConfigV1: TemplateConfig = {
         collections: {
           items: {
             id: "items",
-            label: "Perguntas",
+            label: "Perguntas frequentes",
             itemType: "object",
-            exactItems: 10,
+            exactItems: 8,
             fields: {
               question: withMeta(
-                exact(100),
+                exact(120),
                 "question",
                 "Pergunta",
-                "Pergunta alinhada às principais objeções."
+                "Pergunta recorrente do cliente."
               ),
               answer: withMeta(
-                exact(300),
+                exact(320),
                 "answer",
                 "Resposta",
-                "Resposta objetiva e tranquilizadora."
+                "Resposta detalhada e orientada a valor."
               ),
             },
           },
         },
       },
-      "FAQ com resposta rápida."
+      "Perguntas e respostas estratégicas."
     ),
     footer: section(
       {
@@ -414,20 +426,20 @@ export const flashTemplateConfigV1: TemplateConfig = {
         label: "Rodapé",
         fields: {
           callToAction: withMeta(
-            exact(35),
+            exact(60),
             "callToAction",
             "Call to Action",
-            "Frase rápida incentivando ação."
+            "Frase final incentivando fechamento."
           ),
-          disclaimer: withMeta(
-            exact(330),
-            "disclaimer",
-            "Disclaimer",
-            "Informações complementares ou reforço de valor."
+          contactInfo: withMeta(
+            exact(150),
+            "contactInfo",
+            "Contato",
+            "Informações de contato em frase única."
           ),
         },
       },
-      "Encerramento e reforço de confiança."
+      "Encerramento com CTA e contato."
     ),
   },
 };
