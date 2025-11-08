@@ -73,11 +73,24 @@ export interface PrimeInvestmentSection {
     title: string;
     description: string;
   }>;
-  plans: Array<{
+  plansItems: Array<{
     title: string;
     description: string;
     value: string;
-    topics: string[];
+    planPeriod: string;
+    buttonTitle: string;
+    recommended: boolean;
+    hideTitleField: boolean;
+    hideDescription: boolean;
+    hidePrice: boolean;
+    hidePlanPeriod: boolean;
+    hideButtonTitle: boolean;
+    sortOrder: number;
+    includedItems: Array<{
+      description: string;
+      hideItem: boolean;
+      sortOrder: number;
+    }>;
   }>;
 }
 
@@ -520,18 +533,32 @@ export class PrimeTemplateWorkflow {
           ),
         },
       ],
-      plans: basePlans.map((plan) => ({
+      plansItems: basePlans.map((plan, index) => ({
         title: this.composeExactLengthTextPrime(plan.title, 60),
         description: this.composeExactLengthTextPrime(plan.description, 160),
         value: plan.value,
-        topics: plan.topics.map((topic) =>
-          this.composeExactLengthTextPrime(topic, 60)
-        ),
+        planPeriod: "Mensal",
+        buttonTitle: "Solicitar Proposta",
+        recommended: index === basePlans.length - 1,
+        hideTitleField: false,
+        hideDescription: false,
+        hidePrice: false,
+        hidePlanPeriod: false,
+        hideButtonTitle: false,
+        sortOrder: index,
+        includedItems: plan.topics.map((topic, topicIndex) => ({
+          description: this.composeExactLengthTextPrime(topic, 60),
+          hideItem: false,
+          sortOrder: topicIndex,
+        })),
       })),
     };
   }
 
-  private getFallbackTerms(): PrimeTermsSection {
+  private getFallbackTerms(): Array<{
+    title: string;
+    description: string;
+  }> {
     return [
       {
         title: this.composeExactLengthTextPrime(
@@ -707,7 +734,7 @@ export class PrimeTemplateWorkflow {
     const specialties = await this.safeGenerateSection(
       "Specialties",
       () => this.generateSpecialties(data),
-      () => this.getFallbackSpecialties(data)
+      () => this.getFallbackSpecialties()
     );
 
     const steps = await this.safeGenerateSection(
@@ -739,7 +766,7 @@ export class PrimeTemplateWorkflow {
     const faq = await this.safeGenerateSection(
       "FAQ",
       () => this.generateFAQ(data),
-      () => this.getFallbackFAQ(data)
+      () => this.getFallbackFAQ()
     );
 
     const footer = await this.safeGenerateSection(
@@ -1979,10 +2006,10 @@ REGRAS OBRIGATÓRIAS:
       "investment.deliverables must contain at least 3 items"
     );
 
-    const plans = ensureArray<PrimePlan>(parsed.plans, "investment.plans");
+    const plans = ensureArray<PrimePlan>(parsed.plansItems, "investment.plansItems");
     ensureCondition(
       plans.length === 3,
-      "investment.plans must contain exactly 3 items"
+      "investment.plansItems must contain exactly 3 items"
     );
 
     const titleValidation = validateMaxLengthWithWarning(
@@ -2031,12 +2058,12 @@ REGRAS OBRIGATÓRIAS:
         const planTitleValidation = validateMaxLengthWithWarning(
           plan.title,
           25,
-          `investment.plans[${index}].title`
+          `investment.plansItems[${index}].title`
         );
         const planDescValidation = validateMaxLengthWithWarning(
           plan.description,
           110,
-          `investment.plans[${index}].description`
+          `investment.plansItems[${index}].description`
         );
 
         if (planTitleValidation.warning) {
@@ -2055,11 +2082,11 @@ REGRAS OBRIGATÓRIAS:
         ensureMatchesRegex(
           plan.value,
           currencyRegex,
-          `investment.plans[${index}].value`
+          `investment.plansItems[${index}].value`
         );
         ensureCondition(
           plan.includedItems.length >= 4 && plan.includedItems.length <= 6,
-          `investment.plans[${index}].includedItems must contain 4 to 6 items`
+          `investment.plansItems[${index}].includedItems must contain 4 to 6 items`
         );
 
         return {

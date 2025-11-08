@@ -24,107 +24,107 @@
     "introduction": {
       "userName": "",
       "email": "",
-      "title": "Elevamos sua imagem profissional em imagens únicas",
-      "subtitle": "Transformamos sua equipe em ícones de sucesso e autoridade com elegância e estilo",
+      "title": "Elevamos A Presença Visual Com Imagens",
+      "subtitle": "Criamos Registros Profissionais Que Fortalecem A Imagem E Conectam Emocionalmente Sempre",
       "services": [
-        "Retratos individuais de alta q",
-        "Fotos de grupo com expressivid",
-        "Imagens para site e materiais",
-        "Pós-produção avançada personal"
+        "Retratos Individuais",
+        "Fotos De Grupo",
+        "Imagens Para Site",
+        "Pós-Produção Avançada"
       ],
       "validity": "15 dias",
       "buttonText": "Solicitar Proposta"
     },
     "aboutUs": {
-      "title": "Transformamos sua imagem corporativa",
-      "supportText": "Capturamos a essência",
-      "subtitle": "Nossa equipe cria imagens que refletem profissionalismo e unidade, destacando sua equipe em qualquer plataforma com experiência e equipamentos de alta qualidade."
+      "title": "Transformamos sua equipe em ícones corporativos",
+      "supportText": "Imagens que inspiram confiança",
+      "subtitle": "Com expertise em fotografia corporativa, traduzimos a essência e visão de liderança de sua equipe em imagens impactantes, inspiradoras e autênticas, fortalecendo sua marca e preservando momentos com precisão e emoção."
     },
     "team": {
-      "title": "Nós cuidamos do seu ensaio como se fosse nossa história",
+      "title": "Nós cuidamos do seu ensaio como nossa própria história",
       "members": []
     },
     "specialties": {
-      "title": "Elevamos sua imagem corporativa",
+      "title": "Fotografia corporativa de impacto",
       "topics": [
         {
           "title": "Retratos Executivos",
-          "description": "Capturamos autoridade e liderança."
+          "description": "Imagens fortes, profissionais e autoritárias."
         },
         {
           "title": "Fotos de Equipe",
-          "description": "Registramos sinergia e união."
+          "description": "Composições criativas, harmônicas e unificadoras."
         },
         {
           "title": "Imagens Institucionais",
-          "description": "Criamos identidade visual impactante."
-        },
-        {
-          "title": "Marketing Visual",
-          "description": "Imagens que inspiram e conectam."
-        },
-        {
-          "title": "Ambientes Corporativos",
-          "description": "Destacamos cultura e profissionalismo."
+          "description": "Visuais coerentes, fortalecendo a imagem corporativa."
         },
         {
           "title": "Direção de Arte",
-          "description": "Composições visuais sofisticadas."
+          "description": "Conteúdos visuais estratégicos para marketing."
+        },
+        {
+          "title": "Ambientação Profissional",
+          "description": "Ambientes que transmitem inovação e essência corporativa."
+        },
+        {
+          "title": "Consultoria de Imagem",
+          "description": "Orientação para vestimentas e poses que reforçam a mensagem."
         }
       ]
     },
     "steps": {
       "title": "Nosso Processo",
-      "introduction": "Cuidado e excelência",
+      "introduction": "Cuidado exclusivo",
       "topics": [
         {
-          "title": "Conhecer",
-          "description": "Entendemos sua equipe e história para criar imagens autênticas e impactantes, refletindo a essência da sua corporação em cada registro, com atenção a detalhes e necessidades específicas."
+          "title": "Entendendo",
+          "description": "Conversamos para entender seus objetivos, criando um plano personalizado que reflita sua identidade corporativa e valores, garantindo uma conexão emocional autêntica."
         },
         {
-          "title": "Planejar",
-          "description": "Desenvolvemos um roteiro personalizado para a sessão, considerando objetivos, preferências e necessidades específicas da sua equipe e marca, garantindo alinhamento total com a identidade da empresa."
+          "title": "Planejando",
+          "description": "Desenvolvemos um roteiro detalhado considerando suas necessidades, para garantir que cada imagem atenda às expectativas e necessidades da equipe, com locações e conceitos específicos."
         },
         {
-          "title": "Capturar",
-          "description": "Realizamos a sessão fotográfica com equipamento de alta qualidade, capturando momentos significativos e retratos que transmitem confiança e profissionalismo, valorizando cada executivo e a sinergia do grupo."
+          "title": "Capturando",
+          "description": "Nossos fotógrafos registram momentos únicos e autênticos com técnica e sensibilidade, criando imagens que inspiram e motivam a equipe, refletindo a personalidade e a cultura da empresa."
         },
         {
-          "title": "Editar",
-          "description": "Editamos as imagens com cuidado e atenção aos detalhes, garantindo que cada foto seja uma representação fiel e atraente da sua equipe e marca, aplicando tratamento visual sofisticado e mantendo autenticidade."
+          "title": "Editando",
+          "description": "Realizamos uma edição artística de alta qualidade, garantindo que as imagens sejam impactantes e profissionais, destacando a essência e a beleza da equipe e da empresa, com tratamento especializado."
         },
         {
-          "title": "Entregar",
-          "description": "Entregamos as imagens finais em formato digital, prontas para uso em site institucional, materiais de marketing e outras aplicações, sempre respeitando a identidade visual da sua corporação e oferecendo consultoria para melhor utilização."
+          "title": "Entregando",
+          "description": "Entregamos as imagens finais de forma organizada e acessível, para que possam ser utilizadas em diferentes canais e materiais, como site institucional, redes sociais e materiais de marketing, com orientações de uso."
         }
       ],
       "marquee": []
     },
     "scope": {
-      "content": "Nossa sessão corporativa transforma a imagem da sua equipe executiva, capturando a essência e a autoridade de cada líder em retratos individuais, fotos de grupo e imagens para site e materiais de marketing, entregando registros premium que refletem profissionalismo, unidade e excelência."
+      "content": "Transformamos sua equipe executiva em ícones da liderança, capturando retratos individuais, fotos de grupo e imagens para site e marketing, entregando um acervo estratégico que eleva sua marca, fortalece a presença institucional e valoriza a identidade da empresa com sofisticação e autenticidade."
     },
     "investment": {
       "title": "Investimento Corporativo",
       "deliverables": [
         {
           "title": "Retratos",
-          "description": "Capturamos a essência de cada executivo com retratos personalizados e profissionais, destacando sua personalidade e habilidades, para uso em perfis profissionais e materiais de marketing."
+          "description": "Capturamos expressões únicas de cada membro da equipe, criando imagens que transmitem confiança e profissionalismo, destacando a essência e a personalidade de cada executivo."
         },
         {
           "title": "Fotos de Grupo",
-          "description": "Imagens coesas e harmônicas que representam a unidade da equipe, perfeitas para uso em materiais institucionais e internos, mostrando coesão e trabalho em equipe."
+          "description": "Registramos a união e a coesão da equipe, criando imagens que refletem a força e a liderança da empresa, ideal para uso em site, redes sociais e materiais de marketing."
         },
         {
-          "title": "Imagens para Marketing",
-          "description": "Crie conteúdo visual impactante para campanhas e site com fotografias que comunicam valores da marca e engajam clientes, elevando a presença digital e off-line da empresa."
+          "title": "Imagens para Site",
+          "description": "Desenvolvemos um banco de imagens estratégico para site e redes sociais, com fotos que contam a história da empresa e reforçam seus valores corporativos, melhorando a percepção da marca e aumentando a visibilidade."
         }
       ],
       "plansItems": [
         {
           "id": "1",
           "title": "Básico",
-          "description": "Pacote inicial com retratos e fotos de grupo para uso interno, com entrega de arquivos digitais e edição padrão.",
-          "value": "R$2.800",
+          "description": "Sessão fotográfica básica para equipe executiva, incluindo retratos individuais e fotos de grupo.",
+          "value": "R$2.000",
           "planPeriod": "Único",
           "buttonTitle": "Contratar",
           "recommended": false,
@@ -136,20 +136,20 @@
           "sortOrder": 0,
           "includedItems": [
             {
-              "id": "1",
+              "id": "1.1",
               "description": "Retratos individuais",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "2",
+              "id": "1.2",
               "description": "Fotos de grupo",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "3",
-              "description": "Edição padrão",
+              "id": "1.3",
+              "description": "Edição básica",
               "hideItem": false,
               "sortOrder": 2
             }
@@ -158,10 +158,10 @@
         {
           "id": "2",
           "title": "Avançado",
-          "description": "Pacote intermediário com retratos, fotos de grupo e edição avançada para uso em site e redes sociais.",
-          "value": "R$4.200",
+          "description": "Sessão fotográfica avançada para equipe executiva, incluindo retratos individuais, fotos de grupo e imagens para site.",
+          "value": "R$3.500",
           "planPeriod": "Único",
-          "buttonTitle": "Escolher",
+          "buttonTitle": "Contratar",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -171,26 +171,26 @@
           "sortOrder": 1,
           "includedItems": [
             {
-              "id": "4",
+              "id": "2.1",
               "description": "Retratos individuais",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "5",
+              "id": "2.2",
               "description": "Fotos de grupo",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "6",
-              "description": "Edição avançada",
+              "id": "2.3",
+              "description": "Imagens para site",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "7",
-              "description": "Suporte técnico",
+              "id": "2.4",
+              "description": "Edição avançada",
               "hideItem": false,
               "sortOrder": 3
             }
@@ -199,10 +199,10 @@
         {
           "id": "3",
           "title": "Premium",
-          "description": "Pacote completo com retratos, fotos de grupo, edição premium e entrega de arquivos digitais para uso em todos os canais.",
-          "value": "R$6.500",
+          "description": "Sessão fotográfica premium para equipe executiva, incluindo retratos individuais, fotos de grupo, imagens para site e edição premium.",
+          "value": "R$5.000",
           "planPeriod": "Único",
-          "buttonTitle": "Investir",
+          "buttonTitle": "Contratar",
           "recommended": true,
           "hideTitleField": false,
           "hideDescription": false,
@@ -212,32 +212,32 @@
           "sortOrder": 2,
           "includedItems": [
             {
-              "id": "8",
+              "id": "3.1",
               "description": "Retratos individuais",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "9",
+              "id": "3.2",
               "description": "Fotos de grupo",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "10",
-              "description": "Edição premium",
+              "id": "3.3",
+              "description": "Imagens para site",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "11",
-              "description": "Suporte técnico",
+              "id": "3.4",
+              "description": "Edição premium",
               "hideItem": false,
               "sortOrder": 3
             },
             {
-              "id": "12",
-              "description": "Consultoria",
+              "id": "3.5",
+              "description": "Galeria digital",
               "hideItem": false,
               "sortOrder": 4
             }
@@ -249,9 +249,9 @@
       "title": "Resultados que transformam negócios",
       "items": [
         {
-          "id": "6c6ef508-86d0-400d-b9cd-cf200fd77dbf",
-          "client": "Equipe Executiva",
-          "instagram": "equipeexecutiva",
+          "id": "1be61995-4b4e-47fd-93f1-1fa8fe4fea3b",
+          "client": "EmpresaFicticia1",
+          "instagram": "empresaficticia1",
           "investment": 2000,
           "roi": 3500,
           "photo": "/images/templates/flash/placeholder.png",
@@ -259,9 +259,9 @@
           "sortOrder": 0
         },
         {
-          "id": "c7f2f8d5-02cc-4f4c-82e8-67bf5f125324",
-          "client": "Liderança Corporativa",
-          "instagram": "liderancacorporativa",
+          "id": "78898426-6b70-4de2-b7a6-ec986c28c49b",
+          "client": "EmpresaFicticia2",
+          "instagram": "empresaficticia2",
           "investment": 2500,
           "roi": 4000,
           "photo": "/images/templates/flash/placeholder.png",
@@ -269,11 +269,11 @@
           "sortOrder": 1
         },
         {
-          "id": "17994cec-f079-416d-99b9-f6bf03873c68",
-          "client": "Gerentes Seniores",
-          "instagram": "gerentesseniores",
+          "id": "d0a6ee10-ba0f-4d41-91c8-db9db1917507",
+          "client": "EmpresaFicticia3",
+          "instagram": "empresaficticia3",
           "investment": 3000,
-          "roi": 4500,
+          "roi": 5000,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 2
@@ -284,19 +284,19 @@
       "title": "Depoimentos",
       "items": [
         {
-          "id": "ad96d6fd-f8a2-4200-9af8-b35d9c2273f8",
-          "name": "Carlos Silva",
-          "role": "Diretor Executivo",
-          "testimonial": "A sessão fotográfica foi incrível, capturando a essência da equipe.",
+          "id": "821c364f-f009-40bc-904c-acb9ccc0ddba",
+          "name": "Luiz Felipe",
+          "role": "Diretor de Projetos",
+          "testimonial": "A sessão fotográfica corporativa foi incrível!",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "43669007-f045-4c75-bf77-fd62542507c9",
-          "name": "Mariana Souza",
-          "role": "Gerente de Marketing",
-          "testimonial": "Ficamos satisfeitos com as imagens para nosso site e materiais.",
+          "id": "4861e64e-b78e-4fd0-811b-02f2bb8f9b97",
+          "name": "Beatriz Costa",
+          "role": "Gerente de Equipe",
+          "testimonial": "As fotos de grupo superaram expectativas",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
@@ -305,70 +305,70 @@
     },
     "terms": [
       {
-        "title": "Termos Corporativa",
-        "description": "Realizamos sessões em até 10 dias úteis, com pagamento flexível e suporte inclusos, garantindo transparência e confiabilidade."
+        "title": "Termos Corporativos",
+        "description": "Entregamos em até 10 dias úteis, com pagamento flexível e suporte completo, garantindo transparência e confiabilidade em nossos serviços de fotografia corporativa."
       }
     ],
     "faq": [
       {
-        "question": "Como funciona a sessão?",
-        "answer": "Nossa sessão começa com uma consulta para entender suas necessidades, seguida de agendamento, preparação do local e captação de imagens que transmitem profissionalismo e unidade da equipe, garantindo registros de alta qualidade.",
-        "id": "992e4b4d-68e2-4369-b026-dadcdb07f329"
+        "question": "O que é uma sessão corporativa?",
+        "answer": "É uma sessão fotográfica personalizada para equipes executivas, capturando momentos autênticos e profissionais para uso institucional e marketing, garantindo imagens de alta qualidade que refletem a essência da sua equipe.",
+        "id": "d62b4fad-bf00-4fdf-815c-320d454a71d4"
       },
       {
-        "question": "O que é necessário para agendar?",
-        "answer": "Para agendar, basta nos fornecer a data preferida e as informações básicas da equipe, garantindo que tudo esteja pronto para que o dia da sessão seja tranquilo e produtivo, com atenção especial a cada detalhe.",
-        "id": "81bae40a-cde0-4596-803e-e64868f9a2fc"
+        "question": "Posso escolher o local da sessão?",
+        "answer": "Sim, você pode escolher o local que melhor represente sua equipe e identidade corporativa, garantindo imagens que refletem sua essência e profissionalismo, com opção de estúdio ou local personalizado.",
+        "id": "d487d731-ceb2-45e8-8bb3-16ab0bda26b0"
       },
       {
-        "question": "Vocês fornecem orientação?",
-        "answer": "Sim, oferecemos dicas de vestuário e pose para garantir que todos estejam confiantes e apresentáveis, criando imagens que refletem a essência e o profissionalismo de cada membro da equipe, com resultados de alta qualidade.",
-        "id": "d13079ad-6bb8-4b9e-b899-ca4614eac435"
+        "question": "Quais serviços são incluídos?",
+        "answer": "Incluímos retratos individuais, fotos de grupo e imagens para site e materiais de marketing, garantindo uma cobertura completa das necessidades da sua equipe, com entrega de imagens em alta resolução e edição profissional.",
+        "id": "f7ee6021-6b6c-48ad-ab3a-797b393cb1f1"
       },
       {
-        "question": "Quantas fotos serão entregues?",
-        "answer": "Entregamos um pacote completo com retratos individuais, fotos de grupo e imagens para uso em site e materiais de marketing, garantindo que cada imagem seja de alta qualidade e alinhada com sua marca, com entrega em formato digital.",
-        "id": "b3a09c58-9131-4ad8-93fa-3a91bda8d63c"
+        "question": "Como é o processo de sessão?",
+        "answer": "Nossa equipe trabalha em estreita colaboração com você para entender as necessidades específicas da sua equipe, garantindo que cada imagem capture a essência e o espírito da sua empresa, com direção e orientação personalizada.",
+        "id": "eb42f0d2-776c-44cc-a9f1-def9f0abe312"
       },
       {
-        "question": "O processo de edição é incluído?",
-        "answer": "Sim, todas as fotos passam por um processo cuidadoso de edição para realçar os detalhes, ajustar cores e garantir que as imagens estejam perfeitas para uso corporativo, com entrega em prazo de até 10 dias úteis após a sessão.",
-        "id": "bb77fbf6-c281-47f9-bfbf-a2b1a7605255"
+        "question": "Quanto tempo dura a sessão?",
+        "answer": "O tempo de sessão varia de acordo com as necessidades da sua equipe, mas geralmente leva de 2 a 4 horas, dependendo do número de participantes e do tipo de imagens desejadas, garantindo que todos sejam confortáveis e atendidos.",
+        "id": "91fb426c-605d-4431-9d98-7fd6b7adae74"
       },
       {
-        "question": "Posso solicitar retoques?",
-        "answer": "Claro, oferecemos ajustes adicionais para garantir que as imagens estejam exatamente como você deseja, com nosso objetivo de entregar resultados que superem suas expectativas, com atenção especial a cada detalhe.",
-        "id": "c26c7b6a-aa9c-42f7-9590-0b5d76372d08"
+        "question": "O que devo vestir?",
+        "answer": "Recomendamos roupas profissionais e confortáveis que reflitam a identidade da sua empresa, ajudando a criar imagens coerentes e profissionais, com opção de consultoria para garantir a melhor apresentação.",
+        "id": "a4ceea3a-fe3b-42f1-b15e-d309c7a2fe93"
       },
       {
-        "question": "Vocês disponibilizam em diferentes formatos?",
-        "answer": "Sim, fornecemos as imagens em formatos adequados para web e impressão, garantindo que você tenha tudo o que precisa para usar nas suas plataformas corporativas, com qualidade e resolução adequadas.",
-        "id": "49bb0ba5-a19c-4956-83f2-f21d7861be26"
+        "question": "Como posso preparar minha equipe?",
+        "answer": "Comunicamos antecipadamente as diretrizes e dicas para que sua equipe esteja preparada e confortável durante a sessão, garantindo o melhor resultado possível, com ambiente controlado e descontraído.",
+        "id": "e8756836-75b1-41c1-ada0-18f4d3a284d0"
       },
       {
-        "question": "O tempo de entrega é rápido?",
-        "answer": "Nosso compromisso é entregar as fotos em até 10 dias úteis após a sessão, mantendo a qualidade e a rapidez para que você possa usar as imagens o mais rápido possível, com atenção especial a cada prazo.",
-        "id": "f7d5a11d-64b8-4a23-8816-7adb42f63f02"
+        "question": "Quais são os benefícios?",
+        "answer": "Os benefícios incluem imagens de alta qualidade para uso institucional e marketing, melhorando a percepção da sua empresa e reforçando sua identidade visual, com entrega de imagens em formato digital e impresso.",
+        "id": "e5496abe-6db2-4b9d-b8bb-16284031f81a"
       },
       {
-        "question": "Vocês podem fotografar no escritório?",
-        "answer": "Com certeza, podemos realizar a sessão no local de sua escolha, garantindo que o ambiente reflita a identidade da sua empresa, adicionando uma camada extra de autenticidade às suas imagens, com resultados de alta qualidade.",
-        "id": "b8efd00a-c7ad-4244-a634-9ce2a8900ef5"
+        "question": "Como recebo as imagens?",
+        "answer": "Entregamos as imagens editadas e prontas para uso em formato digital, facilitando a integração em seu site, redes sociais e materiais de marketing, com opção de galeria online para aprovação e personalização.",
+        "id": "88553641-a64e-47eb-ab47-a310fd261a16"
       },
       {
-        "question": "Como faço para garantir minha sessão?",
-        "answer": "Para garantir sua sessão, basta entrar em contato conosco para agendar uma consulta, estando aqui para tornar o processo simples e garantir que você tenha imagens que representem sua equipe de maneira profissional e autêntica, com atenção especial a cada detalhe.",
-        "id": "83357f50-3dcc-4e5a-a3db-b10a0cd1d574"
+        "question": "Qual é o prazo de entrega?",
+        "answer": "A entrega das imagens editadas geralmente ocorre dentro de 7 a 10 dias úteis após a sessão, garantindo que você tenha as imagens necessárias para seus projetos de marketing e comunicação, com qualidade e pontualidade garantidas.",
+        "id": "bc1913a1-4333-482f-9edf-d4614b7e9216"
       }
     ],
     "footer": {
-      "callToAction": "Eternize agora",
-      "disclaimer": "Estamos à disposição para capturar a essência da sua equipe com cuidado e dedicação, garantindo registros fotográficos de alta qualidade e suporte contínuo."
+      "callToAction": "Elevemos",
+      "disclaimer": "Estamos prontos para capturar a essência da sua equipe com atenção artesanal e suporte contínuo, garantindo proximidade e cuidado em cada detalhe para registros que refletem profissionalismo e unidade."
     }
   },
   "workflowMetadata": {
     "sections": [],
-    "generationTime": 45248
+    "generationTime": 39961
   },
-  "generatedAt": "2025-11-08T01:57:43.213Z"
+  "generatedAt": "2025-11-08T02:16:25.859Z"
 }

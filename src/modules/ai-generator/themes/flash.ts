@@ -709,16 +709,8 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         };
       }
       case "investment": {
-        const selectedPlansValue = data.selectedPlans;
-        const plansCount =
-          typeof selectedPlansValue === "number"
-            ? Math.min(Math.max(Math.round(selectedPlansValue), 1), 3)
-            : Array.isArray(selectedPlansValue)
-              ? Math.min(Math.max(selectedPlansValue.length, 1), 3)
-              : 3;
-        const planLabels = Array.isArray(selectedPlansValue)
-          ? selectedPlansValue
-          : ["Essencial", "Avançado", "Premium"];
+        const plansCount = Math.min(Math.max(Math.round(data.selectedPlans), 1), 3);
+        const planLabels = ["Essencial", "Avançado", "Premium"];
         const plans = Array.from({ length: plansCount }).map((_, index) => {
           const label = planLabels[index] ?? `Plano ${index + 1}`;
           const valueBase = 3500 + index * 2200;
@@ -962,14 +954,11 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       transform: (raw) => ({
         userName: data.userName ?? raw.userName ?? "",
         email: data.userEmail ?? raw.email ?? "",
-        title: this.truncateToMax(raw.title ?? "", 60),
-        subtitle: this.truncateToMax(raw.subtitle ?? "", 100),
-        services: this.ensureExactArrayLength(
-          raw.services ?? [],
-          4,
-          30,
-          (index) => `Serviço ${index + 1}`
-        ),
+        title: raw.title ?? "",
+        subtitle: raw.subtitle ?? "",
+        services: Array.isArray(raw.services) && raw.services.length === 4
+          ? raw.services
+          : ["Serviço 1", "Serviço 2", "Serviço 3", "Serviço 4"],
         validity: "15 dias",
         buttonText: "Solicitar Proposta",
       }),
@@ -1026,7 +1015,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         agent,
         expectedFormat,
         transform: (raw) => ({
-          title: this.truncateToMax(raw.title ?? "", 55),
+          title: raw.title ?? "",
           members: [],
         }),
         validate: (processedSection) => this.validateTeamSection(processedSection),
@@ -1132,14 +1121,14 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
               : "Detalhamos como conduzimos esta etapa para preservar ritmo, transparência e alto impacto.";
 
           return {
-            title: this.truncateToMax(baseTitle, 40),
-            description: this.truncateToMax(baseDescription, 240),
+            title: baseTitle,
+            description: baseDescription,
           };
         });
 
         return {
           title: "Nosso Processo",
-          introduction: this.truncateToMax(raw.introduction ?? "", 100),
+          introduction: raw.introduction ?? "",
           topics: normalizedTopics,
           marquee: Array.isArray(raw.marquee) ? raw.marquee : [],
         };
@@ -1167,7 +1156,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       agent,
       expectedFormat,
       transform: (raw) => ({
-        content: this.truncateToMax(raw.content ?? "", 350),
+        content: raw.content ?? "",
       }),
       validate: (section) => this.validateScopeSection(section),
     });

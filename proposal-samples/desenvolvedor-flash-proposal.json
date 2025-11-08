@@ -24,113 +24,117 @@
     "introduction": {
       "userName": "",
       "email": "",
-      "title": "Acelere Seu Crescimento Digital Com Soluções",
-      "subtitle": "Juntos, Criamos Sistemas Que Ampliam Resultados E Fortalecem Seu Negócio Com Tecnologia",
+      "title": "Elevate Sua Experiência Digital Agora",
+      "subtitle": "Juntos Criamos Soluções Digitais Inovadoras Para Negócios Em Crescimento",
       "services": [
-        "Sistemas De Pagamento Seguros ",
-        "Gestão De Estoque Eficiente E ",
-        "Painel Administrativo Intuitiv",
-        "Aplicativo Mobile Integrado E "
+        "Aplicativos Móveis",
+        "Sistemas De Pagamento",
+        "Gestão De Estoque",
+        "Painel Administrativo"
       ],
       "validity": "15 dias",
       "buttonText": "Solicitar Proposta"
     },
     "aboutUs": {
-      "title": "Transformamos sua plataforma em um motor de crescimento",
+      "title": "Transformamos sua ideia em plataforma e-commerce de sucesso",
       "supportText": "Confiabilidade e inovação",
-      "subtitle": "Unimos tecnologia de ponta e estratégias de mercado para elevar sua presença digital, otimizar operações e ampliar sua base de clientes com soluções personalizadas, garantindo performance digital e resultados reais para sua equipe."
+      "subtitle": "Combinamos tecnologia de ponta e metodologias ágeis para entregar soluções personalizadas, impulsionando crescimento e potencializando a experiência do usuário, garantindo resultados concretos e uma operação eficiente para sua equipe."
     },
     "team": {
-      "title": "Nós evoluímos junto com você, lado a lado em cada proje",
+      "title": "Nós evoluímos junto com você lado a lado em projetos",
       "members": []
     },
     "specialties": {
-      "title": "E-commerce de Alta Performance",
+      "title": "Nós criamos e-commerces robustos",
       "topics": [
         {
           "title": "Sistemas de Pagamento",
-          "description": "Transações seguras e eficientes."
+          "description": "Gateways de pagamento seguros e eficientes."
         },
         {
           "title": "Gestão de Estoque",
-          "description": "Controle inteligente e automático."
+          "description": "Controle inteligente de inventário e redução de custos."
         },
         {
           "title": "Painel Administrativo",
-          "description": "Ferramentas de gestão centralizadas."
+          "description": "Interface intuitiva para gestão de vendas e relatórios."
         },
         {
           "title": "Aplicativo Mobile",
-          "description": "Experiência de usuário otimizada."
+          "description": "Experiência de compra personalizada e otimizada."
         },
         {
-          "title": "Integração de Vendas",
-          "description": "Gestão multicanal unificada."
+          "title": "Integração de APIs",
+          "description": "Expansão de funcionalidades e melhoria da experiência do usuário."
         },
         {
-          "title": "Segurança e Conformidade",
-          "description": "Proteção de dados e regulamentações."
+          "title": "Otimização de Performance",
+          "description": "Velocidade, segurança e escalabilidade para crescimento sustentável."
         }
       ]
     },
     "steps": {
       "title": "Nosso Processo",
-      "introduction": "Desenvolvemos com cuidado e precisão",
+      "introduction": "Desenvolvemos com cuidado",
       "topics": [
         {
-          "title": "Análise Estratégica",
-          "description": "Analisamos requisitos e objetivos do projeto para criar soluções robustas e eficientes, garantindo performance e resultados mensuráveis para o seu e-commerce de produtos naturais."
+          "title": "Análise",
+          "description": "Analisamos requisitos para criar soluções eficientes."
         },
         {
-          "title": "Desenvolvimento Personalizado",
-          "description": "Desenvolvemos sistemas, plataformas e aplicativos personalizados, integrando tecnologias de ponta para entregar soluções inovadoras e escaláveis, atendendo às necessidades específicas do seu negócio."
+          "title": "Desenvolvimento",
+          "description": "Desenvolvemos plataforma e-commerce com sistema de pagamentos."
         },
         {
-          "title": "Testes e Validação",
-          "description": "Realizamos testes rigorosos para garantir a qualidade, estabilidade e segurança das soluções, assegurando uma experiência de usuário excepcional e validando cada funcionalidade antes da entrega."
+          "title": "Testes",
+          "description": "Realizamos testes rigorosos para garantir performance."
         },
         {
-          "title": "Implantação e Configuração",
-          "description": "Implantamos as soluções de forma estratégica, otimizando a integração com sistemas existentes e minimizando o impacto nas operações diárias do negócio, garantindo uma transição suave e eficiente."
+          "title": "Lançamento",
+          "description": "Lançamos a plataforma e-commerce completa."
         },
         {
-          "title": "Suporte e Manutenção",
-          "description": "Oferecemos suporte contínuo e atualizações regulares para garantir que as soluções permaneçam atualizadas, seguras e alinhadas com as necessidades em constante evolução do seu negócio, assegurando sucesso a longo prazo."
+          "title": "Suporte",
+          "description": "Oferecemos suporte para garantir sucesso."
         }
       ],
       "marquee": []
     },
     "scope": {
-      "content": "Nós desenvolvemos uma plataforma e-commerce completa para o varejo de produtos naturais, integrando sistema de pagamentos seguro, gestão de estoque eficiente e um painel administrativo intuitivo. Isso amplia a presença digital, aumenta as vendas e fortalece a marca no mercado com resultados concretos."
+      "content": "Nós criamos uma plataforma e-commerce completa e integrada para o varejo de produtos naturais, unindo sistema de pagamentos, gestão de estoque, painel administrativo e aplicativo mobile, para elevar a experiência do usuário, otimizar processos e impulsionar vendas de forma sustentável."
     },
     "investment": {
-      "title": "Investimento estratégico",
+      "title": "Investimento Estratégico",
       "deliverables": [
         {
           "title": "Plataforma E-commerce",
-          "description": "Desenvolvemos plataforma completa com sistema de pagamentos, gestão de estoque e painel administrativo para aumentar vendas e melhorar experiência do cliente."
+          "description": "Desenvolvemos uma plataforma completa com sistema de pagamentos, gestão de estoque e painel administrativo para aumentar conversão e engajamento."
         },
         {
           "title": "Aplicativo Mobile",
-          "description": "Criamos aplicativo mobile para varejo de produtos naturais, permitindo compras fáceis e acesso a ofertas exclusivas."
+          "description": "Criamos um aplicativo mobile para varejo de produtos naturais, otimizando experiência do usuário e aumentando vendas."
         },
         {
-          "title": "Integrações",
-          "description": "Integramos sistemas de pagamento, gestão de estoque e marketing para otimizar processos e aumentar eficiência."
+          "title": "Integrações Avançadas",
+          "description": "Integramos sistemas de pagamento e gestão de estoque para maior eficiência operacional e redução de custos."
         },
         {
           "title": "Suporte Técnico",
-          "description": "Oferecemos suporte técnico contínuo para garantir plataforma sempre atualizada e funcionando corretamente."
+          "description": "Oferecemos suporte técnico especializado e contínuo para resolver qualquer problema ou dúvida, garantindo que a plataforma continue a funcionar de forma otimizada e segura."
+        },
+        {
+          "title": "Otimização Contínua",
+          "description": "Otimizamos constantemente as soluções para melhorar a experiência do usuário, aumentar a eficiência e garantir que as metas sejam alcançadas."
         }
       ],
       "plansItems": [
         {
           "id": "1",
-          "title": "Básico",
-          "description": "Solução inicial com plataforma e-commerce e suporte técnico.",
-          "value": "R$3.000",
-          "planPeriod": "Único",
-          "buttonTitle": "Contratar",
+          "title": "Iniciar",
+          "description": "Plano básico com plataforma e-commerce e suporte limitado.",
+          "value": "R$2.500",
+          "planPeriod": "Mensal",
+          "buttonTitle": "Escolher",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -140,20 +144,20 @@
           "sortOrder": 0,
           "includedItems": [
             {
-              "id": "1.1",
-              "description": "Plataforma e-commerce",
+              "id": "1-1",
+              "description": "Desenvolver plataforma",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "1.2",
-              "description": "Suporte técnico",
+              "id": "1-2",
+              "description": "Configurar pagamentos",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "1.3",
-              "description": "Integração de pagamento",
+              "id": "1-3",
+              "description": "Suporte básico",
               "hideItem": false,
               "sortOrder": 2
             }
@@ -161,11 +165,11 @@
         },
         {
           "id": "2",
-          "title": "Avançado",
-          "description": "Solução completa com aplicativo mobile e integrações.",
-          "value": "R$6.000",
+          "title": "Avançar",
+          "description": "Plano intermediário com integrações avançadas e suporte contínuo.",
+          "value": "R$5.500",
           "planPeriod": "Único",
-          "buttonTitle": "Contratar",
+          "buttonTitle": "Escolher",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -175,25 +179,25 @@
           "sortOrder": 1,
           "includedItems": [
             {
-              "id": "2.1",
-              "description": "Aplicativo mobile",
+              "id": "2-1",
+              "description": "Desenvolver aplicativo",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "2.2",
-              "description": "Integrações de sistemas",
+              "id": "2-2",
+              "description": "Otimizar plataforma",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "2.3",
-              "description": "Painel administrativo",
+              "id": "2-3",
+              "description": "Suporte avançado",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "2.4",
+              "id": "2-4",
               "description": "Análise de desempenho",
               "hideItem": false,
               "sortOrder": 3
@@ -202,11 +206,11 @@
         },
         {
           "id": "3",
-          "title": "Premium",
-          "description": "Solução premium com suporte contínuo e personalizações.",
-          "value": "R$9.000",
+          "title": "Excelência",
+          "description": "Plano completo com todas as funcionalidades e suporte premium.",
+          "value": "R$10.000",
           "planPeriod": "Único",
-          "buttonTitle": "Contratar",
+          "buttonTitle": "Escolher",
           "recommended": true,
           "hideTitleField": false,
           "hideDescription": false,
@@ -216,32 +220,32 @@
           "sortOrder": 2,
           "includedItems": [
             {
-              "id": "3.1",
-              "description": "Plataforma e-commerce personalizada",
+              "id": "3-1",
+              "description": "Desenvolver plataforma personalizada",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "3.2",
+              "id": "3-2",
               "description": "Aplicativo mobile personalizado",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "3.3",
-              "description": "Integrações avançadas",
+              "id": "3-3",
+              "description": "Suporte especializado",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "3.4",
-              "description": "Suporte técnico prioritário",
+              "id": "3-4",
+              "description": "Análise de desempenho avançada",
               "hideItem": false,
               "sortOrder": 3
             },
             {
-              "id": "3.5",
-              "description": "Análise de desempenho avançada",
+              "id": "3-5",
+              "description": "Otimização contínua",
               "hideItem": false,
               "sortOrder": 4
             }
@@ -253,9 +257,9 @@
       "title": "Resultados que transformam negócios",
       "items": [
         {
-          "id": "9539f3e3-fada-4cf8-8517-4c2274f15f05",
-          "client": "Varejo Verde",
-          "instagram": "varejo_verde",
+          "id": "8b5be308-35e5-4310-abbd-62c4e5439772",
+          "client": "Varejo Natural",
+          "instagram": "varejonatural",
           "investment": 1200,
           "roi": 1800,
           "photo": "/images/templates/flash/placeholder.png",
@@ -263,9 +267,9 @@
           "sortOrder": 0
         },
         {
-          "id": "0421b221-f466-4dca-b42f-3049293b285d",
-          "client": "Naturais & Cia",
-          "instagram": "naturais_e_cia",
+          "id": "0bcadaf9-79a5-421f-9244-8db581ab4700",
+          "client": "Produtos Saudáveis",
+          "instagram": "produtossaudaveis",
           "investment": 1500,
           "roi": 2200,
           "photo": "/images/templates/flash/placeholder.png",
@@ -273,11 +277,11 @@
           "sortOrder": 1
         },
         {
-          "id": "0caf2e14-bb2a-46df-be87-f7591e0c6be1",
-          "client": "Bio Market",
-          "instagram": "bio_market",
-          "investment": 2000,
-          "roi": 3000,
+          "id": "b56a5812-08fe-4657-9478-da997e7e528b",
+          "client": "Eco Comércio",
+          "instagram": "ecocomercio",
+          "investment": 1000,
+          "roi": 1500,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 2
@@ -288,19 +292,19 @@
       "title": "Depoimentos",
       "items": [
         {
-          "id": "367eb434-6431-420e-9926-9b6235b08b58",
-          "name": "Maria Silva",
+          "id": "c6532c73-dbca-4fb6-ac47-0d47eb4462ae",
+          "name": "Luiza Souza",
           "role": "Diretora de Varejo",
-          "testimonial": "Plataforma e-commerce superou expectativas.",
+          "testimonial": "A plataforma e-commerce desenvolvida aumentou nossas vendas online.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "100d620b-3816-4fb9-bfc5-c5b910ce426e",
-          "name": "Carlos Pereira",
-          "role": "Gerente de TI",
-          "testimonial": "Aumentamos vendas e melhoria da experiência do cliente.",
+          "id": "d8d67ada-a92f-4d39-b3bb-6a3b06aa1807",
+          "name": "Marcelo Oliveira",
+          "role": "Gerente de Marketing",
+          "testimonial": "O sistema de pagamentos e gestão de estoque foi eficaz.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
@@ -309,70 +313,70 @@
     },
     "terms": [
       {
-        "title": "E-commerce Completo",
-        "description": "Desenvolvemos plataforma de e-commerce completa com pagamentos, gestão de estoque e suporte contínuo, entregando em até 6 meses com pagamento flexível em 10x sem juros."
+        "title": "Termos E-commerce",
+        "description": "Desenvolvemos plataforma completa em até 12 semanas, com pagamento parcelado e suporte contínuo para garantir sucesso."
       }
     ],
     "faq": [
       {
-        "question": "Como garantir segurança nas transações?",
-        "answer": "Implementamos protocolos de segurança avançados, como SSL e criptografia de dados, para proteger todas as transações, garantindo confidencialidade e integridade das informações, além de utilizar sistemas de pagamento confiáveis como PayPal e Stripe.",
-        "id": "bbbf435a-1b57-4cc5-bdf7-5913dd27186c"
-      },
-      {
-        "question": "Qual a velocidade de carregamento da plataforma?",
-        "answer": "A plataforma é otimizada para carregamento rápido, proporcionando uma experiência fluida e sem interrupções, o que aumenta a satisfação do usuário e reduz a taxa de abandono, graças à arquitetura escalável e ao uso de tecnologias de ponta.",
-        "id": "9848323e-3b21-4040-a719-409016b89c42"
-      },
-      {
-        "question": "Vocês oferecem suporte técnico após a entrega?",
-        "answer": "Sim, oferecemos suporte contínuo para garantir que a plataforma funcione perfeitamente e que qualquer ajuste necessário seja realizado de forma ágil e eficiente, com treinamento completo e documentação detalhada para a equipe.",
-        "id": "10ebf78a-52f0-4bd3-bcd2-1837d3f4ab70"
-      },
-      {
-        "question": "Como funciona a gestão de estoque?",
-        "answer": "O sistema de gestão de estoque é integrado e automatizado, permitindo o controle preciso de estoques, alertas de reposição e relatórios detalhados para otimizar a operação, além de oferecer visão clara e controle total sobre o estoque no painel administrativo.",
-        "id": "406e3114-533a-402f-bef7-982a53833bd8"
-      },
-      {
-        "question": "Posso personalizar a aparência da plataforma?",
-        "answer": "Sim, a plataforma é altamente personalizável, permitindo ajustes no design, cores e layout para que se alinhe perfeitamente à sua marca e proposta de valor, com opções para descrição, imagens, preços e muito mais.",
-        "id": "5d162b5b-c451-4c00-aeb3-9e33a3354f26"
-      },
-      {
-        "question": "Como vocês garantem a compatibilidade com dispositivos móveis?",
-        "answer": "A plataforma é desenvolvida com tecnologias responsivas, garantindo excelente desempenho e experiência de usuário em smartphones, tablets e desktops, aumentando a acessibilidade, com aplicativo mobile disponível para iOS e Android.",
-        "id": "0f85f25d-d51e-4a60-a995-68dc92b32f8b"
-      },
-      {
-        "question": "Vocês fornecem integração com redes sociais?",
-        "answer": "Sim, a plataforma oferece integração com redes sociais, permitindo compartilhamento de produtos, campanhas de marketing e engajamento com o público em diferentes canais, além de integração com principais gateways de pagamento para garantir segurança e conversões maximizadas.",
-        "id": "b1417081-331d-48c3-b3db-6afe589b0d26"
+        "question": "O que é plataforma e-commerce?",
+        "answer": "Plataforma e-commerce é um sistema que permite vender produtos online, com gestão de estoque e pagamentos integrados, aumentando a eficiência e alcance do negócio, melhorando a experiência do cliente e aumentando as vendas.",
+        "id": "0b828bc8-31a4-4b70-b984-f570a484340b"
       },
       {
         "question": "Quais métodos de pagamento são suportados?",
-        "answer": "Suportamos diversos métodos de pagamento, incluindo cartões de crédito, débito, boleto bancário e pagamentos digitais, oferecendo flexibilidade e conveniência aos clientes, com sistemas de pagamento confiáveis como PagSeguro, Mercado Pago e Pix.",
-        "id": "e8476b3a-fd57-488d-b432-90b7cd18e57b"
+        "answer": "Integramos cartões, PIX, boletos e carteiras digitais para oferecer flexibilidade aos seus clientes, aumentando conversões e melhorando a experiência de compra, com sistemas seguros de pagamento.",
+        "id": "ce19889b-14ad-4c45-87d6-96ff57d377e8"
       },
       {
-        "question": "Como é o processo de atualização da plataforma?",
-        "answer": "O processo de atualização é simples e transparente, com comunicação prévia e implementação sem interrupção do serviço, garantindo que sua plataforma esteja sempre atualizada e segura, com ciclos de atualização regulares e suporte técnico contínuo.",
-        "id": "c16ae53c-ac3f-4c44-9178-b35aa6abedff"
+        "question": "Como funciona a gestão de estoque?",
+        "answer": "Sincronizamos vendas, entradas e saídas em tempo real, evitando rupturas e excessos, garantindo eficiência operacional e controle preciso dos itens, com relatórios detalhados e alertas de reposição.",
+        "id": "59fa56ba-66e7-4d0f-b114-9f7d78c352f4"
       },
       {
-        "question": "Vocês oferecem treinamento para a equipe de gestão?",
-        "answer": "Sim, oferecemos treinamento completo para a equipe de gestão, incluindo tutoriais, webinars e suporte personalizado, garantindo que eles utilizem a plataforma de forma eficiente e produtiva, com documentação detalhada e suporte técnico disponível 24/7.",
-        "id": "c8e36182-8982-4862-b8e9-ee37df997a79"
+        "question": "O painel administrativo é fácil de usar?",
+        "answer": "Sim, desenvolvemos painéis simplificados com relatórios claros e controles acessíveis, permitindo gerenciar pedidos, produtos e métricas sem complexidade técnica, otimizando o tempo e aumentando a produtividade.",
+        "id": "0f59e7aa-f467-4a9d-a5fe-67c1e2f7f81a"
+      },
+      {
+        "question": "Existe suporte técnico?",
+        "answer": "Oferecemos suporte técnico contínuo para garantir que você utilize o painel administrativo com eficiência, resolvendo problemas e atualizando o sistema, com suporte para manutenção, atualizações e resolução de problemas.",
+        "id": "d8873b6c-4290-49bb-813d-e1e5f4cbe9a4"
+      },
+      {
+        "question": "Como é a integração do aplicativo mobile?",
+        "answer": "Desenvolvemos aplicativos personalizados para varejo de produtos naturais, integrados à plataforma e-commerce, ampliando o alcance e oferecendo experiência mobile otimizada para os clientes, com design e funcionalidades específicas.",
+        "id": "4439afca-cb93-4725-8aff-931c5d5883d0"
+      },
+      {
+        "question": "Qual a segurança do sistema de pagamento?",
+        "answer": "Utilizamos protocolos de segurança avançados para proteger dados e transações dos usuários, com criptografia, backups automáticos e conformidade com LGPD, garantindo a segurança e confiabilidade das transações.",
+        "id": "916a00a5-e409-450e-8e8a-a20179755106"
+      },
+      {
+        "question": "É possível fazer ajustes no sistema posteriormente?",
+        "answer": "Sim, podemos fazer ajustes conforme necessário sem custos adicionais, dentro do escopo do projeto, garantindo que a plataforma atenda às necessidades específicas do negócio e ofereça vantagem competitiva.",
+        "id": "b497d78a-e12f-419b-bb3f-34c16d16794f"
+      },
+      {
+        "question": "O que inclui o suporte contínuo?",
+        "answer": "Oferecemos suporte contínuo para manutenção, atualizações e resolução de problemas, garantindo que a plataforma opere sempre com performance máxima, com atenção e dedicação para garantir sucesso e crescimento contínuo.",
+        "id": "1c3e4eb7-8a91-4759-8ee5-9d3d0d9ae7a2"
+      },
+      {
+        "question": "Qual o prazo para desenvolvimento completo?",
+        "answer": "Desenvolvemos em ciclos ágeis, com entrega progressiva em até 12 semanas, garantindo qualidade e alinhamento contínuo com as necessidades do negócio, com planejamento e execução transparentes e eficazes.",
+        "id": "57e8a6b3-5c7b-4eab-b934-7ef1b9ae28ce"
       }
     ],
     "footer": {
-      "callToAction": "Elevamos seu e-commerce",
-      "disclaimer": "Estamos ao seu lado, garantindo suporte contínuo, cuidado artesanal e segurança para o crescimento da sua plataforma de vendas online."
+      "callToAction": "Eleve seu varejo",
+      "disclaimer": "Estamos ao seu lado, garantindo cuidado artesanal e suporte contínuo para sua plataforma e-commerce, com atenção e segurança."
     }
   },
   "workflowMetadata": {
     "sections": [],
-    "generationTime": 32527
+    "generationTime": 21932
   },
-  "generatedAt": "2025-11-08T01:56:15.408Z"
+  "generatedAt": "2025-11-08T02:14:46.780Z"
 }

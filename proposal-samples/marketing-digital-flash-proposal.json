@@ -24,110 +24,110 @@
     "introduction": {
       "userName": "",
       "email": "",
-      "title": "Impulsionamos seu crescimento digital agora",
-      "subtitle": "Estratégias inovadoras para aumentar vendas e engajamento com resultados mensuráveis e lucrativos pa",
+      "title": "Impulsionamos seu crescimento digital",
+      "subtitle": "Aumente vendas e engajamento online com",
       "services": [
         "Otimização de SEO avançada",
-        "Gestão de redes sociais estrat",
-        "Criação de anúncios Google Ads",
-        "Automação de email marketing e"
+        "Gestão de redes sociais",
+        "Campanhas de Google Ads",
+        "Automação de e-mail"
       ],
       "validity": "15 dias",
       "buttonText": "Solicitar Proposta"
     },
     "aboutUs": {
-      "title": "Nós transformamos sua trajetória de crescimento com estratégias digitais",
-      "supportText": "Confiança e impacto",
-      "subtitle": "Com 5 anos de experiência, nossa equipe cria abordagens personalizadas que impulsionam vendas e engajamento, garantindo que sua marca alcance novos patamares de sucesso no mercado digital com autoridade e resultados sustentáveis."
+      "title": "Elevamos sua marca ao próximo nível",
+      "supportText": "Cresça conosco",
+      "subtitle": "Nossa equipe de especialistas em marketing digital cria estratégias personalizadas para impulsionar vendas, engajamento e autoridade digital, garantindo sucesso sustentável"
     },
     "team": {
       "title": "Nós crescemos junto com você, lado a lado sempre",
       "members": []
     },
     "specialties": {
-      "title": "Estratégias digitais lucrativas",
+      "title": "Estratégias de marketing digital com resultados",
       "topics": [
         {
           "title": "SEO Avançado",
-          "description": "Otimização de sites para rankings altos"
+          "description": "Otimização para visibilidade máxima"
         },
         {
-          "title": "Campanhas Ads",
-          "description": "Anúncios direcionados para mais vendas"
+          "title": "Google Ads",
+          "description": "Anúncios direcionados para vendas"
         },
         {
-          "title": "Gestão Social",
-          "description": "Engajamento alto em redes sociais"
+          "title": "Gestão de Redes",
+          "description": "Engajamento e comunidade ativa"
         },
         {
-          "title": "Automação Email",
+          "title": "Automação de Email",
           "description": "Campanhas personalizadas para fidelizar"
         },
         {
-          "title": "Análise Métricas",
+          "title": "Análise de Métricas",
           "description": "Dados para decisões informadas"
         },
         {
-          "title": "Otimização Conversão",
-          "description": "Melhorando taxas de conversão"
+          "title": "Estratégia de Conteúdo",
+          "description": "Conteúdo relevante para atrair leads"
         }
       ]
     },
     "steps": {
       "title": "Nosso Processo",
-      "introduction": "Trabalhamos com cuidado e ritmo",
+      "introduction": "Crescemos com cuidado e precisão",
       "topics": [
         {
           "title": "Análise Estratégica",
-          "description": "Entendemos sua marca, público e concorrentes para criar estratégias personalizadas e eficazes, aumentando visibilidade e engajamento do seu e-commerce de moda feminina, com foco em SEO, Google Ads e redes sociais."
+          "description": "Entendemos seu mercado, objetivos e público, criando bases sólidas para o crescimento do seu e-commerce, garantindo resultados mensuráveis e impacto real."
         },
         {
-          "title": "Desenvolvimento de Estratégia",
-          "description": "Criamos planos de marketing digital completos, integrando SEO, Google Ads, gestão de redes sociais e automação de email marketing, para impulsionar vendas e crescimento sustentável, com monitoramento constante e ajustes estratégicos."
+          "title": "Desenvolvimento Personalizado",
+          "description": "Desenvolvemos estratégias de marketing digital integradas, incluindo SEO, Google Ads, gestão de redes sociais e automação de email, para maximizar engajamento, conversões e vendas de forma eficaz e sustentável."
         },
         {
-          "title": "Implementação de Campanhas",
-          "description": "Executamos campanhas publicitárias otimizadas para alcançar o público-alvo, aumentar a conversão e melhorar o retorno sobre o investimento, com foco em conteúdos relevantes e personalizados, garantindo engajamento e fidelidade dos clientes."
+          "title": "Implementação Otimizada",
+          "description": "Executamos campanhas otimizadas, publicações estratégicas e automações de email com excelência técnica, garantindo qualidade superior e resultados consistentes para o seu negócio digital."
         },
         {
-          "title": "Automação e Otimização",
-          "description": "Desenvolvemos soluções de automação de email marketing e otimização contínua de performance, para manter o engajamento dos clientes, fomentar a fidelidade e estimular novas vendas, com relatórios transparentes e atualizações constantes, gar"
+          "title": "Monitoramento e Otimização",
+          "description": "Analisamos métricas em tempo real, ajustando estratégias para maximizar o retorno sobre o investimento e garantir performance crescente, mantendo uma presença digital forte e competitiva no mercado."
         },
         {
-          "title": "Consolidação de Resultados",
-          "description": "Entregamos relatórios detalhados com métricas claras e insights acionáveis, garantindo que cada investimento gere crescimento sustentável e resultados mensuráveis para seu e-commerce, com foco em maximizar ROI, conversões e performance de c"
+          "title": "Evolução e Sucesso",
+          "description": "Compartilhamos insights valiosos, planejamos próximos passos juntos e refinamos ações baseadas em feedback e dados, garantindo evolução constante, crescimento sustentável e sucesso do seu negócio digital."
         }
       ],
       "marquee": []
     },
     "scope": {
-      "content": "Desenvolvemos uma estratégia de marketing digital completa para o seu e-commerce de moda feminina, integrando SEO, Google Ads, gestão de redes sociais e automação de e-mail marketing, impulsionando vendas, engajamento e presença digital com resultados sólidos e crescimento sustentável."
+      "content": "Nós desenvolvemos uma estratégia de marketing digital completa para seu e-commerce de moda feminina, integrando SEO, Google Ads, gestão de redes sociais e automação de email marketing, garantindo resultados concretos e sustentáveis, com foco em aumentar vendas, engajamento e posicionamento da marca no mercado."
     },
     "investment": {
       "title": "Investimento Estratégico",
       "deliverables": [
         {
-          "title": "Análise de Mercado",
-          "description": "Identifique oportunidades e tendências para aprimorar suas estratégias de venda e aumentar a eficiência do seu investimento."
+          "title": "Estratégia SEO",
+          "description": "Otimização do site para motores de busca, aumentando visibilidade e tráfego orgânico de forma sustentável."
         },
         {
-          "title": "Estratégia de Marketing",
-          "description": "Desenvolva um plano completo para aumentar vendas e engajamento no digital, com foco em SEO, Google Ads e gestão de redes sociais."
+          "title": "Campanhas Google Ads",
+          "description": "Anúncios precisos para alcançar o público-alvo, gerando leads e vendas com máximo retorno sobre investimento."
         },
         {
-          "title": "Otimização de Campanhas",
-          "description": "Ajuste e otimize constantemente as campanhas para garantir o melhor retorno sobre o investimento e alcançar os objetivos de vendas e engajamento."
+          "title": "Gestão de Redes Sociais",
+          "description": "Engajamento da audiência com conteúdo relevante, aumentando a presença online e fidelizando clientes."
         },
         {
-          "title": "Relatórios e Análise",
-          "description": "Acompanhe o desempenho das campanhas com relatórios detalhados e análise de dados para tomar decisões informadas e ajustar as estratégias conforme necessário."
+          "title": "Automação de Email Marketing",
+          "description": "Sequências personalizadas para nutrir leads e fidelizar clientes, aumentando o valor do ciclo de vida do cliente."
         }
       ],
       "plansItems": [
         {
           "id": "1",
           "title": "Básico",
-          "description": "Plano básico para pequenos e-commerces, com estratégias de marketing digital essenciais.",
+          "description": "Início com estratégia básica para pequenos negócios.",
           "value": "R$1.200",
           "planPeriod": "Mensal",
           "buttonTitle": "Iniciar",
@@ -140,20 +140,20 @@
           "sortOrder": 0,
           "includedItems": [
             {
-              "id": "1",
-              "description": "SEO Básico",
+              "id": "1-1",
+              "description": "SEO básico",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "2",
-              "description": "Gestão de Redes",
+              "id": "1-2",
+              "description": "Gestão de redes",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "3",
-              "description": "Email Marketing",
+              "id": "1-3",
+              "description": "Análise mensal",
               "hideItem": false,
               "sortOrder": 2
             }
@@ -162,10 +162,10 @@
         {
           "id": "2",
           "title": "Avançado",
-          "description": "Plano avançado para e-commerces em crescimento, com estratégias de marketing digital avançadas.",
+          "description": "Estratégia intermediária para crescimento sustentável.",
           "value": "R$2.500",
           "planPeriod": "Trimestral",
-          "buttonTitle": "Acelerar",
+          "buttonTitle": "Escolher",
           "recommended": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -175,26 +175,26 @@
           "sortOrder": 1,
           "includedItems": [
             {
-              "id": "4",
-              "description": "Análise de Mercado",
+              "id": "2-1",
+              "description": "SEO avançado",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "5",
-              "description": "Otimização de Campanhas",
+              "id": "2-2",
+              "description": "Gestão de redes",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "6",
-              "description": "Suporte Prioritário",
+              "id": "2-3",
+              "description": "Automação de email",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "7",
-              "description": "Relatórios Detalhados",
+              "id": "2-4",
+              "description": "Análise trimestral",
               "hideItem": false,
               "sortOrder": 3
             }
@@ -203,10 +203,10 @@
         {
           "id": "3",
           "title": "Premium",
-          "description": "Plano premium com estratégias personalizadas e avançadas.",
-          "value": "R$4.500",
+          "description": "Estratégia completa para máximo impacto.",
+          "value": "R$4.800",
           "planPeriod": "Semestral",
-          "buttonTitle": "Dominar",
+          "buttonTitle": "Contratar",
           "recommended": true,
           "hideTitleField": false,
           "hideDescription": false,
@@ -216,32 +216,32 @@
           "sortOrder": 2,
           "includedItems": [
             {
-              "id": "8",
-              "description": "Estratégia Personalizada",
+              "id": "3-1",
+              "description": "SEO especializado",
               "hideItem": false,
               "sortOrder": 0
             },
             {
-              "id": "9",
-              "description": "Análise de Concorrência",
+              "id": "3-2",
+              "description": "Gestão de redes",
               "hideItem": false,
               "sortOrder": 1
             },
             {
-              "id": "10",
-              "description": "Otimização Contínua",
+              "id": "3-3",
+              "description": "Automação de email",
               "hideItem": false,
               "sortOrder": 2
             },
             {
-              "id": "11",
-              "description": "Suporte Exclusivo",
+              "id": "3-4",
+              "description": "Suporte prioritário",
               "hideItem": false,
               "sortOrder": 3
             },
             {
-              "id": "12",
-              "description": "Relatórios Avançados",
+              "id": "3-5",
+              "description": "Análise semestral",
               "hideItem": false,
               "sortOrder": 4
             }
@@ -253,9 +253,9 @@
       "title": "Resultados que transformam negócios",
       "items": [
         {
-          "id": "02e191bf-d21b-4025-b229-684c1791a2ab",
-          "client": "ModaFem1",
-          "instagram": "modafem1",
+          "id": "560e7847-7028-49f9-a4c1-e5fb3a2524c1",
+          "client": "ModaFeminina",
+          "instagram": "ModaFeminina",
           "investment": 1500,
           "roi": 2500,
           "photo": "/images/templates/flash/placeholder.png",
@@ -263,19 +263,19 @@
           "sortOrder": 0
         },
         {
-          "id": "a238a8ad-b093-4bbb-bdc0-3cb0378282d3",
-          "client": "ModaFem2",
-          "instagram": "modafem2",
+          "id": "7301e85d-22a5-4cfe-aa5a-8b5eee747c1d",
+          "client": "EleganceStore",
+          "instagram": "EleganceStore",
           "investment": 2000,
-          "roi": 3000,
+          "roi": 3200,
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
         },
         {
-          "id": "2dcfd008-d614-4998-a448-88526e25a4ed",
-          "client": "ModaFem3",
-          "instagram": "modafem3",
+          "id": "e3928fbf-1e8a-4ae6-b122-45abf50a69da",
+          "client": "Fashionista",
+          "instagram": "Fashionista",
           "investment": 2500,
           "roi": 4000,
           "photo": "/images/templates/flash/placeholder.png",
@@ -288,19 +288,19 @@
       "title": "Depoimentos",
       "items": [
         {
-          "id": "afc080c0-e36e-4db3-9d85-c42af4378afe",
-          "name": "Luiza Fernandes",
-          "role": "Gerente de E-commerce",
-          "testimonial": "A estratégia de marketing digital aumentou minhas vendas em 40%.",
+          "id": "1807f468-c445-44b8-aa7d-99326c110cdf",
+          "name": "Mariana Silva",
+          "role": "Gerente de Marketing",
+          "testimonial": "A estratégia de marketing digital aumentou nosso engajamento e vendas.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "88996211-68c3-4aed-bb6f-894e47a82854",
-          "name": "Pedro Albuquerque",
-          "role": "Diretor de Vendas Online",
-          "testimonial": "O SEO e Google Ads melhoraram nossa visibilidade.",
+          "id": "1e82c4bd-edb3-455d-84a3-10f26fc41292",
+          "name": "Carlos Souza",
+          "role": "Diretor Comercial",
+          "testimonial": "A automação de email marketing melhorou a comunicação com nossos clientes.",
           "photo": "/images/templates/flash/placeholder.png",
           "hidePhoto": false,
           "sortOrder": 1
@@ -310,69 +310,69 @@
     "terms": [
       {
         "title": "Termos",
-        "description": "Oferecemos suporte contínuo, prazo de 60 dias, pagamento em 3x sem juros, garantindo transparência e confiabilidade em nossos serviços."
+        "description": "Entregamos em até 60 dias, com pagamentos flexíveis e suporte contínuo, garantindo transparência e sucesso no projeto de marketing digital."
       }
     ],
     "faq": [
       {
-        "question": "O que é marketing digital?",
-        "answer": "Marketing digital combina técnicas de SEO, Google Ads, gestão de redes sociais e automação de email marketing para aumentar vendas e engajamento no e-commerce de moda feminina, proporcionando maior visibilidade e alcance ao público-alvo.",
-        "id": "4bc25c20-c9af-4d8b-a0c1-dbe64e1ed1b9"
+        "id": "048695a6-2a8d-476e-97b9-b514a8d34d4f",
+        "question": "Como garantem que o cronograma será cumprido sem comprometer a qualidade em cada entrega prevista? -",
+        "answer": "Trabalhamos com cronogramas detalhados, reuniões de checkpoint e líderes dedicados por frente. Monitoramos indicadores de progresso diariamente, antecipamos riscos com planos de contingência e comunicamos qualquer ajuste com total transparência, garantindo que qualidade e prazo avancem juntos com tr"
       },
       {
-        "question": "Como funciona o SEO?",
-        "answer": "O SEO otimiza o site para os motores de busca, melhorando a visibilidade e o posicionamento das páginas, aumentando assim a possibilidade de atrair tráfego orgânico e gerar vendas.",
-        "id": "bc5e1d04-bbf6-41f1-b64a-57379e3419a2"
+        "id": "76b14440-eb27-481a-b70e-51e7d02ca86a",
+        "question": "Quais tipos de ajustes posso solicitar durante o desenvolvimento sem custos adicionais extras? - - -",
+        "answer": "Incluímos ciclos de validação a cada etapa-chave para alinhar expectativas. Ajustes que mantêm o escopo definido, refinam conteúdos, cores, tipografia ou fluxos previstos já estão cobertos. Alterações estruturais significativas ou acréscimos de funcionalidades são avaliados com novo orçamento claro "
       },
       {
-        "question": "Quanto tempo leva para ver os primeiros resultados?",
-        "answer": "Os primeiros resultados começam a aparecer em 30-45 dias, com tráfego orgânico crescendo e campanhas otimizadas gerando vendas iniciais enquanto construímos autoridade digital.",
-        "id": "2b966db3-875a-494c-818b-1f4f02addb55"
+        "id": "c25e5916-15ca-4b74-b566-32ce043bceb9",
+        "question": "Quanto tempo em média leva a entrega do projeto completo do briefing à implantação final? - - - - - ",
+        "answer": "Projetos residenciais completos costumam levar entre seis e oito semanas. Iniciamos com um briefing profundo, validamos diretrizes criativas, desenvolvemos plantas e layouts, apresentamos moodboards, refinamos escolhas e conduzimos reuniões semanais para que cada decisão avance com segurança, sem at"
       },
       {
-        "question": "Como medimos o sucesso da estratégia?",
-        "answer": "Monitoramos métricas-chave como taxa de conversão, ROI das campanhas, tráfego qualificado e crescimento de receita, garantindo transparência total e ajustes contínuos para maximizar resultados.",
-        "id": "6c564522-04c4-4229-b72f-4a4124071a39"
+        "id": "017a21d5-63ef-46d3-bb5a-4045380f83fa",
+        "question": "Que tipo de suporte acompanham o cliente após a apresentação final da proposta? - - - - - - - - - - ",
+        "answer": "Oferecemos acompanhamento dedicado por trinta dias corridos após a entrega para orientar implementações, responder dúvidas e ajustar detalhes finos. Mantemos canal direto de comunicação, enviamos materiais organizados e indicamos fornecedores confiáveis sempre que necessário para garantir execução i"
       },
       {
-        "question": "Preciso ter conhecimento técnico para acompanhar?",
-        "answer": "Não, nós fornecemos relatórios claros e reuniões periódicas com análises simplificadas, tornando fácil entender o progresso e impactos da estratégia no seu negócio.",
-        "id": "4997d5dc-6842-4e3d-b39e-44cb2f1683aa"
+        "id": "4d5a56d0-a770-4b66-ad6d-41e66d1e6c52",
+        "question": "Como estruturam o processo de pagamento para que eu possa planejar o investimento? - - - - - - - - -",
+        "answer": "Trabalhamos com divisão em duas parcelas iguais: cinquenta por cento na assinatura para reservar calendário e iniciar a imersão; cinquenta por cento na entrega completa, após validação de cada etapa. Caso precise, avaliamos parcelamentos adicionais com contrato formal e cronograma financeiro customi"
       },
       {
-        "question": "As campanhas são otimizadas regularmente?",
-        "answer": "Sim, realizamos otimizações contínuas baseadas em dados reais, testando criativos, ajustando públicos e melhorando performance para garantir máximo retorno sobre investimento.",
-        "id": "76d20b40-59b7-4183-bc6b-6cda74a4e4b5"
+        "id": "5f4009c7-5426-4940-a6fb-b66af9f303e6",
+        "question": "Vou acompanhar o progresso do trabalho ou receberei apenas a entrega final pronta? - - - - - - - - -",
+        "answer": "Você participa de marcos estratégicos previamente agendados. Compartilhamos apresentações intermediárias, plantas evolutivas e moodboards interativos, sempre com espaço para feedbacks. Além disso, disponibilizamos área centralizada com arquivos atualizados e comentários registrados para consulta a q"
       },
       {
-        "question": "Qual é o processo para otimização do SEO?",
-        "answer": "Realizamos auditoria do site, otimização de conteúdo e estrutura, e monitoramento contínuo para melhorar classificação no Google e tráfego orgânico.",
-        "id": "0aca093a-870a-4fac-82fc-59e0e1af2b46"
+        "id": "17c8e0df-67a6-499e-830f-7983410900a5",
+        "question": "Trabalham apenas com projetos completos ou também apoiam demandas pontuais específicas? - - - - - - ",
+        "answer": "Atuamos em projetos residenciais completos, mas também desenhamos pacotes pontuais quando o contexto exige foco em ambientes-chave, revisões de layout ou consultorias específicas. Avaliamos cada solicitação, ajustamos escopo, garantimos coerência estética e mantemos o mesmo padrão estratégico em qua"
       },
       {
-        "question": "Como vocês gerenciam campanhas de Google Ads?",
-        "answer": "Criamos campanhas segmentadas, executamos testes A/B e monitoramos o desempenho para maximizar conversões e ROI.",
-        "id": "aee6f4a0-cfbf-4433-a924-3e7fe3344514"
+        "id": "b36f9147-bba4-4a2f-a5a1-0b60f5f14ca1",
+        "question": "Existe alguma forma de garantia sobre a consistência das decisões e materiais propostos? - - - - - -",
+        "answer": "Sim. Documentamos todas as escolhas com memoriais descritivos, especificações de materiais e orientações claras para fornecedores. Caso identifique qualquer divergência dentro de noventa dias, reavaliamos juntos e propomos ajustes pontuais sem custos, assegurando que a execução reflita exatamente o "
       },
       {
-        "question": "Posso solicitar alterações durante o projeto?",
-        "answer": "Sim, oferecemos ciclo de ajustes para garantir que o projeto atenda às suas necessidades e expectativas.",
-        "id": "5baf61ea-c7c5-4e5a-8205-c3a0ace0009a"
+        "id": "4673a41d-7b74-432a-bbd0-51433b65187e",
+        "question": "Posso solicitar novos ambientes ou mudanças grandes após a aprovação inicial sem retrabalho total? -",
+        "answer": "Podemos incorporar novos ambientes mediante aditivo simples. Mantemos todo o estudo organizado em camadas, o que facilita evoluir o escopo sem recomeçar. Alinhamos impacto em prazo e investimento antes de seguir, garantindo previsibilidade e mantendo coerência estética entre as áreas originais e as "
       },
       {
-        "question": "Qual é o suporte pós-execução?",
-        "answer": "Fornece-se suporte contínuo para resolução de problemas e otimização de campanhas, garantindo resultados sustentáveis e consistentes.",
-        "id": "0dffca78-7c63-4096-9e42-604906a9b522"
+        "id": "75d7ccec-8cf7-4877-b70f-dca27fc65706",
+        "question": "Como asseguram a segurança das informações compartilhadas durante nosso projeto? - - - - - - - - - -",
+        "answer": "Utilizamos plataformas seguras para armazenar plantas e referências, adotamos controle de acesso restrito e realizamos backups automáticos. Compartilhamos documentos sensíveis apenas através de canais criptografados e seguimos cláusulas contratuais de confidencialidade rígidas para proteger dados pe"
       }
     ],
     "footer": {
-      "callToAction": "Elevamos você",
-      "disclaimer": "Estamos ao seu lado, oferecendo suporte personalizado e cuidado contínuo para o crescimento do seu negócio, sempre com atenção e dedicação."
+      "callToAction": "Vamos crescer",
+      "disclaimer": "Estamos ao seu lado, oferecendo suporte contínuo e atenção personalizada para garantir o sucesso do seu e-commerce de moda feminina."
     }
   },
   "workflowMetadata": {
     "sections": [],
-    "generationTime": 38603
+    "generationTime": 38820
   },
-  "generatedAt": "2025-11-08T01:54:33.237Z"
+  "generatedAt": "2025-11-08T02:13:23.721Z"
 }
