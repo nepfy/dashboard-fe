@@ -632,7 +632,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         ];
         const topics = expertiseSources
           .slice(0, 9)
-          .map((topic, index) => ({
+          .map((topic) => ({
             title: this.truncateToMax(topic, 50),
             description: this.truncateToMax(
               `Aplicamos ${topic.toLowerCase()} para acelerar resultados do ${data.projectName}.`,
@@ -709,14 +709,15 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         };
       }
       case "investment": {
+        const selectedPlansValue = data.selectedPlans;
         const plansCount =
-          typeof data.selectedPlans === "number"
-            ? this.clampPlans(data.selectedPlans)
-            : Array.isArray(data.selectedPlans)
-              ? this.clampPlans(data.selectedPlans.length)
+          typeof selectedPlansValue === "number"
+            ? Math.min(Math.max(Math.round(selectedPlansValue), 1), 3)
+            : Array.isArray(selectedPlansValue)
+              ? Math.min(Math.max(selectedPlansValue.length, 1), 3)
               : 3;
-        const planLabels = Array.isArray(data.selectedPlans)
-          ? data.selectedPlans
+        const planLabels = Array.isArray(selectedPlansValue)
+          ? selectedPlansValue
           : ["Essencial", "Avançado", "Premium"];
         const plans = Array.from({ length: plansCount }).map((_, index) => {
           const label = planLabels[index] ?? `Plano ${index + 1}`;
@@ -935,7 +936,6 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     data: FlashThemeData,
     agent: BaseAgentConfig
   ): Promise<FlashIntroductionSection> {
-    const userPrompt = this.getSectionPrompt("introduction", data);
     const expectedFormat =
       this.getSectionExpectedFormat("introduction") ??
       `{

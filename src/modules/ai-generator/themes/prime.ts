@@ -363,9 +363,7 @@ export class PrimeTemplateWorkflow {
     };
   }
 
-  private getFallbackSpecialties(
-    data: PrimeThemeData
-  ): PrimeSpecialtiesSection {
+  private getFallbackSpecialties(): PrimeSpecialtiesSection {
     const baseTopics = [
       "Diagnóstico profundo do contexto e oportunidades",
       "Arquitetura de narrativas premium para posicionamento",
@@ -568,7 +566,7 @@ export class PrimeTemplateWorkflow {
     ];
   }
 
-  private getFallbackFAQ(data: PrimeThemeData): PrimeFAQSection {
+  private getFallbackFAQ(): PrimeFAQSection {
     const questions = [
       [
         "Como garantem aderência às metas estratégicas do projeto?",
