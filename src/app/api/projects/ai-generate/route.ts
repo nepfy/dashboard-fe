@@ -34,6 +34,7 @@ export interface NepfyAIRequestData {
   projectName: string;
   projectDescription: string;
   clientDescription?: string;
+  detailedClientInfo?: string;
   companyInfo?: string;
   selectedPlan?: number;
   selectedPlans?: number;
