@@ -491,11 +491,8 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      aiResult = {
-        success: true,
-        proposal: result.proposal,
-        generationType: generationType,
-      };
+      // Pass the complete MinimalWorkflowResult
+      aiResult = result;
     }
 
     // PRIME TEMPLATE WORKFLOW
