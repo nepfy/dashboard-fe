@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import CalendarIcon from "#/components/icons/CalendarIcon";
 import { Label } from "#/components/Label";
 import { ValidUntilModal } from "#/modules/ai-generator/components/modal/ValidUntilModal";
+import { ValidUntilInfoModal } from "#/modules/ai-generator/components/modal/ValidUntilInfoModal";
 
 interface ValidUntilSectionProps {
   validUntil: string;
@@ -15,6 +16,7 @@ export function ValidUntilSection({
   errors,
 }: ValidUntilSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalInfoOpen, setIsModalInfoOpen] = useState(false);
   const [tempSelectedDate, setTempSelectedDate] = useState<Date | null>(null);
 
   const parseValidUntil = (value: string): Date | null => {
@@ -81,7 +83,7 @@ export function ValidUntilSection({
 
   return (
     <>
-      <Label info onClick={handleOpenModal}>
+      <Label info onClick={() => setIsModalInfoOpen(true)}>
         Qual a validade desta proposta?
       </Label>
 
@@ -110,6 +112,11 @@ export function ValidUntilSection({
           <p className="mt-2 text-sm font-medium text-red-700">{errors}</p>
         ) : null}
       </div>
+
+      <ValidUntilInfoModal
+        isModalOpen={isModalInfoOpen}
+        onClose={() => setIsModalInfoOpen(false)}
+      />
 
       <ValidUntilModal
         isModalOpen={isModalOpen}

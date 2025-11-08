@@ -32,7 +32,7 @@ export function ValidUntilIcon() {
           <path
             d="M182.132 114.531C195.042 114.531 205.563 124.733 206.047 137.5H158.218C158.701 124.733 169.222 114.531 182.132 114.531Z"
             fill="#7F76FF"
-            fill-opacity="0.31"
+            fillOpacity="0.31"
           />
         </g>
         <g filter="url(#filter2_d_266_4576)">
@@ -176,7 +176,7 @@ export function ValidUntilIcon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="white" stopOpacity="0" />
-          <stop offset="1" stop-color="white" />
+          <stop offset="1" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_266_4576"
@@ -187,7 +187,7 @@ export function ValidUntilIcon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="white" />
-          <stop offset="1" stop-color="white" stop-opacity="0.3" />
+          <stop offset="1" stopColor="white" stopOpacity="0.3" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_266_4576"
@@ -198,7 +198,7 @@ export function ValidUntilIcon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="white" />
-          <stop offset="1" stop-color="white" stop-opacity="0.3" />
+          <stop offset="1" stopColor="white" stopOpacity="0.3" />
         </linearGradient>
         <clipPath id="clip0_266_4576">
           <path

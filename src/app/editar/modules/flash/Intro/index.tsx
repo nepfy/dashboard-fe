@@ -39,7 +39,7 @@ export default function FlashIntro({
             editingId="intro-userName"
           />{" "}
         </span>
-        <div className="hidden items-center gap-12 lg:flex">
+        <div className="flex items-center gap-12">
           {/* <EditableText
             value={email || ""}
             onChange={(newEmail: string) =>
