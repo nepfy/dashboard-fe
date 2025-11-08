@@ -14,7 +14,7 @@ export function CompanyInfo({
   handleNext: () => void;
   handleBack: () => void;
   setCompanyInfo: (info: string) => void;
-  companyInfo: string;
+  companyInfo?: string | null;
 }) {
   const [aboutCompany, setAboutCompany] = useState(companyInfo);
   const [saveDescriptionAsModel, setSaveDescriptionAsModel] = useState(false);
@@ -47,17 +47,17 @@ export function CompanyInfo({
   };
 
   const handleNextClick = async () => {
-    setCompanyInfo(aboutCompany);
+    setCompanyInfo(aboutCompany || "");
 
-    if (saveDescriptionAsModel && aboutCompany.trim()) {
-      await saveCompanyInfoToDatabase(aboutCompany);
+    if (saveDescriptionAsModel && aboutCompany?.trim()) {
+      await saveCompanyInfoToDatabase(aboutCompany || "");
     }
 
     handleNext();
   };
 
   return (
-    <section className="flex flex-col min-h-[calc(100vh-140px)] bg-white-neutral-light-200 justify-center items-start gap-10 font-satoshi">
+    <section className="bg-white-neutral-light-200 font-satoshi flex min-h-[calc(100vh-140px)] flex-col items-start justify-center gap-10">
       <Box
         title="Sobre você ou sua empresa"
         description="Desde a área de atuação até o que te diferencia no mercado."
@@ -73,12 +73,12 @@ export function CompanyInfo({
             textareaName="description"
             placeholder="Quanto mais detalhes você der, mais personalizada fica a proposta!"
             rows={9}
-            value={aboutCompany}
+            value={aboutCompany || ""}
             onChange={(e) => setAboutCompany(e.target.value)}
           />
         </div>
 
-        <div className="space-y-9 mx-3">
+        <div className="mx-3 space-y-9">
           <CheckboxInput
             id="saveDescriptionAsModel"
             inputName="saveDescriptionAsModel"
