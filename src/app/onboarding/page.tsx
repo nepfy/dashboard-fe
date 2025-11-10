@@ -33,10 +33,26 @@ const LOCAL_STORAGE_PREFIX = "nepfy:onboarding-progress";
 const SYNC_DEBOUNCE_MS = 800;
 const EMPTY_PROGRESS_KEY = "__empty__";
 
-const buildStorageKey = (userId: string) =>
-  `${LOCAL_STORAGE_PREFIX}:${userId}`;
+const buildStorageKey = (userId: string) => `${LOCAL_STORAGE_PREFIX}:${userId}`;
 
 const isBrowser = typeof window !== "undefined";
+
+type ResponseError = Error & {
+  status?: number;
+};
+
+const getResponseStatus = (error: unknown): number | null => {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    typeof (error as ResponseError).status === "number"
+  ) {
+    return (error as ResponseError).status ?? null;
+  }
+
+  return null;
+};
 
 function readLocalProgress(userId?: string | null): OnboardingProgress | null {
   if (!userId || !isBrowser) {
@@ -136,8 +152,7 @@ function OnboardingProgressSync({
     }
 
     const sanitizedFormData = sanitizeOnboardingFormData(formData);
-    const hasProgress =
-      hasMeaningfulProgress(formData) || currentStep > 1;
+    const hasProgress = hasMeaningfulProgress(formData) || currentStep > 1;
     const payloadKey = hasProgress
       ? JSON.stringify({
           currentStep,
@@ -203,14 +218,19 @@ function OnboardingProgressSync({
   return null;
 }
 
+type BannerState = {
+  type: "info" | "error";
+  message: string;
+};
+
 export default function Onboarding() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const [error, setError] = useState("");
+  const [banner, setBanner] = useState<BannerState | null>(null);
   const [isHydrating, setIsHydrating] = useState(true);
-  const [initialFormData, setInitialFormData] = useState<Partial<FormDataProps>>(
-    {}
-  );
+  const [initialFormData, setInitialFormData] = useState<
+    Partial<FormDataProps>
+  >({});
   const [initialStep, setInitialStep] = useState<number>(1);
   const [providerKey, setProviderKey] = useState(0);
   const [hydratedProgress, setHydratedProgress] =
@@ -249,7 +269,11 @@ export default function Onboarding() {
         });
 
         if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
+          const error = new Error(
+            `Request failed with status ${response.status}`
+          ) as ResponseError;
+          error.status = response.status;
+          throw error;
         }
 
         const result = (await response.json()) as OnboardingStatusApiResponse;
@@ -269,7 +293,10 @@ export default function Onboarding() {
 
         const remoteProgress = result.data.progress;
         const localProgress = readLocalProgress(user.id);
-        const latestProgress = selectLatestProgress(remoteProgress, localProgress);
+        const latestProgress = selectLatestProgress(
+          remoteProgress,
+          localProgress
+        );
 
         if (latestProgress) {
           if (isActive) {
@@ -291,12 +318,24 @@ export default function Onboarding() {
 
         if (isActive) {
           setProviderKey((prev) => prev + 1);
-          setError("");
+          if (latestProgress) {
+            setBanner({
+              type: "info",
+              message: "Retomamos o seu progresso. Continue de onde parou.",
+            });
+          } else {
+            setBanner({
+              type: "info",
+              message:
+                "Bem-vindo! Complete os dados para criar sua conta Nepfy.",
+            });
+          }
         }
 
         ensureTrackingStarted();
       } catch (err) {
         console.error("Failed to recover onboarding progress:", err);
+        const status = getResponseStatus(err);
         const localProgress = readLocalProgress(user.id);
 
         if (localProgress) {
@@ -305,7 +344,10 @@ export default function Onboarding() {
             setInitialStep(localProgress.currentStep);
             setHydratedProgress(localProgress);
             setProviderKey((prev) => prev + 1);
-            setError("");
+            setBanner({
+              type: "info",
+              message: "Retomamos o seu progresso salvo neste dispositivo.",
+            });
           }
           persistLocalProgress(user.id, localProgress);
         } else if (isActive) {
@@ -313,9 +355,19 @@ export default function Onboarding() {
           setInitialStep(1);
           setHydratedProgress(null);
           setProviderKey((prev) => prev + 1);
-          setError(
-            "Não foi possível recuperar o seu progresso. Por favor, reinicie o onboarding."
-          );
+          if (status && status >= 500) {
+            setBanner({
+              type: "error",
+              message:
+                "Não foi possível recuperar o seu progresso. Por favor, reinicie o onboarding.",
+            });
+          } else {
+            setBanner({
+              type: "info",
+              message:
+                "Bem-vindo! Complete os dados para criar sua conta Nepfy.",
+            });
+          }
         }
 
         ensureTrackingStarted();
@@ -359,11 +411,17 @@ export default function Onboarding() {
       }
 
       if (res?.error) {
-        setError(res.error);
+        setBanner({
+          type: "error",
+          message: res.error,
+        });
       }
     } catch (err) {
       if (err instanceof Error) {
-        setError("Um erro ocorreu, por favor, tente mais tarde.");
+        setBanner({
+          type: "error",
+          message: "Um erro ocorreu, por favor, tente mais tarde.",
+        });
       }
     }
   };
@@ -386,24 +444,27 @@ export default function Onboarding() {
         userId={user?.id}
         initialProgress={hydratedProgress}
       />
-      <div className="grid place-items-center pb-2 sm:pb-0 pt-0 h-screen min-h-[740px]">
+      <div className="grid h-screen min-h-[740px] place-items-center pt-0 pb-2 sm:pb-0">
         <Navbar />
-        <div className="flex items-center justify-center gap-0 w-full h-full relative">
+        <div className="relative flex h-full w-full items-center justify-center gap-0">
           <IntroSlider />
 
-          <div className="flex items-center justify-center p-8 sm:p-20 pb-0 sm:pb-20 mb-6 sm:mb-0 box-border w-full lg:w-1/2">
-            <div className="w-full flex flex-col items-center justify-center space-y-8 h-full box-border">
+          <div className="mb-6 box-border flex w-full items-center justify-center p-8 pb-0 sm:mb-0 sm:p-20 sm:pb-20 lg:w-1/2">
+            <div className="box-border flex h-full w-full flex-col items-center justify-center space-y-8">
               <MultiStepForm
                 onComplete={handleOnboardingComplete}
-                error={error}
+                error={banner?.type === "error" ? banner.message : undefined}
+                infoMessage={
+                  banner?.type === "info" ? banner.message : undefined
+                }
               />
             </div>
           </div>
         </div>
-        <div className="hidden lg:block absolute z-40 bottom-5 left-5 right-0">
+        <div className="absolute right-0 bottom-5 left-5 z-40 hidden lg:block">
           <Footer />
         </div>
-        <div className="text-white-neutral-light-400 xl:text-primary-light-200 flex items-center sm:items-end w-full h-[80px] sm:h-full box-border lg:hidden">
+        <div className="text-white-neutral-light-400 xl:text-primary-light-200 box-border flex h-[80px] w-full items-center sm:h-full sm:items-end lg:hidden">
           <span className="px-8 sm:py-6">
             &copy; {date.getFullYear()} Nepfy
           </span>

@@ -16,14 +16,6 @@ type AuthenticateWithGoogleOptions = {
   onError?: (message: string) => void;
 };
 
-const missingAccountCodes = new Set([
-  "identifier_not_found",
-  "form_identifier_not_found",
-  "external_account_not_found",
-  "not_allowed",
-  "strategy_not_allowed",
-]);
-
 const accountExistsCodes = new Set([
   "form_identifier_exists",
   "form_email_address_exists",
@@ -61,22 +53,6 @@ const isClerkApiError = (error: unknown): error is ClerkApiError => {
     );
   });
 };
-
-const shouldFallbackToSignUp = (error: ClerkApiError) =>
-  error.errors.some(({ code, message }) => {
-    if (missingAccountCodes.has(code)) {
-      return true;
-    }
-
-    const normalizedMessage = normalize(message);
-    return (
-      normalizedMessage.includes("not found") ||
-      normalizedMessage.includes("does not exist") ||
-      normalizedMessage.includes("não encontrado") ||
-      normalizedMessage.includes("sem cadastro") ||
-      normalizedMessage.includes("create a new account")
-    );
-  });
 
 const shouldRetrySignIn = (error: ClerkApiError) =>
   error.errors.some(({ code, message }) => {
@@ -119,29 +95,29 @@ export const useGoogleOAuth = () => {
       };
 
       try {
-        await signIn.authenticateWithRedirect(baseConfig);
-      } catch (error) {
-        if (isClerkApiError(error) && shouldFallbackToSignUp(error)) {
+        await signUp.authenticateWithRedirect({
+          ...baseConfig,
+          ...(typeof legalAccepted === "boolean" ? { legalAccepted } : {}),
+        });
+        return;
+      } catch (signUpError) {
+        if (isClerkApiError(signUpError) && shouldRetrySignIn(signUpError)) {
           try {
-            await signUp.authenticateWithRedirect({
-              ...baseConfig,
-              legalAccepted,
-            });
+            await signIn.authenticateWithRedirect(baseConfig);
             return;
-          } catch (signUpError) {
-            if (isClerkApiError(signUpError) && shouldRetrySignIn(signUpError)) {
-              await signIn.authenticateWithRedirect(baseConfig);
-              return;
-            }
-
+          } catch (signInError) {
             onError?.(DEFAULT_ERROR_MESSAGE);
-            console.error(signUpError);
+            console.error(signInError);
             return;
           }
         }
 
-        onError?.(DEFAULT_ERROR_MESSAGE);
-        console.error(error);
+        const fallbackMessage =
+          isClerkApiError(signUpError) && signUpError.errors[0]?.message
+            ? signUpError.errors[0].message
+            : DEFAULT_ERROR_MESSAGE;
+        onError?.(fallbackMessage);
+        console.error(signUpError);
       }
     },
     [isReady, signIn, signUp]
