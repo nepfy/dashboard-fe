@@ -111,7 +111,7 @@ function OnboardingProgressSync({
   initialProgress: OnboardingProgress | null;
 }) {
   const { formData, currentStep } = useFormContext();
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const hasInitialisedRef = useRef(false);
   const lastSyncedPayloadRef = useRef<string>(
     initialProgress
@@ -253,10 +253,13 @@ export default function Onboarding() {
         }
 
         const result = (await response.json()) as OnboardingStatusApiResponse;
-        const result = (await response.json()) as OnboardingStatusApiResponse;
 
-        if (!result.success || !result.data) {
+        if (!result.success) {
           throw new Error(result.error ?? "Status indisponível");
+        }
+
+        if (!result.data) {
+          throw new Error("Status indisponível");
         }
 
         if (!result.data.needsOnboarding) {
