@@ -440,3 +440,4 @@ export function countCharacters(value: string): number {
   return sanitizeString(value).length;
 }
 
+

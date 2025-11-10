@@ -512,3 +512,4 @@ Response: {
 3. Atualizar validações em `/themes/{template}.ts`
 4. Atualizar fallbacks para respeitar novos limites
 
+

@@ -17,11 +17,13 @@ import GoogleLogo from "#/components/icons/GoogleLogo";
 import PasswordInput from "#/components/Inputs/PasswordInput";
 import MailEnvelope from "#/components/icons/MailEnvelope";
 import { Loader2 } from "lucide-react";
+import { useGoogleOAuth } from "#/hooks/useGoogleOAuth";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, setActive, isLoaded: clerkLoaded } = useSignIn();
   const router = useRouter();
+  const { authenticateWithGoogle, isReady: isGoogleAuthReady } = useGoogleOAuth();
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -56,7 +58,7 @@ export default function Login() {
         await setActive?.({
           session: signInAttempt?.createdSessionId,
         });
-        router.push("/");
+        router.push("/app");
       } else {
         setIsLoading(false);
         console.error(JSON.stringify(signInAttempt, null, 2));
@@ -76,27 +78,23 @@ export default function Login() {
   };
 
   const handleGoogleSignIn = async () => {
-    try {
-      if (!clerkLoaded || !signIn) {
-        setError(
-          "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
-        );
-        return;
-      }
+    setError("");
 
-      await signIn.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/dashboard",
+    if (!isGoogleAuthReady) {
+      setError(
+        "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await authenticateWithGoogle({
+        redirectUrlComplete: "/app",
+        legalAccepted: true,
+        onError: (message) => setError(message),
       });
-    } catch (err) {
-      if (
-        err instanceof Error &&
-        "errors" in err &&
-        Array.isArray(err.errors)
-      ) {
-        setError("Ocorreu um erro ao conectar com Google. Tente novamente.");
-      }
     } finally {
       setIsLoading(false);
     }
@@ -198,7 +196,12 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="flex h-[54px] w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] px-4 py-3 font-medium text-[var(--color-white-neutral-light-800)] transition-colors hover:bg-[var(--color-white-neutral-light-200)]"
+              disabled={!isGoogleAuthReady || isLoading}
+              className={`flex h-[54px] w-full items-center justify-center gap-2 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] px-4 py-3 font-medium text-[var(--color-white-neutral-light-800)] transition-colors ${
+                !isGoogleAuthReady || isLoading
+                  ? "cursor-not-allowed opacity-70"
+                  : "cursor-pointer hover:bg-[var(--color-white-neutral-light-200)]"
+              }`}
             >
               <GoogleLogo />
               Fazer login com o Google

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
-import { useSignUp } from "@clerk/nextjs";
 
 import MailEnvelope from "#/components/icons/MailEnvelope";
 import { TextField } from "#/components/Inputs";
@@ -10,6 +9,7 @@ import PasswordInput from "#/components/Inputs/PasswordInput";
 import RenderPasswordStrengthMeter from "#/components/RenderPassword";
 import GoogleLogo from "#/components/icons/GoogleLogo";
 import { PasswordStrength } from "#/helpers/evaluatePassword";
+import { useGoogleOAuth } from "#/hooks/useGoogleOAuth";
 
 type SignUpFormProps = {
   emailAddress: string;
@@ -50,7 +50,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   error,
   setError,
 }) => {
-  const { signUp, isLoaded: clerkLoaded } = useSignUp();
+  const { authenticateWithGoogle, isReady: isGoogleAuthReady } =
+    useGoogleOAuth();
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,7 +98,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   const handleGoogleSignUp = async () => {
     if (!termsAccepted || isOAuthLoading) return;
 
-    if (!clerkLoaded || !signUp) {
+    if (!isGoogleAuthReady) {
       setError?.(
         "Serviço de autenticação não disponível. Tente novamente em alguns instantes."
       );
@@ -108,20 +109,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
     setIsOAuthLoading(true);
 
     try {
-      await signUp.authenticateWithRedirect({
-        strategy: "oauth_google",
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/onboarding",
+      await authenticateWithGoogle({
+        redirectUrlComplete: "/app",
         legalAccepted: termsAccepted,
+        onError: (message) => setError?.(message),
       });
-    } catch (err) {
-      if (
-        err instanceof Error &&
-        "errors" in err &&
-        Array.isArray(err.errors)
-      ) {
-        setError?.("Ocorreu um erro ao conectar com Google. Tente novamente.");
-      }
     } finally {
       setIsOAuthLoading(false);
     }
@@ -222,11 +214,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
 
       <div className="relative flex flex-col justify-end">
         <button
-          disabled={!termsAccepted || isOAuthLoading}
+          disabled={!termsAccepted || isOAuthLoading || !isGoogleAuthReady}
           type="button"
           onClick={handleGoogleSignUp}
           className={`flex w-full items-center justify-center gap-2 rounded-[var(--radius-s)] border border-[var(--color-white-neutral-light-300)] bg-[var(--color-white-neutral-light-100)] px-4 py-3 font-medium text-[var(--color-white-neutral-light-800)] transition-colors ${
-            !termsAccepted || isOAuthLoading
+            !termsAccepted || isOAuthLoading || !isGoogleAuthReady
               ? "cursor-not-allowed opacity-70"
               : "cursor-pointer hover:bg-[var(--color-white-neutral-light-200)]"
           }`}
