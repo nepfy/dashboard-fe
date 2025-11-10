@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plan } from "#/types/template-data";
 import { ChevronDown, InfoIcon } from "lucide-react";
+import { CurrencyInput } from "#/components/Inputs";
 
 interface ContentTabProps {
   plan: Plan;
@@ -20,6 +21,12 @@ export default function ContentTab({
     "Mensal" | "Anual" | "Único" | undefined
   >(undefined);
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (plan.planPeriod) {
+      setTempPaymentMethod(plan.planPeriod);
+    }
+  }, [plan.planPeriod]);
 
   return (
     <div className="mt-4 h-[340px] space-y-6 overflow-y-auto px-1 pr-2 pb-14">
@@ -82,12 +89,11 @@ export default function ContentTab({
         <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
           Valor
         </label>
-        <input
-          type="text"
-          value={plan.value}
-          onChange={(e) => onUpdate({ value: e.target.value })}
-          className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
-          placeholder="Digite o valor"
+        <CurrencyInput
+          value={plan.value || ""}
+          onChange={(value) => onUpdate({ value })}
+          placeholder="0,00"
+          className="w-[210px]"
         />
       </div>
 
@@ -119,7 +125,7 @@ export default function ContentTab({
                   <input
                     type="radio"
                     name="paymentMethod"
-                    value="link"
+                    value="Mensal"
                     checked={tempPaymentMethod === "Mensal"}
                     onChange={() => {
                       setTempPaymentMethod("Mensal");
