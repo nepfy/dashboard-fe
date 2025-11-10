@@ -21,9 +21,10 @@ import { useGoogleOAuth } from "#/hooks/useGoogleOAuth";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, setActive, isLoaded: clerkLoaded } = useSignIn();
+  const { signIn, setActive } = useSignIn();
   const router = useRouter();
-  const { authenticateWithGoogle, isReady: isGoogleAuthReady } = useGoogleOAuth();
+  const { authenticateWithGoogle, isReady: isGoogleAuthReady } =
+    useGoogleOAuth();
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
