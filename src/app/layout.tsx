@@ -67,14 +67,19 @@ export const metadata: Metadata = {
   },
 };
 
+function normalizeHostname(hostname: string): string {
+  return hostname.split(":")[0]?.toLowerCase() ?? hostname;
+}
+
 function isMainDomain(hostname: string): boolean {
+  const domain = normalizeHostname(hostname);
+
   return (
-    hostname === "staging-app.nepfy.com" ||
-    hostname === "app.nepfy.com" ||
-    hostname === "localhost:3000" ||
-    hostname === "nepfy.com" ||
-    hostname === "www.nepfy.com" ||
-    hostname === "localhost"
+    domain === "staging-app.nepfy.com" ||
+    domain === "app.nepfy.com" ||
+    domain === "nepfy.com" ||
+    domain === "www.nepfy.com" ||
+    domain === "localhost"
   );
 }
 

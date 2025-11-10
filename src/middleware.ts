@@ -11,14 +11,19 @@ const isPublicRoute = createRouteMatcher([
   "/admin(.*)", // Temporário para desenvolvimento
 ]);
 
+function normalizeHostname(hostname: string): string {
+  return hostname.split(":")[0]?.toLowerCase() ?? hostname;
+}
+
 function isMainDomain(hostname: string): boolean {
+  const domain = normalizeHostname(hostname);
+
   return (
-    hostname === "staging-app.nepfy.com" ||
-    hostname === "app.nepfy.com" ||
-    hostname === "localhost:3000" ||
-    hostname === "nepfy.com" ||
-    hostname === "www.nepfy.com" ||
-    hostname === "localhost"
+    domain === "staging-app.nepfy.com" ||
+    domain === "app.nepfy.com" ||
+    domain === "nepfy.com" ||
+    domain === "www.nepfy.com" ||
+    domain === "localhost"
   );
 }
 
@@ -74,7 +79,7 @@ function parseSubdomain(
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
-  const hostname = req.headers.get("host") || "";
+  const hostname = req.nextUrl.hostname;
 
   // Allow template-flash static files to be served without authentication
   if (url.pathname.startsWith("/template-flash/")) {
