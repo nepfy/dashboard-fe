@@ -542,3 +542,4 @@ flashTheme["generateSectionContent"] = async function(...args) {
 - [templates/flash/README.md](./templates/flash/README.md) - Específico do Flash
 
 
+

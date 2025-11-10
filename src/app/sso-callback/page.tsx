@@ -1,13 +1,8 @@
-import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
-
-export default function SsoCallbackPage() {
-  return <AuthenticateWithRedirectCallback />;
-}
 "use client";
 
 import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
 
-export default function SSOCallback() {
+export default function SsoCallbackPage() {
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="text-center">
