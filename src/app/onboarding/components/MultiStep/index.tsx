@@ -58,6 +58,19 @@ const MultiStep: React.FC<MultiStepProps> = ({
     enableNextStepUsedBefore,
   ]);
 
+  const isFinalStep = currentStep === steps.length;
+  const primaryDisabled = isFinalStep
+    ? !isLastOptionSelected
+    : !enableNextStep;
+
+  const handlePrimaryAction = () => {
+    if (isFinalStep) {
+      void onComplete?.();
+      return;
+    }
+    nextStep();
+  };
+
   return (
     <div className="w-full flex flex-col justify-start sm:h-[452px]">
       <div className="flex items-center justify-start mb-8 space-x-2 sm:space-x-4 box-border">
@@ -110,33 +123,19 @@ const MultiStep: React.FC<MultiStepProps> = ({
           </button>
         )}
 
-        {!isLastOptionSelected && currentStep < steps.length ? (
-          <button
-            onClick={nextStep}
-            disabled={!enableNextStep}
-            className={` w-full text-white rounded-[var(--radius-s)] font-medium transition-colors text-center border h-[43px] ${
-              enableNextStep
-                ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] hover:cursor-pointer button-inner-inverse"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
-          >
-            Avançar
-          </button>
-        ) : (
-          <button
-            onClick={onComplete}
-            disabled={!isLastOptionSelected}
-            className={`w-full text-white rounded-[var(--radius-s)] font-medium transition-colors text-center border h-[43px]
-            ${
-              isLastOptionSelected
-                ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] transition-colors hover:cursor-pointer"
-                : " bg-gray-300 cursor-not-allowed"
-            }
-              `}
-          >
-            Finalizar cadastro
-          </button>
-        )}
+        <button
+          onClick={handlePrimaryAction}
+          disabled={primaryDisabled}
+          className={`w-full text-white rounded-[var(--radius-s)] font-medium transition-colors text-center border h-[43px] ${
+            primaryDisabled
+              ? "bg-gray-300 cursor-not-allowed"
+              : isFinalStep
+              ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] transition-colors hover:cursor-pointer"
+              : "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] hover:cursor-pointer button-inner-inverse"
+          }`}
+        >
+          {isFinalStep ? "Finalizar cadastro" : "Próximo"}
+        </button>
       </div>
     </div>
   );

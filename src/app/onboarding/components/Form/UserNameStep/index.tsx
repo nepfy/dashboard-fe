@@ -42,7 +42,7 @@ export default function UserNameStep() {
 
   useEffect(() => {
     enableNextStepUserName();
-  }, [formData.usedBefore, enableNextStepUserName]);
+  }, [formData.userName, formErrors.userName, enableNextStepUserName]);
 
   return (
     <div>

@@ -239,6 +239,7 @@ export default function Onboarding() {
   const hasTrackedStart = useRef(false);
 
   const date = new Date();
+  const userId = user?.id ?? null;
 
   const ensureTrackingStarted = () => {
     if (!hasTrackedStart.current) {
@@ -253,7 +254,7 @@ export default function Onboarding() {
       return;
     }
 
-    if (!user) {
+    if (!userId) {
       router.push("/login");
       return;
     }
@@ -292,7 +293,7 @@ export default function Onboarding() {
         }
 
         const remoteProgress = result.data.progress;
-        const localProgress = readLocalProgress(user.id);
+        const localProgress = readLocalProgress(userId);
         const latestProgress = selectLatestProgress(
           remoteProgress,
           localProgress
@@ -303,7 +304,7 @@ export default function Onboarding() {
             setInitialFormData(latestProgress.formData);
             setInitialStep(latestProgress.currentStep);
             setHydratedProgress(latestProgress);
-            persistLocalProgress(user.id, {
+            persistLocalProgress(userId, {
               currentStep: latestProgress.currentStep,
               formData: latestProgress.formData,
               updatedAt: latestProgress.updatedAt,
@@ -313,7 +314,7 @@ export default function Onboarding() {
           setInitialFormData({});
           setInitialStep(1);
           setHydratedProgress(null);
-          clearLocalProgress(user.id);
+          clearLocalProgress(userId);
         }
 
         if (isActive) {
@@ -336,7 +337,7 @@ export default function Onboarding() {
       } catch (err) {
         console.error("Failed to recover onboarding progress:", err);
         const status = getResponseStatus(err);
-        const localProgress = readLocalProgress(user.id);
+        const localProgress = readLocalProgress(userId);
 
         if (localProgress) {
           if (isActive) {
@@ -349,25 +350,17 @@ export default function Onboarding() {
               message: "Retomamos o seu progresso salvo neste dispositivo.",
             });
           }
-          persistLocalProgress(user.id, localProgress);
+          persistLocalProgress(userId, localProgress);
         } else if (isActive) {
+          clearLocalProgress(userId);
           setInitialFormData({});
           setInitialStep(1);
           setHydratedProgress(null);
           setProviderKey((prev) => prev + 1);
-          if (status && status >= 500) {
-            setBanner({
-              type: "error",
-              message:
-                "Não foi possível recuperar o seu progresso. Por favor, reinicie o onboarding.",
-            });
-          } else {
-            setBanner({
-              type: "info",
-              message:
-                "Bem-vindo! Complete os dados para criar sua conta Nepfy.",
-            });
-          }
+          setBanner({
+            type: "info",
+            message: "Bem-vindo! Complete os dados para criar sua conta Nepfy.",
+          });
         }
 
         ensureTrackingStarted();
@@ -383,7 +376,7 @@ export default function Onboarding() {
     return () => {
       isActive = false;
     };
-  }, [isLoaded, user, router]);
+  }, [isLoaded, userId, router]);
 
   const handleOnboardingComplete = async (formData: FormData) => {
     try {
@@ -441,7 +434,7 @@ export default function Onboarding() {
       initialStep={initialStep}
     >
       <OnboardingProgressSync
-        userId={user?.id}
+        userId={userId}
         initialProgress={hydratedProgress}
       />
       <div className="grid h-screen min-h-[740px] place-items-center pt-0 pb-2 sm:pb-0">

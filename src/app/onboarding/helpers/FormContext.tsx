@@ -13,6 +13,38 @@ import {
   type OnboardingFormData,
 } from "#/types/onboarding";
 
+const normalizeStringValue = (
+  value: unknown,
+  { trim }: { trim?: boolean } = {}
+): string => {
+  if (typeof value === "string") {
+    return trim ? value.trim() : value;
+  }
+
+  if (typeof value === "number" && !Number.isNaN(value)) {
+    return String(value);
+  }
+
+  return "";
+};
+
+const normalizeStringArray = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const result: string[] = [];
+
+  for (const item of value) {
+    const normalized = normalizeStringValue(item);
+    if (normalized !== "") {
+      result.push(normalized);
+    }
+  }
+
+  return result;
+};
+
 export type FormDataProps = OnboardingFormData;
 
 interface FormErrors {
@@ -90,12 +122,22 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   const [cpfValidated, setCpfValidated] = useState<boolean>(false);
 
   useEffect(() => {
-    const mergedFormData: FormDataProps = {
+    const merged = {
       ...DEFAULT_ONBOARDING_FORM_DATA,
       ...(initialFormData ?? {}),
     };
 
-    setFormData(mergedFormData);
+    const normalizedFormData: FormDataProps = {
+      fullName: normalizeStringValue(merged.fullName, { trim: true }),
+      userName: normalizeStringValue(merged.userName, { trim: true }),
+      cpf: normalizeStringValue(merged.cpf),
+      phone: normalizeStringValue(merged.phone),
+      jobType: normalizeStringArray(merged.jobType),
+      discoverySource: normalizeStringArray(merged.discoverySource),
+      usedBefore: normalizeStringValue(merged.usedBefore),
+    };
+
+    setFormData(normalizedFormData);
   }, [initialFormData]);
 
   useEffect(() => {
@@ -139,7 +181,10 @@ export const FormProvider: React.FC<FormProviderProps> = ({
 
       setFormData((prevData) => ({
         ...prevData,
-        [name]: value,
+        [name]:
+          typeof value === "string"
+            ? value
+            : normalizeStringValue(value),
       }));
 
       if (formErrors[name]) {
@@ -153,13 +198,23 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   };
 
   const handleMultiSelect = (name: keyof FormDataProps, value: string) => {
-    const currentValues = formData[name] as string[];
-
     setFormData((prevData) => ({
       ...prevData,
-      [name]: currentValues.includes(value)
-        ? currentValues.filter((item) => item !== value)
-        : [...currentValues, value],
+      [name]: (() => {
+        const prevValuesRaw = prevData[name];
+        const normalizedValue = normalizeStringValue(value);
+        const prevValues = Array.isArray(prevValuesRaw)
+          ? prevValuesRaw.map((item) => normalizeStringValue(item))
+          : [];
+
+        if (normalizedValue === "") {
+          return prevValues;
+        }
+
+        return prevValues.includes(normalizedValue)
+          ? prevValues.filter((item) => item !== normalizedValue)
+          : [...prevValues, normalizedValue];
+      })(),
     }));
 
     if (formErrors[name]) {
@@ -174,7 +229,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   const handleSingleSelect = (name: keyof FormDataProps, value: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: normalizeStringValue(value),
     }));
 
     if (formErrors[name]) {

@@ -147,7 +147,8 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
     },
   ];
 
-  const isLastOptionSelected = !!formData.userName;
+  const isLastOptionSelected =
+    typeof formData.userName === "string" && formData.userName.trim().length > 0;
 
   return (
     <FormLayout>

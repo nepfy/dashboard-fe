@@ -28,15 +28,18 @@ const SelectionButton = ({
 }: SelectionButtonProps) => {
   const { formData, handleMultiSelect, handleSingleSelect } = useFormContext();
 
-  const optionValue = typeof option === "object" ? option.id : option;
+  const rawOptionValue = typeof option === "object" ? option.id : option;
+  const optionValue = String(rawOptionValue);
   const optionLabel = typeof option === "object" ? option.name : option;
 
   const selectedValues = formData[fieldName as keyof formDataProps] as
     | string
     | string[];
   const isSelected = Array.isArray(selectedValues)
-    ? selectedValues.includes(optionValue)
-    : selectedValues === optionValue;
+    ? selectedValues
+        .map((value) => String(value))
+        .includes(optionValue)
+    : String(selectedValues) === optionValue;
 
   const handleSelect = isMultiSelect
     ? () => handleMultiSelect(fieldName as keyof formDataProps, optionValue)

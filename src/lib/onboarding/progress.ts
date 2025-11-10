@@ -16,6 +16,39 @@ export function sanitizeOnboardingStep(step: unknown): number {
   return Math.min(Math.max(normalized, 1), TOTAL_ONBOARDING_STEPS);
 }
 
+const normalizeStringValue = (
+  value: unknown,
+  { trim }: { trim?: boolean } = {}
+): string | null => {
+  if (typeof value === "string") {
+    const normalized = trim ? value.trim() : value;
+    return normalized === "" ? null : normalized;
+  }
+
+  if (typeof value === "number" && !Number.isNaN(value)) {
+    return String(value);
+  }
+
+  return null;
+};
+
+const normalizeStringArray = (value: unknown): string[] | null => {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const result: string[] = [];
+
+  for (const item of value) {
+    const normalized = normalizeStringValue(item);
+    if (normalized) {
+      result.push(normalized);
+    }
+  }
+
+  return result.length > 0 ? result : null;
+};
+
 export function sanitizeOnboardingFormData(
   formData: unknown
 ): PartialOnboardingFormData {
@@ -26,42 +59,39 @@ export function sanitizeOnboardingFormData(
   const data = formData as Record<string, unknown>;
   const sanitized: PartialOnboardingFormData = {};
 
-  if (typeof data.fullName === "string" && data.fullName.trim() !== "") {
-    sanitized.fullName = data.fullName;
+  const fullName = normalizeStringValue(data.fullName, { trim: true });
+  if (fullName) {
+    sanitized.fullName = fullName;
   }
 
-  if (typeof data.userName === "string" && data.userName.trim() !== "") {
-    sanitized.userName = data.userName;
+  const userName = normalizeStringValue(data.userName, { trim: true });
+  if (userName) {
+    sanitized.userName = userName;
   }
 
-  if (typeof data.cpf === "string" && data.cpf.trim() !== "") {
-    sanitized.cpf = data.cpf;
+  const cpf = normalizeStringValue(data.cpf);
+  if (cpf) {
+    sanitized.cpf = cpf;
   }
 
-  if (typeof data.phone === "string" && data.phone.trim() !== "") {
-    sanitized.phone = data.phone;
+  const phone = normalizeStringValue(data.phone);
+  if (phone) {
+    sanitized.phone = phone;
   }
 
-  if (
-    Array.isArray(data.jobType) &&
-    data.jobType.every(
-      (item) => typeof item === "string" && item.trim() !== ""
-    )
-  ) {
-    sanitized.jobType = data.jobType;
+  const jobType = normalizeStringArray(data.jobType);
+  if (jobType) {
+    sanitized.jobType = jobType;
   }
 
-  if (
-    Array.isArray(data.discoverySource) &&
-    data.discoverySource.every(
-      (item) => typeof item === "string" && item.trim() !== ""
-    )
-  ) {
-    sanitized.discoverySource = data.discoverySource;
+  const discoverySource = normalizeStringArray(data.discoverySource);
+  if (discoverySource) {
+    sanitized.discoverySource = discoverySource;
   }
 
-  if (typeof data.usedBefore === "string" && data.usedBefore.trim() !== "") {
-    sanitized.usedBefore = data.usedBefore;
+  const usedBefore = normalizeStringValue(data.usedBefore);
+  if (usedBefore) {
+    sanitized.usedBefore = usedBefore;
   }
 
   return sanitized;
