@@ -2,21 +2,18 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
   ReactNode,
   ChangeEvent,
   SetStateAction,
 } from "react";
 import { trackOnboardingQuestionAnswered } from "#/lib/analytics/track";
+import {
+  DEFAULT_ONBOARDING_FORM_DATA,
+  type OnboardingFormData,
+} from "#/types/onboarding";
 
-export interface FormDataProps {
-  fullName: string;
-  userName: string;
-  cpf: string;
-  phone: string;
-  jobType: string[];
-  discoverySource: string[];
-  usedBefore: string;
-}
+export type FormDataProps = OnboardingFormData;
 
 interface FormErrors {
   [key: string]: string;
@@ -47,15 +44,7 @@ interface FormContextType {
 }
 
 const FormContext = createContext<FormContextType>({
-  formData: {
-    fullName: "",
-    userName: "",
-    cpf: "",
-    phone: "",
-    jobType: [],
-    discoverySource: [],
-    usedBefore: "",
-  },
+  formData: DEFAULT_ONBOARDING_FORM_DATA,
   formErrors: {},
   currentStep: 1,
   cpfValidated: false,
@@ -80,23 +69,44 @@ export const useFormContext = () => useContext(FormContext);
 
 interface FormProviderProps {
   children: ReactNode;
+  initialFormData?: Partial<FormDataProps>;
+  initialStep?: number;
 }
 
-export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
-  const [formData, setFormData] = useState<FormDataProps>({
-    fullName: "",
-    userName: "",
-    cpf: "",
-    phone: "",
-    jobType: [],
-    discoverySource: [],
-    usedBefore: "",
-  });
+const TOTAL_STEPS = 5;
+
+export const FormProvider: React.FC<FormProviderProps> = ({
+  children,
+  initialFormData,
+  initialStep,
+}) => {
+  const [formData, setFormData] = useState<FormDataProps>(
+    DEFAULT_ONBOARDING_FORM_DATA
+  );
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [enableNextStep, setEnableNextStep] = useState<boolean>(false);
   const [cpfValidated, setCpfValidated] = useState<boolean>(false);
+
+  useEffect(() => {
+    const mergedFormData: FormDataProps = {
+      ...DEFAULT_ONBOARDING_FORM_DATA,
+      ...(initialFormData ?? {}),
+    };
+
+    setFormData(mergedFormData);
+  }, [initialFormData]);
+
+  useEffect(() => {
+    if (initialStep === undefined || initialStep === null) {
+      setCurrentStep(1);
+      return;
+    }
+
+    const clampedStep = Math.min(Math.max(initialStep, 1), TOTAL_STEPS);
+    setCurrentStep(clampedStep);
+  }, [initialStep]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | { name: string; value: string }

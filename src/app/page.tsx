@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RedirectToSignIn, SignedOut, useUser } from "@clerk/nextjs";
+import type { OnboardingStatusApiResponse } from "#/types/onboarding";
 
 function checkIsMainDomain(hostname: string): boolean {
   return (
@@ -21,16 +22,36 @@ function MainDomainHome() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoaded && user) {
-      console.log("user", user);
-      const onboardingComplete = user?.publicMetadata?.onboardingComplete;
-
-      if (onboardingComplete) {
-        router.push("/dashboard");
-      } else {
-        router.push("/onboarding");
-      }
+    if (!isLoaded || !user) {
+      return;
     }
+
+    const routeUser = async () => {
+      try {
+        const response = await fetch("/api/onboarding/status", {
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          const result = (await response.json()) as OnboardingStatusApiResponse;
+          if (result.success && result.data) {
+            router.push(
+              result.data.needsOnboarding ? "/onboarding" : "/dashboard"
+            );
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("Failed to determine onboarding status:", error);
+      }
+
+      const onboardingComplete = Boolean(
+        user.publicMetadata?.onboardingComplete
+      );
+      router.push(onboardingComplete ? "/dashboard" : "/onboarding");
+    };
+
+    routeUser();
   }, [user, isLoaded, router]);
 
   if (!isLoaded) {

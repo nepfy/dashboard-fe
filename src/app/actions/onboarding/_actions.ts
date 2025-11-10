@@ -24,6 +24,7 @@ export const completeOnboarding = async (formData: FormData) => {
         onboardingComplete: true,
         applicationName: formData.get("applicationName"),
         applicationType: formData.get("applicationType"),
+        onboardingProgress: null,
       },
     });
     return { message: res.publicMetadata };
