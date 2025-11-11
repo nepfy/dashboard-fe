@@ -1,19 +1,22 @@
 "use client";
 
 import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
+import { LoaderCircle } from "lucide-react";
 
 export default function SsoCallbackPage() {
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex h-screen items-center justify-center">
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">
+        <h1 className="mb-4 text-2xl font-bold">
           Processando sua autenticação
         </h1>
         <p className="text-lg">
           Por favor, aguarde enquanto redirecionamos você...
         </p>
         <div className="mt-8 flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--color-primary-light-400)]"></div>
+          <div className="flex h-64 items-center justify-center">
+            <LoaderCircle className="text-primary-light-400 animate-spin" />
+          </div>
         </div>
 
         <AuthenticateWithRedirectCallback
