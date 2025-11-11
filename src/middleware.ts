@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   "/proposta-com-ia(.*)",
   "/termos-de-uso(.*)",
   "/project(.*)",
+  "/sso-callback(.*)",
   "/admin(.*)", // Temporário para desenvolvimento
 ]);
 
