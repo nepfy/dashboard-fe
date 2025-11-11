@@ -221,7 +221,14 @@ export class FlashTheme {
     this.ensureMaxLength(section.content, 350, "scope.content");
   }
 
-  private parseCurrencyValue(value: string): number {
+  private parseCurrencyValue(value: string | number | null | undefined): number {
+    if (value === null || value === undefined) return 0;
+
+    if (typeof value === "number") {
+      ensureCondition(!Number.isNaN(value), "Invalid currency value");
+      return value;
+    }
+
     if (!value) return 0;
 
     const cleaned = value.replace(/[R$\s]/gi, "");
@@ -242,6 +249,29 @@ export class FlashTheme {
     ensureCondition(!Number.isNaN(numeric), "Invalid currency value");
 
     return numeric;
+  }
+
+  private formatCurrencyValue(value: number): string {
+    return `R$ ${value.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  }
+
+  private normalizeResultsSection(section: FlashResultsSection): FlashResultsSection {
+    const normalizedItems = (section.items ?? []).map((item, index) => ({
+      ...item,
+      investment: this.formatCurrencyValue(this.parseCurrencyValue(item.investment)),
+      roi: item.roi ?? "",
+      hidePhoto: item.hidePhoto ?? false,
+      sortOrder: item.sortOrder ?? index,
+      photo: item.photo ?? "/images/templates/flash/placeholder.png",
+    }));
+
+    return {
+      ...section,
+      items: normalizedItems,
+    };
   }
 
   private validateInvestmentSection(
@@ -407,6 +437,7 @@ export class FlashTheme {
   ): FlashInvestmentSection {
     const normalizedPlans = (section.plansItems ?? []).map((plan, index) => ({
       ...plan,
+      value: this.formatCurrencyValue(this.parseCurrencyValue(plan.value)),
       id: plan.id ?? crypto.randomUUID(),
       hideTitleField: plan.hideTitleField ?? false,
       hideDescription: plan.hideDescription ?? false,
@@ -1522,13 +1553,14 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         // Generate proper UUIDs for the result items
         const resultsWithUUIDs = {
           ...moaResult.result,
-          items: moaResult.result.items.map((item) => ({
+          items: moaResult.result.items.map((item, index) => ({
             ...item,
             id: crypto.randomUUID(),
+            sortOrder: item.sortOrder ?? index,
           })),
         };
 
-        return resultsWithUUIDs;
+        return this.normalizeResultsSection(resultsWithUUIDs);
       }
 
       // Fallback to single model if MoA fails
@@ -1541,13 +1573,14 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       // Generate proper UUIDs for the result items
       const resultsWithUUIDs = {
         ...parsed,
-        items: parsed.items.map((item) => ({
+        items: parsed.items.map((item, index) => ({
           ...item,
           id: crypto.randomUUID(),
+          sortOrder: item.sortOrder ?? index,
         })),
       };
 
-      return resultsWithUUIDs;
+      return this.normalizeResultsSection(resultsWithUUIDs);
     } catch (error) {
       console.error("Flash Results Generation Error:", error);
       throw error;

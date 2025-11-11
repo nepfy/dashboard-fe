@@ -631,7 +631,7 @@ REGRAS OBRIGATÓRIAS:
         id: crypto.randomUUID(),
         title: `Plano ${i + 1}`,
         description: "Descrição do plano",
-        value: (i + 1) * 1000,
+        value: this.formatCurrencyValue((i + 1) * 1000),
         planPeriod: "mensal",
         recommended: i === planCount - 1, // Last plan is recommended
         buttonTitle: "Contratar",
