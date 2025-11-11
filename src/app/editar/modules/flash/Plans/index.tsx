@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Checkbox from "#/components/icons/Checkbox";
 import StarIcon from "./StarIcon";
-import { formatCurrencyDisplayNoCents } from "#/helpers/formatCurrency";
+import { formatCurrencyDisplay } from "#/helpers/formatCurrency";
 import { PlansSection } from "#/types/template-data";
 import EditablePlan from "#/app/editar/components/EditablePlan";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
@@ -92,7 +92,7 @@ export default function FlashPlans({
                   <div className="flex items-baseline gap-4">
                     {!plan.hidePrice && (
                       <p className="text-[2.5rem] font-medium text-[#E6E6E6]">
-                        {formatCurrencyDisplayNoCents(plan.value)}
+                        {formatCurrencyDisplay(plan.value)}
                       </p>
                     )}
                     {!plan.hidePlanPeriod && (
