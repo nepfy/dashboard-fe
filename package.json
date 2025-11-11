@@ -18,7 +18,8 @@
     "test-minimal": "npx tsx src/scripts/test-agent-proposals.ts --template=minimal",
     "test-flash": "npx tsx src/scripts/test-agent-proposals.ts --template=flash",
     "test-prime": "npx tsx src/scripts/test-agent-proposals.ts --template=prime",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest"
   },
   "dependencies": {
     "@ai-sdk/togetherai": "^1.0.1",
@@ -55,20 +56,26 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-slick": "^0.23.13",
     "@types/ws": "^8.18.0",
+    "@vitejs/plugin-react": "^5.1.0",
     "drizzle-kit": "^0.31.1",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
     "husky": "^9.1.7",
+    "jsdom": "^27.1.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "puppeteer": "^24.29.1",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.8"
   }
 }
