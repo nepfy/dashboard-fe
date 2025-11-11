@@ -4,7 +4,7 @@
  * @returns string - The formatted currency value (e.g., "R$ 1.234")
  */
 export const formatCurrency = (value: string | number): string => {
-  if (!value) return "";
+  if (value === null || value === undefined) return "";
 
   // Convert to string and remove any existing formatting
   const stringValue = value.toString().replace(/\D/g, "");
@@ -29,7 +29,7 @@ export const formatCurrency = (value: string | number): string => {
  * @returns string - The formatted currency value (e.g., "1.234")
  */
 export const formatCurrencyValue = (value: string | number): string => {
-  if (!value) return "";
+  if (value === null || value === undefined) return "";
 
   // Convert to string and remove any existing formatting
   const stringValue = value.toString().replace(/\D/g, "");
@@ -60,9 +60,19 @@ export const parseCurrencyValue = (
 
   const cleanValue = trimmedValue.replace(/[R$]/gi, "").replace(/\s/g, "");
 
-  const normalizedValue = cleanValue.includes(",")
-    ? cleanValue.replace(/\./g, "").replace(/,/g, ".")
-    : cleanValue;
+  let normalizedValue = cleanValue;
+
+  const hasComma = cleanValue.includes(",");
+  const hasDot = cleanValue.includes(".");
+
+  if (hasComma) {
+    normalizedValue = cleanValue.replace(/\./g, "").replace(/,/g, ".");
+  } else if (hasDot) {
+    // If the dot is likely a thousands separator (e.g. "15.000"), strip it.
+    // Otherwise, keep it as decimal separator (e.g. "15.5").
+    const dotAsDecimal = /\.\d{1,2}$/.test(cleanValue);
+    normalizedValue = dotAsDecimal ? cleanValue : cleanValue.replace(/\./g, "");
+  }
 
   const numberValue = Number(normalizedValue);
 

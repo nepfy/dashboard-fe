@@ -99,6 +99,22 @@ describe("CurrencyInput", () => {
     expect(input).toHaveValue("R$ 10,00");
   });
 
+  it("normalizes thousand-separated numbers without decimals", async () => {
+    const user = userEvent.setup();
+    render(
+      <CurrencyInputHarness
+        initialValue="R$ 15.000"
+      />
+    );
+
+    const input = screen.getByPlaceholderText("0,00") as HTMLInputElement;
+    expect(input).toHaveValue("R$ 15.000,00");
+
+    await user.click(input);
+
+    await waitFor(() => expect(input).toHaveValue("15000"));
+  });
+
   it("normalizes user input and applies currency formatting on blur", async () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();
