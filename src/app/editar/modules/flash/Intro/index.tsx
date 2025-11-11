@@ -27,8 +27,8 @@ export default function FlashIntro({
   const gradientString = `radial-gradient(circle at 0 0, #000 7%, ${colors.dark} 35%, ${defaultColor} 68%, ${colors.light} 76%)`;
 
   return (
-    <div className="relative overflow-hidden px-6 py-11 lg:px-12">
-      <div className="relative z-10">
+    <div className="relative overflow-hidden px-6">
+      <div className="relative z-10 py-11 lg:px-12">
         <nav className="mx-auto flex max-w-[1440px] items-center justify-between text-[#E6E6E6]">
           <span className="text-lg font-semibold lg:text-base lg:font-normal">
             <EditableText
