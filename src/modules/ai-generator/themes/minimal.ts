@@ -201,8 +201,12 @@ export class MinimalTheme {
     }
   }
 
-  private parseCurrencyValue(value: string | number): number {
-    if (typeof value === "number") return value;
+  private parseCurrencyValue(value: string | number | null | undefined): number {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === "number") {
+      ensureCondition(!Number.isNaN(value), "Invalid currency value");
+      return value;
+    }
 
     const cleaned = value.replace(/[R$\s]/gi, "");
 
@@ -222,6 +226,13 @@ export class MinimalTheme {
     ensureCondition(!Number.isNaN(numeric), "Invalid currency value");
 
     return numeric;
+  }
+
+  private formatCurrencyValue(value: number): string {
+    return `R$ ${value.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   }
 
   private validateInvestmentSection(
