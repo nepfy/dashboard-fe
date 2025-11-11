@@ -228,13 +228,6 @@ export class MinimalTheme {
     return numeric;
   }
 
-  private formatCurrencyValue(value: number): string {
-    return `R$ ${value.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
-  }
-
   private validateInvestmentSection(
     section: MinimalProposal["investment"]
   ): void {
@@ -642,7 +635,7 @@ REGRAS OBRIGATÓRIAS:
         id: crypto.randomUUID(),
         title: `Plano ${i + 1}`,
         description: "Descrição do plano",
-        value: this.formatCurrencyValue((i + 1) * 1000),
+        value: (i + 1) * 1000,
         planPeriod: "mensal",
         recommended: i === planCount - 1, // Last plan is recommended
         buttonTitle: "Contratar",
