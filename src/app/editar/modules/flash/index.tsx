@@ -19,7 +19,7 @@ export default function Flash() {
     return null;
   }
   return (
-    <div className="font-manrope overflow-hidden p-3">
+    <div className="font-manrope overflow-hidden bg-[#1C1A22] p-3 text-[#E6E6E6] min-h-[calc(100vh-56px)] sm:min-h-[calc(100vh-66px)]">
       <FlashIntro
         {...projectData?.proposalData?.introduction}
         mainColor={projectData?.mainColor}
