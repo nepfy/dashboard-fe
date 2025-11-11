@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Label } from "#/components/Label";
+import { getProjectBaseDomain } from "#/lib/subdomain";
 import { URLModal } from "#/modules/ai-generator/components/modal/URLModal";
 
 // Constants
@@ -34,6 +35,7 @@ export function PageURLSection({
   onValidationStateChange,
   skipInitialValidation = false,
 }: PageURLSectionProps) {
+  const projectBaseDomain = getProjectBaseDomain();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [duplicateMessage, setDuplicateMessage] = useState<
@@ -216,7 +218,9 @@ export function PageURLSection({
           aria-invalid={combinedError ? "true" : "false"}
         />
 
-        <span className="text-white-neutral-light-600">.nepfy.com</span>
+        <span className="text-white-neutral-light-600">
+          .{projectBaseDomain}
+        </span>
       </div>
 
       <div className="h-[18px]">

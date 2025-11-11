@@ -1,8 +1,25 @@
+const DEFAULT_PROJECT_BASE_DOMAIN = "nepfy.com";
+
+export function getProjectBaseDomain(): string {
+  const envValue = process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN?.trim();
+
+  if (!envValue) {
+    return DEFAULT_PROJECT_BASE_DOMAIN;
+  }
+
+  return envValue
+    .replace(/^https?:\/\//, "")
+    .replace(/\/$/, "")
+    .toLowerCase();
+}
+
 export function generateSubdomainUrl(
   userName: string,
   projectUrl: string
 ): string {
-  return `https://${userName}-${projectUrl}.nepfy.com`;
+  const projectBaseDomain = getProjectBaseDomain();
+
+  return `https://${userName}-${projectUrl}.${projectBaseDomain}`;
 }
 
 export function isMainDomain(hostname: string): boolean {

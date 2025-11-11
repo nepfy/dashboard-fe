@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+import { getProjectBaseDomain } from "#/lib/subdomain";
 import Modal from "#/components/Modal";
 import { TextField } from "#/components/Inputs";
 import WarningIcon from "#/components/icons/WarningIcon";
@@ -16,6 +17,7 @@ export default function UserNameStep() {
     formErrors,
   } = useFormContext();
   const [usernameModal, setUsernameModal] = useState(false);
+  const projectBaseDomain = getProjectBaseDomain();
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
@@ -91,7 +93,7 @@ export default function UserNameStep() {
               Ele será usado para criar um link exclusivo para cada proposta que
               você enviar, como:{" "}
               <span className="text-primary-light-500 text-sm">
-                usuario-cliente.nepfy.com.
+                usuario-cliente.{projectBaseDomain}.
               </span>
             </p>
             <p className="text-white-neutral-light-500 mb-3 text-sm">

@@ -1,5 +1,6 @@
 "use client";
 
+import { generateSubdomainUrl } from "#/lib/subdomain";
 import { ReactNode } from "react";
 
 interface CopyLinkResponse {
@@ -30,7 +31,7 @@ export function useCopyLinkWithCache() {
       throw new Error("Dados insuficientes para gerar o link");
     }
 
-    const fullUrl = `https://${userName}-${projectUrl}.nepfy.com`;
+    const fullUrl = generateSubdomainUrl(userName, projectUrl);
 
     await navigator.clipboard.writeText(fullUrl);
 

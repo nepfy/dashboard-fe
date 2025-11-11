@@ -1,3 +1,4 @@
+import { getProjectBaseDomain } from "#/lib/subdomain";
 import Modal from "#/modules/ai-generator/components/modal/Modal";
 import { URLIcon } from "#/modules/ai-generator/components/icons/URLIcon";
 
@@ -28,6 +29,8 @@ export function URLModal({
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
 }) {
+  const projectBaseDomain = getProjectBaseDomain();
+
   return (
     <Modal
       isOpen={isModalOpen}
@@ -43,7 +46,7 @@ export function URLModal({
         <p className="text-white-neutral-light-900 text-sm mb-4 font-semibold">
           Sua URL terá o formato:{" "}
           <span className="text-primary-light-500">
-            usuário-cliente.nepfy.com
+            usuário-cliente.{projectBaseDomain}
           </span>
         </p>
 
