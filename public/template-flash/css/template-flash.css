@@ -2931,12 +2931,12 @@ figcaption {
     flex-flow: column;
   }
 
-    @media (max-width: 479px) {
-      .hero_bottom-wrap {
-        display: none;
-      }
+  @media (max-width: 479px) {
+    .hero_bottom {
+      display: none;
     }
-
+  }
+  
   .hero_bottom-wrap {
     display: none;
   }

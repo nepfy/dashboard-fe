@@ -1352,7 +1352,7 @@ figcaption {
 }
 
 @media (max-width: 479px) {
-  .hero_bottom-wrap {
+  .hero_bottom {
     display: none;
   }
 }
@@ -2788,6 +2788,12 @@ figcaption {
     grid-column-gap: 0rem;
     grid-row-gap: 0rem;
     flex-flow: column;
+  }
+
+  @media (max-width: 479px) {
+    .hero_bottom {
+      display: none;
+    }
   }
 
   .hero_bottom-wrap {
