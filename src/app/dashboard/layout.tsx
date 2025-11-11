@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs";
 
 import { CopyLinkCacheProvider } from "#/contexts/CopyLinkCacheContext";
 import type { OnboardingStatusApiResponse } from "#/types/onboarding";
+import { Loader2, LoaderCircle } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -73,8 +74,8 @@ export default function DashboardLayout({
 
   if (!isLoaded || isCheckingOnboarding) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--color-primary-light-400)]"></div>
+      <div className="flex h-screen items-center justify-center">
+        <LoaderCircle className="text-primary-light-400 animate-spin" />
       </div>
     );
   }
@@ -85,11 +86,11 @@ export default function DashboardLayout({
 
   return (
     <CopyLinkCacheProvider>
-      <div className="bg-gray-50 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] h-screen relative">
+      <div className="relative bg-gray-50">
+        <div className="relative grid h-screen grid-cols-1 lg:grid-cols-[280px_1fr]">
           <Sidebar />
 
-          <div className="flex flex-col h-screen overflow-scroll">
+          <div className="flex h-screen flex-col overflow-scroll">
             <Navbar />
             <main className="flex-1">{children}</main>
           </div>

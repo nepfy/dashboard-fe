@@ -3,11 +3,11 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 
 const RedirectingScreen = ({ message }: { message: string }) => (
   <div className="flex h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-    <Loader2 className="h-10 w-10 animate-spin text-[var(--color-primary-light-400)]" />
+    <LoaderCircle className="text-primary-light-400 animate-spin" />
     <div className="space-y-1">
       <p className="text-lg font-semibold text-[var(--color-white-neutral-light-800)]">
         {message}
@@ -33,9 +33,7 @@ export default function AppLanding() {
       return;
     }
 
-    const onboardingComplete = Boolean(
-      user.publicMetadata?.onboardingComplete
-    );
+    const onboardingComplete = Boolean(user.publicMetadata?.onboardingComplete);
 
     router.replace(onboardingComplete ? "/dashboard" : "/onboarding");
   }, [isLoaded, user, router]);
@@ -50,5 +48,3 @@ export default function AppLanding() {
 
   return <RedirectingScreen message="Entrando na sua conta" />;
 }
-
-

@@ -16,7 +16,7 @@ import FormHeader from "#/app/onboarding/components/FormHeader";
 import GoogleLogo from "#/components/icons/GoogleLogo";
 import PasswordInput from "#/components/Inputs/PasswordInput";
 import MailEnvelope from "#/components/icons/MailEnvelope";
-import { Loader2 } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useGoogleOAuth } from "#/hooks/useGoogleOAuth";
 
 export default function Login() {
@@ -170,7 +170,7 @@ export default function Login() {
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <Loader2 className="animate-spin self-center" />
+                    <LoaderCircle className="text-primary-light-400 animate-spin" />
                   </div>
                 ) : (
                   "Acessar conta"
