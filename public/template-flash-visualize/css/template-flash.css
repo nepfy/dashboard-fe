@@ -1822,6 +1822,7 @@ figcaption {
   position: relative;
   gap: 1.25rem;
   justify-content: flex-start;
+  height: 100%;
 }
 
 .pricing_top {
@@ -1847,6 +1848,7 @@ figcaption {
   padding: .5rem .75rem .75rem;
   display: flex;
   justify-content: flex-start;
+  flex: 1;
 }
 
 .pricing_item {
@@ -2182,9 +2184,15 @@ figcaption {
 }
 
 .pricing_button {
-  margin-top: 3rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  margin-top: auto;
+  padding: .5rem .75rem .75rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.pricing_button .btn-magnetic {
+  width: 100%;
 }
 
 .faq_bg {

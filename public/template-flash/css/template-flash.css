@@ -1893,6 +1893,7 @@ figcaption {
 
 .pricing_card {
   min-height: auto;
+  height: 100%;
   flex-flow: column;
   display: flex;
   justify-content: flex-start;
@@ -1928,6 +1929,7 @@ figcaption {
   padding: 0.5rem 0.75rem 0.75rem;
   display: flex;
   justify-content: flex-start;
+  flex: 1;
 }
 
 .pricing_item {
@@ -2312,9 +2314,15 @@ figcaption {
 }
 
 .pricing_button {
-  margin-top: 3rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  margin-top: auto;
+  padding: 0.5rem 0.75rem 0.75rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.pricing_button .btn-magnetic {
+  width: 100%;
 }
 
 .faq_bg {
