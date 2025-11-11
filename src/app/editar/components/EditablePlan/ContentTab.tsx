@@ -92,7 +92,7 @@ export default function ContentTab({
           Valor
         </label>
         <CurrencyInput
-          value={plan.value || ""}
+          value={plan.value ?? ""}
           onChange={(value) => onUpdate({ value })}
           placeholder="0,00"
           className="w-[210px]"

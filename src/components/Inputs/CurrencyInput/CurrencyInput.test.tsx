@@ -50,6 +50,17 @@ describe("CurrencyInput", () => {
     expect(input).toHaveValue("R$ 0,00");
   });
 
+  it("supports numeric initial values without interaction", () => {
+    render(
+      <CurrencyInputHarness
+        initialValue={4500}
+      />
+    );
+
+    const input = screen.getByPlaceholderText("0,00") as HTMLInputElement;
+    expect(input).toHaveValue("R$ 4.500,00");
+  });
+
   it("shows any provided initial value without requiring focus", () => {
     render(
       <CurrencyInputHarness
@@ -59,6 +70,22 @@ describe("CurrencyInput", () => {
 
     const input = screen.getByPlaceholderText("0,00") as HTMLInputElement;
     expect(input).toHaveValue("R$ 1.599,90");
+  });
+
+  it("shows raw numeric value when focusing for editing", async () => {
+    const user = userEvent.setup();
+    render(
+      <CurrencyInputHarness
+        initialValue="R$ 4.500,00"
+      />
+    );
+
+    const input = screen.getByPlaceholderText("0,00") as HTMLInputElement;
+    expect(input).toHaveValue("R$ 4.500,00");
+
+    await user.click(input);
+
+    await waitFor(() => expect(input).toHaveValue("4500"));
   });
 
   it("renders formatted strings coming from external sources", () => {
