@@ -1460,6 +1460,12 @@ figcaption {
   display: flex;
 }
 
+@media (max-width: 768px) {
+  .hero_bottom-wrap {
+    display: none;
+  }
+}
+
 .hero_bottom-wrap.is--right {
   width: 50%;
 }

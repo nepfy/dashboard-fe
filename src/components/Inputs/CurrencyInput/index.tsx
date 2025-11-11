@@ -23,14 +23,34 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [hasError, setHasError] = useState(false);
 
+  const normalizeToNumber = (
+    rawValue: string | undefined | null
+  ): number | null => {
+    if (rawValue === undefined || rawValue === null) return null;
+
+    const trimmedValue = rawValue.replace(/\u00A0/g, "").trim();
+    if (trimmedValue === "") return null;
+
+    const cleanValue = trimmedValue
+      .replace(/[R$]/g, "")
+      .replace(/\s/g, "");
+
+    const normalizedValue = cleanValue.includes(",")
+      ? cleanValue.replace(/\./g, "").replace(/,/g, ".")
+      : cleanValue;
+
+    const number = Number(normalizedValue);
+
+    return Number.isNaN(number) ? null : number;
+  };
+
   // Format number to currency display (e.g., "12500" -> "R$ 12.500,00")
   const formatToCurrency = (numValue: string): string => {
-    if (!numValue || numValue === "0") return "";
+    const normalizedNumber = normalizeToNumber(numValue);
 
-    const number = parseFloat(numValue);
-    if (isNaN(number)) return "";
+    if (normalizedNumber === null) return "";
 
-    return number.toLocaleString("pt-BR", {
+    return normalizedNumber.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 2,
@@ -40,16 +60,9 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 
   // Parse currency display to plain number (e.g., "R$ 12.500,00" -> "12500")
   const parseFromCurrency = (formattedValue: string): string => {
-    if (!formattedValue) return "";
+    const normalizedNumber = normalizeToNumber(formattedValue);
 
-    // Remove currency symbols and spaces
-    const cleanValue = formattedValue
-      .replace(/[R$\s]/g, "")
-      .replace(/\./g, "") // Remove thousands separator
-      .replace(/,/g, "."); // Replace decimal comma with dot
-
-    const number = parseFloat(cleanValue);
-    return isNaN(number) ? "" : number.toString();
+    return normalizedNumber === null ? "" : normalizedNumber.toString();
   };
 
   // Initialize display value when component mounts or value changes from outside

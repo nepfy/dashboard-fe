@@ -39,6 +39,17 @@ describe("CurrencyInput", () => {
     expect(input).toHaveValue("R$ 1.234,56");
   });
 
+  it("keeps zero values visible without requiring focus", () => {
+    render(
+      <CurrencyInputHarness
+        initialValue="0"
+      />
+    );
+
+    const input = screen.getByPlaceholderText("0,00") as HTMLInputElement;
+    expect(input).toHaveValue("R$ 0,00");
+  });
+
   it("normalizes user input and applies currency formatting on blur", async () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();

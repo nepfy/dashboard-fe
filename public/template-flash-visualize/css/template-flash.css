@@ -1351,6 +1351,12 @@ figcaption {
   display: flex;
 }
 
+@media (max-width: 768px) {
+  .hero_bottom-wrap {
+    display: none;
+  }
+}
+
 .line {
   background-color: var(--background-color--line);
   opacity: .5;
