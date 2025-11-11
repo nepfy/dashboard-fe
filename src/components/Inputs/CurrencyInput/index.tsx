@@ -1,15 +1,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { parseCurrencyValue } from "#/helpers/formatCurrency";
 
 interface CurrencyInputProps {
-  value: string;
+  value: string | number;
   onChange: (value: string) => void;
   onBlur?: () => void;
   placeholder?: string;
   className?: string;
   error?: string;
 }
+
+const formatToCurrency = (inputValue: string | number): string => {
+  const normalizedNumber = parseCurrencyValue(inputValue);
+
+  if (normalizedNumber === null) return "";
+
+  return normalizedNumber.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
+const parseFromCurrency = (formattedValue: string): string => {
+  const normalizedNumber = parseCurrencyValue(formattedValue);
+
+  return normalizedNumber === null ? "" : normalizedNumber.toString();
+};
 
 const CurrencyInput: React.FC<CurrencyInputProps> = ({
   value,
@@ -23,52 +43,11 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const normalizeToNumber = (
-    rawValue: string | undefined | null
-  ): number | null => {
-    if (rawValue === undefined || rawValue === null) return null;
-
-    const trimmedValue = rawValue.replace(/\u00A0/g, "").trim();
-    if (trimmedValue === "") return null;
-
-    const cleanValue = trimmedValue
-      .replace(/[R$]/g, "")
-      .replace(/\s/g, "");
-
-    const normalizedValue = cleanValue.includes(",")
-      ? cleanValue.replace(/\./g, "").replace(/,/g, ".")
-      : cleanValue;
-
-    const number = Number(normalizedValue);
-
-    return Number.isNaN(number) ? null : number;
-  };
-
-  // Format number to currency display (e.g., "12500" -> "R$ 12.500,00")
-  const formatToCurrency = (numValue: string): string => {
-    const normalizedNumber = normalizeToNumber(numValue);
-
-    if (normalizedNumber === null) return "";
-
-    return normalizedNumber.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  };
-
-  // Parse currency display to plain number (e.g., "R$ 12.500,00" -> "12500")
-  const parseFromCurrency = (formattedValue: string): string => {
-    const normalizedNumber = normalizeToNumber(formattedValue);
-
-    return normalizedNumber === null ? "" : normalizedNumber.toString();
-  };
-
   // Initialize display value when component mounts or value changes from outside
   useEffect(() => {
     if (!isEditing) {
-      setDisplayValue(value ? formatToCurrency(value) : "");
+      const formattedValue = formatToCurrency(value);
+      setDisplayValue(formattedValue || "");
     }
   }, [value, isEditing]);
 
@@ -76,7 +55,10 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
     setIsEditing(true);
     setHasError(false);
     // Show raw number when editing
-    setDisplayValue(value || "");
+    const rawValue = parseCurrencyValue(value);
+    setDisplayValue(
+      rawValue === null ? "" : rawValue.toString()
+    );
   };
 
   const handleBlur = () => {

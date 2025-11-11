@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import CurrencyInput from "./index";
 
 interface HarnessProps {
-  initialValue?: string;
+  initialValue?: string | number;
   onChange?: (value: string) => void;
 }
 
@@ -59,6 +59,17 @@ describe("CurrencyInput", () => {
 
     const input = screen.getByPlaceholderText("0,00") as HTMLInputElement;
     expect(input).toHaveValue("R$ 1.599,90");
+  });
+
+  it("renders formatted strings coming from external sources", () => {
+    render(
+      <CurrencyInputHarness
+        initialValue="R$ 10,00"
+      />
+    );
+
+    const input = screen.getByPlaceholderText("0,00") as HTMLInputElement;
+    expect(input).toHaveValue("R$ 10,00");
   });
 
   it("normalizes user input and applies currency formatting on blur", async () => {

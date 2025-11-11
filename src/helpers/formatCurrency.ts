@@ -46,18 +46,37 @@ export const formatCurrencyValue = (value: string | number): string => {
   });
 };
 
+export const parseCurrencyValue = (
+  value: string | number | null | undefined
+): number | null => {
+  if (value === null || value === undefined) return null;
+
+  if (typeof value === "number") {
+    return Number.isNaN(value) ? null : value;
+  }
+
+  const trimmedValue = value.replace(/\u00A0/g, "").trim();
+  if (trimmedValue === "") return null;
+
+  const cleanValue = trimmedValue.replace(/[R$]/gi, "").replace(/\s/g, "");
+
+  const normalizedValue = cleanValue.includes(",")
+    ? cleanValue.replace(/\./g, "").replace(/,/g, ".")
+    : cleanValue;
+
+  const numberValue = Number(normalizedValue);
+
+  return Number.isNaN(numberValue) ? null : numberValue;
+};
+
 /**
  * Formats a numeric value as Brazilian Real currency for display (without dividing by 100)
  * @param value - The value to format (can be string or number)
  * @returns string - The formatted currency value (e.g., "R$ 2.500,00")
  */
 export const formatCurrencyDisplay = (value: string | number): string => {
-  if (!value) return "R$ 0,00";
-
-  // Convert to number
-  const numValue = typeof value === "string" ? parseFloat(value) : value;
-
-  if (isNaN(numValue)) return "R$ 0,00";
+  const numValue = parseCurrencyValue(value);
+  if (numValue === null) return "R$ 0,00";
 
   // Format as Brazilian currency with cents
   return numValue.toLocaleString("pt-BR", {
@@ -76,12 +95,8 @@ export const formatCurrencyDisplay = (value: string | number): string => {
 export const formatCurrencyDisplayNoCents = (
   value: string | number
 ): string => {
-  if (!value) return "R$ 0";
-
-  // Convert to number
-  const numValue = typeof value === "string" ? parseFloat(value) : value;
-
-  if (isNaN(numValue)) return "R$ 0";
+  const numValue = parseCurrencyValue(value);
+  if (numValue === null) return "R$ 0";
 
   // Format as Brazilian currency without cents
   return numValue.toLocaleString("pt-BR", {
