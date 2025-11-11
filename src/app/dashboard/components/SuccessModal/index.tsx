@@ -132,10 +132,10 @@ export default function SuccessModal({
       footer={false}
     >
       <div>
-        <div className="w-full flex items-center justify-center pt-9 pb-4">
+        <div className="flex w-full items-center justify-center pt-9 pb-4">
           <Lottie animationData={propostaCriada} className="w-[200px]" />
         </div>
-        <p className="text-white-neutral-light-500 mb-6 text-sm p-7">
+        <p className="text-white-neutral-light-500 mb-6 p-7 text-sm">
           Sua proposta está pronta e já pode ser compartilhada com seus
           clientes. Acompanhe o status diretamente na plataforma.
         </p>
@@ -143,10 +143,10 @@ export default function SuccessModal({
         {copyLinkMessage && (
           <div className="px-7 pb-4">
             <div
-              className={`text-xs px-3 py-2 rounded-2xs text-center ${
+              className={`rounded-2xs px-3 py-2 text-center text-xs ${
                 copyLinkMessage.includes("Erro")
-                  ? "text-red-700 bg-red-100"
-                  : "text-green-700 bg-green-100"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-green-100 text-green-700"
               }`}
             >
               {copyLinkMessage}
@@ -154,17 +154,13 @@ export default function SuccessModal({
           </div>
         )}
 
-        <div className="border-t border-t-white-neutral-light-300">
-          <div className="flex gap-3 justify-start items-center py-4 px-7">
+        <div className="border-t-white-neutral-light-300 border-t">
+          <div className="flex items-center justify-start gap-3 px-7 py-4">
             <button
               type="button"
               onClick={handleCopyLink}
               disabled={isCopyLinkDisabled}
-              className="w-[110px] h-[44px] px-4 py-2 text-sm font-medium 
-                     border rounded-[12px] bg-primary-light-500 button-inner-inverse 
-                     border-white-neutral-light-300 cursor-pointer text-white-neutral-light-100
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     flex items-center justify-center gap-2"
+              className="bg-primary-light-500 button-inner-inverse border-white-neutral-light-300 text-white-neutral-light-100 flex h-[44px] w-[110px] cursor-pointer items-center justify-center gap-2 rounded-[12px] border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoadingCopyLink ? "Copiando..." : "Copiar link"}
             </button>
@@ -173,11 +169,7 @@ export default function SuccessModal({
               type="button"
               onClick={handleViewLink}
               disabled={isViewLinkDisabled}
-              className="flex items-center justify-center gap-1 w-[110px] h-[44px] 
-                     px-4 py-2 text-sm font-medium border rounded-[12px] 
-                     border-white-neutral-light-300 disabled:hover:bg-white-neutral-light-100 cursor-pointer button-inner 
-                     text-white-neutral-light-900 hover:bg-white-neutral-light-300
-                     disabled:opacity-50 disabled:cursor-not-allowed"
+              className="border-white-neutral-light-300 disabled:hover:bg-white-neutral-light-100 button-inner text-white-neutral-light-900 hover:bg-white-neutral-light-300 flex h-[44px] w-[110px] cursor-pointer items-center justify-center gap-1 rounded-[12px] border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoadingViewLink ? "Abrindo..." : "Visualizar"}
             </button>
