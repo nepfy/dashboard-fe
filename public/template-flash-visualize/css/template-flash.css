@@ -1820,6 +1820,8 @@ figcaption {
   flex-flow: column;
   display: flex;
   position: relative;
+  gap: 1.25rem;
+  justify-content: flex-start;
 }
 
 .pricing_top {
@@ -1828,9 +1830,10 @@ figcaption {
   background-color: #111;
   border-radius: 4px;
   flex-flow: column;
-  margin-bottom: .75rem;
-  padding: 1.25rem;
+  margin-bottom: 0;
+  padding: 1.1rem;
   display: flex;
+  justify-content: flex-start;
 }
 
 .pricing_top.is--best-offer {
@@ -1838,16 +1841,17 @@ figcaption {
 }
 
 .pricing_bottom {
-  grid-column-gap: 1.25rem;
-  grid-row-gap: 1.25rem;
+  grid-column-gap: 1rem;
+  grid-row-gap: 1rem;
   flex-flow: column;
-  padding: .75rem 1rem;
+  padding: .5rem .75rem .75rem;
   display: flex;
+  justify-content: flex-start;
 }
 
 .pricing_item {
-  grid-column-gap: .75rem;
-  grid-row-gap: .75rem;
+  grid-column-gap: .5rem;
+  grid-row-gap: .5rem;
   opacity: .8;
   justify-content: flex-start;
   align-items: center;
@@ -1856,7 +1860,7 @@ figcaption {
 
 .pricing_item-wrap {
   grid-column-gap: .75rem;
-  grid-row-gap: .75rem;
+  grid-row-gap: .6rem;
   flex-flow: column;
   display: flex;
 }
@@ -1869,8 +1873,8 @@ figcaption {
 }
 
 .pricing_price {
-  grid-column-gap: 1.5rem;
-  grid-row-gap: 1.5rem;
+  grid-column-gap: .75rem;
+  grid-row-gap: .5rem;
   justify-content: flex-start;
   align-items: flex-end;
   display: flex;
