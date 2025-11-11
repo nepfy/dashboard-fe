@@ -9,7 +9,7 @@ import { useUser } from "@clerk/nextjs";
 
 import { CopyLinkCacheProvider } from "#/contexts/CopyLinkCacheContext";
 import type { OnboardingStatusApiResponse } from "#/types/onboarding";
-import { Loader2, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 
 export default function DashboardLayout({
   children,
