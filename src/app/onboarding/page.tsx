@@ -336,7 +336,6 @@ export default function Onboarding() {
         ensureTrackingStarted();
       } catch (err) {
         console.error("Failed to recover onboarding progress:", err);
-        const status = getResponseStatus(err);
         const localProgress = readLocalProgress(userId);
 
         if (localProgress) {
