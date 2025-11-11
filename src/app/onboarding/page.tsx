@@ -41,19 +41,6 @@ type ResponseError = Error & {
   status?: number;
 };
 
-const getResponseStatus = (error: unknown): number | null => {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    typeof (error as ResponseError).status === "number"
-  ) {
-    return (error as ResponseError).status ?? null;
-  }
-
-  return null;
-};
-
 function readLocalProgress(userId?: string | null): OnboardingProgress | null {
   if (!userId || !isBrowser) {
     return null;

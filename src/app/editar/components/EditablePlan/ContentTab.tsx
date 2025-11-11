@@ -24,7 +24,9 @@ export default function ContentTab({
 
   useEffect(() => {
     if (plan.planPeriod) {
-      setTempPaymentMethod(plan.planPeriod);
+      setTempPaymentMethod(
+        (plan.planPeriod as "Mensal" | "Anual" | "Único") || undefined
+      );
     }
   }, [plan.planPeriod]);
 
