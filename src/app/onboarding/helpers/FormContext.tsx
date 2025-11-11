@@ -181,10 +181,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({
 
       setFormData((prevData) => ({
         ...prevData,
-        [name]:
-          typeof value === "string"
-            ? value
-            : normalizeStringValue(value),
+        [name]: typeof value === "string" ? value : normalizeStringValue(value),
       }));
 
       if (formErrors[name]) {
@@ -254,7 +251,9 @@ export const FormProvider: React.FC<FormProviderProps> = ({
 
   const nextStep = () => {
     // Track question answered when moving to next step
-    const stepNameMap: { [key: number]: { name: string; field: keyof FormDataProps } } = {
+    const stepNameMap: {
+      [key: number]: { name: string; field: keyof FormDataProps };
+    } = {
       1: { name: "personal_info", field: "fullName" },
       2: { name: "job_type", field: "jobType" },
       3: { name: "discovery_source", field: "discoverySource" },
@@ -312,12 +311,11 @@ export const FormProvider: React.FC<FormProviderProps> = ({
   };
 
   const enableNextStepUserName = () => {
-    // Username must be between 3 and 20 characters, and can only contain letters and numbers
+    const username = formData.userName.trim();
     const isValid =
-      formData.userName.trim() !== "" &&
-      formData.userName.length >= 3 &&
-      formData.userName.length <= 20 &&
-      /^[a-zA-Z0-9]+$/.test(formData.userName) &&
+      username.length >= 3 &&
+      username.length <= 20 &&
+      /^[a-z]+$/.test(username) &&
       !formErrors.userName;
 
     setEnableNextStep(isValid);

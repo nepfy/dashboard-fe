@@ -27,7 +27,8 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
   error,
   infoMessage,
 }) => {
-  const { currentStep, goToStep, formData, setFieldError } = useFormContext();
+  const { currentStep, goToStep, formData, setFieldError, enableNextStep } =
+    useFormContext();
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const errorMessage = error || submissionError;
@@ -147,8 +148,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
     },
   ];
 
-  const isLastOptionSelected =
-    typeof formData.userName === "string" && formData.userName.trim().length > 0;
+  const isLastOptionSelected = enableNextStep;
 
   return (
     <FormLayout>

@@ -29,6 +29,7 @@ const MultiStep: React.FC<MultiStepProps> = ({
     enableNextStepJobType,
     enableNextStepDiscoverySource,
     enableNextStepUsedBefore,
+    enableNextStepUserName,
     formData,
   } = useFormContext();
 
@@ -46,6 +47,9 @@ const MultiStep: React.FC<MultiStepProps> = ({
       case 4:
         enableNextStepUsedBefore();
         break;
+      case 5:
+        enableNextStepUserName();
+        break;
       default:
         break;
     }
@@ -56,12 +60,11 @@ const MultiStep: React.FC<MultiStepProps> = ({
     enableNextStepJobType,
     enableNextStepDiscoverySource,
     enableNextStepUsedBefore,
+    enableNextStepUserName,
   ]);
 
   const isFinalStep = currentStep === steps.length;
-  const primaryDisabled = isFinalStep
-    ? !isLastOptionSelected
-    : !enableNextStep;
+  const primaryDisabled = isFinalStep ? !isLastOptionSelected : !enableNextStep;
 
   const handlePrimaryAction = () => {
     if (isFinalStep) {
@@ -72,19 +75,18 @@ const MultiStep: React.FC<MultiStepProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col justify-start sm:h-[452px]">
-      <div className="flex items-center justify-start mb-8 space-x-2 sm:space-x-4 box-border">
+    <div className="flex w-full flex-col justify-start sm:h-[452px]">
+      <div className="mb-8 box-border flex items-center justify-start space-x-2 sm:space-x-4">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
             <div
-              className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold 
-                ${
-                  currentStep === index + 1
-                    ? "border border-primary-light-500 text-primary-light-500 bg-primary-light-25"
-                    : index + 1 < currentStep
-                    ? "bg-white text-white-neutral-light-900 cursor-pointer e0"
-                    : "bg-white-neutral-light-200 text-white-neutral-light-500 border border-white-neutral-light-400 opacity-50"
-                }`}
+              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${
+                currentStep === index + 1
+                  ? "border-primary-light-500 text-primary-light-500 bg-primary-light-25 border"
+                  : index + 1 < currentStep
+                    ? "text-white-neutral-light-900 e0 cursor-pointer bg-white"
+                    : "bg-white-neutral-light-200 text-white-neutral-light-500 border-white-neutral-light-400 border opacity-50"
+              }`}
               onClick={() => {
                 if (index + 1 <= currentStep) {
                   onChange(index + 1);
@@ -103,10 +105,10 @@ const MultiStep: React.FC<MultiStepProps> = ({
         {currentStep > 1 && (
           <button
             onClick={prevStep}
-            className="h-[44px] px-4 flex items-center text-white-neutral-light-900 bg-white border border-white-neutral-light-300 rounded-xs mr-2 font-medium hover:cursor-pointer"
+            className="text-white-neutral-light-900 border-white-neutral-light-300 mr-2 flex h-[44px] items-center rounded-xs border bg-white px-4 font-medium hover:cursor-pointer"
           >
             <svg
-              className="w-[16px] h-[16px] mr-2"
+              className="mr-2 h-[16px] w-[16px]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -126,12 +128,12 @@ const MultiStep: React.FC<MultiStepProps> = ({
         <button
           onClick={handlePrimaryAction}
           disabled={primaryDisabled}
-          className={`w-full text-white rounded-[var(--radius-s)] font-medium transition-colors text-center border h-[43px] ${
+          className={`h-[43px] w-full rounded-[var(--radius-s)] border text-center font-medium text-white transition-colors ${
             primaryDisabled
-              ? "bg-gray-300 cursor-not-allowed"
+              ? "cursor-not-allowed bg-gray-300"
               : isFinalStep
-              ? "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] transition-colors hover:cursor-pointer"
-              : "bg-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-500)] hover:cursor-pointer button-inner-inverse"
+                ? "bg-[var(--color-primary-light-400)] transition-colors hover:cursor-pointer hover:bg-[var(--color-primary-light-500)]"
+                : "button-inner-inverse bg-[var(--color-primary-light-400)] hover:cursor-pointer hover:bg-[var(--color-primary-light-500)]"
           }`}
         >
           {isFinalStep ? "Finalizar cadastro" : "Próximo"}

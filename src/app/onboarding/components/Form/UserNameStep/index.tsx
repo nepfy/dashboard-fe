@@ -18,26 +18,19 @@ export default function UserNameStep() {
   const [usernameModal, setUsernameModal] = useState(false);
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+    const rawValue = e.target.value;
+    const sanitizedValue = rawValue.toLowerCase().replace(/[^a-z]/g, "");
 
-    // Allow only letters and numbers
-    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    // Apply max length constraint before updating form state
+    const truncatedValue = sanitizedValue.slice(0, 20);
 
-    // Update the field using the existing handleChange method
-    handleChange({ name: "userName", value: alphanumericValue });
+    handleChange({ name: "userName", value: truncatedValue });
 
-    // Validate username length - require at least 3 characters
-    if (alphanumericValue.length > 0 && alphanumericValue.length < 3) {
-      setFieldError(
-        "userName",
-        "Nome de usuário deve ter no mínimo 3 caracteres"
-      );
-    } else {
-      // Clear error if it exists and validation passes
-      if (formErrors.userName) {
-        setFieldError("userName", "");
-      }
-    }
+    const isTooShort = truncatedValue.length > 0 && truncatedValue.length < 3;
+    setFieldError(
+      "userName",
+      isTooShort ? "Nome de usuário deve ter no mínimo 3 caracteres" : ""
+    );
   };
 
   useEffect(() => {
@@ -69,8 +62,8 @@ export default function UserNameStep() {
         />
       </div>
 
-      <div className="border border-yellow-light-200 bg-yellow-light-10 w-full h-auto sm:h-[88px] rounded-[12px] py-2 px-3 sm:py-[20px] sm:px-[24px] flex items-center justify-between mt-8">
-        <div className="rounded-full warning-bg p-3 sm:p-2 w-[48px] h-[48px] flex items-center justify-center">
+      <div className="border-yellow-light-200 bg-yellow-light-10 mt-8 flex h-auto w-full items-center justify-between rounded-[12px] border px-3 py-2 sm:h-[88px] sm:px-[24px] sm:py-[20px]">
+        <div className="warning-bg flex h-[48px] w-[48px] items-center justify-center rounded-full p-3 sm:p-2">
           <WarningIcon width="24" height="24" />
         </div>
         <p className="max-w-[404px] p-2 sm:p-2">
@@ -91,17 +84,17 @@ export default function UserNameStep() {
           title="Nome de usuário"
         >
           <div className="p-6">
-            <p className="text-white-neutral-light-500 font-bold text-sm mb-3">
+            <p className="text-white-neutral-light-500 mb-3 text-sm font-bold">
               Seu nome de usuário é o seu identificador por aqui
             </p>
-            <p className="text-white-neutral-light-500 text-sm mb-3">
+            <p className="text-white-neutral-light-500 mb-3 text-sm">
               Ele será usado para criar um link exclusivo para cada proposta que
               você enviar, como:{" "}
               <span className="text-primary-light-500 text-sm">
                 usuario-cliente.nepfy.com.
               </span>
             </p>
-            <p className="text-white-neutral-light-500 text-sm mb-3">
+            <p className="text-white-neutral-light-500 mb-3 text-sm">
               Para funcionar direitinho, siga essas orientações:
             </p>
             <p className="text-white-neutral-light-500 text-sm">
@@ -110,11 +103,11 @@ export default function UserNameStep() {
             <p className="text-white-neutral-light-500 text-sm">
               &#8226; Use apenas letras minúsculas.
             </p>
-            <p className="text-white-neutral-light-500 text-sm mb-3">
+            <p className="text-white-neutral-light-500 mb-3 text-sm">
               &#8226; Evite espaços, números ou caracteres especiais.
             </p>
           </div>
-          <div className="flex justify-end items-center w-full">
+          <div className="flex w-full items-center justify-end">
             <Image
               src="/images/browserbar.jpg"
               alt="Imagem de um navegador com o link do cliente"
