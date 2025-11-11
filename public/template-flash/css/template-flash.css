@@ -2925,18 +2925,16 @@ figcaption {
     flex-flow: column;
   }
 
+  .hero_bottom-wrap {
+    display: none;
+  }
+
   .hero_text-wrap {
     padding-top: 3rem;
   }
 
   .hero_text-wrap.is-right {
     max-width: none;
-  }
-
-  .hero_bottom-wrap {
-    grid-column-gap: 1.5rem;
-    grid-row-gap: 1.5rem;
-    width: 100%;
   }
 
   .hero_bottom-wrap.is--right {
