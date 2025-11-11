@@ -203,8 +203,25 @@ export class MinimalTheme {
 
   private parseCurrencyValue(value: string | number): number {
     if (typeof value === "number") return value;
-    const numeric = value.replace(/[^\d,]/g, "").replace(",", ".");
-    return Number(numeric);
+
+    const cleaned = value.replace(/[R$\s]/gi, "");
+
+    const hasComma = cleaned.includes(",");
+    const hasDot = cleaned.includes(".");
+
+    let normalized = cleaned;
+
+    if (hasComma) {
+      normalized = cleaned.replace(/\./g, "").replace(/,/g, ".");
+    } else if (hasDot) {
+      const dotAsDecimal = /\.\d{1,2}$/.test(cleaned);
+      normalized = dotAsDecimal ? cleaned : cleaned.replace(/\./g, "");
+    }
+
+    const numeric = Number(normalized);
+    ensureCondition(!Number.isNaN(numeric), "Invalid currency value");
+
+    return numeric;
   }
 
   private validateInvestmentSection(
