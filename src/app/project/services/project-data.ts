@@ -11,7 +11,7 @@ import type { TemplateData } from "#/types/template-data";
 export const getProjectData = cache(
   async (
     userName: string,
-    projectURL: string
+    projectUrl: string
   ): Promise<TemplateData | null> => {
     try {
       // Fetch project with user and proposal data
@@ -47,7 +47,7 @@ export const getProjectData = cache(
         .where(
           and(
             eq(personUserTable.userName, userName),
-            eq(projectsTable.projectUrl, projectURL)
+            eq(projectsTable.projectUrl, projectUrl)
           )
         )
         .limit(1);
