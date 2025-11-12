@@ -445,7 +445,6 @@ export class FlashTheme {
       hidePlanPeriod: plan.hidePlanPeriod ?? false,
       hideButtonTitle: plan.hideButtonTitle ?? false,
       sortOrder: index,
-      value: this.normalizePriceValue(plan.value),
       includedItems: (plan.includedItems ?? []).map((item, itemIndex) => ({
         ...item,
         id: item.id ?? crypto.randomUUID(),
@@ -461,66 +460,6 @@ export class FlashTheme {
 
     this.validateInvestmentSection(normalized, selectedPlans);
     return normalized;
-  }
-
-  private normalizePriceValue(value: string): string {
-    console.log(`[normalizePriceValue] Input: "${value}"`);
-    
-    // Remove all spaces
-    let normalized = value.replace(/\s+/g, "");
-
-    // Ensure it starts with R$
-    if (!normalized.startsWith("R$")) {
-      normalized = `R$${normalized}`;
-    }
-
-    // Extract only the R$ prefix and digits
-    const match = normalized.match(/^(R\$)?([\d.,]+)$/);
-    if (!match) {
-      console.warn(`[normalizePriceValue] Could not match pattern for: "${normalized}"`);
-      // Try to extract just numbers and format them
-      const numbersOnly = normalized.replace(/[^\d]/g, "");
-      if (numbersOnly) {
-        const formatted = this.formatBrazilianCurrency(numbersOnly);
-        const result = `R$${formatted}`;
-        console.log(`[normalizePriceValue] Fallback formatting: "${result}"`);
-        return result;
-      }
-      return normalized;
-    }
-
-    const numericPart = match[2];
-
-    // Remove all dots and commas temporarily to get digits only
-    const digitsOnly = numericPart.replace(/[.,]/g, "");
-
-    // Check if original had decimal part (ended with ,XX)
-    const hasDecimals = /,\d{1,2}$/.test(numericPart);
-
-    let reaisValue: string;
-    if (hasDecimals) {
-      // Remove the last 2 digits (cents) to keep only reais
-      // Example: "150000" (from R$1.500,00) -> "1500" (R$1.500)
-      reaisValue = digitsOnly.slice(0, -2);
-    } else {
-      // No decimals, use all digits
-      reaisValue = digitsOnly;
-    }
-
-    // Format without cents (as per prompt requirements)
-    const finalNumber = this.formatBrazilianCurrency(reaisValue);
-    const result = `R$${finalNumber}`;
-    
-    console.log(`[normalizePriceValue] Output: "${result}"`);
-    return result;
-  }
-
-  private formatBrazilianCurrency(reais: string): string {
-    // Format reais part with dots for thousands, NO cents
-    const reaisNum = parseInt(reais || "0", 10);
-    const reaisFormatted = reaisNum.toLocaleString("pt-BR");
-
-    return reaisFormatted;
   }
 
   private normalizeFAQSection(entries: FlashFAQSection): FlashFAQSection {
