@@ -23,16 +23,16 @@ type LayoutProps = {
   children: React.ReactNode;
   params: Promise<{
     userName: string;
-    projectURL: string;
+    projectUrl: string;
   }>;
 };
 
 export async function generateMetadata({
   params,
 }: LayoutProps): Promise<Metadata> {
-  const { userName, projectURL } = await params;
+  const { userName, projectUrl } = await params;
 
-  const projectData = await getProjectData(userName, projectURL);
+  const projectData = await getProjectData(userName, projectUrl);
 
   if (!projectData) {
     return {
