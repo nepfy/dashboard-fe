@@ -881,14 +881,11 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           // Description: max 140 chars - craft it to fit
           const description = `Cobertura estratégica com foco em ${projectName}, alinhando consultoria, execução e rituais de acompanhamento.`;
 
-          // Format value without cents
-          const formattedValue = this.formatBrazilianCurrency(valueBase.toString());
-
           return {
             id: crypto.randomUUID(),
             title: label, // Already within 20 chars
             description: description.substring(0, 140), // Ensure max 140 chars
-            value: `R$${formattedValue}`,
+            value: this.formatCurrencyValue(valueBase),
             planPeriod: ["Mensal", "Trimestral", "Anual"][index] ?? "Único",
             buttonTitle: "Solicitar Detalhes", // Already within 25 chars
             recommended: index === plansCount - 1,
