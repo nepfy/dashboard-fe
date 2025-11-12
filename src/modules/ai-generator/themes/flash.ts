@@ -357,10 +357,10 @@ export class FlashTheme {
       );
       
       // Validate value starts with R$ and contains only valid characters
-      // The normalization already handles formatting, so we just do basic validation
+      // Accept Brazilian format: R$ 1.500,00 or R$1.500 or R$1500
       ensureCondition(
-        plan.value.startsWith("R$") && /^R\$[\d.]+$/.test(plan.value),
-        `investment.plansItems[${index}].value must start with R$ and contain only digits and dots, got "${plan.value}"`
+        plan.value.startsWith("R$") && /^R\$\s?[\d.,\s]+$/.test(plan.value),
+        `investment.plansItems[${index}].value must be a valid Brazilian currency format, got "${plan.value}"`
       );
       ensureCondition(
         plan.buttonTitle.length <= 25,
