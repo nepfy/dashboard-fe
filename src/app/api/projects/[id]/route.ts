@@ -4,6 +4,7 @@ import { db } from "#/lib/db";
 import { eq, and } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
+import { prepareProjectSlug } from "#/lib/project-slug";
 
 export async function GET(
   request: Request,
@@ -132,6 +133,18 @@ export async function PUT(
     // Parse request body
     const body = await request.json();
 
+    let projectSlug = existingProject[0].projectUrl;
+
+    if (body.projectUrl !== undefined) {
+      projectSlug =
+        (await prepareProjectSlug({
+          userId,
+          desiredSlug: body.projectUrl,
+          fallbackValue: body.clientName ?? existingProject[0].clientName,
+          projectIdToExclude: projectId,
+        })) ?? null;
+    }
+
     // Parse and validate date fields
     const parseDate = (dateValue: Date | string | null): Date | null => {
       if (!dateValue) return null;
@@ -157,7 +170,7 @@ export async function PUT(
         projectVisualizationDate: parseDate(body.projectVisualizationDate),
         templateType: body.templateType,
         mainColor: body.mainColor,
-        projectUrl: body.projectUrl,
+        projectUrl: projectSlug,
         pagePassword: body.pagePassword,
         isPublished: body.isPublished ?? true,
         isProposalGenerated: body.isProposalGenerated,

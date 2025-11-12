@@ -90,10 +90,10 @@ export default function UserNameStep() {
               Seu nome de usuário é o seu identificador por aqui
             </p>
             <p className="text-white-neutral-light-500 mb-3 text-sm">
-              Ele será usado para criar um link exclusivo para cada proposta que
+            Ele será usado para criar um link exclusivo para cada proposta que
               você enviar, como:{" "}
               <span className="text-primary-light-500 text-sm">
-                usuario-cliente.{projectBaseDomain}.
+                usuario.{projectBaseDomain}/cliente.
               </span>
             </p>
             <p className="text-white-neutral-light-500 mb-3 text-sm">

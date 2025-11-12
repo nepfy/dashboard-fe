@@ -80,10 +80,10 @@ Create a `.env.local` file with the following variables. You can find example va
 NEXT_PUBLIC_VERCEL_ENV=development
 NEXT_PUBLIC_VERCEL_URL=localhost:3000
 NEXT_PUBLIC_NEPFY_API_URL=http://localhost:3000/api
-NEXT_PUBLIC_PROJECT_BASE_DOMAIN=app.nepfy.com
+NEXT_PUBLIC_PROJECT_BASE_DOMAIN=nepfy.com
 ```
 
-- `NEXT_PUBLIC_PROJECT_BASE_DOMAIN` should match the host used for public proposal links (for example, `app.nepfy.com` in production and `staging-app.nepfy.com` in staging).
+- `NEXT_PUBLIC_PROJECT_BASE_DOMAIN` should match the host used for public proposal links (for example, `nepfy.com` in production and `staging-app.nepfy.com` in staging).
 
 ### Database (PostgreSQL/Neon)
 

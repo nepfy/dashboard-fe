@@ -1,10 +1,11 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Label } from "#/components/Label";
+import { PROJECT_SLUG_MAX_LENGTH } from "#/constants/project";
 import { getProjectBaseDomain } from "#/lib/subdomain";
+import { slugify, truncateSlug } from "#/lib/slug";
 import { URLModal } from "#/modules/ai-generator/components/modal/URLModal";
 
 // Constants
-const MAX_URL_LENGTH = 20;
 const MIN_URL_LENGTH = 3;
 const CHECK_DELAY_MS = 400;
 
@@ -22,6 +23,7 @@ interface PageURLSectionProps {
     message?: string;
   }) => void;
   skipInitialValidation?: boolean;
+  onUserEdit?: () => void;
 }
 
 export function PageURLSection({
@@ -34,6 +36,7 @@ export function PageURLSection({
   errorMessage,
   onValidationStateChange,
   skipInitialValidation = false,
+  onUserEdit,
 }: PageURLSectionProps) {
   const projectBaseDomain = getProjectBaseDomain();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,9 +55,10 @@ export function PageURLSection({
   const disabled = isLoading || isPublished;
 
   const sanitizeInput = (input: string) =>
-    input.toLowerCase().replace(/[^a-z]/g, "");
+    truncateSlug(slugify(input), PROJECT_SLUG_MAX_LENGTH);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    onUserEdit?.();
     const sanitizedValue = sanitizeInput(e.target.value);
     setOriginalPageUrl(sanitizedValue);
     clearError("originalPageUrl");
@@ -196,12 +200,12 @@ export function PageURLSection({
           {isLoading ? (
             <div className="border-white-neutral-light-600 font-satoshi mr-1 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
           ) : (
-            `${userName}-`
+            `https://${userName}.${projectBaseDomain}/`
           )}
         </span>
 
         <textarea
-          placeholder="lojasxyz"
+          placeholder="loja-xyz"
           value={originalPageUrl}
           onChange={handleInputChange}
           className={`border-white-neutral-light-300 font-satoshi w-full max-w-[250px] rounded-[var(--radius-s)] border px-4 py-3 placeholder:text-[var(--color-white-neutral-light-400)] focus:border-[var(--color-primary-light-400)] focus:outline-none ${
@@ -213,14 +217,11 @@ export function PageURLSection({
           }`}
           rows={isLoading ? 2 : 1}
           style={{ resize: "none" }}
-          maxLength={MAX_URL_LENGTH}
+          maxLength={PROJECT_SLUG_MAX_LENGTH}
           disabled={disabled}
           aria-invalid={combinedError ? "true" : "false"}
         />
 
-        <span className="text-white-neutral-light-600">
-          .{projectBaseDomain}
-        </span>
       </div>
 
       <div className="h-[18px]">
@@ -239,12 +240,12 @@ export function PageURLSection({
       <div className="mt-2 flex justify-end">
         <div
           className={`font-satoshi text-xs ${
-            originalPageUrl?.length >= 18
+            originalPageUrl?.length >= PROJECT_SLUG_MAX_LENGTH - 2
               ? "text-red-500"
               : "text-white-neutral-light-500"
           }`}
         >
-          {originalPageUrl?.length} / {MAX_URL_LENGTH}
+          {originalPageUrl?.length} / {PROJECT_SLUG_MAX_LENGTH}
         </div>
       </div>
 

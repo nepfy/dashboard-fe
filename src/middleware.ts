@@ -1,5 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  getProjectBaseDomain,
+  isMainDomain,
+  parseProjectLocation,
+} from "#/lib/subdomain";
 
 const isPublicRoute = createRouteMatcher([
   "/login(.*)",
@@ -11,72 +16,6 @@ const isPublicRoute = createRouteMatcher([
   "/sso-callback(.*)",
   "/admin(.*)", // Temporário para desenvolvimento
 ]);
-
-function normalizeHostname(hostname: string): string {
-  return hostname.split(":")[0]?.toLowerCase() ?? hostname;
-}
-
-function isMainDomain(hostname: string): boolean {
-  const domain = normalizeHostname(hostname);
-
-  return (
-    domain === "staging-app.nepfy.com" ||
-    domain === "app.nepfy.com" ||
-    domain === "nepfy.com" ||
-    domain === "www.nepfy.com" ||
-    domain === "localhost"
-  );
-}
-
-function isValidProjectSubdomain(hostname: string): boolean {
-  if (isMainDomain(hostname)) {
-    return false;
-  }
-
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  if (parts.length < 2) {
-    return false;
-  }
-
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
-
-  if (!userName || !projectUrl) {
-    return false;
-  }
-
-  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
-    return false;
-  }
-
-  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
-    return false;
-  }
-
-  return true;
-}
-
-function parseSubdomain(
-  hostname: string
-): { userName: string; projectUrl: string } | null {
-  if (isMainDomain(hostname)) {
-    return null;
-  }
-
-  if (!isValidProjectSubdomain(hostname)) {
-    return null;
-  }
-
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
-
-  return { userName, projectUrl };
-}
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
@@ -99,25 +38,33 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   if (!isMainDomain(hostname)) {
-    const subdomainData = parseSubdomain(hostname);
+    const projectLocation = parseProjectLocation(hostname, url.pathname);
 
-    if (subdomainData) {
-      const { userName, projectUrl } = subdomainData;
-
-      // Only rewrite if we're on the root path or project path
-      if (url.pathname === "/" || url.pathname.startsWith("/project/")) {
-        const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
-
-        const response = NextResponse.rewrite(newUrl);
-        response.headers.set("x-subdomain", hostname.split(".")[0]);
-        response.headers.set("x-username", userName);
-        response.headers.set("x-project-url", projectUrl);
-        response.headers.set("x-is-subdomain", "true");
-
-        return response;
-      }
-    } else {
+    if (!projectLocation) {
       return new NextResponse("Not Found", { status: 404 });
+    }
+
+    const { userName, projectUrl, isLegacy } = projectLocation;
+
+    if (isLegacy) {
+      const projectBaseDomain = getProjectBaseDomain();
+      const redirectUrl = new URL(req.url);
+      redirectUrl.hostname = `${userName}.${projectBaseDomain}`;
+      redirectUrl.pathname = `/${projectUrl}`;
+
+      return NextResponse.redirect(redirectUrl, 308);
+    }
+
+    if (!url.pathname.startsWith("/project/")) {
+      const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
+
+      const response = NextResponse.rewrite(newUrl);
+      response.headers.set("x-subdomain", userName);
+      response.headers.set("x-username", userName);
+      response.headers.set("x-project-url", projectUrl);
+      response.headers.set("x-is-subdomain", "true");
+
+      return response;
     }
   }
 

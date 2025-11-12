@@ -11,6 +11,7 @@ export function ClientInfo({
   handleBack,
   clientData,
   setClientData,
+  onClientNameSubmit,
 }: {
   handleNext: () => void;
   handleBack: () => void;
@@ -26,6 +27,7 @@ export function ClientInfo({
     projectDescription: string;
     detailedClientInfo?: string;
   }) => void;
+  onClientNameSubmit?: (clientName: string) => void;
 }) {
   const [formData, setFormData] = useState({
     clientName: clientData.clientName,
@@ -59,6 +61,7 @@ export function ClientInfo({
             projectDescription: formData.projectDescription,
             detailedClientInfo: formData.detailedClientInfo,
           });
+          onClientNameSubmit?.(formData.clientName);
 
           handleNext();
         }}

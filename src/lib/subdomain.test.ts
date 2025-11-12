@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { generateSubdomainUrl, getProjectBaseDomain } from "#/lib/subdomain";
+import {
+  generateSubdomainUrl,
+  getProjectBaseDomain,
+  parseProjectLocation,
+} from "#/lib/subdomain";
 
 const originalProjectBaseDomain = process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN;
 
@@ -35,8 +39,36 @@ describe("subdomain helpers", () => {
     process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN = "clientes.nepfy.dev";
 
     expect(generateSubdomainUrl("joao", "loja-test")).toBe(
-      "https://joao-loja-test.clientes.nepfy.dev"
+      "https://joao.clientes.nepfy.dev/loja-test"
     );
+  });
+
+  describe("parseProjectLocation", () => {
+    it("parses modern subdomain with slug in path", () => {
+      process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN = "nepfy.com";
+
+      expect(parseProjectLocation("joao.nepfy.com", "/loja-test")).toEqual({
+        userName: "joao",
+        projectUrl: "loja-test",
+        isLegacy: false,
+      });
+    });
+
+    it("parses legacy subdomain format", () => {
+      process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN = "nepfy.com";
+
+      expect(parseProjectLocation("joao-loja-test.nepfy.com", "/")).toEqual({
+        userName: "joao",
+        projectUrl: "loja-test",
+        isLegacy: true,
+      });
+    });
+
+    it("returns null when slug is missing on modern subdomain", () => {
+      process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN = "nepfy.com";
+
+      expect(parseProjectLocation("joao.nepfy.com", "/")).toBeNull();
+    });
   });
 });
 

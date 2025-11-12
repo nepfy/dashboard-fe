@@ -23,6 +23,7 @@ import {
   saveMinimalTemplateData,
   savePrimeTemplateData,
 } from "#/lib/db/proposal-save-handler";
+import { prepareProjectSlug } from "#/lib/project-slug";
 import { ButtonConfig } from "#/types/template-data";
 
 // Set max duration to 5 minutes (300 seconds) to allow for long-running AI workflows
@@ -113,6 +114,15 @@ async function createOrUpdateProjectFromAIResult(
     )
     .limit(1);
 
+  const existingDraftId = existingDrafts[0]?.id;
+
+  const projectSlug = await prepareProjectSlug({
+    userId,
+    desiredSlug: requestData.originalPageUrl,
+    fallbackValue: requestData.clientName,
+    projectIdToExclude: existingDraftId,
+  });
+
   const projectData = {
     personId: userId,
     clientName: requestData.clientName,
@@ -125,7 +135,7 @@ async function createOrUpdateProjectFromAIResult(
     projectVisualizationDate: null,
     templateType: requestData.templateType || "flash",
     mainColor: requestData.mainColor || "#3B82F6",
-    projectUrl: requestData.originalPageUrl || null,
+    projectUrl: projectSlug,
     pagePassword: requestData.pagePassword || null,
     isPublished: false,
     isProposalGenerated: true,

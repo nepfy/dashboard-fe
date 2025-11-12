@@ -1,5 +1,6 @@
 import { PasswordValidation, FormErrors } from "./types";
 import { MIN_URL_LENGTH, MIN_PASSWORD_LENGTH } from "./constants";
+import { isValidSlug } from "#/lib/slug";
 
 export const validatePassword = (password: string): PasswordValidation => ({
   minLength: password.length >= MIN_PASSWORD_LENGTH,
@@ -20,6 +21,9 @@ export const validateForm = (
     newErrors.originalPageUrl = "O campo 'URL personalizada' é obrigatório";
   } else if (originalPageUrl?.length < MIN_URL_LENGTH) {
     newErrors.originalPageUrl = "A URL deve ter pelo menos 3 caracteres";
+  } else if (!isValidSlug(originalPageUrl)) {
+    newErrors.originalPageUrl =
+      "URL deve conter apenas letras minúsculas, números e hífens";
   }
 
   if (pagePassword?.length === 0) {

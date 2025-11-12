@@ -9,16 +9,16 @@ const rules = [
   },
   {
     id: "2",
-    description: "Use apenas letras minúsculas.",
+    description: "Use apenas letras minúsculas, números e hífens.",
   },
   {
     id: "3",
-    description: "Evite espaços, números ou caracteres especiais.",
+    description: "Evite espaços ou caracteres especiais.",
   },
   {
     id: "4",
     description:
-      "Não use o mesmo nome de cliente mais de uma vez (cada proposta deve ter uma URL única)",
+      "Cada cliente deve ter uma URL exclusiva (não repita o mesmo slug).",
   },
 ];
 
@@ -43,10 +43,10 @@ export function URLModal({
           <URLIcon />
         </div>
 
-        <p className="text-white-neutral-light-900 text-sm mb-4 font-semibold">
+        <p className="text-white-neutral-light-900 mb-4 text-sm font-semibold">
           Sua URL terá o formato:{" "}
           <span className="text-primary-light-500">
-            usuário-cliente.{projectBaseDomain}
+            usuário.{projectBaseDomain}/cliente
           </span>
         </p>
 

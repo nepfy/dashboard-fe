@@ -90,7 +90,7 @@ export default function ChangePassword() {
               Ele será usado para criar um link exclusivo para cada proposta que
               você enviar, como:{" "}
               <span className="text-primary-light-500 text-sm">
-                usuario-cliente.{projectBaseDomain}.
+                usuario.{projectBaseDomain}/cliente.
               </span>
             </p>
 

@@ -1,5 +1,9 @@
 const DEFAULT_PROJECT_BASE_DOMAIN = "nepfy.com";
 
+function normalizeHostname(hostname: string): string {
+  return hostname.split(":")[0]?.toLowerCase() ?? hostname.toLowerCase();
+}
+
 export function getProjectBaseDomain(): string {
   const envValue = process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN?.trim();
 
@@ -8,7 +12,7 @@ export function getProjectBaseDomain(): string {
   }
 
   return envValue
-    .replace(/^https?:\/\//, "")
+    .replace(/^https?:\/\//i, "")
     .replace(/\/$/, "")
     .toLowerCase();
 }
@@ -18,80 +22,150 @@ export function generateSubdomainUrl(
   projectUrl: string
 ): string {
   const projectBaseDomain = getProjectBaseDomain();
+  const normalizedUserName = userName.trim().toLowerCase();
+  const normalizedProjectUrl = projectUrl.trim().replace(/^\/+/, "");
+  const slugSegment = normalizedProjectUrl
+    ? encodeURIComponent(normalizedProjectUrl)
+    : "";
+  const baseUrl = `https://${normalizedUserName}.${projectBaseDomain}`;
 
-  return `https://${userName}-${projectUrl}.${projectBaseDomain}`;
+  return slugSegment ? `${baseUrl}/${slugSegment}` : baseUrl;
 }
 
 export function isMainDomain(hostname: string): boolean {
+  const normalized = normalizeHostname(hostname);
+  const projectBaseDomain = getProjectBaseDomain();
+
   return (
-    hostname === "staging-app.nepfy.com" ||
-    hostname === "app.nepfy.com" ||
-    hostname === "localhost:3000" ||
-    hostname === "nepfy.com" ||
-    hostname === "www.nepfy.com" ||
-    hostname === "localhost"
+    normalized === "staging-app.nepfy.com" ||
+    normalized === "app.nepfy.com" ||
+    normalized === "nepfy.com" ||
+    normalized === "www.nepfy.com" ||
+    normalized === "localhost" ||
+    normalized === "localhost:3000" ||
+    normalized === projectBaseDomain ||
+    normalized === `www.${projectBaseDomain}`
   );
 }
 
-export function isValidProjectSubdomain(hostname: string): boolean {
-  // Se for um domínio principal, não é um subdomínio de projeto
-  if (isMainDomain(hostname)) {
-    return false;
+function stripBaseDomain(hostname: string): string | null {
+  const normalizedHost = normalizeHostname(hostname);
+  const projectBaseDomain = getProjectBaseDomain();
+
+  if (normalizedHost === projectBaseDomain) {
+    return "";
   }
 
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  // Deve ter pelo menos 2 partes (userName-projectUrl)
-  if (parts.length < 2) {
-    return false;
+  if (normalizedHost.endsWith(`.${projectBaseDomain}`)) {
+    return normalizedHost.slice(0, -(projectBaseDomain.length + 1));
   }
 
-  // Verificações básicas de formato
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
+  return null;
+}
 
-  // userName e projectUrl não podem estar vazios
+function extractSlugFromPath(pathname: string): string | null {
+  if (!pathname) {
+    return null;
+  }
+
+  const trimmedPath = pathname.replace(/\/+$/, "");
+
+  if (trimmedPath === "" || trimmedPath === "/") {
+    return null;
+  }
+
+  const segments = trimmedPath.split("/").filter(Boolean);
+
+  if (segments.length !== 1) {
+    return null;
+  }
+
+  return segments[0];
+}
+
+export interface ParsedProjectLocation {
+  userName: string;
+  projectUrl: string;
+  isLegacy: boolean;
+}
+
+function parseLegacyProjectSubdomain(
+  hostname: string
+): ParsedProjectLocation | null {
+  const remainder = stripBaseDomain(hostname);
+
+  if (!remainder || !remainder.includes("-")) {
+    return null;
+  }
+
+  const [userName, ...slugParts] = remainder.split("-");
+  const projectUrl = slugParts.join("-");
+
   if (!userName || !projectUrl) {
-    return false;
+    return null;
   }
 
-  // userName deve ter pelo menos 2 caracteres e ser alfanumérico
-  if (userName.length < 2 || !/^[a-zA-Z0-9]+$/.test(userName)) {
-    return false;
+  return {
+    userName,
+    projectUrl,
+    isLegacy: true,
+  };
+}
+
+function parseModernProjectSubdomain(
+  hostname: string,
+  pathname: string
+): ParsedProjectLocation | null {
+  const remainder = stripBaseDomain(hostname);
+
+  if (remainder === null || remainder.includes(".")) {
+    return null;
   }
 
-  // projectUrl deve ter pelo menos 2 caracteres e permitir hífens
-  if (projectUrl.length < 2 || !/^[a-zA-Z0-9-]+$/.test(projectUrl)) {
-    return false;
+  const userName = remainder.trim();
+  const projectUrl = extractSlugFromPath(pathname);
+
+  if (!userName || !projectUrl) {
+    return null;
   }
 
-  return true;
+  return {
+    userName,
+    projectUrl,
+    isLegacy: false,
+  };
+}
+
+export function parseProjectLocation(
+  hostname: string,
+  pathname: string
+): ParsedProjectLocation | null {
+  if (isMainDomain(hostname)) {
+    return null;
+  }
+
+  const legacy = parseLegacyProjectSubdomain(hostname);
+  if (legacy) {
+    return legacy;
+  }
+
+  return parseModernProjectSubdomain(hostname, pathname);
+}
+
+export function isValidProjectSubdomain(
+  hostname: string,
+  pathname = "/"
+): boolean {
+  return parseProjectLocation(hostname, pathname) !== null;
 }
 
 export function parseSubdomain(
-  hostname: string
-): { userName: string; projectUrl: string } | null {
-  // Verifica se é um domínio principal
-  if (isMainDomain(hostname)) {
-    return null;
-  }
-
-  // Verifica se é um subdomínio de projeto válido
-  if (!isValidProjectSubdomain(hostname)) {
-    return null;
-  }
-
-  const subdomain = hostname.split(".")[0];
-  const parts = subdomain.split("-");
-
-  const userName = parts[0];
-  const projectUrl = parts.slice(1).join("-");
-
-  return { userName, projectUrl };
+  hostname: string,
+  pathname = "/"
+): ParsedProjectLocation | null {
+  return parseProjectLocation(hostname, pathname);
 }
 
-export function isValidSubdomain(hostname: string): boolean {
-  const parsed = parseSubdomain(hostname);
-  return parsed !== null;
+export function isValidSubdomain(hostname: string, pathname = "/"): boolean {
+  return parseProjectLocation(hostname, pathname) !== null;
 }
