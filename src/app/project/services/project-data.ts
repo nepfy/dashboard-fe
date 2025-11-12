@@ -14,6 +14,11 @@ export const getProjectData = cache(
     projectUrl: string
   ): Promise<TemplateData | null> => {
     try {
+      console.log("[getProjectData] Fetching project", {
+        userName,
+        projectUrl,
+      });
+
       // Fetch project with user and proposal data
       const result = await db
         .select({
@@ -53,10 +58,23 @@ export const getProjectData = cache(
         .limit(1);
 
       if (!result || result.length === 0) {
+        console.warn("[getProjectData] Project not found", {
+          userName,
+          projectUrl,
+        });
         return null;
       }
 
       const project = result[0];
+
+      console.log("[getProjectData] Project retrieved", {
+        id: project.id,
+        userName: project.userName,
+        projectUrl: project.projectUrl,
+        templateType: project.templateType,
+        isPublished: project.isPublished,
+        isProposalGenerated: project.isProposalGenerated,
+      });
 
       // Convert Date objects to strings for TemplateData interface
       const formatDate = (
