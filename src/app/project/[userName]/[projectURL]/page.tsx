@@ -3,16 +3,16 @@ import FlashTemplate from "#/app/project/components/Templates/Flash";
 import { getProjectData } from "#/app/project/services/project-data";
 
 type ProjectPageProps = {
-  params: Promise<{
+  params: {
     userName: string;
-    projectURL: string;
-  }>;
+    projectUrl: string;
+  };
 };
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { userName, projectURL } = await params;
+  const { userName, projectUrl } = params;
 
-  const projectData = await getProjectData(userName, projectURL);
+  const projectData = await getProjectData(userName, projectUrl);
 
   if (!projectData) {
     notFound();
