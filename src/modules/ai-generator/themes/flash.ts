@@ -35,6 +35,7 @@ export interface FlashThemeData extends BaseThemeData {
 type FlashSectionKey = keyof TemplateConfig["sections"];
 
 export class FlashTheme {
+  private static readonly VERSION = "2.0.0"; // Force rebuild
   private sections: FlashSection[] = [];
   private moaService: MOAService;
   private templateConfig: TemplateConfig;
