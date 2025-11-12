@@ -23,7 +23,7 @@ const CopyLinkCacheContext = createContext<
   CopyLinkCacheContextType | undefined
 >(undefined);
 
-const CACHE_EXPIRY_TIME = 5 * 60 * 1000;
+const CACHE_EXPIRY_TIME = 30 * 1000;
 
 export function CopyLinkCacheProvider({ children }: { children: ReactNode }) {
   const [cache, setCache] = useState<{ [projectId: string]: CopyLinkData }>({});
