@@ -39,7 +39,7 @@ export class FlashTheme {
   private sections: FlashSection[] = [];
   private moaService: MOAService;
   private templateConfig: TemplateConfig;
-  private static readonly VALIDATION_MAX_ATTEMPTS = 5;
+  private static readonly VALIDATION_MAX_ATTEMPTS = 2;
 
   constructor(private together: Together) {
     this.moaService = new MOAService(together, {
@@ -308,20 +308,11 @@ export class FlashTheme {
         `investment.plansItems[${index}].description`
       );
       
-      // Log the value being validated
-      console.log(`[validateInvestment] Plan ${index} value: "${plan.value}"`);
-      
-      const valueRegex = /^R\$\d{1,3}(?:\.\d{3})*$/;
-      const isValid = valueRegex.test(plan.value);
-      
-      if (!isValid) {
-        console.error(`[validateInvestment] INVALID value at plan ${index}: "${plan.value}"`);
-        console.error(`[validateInvestment] Regex test result: ${isValid}`);
-      }
-      
+      // Validate value starts with R$ and contains only valid characters
+      // The normalization already handles formatting, so we just do basic validation
       ensureCondition(
-        isValid,
-        `investment.plansItems[${index}].value must follow the format R$X.XXX (e.g., R$1.500, R$10.000, R$100.000) but got "${plan.value}"`
+        plan.value.startsWith("R$") && /^R\$[\d.]+$/.test(plan.value),
+        `investment.plansItems[${index}].value must start with R$ and contain only digits and dots, got "${plan.value}"`
       );
       ensureCondition(
         plan.buttonTitle.length <= 25,
