@@ -307,9 +307,8 @@ export class FlashTheme {
         `investment.plansItems[${index}].description`
       );
       ensureCondition(
-        /^R\$\d{1,3}(?:\.\d{3})?(?:,\d{2})?$/.test(plan.value) &&
-          plan.value.length <= 11,
-        `investment.plansItems[${index}].value must follow the format R$X.XXX (max 11 characters)`
+        /^R\$\d{1,3}(?:\.\d{3})*$/.test(plan.value),
+        `investment.plansItems[${index}].value must follow the format R$X.XXX (e.g., R$1.500, R$10.000, R$100.000)`
       );
       ensureCondition(
         plan.buttonTitle.length <= 25,
@@ -878,11 +877,14 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           // Description: max 140 chars - craft it to fit
           const description = `Cobertura estratégica com foco em ${projectName}, alinhando consultoria, execução e rituais de acompanhamento.`;
 
+          // Format value without cents
+          const formattedValue = this.formatBrazilianCurrency(valueBase.toString());
+
           return {
             id: crypto.randomUUID(),
             title: label, // Already within 20 chars
             description: description.substring(0, 140), // Ensure max 140 chars
-            value: `R$${valueBase.toLocaleString("pt-BR")}`,
+            value: `R$${formattedValue}`,
             planPeriod: ["Mensal", "Trimestral", "Anual"][index] ?? "Único",
             buttonTitle: "Solicitar Detalhes", // Already within 25 chars
             recommended: index === plansCount - 1,
@@ -1352,7 +1354,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       "id": "string",
       "title": "string (exactly 20 characters)",
       "description": "string (exactly 95 characters)",
-      "value": "string (FORMATO EXATO: R$1.000 ou R$2.500 ou R$10.000 - máximo 11 caracteres, SEM CENTAVOS, SEM ESPAÇOS)",
+      "value": "string (FORMATO: R$1.500 ou R$5.000 ou R$10.000 ou R$50.000 - SEM CENTAVOS, SEM ESPAÇOS após R$)",
       "planPeriod": "string",
       "buttonTitle": "string (max 25 characters)",
       "recommended": boolean,
