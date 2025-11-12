@@ -393,6 +393,7 @@ export class FlashTheme {
       hidePlanPeriod: plan.hidePlanPeriod ?? false,
       hideButtonTitle: plan.hideButtonTitle ?? false,
       sortOrder: index,
+      value: this.normalizePriceValue(plan.value),
       includedItems: (plan.includedItems ?? []).map((item, itemIndex) => ({
         ...item,
         id: item.id ?? crypto.randomUUID(),
@@ -408,6 +409,54 @@ export class FlashTheme {
 
     this.validateInvestmentSection(normalized, selectedPlans);
     return normalized;
+  }
+
+  private normalizePriceValue(value: string): string {
+    // Remove all spaces
+    let normalized = value.replace(/\s+/g, "");
+
+    // Ensure it starts with R$
+    if (!normalized.startsWith("R$")) {
+      normalized = `R$${normalized}`;
+    }
+
+    // Extract only the R$ prefix and digits
+    const match = normalized.match(/^(R\$)?([\d.,]+)$/);
+    if (!match) {
+      // If format is completely wrong, return as is and let validation fail with clear error
+      return normalized;
+    }
+
+    const numericPart = match[2];
+
+    // Remove all dots and commas temporarily to get digits only
+    const digitsOnly = numericPart.replace(/[.,]/g, "");
+
+    // Check if original had decimal part (ended with ,XX)
+    const hasDecimals = /,\d{1,2}$/.test(numericPart);
+
+    let reaisValue: string;
+    if (hasDecimals) {
+      // Remove the last 2 digits (cents) to keep only reais
+      // Example: "150000" (from R$1.500,00) -> "1500" (R$1.500)
+      reaisValue = digitsOnly.slice(0, -2);
+    } else {
+      // No decimals, use all digits
+      reaisValue = digitsOnly;
+    }
+
+    // Format without cents (as per prompt requirements)
+    const finalNumber = this.formatBrazilianCurrency(reaisValue);
+
+    return `R$${finalNumber}`;
+  }
+
+  private formatBrazilianCurrency(reais: string): string {
+    // Format reais part with dots for thousands, NO cents
+    const reaisNum = parseInt(reais || "0", 10);
+    const reaisFormatted = reaisNum.toLocaleString("pt-BR");
+
+    return reaisFormatted;
   }
 
   private normalizeFAQSection(entries: FlashFAQSection): FlashFAQSection {
@@ -1303,7 +1352,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       "id": "string",
       "title": "string (exactly 20 characters)",
       "description": "string (exactly 95 characters)",
-      "value": "string (<= 11 characters, formato R$X.XXX)",
+      "value": "string (FORMATO EXATO: R$1.000 ou R$2.500 ou R$10.000 - máximo 11 caracteres, SEM CENTAVOS, SEM ESPAÇOS)",
       "planPeriod": "string",
       "buttonTitle": "string (max 25 characters)",
       "recommended": boolean,
