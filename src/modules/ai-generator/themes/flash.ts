@@ -306,9 +306,21 @@ export class FlashTheme {
         140,
         `investment.plansItems[${index}].description`
       );
+      
+      // Log the value being validated
+      console.log(`[validateInvestment] Plan ${index} value: "${plan.value}"`);
+      
+      const valueRegex = /^R\$\d{1,3}(?:\.\d{3})*$/;
+      const isValid = valueRegex.test(plan.value);
+      
+      if (!isValid) {
+        console.error(`[validateInvestment] INVALID value at plan ${index}: "${plan.value}"`);
+        console.error(`[validateInvestment] Regex test result: ${isValid}`);
+      }
+      
       ensureCondition(
-        /^R\$\d{1,3}(?:\.\d{3})*$/.test(plan.value),
-        `investment.plansItems[${index}].value must follow the format R$X.XXX (e.g., R$1.500, R$10.000, R$100.000)`
+        isValid,
+        `investment.plansItems[${index}].value must follow the format R$X.XXX (e.g., R$1.500, R$10.000, R$100.000) but got "${plan.value}"`
       );
       ensureCondition(
         plan.buttonTitle.length <= 25,
@@ -411,6 +423,8 @@ export class FlashTheme {
   }
 
   private normalizePriceValue(value: string): string {
+    console.log(`[normalizePriceValue] Input: "${value}"`);
+    
     // Remove all spaces
     let normalized = value.replace(/\s+/g, "");
 
@@ -422,7 +436,15 @@ export class FlashTheme {
     // Extract only the R$ prefix and digits
     const match = normalized.match(/^(R\$)?([\d.,]+)$/);
     if (!match) {
-      // If format is completely wrong, return as is and let validation fail with clear error
+      console.warn(`[normalizePriceValue] Could not match pattern for: "${normalized}"`);
+      // Try to extract just numbers and format them
+      const numbersOnly = normalized.replace(/[^\d]/g, "");
+      if (numbersOnly) {
+        const formatted = this.formatBrazilianCurrency(numbersOnly);
+        const result = `R$${formatted}`;
+        console.log(`[normalizePriceValue] Fallback formatting: "${result}"`);
+        return result;
+      }
       return normalized;
     }
 
@@ -446,8 +468,10 @@ export class FlashTheme {
 
     // Format without cents (as per prompt requirements)
     const finalNumber = this.formatBrazilianCurrency(reaisValue);
-
-    return `R$${finalNumber}`;
+    const result = `R$${finalNumber}`;
+    
+    console.log(`[normalizePriceValue] Output: "${result}"`);
+    return result;
   }
 
   private formatBrazilianCurrency(reais: string): string {
