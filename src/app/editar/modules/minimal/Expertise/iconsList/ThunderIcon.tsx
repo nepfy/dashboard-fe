@@ -1,0 +1,34 @@
+import React from "react";
+
+interface IconProps {
+  fill?: string;
+  width?: string;
+  height?: string;
+  className?: string;
+}
+
+const ThunderIcon: React.FC<IconProps> = ({
+  fill = "black",
+  width = "33",
+  height = "33",
+  className,
+}) => (
+  <svg
+    width={width}
+    height={height}
+    viewBox="0 0 33 33"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M14.1666 16.7567V22.5256C14.1666 23.375 15.2243 23.7756 15.7851 23.1346L21.8506 16.2439C22.3794 15.643 21.9547 14.7055 21.1535 14.7055H18.6776V8.93655C18.6776 8.08723 17.62 7.68661 17.0591 8.32761L10.9937 15.2183C10.4729 15.8192 10.8976 16.7567 11.6908 16.7567H14.1666Z"
+      stroke={fill}
+      strokeWidth="1.20187"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export default ThunderIcon;

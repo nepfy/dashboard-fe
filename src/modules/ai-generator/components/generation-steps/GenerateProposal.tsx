@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 
 export function GenerateProposal({
@@ -27,8 +28,8 @@ export function GenerateProposal({
     return (
       <div className="flex min-h-[calc(100vh-100px)] items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-light-500 mx-auto mb-4"></div>
-          <h2 className="text-xl font-medium text-gray-800 mb-2">
+          <LoaderCircle className="text-primary-light-400 animate-spin" />
+          <h2 className="mb-2 text-xl font-medium text-gray-800">
             Gerando sua proposta...
           </h2>
           <p className="text-gray-600">
@@ -43,7 +44,7 @@ export function GenerateProposal({
     return (
       <div className="flex min-h-[calc(100vh-100px)] items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-medium text-gray-800 mb-2">
+          <h2 className="mb-2 text-xl font-medium text-gray-800">
             Nenhuma proposta gerada
           </h2>
           <p className="text-gray-600">Volte e gere uma proposta primeiro</p>
@@ -83,7 +84,7 @@ export function GenerateProposal({
     <div className="min-h-[calc(100vh-100px)] p-6">
       <div className="mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          <h1 className="mb-2 text-2xl font-bold text-gray-800">
             Proposta Gerada com IA
           </h1>
           <p className="text-gray-600">
@@ -91,10 +92,10 @@ export function GenerateProposal({
           </p>
         </div>
 
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6">
+        <div className="mb-6 flex space-x-1 rounded-lg bg-gray-100 p-1">
           <button
             onClick={() => setActiveTab("preview")}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === "preview"
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-600 hover:text-gray-900"
@@ -104,7 +105,7 @@ export function GenerateProposal({
           </button>
           <button
             onClick={() => setActiveTab("raw")}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === "raw"
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-600 hover:text-gray-900"
@@ -115,10 +116,10 @@ export function GenerateProposal({
         </div>
 
         {activeTab === "preview" ? (
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="space-y-6 rounded-lg border bg-white p-6 shadow-sm">
             {introduction && (
               <div className="border-b pb-4">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                <h2 className="mb-3 text-xl font-semibold text-gray-800">
                   {safeString(
                     (introduction as Record<string, unknown>).title,
                     "Introdução"
@@ -127,7 +128,7 @@ export function GenerateProposal({
                 {Boolean(
                   (introduction as Record<string, unknown>).subtitle
                 ) && (
-                  <p className="text-gray-600 mb-3">
+                  <p className="mb-3 text-gray-600">
                     {safeString(
                       (introduction as Record<string, unknown>).subtitle
                     )}
@@ -144,7 +145,7 @@ export function GenerateProposal({
                       ).map((service: unknown, index: number) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                          className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800"
                         >
                           {safeString(service)}
                         </span>
@@ -156,7 +157,7 @@ export function GenerateProposal({
 
             {Boolean(aboutUs) && (
               <div className="border-b pb-4">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                <h2 className="mb-3 text-xl font-semibold text-gray-800">
                   {safeString(
                     (aboutUs as Record<string, unknown>).title,
                     "Sobre Nós"
@@ -176,19 +177,19 @@ export function GenerateProposal({
                 (specialties as Record<string, unknown>).topics
               ) && (
                 <div className="border-b pb-4">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                  <h2 className="mb-3 text-xl font-semibold text-gray-800">
                     {safeString(
                       (specialties as Record<string, unknown>).title,
                       "Especialidades"
                     )}
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {(
                       (specialties as Record<string, unknown>)
                         .topics as unknown[]
                     ).map((topic: unknown, index: number) => (
-                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                        <h3 className="font-medium text-gray-800 mb-1">
+                      <div key={index} className="rounded-lg bg-gray-50 p-3">
+                        <h3 className="mb-1 font-medium text-gray-800">
                           {safeString((topic as Record<string, unknown>).title)}
                         </h3>
                         {Boolean(
@@ -210,7 +211,7 @@ export function GenerateProposal({
               (steps as Record<string, React.ReactNode>).topics &&
               Array.isArray((steps as Record<string, unknown>).topics) && (
                 <div className="border-b pb-4">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                  <h2 className="mb-3 text-xl font-semibold text-gray-800">
                     {safeString(
                       (steps as Record<string, unknown>).title,
                       "Processo"
@@ -221,7 +222,7 @@ export function GenerateProposal({
                       (steps as Record<string, unknown>).topics as unknown[]
                     ).map((step: unknown, index: number) => (
                       <div key={index} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-medium text-blue-600">
                           {index + 1}
                         </div>
                         <div>
@@ -248,21 +249,21 @@ export function GenerateProposal({
 
             {investment && (
               <div className="border-b pb-4">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                <h2 className="mb-3 text-xl font-semibold text-gray-800">
                   {safeString(
                     (investment as Record<string, unknown>).title,
                     "Investimento"
                   )}
                 </h2>
                 {plans && Array.isArray(plans) && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     {(plans as unknown[]).map(
                       (plan: unknown, index: number) => (
                         <div
                           key={index}
-                          className="bg-gray-50 p-4 rounded-lg border"
+                          className="rounded-lg border bg-gray-50 p-4"
                         >
-                          <h3 className="font-medium text-gray-800 mb-2">
+                          <h3 className="mb-2 font-medium text-gray-800">
                             {safeString(
                               (plan as Record<string, unknown>).title
                             )}
@@ -270,7 +271,7 @@ export function GenerateProposal({
                           {Boolean(
                             (plan as Record<string, unknown>).description
                           ) && (
-                            <p className="text-sm text-gray-600 mb-2">
+                            <p className="mb-2 text-sm text-gray-600">
                               {safeString(
                                 (plan as Record<string, unknown>).description
                               )}
@@ -293,14 +294,14 @@ export function GenerateProposal({
 
             {terms && Array.isArray(terms) && (
               <div className="border-b pb-4">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                <h2 className="mb-3 text-xl font-semibold text-gray-800">
                   Termos e Condições
                 </h2>
                 <div className="space-y-3">
                   {(terms as unknown[]).map((term: unknown, index: number) => (
                     <div key={index}>
                       {Boolean((term as Record<string, unknown>).title) && (
-                        <h3 className="font-medium text-gray-800 mb-1">
+                        <h3 className="mb-1 font-medium text-gray-800">
                           {safeString((term as Record<string, unknown>).title)}
                         </h3>
                       )}
@@ -317,13 +318,13 @@ export function GenerateProposal({
 
             {faq && Array.isArray(faq) && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                <h2 className="mb-3 text-xl font-semibold text-gray-800">
                   Perguntas Frequentes
                 </h2>
                 <div className="space-y-3">
                   {(faq as unknown[]).map((item: unknown, index: number) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                      <h3 className="font-medium text-gray-800 mb-1">
+                    <div key={index} className="rounded-lg bg-gray-50 p-3">
+                      <h3 className="mb-1 font-medium text-gray-800">
                         {safeString((item as Record<string, unknown>).question)}
                       </h3>
                       <p className="text-sm text-gray-600">
@@ -336,11 +337,11 @@ export function GenerateProposal({
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <div className="rounded-lg border bg-white p-6 shadow-sm">
+            <h3 className="mb-4 text-lg font-semibold text-gray-800">
               Dados da Proposta (JSON)
             </h3>
-            <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-hidden break-words whitespace-pre-wrap">
+            <pre className="overflow-hidden rounded-lg bg-gray-50 p-4 text-sm break-words whitespace-pre-wrap">
               {JSON.stringify(generatedProposal, null, 2)}
             </pre>
           </div>

@@ -1,6 +1,6 @@
 import { db } from "#/lib/db";
 import { BaseAgentConfig, ServiceType, TemplateType } from "./base/types";
-import { TemplateConfig } from "./base/template-config";
+import { TemplateConfig } from "./base/template-constraints";
 import { agentsTable, agentTemplatesTable } from "#/lib/db/schema/agents";
 import { eq, and } from "drizzle-orm";
 

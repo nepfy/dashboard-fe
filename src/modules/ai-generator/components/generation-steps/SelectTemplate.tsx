@@ -26,6 +26,21 @@ const templates: TemplateModel[] = [
     ],
     preview: "flash",
   },
+  {
+    id: "minimal",
+    title: "Minimal",
+    description:
+      "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
+    colorsList: [
+      "#000000",
+      "#4F21A1",
+      "#BE8406",
+      "#9B3218",
+      "#05722C",
+      "#182E9B",
+    ],
+    preview: "minimal",
+  },
   // {
   //   id: "prime",
   //   title: "Prime",
@@ -39,21 +54,6 @@ const templates: TemplateModel[] = [
   //     "#08306C",
   //   ],
   //   preview: "prime",
-  // },
-  // {
-  //   id: "minimal",
-  //   title: "Minimal",
-  //   description:
-  //     "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
-  //   colorsList: [
-  //     "#000000",
-  //     "#FFFFFF",
-  //     "#F5F5F5",
-  //     "#333333",
-  //     "#666666",
-  //     "#999999",
-  //   ],
-  //   preview: "minimal",
   // },
   // {
   //   id: "grid",

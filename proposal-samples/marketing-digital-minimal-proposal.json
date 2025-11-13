@@ -1,0 +1,360 @@
+{
+  "agent": {
+    "id": "marketing-digital-base-agent",
+    "name": "Especialista em Marketing Digital",
+    "sector": "Marketing Digital",
+    "template": "minimal"
+  },
+  "testData": {
+    "companyInfo": "Agência Digital Inovadora - Especialistas em crescimento de negócios online com 5 anos de experiência. Nossa equipe é composta por especialistas em SEO, Google Ads, redes sociais e automação de marketing.",
+    "clientName": "Felipe Ferragens",
+    "projectName": "Site Institucional",
+    "projectDescription": "Desenvolvimento de um site institucional moderno, funcional e responsivo para apresentar a empresa, seus produtos e diferenciais. O objetivo é fortalecer a presença digital da marca, transmitir credibilidade e facilitar o contato e o relacionamento com novos clientes e parceiros comerciais.",
+    "clientDescription": "Empresa especializada na comercialização de ferragens, ferramentas e materiais para construção. Atua há anos no setor, atendendo tanto o público profissional quanto o consumidor final, com foco em qualidade, variedade de produtos e atendimento personalizado.",
+    "selectedPlans": 2,
+    "planDetails": "",
+    "includeTerms": true,
+    "includeFAQ": true,
+    "mainColor": "#182E9B"
+  },
+  "proposal": {
+    "introduction": {
+      "userName": "Caio Alcantara",
+      "email": "alcantaracaiolucas@gmail.com",
+      "title": "Proposta de Site Institucional",
+      "subtitle": "Desenvolvendo uma presença digital forte e eficaz para a Felipe Ferragens",
+      "hideSubtitle": false,
+      "services": [
+        {
+          "id": "1",
+          "serviceName": "Desenvolvimento Web",
+          "sortOrder": 1
+        },
+        {
+          "id": "2",
+          "serviceName": "SEO e Otimização",
+          "sortOrder": 2
+        },
+        {
+          "id": "3",
+          "serviceName": "Marketing Digital",
+          "sortOrder": 3
+        }
+      ]
+    },
+    "aboutUs": {
+      "hideSection": false,
+      "title": "Cresça Online",
+      "subtitle": "Desenvolvemos um site institucional moderno para Felipe Ferragens, impulsionando sua presença digital e relacionamento com clientes e parceiros"
+    },
+    "team": {
+      "hideSection": false,
+      "title": "Nossa Equipe",
+      "members": [
+        {
+          "id": "1",
+          "name": "Caio Alcantara",
+          "role": "Usuário",
+          "image": "/images/templates/flash/placeholder.png",
+          "sortOrder": 1
+        },
+        {
+          "id": "2",
+          "name": "Felipe Ferragens",
+          "role": "Cliente",
+          "image": "/images/templates/flash/placeholder.png",
+          "sortOrder": 2
+        },
+        {
+          "id": "3",
+          "name": "Agência Digital Inovadora",
+          "role": "Desenvolvedor",
+          "image": "/images/templates/flash/placeholder.png",
+          "sortOrder": 3
+        }
+      ]
+    },
+    "expertise": {
+      "hideSection": false,
+      "title": "Nossas Especialidades",
+      "hideIcon": false,
+      "topics": [
+        {
+          "id": "1",
+          "icon": "GlobeIcon",
+          "title": "Desenvolvimento Web",
+          "description": "Criamos sites institucionais modernos e responsivos para fortalecer sua presença digital",
+          "sortOrder": 1
+        },
+        {
+          "id": "2",
+          "icon": "StarIcon",
+          "title": "SEO e Otimização",
+          "description": "Especialistas em SEO para melhorar sua visibilidade e ranking nos motores de busca",
+          "sortOrder": 2
+        },
+        {
+          "id": "3",
+          "icon": "BulbIcon",
+          "title": "Marketing Digital",
+          "description": "Desenvolvemos estratégias de marketing digital para impulsionar seu negócio online",
+          "sortOrder": 3
+        },
+        {
+          "id": "4",
+          "icon": "GearIcon",
+          "title": "Automação de Marketing",
+          "description": "Implementamos soluções de automação para otimizar seus processos de marketing",
+          "sortOrder": 4
+        },
+        {
+          "id": "5",
+          "icon": "EyeIcon",
+          "title": "Análise e Monitoramento",
+          "description": "Análise e monitoramento de desempenho para ajustar e melhorar suas estratégias",
+          "sortOrder": 5
+        }
+      ]
+    },
+    "results": {
+      "hideSection": false,
+      "title": "Resultados Comprovados",
+      "items": [
+        {
+          "id": "059e15bb-0e89-4899-8e08-9f206b15baf2",
+          "client": "Felipe Ferragens",
+          "investment": "R$ 15.000",
+          "roi": "+120%",
+          "photo": "",
+          "instagram": "@felipeferragensoficial",
+          "hidePhoto": false,
+          "hideItem": false,
+          "sortOrder": 0
+        },
+        {
+          "id": "17240cb2-d4b9-46c4-a635-565d2c0a7e54",
+          "client": "Ferragens São Paulo",
+          "investment": "R$ 20.000",
+          "roi": "+200%",
+          "photo": "",
+          "instagram": "@ferragenssaopaulo",
+          "hidePhoto": false,
+          "hideItem": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "65056e6f-bdcb-495e-bd2d-0b14a6133736",
+          "client": "Metalúrgica Brasileira",
+          "investment": "R$ 30.000",
+          "roi": "+250%",
+          "photo": "",
+          "instagram": "@metalurgicabrasileira",
+          "hidePhoto": false,
+          "hideItem": false,
+          "sortOrder": 2
+        }
+      ]
+    },
+    "testimonials": {
+      "hideSection": false,
+      "items": [
+        {
+          "id": "7c4c6ba3-49f1-4e73-abed-d5cd41f0dfc8",
+          "name": "Felipe Silva",
+          "role": "Dono, Felipe Ferragens",
+          "testimonial": "A Agência Digital Inovadora criou um site institucional incrível para a minha empresa. Houve um aumento de 30% no tráfego orgânico e 25% nas vendas após 6 meses.",
+          "photo": "",
+          "hidePhoto": false,
+          "sortOrder": 0
+        },
+        {
+          "id": "15e33864-405c-46b8-b7db-4f897c0db953",
+          "name": "Beatriz Oliveira",
+          "role": "Marketing, B2B Soluções",
+          "testimonial": "A equipe da Agência Digital Inovadora foi fundamental para melhorar nossa presença online. Com o site novo, reduzimos o bounce rate em 20% e aumentamos a taxa de conversão em 15%.",
+          "photo": "",
+          "hidePhoto": false,
+          "sortOrder": 1
+        },
+        {
+          "id": "6e3306ec-a95a-4d92-a3c9-2d579162c109",
+          "name": "João Pedro",
+          "role": "Diretor, JP Indústria",
+          "testimonial": "A Agência Digital Inovadora nos ajudou a criar uma estratégia de marketing digital eficaz. Após 3 meses, já vimos um aumento de 40% nas interações nas redes sociais e 10% no engajamento do site.",
+          "photo": "",
+          "hidePhoto": false,
+          "sortOrder": 2
+        }
+      ]
+    },
+    "steps": {
+      "hideSection": false,
+      "topics": [
+        {
+          "id": "1",
+          "title": "Análise de Requisitos",
+          "description": "Entendemos as necessidades do cliente Felipe Ferragens e definimos os objetivos do site institucional, alinhando com a estratégia de crescimento da marca",
+          "sortOrder": 1
+        },
+        {
+          "id": "2",
+          "title": "Desenvolvimento do Site",
+          "description": "Nossa equipe da Agência Digital Inovadora desenvolve o site institucional, priorizando design moderno, funcionalidade e responsividade para uma experiência de usuário excepcional",
+          "sortOrder": 2
+        },
+        {
+          "id": "3",
+          "title": "Otimização para SEO",
+          "description": "Aplicamos técnicas de SEO para garantir a visibilidade do site nos principais motores de busca, melhorando a presença digital da marca e atraindo novos clientes",
+          "sortOrder": 3
+        },
+        {
+          "id": "4",
+          "title": "Lançamento e Monitoring",
+          "description": "Realizamos o lançamento do site e monitoramos seu desempenho, ajustando estratégias conforme necessário para garantir o sucesso do projeto e o crescimento contínuo da marca",
+          "sortOrder": 4
+        }
+      ]
+    },
+    "escope": {
+      "hideSection": false
+    },
+    "investment": {
+      "hideSection": false,
+      "title": "Investimento no Site",
+      "projectScope": "Desenvolvimento de site institucional moderno e responsivo",
+      "hideProjectScope": false
+    },
+    "plans": {
+      "hideSection": false,
+      "plansItems": [
+        {
+          "id": "9787b470-8b3a-43c2-a4f9-4704a4629336",
+          "title": "Plano 1",
+          "description": "Descrição do plano",
+          "value": 1000,
+          "planPeriod": "mensal",
+          "recommended": false,
+          "buttonTitle": "Contratar",
+          "buttonWhereToOpen": "_blank",
+          "buttonHref": "#",
+          "buttonPhone": "",
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "hideItem": false,
+          "sortOrder": 0,
+          "includedItems": [
+            {
+              "id": "eca632f0-968b-425a-bca2-9bfeb8c2874b",
+              "description": "Item incluído 1",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "241876b5-16c9-427d-b37e-11d274ed55ce",
+              "description": "Item incluído 2",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "6b03fbb0-ef06-481a-9451-0d19176729d8",
+              "description": "Item incluído 3",
+              "hideItem": false,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "id": "c2432963-e8aa-44ae-9f8f-e2a3a491fd16",
+          "title": "Plano 2",
+          "description": "Descrição do plano",
+          "value": 2000,
+          "planPeriod": "mensal",
+          "recommended": true,
+          "buttonTitle": "Contratar",
+          "buttonWhereToOpen": "_blank",
+          "buttonHref": "#",
+          "buttonPhone": "",
+          "hideTitleField": false,
+          "hideDescription": false,
+          "hidePrice": false,
+          "hidePlanPeriod": false,
+          "hideButtonTitle": false,
+          "hideItem": false,
+          "sortOrder": 1,
+          "includedItems": [
+            {
+              "id": "0339fcdc-eb23-4a86-b86d-3b1ad072a80a",
+              "description": "Item incluído 1",
+              "hideItem": false,
+              "sortOrder": 0
+            },
+            {
+              "id": "2e93bcca-4794-4d74-9d43-f46e6acc6fc5",
+              "description": "Item incluído 2",
+              "hideItem": false,
+              "sortOrder": 1
+            },
+            {
+              "id": "e157a61d-88b2-41d7-a420-ae78ad2ed789",
+              "description": "Item incluído 3",
+              "hideItem": false,
+              "sortOrder": 2
+            },
+            {
+              "id": "c515cf91-a910-4be3-85bf-fddff8ed97bd",
+              "description": "Item incluído 4",
+              "hideItem": false,
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    },
+    "faq": {
+      "hideSection": false,
+      "items": [
+        {
+          "id": "1",
+          "question": "O que é um site institucional?",
+          "answer": "Um site institucional é uma plataforma online que apresenta a empresa, seus produtos e serviços de forma clara e objetiva, visando fortalecer a presença digital da marca.",
+          "sortOrder": 1
+        },
+        {
+          "id": "2",
+          "question": "Por que é importante ter um site institucional?",
+          "answer": "Ter um site institucional é fundamental para transmitir credibilidade, facilitar o contato e o relacionamento com novos clientes e parceiros comerciais, além de fortalecer a presença digital da marca.",
+          "sortOrder": 2
+        },
+        {
+          "id": "3",
+          "question": "Quais são os principais objetivos do site?",
+          "answer": "Os principais objetivos do site são apresentar a empresa, seus produtos e serviços, transmitir credibilidade e facilitar o contato e o relacionamento com novos clientes e parceiros comerciais.",
+          "sortOrder": 3
+        },
+        {
+          "id": "4",
+          "question": "Quem é a Agência Digital Inovadora?",
+          "answer": "A Agência Digital Inovadora é uma agência especializada em crescimento de negócios online, com 5 anos de experiência e equipe composta por especialistas em SEO, Google Ads, redes sociais e automação de marketing.",
+          "sortOrder": 4
+        },
+        {
+          "id": "5",
+          "question": "Como a Agência Digital Inovadora pode ajudar?",
+          "answer": "A Agência Digital Inovadora pode ajudar a desenvolver um site institucional moderno, funcional e responsivo, além de oferecer serviços de SEO, Google Ads, redes sociais e automação de marketing para fortalecer a presença digital da marca.",
+          "sortOrder": 5
+        }
+      ]
+    },
+    "footer": {
+      "callToAction": "Vamos transformar sua ideia em realidade?",
+      "disclaimer": "Esta proposta é válida pelo período indicado. Estamos à disposição para esclarecer dúvidas e personalizar soluções de acordo com suas necessidades.",
+      "hideCallToAction": false,
+      "hideDisclaimer": false
+    }
+  },
+  "generatedAt": "2025-11-08T09:00:49.428Z"
+}

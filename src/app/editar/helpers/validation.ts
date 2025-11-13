@@ -8,6 +8,7 @@ import {
   TemplateData,
   Testimonial,
 } from "#/types/template-data";
+import { isValidSlug } from "#/lib/slug";
 
 export interface ValidationResult {
   isValid: boolean;
@@ -100,11 +101,11 @@ function validatePersonalizationField(
           message: "URL deve ter pelo menos 3 caracteres",
         };
       }
-      if (!/^[a-zA-Z0-9-_]+$/.test(value as string)) {
+      if (!isValidSlug(value as string)) {
         return {
           isValid: false,
           message:
-            "URL deve conter apenas letras, números, hífens e underscores",
+            "URL deve conter apenas letras minúsculas, números e hífens",
         };
       }
       return { isValid: true };

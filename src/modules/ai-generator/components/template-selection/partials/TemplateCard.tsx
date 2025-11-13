@@ -49,13 +49,8 @@ export const colorToImageName: Record<string, string> = {
   "#5E4D35": "marrom",
   "#7C4257": "rosa",
 
-  // Minimal
-  "#006DC5": "azul",
-  "##2C2C2C": "preto",
-  "#rgba(120, 131, 142, 1)": "cinza",
-  "#rgba(41, 77, 65, 1)": "verde",
-  "#rgba(94, 77, 53, 1)": "marrom",
-  "#rgba(124, 66, 87, 1)": "rosa",
+  // Minimal (compartilha cores com Flash, exceto preto)
+  "#000000": "preto",
 };
 
 export const getImagePath = (templateName: string, color: string): string => {
@@ -88,11 +83,13 @@ export const TemplateCard = ({
     {/* Preview - Agora com imagem */}
     <div className="rounded-2xs h-[190px] m-2 overflow-hidden">
       <Image
+        key={`${template.title}-${selectedColor}`}
         src={getImagePath(template.title, selectedColor)}
         alt={`Preview do template ${template.title}`}
         width={324}
         height={190}
         className="w-full h-full object-cover rounded-2xs"
+        unoptimized
       />
     </div>
 

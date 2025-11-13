@@ -2,21 +2,50 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
   ReactNode,
   ChangeEvent,
   SetStateAction,
 } from "react";
 import { trackOnboardingQuestionAnswered } from "#/lib/analytics/track";
+import {
+  DEFAULT_ONBOARDING_FORM_DATA,
+  type OnboardingFormData,
+} from "#/types/onboarding";
 
-export interface FormDataProps {
-  fullName: string;
-  userName: string;
-  cpf: string;
-  phone: string;
-  jobType: string[];
-  discoverySource: string[];
-  usedBefore: string;
-}
+const normalizeStringValue = (
+  value: unknown,
+  { trim }: { trim?: boolean } = {}
+): string => {
+  if (typeof value === "string") {
+    return trim ? value.trim() : value;
+  }
+
+  if (typeof value === "number" && !Number.isNaN(value)) {
+    return String(value);
+  }
+
+  return "";
+};
+
+const normalizeStringArray = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const result: string[] = [];
+
+  for (const item of value) {
+    const normalized = normalizeStringValue(item);
+    if (normalized !== "") {
+      result.push(normalized);
+    }
+  }
+
+  return result;
+};
+
+export type FormDataProps = OnboardingFormData;
 
 interface FormErrors {
   [key: string]: string;
@@ -47,15 +76,7 @@ interface FormContextType {
 }
 
 const FormContext = createContext<FormContextType>({
-  formData: {
-    fullName: "",
-    userName: "",
-    cpf: "",
-    phone: "",
-    jobType: [],
-    discoverySource: [],
-    usedBefore: "",
-  },
+  formData: DEFAULT_ONBOARDING_FORM_DATA,
   formErrors: {},
   currentStep: 1,
   cpfValidated: false,
@@ -80,23 +101,54 @@ export const useFormContext = () => useContext(FormContext);
 
 interface FormProviderProps {
   children: ReactNode;
+  initialFormData?: Partial<FormDataProps>;
+  initialStep?: number;
 }
 
-export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
-  const [formData, setFormData] = useState<FormDataProps>({
-    fullName: "",
-    userName: "",
-    cpf: "",
-    phone: "",
-    jobType: [],
-    discoverySource: [],
-    usedBefore: "",
-  });
+const TOTAL_STEPS = 5;
+
+export const FormProvider: React.FC<FormProviderProps> = ({
+  children,
+  initialFormData,
+  initialStep,
+}) => {
+  const [formData, setFormData] = useState<FormDataProps>(
+    DEFAULT_ONBOARDING_FORM_DATA
+  );
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [enableNextStep, setEnableNextStep] = useState<boolean>(false);
   const [cpfValidated, setCpfValidated] = useState<boolean>(false);
+
+  useEffect(() => {
+    const merged = {
+      ...DEFAULT_ONBOARDING_FORM_DATA,
+      ...(initialFormData ?? {}),
+    };
+
+    const normalizedFormData: FormDataProps = {
+      fullName: normalizeStringValue(merged.fullName, { trim: true }),
+      userName: normalizeStringValue(merged.userName, { trim: true }),
+      cpf: normalizeStringValue(merged.cpf),
+      phone: normalizeStringValue(merged.phone),
+      jobType: normalizeStringArray(merged.jobType),
+      discoverySource: normalizeStringArray(merged.discoverySource),
+      usedBefore: normalizeStringValue(merged.usedBefore),
+    };
+
+    setFormData(normalizedFormData);
+  }, [initialFormData]);
+
+  useEffect(() => {
+    if (initialStep === undefined || initialStep === null) {
+      setCurrentStep(1);
+      return;
+    }
+
+    const clampedStep = Math.min(Math.max(initialStep, 1), TOTAL_STEPS);
+    setCurrentStep(clampedStep);
+  }, [initialStep]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | { name: string; value: string }
@@ -129,7 +181,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
 
       setFormData((prevData) => ({
         ...prevData,
-        [name]: value,
+        [name]: typeof value === "string" ? value : normalizeStringValue(value),
       }));
 
       if (formErrors[name]) {
@@ -143,13 +195,23 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   };
 
   const handleMultiSelect = (name: keyof FormDataProps, value: string) => {
-    const currentValues = formData[name] as string[];
-
     setFormData((prevData) => ({
       ...prevData,
-      [name]: currentValues.includes(value)
-        ? currentValues.filter((item) => item !== value)
-        : [...currentValues, value],
+      [name]: (() => {
+        const prevValuesRaw = prevData[name];
+        const normalizedValue = normalizeStringValue(value);
+        const prevValues = Array.isArray(prevValuesRaw)
+          ? prevValuesRaw.map((item) => normalizeStringValue(item))
+          : [];
+
+        if (normalizedValue === "") {
+          return prevValues;
+        }
+
+        return prevValues.includes(normalizedValue)
+          ? prevValues.filter((item) => item !== normalizedValue)
+          : [...prevValues, normalizedValue];
+      })(),
     }));
 
     if (formErrors[name]) {
@@ -164,7 +226,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   const handleSingleSelect = (name: keyof FormDataProps, value: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: normalizeStringValue(value),
     }));
 
     if (formErrors[name]) {
@@ -189,7 +251,9 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
 
   const nextStep = () => {
     // Track question answered when moving to next step
-    const stepNameMap: { [key: number]: { name: string; field: keyof FormDataProps } } = {
+    const stepNameMap: {
+      [key: number]: { name: string; field: keyof FormDataProps };
+    } = {
       1: { name: "personal_info", field: "fullName" },
       2: { name: "job_type", field: "jobType" },
       3: { name: "discovery_source", field: "discoverySource" },
@@ -247,12 +311,11 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   };
 
   const enableNextStepUserName = () => {
-    // Username must be between 3 and 20 characters, and can only contain letters and numbers
+    const username = formData.userName.trim();
     const isValid =
-      formData.userName.trim() !== "" &&
-      formData.userName.length >= 3 &&
-      formData.userName.length <= 20 &&
-      /^[a-zA-Z0-9]+$/.test(formData.userName) &&
+      username.length >= 3 &&
+      username.length <= 20 &&
+      /^[a-z]+$/.test(username) &&
       !formErrors.userName;
 
     setEnableNextStep(isValid);

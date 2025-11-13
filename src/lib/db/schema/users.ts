@@ -9,6 +9,7 @@ import {
 
 export const personUserTable = pgTable("person_user", {
   id: uuid().notNull().primaryKey().defaultRandom(),
+  clerkUserId: varchar("clerk_user_id", { length: 255 }).unique().notNull(),
   firstName: varchar("first_name", { length: 255 }),
   lastName: varchar("last_name", { length: 255 }),
   userName: varchar("user_name", { length: 255 }).unique(),

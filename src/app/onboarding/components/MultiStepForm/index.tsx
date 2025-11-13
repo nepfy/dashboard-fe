@@ -14,6 +14,7 @@ import UserNameStep from "../Form/UserNameStep";
 interface MultiStepFormProps {
   onComplete: (formData: FormData) => Promise<{ error?: string } | void>;
   error?: string;
+  infoMessage?: string;
 }
 
 interface FormValidationErrors {
@@ -21,8 +22,13 @@ interface FormValidationErrors {
   message: string;
 }
 
-const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete, error }) => {
-  const { currentStep, goToStep, formData, setFieldError } = useFormContext();
+const MultiStepForm: React.FC<MultiStepFormProps> = ({
+  onComplete,
+  error,
+  infoMessage,
+}) => {
+  const { currentStep, goToStep, formData, setFieldError, enableNextStep } =
+    useFormContext();
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const errorMessage = error || submissionError;
@@ -142,10 +148,15 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ onComplete, error }) => {
     },
   ];
 
-  const isLastOptionSelected = !!formData.userName;
+  const isLastOptionSelected = enableNextStep;
 
   return (
     <FormLayout>
+      {infoMessage && (
+        <div className="border bg-blue-50 border-blue-200 text-blue-700 px-4 py-3 rounded-md my-8">
+          {infoMessage}
+        </div>
+      )}
       {errorMessage && (
         <div className="border bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-md my-8">
           {submissionError || error}

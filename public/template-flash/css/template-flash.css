@@ -1460,6 +1460,12 @@ figcaption {
   display: flex;
 }
 
+@media (max-width: 768px) {
+  .hero_bottom-wrap {
+    display: none;
+  }
+}
+
 .hero_bottom-wrap.is--right {
   width: 50%;
 }
@@ -1886,24 +1892,25 @@ figcaption {
 }
 
 .pricing_card {
-  min-height: 760px;
+  min-height: auto;
+  height: 100%;
   flex-flow: column;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 1.25rem;
   position: relative;
 }
 
 .pricing_top {
-  grid-column-gap: 1rem;
-  grid-row-gap: 1rem;
+  grid-column-gap: 0.75rem;
+  grid-row-gap: 0.75rem;
   background-color: #111;
   border-radius: 4px;
   flex-flow: column;
-  margin-bottom: 1rem;
-  padding: 1.5rem;
+  margin-bottom: 0;
+  padding: 1.1rem;
   display: flex;
-  justify-content: space-between;
-  min-height: 260px;
+  justify-content: flex-start;
 }
 
 .pricing_top.is--best-offer {
@@ -1916,18 +1923,18 @@ figcaption {
 }
 
 .pricing_bottom {
-  grid-column-gap: 1.8rem;
-  grid-row-gap: 1.8rem;
+  grid-column-gap: 1rem;
+  grid-row-gap: 1rem;
   flex-flow: column;
-  padding: 1rem;
+  padding: 0.5rem 0.75rem 0.75rem;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   flex: 1;
 }
 
 .pricing_item {
-  grid-column-gap: 1rem;
-  grid-row-gap: 1rem;
+  grid-column-gap: 0.5rem;
+  grid-row-gap: 0.5rem;
   opacity: 0.8;
   justify-content: flex-start;
   align-items: center;
@@ -1935,8 +1942,8 @@ figcaption {
 }
 
 .pricing_item-wrap {
-  grid-column-gap: 1rem;
-  grid-row-gap: 1rem;
+  grid-column-gap: 0.75rem;
+  grid-row-gap: 0.6rem;
   flex-flow: column;
   display: flex;
 }
@@ -1949,8 +1956,8 @@ figcaption {
 }
 
 .pricing_price {
-  grid-column-gap: 1.5rem;
-  grid-row-gap: 1.5rem;
+  grid-column-gap: 0.75rem;
+  grid-row-gap: 0.5rem;
   justify-content: flex-start;
   align-items: flex-end;
   display: flex;
@@ -2307,9 +2314,15 @@ figcaption {
 }
 
 .pricing_button {
-  margin-top: 3rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  margin-top: auto;
+  padding: 0.5rem 0.75rem 0.75rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.pricing_button .btn-magnetic {
+  width: 100%;
 }
 
 .faq_bg {
@@ -2925,18 +2938,22 @@ figcaption {
     flex-flow: column;
   }
 
+  @media (max-width: 479px) {
+    .hero_bottom {
+      display: none;
+    }
+  }
+  
+  .hero_bottom-wrap {
+    display: none;
+  }
+
   .hero_text-wrap {
     padding-top: 3rem;
   }
 
   .hero_text-wrap.is-right {
     max-width: none;
-  }
-
-  .hero_bottom-wrap {
-    grid-column-gap: 1.5rem;
-    grid-row-gap: 1.5rem;
-    width: 100%;
   }
 
   .hero_bottom-wrap.is--right {

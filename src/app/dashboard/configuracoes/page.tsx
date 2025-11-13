@@ -7,10 +7,18 @@ import PersonalData from "./_components/_PersonalData";
 import CompanyData from "./_components/_CompanyData";
 import ChangePassword from "./_components/_ChangePassword";
 import { useUserAccount } from "#/hooks/useUserAccount";
+import { useFeatureFlag } from "#/hooks/useFeatureFlag";
+import dynamic from "next/dynamic";
+
+const NotificationSettings = dynamic(
+  () => import("./notificacoes/page"),
+  { ssr: false }
+);
 // import { Subscription } from "#/modules/subscription";
 
 export default function Configurations() {
   const { isLoading } = useUserAccount();
+  const { isEnabled: notificationsEnabled } = useFeatureFlag("notifications_system");
 
   const [activeTab, setActiveTab] = useState("Dados pessoais");
   const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +37,10 @@ export default function Configurations() {
     hasChanges: boolean;
   }>(null);
 
-  const tabs = ["Dados pessoais", "Dados empresariais", "Segurança"];
+  const baseTabs = ["Dados pessoais", "Dados empresariais", "Segurança"];
+  const tabs = notificationsEnabled
+    ? [...baseTabs, "Notificações"]
+    : baseTabs;
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -140,6 +151,7 @@ export default function Configurations() {
           <ChangePassword />
         </div>
       )}
+      {activeTab === "Notificações" && <NotificationSettings />}
       {/* {activeTab === "Assinatura" && (
         <div className="p-7">
           <Subscription />

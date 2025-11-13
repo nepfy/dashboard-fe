@@ -7,6 +7,7 @@ import {
   TemplateType,
 } from "#/modules/ai-generator/agents";
 import { FlashWorkflowResult } from "#/modules/ai-generator/themes/flash";
+import { MinimalWorkflowResult } from "#/modules/ai-generator/themes/minimal";
 import { PrimeWorkflowResult } from "#/modules/ai-generator/themes/prime";
 import {
   serviceMapping,
@@ -19,8 +20,10 @@ import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 import {
   saveFlashTemplateData,
+  saveMinimalTemplateData,
   savePrimeTemplateData,
 } from "#/lib/db/proposal-save-handler";
+import { prepareProjectSlug } from "#/lib/project-slug";
 import { ButtonConfig } from "#/types/template-data";
 
 // Set max duration to 5 minutes (300 seconds) to allow for long-running AI workflows
@@ -51,6 +54,7 @@ export interface NepfyAIRequestData {
 
 export type ProposalResult =
   | FlashWorkflowResult
+  | MinimalWorkflowResult
   | PrimeWorkflowResult
   | WorkflowResult;
 
@@ -79,6 +83,7 @@ async function getUserIdFromEmail(emailAddress: string): Promise<{
 
 type AIResult =
   | FlashWorkflowResult
+  | MinimalWorkflowResult
   | PrimeWorkflowResult
   | WorkflowResult
   | Record<string, unknown>;
@@ -109,6 +114,15 @@ async function createOrUpdateProjectFromAIResult(
     )
     .limit(1);
 
+  const existingDraftId = existingDrafts[0]?.id;
+
+  const projectSlug = await prepareProjectSlug({
+    userId,
+    desiredSlug: requestData.originalPageUrl,
+    fallbackValue: requestData.clientName,
+    projectIdToExclude: existingDraftId,
+  });
+
   const projectData = {
     personId: userId,
     clientName: requestData.clientName,
@@ -121,7 +135,7 @@ async function createOrUpdateProjectFromAIResult(
     projectVisualizationDate: null,
     templateType: requestData.templateType || "flash",
     mainColor: requestData.mainColor || "#3B82F6",
-    projectUrl: requestData.originalPageUrl || null,
+    projectUrl: projectSlug,
     pagePassword: requestData.pagePassword || null,
     isPublished: false,
     isProposalGenerated: true,
@@ -169,6 +183,12 @@ async function createOrUpdateProjectFromAIResult(
     await saveFlashTemplateData(
       project.id,
       aiResult as FlashWorkflowResult,
+      requestData
+    );
+  } else if (requestData.templateType === "minimal" && "proposal" in aiResult) {
+    await saveMinimalTemplateData(
+      project.id,
+      aiResult as MinimalWorkflowResult,
       requestData
     );
   } else if (requestData.templateType === "prime" && "data" in aiResult) {
@@ -399,6 +419,89 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      aiResult = result;
+    }
+
+    // MINIMAL TEMPLATE WORKFLOW
+    else if (templateType === "minimal") {
+      const { MinimalTemplateWorkflow } = await import(
+        "#/modules/ai-generator/themes/minimal"
+      );
+      const minimalData = {
+        selectedService: agentServiceId as ServiceType,
+        companyInfo: defaultCompanyInfo,
+        clientName,
+        projectName,
+        projectDescription,
+        clientDescription: effectiveClientDescription,
+        selectedPlans: defaultPlans as number,
+        planDetails: planDetails,
+        includeTerms,
+        includeFAQ,
+        templateType: "minimal" as const,
+        mainColor,
+        userName: `${userId.firstName} ${userId.lastName}`,
+        userEmail: emailAddress,
+      };
+
+      const minimalWorkflow = new MinimalTemplateWorkflow();
+      let result: MinimalWorkflowResult;
+
+      try {
+        // 180s timeout for main minimal workflow
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error("Minimal AI timeout")), 180000);
+        });
+        const minimalPromise = minimalWorkflow.execute(minimalData);
+        result = await Promise.race([minimalPromise, timeoutPromise]);
+        generationType = "minimal-workflow";
+      } catch (workflowError) {
+        console.error("Minimal workflow error:", workflowError);
+        // Fallback to simple generation (240s timeout)
+        try {
+          const simpleTimeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(
+              () => reject(new Error("Minimal simple generation timeout")),
+              240000
+            );
+          });
+          const simplePromise = minimalWorkflow.execute(minimalData);
+          result = await Promise.race([simplePromise, simpleTimeoutPromise]);
+          generationType = "minimal-simple-generation";
+        } catch (simpleError) {
+          console.error("Minimal simple generation error:", simpleError);
+          return NextResponse.json(
+            {
+              error: "Failed to generate minimal proposal",
+              details: `Workflow error: ${
+                workflowError instanceof Error
+                  ? workflowError.message
+                  : "Unknown"
+              }. Fallback error: ${
+                simpleError instanceof Error ? simpleError.message : "Unknown"
+              }`,
+              generationType: "failed",
+            },
+            { status: 500 }
+          );
+        }
+      }
+
+      // Validate minimal result before continuing
+      if (result.status !== "success" || !result.proposal) {
+        return NextResponse.json(
+          {
+            error: "Failed to generate minimal proposal",
+            details:
+              result.error ||
+              "Minimal AI workflow did not return a valid proposal",
+            generationType: "failed",
+          },
+          { status: 500 }
+        );
+      }
+
+      // Pass the complete MinimalWorkflowResult
       aiResult = result;
     }
 

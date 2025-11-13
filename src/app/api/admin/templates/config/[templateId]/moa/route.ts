@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { templateConfigManager } from "#/modules/ai-generator/config/template-config";
+import { templateConfigManager } from "#/modules/ai-generator/config/template-prompts";
 
 // PUT /api/admin/templates/config/[templateId]/moa - Update MoA configuration
 export async function PUT(

@@ -2,11 +2,12 @@ import { useEditor } from "../../contexts/EditorContext";
 import { useState } from "react";
 
 export default function Publish() {
-  const { saveProject, isDirty, isSaving } = useEditor();
+  const { saveProject, isDirty, isSaving, projectData } = useEditor();
   const [showSuccess, setShowSuccess] = useState(false);
+  const isAlreadyPublished = projectData?.isPublished ?? false;
 
   const handlePublish = async () => {
-    if (!isDirty) {
+    if (isSaving || (!isDirty && isAlreadyPublished)) {
       return;
     }
 
@@ -25,9 +26,9 @@ export default function Publish() {
   return (
     <button
       onClick={handlePublish}
-      disabled={!isDirty || isSaving}
+      disabled={isSaving || (!isDirty && isAlreadyPublished)}
       className={`flex w-full transform items-center justify-center rounded-[12px] px-5 py-3 text-sm font-medium shadow-lg transition-all duration-200 hover:shadow-xl sm:w-auto ${
-        !isDirty || isSaving
+        isSaving || (!isDirty && isAlreadyPublished)
           ? "cursor-not-allowed bg-gray-400 text-gray-200"
           : "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
       }`}

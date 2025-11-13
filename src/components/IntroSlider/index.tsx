@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 import criarProposta from "#/lotties/criar-proposta.json";
 import criarCalculadora from "#/lotties/criar-calculadora.json";
 import criarContrato from "#/lotties/criar-contrato.json";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function IntroSlider() {
   const [currentSlide, setCurrentSlide] = useState(0);

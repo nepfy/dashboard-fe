@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save } from "lucide-react";
+import { LoaderCircle, Save } from "lucide-react";
 import { useSaveDraft } from "#/hooks/useProjectGenerator/useSaveDraft";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { toast, Slide } from "react-toastify";
@@ -97,24 +97,24 @@ export function SaveDraftButton({
       <button
         onClick={handleSaveDraft}
         disabled={isSaving}
-        className={`h-[44px] px-4 border border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 rounded-[10px] flex items-center justify-center button-inner cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        className={`border-white-neutral-light-300 hover:bg-white-neutral-light-200 bg-white-neutral-light-100 button-inner flex h-[44px] cursor-pointer items-center justify-center rounded-[10px] border px-4 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
         title="Salvar rascunho"
       >
         {isSaving ? (
           <>
-            <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
-            <span className="text-sm ml-2">Salvando</span>
+            <LoaderCircle className="text-primary-light-400 animate-spin" />
+            <span className="ml-2 text-sm">Salvando</span>
           </>
         ) : (
           <>
             <Save size={18} strokeWidth={1} />
-            <span className="text-sm ml-2">Salvar rascunho</span>
+            <span className="ml-2 text-sm">Salvar rascunho</span>
           </>
         )}
       </button>
 
       {isVisible && (
-        <div className="absolute top-12 left-4 text-white-neutral-light-900 text-xs">
+        <div className="text-white-neutral-light-900 absolute top-12 left-4 text-xs">
           {getLastSavedText()}
         </div>
       )}

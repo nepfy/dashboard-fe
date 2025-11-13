@@ -9,6 +9,7 @@ import { projectsTable } from "#/lib/db/schema/projects";
 import { eq } from "drizzle-orm";
 import type { ProposalData } from "#/types/proposal-data";
 import type { FlashWorkflowResult } from "#/modules/ai-generator/themes/flash";
+import type { MinimalWorkflowResult } from "#/modules/ai-generator/themes/minimal";
 import type { PrimeWorkflowResult } from "#/modules/ai-generator/themes/prime";
 
 /**
@@ -458,4 +459,220 @@ export async function savePrimeTemplateData(
     .where(eq(projectsTable.id, projectId));
 
   console.log("✅ Prime template data saved successfully to proposalData");
+}
+
+/**
+ * Convert Minimal AI result to unified ProposalData format
+ */
+function convertMinimalToProposalData(
+  aiResult: MinimalWorkflowResult,
+  requestData: {
+    validUntil?: string;
+    originalPageUrl?: string;
+    pagePassword?: string;
+  }
+): ProposalData {
+  if (aiResult.status !== "success" || !aiResult.proposal) {
+    throw new Error("Minimal AI result is not successful");
+  }
+
+  const proposal = aiResult.proposal;
+
+  return {
+    introduction: {
+      userName: proposal.introduction.userName,
+      email: proposal.introduction.email || "",
+      buttonTitle: "Solicitar Proposta",
+      title: proposal.introduction.title,
+      validity: requestData.validUntil || new Date().toISOString(),
+      subtitle: proposal.introduction.subtitle,
+      hideSubtitle: proposal.introduction.hideSubtitle || false,
+      services:
+        proposal.introduction.services?.map((service, index) => ({
+          id: service.id,
+          serviceName: service.serviceName,
+          hideService: service.hideItem || false,
+          sortOrder: service.sortOrder || index,
+        })) || [],
+    },
+    aboutUs: {
+      hideSection: proposal.aboutUs.hideSection || false,
+      title: proposal.aboutUs.title,
+      hideTitle: false,
+      supportText: "",
+      hideSupportText: true,
+      subtitle: "",
+      hideSubtitle: true,
+    },
+    team: {
+      hideSection: proposal.team.hideSection || false,
+      title: proposal.team.title,
+      hideTitle: false,
+      members:
+        proposal.team.members?.map((member, index) => ({
+          id: member.id,
+          name: member.name,
+          role: member.role,
+          image: member.image || "",
+          hideMember: member.hideMember || false,
+          sortOrder: member.sortOrder || index,
+        })) || [],
+    },
+    expertise: {
+      hideSection: proposal.expertise.hideSection || false,
+      title: proposal.expertise.title,
+      hideTitle: false,
+      topics:
+        proposal.expertise.topics?.map((topic, index) => ({
+          id: topic.id,
+          icon: topic.icon,
+          title: topic.title,
+          description: topic.description,
+          hideTopic: topic.hideItem || false,
+          sortOrder: topic.sortOrder || index,
+        })) || [],
+    },
+    steps: {
+      hideSection: proposal.steps.hideSection || false,
+      title: "Nosso Processo",
+      hideTitle: false,
+      introduction: undefined,
+      hideIntroduction: true,
+      topics:
+        proposal.steps.topics?.map((topic, index) => ({
+          id: topic.id,
+          title: topic.title,
+          description: topic.description,
+          hideTopic: topic.hideItem || false,
+          sortOrder: topic.sortOrder || index,
+        })) || [],
+      marquee: [],
+    },
+    clients: {
+      hideSection: true,
+      title: undefined,
+      hideTitle: false,
+      items: [],
+    },
+    testimonials: {
+      hideSection: proposal.testimonials.hideSection || false,
+      title: undefined,
+      hideTitle: true,
+      items: proposal.testimonials.items?.map((item, index) => ({
+        id: item.id,
+        name: item.name,
+        role: item.role,
+        testimonial: item.testimonial,
+        photo: item.photo || "",
+        hidePhoto: item.hidePhoto || false,
+        sortOrder: item.sortOrder || index,
+      })),
+    },
+    investment: {
+      hideSection: proposal.investment.hideSection || false,
+      title: proposal.investment.title,
+      projectScope: proposal.investment.projectScope || "",
+      hideProjectScope: proposal.investment.hideProjectScope || false,
+      hideTitle: false,
+    },
+    results: {
+      hideSection: proposal.results.hideSection || false,
+      title: proposal.results.title,
+      hideTitle: false,
+      items: proposal.results.items?.map((item, index) => ({
+        id: item.id,
+        client: item.client,
+        instagram: item.instagram || "",
+        investment: item.investment,
+        roi: item.roi,
+        photo: item.photo || "",
+        hidePhoto: item.hidePhoto || false,
+        sortOrder: item.sortOrder || index,
+      })),
+    },
+    deliverables: {
+      hideSection: true,
+      title: "",
+      hideTitle: true,
+      items: [],
+    },
+    plans: {
+      hideSection: proposal.plans.hideSection || false,
+      title: undefined,
+      hideTitle: true,
+      plansItems: proposal.plans.plansItems?.map((plan, index) => ({
+        id: plan.id,
+        title: plan.title,
+        description: plan.description,
+        value: String(plan.value),
+        planPeriod: plan.planPeriod || "mensal",
+        recommended: plan.recommended || false,
+        buttonTitle: plan.buttonTitle || "Solicitar Proposta",
+        buttonWhereToOpen: plan.buttonWhereToOpen || "link",
+        buttonHref: plan.buttonHref || "",
+        buttonPhone: plan.buttonPhone || "",
+        hideTitleField: plan.hideTitleField || false,
+        hideDescription: plan.hideDescription || false,
+        hidePrice: plan.hidePrice || false,
+        hidePlanPeriod: plan.hidePlanPeriod || false,
+        hideButtonTitle: plan.hideButtonTitle || false,
+        hideItem: plan.hideItem || false,
+        sortOrder: plan.sortOrder || index,
+        includedItems: plan.includedItems?.map((item, itemIndex) => ({
+          id: item.id,
+          item: item.description,
+          description: item.description,
+          hideItem: item.hideItem || false,
+          sortOrder: item.sortOrder || itemIndex,
+          hideDescription: false,
+        })),
+      })),
+    },
+    faq: {
+      hideSection: proposal.faq.hideSection || false,
+      title: "Perguntas Frequentes",
+      hideTitle: false,
+      items: proposal.faq.items?.map((item, index) => ({
+        id: item.id,
+        question: item.question,
+        answer: item.answer,
+        hideItem: item.hideItem || false,
+        sortOrder: item.sortOrder || index,
+      })),
+    },
+    footer: {
+      callToAction: proposal.footer.callToAction || "",
+      disclaimer: proposal.footer.disclaimer || "",
+      hideCallToAction: proposal.footer.hideCallToAction || false,
+      hideDisclaimer: proposal.footer.hideDisclaimer || false,
+      marquee: [],
+    },
+  };
+}
+
+/**
+ * Save Minimal template data using unified ProposalData
+ */
+export async function saveMinimalTemplateData(
+  projectId: string,
+  aiResult: MinimalWorkflowResult,
+  requestData: {
+    userName: string;
+    userEmail: string;
+    validUntil?: string;
+    originalPageUrl?: string;
+    pagePassword?: string;
+  }
+) {
+  const proposalData = convertMinimalToProposalData(aiResult, requestData);
+
+  await db
+    .update(projectsTable)
+    .set({
+      proposalData: proposalData as unknown as Record<string, unknown>,
+      updated_at: new Date(),
+    })
+    .where(eq(projectsTable.id, projectId));
+
+  console.log("✅ Minimal template data saved successfully to proposalData");
 }

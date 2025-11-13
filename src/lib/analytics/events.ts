@@ -130,6 +130,45 @@ export interface ProposalAcceptedProperties {
   timestamp?: string;
 }
 
+// Notification Events
+export interface NotificationCenterOpenedProperties {
+  unread_count?: number;
+  timestamp?: string;
+}
+
+export interface NotificationClickedProperties {
+  notification_id: string;
+  notification_type?: string;
+  timestamp?: string;
+}
+
+export interface NotificationsMarkedAllReadProperties {
+  count?: number;
+  timestamp?: string;
+}
+
+export interface NotificationDeletedProperties {
+  notification_id: string;
+  notification_type?: string;
+  timestamp?: string;
+}
+
+export interface NotificationSentProperties {
+  notification_id: string;
+  notification_type: string;
+  user_id: string;
+  via_email?: boolean;
+  timestamp?: string;
+}
+
+export interface NotificationEmailSentProperties {
+  notification_id: string;
+  notification_type: string;
+  user_id: string;
+  email_address: string;
+  timestamp?: string;
+}
+
 // Plan Events
 export interface PlanTrialStartedProperties {
   plan_id?: string;

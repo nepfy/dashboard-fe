@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { getProjectBaseDomain } from "#/lib/subdomain";
 import { useUserAccount } from "#/hooks/useUserAccount";
 import Modal from "#/components/Modal";
 import { TextField } from "#/components/Inputs";
@@ -14,6 +15,7 @@ export default function ChangePassword() {
   const [usernameModal, setUsernameModal] = useState(false);
   const [emailModal, setEmailModal] = useState(false);
   const [passwordModal, setPasswordModal] = useState(false);
+  const projectBaseDomain = getProjectBaseDomain();
 
   useEffect(() => {
     setError("");
@@ -88,7 +90,7 @@ export default function ChangePassword() {
               Ele será usado para criar um link exclusivo para cada proposta que
               você enviar, como:{" "}
               <span className="text-primary-light-500 text-sm">
-                usuario-cliente.nepfy.com.
+                usuario.{projectBaseDomain}/cliente.
               </span>
             </p>
 

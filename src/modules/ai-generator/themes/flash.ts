@@ -7,7 +7,7 @@ import { MOAService } from "../services/moa-service";
 import {
   templateConfigManager,
   type TemplateConfig,
-} from "../config/template-config";
+} from "../config/template-prompts";
 
 function ensureCondition(condition: boolean, message: string): void {
   if (!condition) {
@@ -221,9 +221,57 @@ export class FlashTheme {
     this.ensureMaxLength(section.content, 350, "scope.content");
   }
 
-  private parseCurrencyValue(value: string): number {
-    const numeric = value.replace(/[^\d,]/g, "").replace(",", ".");
-    return Number(numeric);
+  private parseCurrencyValue(value: string | number | null | undefined): number {
+    if (value === null || value === undefined) return 0;
+
+    if (typeof value === "number") {
+      ensureCondition(!Number.isNaN(value), "Invalid currency value");
+      return value;
+    }
+
+    if (!value) return 0;
+
+    const cleaned = value.replace(/[R$\s]/gi, "");
+
+    const hasComma = cleaned.includes(",");
+    const hasDot = cleaned.includes(".");
+
+    let normalized = cleaned;
+
+    if (hasComma) {
+      normalized = cleaned.replace(/\./g, "").replace(/,/g, ".");
+    } else if (hasDot) {
+      const dotAsDecimal = /\.\d{1,2}$/.test(cleaned);
+      normalized = dotAsDecimal ? cleaned : cleaned.replace(/\./g, "");
+    }
+
+    const numeric = Number(normalized);
+    ensureCondition(!Number.isNaN(numeric), "Invalid currency value");
+
+    return numeric;
+  }
+
+  private formatCurrencyValue(value: number): string {
+    return `R$ ${value.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  }
+
+  private normalizeResultsSection(section: FlashResultsSection): FlashResultsSection {
+    const normalizedItems = (section.items ?? []).map((item, index) => ({
+      ...item,
+      investment: this.formatCurrencyValue(this.parseCurrencyValue(item.investment)),
+      roi: item.roi ?? "",
+      hidePhoto: item.hidePhoto ?? false,
+      sortOrder: item.sortOrder ?? index,
+      photo: item.photo ?? "/images/templates/flash/placeholder.png",
+    }));
+
+    return {
+      ...section,
+      items: normalizedItems,
+    };
   }
 
   private validateInvestmentSection(
@@ -309,10 +357,10 @@ export class FlashTheme {
       );
       
       // Validate value starts with R$ and contains only valid characters
-      // The normalization already handles formatting, so we just do basic validation
+      // Accept Brazilian format: R$ 1.500,00 or R$1.500 or R$1500
       ensureCondition(
-        plan.value.startsWith("R$") && /^R\$[\d.]+$/.test(plan.value),
-        `investment.plansItems[${index}].value must start with R$ and contain only digits and dots, got "${plan.value}"`
+        plan.value.startsWith("R$") && /^R\$\s?[\d.,\s]+$/.test(plan.value),
+        `investment.plansItems[${index}].value must be a valid Brazilian currency format, got "${plan.value}"`
       );
       ensureCondition(
         plan.buttonTitle.length <= 25,
@@ -389,6 +437,7 @@ export class FlashTheme {
   ): FlashInvestmentSection {
     const normalizedPlans = (section.plansItems ?? []).map((plan, index) => ({
       ...plan,
+      value: this.formatCurrencyValue(this.parseCurrencyValue(plan.value)),
       id: plan.id ?? crypto.randomUUID(),
       hideTitleField: plan.hideTitleField ?? false,
       hideDescription: plan.hideDescription ?? false,
@@ -396,7 +445,6 @@ export class FlashTheme {
       hidePlanPeriod: plan.hidePlanPeriod ?? false,
       hideButtonTitle: plan.hideButtonTitle ?? false,
       sortOrder: index,
-      value: this.normalizePriceValue(plan.value),
       includedItems: (plan.includedItems ?? []).map((item, itemIndex) => ({
         ...item,
         id: item.id ?? crypto.randomUUID(),
@@ -412,66 +460,6 @@ export class FlashTheme {
 
     this.validateInvestmentSection(normalized, selectedPlans);
     return normalized;
-  }
-
-  private normalizePriceValue(value: string): string {
-    console.log(`[normalizePriceValue] Input: "${value}"`);
-    
-    // Remove all spaces
-    let normalized = value.replace(/\s+/g, "");
-
-    // Ensure it starts with R$
-    if (!normalized.startsWith("R$")) {
-      normalized = `R$${normalized}`;
-    }
-
-    // Extract only the R$ prefix and digits
-    const match = normalized.match(/^(R\$)?([\d.,]+)$/);
-    if (!match) {
-      console.warn(`[normalizePriceValue] Could not match pattern for: "${normalized}"`);
-      // Try to extract just numbers and format them
-      const numbersOnly = normalized.replace(/[^\d]/g, "");
-      if (numbersOnly) {
-        const formatted = this.formatBrazilianCurrency(numbersOnly);
-        const result = `R$${formatted}`;
-        console.log(`[normalizePriceValue] Fallback formatting: "${result}"`);
-        return result;
-      }
-      return normalized;
-    }
-
-    const numericPart = match[2];
-
-    // Remove all dots and commas temporarily to get digits only
-    const digitsOnly = numericPart.replace(/[.,]/g, "");
-
-    // Check if original had decimal part (ended with ,XX)
-    const hasDecimals = /,\d{1,2}$/.test(numericPart);
-
-    let reaisValue: string;
-    if (hasDecimals) {
-      // Remove the last 2 digits (cents) to keep only reais
-      // Example: "150000" (from R$1.500,00) -> "1500" (R$1.500)
-      reaisValue = digitsOnly.slice(0, -2);
-    } else {
-      // No decimals, use all digits
-      reaisValue = digitsOnly;
-    }
-
-    // Format without cents (as per prompt requirements)
-    const finalNumber = this.formatBrazilianCurrency(reaisValue);
-    const result = `R$${finalNumber}`;
-    
-    console.log(`[normalizePriceValue] Output: "${result}"`);
-    return result;
-  }
-
-  private formatBrazilianCurrency(reais: string): string {
-    // Format reais part with dots for thousands, NO cents
-    const reaisNum = parseInt(reais || "0", 10);
-    const reaisFormatted = reaisNum.toLocaleString("pt-BR");
-
-    return reaisFormatted;
   }
 
   private normalizeFAQSection(entries: FlashFAQSection): FlashFAQSection {
@@ -785,7 +773,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           if (title.length > 50) {
             // Try to find a natural break point
             title = title.substring(0, 50);
-          }
+    }
 
           // Description: max 100 chars
           const baseDesc = `Aplicamos ${topic.toLowerCase()} para acelerar resultados do ${data.projectName}.`;
@@ -893,14 +881,11 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           // Description: max 140 chars - craft it to fit
           const description = `Cobertura estratégica com foco em ${projectName}, alinhando consultoria, execução e rituais de acompanhamento.`;
 
-          // Format value without cents
-          const formattedValue = this.formatBrazilianCurrency(valueBase.toString());
-
           return {
             id: crypto.randomUUID(),
             title: label, // Already within 20 chars
             description: description.substring(0, 140), // Ensure max 140 chars
-            value: `R$${formattedValue}`,
+            value: this.formatCurrencyValue(valueBase),
             planPeriod: ["Mensal", "Trimestral", "Anual"][index] ?? "Único",
             buttonTitle: "Solicitar Detalhes", // Already within 25 chars
             recommended: index === plansCount - 1,
@@ -1106,7 +1091,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       sectionKey: "introduction",
       data,
       agent,
-      expectedFormat,
+          expectedFormat,
       transform: (raw) => ({
         userName: data.userName ?? raw.userName ?? "",
         email: data.userEmail ?? raw.email ?? "",
@@ -1143,7 +1128,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         sectionKey: "aboutUs",
         data,
         agent,
-        expectedFormat,
+          expectedFormat,
         validate: (section) => this.validateAboutUsSection(section),
       });
     } catch (error) {
@@ -1172,7 +1157,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
     try {
       const section = await this.generateSectionWithValidation<
         {
-          title: string;
+        title: string;
           members?: Array<{ name: string; role: string; image?: string }>;
         },
         FlashTeamSection
@@ -1198,7 +1183,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
           this.validateTeamSection(processedSection),
       });
 
-      console.log("✅ MoA Team generated successfully");
+        console.log("✅ MoA Team generated successfully");
       return section;
     } catch (error) {
       console.error("Flash Team Generation Error:", error);
@@ -1290,7 +1275,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       sectionKey: "steps",
       data,
       agent,
-      expectedFormat,
+          expectedFormat,
       transform: (raw) => {
         const topicsRaw = Array.isArray(raw.topics) ? raw.topics : [];
         const normalizedTopics = Array.from({ length: 5 }).map((_, index) => {
@@ -1342,7 +1327,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       sectionKey: "scope",
       data,
       agent,
-      expectedFormat,
+          expectedFormat,
       transform: (raw) => ({
         content: raw.content ?? "",
       }),
@@ -1400,7 +1385,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         sectionKey: "investment",
         data,
         agent,
-        expectedFormat,
+          expectedFormat,
         transform: (raw) =>
           this.normalizeInvestmentSection(raw, data.selectedPlans),
         validate: () => {
@@ -1408,7 +1393,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         },
       });
 
-      console.log("✅ MoA Investment generated successfully");
+        console.log("✅ MoA Investment generated successfully");
       return section;
     } catch (error) {
       console.error("Flash Investment Generation Error:", error);
@@ -1504,13 +1489,14 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         // Generate proper UUIDs for the result items
         const resultsWithUUIDs = {
           ...moaResult.result,
-          items: moaResult.result.items.map((item) => ({
+          items: moaResult.result.items.map((item, index) => ({
             ...item,
             id: crypto.randomUUID(),
+            sortOrder: item.sortOrder ?? index,
           })),
         };
 
-        return resultsWithUUIDs;
+        return this.normalizeResultsSection(resultsWithUUIDs);
       }
 
       // Fallback to single model if MoA fails
@@ -1523,13 +1509,14 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       // Generate proper UUIDs for the result items
       const resultsWithUUIDs = {
         ...parsed,
-        items: parsed.items.map((item) => ({
+        items: parsed.items.map((item, index) => ({
           ...item,
           id: crypto.randomUUID(),
+          sortOrder: item.sortOrder ?? index,
         })),
       };
 
-      return resultsWithUUIDs;
+      return this.normalizeResultsSection(resultsWithUUIDs);
     } catch (error) {
       console.error("Flash Results Generation Error:", error);
       throw error;
@@ -1656,8 +1643,8 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       this.getSectionExpectedFormat("terms") ??
       `[
   {
-    "title": "string (maximum 30 characters, premium tone)",
-    "description": "string (maximum 180 characters, premium tone)"
+  "title": "string (maximum 30 characters, premium tone)",
+  "description": "string (maximum 180 characters, premium tone)"
   }
 ]`;
 
@@ -1669,7 +1656,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         sectionKey: "terms",
         data,
         agent,
-        expectedFormat,
+          expectedFormat,
         transform: (raw) => {
           // ensureItemsHaveIds handles both arrays and single objects
           return ensureItemsHaveIds(raw);
@@ -1677,7 +1664,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
         validate: (section) => this.validateTermsSection(section),
       });
 
-      console.log("✅ MoA Terms generated successfully");
+        console.log("✅ MoA Terms generated successfully");
       return section;
     } catch (error) {
       console.error("Flash Terms Generation Error:", error);
@@ -1711,7 +1698,7 @@ ATENÇÃO EXTRA (tentativa ${attempt + 1}):
       transform: (raw) => {
         if (!Array.isArray(raw.faq) || raw.faq.length === 0) {
           throw new Error("FAQ must contain at least 1 item");
-        }
+      }
         return raw.faq;
       },
       validate: (section) => this.validateFAQSection(section),

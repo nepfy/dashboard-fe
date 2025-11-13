@@ -37,6 +37,7 @@ export function FinalStep({
   setPagePassword,
   validUntil,
   setValidUntil,
+  onSlugEdited,
 }: {
   handleGenerateProposal: () => void;
   handleBack: () => void;
@@ -48,6 +49,7 @@ export function FinalStep({
   setPagePassword: (password: string) => void;
   validUntil: string;
   setValidUntil: (date: string) => void;
+  onSlugEdited?: () => void;
 }) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [urlValidationState, setUrlValidationState] =
@@ -183,6 +185,7 @@ export function FinalStep({
           onValidationStateChange={(state) => {
             setUrlValidationState(state);
           }}
+          onUserEdit={onSlugEdited}
         />
 
         <PasswordSection

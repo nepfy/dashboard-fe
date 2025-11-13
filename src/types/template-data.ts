@@ -269,7 +269,7 @@ export type ProjectStatus =
   | "rejected";
 
 // Template type enum
-export type TemplateType = "flash" | "prime" | "base";
+export type TemplateType = "flash" | "minimal" | "prime" | "base";
 
 // Button configuration interface
 export interface ButtonConfig {

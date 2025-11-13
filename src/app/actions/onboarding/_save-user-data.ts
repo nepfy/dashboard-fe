@@ -15,7 +15,12 @@ export async function saveUserData(formData: FormData) {
   try {
     const user = await currentUser();
 
-    const userEmail = user?.emailAddresses[0]?.emailAddress || "";
+    if (!user) {
+      throw new Error("Usuário não autenticado");
+    }
+
+    const userEmail = user.emailAddresses[0]?.emailAddress || "";
+    const clerkUserId = user.id;
 
     const fullName = formData.get("fullName") as string;
     const userName = formData.get("userName") as string;
@@ -34,6 +39,7 @@ export async function saveUserData(formData: FormData) {
       parseInt(discoverySourceStr.split(",")[0]) || null;
     const usedBeforeId = parseInt(usedBeforeStr) || null;
 
+    // Check if CPF or userName are already in use by OTHER users
     const existingUser = await db
       .select()
       .from(personUserTable)
@@ -42,36 +48,69 @@ export async function saveUserData(formData: FormData) {
       )
       .limit(1);
 
-    if (existingUser.length > 0) {
+    if (existingUser.length > 0 && existingUser[0].clerkUserId !== clerkUserId) {
       if (existingUser[0].cpf === cpf) {
         throw new Error("CPF já cadastrado");
       }
       if (existingUser[0].userName === userName) {
         throw new Error("Nome de usuário já está em uso");
       }
-      throw new Error("Dados já cadastrados");
     }
 
-    const insertResult = await db
-      .insert(personUserTable)
-      .values({
-        firstName: truncate(firstName),
-        lastName: truncate(lastName),
-        userName: truncate(userName),
-        cpf: truncate(cpf),
-        phone: truncate(phone),
-        email: truncate(userEmail),
-        created_at: new Date(),
-        updated_at: new Date(),
-        userJobType: jobTypeId,
-        userDiscovery: discoverySourceId,
-        userUsedBefore: usedBeforeId,
-      })
-      .returning({ id: personUserTable.id });
+    // Check if user already exists in our database (created by webhook)
+    const currentUserInDb = await db
+      .select()
+      .from(personUserTable)
+      .where(eq(personUserTable.clerkUserId, clerkUserId))
+      .limit(1);
+
+    let userId: string;
+
+    if (currentUserInDb.length > 0) {
+      // Update existing user with onboarding data
+      const updateResult = await db
+        .update(personUserTable)
+        .set({
+          firstName: truncate(firstName),
+          lastName: truncate(lastName),
+          userName: truncate(userName),
+          cpf: truncate(cpf),
+          phone: truncate(phone),
+          updated_at: new Date(),
+          userJobType: jobTypeId,
+          userDiscovery: discoverySourceId,
+          userUsedBefore: usedBeforeId,
+        })
+        .where(eq(personUserTable.clerkUserId, clerkUserId))
+        .returning({ id: personUserTable.id });
+
+      userId = updateResult[0]?.id;
+    } else {
+      // Fallback: Create user if webhook didn't create it yet
+      const insertResult = await db
+        .insert(personUserTable)
+        .values({
+          clerkUserId,
+          firstName: truncate(firstName),
+          lastName: truncate(lastName),
+          userName: truncate(userName),
+          cpf: truncate(cpf),
+          phone: truncate(phone),
+          email: truncate(userEmail),
+          created_at: new Date(),
+          updated_at: new Date(),
+          userJobType: jobTypeId,
+          userDiscovery: discoverySourceId,
+          userUsedBefore: usedBeforeId,
+        })
+        .returning({ id: personUserTable.id });
+
+      userId = insertResult[0]?.id;
+    }
 
     return {
       success: true,
-      userId: insertResult[0]?.id,
+      userId,
       message: "Dados salvos com sucesso",
     };
   } catch (error) {

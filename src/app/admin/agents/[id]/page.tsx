@@ -3,7 +3,7 @@ import { db } from "#/lib/db";
 import { agentsTable } from "#/lib/db/schema/agents";
 import { eq } from "drizzle-orm";
 import { DatabaseAgentConfig } from "#/modules/ai-generator/agents/database-agents";
-import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-config";
+import { TemplateConfig } from "#/modules/ai-generator/agents/base/template-constraints";
 import AgentEditor from "./components/AgentEditor";
 
 interface AgentPageProps {

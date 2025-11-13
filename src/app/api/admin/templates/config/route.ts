@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   templateConfigManager,
   type TemplateConfig,
-} from "#/modules/ai-generator/config/template-config";
+} from "#/modules/ai-generator/config/template-prompts";
 
 // GET /api/admin/templates/config - Get all template configurations
 export async function GET() {

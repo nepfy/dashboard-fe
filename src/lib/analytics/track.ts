@@ -24,6 +24,12 @@ import type {
   PlanUpgradedProperties,
   PlanLimitReachedProperties,
   PlanCanceledProperties,
+  NotificationCenterOpenedProperties,
+  NotificationClickedProperties,
+  NotificationsMarkedAllReadProperties,
+  NotificationDeletedProperties,
+  NotificationSentProperties,
+  NotificationEmailSentProperties,
 } from "./events";
 
 /**
@@ -182,7 +188,9 @@ export function trackEditorSettingsChanged(
   });
 }
 
-export function trackProposalPublished(properties: ProposalPublishedProperties) {
+export function trackProposalPublished(
+  properties: ProposalPublishedProperties
+) {
   const posthog = getPostHog();
   if (!posthog) return;
 
@@ -237,6 +245,77 @@ export function trackProposalAccepted(properties: ProposalAcceptedProperties) {
   });
 }
 
+// Notification Tracking
+export function trackNotificationCenterOpened(
+  properties?: NotificationCenterOpenedProperties
+) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("notification_center_opened", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackNotificationClicked(
+  properties: NotificationClickedProperties
+) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("notification_clicked", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackNotificationsMarkedAllRead(
+  properties?: NotificationsMarkedAllReadProperties
+) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("notifications_marked_all_read", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackNotificationDeleted(
+  properties: NotificationDeletedProperties
+) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("notification_deleted", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackNotificationSent(properties: NotificationSentProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("notification_sent", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackNotificationEmailSent(
+  properties: NotificationEmailSentProperties
+) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("notification_email_sent", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
 // Plan Tracking
 export function trackPlanTrialStarted(properties?: PlanTrialStartedProperties) {
   const posthog = getPostHog();
@@ -277,4 +356,3 @@ export function trackPlanCanceled(properties: PlanCanceledProperties) {
     timestamp: new Date().toISOString(),
   });
 }
-

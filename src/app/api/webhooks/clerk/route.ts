@@ -3,6 +3,9 @@ import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { ClerkStripeSyncService } from "#/lib/services/clerk-stripe-sync";
+import { db } from "#/lib/db";
+import { personUserTable } from "#/lib/db/schema/users";
+import { eq } from "drizzle-orm";
 
 const webhookSecret = process.env.CLERK_WEBHOOK_SECRET!;
 
@@ -46,9 +49,29 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   if (eventType === "user.created") {
-    const { id, unsafe_metadata } = evt.data;
+    const { id, email_addresses, first_name, last_name, unsafe_metadata } = evt.data;
 
     try {
+      // Get primary email
+      const primaryEmail = email_addresses?.find(
+        (email: { id: string }) => email.id === evt.data.primary_email_address_id
+      );
+
+      if (!primaryEmail) {
+        console.error("No primary email found for user:", id);
+        return new NextResponse("No primary email found", { status: 400 });
+      }
+
+      // Create user in person_user table
+      await db.insert(personUserTable).values({
+        clerkUserId: id,
+        email: primaryEmail.email_address,
+        firstName: first_name || null,
+        lastName: last_name || null,
+      });
+
+      console.log(`Created person record for user ${id}`);
+
       // Sync user data to Stripe if they have subscription-related metadata
       if (unsafe_metadata?.subscriptionType || unsafe_metadata?.plan) {
         await ClerkStripeSyncService.syncUserToStripe(id);
@@ -62,9 +85,28 @@ export async function POST(req: Request) {
   }
 
   if (eventType === "user.updated") {
-    const { id } = evt.data;
+    const { id, email_addresses, first_name, last_name } = evt.data;
 
     try {
+      // Get primary email
+      const primaryEmail = email_addresses?.find(
+        (email: { id: string }) => email.id === evt.data.primary_email_address_id
+      );
+
+      if (primaryEmail) {
+        // Update user in person_user table
+        await db
+          .update(personUserTable)
+          .set({
+            email: primaryEmail.email_address,
+            firstName: first_name || null,
+            lastName: last_name || null,
+          })
+          .where(eq(personUserTable.clerkUserId, id));
+
+        console.log(`Updated person record for user ${id}`);
+      }
+
       // Sync updated user data to Stripe
       await ClerkStripeSyncService.syncUserToStripe(id);
 
@@ -76,7 +118,22 @@ export async function POST(req: Request) {
   }
 
   if (eventType === "user.deleted") {
+    const { id } = evt.data;
+
+    if (!id) {
+      console.error("No user ID provided for user.deleted event");
+      return new NextResponse("No user ID provided", { status: 400 });
+    }
+
     try {
+      // Soft delete user in person_user table (if you have deleted_at column)
+      // Or hard delete if preferred
+      await db
+        .delete(personUserTable)
+        .where(eq(personUserTable.clerkUserId, id));
+
+      console.log(`Deleted person record for user ${id}`);
+
       // Note: We don't delete Stripe customers when users are deleted from Clerk
       // This is to preserve billing history and prevent data loss
       // Stripe customers can be manually managed if needed

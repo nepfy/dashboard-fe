@@ -4,9 +4,9 @@ import { db } from "#/lib/db";
 import { personUserTable } from "#/lib/db/schema/users";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { eq, and } from "drizzle-orm";
+import { slugify } from "#/lib/slug";
 
-const sanitizeProjectUrl = (value: string): string =>
-  value.trim().toLowerCase();
+const sanitizeProjectUrl = (value: string): string => slugify(value);
 
 export async function GET(request: NextRequest) {
   try {

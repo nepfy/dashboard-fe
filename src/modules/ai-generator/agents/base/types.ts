@@ -1,4 +1,4 @@
-import { TemplateConfig } from "./template-config";
+import { TemplateConfig } from "./template-constraints";
 
 export interface BaseAgentConfig {
   id: string;

@@ -1,0 +1,90 @@
+import { clerkClient } from "@clerk/nextjs/server";
+import { db } from "#/lib/db";
+import { personUserTable } from "#/lib/db/schema/users";
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+
+/**
+ * Sync all Clerk users to the person_user table
+ * This endpoint should be called once to backfill existing users
+ */
+export async function POST() {
+  try {
+    const clerk = await clerkClient();
+    
+    // Get all users from Clerk
+    const { data: users, totalCount } = await clerk.users.getUserList({
+      limit: 500, // Adjust based on your needs
+    });
+
+    console.log(`Found ${totalCount} users in Clerk`);
+
+    let created = 0;
+    let updated = 0;
+    let errors = 0;
+
+    for (const user of users) {
+      try {
+        // Get primary email
+        const primaryEmail = user.emailAddresses.find(
+          (email) => email.id === user.primaryEmailAddressId
+        );
+
+        if (!primaryEmail) {
+          console.warn(`No primary email for user ${user.id}`);
+          errors++;
+          continue;
+        }
+
+        // Check if user already exists by clerkUserId
+        const existingPerson = await db
+          .select()
+          .from(personUserTable)
+          .where(eq(personUserTable.clerkUserId, user.id))
+          .limit(1);
+
+        const userData = {
+          clerkUserId: user.id,
+          email: primaryEmail.emailAddress,
+          firstName: user.firstName || null,
+          lastName: user.lastName || null,
+        };
+
+        if (existingPerson.length > 0) {
+          // Update existing user
+          await db
+            .update(personUserTable)
+            .set(userData)
+            .where(eq(personUserTable.clerkUserId, user.id));
+          updated++;
+        } else {
+          // Create new user
+          await db.insert(personUserTable).values(userData);
+          created++;
+        }
+
+        console.log(`Processed user ${user.id}`);
+      } catch (error) {
+        console.error(`Error processing user ${user.id}:`, error);
+        errors++;
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      summary: {
+        total: users.length,
+        created,
+        updated,
+        errors,
+      },
+    });
+  } catch (error) {
+    console.error("Error syncing users:", error);
+    return NextResponse.json({
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }, { status: 500 });
+  }
+}
+

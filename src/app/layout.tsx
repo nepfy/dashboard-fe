@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import { headers } from "next/headers";
 import "#/styles/globals.css";
 import { PostHogProvider } from "#/lib/analytics/PostHogProvider";
+import { isMainDomain } from "#/lib/subdomain";
 
 const satoshi = localFont({
   src: [
@@ -66,17 +67,6 @@ export const metadata: Metadata = {
     "msapplication-config": "/browserconfig.xml",
   },
 };
-
-function isMainDomain(hostname: string): boolean {
-  return (
-    hostname === "staging-app.nepfy.com" ||
-    hostname === "app.nepfy.com" ||
-    hostname === "localhost:3000" ||
-    hostname === "nepfy.com" ||
-    hostname === "www.nepfy.com" ||
-    hostname === "localhost"
-  );
-}
 
 export default async function RootLayout({
   children,

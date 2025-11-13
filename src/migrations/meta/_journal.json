@@ -22,6 +22,20 @@
       "when": 1760800059971,
       "tag": "0002_equal_sumo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1762580643471,
+      "tag": "0003_superb_white_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763032835547,
+      "tag": "0004_chief_hex",
+      "breakpoints": true
     }
   ]
 }

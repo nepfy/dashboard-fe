@@ -1,0 +1,1304 @@
+<!DOCTYPE html><!--  Last Published: Mon Oct 27 2025 17:03:07 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="685efd209996a3ec4a490c16" data-wf-site="685efd209996a3ec4a490c1a">
+<head>
+  <meta charset="utf-8">
+  <title>Empty Studio</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/components.css" rel="stylesheet" type="text/css">
+  <link href="css/empty-studio.css" rel="stylesheet" type="text/css">
+  <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+  <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="images/webclip.png" rel="apple-touch-icon"><!--  CSS  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.css">
+  <!--  JS  -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.min.js"></script>
+  <meta name="format-detection" content="telephone=no"><!--  GSAP Marquee -->
+  <style>
+[data-marquee] {
+  overflow: hidden;
+}
+[data-marquee-content], [data-marquee-clone] {
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body style="background-color: #000000;">
+  <div class="page-wrapper">
+    <div class="staggered-code w-embed w-script">
+      <script>
+function initButtonCharacterStagger() {
+  const offsetIncrement = 0.01; // Transition offset increment in seconds
+  const buttons = document.querySelectorAll('[data-button-animate-chars]');
+  buttons.forEach(button => {
+    const text = button.textContent; // Get the button's text content
+    button.innerHTML = ''; // Clear the original content
+    [...text].forEach((char, index) => {
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.style.transitionDelay = `${index * offsetIncrement}s`;
+      // Handle spaces explicitly
+      if (char === ' ') {
+        span.style.whiteSpace = 'pre'; // Preserve space width
+      }
+      button.appendChild(span);
+    });
+  });
+}
+// Initialize Button Character Stagger Animation
+document.addEventListener('DOMContentLoaded', () => {
+  initButtonCharacterStagger();
+});
+</script>
+      <style>
+  /* Characters */
+  .btn-animate-chars [data-button-animate-chars] {
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+  }
+  .btn-animate-chars [data-button-animate-chars] span {
+    display: inline-block;
+    position: relative;
+    text-shadow: 0px 1.3rem currentColor;
+    transform: translateY(0rem) rotate(0.001deg);
+    transition: transform 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+  }
+  .btn-animate-chars:hover [data-button-animate-chars] span {
+    transform: translateY(-1.3rem) rotate(0.001deg);
+  }
+  /* Background */
+  .btn-animate-chars__bg {
+    inset: 0;
+    transition: inset 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+  }
+  .btn-animate-chars:hover .btn-animate-chars__bg {
+    inset: 0.125rem;
+  }
+</style>
+    </div>
+    <div class="global-styles w-embed">
+      <style>
+/* Make text look crisper and more legible in all browsers */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+/* Focus state style for keyboard navigation for the focusable elements */
+*[tabindex]:focus-visible,
+  input[type="file"]:focus-visible {
+   outline: 0.125rem solid #4d65ff;
+   outline-offset: 0.125rem;
+}
+/* Set color style to inherit */
+.inherit-color * {
+    color: inherit;
+}
+/* Get rid of top margin on first element in any rich text element */
+.w-richtext > :not(div):first-child, .w-richtext > div:first-child > :first-child {
+  margin-top: 0 !important;
+}
+/* Get rid of bottom margin on last element in any rich text element */
+.w-richtext>:last-child, .w-richtext ol li:last-child, .w-richtext ul li:last-child {
+	margin-bottom: 0 !important;
+}
+/* Make sure containers never lose their center alignment */
+.container-medium,.container-small, .container-large {
+	margin-right: auto !important;
+  margin-left: auto !important;
+}
+/* 
+Make the following elements inherit typography styles from the parent and not have hardcoded values. 
+Important: You will not be able to style for example "All Links" in Designer with this CSS applied.
+Uncomment this CSS to use it in the project. Leave this message for future hand-off.
+*/
+/*
+a,
+.w-input,
+.w-select,
+.w-tab-link,
+.w-nav-link,
+.w-dropdown-btn,
+.w-dropdown-toggle,
+.w-dropdown-link {
+  color: inherit;
+  text-decoration: inherit;
+  font-size: inherit;
+}
+*/
+/* Apply "..." after 3 lines of text */
+.text-style-3lines {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+}
+/* Apply "..." after 2 lines of text */
+.text-style-2lines {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+/* Adds inline flex display */
+.display-inlineflex {
+  display: inline-flex;
+}
+/* These classes are never overwritten */
+.hide {
+  display: none !important;
+}
+@media screen and (max-width: 991px) {
+    .hide, .hide-tablet {
+        display: none !important;
+    }
+}
+  @media screen and (max-width: 767px) {
+    .hide-mobile-landscape{
+      display: none !important;
+    }
+}
+  @media screen and (max-width: 479px) {
+    .hide-mobile{
+      display: none !important;
+    }
+}
+.margin-0 {
+  margin: 0rem !important;
+}
+.padding-0 {
+  padding: 0rem !important;
+}
+.spacing-clean {
+padding: 0rem !important;
+margin: 0rem !important;
+}
+.margin-top {
+  margin-right: 0rem !important;
+  margin-bottom: 0rem !important;
+  margin-left: 0rem !important;
+}
+.padding-top {
+  padding-right: 0rem !important;
+  padding-bottom: 0rem !important;
+  padding-left: 0rem !important;
+}
+.margin-right {
+  margin-top: 0rem !important;
+  margin-bottom: 0rem !important;
+  margin-left: 0rem !important;
+}
+.padding-right {
+  padding-top: 0rem !important;
+  padding-bottom: 0rem !important;
+  padding-left: 0rem !important;
+}
+.margin-bottom {
+  margin-top: 0rem !important;
+  margin-right: 0rem !important;
+  margin-left: 0rem !important;
+}
+.padding-bottom {
+  padding-top: 0rem !important;
+  padding-right: 0rem !important;
+  padding-left: 0rem !important;
+}
+.margin-left {
+  margin-top: 0rem !important;
+  margin-right: 0rem !important;
+  margin-bottom: 0rem !important;
+}
+.padding-left {
+  padding-top: 0rem !important;
+  padding-right: 0rem !important;
+  padding-bottom: 0rem !important;
+}
+.margin-horizontal {
+  margin-top: 0rem !important;
+  margin-bottom: 0rem !important;
+}
+.padding-horizontal {
+  padding-top: 0rem !important;
+  padding-bottom: 0rem !important;
+}
+.margin-vertical {
+  margin-right: 0rem !important;
+  margin-left: 0rem !important;
+}
+.padding-vertical {
+  padding-right: 0rem !important;
+  padding-left: 0rem !important;
+}
+</style>
+    </div>
+    <main class="main-wrapper">
+      <nav class="progress-nav">
+        <div class="progress-nav__inner">
+          <div class="progress-nav__wrapper">
+            <div data-progress-nav-list="" class="progress-nav__list">
+              <div class="progress-nav__indicator"></div>
+              <div data-progress-nav-target="#top" class="progress-nav__btn is--before"></div>
+              <a data-progress-nav-target="#about" href="#about" class="progress-nav__btn w-inline-block"><span class="progress-nav__btn-text">About</span><span class="progress-nav__btn-text is--duplicate">About</span></a>
+              <a data-progress-nav-target="#expertise" href="#expertise" class="progress-nav__btn w-inline-block"><span class="progress-nav__btn-text">Expertise</span><span class="progress-nav__btn-text is--duplicate">Expertise</span></a>
+              <a data-progress-nav-target="#investiment" href="#investiment" class="progress-nav__btn w-inline-block"><span class="progress-nav__btn-text">Investment</span><span class="progress-nav__btn-text is--duplicate">Investment</span></a>
+              <div class="sticky-nav_divider"></div>
+              <a href="#" class="progress-nav__btn is-mobile w-inline-block"><span class="progress-nav__btn-text">Get Started</span><span class="progress-nav__btn-text is--duplicate">Get Started</span></a>
+              <div data-progress-nav-target="#bottom" class="progress-nav__btn is--after"></div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <section class="section_hero">
+        <div data-animation="default" data-collapse="none" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="nav_component w-nav">
+          <div class="padding-global">
+            <div class="container-large">
+              <div class="nav_wrap">
+                <div class="nav_brand">
+                  <div class="text-weight-medium text-size-medium" id="introduction-username"></div>
+                </div>
+                <nav role="navigation" class="nav_menu w-nav-menu">
+                  <a aria-label="staggering button" href="#" class="btn-animate-chars w-inline-block">
+                    <div class="btn-animate-chars__bg"></div><span data-button-animate-chars="" class="btn-animate-chars__text text-size-regular" id="buttonconfig-buttontitle">Start Project</span>
+                  </a>
+                </nav>
+                <div class="nav_button w-nav-button">
+                  <div class="w-icon-nav-menu"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="padding-global padding-section-large">
+          <div class="w-layout-blockcontainer container-large w-container">
+            <div class="hero_component">
+              <div class="hero_left">
+                <div class="heading-wrap">
+                  <h1 class="heading-style-h1 text-weight-light">Hello,</h1>
+                  <div class="heading-client-image"></div>
+                  <h1 class="heading-style-h1 text-weight-light" id="introduction-username">Jesse</h1>
+                </div>
+                <h1 class="heading-line">—</h1>
+                <h1 class="heading-style-h1 text-weight-light" id="introduction-title">Focus on the Aurore product growing while we cover the brand design and web development services.</h1>
+              </div>
+              <div class="hero_right">
+                <div class="text-size-regular text-weight-light">Proposal — <span class="text-color-grey"><span id="introduction-validity">June 22, 2025</span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="marquee_component">
+          <div data-marquee-pause="true" data-marquee="" data-marquee-speed="60" class="marquee_content">
+            <div data-marquee-content="" class="marquee_item">
+              <div class="marquee-img"><img src="images/img1.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img1-p-500.jpg 500w, images/img1-p-800.jpg 800w, images/img1.jpg 1160w" alt="" class="image"></div>
+              <div class="marquee-img"><img src="images/img2.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img2-p-500.jpg 500w, images/img2-p-800.jpg 800w, images/img2-p-1080.jpg 1080w, images/img2.jpg 1160w" alt="" class="image"></div>
+              <div class="marquee-img">
+                <div data-poster-url="videos/scribbble2-poster-00001.jpg" data-video-urls="videos/scribbble2-transcode.mp4,videos/scribbble2-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="video-marquee w-background-video w-background-video-atom"><video id="d14ca06e-568e-ae46-0efe-d65aeb9d1255-video" autoplay="" loop="" style="background-image:url(&quot;videos/scribbble2-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                    <source src="videos/scribbble2-transcode.mp4" data-wf-ignore="true">
+                    <source src="videos/scribbble2-transcode.webm" data-wf-ignore="true">
+                  </video></div>
+              </div>
+              <div class="marquee-img"><img src="images/img4.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img4-p-500.jpg 500w, images/img4-p-800.jpg 800w, images/img4-p-1080.jpg 1080w, images/img4.jpg 1160w" alt="" class="image"></div>
+              <div class="marquee-img">
+                <div data-poster-url="videos/smoov-poster-00001.jpg" data-video-urls="videos/smoov-transcode.mp4,videos/smoov-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="video-marquee w-background-video w-background-video-atom"><video id="0ad608e7-97e4-8ebd-59bd-3381b52facb4-video" autoplay="" loop="" style="background-image:url(&quot;videos/smoov-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                    <source src="videos/smoov-transcode.mp4" data-wf-ignore="true">
+                    <source src="videos/smoov-transcode.webm" data-wf-ignore="true">
+                  </video></div>
+              </div>
+              <div class="marquee-img"><img src="images/img6.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img6-p-500.jpg 500w, images/img6-p-800.jpg 800w, images/img6-p-1080.jpg 1080w, images/img6.jpg 1160w" alt="" class="image"></div>
+            </div>
+            <div data-marquee-content="" class="marquee_item">
+              <div class="marquee-img"><img src="images/img1.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img1-p-500.jpg 500w, images/img1-p-800.jpg 800w, images/img1.jpg 1160w" alt="" class="image"></div>
+              <div class="marquee-img"><img src="images/img2.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img2-p-500.jpg 500w, images/img2-p-800.jpg 800w, images/img2-p-1080.jpg 1080w, images/img2.jpg 1160w" alt="" class="image"></div>
+              <div class="marquee-img">
+                <div data-poster-url="videos/scribbble2-poster-00001.jpg" data-video-urls="videos/scribbble2-transcode.mp4,videos/scribbble2-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="video-marquee w-background-video w-background-video-atom"><video id="7458f260-9b57-822a-7b6c-fb775008826c-video" autoplay="" loop="" style="background-image:url(&quot;videos/scribbble2-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                    <source src="videos/scribbble2-transcode.mp4" data-wf-ignore="true">
+                    <source src="videos/scribbble2-transcode.webm" data-wf-ignore="true">
+                  </video></div>
+              </div>
+              <div class="marquee-img"><img src="images/img4.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img4-p-500.jpg 500w, images/img4-p-800.jpg 800w, images/img4-p-1080.jpg 1080w, images/img4.jpg 1160w" alt="" class="image"></div>
+              <div class="marquee-img">
+                <div data-poster-url="videos/smoov-poster-00001.jpg" data-video-urls="videos/smoov-transcode.mp4,videos/smoov-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="video-marquee w-background-video w-background-video-atom"><video id="7458f260-9b57-822a-7b6c-fb7750088270-video" autoplay="" loop="" style="background-image:url(&quot;videos/smoov-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                    <source src="videos/smoov-transcode.mp4" data-wf-ignore="true">
+                    <source src="videos/smoov-transcode.webm" data-wf-ignore="true">
+                  </video></div>
+              </div>
+              <div class="marquee-img"><img src="images/img6.jpg" loading="lazy" sizes="(max-width: 1160px) 100vw, 1160px" srcset="images/img6-p-500.jpg 500w, images/img6-p-800.jpg 800w, images/img6-p-1080.jpg 1080w, images/img6.jpg 1160w" alt="" class="image"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section_about">
+        <div class="padding-global">
+          <div class="w-layout-blockcontainer container-large w-container">
+            <div data-w-id="97b6f33b-99ae-2558-a552-03b19bd21fd7" class="about_component">
+              <div class="about-heading">
+                <div class="about-heading_left">
+                  <div class="text-weight-light text-size-regular">Proposal — <span class="text-color-grey">June 22, 2025</span></div>
+                  <div id="introduction-subtitle">Focus on the Aurore product growing while we cover the brand design,</div>
+                </div>
+                <div class="about-heading_title">
+                  <h2 class="heading-style-h1 text-weight-light" id="aboutus-title">We're a creative studio focused on bringing brands to life through thoughtful design and smart technology.</h2>
+                </div>
+              </div>
+              <div class="about-content">
+                <div class="about-dev">
+                  <div class="about-video">
+                    <div data-poster-url="videos/1-build-with-raw-ingredients_compressed-poster-00001.jpg" data-video-urls="videos/1-build-with-raw-ingredients_compressed-transcode.mp4,videos/1-build-with-raw-ingredients_compressed-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="about-video w-background-video w-background-video-atom"><video id="9558e231-0a56-e39f-c907-c9c1e4b10856-video" autoplay="" loop="" style="background-image:url(&quot;videos/1-build-with-raw-ingredients_compressed-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                        <source src="videos/1-build-with-raw-ingredients_compressed-transcode.mp4" data-wf-ignore="true">
+                        <source src="videos/1-build-with-raw-ingredients_compressed-transcode.webm" data-wf-ignore="true">
+                      </video></div>
+                  </div>
+                  <div class="about-paragraph">
+                    <p>We’re a creative studio focused on bringing brands to life through thoughtful design and smart technology.</p>
+                  </div>
+                </div>
+                <div class="about-design">
+                  <div class="about-video is-figma">
+                    <div data-poster-url="videos/e414de9bdb45e752b36dc76e3838977534ec4106-poster-00001.jpg" data-video-urls="videos/e414de9bdb45e752b36dc76e3838977534ec4106-transcode.mp4,videos/e414de9bdb45e752b36dc76e3838977534ec4106-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="about-video w-background-video w-background-video-atom"><video id="7862354e-d076-ccc3-0697-e6f807b55681-video" autoplay="" loop="" style="background-image:url(&quot;videos/e414de9bdb45e752b36dc76e3838977534ec4106-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                        <source src="videos/e414de9bdb45e752b36dc76e3838977534ec4106-transcode.mp4" data-wf-ignore="true">
+                        <source src="videos/e414de9bdb45e752b36dc76e3838977534ec4106-transcode.webm" data-wf-ignore="true">
+                      </video></div>
+                  </div>
+                  <div class="about-paragraph">
+                    <p>We’re a creative studio focused on bringing brands to life through thoughtful design and smart technology.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about-marquee" id="introduction-services">
+          <div data-marquee-pause="true" data-marquee="" data-marquee-speed="60" class="marquee_content">
+            <div data-marquee-content="" class="marquee_item">
+              <div class="about-marquee_text">Brand Design → Design Systems → UI Design → Webflow Development</div>
+            </div>
+            <div class="marquee_item">
+              <div class="about-marquee_text">Brand Design → Design Systems → UI Design → Webflow Development</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div data-w-id="38be1e05-56f5-011d-649b-792acf541a1e" class="locomotive-wrap">
+        <section id="about" data-progress-nav-anchor="" data-w-id="2f7add0a-dddf-2ff8-dc82-66315dad3535" class="section_partners">
+          <div class="padding-global">
+            <div class="w-layout-blockcontainer container-large w-container">
+              <div class="partners-component">
+                <div class="partners-heading">
+                  <h1 class="heading-style-h2 text-weight-normal">We recognized a gap in the creative industry—small businesses often struggle to find high-quality, yet affordable, design solutions. That&#x27;s why we exist.</h1>
+                </div>
+                <div class="partners-paragraph">
+                  <p class="text-size-medium">Your website is most likely the first point of contact someone will have with your brand. Cut through the noise and stand out from the crowd by creating a website that will help you achieve your business goals while showing who you are in a way people will not forget.</p>
+                  <p class="text-size-medium">Design is about creating experiences, making the lives of people easier, or even making it fun when you&#x27;re not having the best day. With that in mind, we provide services to be your partner on your next project.</p>
+                </div>
+                <div class="w-layout-grid partners-grid">
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="80" height="24" viewbox="0 0 80 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1172)">
+                          <g clip-path="url(#clip1_36_1172)">
+                            <path d="M25.832 9.80782C25.832 8.37271 24.4365 6.84852 22.0215 6.84852C19.3097 6.84852 16.3306 8.83788 15.8753 12.8067C15.4101 16.8151 17.9042 18.5966 20.4182 18.5966C22.9321 18.5966 24.2484 17.6168 25.5945 16.3104C24.4365 14.8554 22.942 15.5285 22.655 15.6769C22.3382 15.8353 21.9325 16.053 21.1011 16.053C20.1311 16.053 19.1414 15.6175 19.1414 13.8063C25.3569 13.1927 25.832 11.2429 25.832 9.80782ZM22.7539 10.0454C22.7143 10.4907 22.5362 11.2528 19.3888 11.6784C20.052 9.32285 21.3188 9.1447 21.9028 9.1447C22.4471 9.1447 22.7935 9.57028 22.7539 10.0454ZM12.2232 10.4314C12.2232 10.4314 10.887 14.6278 10.7782 14.9742C10.7386 14.6179 9.75875 7.08606 9.75875 7.08606C7.48237 7.08606 6.265 8.70922 5.62168 10.4215C5.62168 10.4215 3.99852 14.6278 3.85995 14.9841C3.85006 14.6575 3.61252 10.4709 3.61252 10.4709C3.47396 8.37271 1.55388 7.09595 0 7.09595L1.88049 18.5076C4.26574 18.4977 5.55239 16.8844 6.22541 15.1722C6.22541 15.1722 7.66052 11.4607 7.71991 11.2924C7.7298 11.4508 8.74923 18.5076 8.74923 18.5076C11.1444 18.5076 12.431 16.9933 13.1238 15.3404L16.479 7.09595C14.1136 7.09595 12.8665 8.70922 12.2232 10.4314ZM34.6208 6.82873C33.1461 6.82873 32.0178 7.63041 31.0677 8.80819V8.79829L31.9188 1.93945C29.9592 1.93945 28.3657 3.64179 28.0589 6.1755L26.5743 18.4185C27.7026 18.4185 28.9002 18.0919 29.5435 17.2605C30.1175 18.0028 30.9786 18.5966 32.2554 18.5966C35.5611 18.5966 37.8275 14.7565 37.8275 11.1539C37.8077 7.86794 36.2143 6.82873 34.6208 6.82873ZM34.314 12.7176C33.9676 14.7268 32.8492 16.0926 31.7704 16.0926C30.6817 16.0926 30.2165 15.6076 30.2165 15.6076C30.4243 13.8459 30.553 12.7671 30.9489 11.8368C31.3448 10.9064 32.285 9.42182 33.2649 9.42182C34.2249 9.42182 34.6604 10.6986 34.314 12.7176ZM46.0819 7.09595H43.7758L43.7857 6.97719C43.9441 5.47279 44.3004 4.68101 45.4782 4.55234C46.2798 4.47317 46.6362 4.05748 46.7252 3.6022C46.7945 3.2459 47.0122 2.00873 47.0122 2.00873C42.3803 1.97904 40.9254 3.9783 40.5493 7.02667L40.5394 7.09595H40.4899C39.7377 7.09595 38.9063 7.94712 38.7678 9.02593L38.7183 9.42182H40.2623L38.9657 20.1307L38.5698 22.0508C38.6193 22.0508 38.6787 22.0607 38.7282 22.0607C40.8957 21.9815 42.2813 20.2693 42.5881 17.7851L43.5977 9.42182H44.3202C45.0328 9.42182 45.8642 8.70922 46.0126 7.52154L46.0819 7.09595ZM58.0774 6.89801C55.4151 6.89801 52.9012 8.85768 52.1292 11.9357C51.3572 15.0138 52.5251 18.656 56.4444 18.656C60.3538 18.656 62.6104 14.8653 62.6104 11.7081C62.6104 8.57065 60.4825 6.89801 58.0774 6.89801ZM59.1563 12.6187C59.0177 14.0142 58.4041 16.1322 56.7215 16.1322C55.0291 16.1322 55.2666 13.6579 55.4349 12.4801C55.613 11.2231 56.3157 9.43172 57.83 9.43172C59.1859 9.43172 59.3146 11.045 59.1563 12.6187ZM75.764 10.4314C75.764 10.4314 74.4278 14.6278 74.3189 14.9742C74.2794 14.6179 73.2995 7.08606 73.2995 7.08606C71.0231 7.08606 69.8058 8.70922 69.1624 10.4215C69.1624 10.4215 67.5393 14.6278 67.4007 14.9841C67.3908 14.6575 67.1533 10.4709 67.1533 10.4709C67.0147 8.37271 65.0946 7.09595 63.5408 7.09595L65.4114 18.5076C67.7966 18.4977 69.0833 16.8844 69.7563 15.1722C69.7563 15.1722 71.1914 11.4607 71.2409 11.2924C71.2607 11.4508 72.2702 18.5076 72.2702 18.5076C74.6653 18.5076 75.952 16.9933 76.6448 15.3404L80 7.09595C77.6444 7.09595 76.3974 8.70922 75.764 10.4314ZM48.2593 2.00873L46.3194 17.6564L45.9235 19.5864C45.973 19.5864 46.0324 19.5963 46.0819 19.5963C48.1702 19.5666 49.6548 17.7356 49.932 15.4295L51.0504 6.45263C51.3869 3.71107 49.7538 2.00873 48.2593 2.00873Z" fill="black"></path>
+                          </g>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1172">
+                            <rect width="80" height="24" fill="white"></rect>
+                          </clippath>
+                          <clippath id="clip1_36_1172">
+                            <rect width="80" height="20.1212" fill="white" transform="translate(0 1.93945)"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="82" height="26" viewbox="0 0 82 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1177)">
+                          <mask id="mask0_36_1177" style="mask-type:luminance" maskunits="userSpaceOnUse" x="0" y="0" width="82" height="26">
+                            <path d="M82 0H0V26H82V0Z" fill="white"></path>
+                          </mask>
+                          <g mask="url(#mask0_36_1177)">
+                            <path d="M9.07191 8.75334H17.966V0.259766H0.355469V0.346198L9.07191 8.75334Z" fill="#121212"></path>
+                            <path d="M9.07188 8.75391H0.177734V17.2468H17.7883V17.1603L9.07188 8.75391Z" fill="#121212"></path>
+                            <path d="M0.269531 17.1602H9.07446V25.7402L0.269531 17.1602Z" fill="#121212"></path>
+                            <path d="M30.0631 17.1595V12.4795H35.3111V10.313H30.0631V7.19302H35.7556V4.93945H27.4844V17.073H30.0631V17.1595Z" fill="#121212"></path>
+                            <path d="M42.3345 8.32005C42.1568 8.23362 41.8007 8.14648 41.3562 8.14648C40.4664 8.14648 39.7551 8.58005 39.3105 9.18648V8.32005H36.8203V17.1601H39.3105V11.7001C39.4882 10.9201 40.2003 10.4865 41.0002 10.4865C41.4454 10.4865 41.8899 10.5736 42.2453 10.7465V8.32005H42.3345Z" fill="#121212"></path>
+                            <path d="M50.6952 17.1601V11.5265C50.6952 9.44648 49.2717 8.14648 46.8707 8.14648C44.825 8.14648 43.313 9.36005 43.0462 11.0065H45.4479C45.6256 10.4865 46.0701 10.1401 46.7815 10.1401C47.7597 10.1401 48.2934 10.7465 48.2934 11.5265V12.1336C47.9381 11.8736 47.0483 11.6136 46.2478 11.6136C44.2913 11.6136 42.7793 12.7401 42.7793 14.4736C42.7793 16.2936 44.2913 17.3336 46.1593 17.3336C47.1375 17.3336 48.0266 16.9865 48.3826 16.7265V17.1601H50.6952ZM48.2934 14.7336C48.0266 15.1665 47.4044 15.5136 46.693 15.5136C45.8924 15.5136 45.0918 15.1665 45.0918 14.3865C45.0918 13.6065 45.8924 13.2601 46.693 13.2601C47.4044 13.2601 48.1158 13.5201 48.2934 14.0401V14.7336Z" fill="#121212"></path>
+                            <path d="M59.5912 9.27362C59.0575 8.58005 58.2569 8.14648 57.1895 8.14648C56.2112 8.14648 55.3215 8.49362 54.8769 9.10005V8.40648H52.3867V17.2465H54.8769V11.5265C55.0546 10.7465 55.6775 10.4001 56.2997 10.4001C57.1895 10.4001 57.5455 11.0065 57.5455 11.9601V17.2465H60.0357V11.5265C60.2134 10.7465 60.7471 10.4001 61.4585 10.4001C62.3483 10.4001 62.7928 11.0065 62.7928 11.9601V17.2465H65.283V11.4401C65.283 9.44648 64.1271 8.14648 62.2591 8.14648C61.1032 8.14648 60.2134 8.66648 59.5912 9.27362Z" fill="#121212"></path>
+                            <path d="M72.4874 14.3001C72.3097 15.0801 71.6867 15.4265 70.7977 15.4265C69.6418 15.4265 68.9304 14.6465 68.8412 13.3465H74.8891V12.5665C74.8891 9.96648 73.4664 8.14648 70.7977 8.14648C68.3075 8.14648 66.4395 10.1401 66.4395 12.7401C66.4395 15.4265 68.2183 17.3336 70.7977 17.3336C73.1103 17.3336 74.4446 16.1201 74.8006 14.2136H72.4874V14.3001ZM70.7977 10.1401C71.8651 10.1401 72.3989 10.8336 72.3989 11.7865H68.9304C69.1972 10.7465 69.8194 10.1401 70.7977 10.1401Z" fill="#121212"></path>
+                            <path d="M81.561 8.32005C81.3833 8.23362 81.0273 8.14648 80.5828 8.14648C79.6937 8.14648 78.9823 8.58005 78.5371 9.18648V8.32005H76.0469V17.1601H78.5371V11.7001C78.7155 10.9201 79.4269 10.4865 80.2274 10.4865C80.6712 10.4865 81.1165 10.5736 81.4718 10.7465V8.32005H81.561Z" fill="#121212"></path>
+                          </g>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1177">
+                            <rect width="82" height="26" fill="white"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="87" height="17" viewbox="0 0 87 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1192)">
+                          <mask id="mask0_36_1192" style="mask-type:luminance" maskunits="userSpaceOnUse" x="0" y="0" width="87" height="17">
+                            <path d="M87 0H0V17H87V0Z" fill="white"></path>
+                          </mask>
+                          <g mask="url(#mask0_36_1192)">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.8997 11.3652C11.4637 10.8829 11.8312 10.2489 12.0046 9.46404H17.5726C17.3173 11.7074 16.393 13.5235 14.8001 14.914C13.2066 16.3044 11.2447 17 8.91606 17C7.21737 17 5.68835 16.6352 4.32825 15.9064C2.96815 15.1775 1.90675 14.1645 1.14405 12.8676C0.38135 11.5706 0 10.115 0 8.5C0 6.885 0.38135 5.42937 1.14405 4.13241C1.90675 2.83546 2.96815 1.82254 4.32825 1.09366C5.68835 0.364084 7.21737 0 8.91606 0C11.2078 0 13.1428 0.670791 14.7212 2.01309C16.2987 3.35466 17.2311 5.11346 17.516 7.28872H12.0277C11.795 6.57121 11.397 5.99391 10.8329 5.55616C10.2696 5.11912 9.63816 4.90025 8.93922 4.90025C7.97715 4.90025 7.20141 5.23104 6.612 5.89262C6.02113 6.55421 5.72677 7.42336 5.72677 8.49932C5.72677 9.56889 6.02402 10.4345 6.61708 11.096C7.21155 11.7576 7.98441 12.0877 8.93922 12.0877C9.6831 12.0877 10.3364 11.8469 10.8997 11.3652ZM30.6631 6.94518C31.7441 7.95811 32.285 9.26854 32.285 10.8744C32.285 12.7104 31.6629 14.1908 30.4181 15.3141C29.1725 16.4383 27.5326 17 25.4953 17C23.4827 17 21.8465 16.4361 20.5856 15.3085C19.3241 14.1801 18.6941 12.7189 18.6941 10.9218C18.6941 9.94072 18.8674 8.95336 19.2132 7.96022C19.559 6.96714 20.0941 5.88059 20.8183 4.70191L23.3777 0.544L28.7861 0.543291L25.7578 5.44921C26.0601 5.43362 26.2987 5.42584 26.4741 5.42584C28.1844 5.42584 29.5807 5.93229 30.6631 6.94518ZM27.0113 12.3816C27.4006 11.9942 27.5956 11.492 27.5956 10.8744C27.5956 10.2574 27.4006 9.75093 27.0113 9.35496C26.6212 8.959 26.116 8.76139 25.4961 8.76139C24.8755 8.76139 24.3695 8.95968 23.9808 9.35496C23.59 9.75093 23.3957 10.2574 23.3957 10.8744C23.3957 11.492 23.59 11.9942 23.9801 12.3816C24.3695 12.7699 24.8755 12.9639 25.4953 12.9639C26.116 12.9639 26.6212 12.7699 27.0106 12.3816H27.0113ZM42.4241 7.76336C44.3453 8.31864 45.559 9.97968 45.559 12.1266C45.559 13.3131 45.1399 14.3437 44.3134 15.1902C43.4921 16.0303 42.4618 16.4567 41.251 16.4567H36.0122C36.0026 16.4566 35.9931 16.4546 35.9842 16.451C35.9754 16.4473 35.9674 16.442 35.9607 16.4353C35.9539 16.4285 35.9486 16.4206 35.945 16.4119C35.9414 16.4032 35.9396 16.3938 35.9397 16.3845V0.615541C35.9397 0.575875 35.9716 0.543291 36.0122 0.543291H40.6268C41.7484 0.543291 42.6743 0.9095 43.3768 1.63271C44.0989 2.32687 44.4671 3.25479 44.4671 4.386C44.4671 5.90325 43.6965 7.15414 42.4241 7.76336ZM43.8741 14.7844C44.6107 14.0512 44.9689 13.1821 44.9689 12.126C44.9689 10.953 44.6013 9.99172 43.8763 9.27064C43.1259 8.52482 42.2015 8.16143 41.0502 8.16143H36.5305V15.8688H41.2503C42.2885 15.8688 43.1716 15.504 43.8741 14.785V14.7844ZM36.5299 1.13121V7.57418H40.6268C41.5853 7.57418 42.3704 7.27532 42.962 6.68666C43.5688 6.08316 43.8763 5.30896 43.8763 4.386C43.8763 2.46925 42.5401 1.13121 40.6268 1.13121H36.5299ZM86.9863 16.3426C86.9938 16.3533 86.9986 16.3658 87 16.3789C87.0007 16.392 86.9979 16.4051 86.9918 16.4168C86.9863 16.4285 86.9767 16.4383 86.9658 16.4453C86.9541 16.4521 86.9411 16.4559 86.9274 16.456H86.378C86.3663 16.4561 86.3547 16.4533 86.3437 16.448C86.3335 16.4427 86.3246 16.4351 86.3177 16.4255L80.4462 8.23364L77.8527 11.2129V16.3837C77.8527 16.3932 77.8513 16.4026 77.8479 16.4114C77.8438 16.4202 77.839 16.4282 77.8321 16.435C77.8253 16.4418 77.8171 16.4472 77.8081 16.4509C77.7992 16.4546 77.7896 16.4566 77.7801 16.4567H77.3437C77.3341 16.4566 77.3245 16.4546 77.3156 16.451C77.3067 16.4473 77.2992 16.442 77.2923 16.4353C77.2855 16.4285 77.28 16.4206 77.2766 16.4119C77.2731 16.4032 77.2711 16.3938 77.2711 16.3845V0.615541C77.2711 0.575875 77.304 0.543291 77.3437 0.543291H77.7801C77.8198 0.543291 77.8527 0.575875 77.8527 0.615541V10.3367L86.2752 0.568791C86.2821 0.560833 86.2903 0.554429 86.2999 0.550025C86.3095 0.54562 86.3204 0.543323 86.3307 0.543291H86.9082C86.9486 0.543291 86.9808 0.575875 86.9808 0.615541C86.9808 0.63325 86.974 0.649541 86.9637 0.662291L80.8367 7.76832L86.9863 16.3426ZM73.5849 0.543291C73.6246 0.543291 73.6568 0.575875 73.6568 0.615541V16.3845C73.6575 16.3938 73.6554 16.4032 73.652 16.4119C73.6479 16.4206 73.6431 16.4285 73.6363 16.4353C73.6294 16.442 73.6212 16.4473 73.6123 16.451C73.6041 16.4546 73.5945 16.4566 73.5849 16.4567H73.3835C73.3725 16.4567 73.3609 16.4541 73.3506 16.4489C73.3403 16.4438 73.3314 16.4362 73.3252 16.427L62.7545 1.83529V16.3845C62.7547 16.3938 62.7528 16.4032 62.7493 16.4119C62.7456 16.4206 62.7404 16.4285 62.7336 16.4353C62.7269 16.442 62.7188 16.4473 62.71 16.451C62.7012 16.4546 62.6917 16.4566 62.6821 16.4567H62.2369C62.2273 16.4566 62.2178 16.4546 62.2089 16.451C62.2001 16.4473 62.1921 16.442 62.1853 16.4353C62.1786 16.4285 62.1733 16.4206 62.1697 16.4119C62.1661 16.4032 62.1643 16.3938 62.1644 16.3845V0.615541C62.1644 0.575875 62.1971 0.543291 62.2369 0.543291H62.5196C62.531 0.543455 62.5422 0.546233 62.5523 0.551402C62.5624 0.55657 62.571 0.563983 62.5777 0.573041L73.0663 15.0514V0.61625C73.0663 0.576584 73.0992 0.544 73.1389 0.544H73.5849V0.543291ZM59.5355 16.359C59.5399 16.3698 59.5415 16.3815 59.5402 16.3931C59.5388 16.4047 59.5347 16.4158 59.5279 16.4255C59.5212 16.4351 59.5122 16.4429 59.5016 16.4484C59.4911 16.4539 59.4794 16.4567 59.4674 16.4567H59.0048C58.9898 16.4566 58.9751 16.4519 58.9629 16.4433C58.9507 16.4346 58.9415 16.4225 58.9367 16.4085L57.0865 11.5331H49.5443L47.6948 16.41C47.6898 16.4236 47.6805 16.4355 47.6683 16.4438C47.6561 16.4522 47.6416 16.4567 47.6267 16.4567H47.1635C47.1515 16.4566 47.1397 16.4537 47.1291 16.4482C47.1187 16.4427 47.1096 16.4346 47.103 16.4249C47.0963 16.4153 47.0922 16.404 47.091 16.3924C47.0898 16.3808 47.0915 16.3691 47.096 16.3582L53.1062 0.590041C53.1113 0.576352 53.1206 0.564519 53.1328 0.556154C53.1449 0.547789 53.1595 0.543298 53.1744 0.543291H53.4557C53.4708 0.543203 53.4855 0.547729 53.4979 0.556238C53.5103 0.564747 53.5196 0.576813 53.5246 0.59075L59.5355 16.359ZM49.7611 10.9451H56.8705L53.3165 1.67804L49.7611 10.9451Z" fill="#121212"></path>
+                          </g>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1192">
+                            <rect width="87" height="17" fill="white"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="97" height="14" viewbox="0 0 97 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.8435 0C15.1258 0 14.1212 0.0284204 12.8387 0.0787354L11.2387 0.13775V0.57072H11.4728C12.1223 0.57072 12.5458 0.634157 12.7412 0.747837C12.9371 0.862097 13.0552 1.06031 13.1119 1.35785C13.1685 1.65539 13.2094 2.32196 13.2094 3.34544V9.64257C13.2094 10.7177 13.1685 11.4148 13.1119 11.7088C13.0552 12.0029 12.9327 12.2191 12.7216 12.3582C12.5106 12.4973 12.1188 12.555 11.5704 12.555H11.2387V12.9879H17.1118V12.555H16.6825C16.1088 12.555 15.7201 12.4915 15.5118 12.3386C15.3035 12.1863 15.1687 11.9442 15.1215 11.6301C15.0738 11.316 15.0631 10.6578 15.0631 9.6425V6.92694H16.4679C17.9306 6.92694 18.9508 6.79122 19.5312 6.51362C20.1123 6.23536 20.5466 5.83081 20.8581 5.29359C21.1688 4.75564 21.3263 4.12598 21.3263 3.42403C21.3263 2.61551 21.0995 1.94786 20.6434 1.41687C20.1872 0.885877 19.601 0.523595 18.8873 0.314868C18.1737 0.10614 17.1635 0 15.8435 0ZM3.76569 0.13775V0.57072H4.05841C4.70516 0.57072 5.11598 0.634157 5.3072 0.747837C5.49906 0.861445 5.63794 1.06169 5.69739 1.35785C5.75684 1.65467 5.77546 2.32326 5.77546 3.34544V7.714C5.77546 9.14602 5.73923 10.1823 5.6388 10.8036C5.53989 11.4263 5.22827 11.9599 4.74139 12.4172C4.25444 12.8746 3.6578 13.106 2.94628 13.106C2.59663 13.106 2.30586 13.0418 2.0682 12.9289C1.83199 12.8159 1.71697 12.6577 1.71697 12.4566C1.71697 12.3808 1.74558 12.2729 1.81459 12.122C1.89043 11.9519 1.93162 11.7878 1.93162 11.6301C1.93162 11.3656 1.84486 11.1435 1.65853 10.9611C1.47271 10.7778 1.23333 10.6855 0.95607 10.6855C0.68492 10.6855 0.459561 10.7965 0.273163 11.0004C0.0874122 11.2042 0 11.45 0 11.7482C0 12.2427 0.262093 12.6684 0.780455 13.0273C1.30011 13.3855 2.02306 13.5586 2.98531 13.5586C3.84161 13.5586 4.60193 13.4163 5.24868 13.1257C5.89536 12.8343 6.42235 12.4253 6.80959 11.8859C7.19676 11.3459 7.42658 10.7821 7.51205 10.2132C7.59602 9.64504 7.62901 8.82122 7.62901 7.73372V3.34537C7.62901 2.2778 7.6638 1.6029 7.72663 1.31848C7.78874 1.03399 7.92295 0.83143 8.11682 0.728118C8.31012 0.622775 8.72058 0.57072 9.34613 0.57072H9.65832V0.13775H3.76569ZM23.0433 0.137678V0.57072H23.3946C24.044 0.57072 24.4507 0.634157 24.6433 0.747837C24.8359 0.862097 24.9741 1.06031 25.0336 1.35785C25.0936 1.65539 25.1116 2.32116 25.1116 3.34544V8.93418C25.1116 9.99616 25.0898 10.7259 25.014 11.1185C24.9389 11.5103 24.7143 11.8548 24.3701 12.1221C24.0266 12.3907 23.5924 12.524 23.0433 12.555V12.9879H27.6286V12.555C27.0392 12.5171 26.5885 12.3637 26.2627 12.0827C25.9356 11.8017 25.7396 11.4721 25.6774 11.0988C25.6146 10.7254 25.5798 10.0235 25.5798 8.99319V1.47588L30.6529 12.9879H31.1017L36.1162 1.47588V9.66222C36.1162 10.7373 36.0975 11.4148 36.0382 11.7088C35.9787 12.0029 35.8395 12.2184 35.6284 12.3582C35.4167 12.4973 35.0396 12.555 34.4967 12.555H34.0479V12.9879H40.1746V12.555H39.6088C39.0311 12.555 38.6416 12.4907 38.4381 12.3386C38.2333 12.187 38.0977 11.9624 38.0479 11.6497C37.9973 11.3371 37.9698 10.6544 37.9698 9.64257V3.34544C37.9698 2.27708 38.0004 1.60363 38.0674 1.31848C38.1323 1.03399 38.2629 0.832155 38.4577 0.728118C38.6523 0.62408 39.0788 0.57072 39.7064 0.57072H40.1746V0.137678H36.2333L31.609 10.7839L26.9262 0.137678H23.0433ZM16.0386 0.452617C17.2009 0.452617 18.038 0.702452 18.5557 1.20038C19.0732 1.69766 19.3361 2.47733 19.3361 3.54221C19.3361 4.23995 19.1885 4.838 18.8873 5.31324C18.5855 5.78847 18.2071 6.08804 17.7557 6.23812C17.3036 6.38689 16.7142 6.47432 15.98 6.47432H15.0631V0.491985C15.2891 0.466465 15.6125 0.452617 16.0386 0.452617ZM46.1842 2.9124C44.6736 2.9124 43.4285 3.36632 42.4185 4.2899C41.4084 5.2129 40.8966 6.44424 40.8966 7.96985C40.8966 9.53469 41.4033 10.7814 42.399 11.7285C43.3947 12.6768 44.669 13.1651 46.2233 13.1651C47.8192 13.1651 49.1073 12.6768 50.0866 11.7285C51.0652 10.7814 51.55 9.55934 51.55 8.02887C51.55 6.44953 51.0302 5.20398 50.0085 4.28997C48.9862 3.37662 47.7085 2.9124 46.1842 2.9124ZM68.8377 2.9124C67.3116 2.9124 66.1161 3.4423 65.2276 4.50645C64.3391 5.56981 63.8812 6.81239 63.8812 8.22571C63.8812 9.65417 64.3578 10.8374 65.2866 11.7679C66.2146 12.6984 67.3784 13.1651 68.7788 13.1651C69.476 13.1651 70.2236 13.002 71.0424 12.6927C71.6434 12.4654 72.1358 12.3582 72.5053 12.3582C72.5973 12.3582 72.7037 12.3579 72.818 12.3779V11.3349C72.818 10.4809 72.8424 9.94301 72.8956 9.72131C72.9481 9.50018 73.0609 9.3243 73.2277 9.22932C73.3938 9.1342 73.7165 9.0915 74.1838 9.0915V8.75699H69.9498V9.09157H70.1834C70.5723 9.09157 70.8383 9.12869 70.9835 9.18996C71.1294 9.24991 71.2257 9.36715 71.2962 9.54419C71.3659 9.72189 71.4126 10.0758 71.4126 10.6068C71.4126 11.0593 71.3285 11.4324 71.179 11.7285C71.0309 12.0254 70.7671 12.2696 70.3595 12.4762C69.9512 12.6843 69.4919 12.7911 68.9937 12.7911C68.0197 12.7911 67.1923 12.4396 66.5352 11.7088C65.8775 10.9794 65.5598 9.72203 65.5598 7.96985C65.5598 6.21282 65.9098 4.99902 66.5935 4.30962C67.2771 3.62087 68.0729 3.26663 68.9937 3.26663C69.8844 3.26663 70.6334 3.56258 71.2566 4.15222C71.8813 4.74244 72.2688 5.54263 72.4082 6.55299H72.7396V3.24699H72.4082C72.3644 3.64581 72.2573 4.02361 72.0955 4.36871C71.2351 3.3996 70.1496 2.9124 68.8377 2.9124ZM56.4865 2.97149C55.9381 2.97149 55.1949 2.98918 54.2621 3.03057L52.8768 3.08959V3.4241H53.0329C53.5376 3.4241 53.8756 3.47435 54.028 3.56185C54.1789 3.64936 54.277 3.80618 54.3207 4.03412C54.365 4.26206 54.3791 4.76281 54.3791 5.54944V10.41C54.3791 11.2358 54.3643 11.7578 54.3207 11.9843C54.2776 12.2102 54.1703 12.3702 54.0085 12.4763C53.8473 12.583 53.5504 12.6338 53.1304 12.6338H52.8182V12.9682H57.5206V12.6337H57.0523C56.6078 12.6337 56.2916 12.5729 56.1352 12.4566C55.9775 12.3409 55.8781 12.165 55.8426 11.9252C55.8063 11.6877 55.8035 11.1821 55.8035 10.41V8.24535H56.1938C56.4567 8.24535 56.6346 8.29429 56.7597 8.38317C56.8833 8.47264 57.112 8.7021 57.4425 9.11122C57.7724 9.51831 58.0913 9.94613 58.3986 10.3903C59.3554 11.7802 60.0805 12.637 60.5448 12.9682H63.1595V12.6337C62.5866 12.6144 62.097 12.4523 61.6766 12.1417C61.2573 11.8298 60.6789 11.1739 59.94 10.1739C59.0331 8.93824 58.3582 8.22658 57.9499 8.02887C58.8568 7.91736 59.551 7.64005 60.0181 7.18272C60.4865 6.72539 60.7205 6.1575 60.7205 5.51C60.7205 4.95559 60.5348 4.49196 60.1742 4.09313C59.8136 3.69301 59.3525 3.40293 58.7694 3.22726C58.1847 3.05232 57.4187 2.97149 56.4865 2.97149ZM79.8419 2.97149L76.9736 9.80004C76.7681 10.2917 76.6545 10.5739 76.6228 10.6462C76.3224 11.421 76.0557 11.9408 75.8422 12.1811C75.6287 12.4222 75.3217 12.5656 74.8861 12.6338V12.9682H77.8327V12.6337C77.5135 12.6337 77.2511 12.5708 77.052 12.4172C76.8514 12.2636 76.7594 12.0254 76.7594 11.7285C76.7594 11.4509 76.9485 10.8672 77.3252 9.95744L77.5789 9.32771H81.286L82.0272 11.1578C82.2486 11.6882 82.3787 12.0153 82.3787 12.1221C82.3787 12.3308 82.2917 12.4651 82.1249 12.5353C81.9589 12.6056 81.6397 12.6338 81.1689 12.6338V12.9682H85.0125V12.6337C84.6704 12.5993 84.4224 12.5318 84.252 12.3975C84.0809 12.2647 83.9422 12.0794 83.8415 11.8465L83.393 10.8036L80.1344 2.97149H79.8419ZM86.2806 3.08959V3.4241C86.8097 3.4241 87.1425 3.46913 87.2956 3.54213C87.4487 3.61521 87.5566 3.77718 87.627 4.03412C87.6975 4.29106 87.7442 4.79102 87.7442 5.54944V10.8036C87.7442 11.4008 87.7111 11.7648 87.6665 11.9253C87.6205 12.0851 87.4811 12.2388 87.2367 12.3779C86.993 12.5171 86.6472 12.5993 86.1835 12.6338V12.9682H89.8123V12.6337C89.2947 12.6337 88.9202 12.5681 88.6614 12.4172C88.4026 12.2671 88.2294 12.1057 88.1733 11.9252C88.118 11.7455 88.0957 11.3718 88.0957 10.8036V3.93574L95.0614 13.2044H95.3539V5.01809C95.3539 4.59512 95.387 4.31027 95.4517 4.1325C95.5157 3.95553 95.6652 3.78624 95.9003 3.66024C96.1368 3.53423 96.466 3.45854 96.8757 3.42403V3.08959H93.344V3.4241C93.7293 3.4241 94.0456 3.47957 94.3195 3.58157C94.5941 3.68344 94.7774 3.82053 94.8658 3.99475C94.955 4.17049 95.0024 4.48297 95.0024 4.91971V10.8233L89.2077 3.08959H86.2806ZM46.2038 3.26663C47.3969 3.26663 48.3078 3.68749 48.9354 4.50645C49.563 5.32534 49.872 6.4923 49.872 8.02894C49.872 9.60886 49.5523 10.7931 48.9159 11.5907C48.2781 12.3884 47.4183 12.7912 46.3208 12.7912C45.0691 12.7912 44.1367 12.3884 43.5111 11.5907C42.8856 10.7931 42.5746 9.6185 42.5746 8.02887C42.5746 6.46338 42.8856 5.26669 43.5111 4.46709C44.1367 3.66741 45.0285 3.26663 46.2038 3.26663ZM56.4084 3.32572C57.5482 3.32572 58.2927 3.53728 58.6328 3.95538C58.9721 4.37356 59.14 4.93319 59.14 5.6281C59.14 6.02758 59.0837 6.35898 58.9839 6.63172C58.8836 6.90374 58.7476 7.13342 58.5742 7.30082C58.4007 7.46888 58.172 7.58792 57.8913 7.67471C57.6113 7.76221 57.2766 7.81209 56.8962 7.83217C56.5158 7.85139 56.1601 7.86248 55.8035 7.87147V3.34544C56.0316 3.32536 56.2322 3.32572 56.4084 3.32572ZM79.4321 4.78196L81.1495 8.97354H77.7155L79.4321 4.78196Z" fill="#121212"></path>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="71" height="17" viewbox="0 0 71 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1206)">
+                          <mask id="mask0_36_1206" style="mask-type:luminance" maskunits="userSpaceOnUse" x="0" y="0" width="71" height="17">
+                            <path d="M71 0H0V16.6612H71V0Z" fill="white"></path>
+                          </mask>
+                          <g mask="url(#mask0_36_1206)">
+                            <path d="M21.2471 16.0957C18.6423 11.0814 16.9695 5.6262 16.3116 0H10.9954L11.0369 0.340482C11.7303 5.92619 13.4269 11.3349 16.0376 16.3042L15.2834 15.3142C12.9394 12.2379 11.314 8.71153 10.2265 4.98574H4.91025C5.82443 8.82707 7.32094 11.6949 10.4991 16.0431L10.8236 16.4482L9.2782 15.1672C7.71355 13.8698 6.21118 11.8854 5.31622 10.0495H0C1.11866 12.6413 3.34116 14.8747 4.8569 15.9921L5.76516 16.6612H21.5419L21.2486 16.0957H21.2471Z" fill="#121212"></path>
+                            <path d="M42.3383 5.98242H39.7246V16.4864H42.3383V5.98242Z" fill="#121212"></path>
+                            <path d="M42.3383 2.1875H39.7246V4.50038H42.3383V2.1875Z" fill="#121212"></path>
+                            <path d="M54.3928 2.20354C54.0401 2.21255 53.6771 2.28454 53.3023 2.41653C52.9274 2.55003 52.5807 2.79751 52.2592 3.1605C52.0102 3.43948 51.8383 3.74997 51.745 4.09344C51.6517 4.43693 51.5998 4.77741 51.5865 5.11489C51.5746 5.43587 51.5687 5.72386 51.5672 5.98035H47.5312V5.39688C47.5312 5.10589 47.6304 4.8539 47.8289 4.64392C48.026 4.43242 48.3312 4.32743 48.7417 4.32743H49.9937V2.18705H48.6454C48.395 2.18705 48.0942 2.19155 47.7416 2.20204C47.3889 2.21104 47.0259 2.28304 46.6511 2.41503C46.2762 2.54853 45.9295 2.79601 45.608 3.15899C45.3591 3.43798 45.1871 3.74847 45.0938 4.09194C45.0004 4.43543 44.9486 4.77591 44.9353 5.11339C44.9234 5.43437 44.9175 5.72236 44.916 5.97885H43.2832V8.02173H44.916V16.4843H47.5297V8.02173H51.5643V16.4843H54.1779V8.02173H56.5797V5.97885H54.1779V5.39538C54.1779 5.10439 54.2772 4.8524 54.4758 4.64242C54.6742 4.43242 54.9795 4.32593 55.3885 4.32593H56.5797V2.18555H55.2921C55.0417 2.18555 54.7409 2.19005 54.3883 2.20054L54.3928 2.20354Z" fill="#121212"></path>
+                            <path d="M60.0414 2.1875H57.4277V4.50038H60.0414V2.1875Z" fill="#121212"></path>
+                            <path d="M60.0419 5.98242H57.4297V16.4864H60.0419V5.98242Z" fill="#121212"></path>
+                            <path d="M70.9606 9.75572C70.9353 9.37322 70.8613 8.95022 70.7398 8.48679C70.6182 8.0233 70.4137 7.57784 70.1291 7.14883C69.8432 6.72134 69.4461 6.36738 68.9335 6.0884C68.4208 5.80941 67.7572 5.66992 66.9437 5.66992C65.9256 5.66992 65.0814 5.89341 64.4118 6.34188C64.0959 6.55334 63.8203 6.79784 63.5802 7.06936V5.9819H61.2559V16.4858H63.9075V11.1551C63.9075 10.5012 63.9803 9.97472 64.1241 9.58019C64.2679 9.18573 64.4515 8.88423 64.6771 8.68029C64.9021 8.47629 65.1422 8.33828 65.3985 8.26628C65.6549 8.19579 65.8949 8.15978 66.1188 8.15978C66.6753 8.15978 67.1055 8.28577 67.4106 8.53925C67.7145 8.79273 67.9335 9.10626 68.0682 9.48275C68.2018 9.85918 68.2831 10.2327 68.3083 10.6061C68.3336 10.9797 68.3468 11.2856 68.3468 11.5256V16.4858H70.9991V10.5911C70.9991 10.4157 70.9859 10.1367 70.9606 9.7542V9.75572Z" fill="#121212"></path>
+                            <path d="M38.0023 5.95775C37.6882 5.98026 37.3845 6.03575 37.0896 6.12273C36.7947 6.21125 36.5221 6.33274 36.2732 6.4872C35.9457 6.68222 35.6716 6.92823 35.4464 7.2267C35.3397 7.3692 35.2449 7.51916 35.159 7.67514V6.20227H32.8535V16.4857H35.4864V11.116C35.4864 10.714 35.5398 10.3525 35.6494 10.0315C35.759 9.71058 35.9191 9.4316 36.1309 9.19457C36.3414 8.9576 36.6006 8.7686 36.9088 8.6261C37.217 8.4776 37.5608 8.38762 37.9416 8.35914C38.2705 8.33364 38.5579 8.36212 38.8187 8.4266V5.97126C38.5475 5.94426 38.2764 5.93676 38.0053 5.95625L38.0023 5.95775Z" fill="#121212"></path>
+                            <path d="M33.8776 4.50233V2.18945H22.5547V4.50233H26.9167V16.4777H29.4474V4.50233H33.8776Z" fill="#121212"></path>
+                          </g>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1206">
+                            <rect width="71" height="17" fill="white"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo mobile-hide">
+                    <div class="logo-embed w-embed"><svg width="94" height="11" viewbox="0 0 94 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.9955 1.38411C5.47297 1.9332 5.69947 2.63573 5.62467 3.33925C5.69178 4.04003 5.47227 4.73861 5.00948 5.29438C4.75082 5.51763 4.44483 5.68802 4.11137 5.79464C3.77791 5.90125 3.42424 5.94174 3.07296 5.91351H1.39517V10.0258H0.0878906V0.843192H2.77934C3.56825 0.765555 4.35962 0.968012 4.9955 1.41018V1.38411ZM4.29635 3.33925C4.32753 2.9346 4.19813 2.53338 3.93283 2.21179C3.76701 2.08557 3.57594 1.99122 3.37076 1.93417C3.16558 1.87712 2.95034 1.85851 2.7374 1.87941H1.33925V4.90336H2.36689C2.89414 4.95906 3.42571 4.84151 3.86991 4.57098C4.02587 4.40778 4.14465 4.21678 4.21917 4.00955C4.29369 3.80232 4.32228 3.58316 4.30334 3.36532L4.29635 3.33925ZM14.3072 2.77878C14.4575 3.68623 14.5184 4.60465 14.489 5.52248C14.5037 6.26709 14.4638 7.01174 14.3701 7.75137C14.3177 8.17179 14.1856 8.58015 13.9787 8.95697C13.7319 9.35002 13.3677 9.66714 12.93 9.86943C12.4344 10.0882 11.8912 10.1954 11.3431 10.1822C10.8852 10.1876 10.4301 10.1147 10.0009 9.96712C9.61991 9.82798 9.28156 9.60425 9.01521 9.31541C8.68944 8.96056 8.47202 8.53062 8.38603 8.07064C8.23713 7.18497 8.17631 6.2883 8.20427 5.39214C8.18819 4.60867 8.22594 3.82504 8.31613 3.04598C8.36576 2.63129 8.49858 2.22899 8.70761 1.85986C8.9453 1.46645 9.30602 1.1503 9.74225 0.953983C10.2463 0.738739 10.7958 0.633957 11.3501 0.647677C11.808 0.642181 12.2631 0.715077 12.6924 0.862742C13.0706 0.990695 13.4089 1.20331 13.6781 1.48187C14.0108 1.86337 14.2296 2.31955 14.3142 2.80484L14.3072 2.77878ZM13.1607 5.42473C13.1607 3.86931 13.0279 2.86133 12.7623 2.40078C12.6217 2.17545 12.4162 1.99166 12.1687 1.87058C11.922 1.7495 11.6423 1.69608 11.3641 1.71649C11.0901 1.71016 10.8174 1.76139 10.5672 1.86638C10.3414 1.96529 10.1505 2.12106 10.0149 2.31606C9.83173 2.59658 9.71218 2.90946 9.66534 3.23497C9.57656 3.96177 9.54161 4.69343 9.56049 5.42473C9.56049 6.34581 9.58146 6.99753 9.6234 7.37989C9.64717 7.67896 9.71778 7.97321 9.83313 8.25319C9.95337 8.53336 10.1603 8.77384 10.4273 8.94394C10.707 9.10224 11.03 9.18149 11.3571 9.1721C11.6368 9.19263 11.9164 9.1386 12.1639 9.01621C12.4113 8.89388 12.6169 8.70834 12.7553 8.48122C13.03 8.02072 13.1677 7.01057 13.1677 5.45079L13.1607 5.42473ZM22.9479 7.28207V8.10329C22.9479 8.38353 22.9479 8.67022 22.9898 8.97001L19.3546 0.817123H17.495V10.0584H18.6765V2.70057C18.6765 2.42033 18.6345 2.04886 18.5926 1.6839L22.3886 10.0649H24.2062V0.843192H22.9968L22.9479 7.28207ZM29.7988 5.18359L27.9183 0.843192H26.4223L29.0159 6.20026V10.0584H30.3441V6.31757L33.0915 0.849709H31.7702L29.7988 5.18359ZM43.5637 5.29438L43.0044 4.96201C41.6573 4.17996 40.9841 3.49348 40.9841 2.9026C40.9799 2.73208 41.017 2.56287 41.0918 2.40729C41.1666 2.25171 41.2777 2.11368 41.4175 2.00324C41.7223 1.75972 42.1138 1.6318 42.5151 1.6448C42.715 1.63111 42.9163 1.65779 43.1044 1.72302C43.2924 1.78824 43.4637 1.89049 43.6056 2.02279C43.8713 2.34152 44.0013 2.741 43.9692 3.14373V3.33925H45.3324V3.11115C45.3582 2.78234 45.3093 2.45211 45.1891 2.14213C45.0688 1.83215 44.8794 1.54939 44.6333 1.31242C44.067 0.85581 43.3323 0.622137 42.585 0.660712C41.8237 0.631252 41.0778 0.863142 40.4878 1.31242C40.2186 1.52636 40.0061 1.79522 39.867 2.09814C39.7271 2.40106 39.6649 2.72987 39.6838 3.05901C39.6684 3.51967 39.8019 3.97399 40.0683 4.36244C40.5856 4.92044 41.2029 5.39018 41.8929 5.75058L42.2984 5.9852C43.5238 6.69773 44.1369 7.31902 44.1369 7.84906C44.1418 8.03806 44.102 8.22569 44.0209 8.39897C43.9405 8.57227 43.8203 8.72711 43.6686 8.8527C43.34 9.12368 42.9115 9.26601 42.4731 9.25024C42.2662 9.26738 42.0572 9.23988 41.8635 9.16982C41.6692 9.09976 41.4951 8.98903 41.3546 8.84624C41.0827 8.46141 40.9589 8.00169 41.0051 7.54282V7.37331H39.6069V7.65355C39.5692 8.00045 39.6104 8.35081 39.7272 8.68201C39.8439 9.01315 40.0341 9.31782 40.285 9.5761C40.8876 10.0452 41.6615 10.2787 42.4452 10.2278C43.2498 10.2803 44.0468 10.0475 44.6752 9.5761C44.9451 9.33425 45.1555 9.04052 45.2925 8.71532C45.4288 8.39018 45.4876 8.04125 45.4652 7.69272C45.4764 7.2792 45.3464 6.87305 45.0947 6.53264C44.6585 6.03891 44.1334 5.61987 43.5427 5.29438H43.5637ZM47.8421 1.78817H50.2679V10.0584H51.5751V1.78817H53.931V0.843192H47.8421V1.78817ZM61.2574 6.60432V6.81287C61.2665 7.17011 61.2455 7.52751 61.1945 7.88171C61.1609 8.08074 61.0903 8.27274 60.9847 8.4487C60.8372 8.68957 60.6191 8.88626 60.3556 9.01562C60.069 9.14844 59.7523 9.21335 59.4328 9.20462C59.1154 9.21368 58.8008 9.1487 58.517 9.01562C58.2555 8.88424 58.0374 8.68807 57.8878 8.4487C57.7774 8.27137 57.7019 8.07723 57.6641 7.87513C57.6089 7.51916 57.5858 7.15948 57.5942 6.79984V0.843192H56.3638V6.7086C56.3464 7.23723 56.3911 7.7661 56.4967 8.28577C56.5792 8.61749 56.7288 8.93162 56.9371 9.21114C57.1957 9.54977 57.5453 9.81938 57.9508 9.99319C58.4149 10.1742 58.9155 10.2608 59.4188 10.2474C59.8536 10.2859 60.2927 10.2307 60.7009 10.086C61.1092 9.94138 61.4769 9.7112 61.7747 9.41317C62.3249 8.58797 62.5703 7.61744 62.4738 6.64994V0.843192H61.2574V6.60432ZM71.6247 2.69405C71.7974 3.64094 71.8652 4.6018 71.8275 5.56159C71.8449 6.31982 71.7981 7.07815 71.6877 7.82951C71.6247 8.24569 71.4702 8.64513 71.2333 9.00259C70.9823 9.37165 70.6167 9.66043 70.1846 9.83027C69.5051 10.0193 68.7956 10.0986 68.0874 10.0649H65.7175V0.843192H68.0874C68.725 0.819898 69.3632 0.868034 69.9889 0.986568C70.3468 1.07564 70.6761 1.24578 70.9466 1.48187C71.2878 1.81587 71.5185 2.23448 71.6108 2.68754L71.6247 2.69405ZM70.5482 5.39214C70.5482 4.77084 70.5293 4.22775 70.4922 3.76286C70.4824 3.4634 70.4356 3.166 70.3524 2.87653C70.2448 2.54924 70.0141 2.26921 69.7023 2.08796C69.2947 1.9084 68.8452 1.8277 68.395 1.85335H66.9968V9.02221H68.395C68.7788 9.03583 69.1626 8.98506 69.5275 8.87225C69.7917 8.78205 70.0141 8.60935 70.1567 8.38346C70.3238 8.06504 70.4258 7.72022 70.4573 7.36686C70.5244 6.7084 70.5502 6.04686 70.5342 5.38562L70.5482 5.39214ZM74.7916 10.0649H76.1268V0.843192H74.7916V10.0649ZM85.2777 2.81788C85.4287 3.72528 85.4896 4.64375 85.4595 5.56159C85.4742 6.30619 85.4344 7.05084 85.3407 7.79041C85.2882 8.21089 85.1561 8.61925 84.9492 8.99614C84.7024 9.38912 84.3382 9.70624 83.9006 9.90847C83.4049 10.1273 82.8617 10.2345 82.3137 10.2214C81.8558 10.2267 81.4007 10.1538 80.9714 10.0062C80.5911 9.86709 80.2521 9.64342 79.9857 9.35451C79.6621 8.99842 79.4453 8.56907 79.3566 8.10975C79.2076 7.22407 79.1468 6.32741 79.1748 5.43124C79.1587 4.64777 79.1958 3.86412 79.2867 3.08508C79.3356 2.67027 79.4684 2.26786 79.6781 1.89897C79.9151 1.50529 80.2765 1.18906 80.7128 0.993085C81.2168 0.777841 81.7663 0.67306 82.3206 0.686781C82.7785 0.681432 83.2329 0.754324 83.6629 0.901846C84.0411 1.0298 84.3794 1.24241 84.6486 1.52097C84.9597 1.89524 85.1645 2.33695 85.2428 2.80484L85.2777 2.81788ZM84.1313 5.46383C84.1313 3.90841 83.9984 2.90043 83.7328 2.43989C83.5923 2.21456 83.3867 2.03075 83.1393 1.90968C82.8925 1.7886 82.6129 1.73519 82.3346 1.75559C82.0606 1.74927 81.788 1.80049 81.5377 1.90548C81.3119 2.0041 81.1203 2.15993 80.9854 2.35516C80.8015 2.63552 80.6827 2.94847 80.6359 3.27408C80.5471 4.0009 80.5121 4.73254 80.531 5.46383C80.531 6.38491 80.552 7.03664 80.5939 7.41893C80.6184 7.718 80.689 8.01212 80.8036 8.29222C80.9239 8.57227 81.1308 8.81268 81.3979 8.98304C81.6775 9.14167 82.0005 9.22091 82.3277 9.21114C82.6073 9.23173 82.8869 9.17771 83.1344 9.05531C83.3819 8.93299 83.5874 8.74745 83.7258 8.52039C83.9684 8.03376 84.0914 7.01057 84.0963 5.45079L84.1313 5.46383ZM93.6387 6.51308C93.2018 6.03168 92.6789 5.62386 92.0938 5.30742L91.5345 4.97504C90.2203 4.19299 89.5631 3.50652 89.5631 2.91564C89.5596 2.74518 89.5967 2.57612 89.6715 2.42061C89.7463 2.2651 89.8574 2.12701 89.9965 2.01627C90.3013 1.77275 90.6928 1.64482 91.0941 1.65783C91.294 1.64415 91.4954 1.67083 91.6834 1.73605C91.8715 1.80127 92.0427 1.90352 92.1847 2.03582C92.4503 2.35485 92.5796 2.7541 92.5482 3.15677V3.35228H93.9114V3.12418C93.9366 2.79541 93.8876 2.4653 93.7674 2.15537C93.6471 1.84545 93.4577 1.56267 93.2123 1.32546C92.6454 0.869446 91.9113 0.635859 91.164 0.673747C90.4027 0.644287 89.6568 0.876177 89.0668 1.32546C88.7871 1.53148 88.562 1.79535 88.4103 2.09621C88.2586 2.39707 88.1845 2.72669 88.1929 3.05901C88.1789 3.5204 88.3153 3.9749 88.5844 4.36244C89.101 4.92082 89.7183 5.39062 90.409 5.75058L90.8075 5.9852C92.033 6.69773 92.646 7.31902 92.646 7.84906C92.6509 8.03806 92.6111 8.22569 92.53 8.39897C92.4496 8.57227 92.3294 8.72711 92.1777 8.8527C91.8491 9.12368 91.4206 9.26601 90.9822 9.25024C90.7753 9.26738 90.5663 9.23988 90.3727 9.16982C90.1783 9.09976 90.0042 8.98903 89.8637 8.84624C89.5918 8.46141 89.468 8.00169 89.5142 7.54282V7.37331H88.116V7.65355C88.0853 7.99759 88.1321 8.34371 88.2523 8.67015C88.3726 8.9966 88.5641 9.29619 88.8151 9.55003C89.4177 10.0197 90.1916 10.2534 90.9753 10.2017C91.7799 10.2543 92.5768 10.0215 93.2053 9.55003C93.4752 9.30818 93.6856 9.01445 93.8226 8.68925C93.9589 8.36411 94.0176 8.01518 93.9953 7.66658C93.9995 7.24799 93.8604 6.83911 93.5968 6.50005L93.6387 6.51308Z" fill="#121212"></path>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="90" height="20" viewbox="0 0 90 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_36_1224" style="mask-type:luminance" maskunits="userSpaceOnUse" x="0" y="0" width="90" height="20">
+                          <path d="M90 0H0V19.3966H90V0Z" fill="white"></path>
+                        </mask>
+                        <g mask="url(#mask0_36_1224)">
+                          <mask id="mask1_36_1224" style="mask-type:luminance" maskunits="userSpaceOnUse" x="0" y="0" width="90" height="19">
+                            <path d="M89.7177 0H0.0917969V18.9362H89.7177V0Z" fill="white"></path>
+                          </mask>
+                          <g mask="url(#mask1_36_1224)">
+                            <path d="M24.9614 11.9946C25.7634 11.559 26.4738 11.284 27.0926 11.1696C27.8028 11.0322 28.9486 10.9634 30.53 10.9632H33.1424V7.42327H30.53C29.3154 7.42327 28.3186 7.48046 27.5396 7.59486C26.5315 7.75546 25.672 8.04188 24.9614 8.45401V4.12392H36.1333V0.583984H21.4551V18.3868H36.1333V14.8127H24.9614V11.9946Z" fill="#121212"></path>
+                            <path d="M13.9132 1.59961C12.5494 0.923629 10.974 0.585734 9.18685 0.585938H0.0917969L1.93351 4.12588V18.3888H9.18685C10.9742 18.3888 12.5497 18.0222 13.9132 17.289C15.2555 16.5769 16.3562 15.4824 17.0758 14.1442C17.8208 12.7804 18.1933 11.1766 18.1933 9.33286C18.1933 7.48913 17.8151 5.90246 17.0587 4.57287C16.3412 3.28169 15.2428 2.24337 13.9132 1.59961ZM13.1738 13.4053C12.234 14.3445 10.9048 14.8143 9.18623 14.8147H5.64565V4.12588H9.18623C10.9278 4.12588 12.2627 4.57837 13.1908 5.48335C14.119 6.38833 14.5831 7.70001 14.5831 9.41836C14.5831 11.1367 14.1133 12.4657 13.1738 13.4053Z" fill="#121212"></path>
+                            <path d="M53.263 7.93971C51.8878 7.41268 50.0087 7.14928 47.6255 7.14949C46.5257 7.14949 45.6777 7.06929 45.0815 6.90889C44.5545 6.79409 44.1879 6.5879 43.9818 6.29031C43.8212 6.08391 43.7409 5.77451 43.7412 5.36212C43.7412 4.85833 44.1193 4.41154 44.8757 4.02174C45.6414 3.62982 46.4906 3.42931 47.3507 3.43735C49.6192 3.43735 51.3839 3.95294 52.6444 4.98412L55.0162 2.23437C53.8016 1.38678 52.5298 0.790999 51.2008 0.446996C50.0779 0.148999 48.8061 0 47.3855 0C46.0561 0 44.8302 0.223295 43.7076 0.669883C42.585 1.11647 41.7026 1.74076 41.0604 2.54275C40.3728 3.36773 40.029 4.30712 40.029 5.3609C40.029 7.21666 40.728 8.58003 42.126 9.45101C43.3406 10.253 45.0937 10.654 47.3855 10.654C49.3561 10.654 50.7425 10.78 51.5446 11.032C52.4387 11.3068 52.8854 11.8338 52.885 12.613C52.885 13.5296 52.3808 14.2398 51.3725 14.7436C50.3641 15.2473 49.0349 15.4993 47.3849 15.4996C46.4909 15.4996 45.6889 15.3621 44.979 15.0873C44.3805 14.8429 43.8238 14.5068 43.3289 14.0907C43.0309 13.8159 42.6414 13.4264 42.1602 12.922L41.8506 12.5782L39.3066 15.1557C40.3001 16.3306 41.5377 17.2748 42.9333 17.9226C44.3228 18.5887 45.8439 18.9351 47.3849 18.9362C50.0433 18.9362 52.186 18.4093 53.8132 17.3553C55.5322 16.2555 56.3916 14.6745 56.3914 12.6123C56.3914 11.5126 56.1965 10.6076 55.807 9.89744C55.3258 9.02785 54.4778 8.37528 53.263 7.93971Z" fill="#121212"></path>
+                            <path d="M79.8679 0.585938V12.9583L69.1083 0.585938H64.6738L66.427 3.23188V18.3882H69.9675V6.80663L79.8679 18.3882H83.4082V0.585938H79.8679Z" fill="#121212"></path>
+                            <path d="M63.1548 0.585938H59.6484V18.3888H63.1548V0.585938Z" fill="#121212"></path>
+                            <path d="M89.7155 2.04099C89.7155 2.8672 89.0669 3.51571 88.2228 3.51571C87.3872 3.51571 86.7207 2.8672 86.7207 2.04099C86.7207 1.23249 87.3872 0.583984 88.2228 0.583984C89.0669 0.583984 89.7155 1.23249 89.7155 2.04099ZM87.0947 2.04099C87.0947 2.68951 87.5741 3.2049 88.2321 3.2049C88.8714 3.2049 89.3423 2.68951 89.3423 2.04954C89.3423 1.40103 88.8714 0.877093 88.2235 0.877093C87.5749 0.877093 87.0947 1.40103 87.0947 2.04099ZM87.9923 2.80492H87.6548V1.34791C87.8395 1.31518 88.0273 1.30026 88.215 1.30333C88.4904 1.30333 88.6146 1.34791 88.7209 1.4102C88.7674 1.44945 88.8039 1.49859 88.8287 1.55398C88.8528 1.60937 88.8652 1.66958 88.8629 1.73018C88.8629 1.89017 88.7387 2.01474 88.561 2.06786V2.08558C88.7023 2.1387 88.7829 2.24557 88.8272 2.44097C88.8714 2.66325 88.8985 2.75179 88.9342 2.80553H88.5696C88.5246 2.7524 88.499 2.61867 88.454 2.45013C88.4268 2.29014 88.3384 2.21869 88.1522 2.21869H87.9916L87.9923 2.80492ZM88.0009 1.97871H88.1607C88.3477 1.97871 88.499 1.91642 88.499 1.76559C88.499 1.63247 88.4004 1.54332 88.1879 1.54332C88.125 1.54193 88.0622 1.54807 88.0009 1.56164V1.97871Z" fill="#121212"></path>
+                          </g>
+                        </g>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo mobile-hide">
+                    <div class="logo-embed w-embed"><svg width="88" height="22" viewbox="0 0 88 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1239)">
+                          <path d="M4.43469 12.2137C4.86267 13.2663 5.82082 13.7923 7.30914 13.7918C8.2338 13.7918 9.0126 13.4899 9.64548 12.886L12.7255 15.0589C11.4588 16.663 9.61926 17.4651 7.20673 17.4651C5.03362 17.4651 3.29262 16.8227 1.98366 15.5379C0.674725 14.2532 0.0200121 12.6278 0.0195312 10.6616C0.0195312 8.71345 0.66126 7.08388 1.94472 5.773C3.22817 4.4621 4.86315 3.80664 6.84961 3.80664C8.76644 3.80664 10.3492 4.45337 11.5981 5.74685C12.8469 7.04026 13.472 8.66134 13.4735 10.61C13.4769 11.1499 13.4165 11.6882 13.2939 12.2137H4.43469ZM4.38564 9.239H9.31361C8.97125 8.03233 8.16695 7.42871 6.90084 7.42827C5.58179 7.42827 4.74341 8.03183 4.38564 9.239Z" fill="#121212"></path>
+                          <path d="M24.8056 4.16938H29.0664V21.1128H24.8056V15.9138C23.9352 16.9479 22.7203 17.4651 21.1608 17.4651C19.4498 17.4651 18.0169 16.8139 16.8618 15.5118C15.7067 14.2096 15.1303 12.5844 15.1328 10.6363C15.1328 8.68749 15.7098 7.06213 16.8639 5.7599C18.018 4.45773 19.451 3.80664 21.163 3.80664C22.72 3.80664 23.935 4.32422 24.8078 5.35938L24.8056 4.16938ZM20.1596 12.6796C20.6559 13.1972 21.3051 13.4558 22.1072 13.4553C22.9093 13.4548 23.5585 13.1962 24.0547 12.6796C24.551 12.162 24.7991 11.4809 24.7991 10.6363C24.7991 9.79151 24.551 9.11039 24.0547 8.59283C23.5585 8.0752 22.9093 7.81642 22.1072 7.81642C21.3051 7.81642 20.6559 8.0752 20.1596 8.59283C19.6634 9.11184 19.4152 9.79296 19.4152 10.6363C19.4152 11.4795 19.6634 12.1606 20.1596 12.6796Z" fill="#121212"></path>
+                          <path d="M39.1618 4.16992H43.4226V17.1028H39.1618V15.8096C38.3924 16.9141 37.2032 17.4661 35.5942 17.4656C34.2079 17.4656 33.0742 16.987 32.1933 16.0299C31.3122 15.0728 30.8716 13.6974 30.8711 11.9038V4.16992H35.1319V11.3608C35.1319 12.0335 35.3074 12.5423 35.6584 12.8874C36.0095 13.2324 36.4769 13.4046 37.0606 13.4042C37.7281 13.4042 38.2458 13.2016 38.6136 12.7965C38.9815 12.3913 39.1655 11.8098 39.1655 11.0518L39.1618 4.16992Z" fill="#121212"></path>
+                          <path d="M54.7044 4.16865H58.9649V17.1016H54.7044V15.913C53.8312 16.9478 52.6165 17.465 51.0595 17.465C49.348 17.465 47.9151 16.8139 46.7605 15.5118C45.6059 14.2096 45.0288 12.5844 45.0293 10.6362C45.0293 8.68752 45.6064 7.06216 46.7605 5.75991C47.9146 4.45773 49.3476 3.80664 51.0595 3.80664C52.6161 3.80664 53.8307 4.32422 54.7044 5.35938V4.16865ZM50.0583 12.6789C50.5546 13.1965 51.2038 13.455 52.0058 13.4545C52.808 13.454 53.4569 13.1955 53.9532 12.6789C54.4493 12.1613 54.6974 11.4802 54.6974 10.6355C54.6974 9.79079 54.4493 9.1096 53.9532 8.59204C53.4569 8.07447 52.808 7.81569 52.0058 7.81569C51.2038 7.81569 50.5546 8.07447 50.0583 8.59204C49.5621 9.10866 49.3139 9.78984 49.3139 10.6355C49.3139 11.4811 49.5621 12.1623 50.0583 12.6789Z" fill="#121212"></path>
+                          <path d="M60.5645 17.1018V0.138672H64.8258V17.1018H60.5645Z" fill="#121212"></path>
+                          <path d="M70.8904 7.88931C70.8904 8.10938 71.1146 8.29185 71.5618 8.43674L73.1253 8.94557L74.9812 9.54604C75.6237 9.75397 76.1631 10.1676 76.5995 10.7869C77.0365 11.4063 77.2541 12.1845 77.2535 13.1219C77.2535 14.6048 76.7032 15.6998 75.6026 16.4069C74.5008 17.1139 73.1935 17.4674 71.6806 17.4674C68.8055 17.4674 66.8894 16.4413 65.9316 14.3889L69.653 12.4989C69.9778 13.4478 70.6451 13.922 71.6553 13.9215C72.4244 13.9215 72.8089 13.6913 72.8089 13.2309C72.8089 12.9924 72.5931 12.7947 72.1537 12.6494L70.6125 12.1172L68.7784 11.479C68.1407 11.2548 67.5862 10.8378 67.1914 10.2846C66.7634 9.70739 66.5501 8.99623 66.5507 8.15105C66.5507 6.77134 67.0582 5.70196 68.0726 4.94307C69.087 4.18416 70.3087 3.80469 71.7366 3.80469C74.2693 3.80469 76.0318 4.80496 77.0245 6.80547L73.4309 8.43523C73.0548 7.69377 72.5238 7.32303 71.8397 7.32303C71.2074 7.32404 70.8904 7.5128 70.8904 7.88931Z" fill="#121212"></path>
+                          <path d="M85.7618 2.02161C84.3719 0.680416 82.5426 0 80.3269 0C78.1287 0 76.3091 0.685501 74.9167 2.03543C74.4152 2.52211 73.9903 3.08383 73.6582 3.70084C73.8366 3.74445 74.0096 3.79461 74.1772 3.85131C74.4755 3.32287 74.8474 2.84055 75.2826 2.41925C76.5718 1.16601 78.2692 0.52921 80.3269 0.52921C82.4034 0.52921 84.1097 1.16019 85.399 2.40398C86.6876 3.64777 87.3374 5.2841 87.3374 7.27444C87.3374 8.71959 86.983 10.0085 86.2838 11.1076L80.0424 20.6014H76.1572L80.6138 14.0313L80.1238 14.0233C79.2329 14.0166 78.3487 13.8588 77.5091 13.5566C77.4995 13.7381 77.4802 13.9189 77.4512 14.0982C78.1571 14.3417 78.8918 14.4884 79.6368 14.5344L75.159 21.1335H80.3209L86.5834 11.6106L86.6406 11.5241C87.4489 10.3109 87.8587 8.88314 87.8587 7.27953C87.8618 5.13435 87.1547 3.36572 85.7618 2.02161Z" fill="#121212"></path>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1239">
+                            <rect width="88" height="22" fill="white"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="106" height="27" viewbox="0 0 106 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1248)">
+                          <path d="M58.4434 14.417H60.1328C60.1328 15.1755 60.6686 15.6245 61.5749 15.6245C62.4818 15.6245 62.9624 15.2984 62.9624 14.7303C62.9624 14.0119 62.1521 13.8762 61.2452 13.7269C60.0503 13.5365 58.6219 13.3071 58.6219 11.7472C58.6219 10.4587 59.7205 9.68555 61.5749 9.68555C63.4294 9.68555 64.5147 10.5123 64.5147 11.9229H62.8252C62.8252 11.2045 62.3717 10.7974 61.5749 10.7974C60.8194 10.7974 60.3666 11.0961 60.3666 11.5978C60.3666 12.2079 61.1215 12.33 62.0007 12.4793C63.2232 12.6823 64.7067 12.9264 64.7067 14.5263C64.7067 15.9232 63.5395 16.7636 61.5749 16.7636C59.5969 16.7636 58.4434 15.8959 58.4434 14.417Z" fill="#010101"></path>
+                          <path d="M65.7383 6.82227H67.5515V8.51685H65.7383V6.82227ZM65.7383 9.81806H67.5515V16.6247H65.7383V9.81806Z" fill="#010101"></path>
+                          <path d="M89.4336 6.18555H91.2468V16.6264H89.4336V6.18555Z" fill="#010101"></path>
+                          <path d="M99.1172 13.4272H94.0905C94.1588 14.6747 94.7636 15.4068 95.7388 15.4068C96.5903 15.4068 97.1809 14.9451 97.3594 14.1993H99.1172C98.8705 15.8129 97.6055 16.7626 95.7388 16.7626C93.5958 16.7626 92.332 15.4468 92.332 13.2241C92.332 11.0014 93.5958 9.68555 95.7388 9.68555C97.8811 9.68555 99.1172 10.9868 99.1172 13.2241V13.4272ZM94.1028 12.8171H97.3447C97.2345 11.6779 96.6439 11.0268 95.7376 11.0268C94.8171 11.0268 94.2265 11.6779 94.1028 12.8171Z" fill="#010101"></path>
+                          <path d="M99.7344 14.417H101.424C101.424 15.1755 101.96 15.6245 102.866 15.6245C103.773 15.6245 104.254 15.2984 104.254 14.7303C104.254 14.0119 103.443 13.8762 102.537 13.7269C101.341 13.5365 99.9134 13.3071 99.9134 11.7472C99.9134 10.4587 101.012 9.68555 102.866 9.68555C104.72 9.68555 105.806 10.5123 105.806 11.9229H104.116C104.116 11.2045 103.663 10.7974 102.866 10.7974C102.111 10.7974 101.658 11.0961 101.658 11.5978C101.658 12.2079 102.413 12.33 103.292 12.4793C104.514 12.6823 105.998 12.9264 105.998 14.5263C105.998 15.9232 104.831 16.7636 102.866 16.7636C100.889 16.7636 99.7344 15.8959 99.7344 14.417Z" fill="#010101"></path>
+                          <path d="M85.5866 9.68164C84.3287 9.68164 83.4848 10.2986 83.2169 11.3685H83.0985V9.81732H81.2871V19.7429H83.1003V14.2783H83.128C83.128 15.8372 84.0478 16.7597 85.5866 16.7597C87.3173 16.7597 88.3473 15.4439 88.3473 13.2212C88.3473 10.9975 87.3173 9.68164 85.5854 9.68164H85.5866ZM84.7486 15.3365C83.6497 15.3365 83.0043 14.4687 83.0043 13.2212C83.0043 11.9737 83.6497 11.1059 84.7486 11.1059C85.8475 11.1059 86.4929 11.8917 86.4929 13.2212C86.4929 14.5497 85.8475 15.3365 84.7486 15.3365Z" fill="#010101"></path>
+                          <path d="M77.5514 9.68164C76.3601 9.68164 75.6004 10.3894 75.4308 11.6232H75.3272C75.1423 10.4157 74.3331 9.68164 73.0735 9.68164C71.944 9.68164 71.179 10.2927 70.9335 11.3685H70.8204V9.81732H69.0078V16.6241H70.8204V12.8678C70.8204 11.756 71.3563 11.0922 72.2779 11.0922C73.0882 11.0922 73.5552 11.6076 73.5552 12.4891V16.625H75.3684V12.8688C75.3684 11.7569 75.9037 11.0931 76.8106 11.0931C77.6209 11.0931 78.1014 11.6086 78.1014 12.4901V16.626H79.9146V12.409C79.9129 10.6871 79.0336 9.68264 77.5502 9.68264L77.5514 9.68164Z" fill="#010101"></path>
+                          <path d="M83.1237 14.252H82.9082V15.0022H83.2927L83.1237 14.252Z" fill="#010101"></path>
+                          <path d="M24.2266 13.1821C24.2266 10.9995 25.4628 9.69727 27.5232 9.69727C29.1851 9.69727 30.3115 10.5514 30.6421 12.0566H29.5158C29.2136 11.1352 28.5268 10.6061 27.5232 10.6061C26.177 10.6061 25.3804 11.5686 25.3804 13.1821C25.3804 14.7957 26.177 15.7582 27.5232 15.7582C28.5808 15.7582 29.295 15.1755 29.556 14.1719H30.6823C30.3802 15.7582 29.2538 16.6807 27.5232 16.6807C25.4628 16.6807 24.2266 15.3785 24.2266 13.1821Z" fill="#010101"></path>
+                          <path d="M31.166 13.1821C31.166 10.9995 32.4159 9.69727 34.5038 9.69727C36.5916 9.69727 37.8278 10.9985 37.8278 13.1821C37.8278 15.3658 36.5916 16.6807 34.5038 16.6807C32.4159 16.6807 31.166 15.3785 31.166 13.1821ZM36.6877 13.1821C36.6877 11.5686 35.8773 10.6061 34.5038 10.6061C33.1302 10.6061 32.3198 11.5686 32.3198 13.1821C32.3198 14.7957 33.1302 15.7582 34.5038 15.7582C35.8773 15.7582 36.6877 14.8094 36.6877 13.1821Z" fill="#010101"></path>
+                          <path d="M47.5806 10.6608V14.58C47.5806 15.3258 48.0339 15.7602 48.8168 15.7602C49.1602 15.7602 49.5174 15.6791 49.7921 15.5435V16.4113C49.4349 16.5743 48.9404 16.6826 48.4597 16.6826C47.196 16.6826 46.4543 15.9368 46.4543 14.6484V10.6618H45.3555V9.83495H46.5367V7.50195H47.5796L47.5826 9.83395H49.902V10.6608H47.5816H47.5806Z" fill="#010101"></path>
+                          <path d="M42.3452 9.69727C41.1678 9.69727 40.3751 10.3035 40.123 11.3596H40.0091V9.83295H38.8828V16.545H40.0091V12.8707C40.0091 11.4466 40.7234 10.6061 41.9459 10.6061C43.0447 10.6061 43.6765 11.2708 43.6765 12.3963V16.545H44.8029V12.369C44.8029 10.6871 43.8973 9.69727 42.3452 9.69727Z" fill="#010101"></path>
+                          <path d="M55.535 9.83295V11.3596H55.4329C55.1808 10.3045 54.3037 9.69727 52.9939 9.69727C51.1808 9.69727 50.1094 10.9985 50.1094 13.1821C50.1094 15.3658 51.1808 16.6807 52.9939 16.6807C54.2997 16.6807 55.1759 16.0676 55.43 15.0153H55.535V16.5459H56.6613V9.83395H55.535V9.83295ZM55.5104 12.0293H55.5075V12.0195L55.5104 12.0293ZM53.4334 15.7582C52.0599 15.7582 51.2632 14.8094 51.2632 13.1821C51.2632 11.5549 52.0599 10.6061 53.4334 10.6061C54.807 10.6061 55.6174 11.5959 55.6174 13.1821C55.6174 14.7684 54.8207 15.7582 53.4334 15.7582Z" fill="#010101"></path>
+                          <path d="M18.6129 14.9044L14.5776 10.9208L18.0929 7.44864C18.2773 7.26608 18.2773 6.96934 18.0929 6.78678L11.6136 0.389101C11.4262 0.203633 11.1211 0.203633 10.9337 0.389101L0.139444 11.0477C-0.0410818 11.2263 -0.0459874 11.5123 0.122765 11.6978L0.129633 11.7056L0.132576 11.7085L4.17184 15.6961L1.17845 12.7413L4.17184 15.6971L0.658454 19.1644C0.471062 19.3498 0.471062 19.6505 0.658454 19.835L7.13286 26.2288C7.32024 26.4143 7.62535 26.4143 7.81279 26.2288L18.6119 15.5663C18.7964 15.3857 18.7964 15.0889 18.6119 14.9054L18.6129 14.9044ZM11.8471 8.37302C11.8471 8.37302 11.8432 8.37302 11.8403 8.37302H11.8451H11.8471ZM4.4858 15.3867L0.620194 11.5709L11.4988 8.47065C11.4841 8.48237 11.4674 8.49309 11.4527 8.50675L4.4858 15.3867Z" fill="#010101"></path>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1248">
+                            <rect width="106" height="26.5" fill="white" transform="translate(0 0.25)"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo mobile-hide">
+                    <div class="logo-embed w-embed"><svg width="113" height="24" viewbox="0 0 113 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1264)">
+                          <path d="M17.5074 18.3118V9.15772L12.1513 18.3118H9.00829V9.15772L3.65213 18.3118H0L8.42381 5.08203H11.8519V13.3938L16.7156 5.08203H20.286V18.3118H17.5074Z" fill="#121212"></path>
+                          <path d="M31.9355 6.74409V5.04544H35.1793V18.328H32.0387V16.4748C31.1461 17.9162 29.7903 18.6366 27.9714 18.6366C26.1524 18.6366 24.6895 18.0106 23.634 16.7575C22.5785 15.5049 22.0508 13.8146 22.0508 11.6865C22.0508 9.55839 22.5785 7.86854 23.634 6.61546C24.6895 5.36287 26.1348 4.73633 27.9714 4.73633C29.8079 4.73633 31.0429 5.40591 31.9355 6.74409ZM26.2209 14.9043C26.7872 15.6081 27.6021 15.9593 28.6664 15.9593C29.7307 15.9593 30.5538 15.5905 31.1373 14.8524C31.7037 14.132 31.9869 13.076 31.9869 11.686C31.9869 10.296 31.6993 9.23705 31.1246 8.50731C30.5494 7.77806 29.7302 7.41319 28.6664 7.41319C27.6026 7.41319 26.8088 7.79517 26.2336 8.55866C25.6584 9.32215 25.3713 10.3992 25.3713 11.7892C25.3713 13.1792 25.6545 14.2005 26.2209 14.9038V14.9043Z" fill="#121212"></path>
+                          <path d="M36.4816 23.4494C36.3784 23.4494 35.967 23.4322 35.2461 23.398V20.8498H35.8898C36.7305 20.8498 37.1511 20.4639 37.1511 19.6916V5.04492H40.3949V20.052C40.3949 21.2362 40.073 22.0985 39.4294 22.6394C38.7857 23.1799 37.8031 23.4498 36.4821 23.4498L36.4816 23.4494Z" fill="#121212"></path>
+                          <path d="M53.71 16.7321C52.4745 18.0022 50.8439 18.6366 48.819 18.6366C46.7941 18.6366 45.1639 18.0022 43.928 16.7321C42.6754 15.4795 42.0488 13.7974 42.0488 11.6865C42.0488 9.57551 42.6749 7.89446 43.928 6.64138C45.1634 5.37167 46.7936 4.73633 48.819 4.73633C50.8444 4.73633 52.4745 5.36336 53.71 6.61546C54.9455 7.86805 55.5632 9.55888 55.5632 11.6865C55.5632 13.8141 54.9455 15.4623 53.71 16.7321ZM46.2835 14.8529C46.8924 15.591 47.7381 15.9598 48.819 15.9598C49.8999 15.9598 50.7451 15.5866 51.3545 14.8402C51.9634 14.0938 52.2686 13.0428 52.2686 11.687C52.2686 10.3312 51.9639 9.28058 51.3545 8.53372C50.7451 7.78735 49.8999 7.41416 48.819 7.41416C47.7381 7.41416 46.8924 7.78344 46.2835 8.521C45.6741 9.25906 45.3693 10.3145 45.3693 11.687C45.3693 13.0594 45.6741 14.1154 46.2835 14.8534V14.8529Z" fill="#121212"></path>
+                          <path d="M70.1754 18.3276H66.9316V0H70.1754V18.3276Z" fill="#121212"></path>
+                          <path d="M78.0085 18.6361C76.2067 18.6361 74.7736 18.1132 73.7098 17.0661C72.6113 16.0194 72.0625 14.6377 72.0625 12.9214V5.04492H75.3062V12.9473C75.3062 13.8571 75.5547 14.5687 76.0526 15.0837C76.55 15.5983 77.202 15.856 78.009 15.856C78.816 15.856 79.4973 15.6032 80.0041 15.0965C80.5103 14.5902 80.7636 13.8737 80.7636 12.9469V5.04492H84.0328V12.9219C84.0328 14.6382 83.4835 16.0194 82.3855 17.0666C81.287 18.1132 79.828 18.6366 78.0095 18.6366L78.0085 18.6361Z" fill="#121212"></path>
+                          <path d="M92.2791 18.6366C90.3227 18.6366 88.7351 18.0023 87.5167 16.7321C86.3155 15.4795 85.7148 13.7974 85.7148 11.6865C85.7148 9.57551 86.3155 7.86854 87.5167 6.61546C88.7008 5.36287 90.288 4.73633 92.2791 4.73633C94.012 4.73633 95.4279 5.1956 96.5265 6.11364C97.6245 7.03169 98.2681 8.27205 98.4569 9.83326H95.2132C95.0587 9.06097 94.7241 8.46916 94.2096 8.05684C93.6946 7.64502 93.0514 7.43911 92.2791 7.43911C91.2662 7.43911 90.4728 7.80398 89.8981 8.53323C89.323 9.26248 89.0358 10.3136 89.0358 11.6865C89.0358 13.0594 89.3274 14.111 89.9109 14.8397C90.4939 15.5695 91.2838 15.9338 92.2791 15.9338C93.068 15.9338 93.7337 15.7152 94.2741 15.2775C94.8146 14.8397 95.1447 14.2088 95.2651 13.3856H98.5083C98.3366 14.9816 97.6846 16.2557 96.5519 17.2079C95.4191 18.1602 93.9949 18.6366 92.2791 18.6366Z" fill="#121212"></path>
+                          <path d="M112.958 18.3276H109.252L105.391 12.1498L103.383 14.1576V18.3276H100.191V0H103.383V10.5539L108.789 5.04558H112.65L107.63 10.0652L112.958 18.3281V18.3276Z" fill="#121212"></path>
+                          <path d="M3.19188 5.04492H0V8.2368H3.19188V5.04492Z" fill="#121212"></path>
+                          <path d="M60.5889 8.52296V5.04495H57.3457V18.327H60.5889V12.0543L65.2481 8.25444V4.73633L60.5889 8.52296Z" fill="#121212"></path>
+                          <path d="M40.3677 0.283203H37.1758V3.32102H40.3677V0.283203Z" fill="#121212"></path>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1264">
+                            <rect width="112.959" height="23.45" fill="white"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo mobile-hide">
+                    <div class="logo-embed w-embed"><svg width="80" height="24" viewbox="0 0 80 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1172)">
+                          <g clip-path="url(#clip1_36_1172)">
+                            <path d="M25.832 9.80782C25.832 8.37271 24.4365 6.84852 22.0215 6.84852C19.3097 6.84852 16.3306 8.83788 15.8753 12.8067C15.4101 16.8151 17.9042 18.5966 20.4182 18.5966C22.9321 18.5966 24.2484 17.6168 25.5945 16.3104C24.4365 14.8554 22.942 15.5285 22.655 15.6769C22.3382 15.8353 21.9325 16.053 21.1011 16.053C20.1311 16.053 19.1414 15.6175 19.1414 13.8063C25.3569 13.1927 25.832 11.2429 25.832 9.80782ZM22.7539 10.0454C22.7143 10.4907 22.5362 11.2528 19.3888 11.6784C20.052 9.32285 21.3188 9.1447 21.9028 9.1447C22.4471 9.1447 22.7935 9.57028 22.7539 10.0454ZM12.2232 10.4314C12.2232 10.4314 10.887 14.6278 10.7782 14.9742C10.7386 14.6179 9.75875 7.08606 9.75875 7.08606C7.48237 7.08606 6.265 8.70922 5.62168 10.4215C5.62168 10.4215 3.99852 14.6278 3.85995 14.9841C3.85006 14.6575 3.61252 10.4709 3.61252 10.4709C3.47396 8.37271 1.55388 7.09595 0 7.09595L1.88049 18.5076C4.26574 18.4977 5.55239 16.8844 6.22541 15.1722C6.22541 15.1722 7.66052 11.4607 7.71991 11.2924C7.7298 11.4508 8.74923 18.5076 8.74923 18.5076C11.1444 18.5076 12.431 16.9933 13.1238 15.3404L16.479 7.09595C14.1136 7.09595 12.8665 8.70922 12.2232 10.4314ZM34.6208 6.82873C33.1461 6.82873 32.0178 7.63041 31.0677 8.80819V8.79829L31.9188 1.93945C29.9592 1.93945 28.3657 3.64179 28.0589 6.1755L26.5743 18.4185C27.7026 18.4185 28.9002 18.0919 29.5435 17.2605C30.1175 18.0028 30.9786 18.5966 32.2554 18.5966C35.5611 18.5966 37.8275 14.7565 37.8275 11.1539C37.8077 7.86794 36.2143 6.82873 34.6208 6.82873ZM34.314 12.7176C33.9676 14.7268 32.8492 16.0926 31.7704 16.0926C30.6817 16.0926 30.2165 15.6076 30.2165 15.6076C30.4243 13.8459 30.553 12.7671 30.9489 11.8368C31.3448 10.9064 32.285 9.42182 33.2649 9.42182C34.2249 9.42182 34.6604 10.6986 34.314 12.7176ZM46.0819 7.09595H43.7758L43.7857 6.97719C43.9441 5.47279 44.3004 4.68101 45.4782 4.55234C46.2798 4.47317 46.6362 4.05748 46.7252 3.6022C46.7945 3.2459 47.0122 2.00873 47.0122 2.00873C42.3803 1.97904 40.9254 3.9783 40.5493 7.02667L40.5394 7.09595H40.4899C39.7377 7.09595 38.9063 7.94712 38.7678 9.02593L38.7183 9.42182H40.2623L38.9657 20.1307L38.5698 22.0508C38.6193 22.0508 38.6787 22.0607 38.7282 22.0607C40.8957 21.9815 42.2813 20.2693 42.5881 17.7851L43.5977 9.42182H44.3202C45.0328 9.42182 45.8642 8.70922 46.0126 7.52154L46.0819 7.09595ZM58.0774 6.89801C55.4151 6.89801 52.9012 8.85768 52.1292 11.9357C51.3572 15.0138 52.5251 18.656 56.4444 18.656C60.3538 18.656 62.6104 14.8653 62.6104 11.7081C62.6104 8.57065 60.4825 6.89801 58.0774 6.89801ZM59.1563 12.6187C59.0177 14.0142 58.4041 16.1322 56.7215 16.1322C55.0291 16.1322 55.2666 13.6579 55.4349 12.4801C55.613 11.2231 56.3157 9.43172 57.83 9.43172C59.1859 9.43172 59.3146 11.045 59.1563 12.6187ZM75.764 10.4314C75.764 10.4314 74.4278 14.6278 74.3189 14.9742C74.2794 14.6179 73.2995 7.08606 73.2995 7.08606C71.0231 7.08606 69.8058 8.70922 69.1624 10.4215C69.1624 10.4215 67.5393 14.6278 67.4007 14.9841C67.3908 14.6575 67.1533 10.4709 67.1533 10.4709C67.0147 8.37271 65.0946 7.09595 63.5408 7.09595L65.4114 18.5076C67.7966 18.4977 69.0833 16.8844 69.7563 15.1722C69.7563 15.1722 71.1914 11.4607 71.2409 11.2924C71.2607 11.4508 72.2702 18.5076 72.2702 18.5076C74.6653 18.5076 75.952 16.9933 76.6448 15.3404L80 7.09595C77.6444 7.09595 76.3974 8.70922 75.764 10.4314ZM48.2593 2.00873L46.3194 17.6564L45.9235 19.5864C45.973 19.5864 46.0324 19.5963 46.0819 19.5963C48.1702 19.5666 49.6548 17.7356 49.932 15.4295L51.0504 6.45263C51.3869 3.71107 49.7538 2.00873 48.2593 2.00873Z" fill="black"></path>
+                          </g>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1172">
+                            <rect width="80" height="24" fill="white"></rect>
+                          </clippath>
+                          <clippath id="clip1_36_1172">
+                            <rect width="80" height="20.1212" fill="white" transform="translate(0 1.93945)"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                  <div class="partners-logo">
+                    <div class="logo-embed w-embed"><svg width="98" height="19" viewbox="0 0 98 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_36_1281)">
+                          <mask id="mask0_36_1281" style="mask-type:luminance" maskunits="userSpaceOnUse" x="0" y="0" width="98" height="19">
+                            <path d="M98 0.615234H0V18.3845H98V0.615234Z" fill="white"></path>
+                          </mask>
+                          <g mask="url(#mask0_36_1281)">
+                            <path d="M19.2876 0.634766C16.7142 0.634766 15.1758 2.71407 15.1758 4.77169C15.1758 6.46051 15.8702 7.73543 17.5416 8.71839C20.1034 10.2253 24.7917 13.0438 25.3848 13.4143C26.2288 13.94 25.9812 14.9062 24.9927 14.9062H15.5097V18.3489H25.1273C27.7506 18.3489 29.6977 16.6651 29.6977 14.3155C29.6977 12.6183 28.9551 11.2883 27.4549 10.3738C25.7769 9.34914 20.1931 6.03497 19.4039 5.53599C18.7826 5.14549 18.7427 4.07747 19.8342 4.07747H45.0935V0.634766H19.2876Z" fill="#121212"></path>
+                            <path d="M11.0879 14.9062H5.11864C4.27467 14.9062 3.59186 14.2187 3.59186 13.3726V5.61108C3.59186 4.76334 4.27634 4.07747 5.11864 4.07747H13.6514V0.634766H4.99238C1.92053 0.634766 0 2.97107 0 5.85306V13.1307C0 16.2162 2.12321 18.3489 4.99238 18.3489H13.9056V17.8633C13.9056 16.4415 12.638 14.9046 11.0862 14.9046L11.0879 14.9062Z" fill="#121212"></path>
+                            <path d="M45.0925 14.9056H36.7358C35.8918 14.9056 35.209 14.2181 35.209 13.372V11.2393H43.2517V7.79663H35.209V5.26172H34.6375C32.8798 5.26172 31.6172 6.69354 31.6172 8.4591V13.1317C31.6172 16.2173 33.7404 18.35 36.6095 18.35H45.0941V14.9073L45.0925 14.9056Z" fill="#121212"></path>
+                            <path d="M53.315 0.634766H52.4844V18.3489H53.315V0.634766Z" fill="#121212"></path>
+                            <path d="M57.1294 4.36166C56.7573 3.95781 56.5742 3.43048 56.5742 2.793C56.5742 2.15552 56.7573 1.62652 57.1229 1.22434C57.495 0.820495 57.9699 0.615234 58.5617 0.615234C59.0065 0.615234 59.4948 0.740393 60.0285 0.982367L59.8023 1.48801C59.3209 1.28943 58.9187 1.18763 58.5913 1.18763C58.1611 1.18763 57.817 1.34116 57.5698 1.64154C57.3286 1.94192 57.2042 2.32407 57.2042 2.793C57.2042 3.26193 57.3286 3.65076 57.5763 3.95114C57.824 4.25152 58.1611 4.39837 58.5913 4.39837C58.9483 4.39837 59.357 4.31827 59.8023 4.16307L60.022 4.67706C59.4733 4.87564 58.9849 4.97076 58.5617 4.97076C57.9764 4.97076 57.5031 4.7655 57.131 4.36166H57.1294Z" fill="#121212"></path>
+                            <path d="M64.7466 4.91903L64.3815 3.93611H62.323L61.9574 4.91903H61.3145L62.8114 0.967348C62.9061 0.732049 63.0887 0.615234 63.3595 0.615234C63.6304 0.615234 63.8048 0.732049 63.8996 0.967348L65.3879 4.91903H64.745H64.7466ZM62.5271 3.39376H64.1839L63.3515 1.15759L62.5255 3.39376H62.5271Z" fill="#121212"></path>
+                            <path d="M69.5851 0.666967H70.2065V4.57526C70.2065 4.83226 70.0019 4.97911 69.7763 4.97911C69.5867 4.97911 69.4473 4.90569 69.3611 4.75215L67.5497 1.60649V4.91903H66.9219V1.01074C66.9219 0.753743 67.1195 0.615234 67.3607 0.615234C67.5497 0.615234 67.6962 0.695336 67.791 0.857208L69.5867 3.99453V0.666967H69.5851Z" fill="#121212"></path>
+                            <path d="M75.145 4.91903L74.7794 3.93611H72.7214L72.3558 4.91903H71.7129L73.2098 0.967348C73.3041 0.732049 73.4871 0.615234 73.758 0.615234C74.0288 0.615234 74.2033 0.732049 74.2981 0.967348L75.7864 4.91903H75.1434H75.145ZM72.9255 3.39376H74.5818L73.7494 1.15759L72.9239 3.39376H72.9255Z" fill="#121212"></path>
+                            <path d="M78.8537 0.667969C79.4385 0.667969 79.9118 0.87323 80.2839 1.27707C80.6565 1.68092 80.8455 2.18656 80.8455 2.79567C80.8455 3.40478 80.6565 3.9171 80.2839 4.32094C79.9118 4.72479 79.4369 4.9217 78.8537 4.9217H77.716C77.4597 4.9217 77.2637 4.72312 77.2637 4.46779V1.13022C77.2637 0.866554 77.4613 0.667969 77.716 0.667969H78.8537ZM78.8322 4.34931C79.2474 4.34931 79.585 4.20246 79.8321 3.90875C80.0879 3.60837 80.2128 3.24124 80.2128 2.794C80.2128 2.34676 80.0879 1.97964 79.8321 1.6876C79.585 1.38722 79.249 1.24036 78.8322 1.24036H77.8834V4.34764H78.8322V4.34931Z" fill="#121212"></path>
+                            <path d="M82.5176 4.92003V0.667969H83.1373V4.92003H82.5176Z" fill="#121212"></path>
+                            <path d="M88.1079 4.91903L87.7429 3.93611H85.6843L85.3187 4.91903H84.6758L86.1727 0.967348C86.2675 0.732049 86.45 0.615234 86.7209 0.615234C86.9917 0.615234 87.1662 0.732049 87.2609 0.967348L88.7492 4.91903H88.1063H88.1079ZM85.8884 3.39376H87.5447L86.7128 1.15759L85.8868 3.39376H85.8884Z" fill="#121212"></path>
+                            <path d="M92.9464 0.666967H93.5678V4.57526C93.5678 4.83226 93.3632 4.97911 93.1376 4.97911C92.948 4.97911 92.8086 4.90569 92.7219 4.75215L90.911 1.60649V4.91903H90.2832V1.01074C90.2832 0.753743 90.4808 0.615234 90.7221 0.615234C90.9111 0.615234 91.0575 0.695336 91.1523 0.857208L92.9481 3.99453V0.666967H92.9464Z" fill="#121212"></path>
+                            <path d="M56.5529 11.2283L56.7785 10.701C57.2669 10.973 57.779 11.1115 58.3121 11.1115C58.8452 11.1115 59.2027 10.8395 59.2027 10.5107C59.2027 10.3422 59.123 10.1953 58.9685 10.0852C58.8155 9.9684 58.5232 9.84988 58.0843 9.73309C57.6245 9.6079 57.3832 9.52783 57.0693 9.32924C56.7554 9.13066 56.6089 8.84527 56.6089 8.46313C56.6089 8.15443 56.7403 7.89074 57.0031 7.66378C57.2739 7.43682 57.6374 7.31836 58.1059 7.31836C58.6179 7.31836 59.1645 7.45017 59.7557 7.72221L59.5301 8.24284C58.9599 8.00754 58.4866 7.89074 58.0994 7.89074C57.5744 7.89074 57.2454 8.13273 57.2454 8.46313C57.2454 8.63167 57.3186 8.76348 57.4565 8.86697C57.5943 8.97041 57.8716 9.07224 58.2739 9.18235C58.7773 9.3209 59.0697 9.42434 59.3836 9.6296C59.6975 9.82818 59.8354 10.1136 59.8354 10.5024C59.8354 10.8244 59.6975 11.1032 59.4116 11.3318C59.1343 11.5587 58.7622 11.6772 58.2954 11.6772C57.6605 11.6772 57.0758 11.5304 56.5508 11.23L56.5529 11.2283Z" fill="#121212"></path>
+                            <path d="M63.773 7.94181H61.6493V9.21678H63.4656V9.75244H61.6493V11.0508H63.773V11.6232H61.4668C61.2261 11.6232 61.0215 11.4179 61.0215 11.1759V7.81834C61.0215 7.57636 61.2261 7.37109 61.4668 7.37109H63.773V7.94348V7.94181Z" fill="#121212"></path>
+                            <path d="M65.2114 11.0648C64.8393 10.661 64.6562 10.1336 64.6562 9.49611C64.6562 8.85868 64.8393 8.32964 65.2044 7.92747C65.577 7.52362 66.0519 7.31836 66.6432 7.31836C67.0885 7.31836 67.5769 7.44355 68.1105 7.68548L67.8843 8.19115C67.4024 7.99257 67.0007 7.89074 66.6733 7.89074C66.2431 7.89074 65.899 8.04431 65.6513 8.34467C65.4106 8.64507 65.2863 9.02722 65.2863 9.49611C65.2863 9.96506 65.4106 10.3539 65.6583 10.6543C65.9055 10.9546 66.2431 11.1015 66.6733 11.1015C67.0303 11.1015 67.439 11.0214 67.8843 10.8662L68.1035 11.3802C67.5553 11.5788 67.0669 11.6739 66.6432 11.6739C66.0584 11.6739 65.5851 11.4687 65.213 11.0648H65.2114Z" fill="#121212"></path>
+                            <path d="M69.0664 9.66564V7.37109H69.6856V9.66564C69.6856 10.5384 70.1309 11.0874 70.8902 11.0874C71.6494 11.0874 72.0866 10.5234 72.0866 9.66564V7.37109H72.708V9.66564C72.708 10.2964 72.54 10.7871 72.211 11.1475C71.882 11.4996 71.4367 11.6749 70.8902 11.6749C69.7804 11.6749 69.0664 10.9273 69.0664 9.66564Z" fill="#121212"></path>
+                            <path d="M77.278 11.6232H76.585L75.6281 10.1062H74.5846V11.6232H73.9648V7.83331C73.9648 7.56968 74.1625 7.37109 74.4171 7.37109H75.5781C76.0535 7.37109 76.4471 7.50291 76.753 7.75992C77.0669 8.01692 77.2198 8.354 77.2198 8.75618C77.2198 9.34359 76.8542 9.79751 76.2625 9.99609L77.278 11.6232ZM74.5846 7.91343V9.58557H75.5269C76.1397 9.58557 76.5915 9.25512 76.5915 8.75618C76.5915 8.51419 76.4886 8.30893 76.284 8.15542C76.0799 7.99356 75.8241 7.91343 75.5248 7.91343H74.583H74.5846Z" fill="#121212"></path>
+                            <path d="M78.5547 11.6232V7.37109H79.1761V11.6232H78.5547Z" fill="#121212"></path>
+                            <path d="M83.6348 7.37109V7.94348H82.3651V11.6248H81.7438V7.94348H80.4746V7.37109H83.6327H83.6348Z" fill="#121212"></path>
+                            <path d="M84.8047 11.6232V7.37109H85.4245V11.6232H84.8047Z" fill="#121212"></path>
+                            <path d="M89.4639 7.94181H87.3407V9.21678H89.157V9.75244H87.3407V11.0508H89.4639V11.6232H87.1582C86.9175 11.6232 86.7129 11.4179 86.7129 11.1759V7.81834C86.7129 7.57636 86.9175 7.37109 87.1582 7.37109H89.4639V7.94348V7.94181Z" fill="#121212"></path>
+                            <path d="M90.4084 11.2283L90.634 10.701C91.1224 10.973 91.6345 11.1115 92.1676 11.1115C92.7006 11.1115 93.0582 10.8395 93.0582 10.5107C93.0582 10.3422 92.9785 10.1953 92.8239 10.0852C92.671 9.9684 92.3786 9.84988 91.9398 9.73309C91.4799 9.6079 91.2387 9.52783 90.9248 9.32924C90.6109 9.13066 90.4644 8.84527 90.4644 8.46313C90.4644 8.15443 90.5958 7.89074 90.8586 7.66378C91.1294 7.43682 91.4929 7.31836 91.9613 7.31836C92.4734 7.31836 93.0199 7.45017 93.6112 7.72221L93.3856 8.24284C92.8153 8.00754 92.342 7.89074 91.9549 7.89074C91.4299 7.89074 91.1009 8.13273 91.1009 8.46313C91.1009 8.63167 91.1741 8.76348 91.3119 8.86697C91.4498 8.97041 91.7271 9.07224 92.1293 9.18235C92.6328 9.3209 92.9252 9.42434 93.2391 9.6296C93.553 9.82818 93.6909 10.1136 93.6909 10.5024C93.6909 10.8244 93.553 11.1032 93.2671 11.3318C92.9898 11.5587 92.6177 11.6772 92.1509 11.6772C91.516 11.6772 90.9312 11.5304 90.4062 11.23L90.4084 11.2283Z" fill="#121212"></path>
+                            <path d="M59.6177 14.6449H57.2889V15.9199H59.3108V16.4556H57.2889V17.7539H59.6177V18.3263H57.1074C56.8667 18.3263 56.6621 18.121 56.6621 17.879V14.5215C56.6621 14.2795 56.8667 14.0742 57.1074 14.0742H59.6177V14.6466V14.6449Z" fill="#121212"></path>
+                            <path d="M64.6331 14.0742L63.0996 16.2002L64.6331 18.3263H63.91L62.6909 16.6325L61.4713 18.3263H60.7422L62.2822 16.2002L60.7422 14.0742H61.4713L62.6909 15.7681L63.91 14.0742H64.6331Z" fill="#121212"></path>
+                            <path d="M66.1509 17.7679C65.7788 17.3641 65.5957 16.8367 65.5957 16.1993C65.5957 15.5618 65.7788 15.0328 66.1439 14.6306C66.5165 14.2267 66.9914 14.0215 67.5826 14.0215C68.0279 14.0215 68.5163 14.1467 69.0499 14.3887L68.8238 14.8943C68.3419 14.6957 67.9402 14.5939 67.6128 14.5939C67.1826 14.5939 66.8385 14.7474 66.5908 15.0478C66.3501 15.3482 66.2257 15.7303 66.2257 16.1993C66.2257 16.6682 66.3501 17.057 66.5978 17.3574C66.8455 17.6578 67.1826 17.8047 67.6128 17.8047C67.9698 17.8047 68.3785 17.7245 68.8238 17.5694L69.0429 18.0833C68.4948 18.2819 68.0064 18.377 67.5826 18.377C66.9979 18.377 66.5245 18.1718 66.1525 17.7679H66.1509Z" fill="#121212"></path>
+                            <path d="M73.549 14.0742H74.1768V18.3263H73.549V16.4572H71.2794V18.3263H70.6602V14.0742H71.2794V15.9216H73.549V14.0742Z" fill="#121212"></path>
+                            <path d="M78.8995 18.3253L78.5339 17.3424H76.4753L76.1097 18.3253H75.4668L76.9637 14.3736C77.0585 14.1383 77.2416 14.0215 77.5119 14.0215C77.7827 14.0215 77.9572 14.1383 78.052 14.3736L79.5408 18.3253H78.8979H78.8995ZM76.68 16.8001H78.3363L77.5038 14.5639L76.6783 16.8001H76.68Z" fill="#121212"></path>
+                            <path d="M83.4445 14.0735H84.0659V17.9818C84.0659 18.2388 83.8618 18.3857 83.6356 18.3857C83.4461 18.3857 83.3066 18.3122 83.2205 18.1587L81.4096 15.0131V18.3273H80.7812V14.4189C80.7812 14.162 80.9794 14.0234 81.2201 14.0234C81.4096 14.0234 81.5556 14.1036 81.6503 14.2654L83.4461 17.4028V14.0735H83.4445Z" fill="#121212"></path>
+                            <path d="M88.6401 16.3611H89.2383V18.0249C88.7715 18.2602 88.2448 18.377 87.6552 18.377C87.0651 18.377 86.5966 18.1717 86.2245 17.7679C85.8525 17.364 85.6699 16.8367 85.6699 16.1992C85.6699 15.5618 85.8525 15.0328 86.2181 14.6306C86.5901 14.2267 87.0651 14.0215 87.6568 14.0215C88.1318 14.0215 88.6271 14.1466 89.1451 14.3886L88.926 14.8943C88.4441 14.6956 88.0273 14.5939 87.6784 14.5939C87.2482 14.5939 86.9122 14.7474 86.6634 15.0478C86.4222 15.3481 86.2978 15.7303 86.2978 16.1992C86.2978 16.6682 86.4221 17.057 86.6698 17.3574C86.9175 17.6578 87.253 17.8046 87.6768 17.8046C87.9756 17.8046 88.2981 17.7529 88.6401 17.6578V16.3594V16.3611Z" fill="#121212"></path>
+                            <path d="M93.5279 14.6449H91.1985V15.9199H93.2204V16.4556H91.1985V17.7539H93.5279V18.3263H91.0176C90.7769 18.3263 90.5723 18.121 90.5723 17.879V14.5215C90.5723 14.2795 90.7769 14.0742 91.0176 14.0742H93.5279V14.6466V14.6449Z" fill="#121212"></path>
+                            <path d="M96.3369 0.628906V0.790525H95.8636V2.04263H95.6924V0.790525H95.2207V0.628906H96.3369Z" fill="#121212"></path>
+                            <path d="M98.0003 2.04228H97.8329L97.7925 0.901176L97.4177 1.6995C97.3983 1.7368 97.3709 1.75367 97.3342 1.75367C97.2955 1.75367 97.268 1.73591 97.2502 1.6995L96.8739 0.905616L96.8329 2.04228H96.666L96.7129 0.732453C96.7145 0.664075 96.7667 0.615234 96.8351 0.615234C96.89 0.615234 96.9261 0.636547 96.9476 0.681836L97.3342 1.50503L97.7187 0.681836C97.7402 0.637435 97.7774 0.615234 97.8312 0.615234C97.8996 0.615234 97.9519 0.664075 97.9535 0.732453L98.0003 2.04228Z" fill="#121212"></path>
+                          </g>
+                        </g>
+                        <defs>
+                          <clippath id="clip0_36_1281">
+                            <rect width="98" height="17.7692" fill="white" transform="translate(0 0.615234)"></rect>
+                          </clippath>
+                        </defs>
+                      </svg></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="section_expertise">
+          <div class="padding-global">
+            <div class="w-layout-blockcontainer container-large w-container">
+              <div id="expertise" data-progress-nav-anchor="" class="expertise-component">
+                <div class="expertise-heading">
+                  <div class="text-style-allcaps text-size-small">What Lives Here</div>
+                  <h1 class="heading-style-h2 text-weight-normal"><span id="expertise-title">We recognized a gap in the creative industry—small businesses often struggle to find high-quality, yet affordable, design solutions. That&#x27;s why we exist.</span></h1>
+                </div>
+                <div class="w-layout-grid expertise-grid" id="expertise-topics-list">
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon1.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Premium design</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Expertly-crafted designs that elevate your brand&#x27;s aesthetic.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon2svg.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Premium development</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Robust development that ensures your site isfast, secure, and efficient.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon3.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Figma to Webflow</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Seamless conversion of your Figma designs intopixel-perfect Webflow sites.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon4.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">UI/UX Design</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">We&#x27;ll keep your site running smoothly, so you canfocus on your business,</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon5.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Responsive Design</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Seamless conversion of your Figma designs intopixel-perfect Webflow sites.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon6.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">SEO</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Seamless conversion of your Figma designs intopixel-perfect Webflow sites.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon7.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Painless website customization</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Customization so easy, it&#x27;s like a walk in the park.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon8.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Advanced Interactions+animations</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Engaging interactions and animations that adddepth and interest to your site.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon9.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Scalability</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Build your Webflow project for the future with ascalable, flexible approach.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon10.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">Proven Webflow expertise</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Experience exceptional design expertise with aproduct founded by a former Webflow branddesigner.</div>
+                    </div>
+                  </div>
+                  <div class="expertise-card">
+                    <div class="expertise-icon_wrapper"><img src="images/icon11.svg" loading="lazy" alt="" class="expertise-icon"></div>
+                    <div class="text-size-medium text-weight-medium">White-Label</div>
+                    <div class="expertise-paragraph">
+                      <div class="text-size-regular">Boost your agency&#x27;s offerings with high-quality web development services that seamlessly integrate with your brand.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <section class="section_invest">
+        <div class="padding-global">
+          <div class="w-layout-blockcontainer container-large w-container">
+            <div id="investiment" data-progress-nav-anchor="" class="invest-component">
+              <div class="invest-heading">
+                <div class="about-heading_left">
+                  <div class="text-size-small text-weight-light">Proposal — <span class="text-color-grey">June 22, 2025</span></div>
+                  <div>Focus on the Aurore product growing while we cover the brand design,</div>
+                </div>
+                <div class="about-heading_title">
+                  <h2 class="heading-style-h1 text-weight-light"><span id="investment-title">We're a creative studio focused on bringing brands to life through thoughtful design and smart technology.</span></h2>
+                </div>
+              </div>
+              <div class="invest-scope">
+                <p id="investment-projectScope"></p>
+              </div>
+              <div class="invest-grid" id="plans-plansItems">
+                <div class="invest-card">
+                  <div class="invest-top">
+                    <div>Essencial</div>
+                    <div class="heading-style-h1 text-weight-medium">R$ 3.200</div>
+                  </div>
+                  <div class="invest-button-wrap">
+                    <div class="max-width-small">
+                      <div class="text-size-regular">Para casais que querem uma cobertura intimista, sem abrir mão da emoção.</div>
+                    </div>
+                    <a aria-label="staggering button" href="#" class="btn-animate-chars is-invest w-inline-block">
+                      <div class="btn-animate-chars__bg"></div><span data-button-animate-chars="" class="btn-animate-chars__text text-size-regular text-weight-medium">Start Project</span>
+                    </a>
+                  </div>
+                  <div class="invest-divider"></div>
+                  <div class="invest-incluse">
+                    <div class="text-style-allcaps text-size-small">O que está incluso:</div>
+                    <div class="invest-feature">
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="invest-card is-best">
+                  <div class="invest-top">
+                    <div class="invest-best_wrap">
+                      <div>Essencial</div>
+                      <div class="invest-best-tag"><img src="images/star.svg" loading="lazy" alt="" class="invest-icon">
+                        <div>Melhor oferta!</div>
+                      </div>
+                    </div>
+                    <div class="heading-style-h1 text-weight-medium">R$ 3.200</div>
+                  </div>
+                  <div class="invest-button-wrap">
+                    <div class="max-width-small">
+                      <div class="text-size-regular">Para casais que querem uma cobertura intimista, sem abrir mão da emoção.</div>
+                    </div>
+                    <a aria-label="staggering button" href="#" class="btn-animate-chars is-invest w-inline-block">
+                      <div class="btn-animate-chars__bg is-best"></div><span data-button-animate-chars="" class="btn-animate-chars__text text-size-regular text-weight-medium">Start Project</span>
+                    </a>
+                  </div>
+                  <div class="invest-divider"></div>
+                  <div class="invest-incluse">
+                    <div class="text-style-allcaps text-size-small">O que está incluso:</div>
+                    <div class="invest-feature">
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="invest-card">
+                  <div class="invest-top">
+                    <div>Essencial</div>
+                    <div class="heading-style-h1 text-weight-medium">R$ 3.200</div>
+                  </div>
+                  <div class="invest-button-wrap">
+                    <div class="max-width-small">
+                      <div class="text-size-regular">Para casais que querem uma cobertura intimista, sem abrir mão da emoção.</div>
+                    </div>
+                    <a aria-label="staggering button" href="#" class="btn-animate-chars is-invest w-inline-block">
+                      <div class="btn-animate-chars__bg"></div><span data-button-animate-chars="" class="btn-animate-chars__text text-size-regular text-weight-medium">Start Project</span>
+                    </a>
+                  </div>
+                  <div class="invest-divider"></div>
+                  <div class="invest-incluse">
+                    <div class="text-style-allcaps text-size-small">O que está incluso:</div>
+                    <div class="invest-feature">
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                      <div class="invest-list"><img src="images/Check.svg" loading="lazy" alt="" class="invest-icon">
+                        <div class="text-size-regular">This is some text inside of a div block.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="invest-terms">
+                <div>Termos &amp; Condições</div>
+                <div class="terms-divider"></div>
+                <div class="w-layout-grid terms-grid">
+                  <div class="terms-card">
+                    <div>Gestão de Projetos</div>
+                    <div class="opacity-70">
+                      <p>Um gerente dedicado coordena cada fase, garantindo uma comunicação fluida, eficiente e a continuidade no projeto.</p>
+                    </div>
+                  </div>
+                  <div class="terms-card">
+                    <div>Gestão de Projetos</div>
+                    <div class="opacity-70">
+                      <p>Um gerente dedicado coordena cada fase, garantindo uma comunicação fluida, eficiente e a continuidade no projeto.</p>
+                    </div>
+                  </div>
+                  <div class="terms-card">
+                    <div>Gestão de Projetos</div>
+                    <div class="opacity-70">
+                      <p>Um gerente dedicado coordena cada fase, garantindo uma comunicação fluida, eficiente e a continuidade no projeto.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="padding-global">
+          <div class="w-layout-blockcontainer container-large w-container">
+            <div class="faq" id="faq-items">
+              <div class="faq-item">
+                <div class="faq-top">
+                  <div class="text-size-regular text-weight-medium">This is some text inside of a div block.</div>
+                  <div class="faq-arrow"><img loading="lazy" src="images/faq-arrow.svg" alt="" class="faq-arrow-img"></div>
+                </div>
+                <div class="faq-answer">
+                  <div class="faq-margin-bottom">
+                    <p class="text-size-regular">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-top">
+                  <div class="text-size-regular text-weight-medium">This is some text inside of a div block.</div>
+                  <div class="faq-arrow"><img loading="lazy" src="images/faq-arrow.svg" alt="" class="faq-arrow-img"></div>
+                </div>
+                <div class="faq-answer">
+                  <div class="faq-margin-bottom">
+                    <p class="text-size-regular">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-top">
+                  <div class="text-size-regular text-weight-medium">This is some text inside of a div block.</div>
+                  <div class="faq-arrow"><img loading="lazy" src="images/faq-arrow.svg" alt="" class="faq-arrow-img"></div>
+                </div>
+                <div class="faq-answer">
+                  <div class="faq-margin-bottom">
+                    <p class="text-size-regular">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-top">
+                  <div class="text-size-regular text-weight-medium">This is some text inside of a div block.</div>
+                  <div class="faq-arrow"><img loading="lazy" src="images/faq-arrow.svg" alt="" class="faq-arrow-img"></div>
+                </div>
+                <div class="faq-answer">
+                  <div class="faq-margin-bottom">
+                    <p class="text-size-regular">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-top">
+                  <div class="text-size-regular text-weight-medium">This is some text inside of a div block.</div>
+                  <div class="faq-arrow"><img loading="lazy" src="images/faq-arrow.svg" alt="" class="faq-arrow-img"></div>
+                </div>
+                <div class="faq-answer">
+                  <div class="faq-margin-bottom">
+                    <p class="text-size-regular">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <footer class="footer">
+        <div class="padding-global">
+          <div class="w-layout-blockcontainer container-large w-container">
+            <div class="footer-component">
+              <div class="footer-heading">
+                <p class="heading-style-h1 text-weight-normal" id="footer-callToAction">We welcome kindred spirits. Whether you&#x27;re looking for silence, space, or simply a change in pace — Kaleo is open.</p>
+                <div class="footer-proposal">
+                  <div class="text-size-regular">Proposta válida até — <span id="footer-validity">12/08/2025</span></div>
+                </div>
+              </div>
+              <div class="footer-contact_wrap">
+                <div class="footer-contact">
+                  <div class="text-style-allcaps">Email</div>
+                  <div class="copy-email-wrapper"><button data-copy-button="" data-copy-email="" aria-label="Copy email to clipboard" class="copy-email-button">
+                      <div class="copy-email-text__wrap"><span data-copy-email-element="" class="copy-email-text__el">lucas.gusso@gmail.com</span><span class="copy-email-text__el">Click to copy email</span><span class="copy-email-text__el">Copied to clipboard!</span></div>
+                    </button></div>
+                  <div class="copy-clipboard w-embed w-script">
+                    <script>
+function initCopyEmailClipboard() {
+  const buttons = document.querySelectorAll('.copy-email-button');
+  if (!buttons.length) return;
+  const copyEmail = (button) => {
+  	// Email to copy to clipboard is taking from the button itself, or if that's empty,
+    // from a text element inside the button
+    const email =
+      button.getAttribute('data-copy-email') ||
+      button.querySelector('[data-copy-email-element]').textContent.trim();
+    if (email) {
+      navigator.clipboard.writeText(email).then(() => {
+        button.setAttribute('data-copy-button', 'copied');
+        button.setAttribute('aria-label', 'Email copied to clipboard!');
+      });
+    }
+  };
+  const handleInteraction = (e) => {
+    if (
+      e.type === 'click' ||
+      (e.type === 'keydown' && (e.key === 'Enter' || e.key === ' '))
+    ) {
+      e.preventDefault();
+      copyEmail(e.currentTarget);
+    }
+  };
+  buttons.forEach((button) => {
+    button.addEventListener('click', handleInteraction);
+    button.addEventListener('keydown', handleInteraction);
+    button.addEventListener('mouseleave', () => {
+    	// Remove 'active' attribute to reset color and text transform
+      button.removeAttribute('data-copy-button');
+      // Remove focus on mouseleave to clear keyboard focus styling
+      button.blur();
+      button.setAttribute('aria-label', 'Copy email to clipboard');
+    });
+    button.addEventListener('blur', () => {
+      button.removeAttribute('data-copy-button');
+      button.setAttribute('aria-label', 'Copy email to clipboard');
+    });
+  });
+}
+// Initialize Copy Email to Clipboard Button
+document.addEventListener('DOMContentLoaded', () => {
+  initCopyEmailClipboard();
+});
+</script>
+                    <style>
+/* Hover styling */
+@media (hover: hover) {
+  .copy-email-button:hover .copy-email-icon__wrap{
+    background: rgba(34, 80, 46, 0.9);
+  }
+  .copy-email-button:hover .copy-email-text__el{
+    transform: translate(0px, -100%);
+  }
+}
+/* Keyboard focus styling */
+.copy-email-button:hover .copy-email-icon__wrap{
+  background: rgba(34, 80, 46, 0.9);
+}
+.copy-email-button:focus .copy-email-text__el {
+  transform: translate(0px, -100%);
+}
+/* 'Copied' state, when a user has clicked the button */
+[data-copy-button="copied"] .copy-email-icon__wrap{ background: #0F8E2E !important; }
+[data-copy-button="copied"] .copy-email-text__el{ transform: translate(0px, -200%) !important; }
+</style>
+                  </div>
+                </div>
+                <div class="footer-contact">
+                  <div class="text-style-allcaps">WHATSAPP</div>
+                  <div class="text-weight-normal text-size-large">+55 (41) 99817-2688</div>
+                </div>
+              </div>
+              <div class="footer_subtitle">
+                <p id="footer-disclaimer"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about-marquee is-footer">
+          <div class="about-marquee_text is-footer">Brand Design → Design Systems → UI Design → Webflow Development</div>
+          <div class="about-marquee_text is-footer">Brand Design → Design Systems → UI Design → Webflow Development</div>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=685efd209996a3ec4a490c1a" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="js/empty-studio.js" type="text/javascript"></script>
+  <script src="https://cdn.prod.website-files.com/gsap/3.13.0/gsap.min.js" type="text/javascript"></script>
+  <script src="https://cdn.prod.website-files.com/gsap/3.13.0/ScrollTrigger.min.js" type="text/javascript"></script>
+  <script type="text/javascript">gsap.registerPlugin(ScrollTrigger);</script>
+  <script>
+// Lenis (with GSAP Scroltrigger)
+const lenis = new Lenis();
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => {lenis.raf(time * 1000);});
+gsap.ticker.lagSmoothing(0);
+</script><!--  GSAP Marquee -->
+  <script>
+// Register GSAP plugins
+gsap.registerPlugin();
+// Montegrappa Marquee Configuration
+const MARQUEE_CONFIG = {
+  defaultSpeed: 20,
+  mobileSpeedRatio: 0.6,
+  tabletSpeedRatio: 0.8,
+  baselineWidth: 1920,
+  duplicateCount: 2
+};
+// Helper function to calculate responsive speed
+function calculateMarqueeSpeed(baseSpeed, containerWidth) {
+  const screenWidth = window.innerWidth;
+  const widthRatio = containerWidth / MARQUEE_CONFIG.baselineWidth;
+  let responsiveMultiplier = 1;
+  if (screenWidth < 480) {
+    responsiveMultiplier = MARQUEE_CONFIG.mobileSpeedRatio;
+  } else if (screenWidth < 992) {
+    responsiveMultiplier = MARQUEE_CONFIG.tabletSpeedRatio;
+  }
+  return baseSpeed * widthRatio * responsiveMultiplier;
+}
+// Helper function to create content duplicates
+function createMarqueeClones(originalContent, cloneCount) {
+  const contentParent = originalContent.parentElement;
+  const duplicates = [];
+  for (let i = 0; i < cloneCount; i++) {
+    const clonedElement = originalContent.cloneNode(true);
+    clonedElement.setAttribute('data-marquee-clone', 'true');
+    clonedElement.removeAttribute('data-marquee-content');
+    contentParent.appendChild(clonedElement);
+    duplicates.push(clonedElement);
+  }
+  return duplicates;
+}
+// Helper function to setup marquee animation
+function createMarqueeAnimation(container, animationSpeed) {
+  const containerWidth = container.scrollWidth;
+  return gsap.to(container, {
+    x: -containerWidth / 2, // Move half the width (because we have duplicates)
+    duration: animationSpeed,
+    ease: 'none',
+    repeat: -1
+  });
+}
+// Initialize individual marquee element
+function setupMarqueeElement(marqueeContainer) {
+  const contentElement = marqueeContainer.querySelector('[data-marquee-content]');
+  if (!contentElement) {
+    console.warn('Marquee content element not found');
+    return;
+  }
+  // Get configuration from attributes
+  const customSpeed = parseFloat(marqueeContainer.getAttribute('data-marquee-speed')) || MARQUEE_CONFIG.defaultSpeed;
+  const pauseOnHover = marqueeContainer.getAttribute('data-marquee-pause') === 'true';
+  // Calculate final animation speed
+  const containerWidth = contentElement.offsetWidth;
+  const finalSpeed = calculateMarqueeSpeed(customSpeed, containerWidth);
+  // Create content duplicates for seamless loop
+  const clonedElements = createMarqueeClones(contentElement, MARQUEE_CONFIG.duplicateCount);
+  const allContentElements = [contentElement, ...clonedElements];
+  // Position elements for continuous flow - work with Webflow Flex
+  allContentElements.forEach((element, index) => {
+    // Don't override Webflow's flex styling, just set initial position
+    gsap.set(element, {
+      x: 0
+    });
+  });
+  // Create the main animation - animate the container itself
+  const marqueeAnimation = createMarqueeAnimation(contentElement.parentElement, finalSpeed);
+  // Setup hover pause functionality
+  if (pauseOnHover) {
+    marqueeContainer.addEventListener('mouseenter', () => {
+      gsap.to(marqueeAnimation, { timeScale: 0, duration: 0.3 });
+    });
+    marqueeContainer.addEventListener('mouseleave', () => {
+      gsap.to(marqueeAnimation, { timeScale: 1, duration: 0.3 });
+    });
+  }
+  // Store animation reference for potential cleanup
+  marqueeContainer._marqueeAnimation = marqueeAnimation;
+  // Set status attribute for CSS targeting
+  marqueeContainer.setAttribute('data-marquee-status', 'active');
+}
+// Cleanup existing marquee animations
+function cleanupMarqueeAnimations() {
+  document.querySelectorAll('[data-marquee]').forEach(container => {
+    if (container._marqueeAnimation) {
+      container._marqueeAnimation.kill();
+      container._marqueeAnimation = null;
+    }
+    // Remove cloned elements
+    container.querySelectorAll('[data-marquee-clone]').forEach(clone => {
+      clone.remove();
+    });
+    // Reset content positioning
+    const content = container.querySelector('[data-marquee-content]');
+    if (content) {
+      gsap.set(content, { clearProps: 'all' });
+    }
+  });
+}
+// Handle window resize with debouncing
+function handleMarqueeResize() {
+  let resizeTimeout;
+  return function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      cleanupMarqueeAnimations();
+      initMontegrapaMarquees();
+    }, 250);
+  };
+}
+// Main marquee initialization function
+function initMontegrapaMarquees() {
+  const marqueeContainers = document.querySelectorAll('[data-marquee]');
+  if (marqueeContainers.length === 0) {
+    console.log('No marquee elements found');
+    return;
+  }
+  marqueeContainers.forEach(container => {
+    setupMarqueeElement(container);
+  });
+  console.log(`Initialized ${marqueeContainers.length} marquee element(s)`);
+}
+// Event listeners
+window.addEventListener('resize', handleMarqueeResize());
+document.addEventListener('DOMContentLoaded', function() {
+  initMontegrapaMarquees();
+});
+</script>
+  <script>
+// Register GSAP Plugins
+gsap.registerPlugin(ScrollTrigger);
+function initProgressNavigation() {
+  // Cache the parent container
+  let navProgress = document.querySelector('[data-progress-nav-list]');
+  // Create or select the moving indicator
+  let indicator = navProgress.querySelector('.progress-nav__indicator');
+  if (!indicator) {
+    indicator = document.createElement('div');
+    indicator.className = 'progress-nav__indicator';
+    navProgress.appendChild(indicator);
+  }
+  // Function to update the indicator based on the active nav link
+  function updateIndicator(activeLink) {
+    let parentWidth = navProgress.offsetWidth;
+    let parentHeight = navProgress.offsetHeight;
+    // Get the active link's position relative to the parent
+    let parentRect = navProgress.getBoundingClientRect();
+    let linkRect = activeLink.getBoundingClientRect();
+    let linkPos = {
+      left: linkRect.left - parentRect.left,
+      top: linkRect.top - parentRect.top
+    };
+    let linkWidth = activeLink.offsetWidth;
+    let linkHeight = activeLink.offsetHeight;
+    // Calculate percentage values relative to parent dimensions
+    let leftPercent = (linkPos.left / parentWidth) * 100;
+    let topPercent = (linkPos.top / parentHeight) * 100;
+    let widthPercent = (linkWidth / parentWidth) * 100;
+    let heightPercent = (linkHeight / parentHeight) * 100;
+    // Update the indicator with a smooth CSS transition (set in your CSS)
+    indicator.style.left = leftPercent + '%';
+    indicator.style.top = topPercent + '%';
+    indicator.style.width = widthPercent + '%';
+    indicator.style.height = heightPercent + '%';
+  }
+  // Get all anchor sections
+  let progressAnchors = gsap.utils.toArray('[data-progress-nav-anchor]');
+  progressAnchors.forEach((progressAnchor) => {
+    let anchorID = progressAnchor.getAttribute('id');
+    ScrollTrigger.create({
+      trigger: progressAnchor,
+      start: '0% 50%',
+      end: '100% 50%',
+      onEnter: () => {
+        let activeLink = navProgress.querySelector('[data-progress-nav-target="#' + anchorID + '"]');
+        activeLink.classList.add('is--active');
+        // Remove 'is--active' class from sibling links
+        let siblings = navProgress.querySelectorAll('[data-progress-nav-target]');
+        siblings.forEach((sib) => {
+          if (sib !== activeLink) {
+            sib.classList.remove('is--active');
+          }
+        });
+        updateIndicator(activeLink);
+      },
+      onEnterBack: () => {
+        let activeLink = navProgress.querySelector('[data-progress-nav-target="#' + anchorID + '"]');
+        activeLink.classList.add('is--active');
+        // Remove 'is--active' class from sibling links
+        let siblings = navProgress.querySelectorAll('[data-progress-nav-target]');
+        siblings.forEach((sib) => {
+          if (sib !== activeLink) {
+            sib.classList.remove('is--active');
+          }
+        });
+        updateIndicator(activeLink);
+      }
+    });
+  });
+}
+// Initialize One Page Progress Navigation
+document.addEventListener('DOMContentLoaded', () => {
+  initProgressNavigation();
+});
+</script>
+  <style>
+.progress-nav__indicator {
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.progress-nav__btn-text {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(0%) rotate(0.001deg);
+}
+.progress-nav__btn:hover .progress-nav__btn-text,
+.progress-nav__contact-btn:hover .progress-nav__btn-text{
+  transform: translateY(-100%) rotate(0.001deg);
+}
+</style>
+</body>
+</html>
+</html>

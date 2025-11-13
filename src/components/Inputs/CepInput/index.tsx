@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Loader2 } from "lucide-react";
+import { Search, LoaderCircle } from "lucide-react";
 
 interface CepInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string | React.ReactNode;
@@ -38,7 +38,7 @@ const CepInput: React.FC<CepInputProps> = (props) => {
     <div className="block w-full">
       <label
         htmlFor={inputName}
-        className="text-[var(--color-white-neutral-light-700)] text-sm font-medium"
+        className="text-sm font-medium text-[var(--color-white-neutral-light-700)]"
       >
         {label}
       </label>
@@ -53,11 +53,7 @@ const CepInput: React.FC<CepInputProps> = (props) => {
           onChange={onChange}
           onBlur={onBlur}
           onKeyDown={handleKeyDown}
-          className={`w-full px-4 py-3 pr-10 rounded-[var(--radius-s)] 
-          border border-white-neutral-light-300 bg-white-neutral-light-100
-          placeholder:text-[var(--color-white-neutral-light-400)] 
-          focus:outline-none focus:border-[var(--color-primary-light-400)]
-          ${
+          className={`border-white-neutral-light-300 bg-white-neutral-light-100 w-full rounded-[var(--radius-s)] border px-4 py-3 pr-10 placeholder:text-[var(--color-white-neutral-light-400)] focus:border-[var(--color-primary-light-400)] focus:outline-none ${
             disabled || isSearching
               ? "opacity-50"
               : "text-white-neutral-light-800"
@@ -69,16 +65,15 @@ const CepInput: React.FC<CepInputProps> = (props) => {
           type="button"
           onClick={onSearch}
           disabled={disabled || isSearching || !value}
-          className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full
-            ${
-              !disabled && !isSearching && value
-                ? "text-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-10)] cursor-pointer"
-                : "text-[var(--color-white-neutral-light-400)] cursor-not-allowed"
-            }`}
+          className={`absolute top-1/2 right-2 -translate-y-1/2 transform rounded-full p-1 ${
+            !disabled && !isSearching && value
+              ? "cursor-pointer text-[var(--color-primary-light-400)] hover:bg-[var(--color-primary-light-10)]"
+              : "cursor-not-allowed text-[var(--color-white-neutral-light-400)]"
+          }`}
           aria-label="Buscar CEP"
         >
           {isSearching ? (
-            <Loader2 size={18} className="animate-spin" />
+            <LoaderCircle className="text-primary-light-400 animate-spin" />
           ) : (
             <Search size={18} />
           )}
@@ -86,7 +81,7 @@ const CepInput: React.FC<CepInputProps> = (props) => {
       </div>
 
       {error && (
-        <div className="text-red-700 rounded-md mt-2 text-sm font-medium">
+        <div className="mt-2 rounded-md text-sm font-medium text-red-700">
           {error}
         </div>
       )}
