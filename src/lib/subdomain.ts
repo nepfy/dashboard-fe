@@ -7,14 +7,20 @@ function normalizeHostname(hostname: string): string {
 export function getProjectBaseDomain(): string {
   const envValue = process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN?.trim();
 
+  console.log("[getProjectBaseDomain] ENV value:", envValue);
+
   if (!envValue) {
+    console.log("[getProjectBaseDomain] No ENV, using default:", DEFAULT_PROJECT_BASE_DOMAIN);
     return DEFAULT_PROJECT_BASE_DOMAIN;
   }
 
-  return envValue
+  const result = envValue
     .replace(/^https?:\/\//i, "")
     .replace(/\/$/, "")
     .toLowerCase();
+
+  console.log("[getProjectBaseDomain] Final result:", result);
+  return result;
 }
 
 export function generateSubdomainUrl(
@@ -52,14 +58,26 @@ function stripBaseDomain(hostname: string): string | null {
   const normalizedHost = normalizeHostname(hostname);
   const projectBaseDomain = getProjectBaseDomain();
 
+  console.log("[stripBaseDomain] Input:", {
+    hostname,
+    normalizedHost,
+    projectBaseDomain,
+    expectedEnd: `.${projectBaseDomain}`,
+    endsWith: normalizedHost.endsWith(`.${projectBaseDomain}`),
+  });
+
   if (normalizedHost === projectBaseDomain) {
+    console.log("[stripBaseDomain] Hostname equals base domain, returning empty string");
     return "";
   }
 
   if (normalizedHost.endsWith(`.${projectBaseDomain}`)) {
-    return normalizedHost.slice(0, -(projectBaseDomain.length + 1));
+    const result = normalizedHost.slice(0, -(projectBaseDomain.length + 1));
+    console.log("[stripBaseDomain] SUCCESS, extracted:", result);
+    return result;
   }
 
+  console.log("[stripBaseDomain] FAILED: hostname does not end with base domain");
   return null;
 }
 
