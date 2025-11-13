@@ -7,6 +7,12 @@ import PersonalData from "./_components/_PersonalData";
 import CompanyData from "./_components/_CompanyData";
 import ChangePassword from "./_components/_ChangePassword";
 import { useUserAccount } from "#/hooks/useUserAccount";
+import dynamic from "next/dynamic";
+
+const NotificationSettings = dynamic(
+  () => import("./notificacoes/page"),
+  { ssr: false }
+);
 // import { Subscription } from "#/modules/subscription";
 
 export default function Configurations() {
@@ -29,7 +35,7 @@ export default function Configurations() {
     hasChanges: boolean;
   }>(null);
 
-  const tabs = ["Dados pessoais", "Dados empresariais", "Segurança"];
+  const tabs = ["Dados pessoais", "Dados empresariais", "Segurança", "Notificações"];
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -140,6 +146,7 @@ export default function Configurations() {
           <ChangePassword />
         </div>
       )}
+      {activeTab === "Notificações" && <NotificationSettings />}
       {/* {activeTab === "Assinatura" && (
         <div className="p-7">
           <Subscription />
