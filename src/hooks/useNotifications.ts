@@ -22,10 +22,16 @@ export function useNotifications(): UseNotificationsReturn {
     NotificationWithProject[]
   >([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Changed to false by default
   const [error, setError] = useState<string | null>(null);
 
+  // 🚨 MANUAL OVERRIDE: Disable notifications system
+  // TODO: Remove when feature flag is active
+  const NOTIFICATIONS_DISABLED = true;
+
   const fetchNotifications = useCallback(async () => {
+    if (NOTIFICATIONS_DISABLED) return;
+
     try {
       setIsLoading(true);
       setError(null);
@@ -46,9 +52,11 @@ export function useNotifications(): UseNotificationsReturn {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [NOTIFICATIONS_DISABLED]);
 
   const fetchUnreadCount = useCallback(async () => {
+    if (NOTIFICATIONS_DISABLED) return;
+
     try {
       const response = await fetch("/api/notifications/unread-count");
       const data = await response.json();
@@ -59,7 +67,7 @@ export function useNotifications(): UseNotificationsReturn {
     } catch (err) {
       console.error("Error fetching unread count:", err);
     }
-  }, []);
+  }, [NOTIFICATIONS_DISABLED]);
 
   const markAsRead = useCallback(
     async (id: string) => {
@@ -156,6 +164,8 @@ export function useNotifications(): UseNotificationsReturn {
   }, [fetchNotifications, fetchUnreadCount]);
 
   useEffect(() => {
+    if (NOTIFICATIONS_DISABLED) return;
+
     refetch();
 
     // Poll for new notifications every 30 seconds
@@ -164,7 +174,7 @@ export function useNotifications(): UseNotificationsReturn {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [refetch, fetchUnreadCount]);
+  }, [refetch, fetchUnreadCount, NOTIFICATIONS_DISABLED]);
 
   return {
     notifications,
