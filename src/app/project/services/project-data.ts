@@ -1,18 +1,18 @@
 /**
  * Simplified project data service using unified proposal_data
  */
-import { cache } from "react";
+// import { cache } from "react"; // TEMPORARILY DISABLED FOR DEBUG
 import { db } from "#/lib/db";
 import { eq, and, isNull } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 import type { TemplateData } from "#/types/template-data";
 
-export const getProjectData = cache(
-  async (
-    userName: string,
-    projectUrl: string
-  ): Promise<TemplateData | null> => {
+// TEMPORARILY REMOVED cache() wrapper for debugging
+export const getProjectData = async (
+  userName: string,
+  projectUrl: string
+): Promise<TemplateData | null> => {
     try {
       console.log("[getProjectData] Fetching project", {
         userName,
@@ -117,5 +117,5 @@ export const getProjectData = cache(
       console.error("Error fetching project data:", error);
       return null;
     }
-  }
-);
+  };
+// }); // TEMPORARILY REMOVED cache() wrapper closing

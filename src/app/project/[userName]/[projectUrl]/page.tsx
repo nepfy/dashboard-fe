@@ -13,11 +13,22 @@ type ProjectPageProps = {
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { userName, projectUrl } = await params;
 
+  console.log("[ProjectPage] Rendering with params:", { userName, projectUrl });
+
   const projectData = await getProjectData(userName, projectUrl);
 
+  console.log("[ProjectPage] Project data result:", {
+    found: !!projectData,
+    id: projectData?.id,
+    projectName: projectData?.projectName,
+  });
+
   if (!projectData) {
+    console.warn("[ProjectPage] Project not found, calling notFound()");
     notFound();
   }
+
+  console.log("[ProjectPage] Rendering template:", projectData.templateType);
 
   // Render appropriate template based on templateType
   if (projectData.templateType === "minimal") {
