@@ -82,7 +82,10 @@ export default function NotificationSettings() {
     }
   };
 
-  const updatePreference = (key: keyof NotificationPreferences, value: boolean) => {
+  const updatePreference = (
+    key: keyof NotificationPreferences,
+    value: boolean
+  ) => {
     if (!preferences) return;
     setPreferences({ ...preferences, [key]: value });
   };
@@ -105,11 +108,11 @@ export default function NotificationSettings() {
 
   return (
     <div className="p-6">
-      <DashboardPageHeader title="Configurações de Notificações">
+      <DashboardPageHeader title="Configurações de Notificações" disableBorder>
         <button
           onClick={savePreferences}
           disabled={saving}
-          className="bg-primary-light-400 hover:bg-primary-light-500 disabled:bg-gray-300 rounded-lg px-6 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed"
+          className="bg-primary-light-400 hover:bg-primary-light-500 rounded-lg px-6 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {saving ? "Salvando..." : "Salvar Alterações"}
         </button>
@@ -148,7 +151,7 @@ export default function NotificationSettings() {
                 }
                 className="peer sr-only"
               />
-              <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+              <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
             </label>
           </div>
 
@@ -221,7 +224,7 @@ export default function NotificationSettings() {
                 }
                 className="peer sr-only"
               />
-              <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+              <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
             </label>
           </div>
 
@@ -304,9 +307,7 @@ function NotificationPreferenceItem({
           {label}
         </p>
         <p
-          className={`text-sm ${
-            disabled ? "text-gray-300" : "text-gray-500"
-          }`}
+          className={`text-sm ${disabled ? "text-gray-300" : "text-gray-500"}`}
         >
           {description}
         </p>
@@ -319,9 +320,8 @@ function NotificationPreferenceItem({
           onChange={(e) => onChange(e.target.checked)}
           className="peer sr-only"
         />
-        <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+        <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:outline-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
       </label>
     </div>
   );
 }
-
