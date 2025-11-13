@@ -7,13 +7,14 @@ import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import MobileMenu from "../MobileMenu";
 import Notifications from "../Notifications";
-
-// import NotificationIcon from "#/components/icons/NotificationIcon";
+import NotificationIcon from "#/components/icons/NotificationIcon";
 import Logo from "#/components/icons/Logo";
 import MenuIcon from "#/components/icons/MenuIcon";
+import { useNotifications } from "#/hooks/useNotifications";
 
 export default function Navbar() {
   const { user } = useUser();
+  const { unreadCount } = useNotifications();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
@@ -28,18 +29,23 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-          <div className="flex items-center">
-            {/* <button
-              className="p-2 text-gray-600 hover:text-gray-900 relative cursor-pointer"
+          <div className="flex items-center gap-2">
+            {/* Notifications Button */}
+            <button
+              className="p-2 text-gray-600 hover:text-gray-900 relative cursor-pointer transition-colors"
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+              aria-label="Notificações"
             >
-              <span className="absolute top-1 right-1 bg-indigo-600 rounded-full w-4 h-4 text-xs text-white flex items-center justify-center">
-                2
-              </span>
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 bg-indigo-600 rounded-full min-w-[16px] h-4 px-1 text-xs text-white flex items-center justify-center font-medium">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
               <NotificationIcon width="24" height="24" />
-            </button> */}
+            </button>
 
-            <div className="hidden lg:block ml-3 relative">
+            {/* User Profile */}
+            <div className="hidden lg:block ml-1 relative">
               <div>
                 <button className="flex items-center text-sm rounded-full focus:outline-none">
                   <div className="h-8 w-8 rounded-full bg-gray-300">
@@ -62,6 +68,7 @@ export default function Navbar() {
               </div>
             </div>
 
+            {/* Mobile Menu Button */}
             <button
               type="button"
               className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
@@ -77,12 +84,10 @@ export default function Navbar() {
         <MobileMenu setIsMobileMenuOpenAction={setIsMobileMenuOpen} />
       )}
 
-      {isNotificationOpen && (
-        <Notifications
-          isNotificationOpen={isNotificationOpen}
-          setIsNotificationOpenAction={setIsNotificationOpen}
-        />
-      )}
+      <Notifications
+        isNotificationOpen={isNotificationOpen}
+        setIsNotificationOpenAction={setIsNotificationOpen}
+      />
     </nav>
   );
 }

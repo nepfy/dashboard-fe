@@ -14,6 +14,10 @@ import {
   serviceTypesTable,
   templateTypesTable,
 } from "./agents";
+import {
+  notificationsTable,
+  notificationPreferencesTable,
+} from "./notifications";
 
 export {
   // Users
@@ -33,4 +37,7 @@ export {
   agentTemplatesTable,
   serviceTypesTable,
   templateTypesTable,
+  // Notifications
+  notificationsTable,
+  notificationPreferencesTable,
 };
