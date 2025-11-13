@@ -3,7 +3,7 @@
  */
 import { cache } from "react";
 import { db } from "#/lib/db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 import type { TemplateData } from "#/types/template-data";
@@ -52,7 +52,8 @@ export const getProjectData = cache(
         .where(
           and(
             eq(personUserTable.userName, userName),
-            eq(projectsTable.projectUrl, projectUrl)
+            eq(projectsTable.projectUrl, projectUrl),
+            isNull(projectsTable.deleted_at)
           )
         )
         .limit(1);
