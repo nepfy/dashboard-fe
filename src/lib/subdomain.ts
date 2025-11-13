@@ -64,22 +64,30 @@ function stripBaseDomain(hostname: string): string | null {
 }
 
 function extractSlugFromPath(pathname: string): string | null {
+  console.log("[extractSlugFromPath] Input pathname:", pathname);
+
   if (!pathname) {
+    console.log("[extractSlugFromPath] FAILED: empty pathname");
     return null;
   }
 
   const trimmedPath = pathname.replace(/\/+$/, "");
+  console.log("[extractSlugFromPath] Trimmed path:", trimmedPath);
 
   if (trimmedPath === "" || trimmedPath === "/") {
+    console.log("[extractSlugFromPath] FAILED: empty or root path");
     return null;
   }
 
   const segments = trimmedPath.split("/").filter(Boolean);
+  console.log("[extractSlugFromPath] Segments:", segments, "length:", segments.length);
 
   if (segments.length !== 1) {
+    console.log("[extractSlugFromPath] FAILED: segments.length is not 1");
     return null;
   }
 
+  console.log("[extractSlugFromPath] SUCCESS:", segments[0]);
   return segments[0];
 }
 
@@ -116,19 +124,27 @@ function parseModernProjectSubdomain(
   hostname: string,
   pathname: string
 ): ParsedProjectLocation | null {
+  console.log("[parseModernProjectSubdomain] Input:", { hostname, pathname });
+
   const remainder = stripBaseDomain(hostname);
+  console.log("[parseModernProjectSubdomain] stripBaseDomain result:", remainder);
 
   if (remainder === null || remainder.includes(".")) {
+    console.log("[parseModernProjectSubdomain] FAILED: remainder is null or contains dot");
     return null;
   }
 
   const userName = remainder.trim();
   const projectUrl = extractSlugFromPath(pathname);
 
+  console.log("[parseModernProjectSubdomain] Extracted:", { userName, projectUrl });
+
   if (!userName || !projectUrl) {
+    console.log("[parseModernProjectSubdomain] FAILED: missing userName or projectUrl");
     return null;
   }
 
+  console.log("[parseModernProjectSubdomain] SUCCESS");
   return {
     userName,
     projectUrl,
