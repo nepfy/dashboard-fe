@@ -38,27 +38,13 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   if (!isMainDomain(hostname)) {
-    console.log("[MIDDLEWARE] Subdomain detected:", {
-      hostname,
-      pathname: url.pathname,
-    });
-
     const projectLocation = parseProjectLocation(hostname, url.pathname);
 
-    console.log("[MIDDLEWARE] parseProjectLocation result:", projectLocation);
-
     if (!projectLocation) {
-      console.error("[MIDDLEWARE] Failed to parse project location - returning 404");
       return new NextResponse("Not Found", { status: 404 });
     }
 
     const { userName, projectUrl, isLegacy } = projectLocation;
-
-    console.log("[MIDDLEWARE] Parsed successfully:", {
-      userName,
-      projectUrl,
-      isLegacy,
-    });
 
     if (isLegacy) {
       const projectBaseDomain = getProjectBaseDomain();
@@ -71,8 +57,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
     if (!url.pathname.startsWith("/project/")) {
       const newUrl = new URL(`/project/${userName}/${projectUrl}`, req.url);
-
-      console.log("[MIDDLEWARE] Rewriting to:", newUrl.pathname);
 
       const response = NextResponse.rewrite(newUrl);
       response.headers.set("x-subdomain", userName);
