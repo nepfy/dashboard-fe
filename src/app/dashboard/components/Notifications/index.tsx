@@ -33,7 +33,9 @@ function formatRelativeTime(date: Date | null): string {
   if (!date) return "";
 
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - new Date(date).getTime()) / 1000);
+  const diffInSeconds = Math.floor(
+    (now.getTime() - new Date(date).getTime()) / 1000
+  );
 
   if (diffInSeconds < 60) return "Agora mesmo";
   if (diffInSeconds < 3600) {
@@ -121,23 +123,23 @@ export default function Notifications({
   if (!isNotificationOpen) return null;
 
   return (
-    <div className="bg-filter absolute top-0 left-0 z-40 w-full h-full">
-      <div className="absolute sm:right-7 sm:top-2 sm:mt-2 bg-white sm:shadow-lg sm:rounded-xs z-10 sm:w-[397px] h-full sm:h-auto max-h-[600px] flex flex-col">
+    <div className="bg-filter absolute top-0 left-0 z-40 h-full w-full">
+      <div className="absolute z-10 flex h-full max-h-[600px] flex-col bg-white sm:top-2 sm:right-7 sm:mt-2 sm:h-auto sm:w-[397px] sm:rounded-xs sm:shadow-lg">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between border-b border-gray-200 p-4">
           <div className="flex items-center gap-2">
             <p className="text-lg font-normal text-gray-900">Notificações</p>
             {notifications.some((n) => !n.isRead) && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-xs text-primary-light-400 hover:text-primary-light-500 font-medium"
+                className="text-primary-light-400 hover:text-primary-light-500 text-xs font-medium"
               >
                 Marcar todas como lidas
               </button>
             )}
           </div>
           <div
-            className="button-inner h-[44px] w-[44px] p-4 rounded-xs border border-white-neutral-light-300 flex items-center justify-center cursor-pointer hover:bg-white-neutral-light-200"
+            className="button-inner border-white-neutral-light-300 hover:bg-white-neutral-light-200 flex h-[44px] w-[44px] cursor-pointer items-center justify-center rounded-xs border p-4"
             onClick={() => setIsNotificationOpenAction(false)}
           >
             <CloseIcon width="16" height="16" />
@@ -145,52 +147,43 @@ export default function Notifications({
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto flex-1">
+        <div className="flex-1 overflow-y-auto">
           {isLoading ? (
             <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-light-400"></div>
+              <div className="border-primary-light-400 h-8 w-8 animate-spin rounded-full border-b-2"></div>
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center">
-              <div className="text-4xl mb-2">🔔</div>
-              <p className="text-sm text-gray-500">
-                Você não tem notificações
-              </p>
+              <div className="mb-2 text-4xl">🔔</div>
+              <p className="text-sm text-gray-500">Você não tem notificações</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
               {notifications.map((notification) => {
-                const NotificationWrapper = notification.actionUrl
-                  ? Link
-                  : "div";
-                const wrapperProps = notification.actionUrl
-                  ? { href: notification.actionUrl }
-                  : {};
+                const commonProps = {
+                  key: notification.id,
+                  className: `flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors cursor-pointer relative group ${
+                    !notification.isRead ? "bg-blue-50" : ""
+                  }`,
+                  onClick: () =>
+                    handleNotificationClick(
+                      notification.id,
+                      notification.actionUrl,
+                      notification.isRead,
+                      notification.type
+                    ),
+                };
 
-                return (
-                  <NotificationWrapper
-                    key={notification.id}
-                    {...wrapperProps}
-                    className={`flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors cursor-pointer relative group ${
-                      !notification.isRead ? "bg-blue-50" : ""
-                    }`}
-                    onClick={() =>
-                      handleNotificationClick(
-                        notification.id,
-                        notification.actionUrl,
-                        notification.isRead,
-                        notification.type
-                      )
-                    }
-                  >
+                const content = (
+                  <>
                     {/* Icon */}
-                    <div className="h-10 w-10 bg-primary-light-100 rounded-lg flex items-center justify-center text-xl flex-shrink-0">
+                    <div className="bg-primary-light-100 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-xl">
                       {getNotificationIcon(notification.type)}
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-start justify-between gap-2">
                         <p
                           className={`text-sm font-medium ${
                             notification.isRead
@@ -200,17 +193,17 @@ export default function Notifications({
                         >
                           {notification.title}
                         </p>
-                        <p className="text-xs text-gray-500 whitespace-nowrap">
+                        <p className="text-xs whitespace-nowrap text-gray-500">
                           {formatRelativeTime(notification.created_at)}
                         </p>
                       </div>
-                      <p className="text-sm text-gray-600 line-clamp-2">
+                      <p className="line-clamp-2 text-sm text-gray-600">
                         {notification.message}
                       </p>
 
                       {/* Unread indicator */}
                       {!notification.isRead && (
-                        <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div className="absolute top-1/2 left-2 h-2 w-2 -translate-y-1/2 rounded-full bg-blue-500"></div>
                       )}
                     </div>
 
@@ -219,12 +212,20 @@ export default function Notifications({
                       onClick={(e) =>
                         handleDelete(e, notification.id, notification.type)
                       }
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-200 rounded"
+                      className="rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200"
                       aria-label="Excluir notificação"
                     >
                       <CloseIcon width="12" height="12" />
                     </button>
-                  </NotificationWrapper>
+                  </>
+                );
+
+                return notification.actionUrl ? (
+                  <Link {...commonProps} href={notification.actionUrl}>
+                    {content}
+                  </Link>
+                ) : (
+                  <div {...commonProps}>{content}</div>
                 );
               })}
             </div>

@@ -10,7 +10,11 @@ import { projectsTable } from "#/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 interface ProposalEventPayload {
-  event: "proposal_viewed" | "proposal_accepted" | "proposal_rejected" | "proposal_feedback";
+  event:
+    | "proposal_viewed"
+    | "proposal_accepted"
+    | "proposal_rejected"
+    | "proposal_feedback";
   projectId: string;
   clientName?: string;
   feedbackText?: string;
@@ -60,7 +64,7 @@ export async function POST(request: NextRequest) {
             .update(projectsTable)
             .set({
               projectVisualizationDate: new Date(),
-              updatedAt: new Date(),
+              updated_at: new Date(),
             })
             .where(eq(projectsTable.id, projectId));
         }
@@ -79,7 +83,7 @@ export async function POST(request: NextRequest) {
           .update(projectsTable)
           .set({
             projectStatus: "approved",
-            updatedAt: new Date(),
+            updated_at: new Date(),
           })
           .where(eq(projectsTable.id, projectId));
         break;
@@ -97,7 +101,7 @@ export async function POST(request: NextRequest) {
           .update(projectsTable)
           .set({
             projectStatus: "rejected",
-            updatedAt: new Date(),
+            updated_at: new Date(),
           })
           .where(eq(projectsTable.id, projectId));
         break;
@@ -135,4 +139,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

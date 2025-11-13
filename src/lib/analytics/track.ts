@@ -24,6 +24,12 @@ import type {
   PlanUpgradedProperties,
   PlanLimitReachedProperties,
   PlanCanceledProperties,
+  NotificationCenterOpenedProperties,
+  NotificationClickedProperties,
+  NotificationsMarkedAllReadProperties,
+  NotificationDeletedProperties,
+  NotificationSentProperties,
+  NotificationEmailSentProperties,
 } from "./events";
 
 /**
@@ -182,7 +188,9 @@ export function trackEditorSettingsChanged(
   });
 }
 
-export function trackProposalPublished(properties: ProposalPublishedProperties) {
+export function trackProposalPublished(
+  properties: ProposalPublishedProperties
+) {
   const posthog = getPostHog();
   if (!posthog) return;
 
@@ -286,9 +294,7 @@ export function trackNotificationDeleted(
   });
 }
 
-export function trackNotificationSent(
-  properties: NotificationSentProperties
-) {
+export function trackNotificationSent(properties: NotificationSentProperties) {
   const posthog = getPostHog();
   if (!posthog) return;
 
@@ -350,4 +356,3 @@ export function trackPlanCanceled(properties: PlanCanceledProperties) {
     timestamp: new Date().toISOString(),
   });
 }
-
