@@ -20,9 +20,10 @@ function checkIsMainDomain(hostname: string): boolean {
 function MainDomainHome() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded || !user) {
+    if (!isLoaded || !user || hasRedirected) {
       return;
     }
 
@@ -34,7 +35,8 @@ function MainDomainHome() {
 
         if (response.ok) {
           const result = (await response.json()) as OnboardingStatusApiResponse;
-          if (result.success && result.data) {
+          if (result.success && result.data && !hasRedirected) {
+            setHasRedirected(true);
             router.push(
               result.data.needsOnboarding ? "/onboarding" : "/dashboard"
             );
@@ -45,14 +47,17 @@ function MainDomainHome() {
         console.error("Failed to determine onboarding status:", error);
       }
 
-      const onboardingComplete = Boolean(
-        user.publicMetadata?.onboardingComplete
-      );
-      router.push(onboardingComplete ? "/dashboard" : "/onboarding");
+      if (!hasRedirected) {
+        const onboardingComplete = Boolean(
+          user.publicMetadata?.onboardingComplete
+        );
+        setHasRedirected(true);
+        router.push(onboardingComplete ? "/dashboard" : "/onboarding");
+      }
     };
 
     routeUser();
-  }, [user, isLoaded, router]);
+  }, [user, isLoaded, router, hasRedirected]);
 
   if (!isLoaded) {
     return (

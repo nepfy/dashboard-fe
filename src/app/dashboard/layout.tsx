@@ -19,6 +19,7 @@ export default function DashboardLayout({
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) {
@@ -27,7 +28,14 @@ export default function DashboardLayout({
 
     if (!user) {
       setIsCheckingOnboarding(false);
-      router.push("/login");
+      if (!hasRedirected) {
+        setHasRedirected(true);
+        router.push("/login");
+      }
+      return;
+    }
+
+    if (hasRedirected) {
       return;
     }
 
@@ -41,7 +49,8 @@ export default function DashboardLayout({
 
         if (response.ok) {
           const result = (await response.json()) as OnboardingStatusApiResponse;
-          if (result.success && result.data.needsOnboarding) {
+          if (result.success && result.data.needsOnboarding && isMounted && !hasRedirected) {
+            setHasRedirected(true);
             router.replace("/onboarding?recovery=1");
             return;
           }
@@ -54,12 +63,13 @@ export default function DashboardLayout({
         }
       }
 
-      if (user.unsafeMetadata.stripe) {
+      if (user.unsafeMetadata.stripe && isMounted && !hasRedirected) {
         const hasActiveSubscription = (
           user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
         )?.subscriptionActive;
 
         if (!hasActiveSubscription) {
+          setHasRedirected(true);
           router.push("/planos");
         }
       }
@@ -70,7 +80,7 @@ export default function DashboardLayout({
     return () => {
       isMounted = false;
     };
-  }, [user, isLoaded, router]);
+  }, [user, isLoaded, router, hasRedirected]);
 
   if (!isLoaded || isCheckingOnboarding) {
     return (

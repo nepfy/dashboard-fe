@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
@@ -22,21 +22,24 @@ const RedirectingScreen = ({ message }: { message: string }) => (
 export default function AppLanding() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded) {
+    if (!isLoaded || hasRedirected) {
       return;
     }
 
     if (!user) {
+      setHasRedirected(true);
       router.replace("/login");
       return;
     }
 
     const onboardingComplete = Boolean(user.publicMetadata?.onboardingComplete);
 
+    setHasRedirected(true);
     router.replace(onboardingComplete ? "/dashboard" : "/onboarding");
-  }, [isLoaded, user, router]);
+  }, [isLoaded, user, router, hasRedirected]);
 
   if (!isLoaded) {
     return <RedirectingScreen message="Carregando suas informações" />;

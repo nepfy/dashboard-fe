@@ -1,14 +1,9 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  if ((await auth()).sessionClaims?.metadata.onboardingComplete === true) {
-    redirect("/dashboard");
-  }
-
+  // Removido verificação server-side que causava loop infinito
+  // A página de onboarding já faz verificação client-side e redireciona se necessário
   return <>{children}</>;
 }
