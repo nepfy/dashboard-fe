@@ -50,6 +50,10 @@ interface ProposalGeneratorState {
   // Loading state
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+
+  // Error
+  error: { message: string; details: string } | null;
+  setError: (error: { message: string; details: string } | null) => void;
 }
 
 const ProposalGeneratorContext = createContext<
@@ -75,7 +79,10 @@ export function ProposalGeneratorProvider({
   const [validUntil, setValidUntil] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [error, setError] = useState<{
+    message: string;
+    details: string;
+  } | null>(null);
   // Fetch user data
   const fetchUserData = async () => {
     try {
@@ -125,6 +132,8 @@ export function ProposalGeneratorProvider({
     setUserName,
     isLoading,
     setIsLoading,
+    error,
+    setError,
   };
 
   return (

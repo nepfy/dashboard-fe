@@ -1,35 +1,163 @@
+"use client";
+
 import EditableText from "#/app/editar/components/EditableText";
+import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 import { InvestmentSection } from "#/types/template-data";
+import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
+import { useState } from "react";
 
 export default function FlashScope({
-  hideProjectScope,
   projectScope,
+  subtitle,
 }: InvestmentSection) {
-  const { updateInvestment } = useEditor();
-  return (
-    <div className="bg-black">
-      {!hideProjectScope && (
-        <div className="mx-auto max-w-[1440px] px-6 pt-10 pb-15 lg:px-41 lg:pb-24">
-          <div className="max-w-[700px] border-l border-l-[#ffffff]/50 pl-5 lg:pl-10">
-            <div className="mb-23 flex items-center gap-2 lg:mb-42">
-              <div className="bg-white-neutral-light-100 h-3 w-3 rounded-full" />
-              <p className="text-sm font-semibold text-white">
-                Escopo do projeto
-              </p>
-            </div>
+  const { updateInvestment, projectData, activeEditingId } = useEditor();
+  const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
 
-            <EditableText
-              value={projectScope || ""}
-              onChange={(newProjectScope: string) =>
-                updateInvestment({ projectScope: newProjectScope })
-              }
-              className="w-full text-[#E6E6E6]"
-              editingId="investment-projectScope"
-            />
+  const canEdit = activeEditingId === null;
+
+  return (
+    <>
+      <style jsx global>{`
+        .container-large {
+          width: 100%;
+          max-width: 90rem;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .invest-heading {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 4rem;
+        }
+
+        .invest-component {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 4rem;
+        }
+
+        .about-heading_left {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          max-width: 40ch;
+        }
+
+        .about-heading_title {
+          max-width: 87ch;
+          justify-self: flex-start;
+        }
+
+        .text-size-small {
+          font-size: 0.875rem;
+          color: #ffffff;
+        }
+
+        .text-weight-light {
+          font-weight: 300;
+        }
+
+        .text-color-grey {
+          color: #b3b3b3;
+        }
+
+        .heading-style-h1 {
+          font-size: 3rem !important;
+          font-weight: 300;
+          line-height: 1.4;
+          margin: 0;
+        }
+
+        .invest-scope p {
+          margin: 0;
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 1.6;
+        }
+
+        @media screen and (max-width: 991px) {
+          .invest-heading {
+            flex-direction: column;
+            gap: 2rem;
+          }
+
+          .about-heading_left {
+            max-width: 100%;
+          }
+
+          .about-heading_title {
+            max-width: 100%;
+          }
+        }
+      `}</style>
+
+      <div className="bg-black">
+        <div className="padding-global pt-80 pb-60">
+          <div className="container-large">
+            <div id="investiment" className="invest-component">
+              <div className="invest-heading">
+                <div className="about-heading_left pt-4">
+                  <div
+                    className={`relative m-0 h-auto w-fit border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
+                  >
+                    <div
+                      className={`text-size-small text-weight-light ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (canEdit) {
+                          setIsDateModalOpen(true);
+                        }
+                      }}
+                    >
+                      Proposta —{" "}
+                      <span className="text-color-grey">
+                        {formatDateToDDDeMonthDeYYYY(
+                          projectData?.projectValidUntil?.toString() || ""
+                        )}
+                      </span>
+                      <EditableDate
+                        isModalOpen={isDateModalOpen}
+                        setIsModalOpen={setIsDateModalOpen}
+                        editingId="investment-date"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="about-heading_subtitle">
+                    <EditableText
+                      value={subtitle || ""}
+                      onChange={(newSubtitle: string) =>
+                        updateInvestment({ subtitle: newSubtitle })
+                      }
+                      className="text-size-medium"
+                      editingId="investment-subtitle"
+                    />
+                    <p className="text-size-small text-weight-light">
+                      Focus on the Aurore product growing while we cover the
+                      brand design
+                    </p>
+                  </div>
+                </div>
+
+                <div className="about-heading_title">
+                  <EditableText
+                    value={projectScope || ""}
+                    onChange={(newProjectScope: string) =>
+                      updateInvestment({ projectScope: newProjectScope })
+                    }
+                    className="heading-style-h1 text-weight-light m-0 p-0"
+                    editingId="investment-projectScope"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }

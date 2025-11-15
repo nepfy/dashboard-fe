@@ -44,6 +44,9 @@ export async function getAgentByServiceAndTemplate(
       agentId = `${service}-flash-agent`;
     } else if (template === "prime") {
       agentId = `${service}-prime-agent`;
+    } else if (template === "minimal") {
+      // Minimal templates use the same base agent as flash
+      agentId = `${service}-flash-agent`;
     } else {
       agentId = `${service}-base-agent`;
     }

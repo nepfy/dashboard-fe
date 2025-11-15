@@ -113,7 +113,7 @@ export default function EditableButton({
       isOpen={isModalOpen}
       preferredPlacement={position === "below" ? "bottom" : "right"}
       offset={position === "below" ? { left: -100 } : undefined}
-      className={`absolute flex h-[480px] w-[350px] cursor-default flex-col items-stretch justify-center ${
+      className={`font-manrope absolute flex h-[480px] w-[350px] cursor-default flex-col items-stretch justify-center ${
         position === "right"
           ? "sm:inset-auto sm:top-[-130px] sm:right-[-360px]"
           : "sm:inset-auto sm:top-[88px] sm:right-12"
@@ -131,7 +131,9 @@ export default function EditableButton({
               className="mb-6 flex w-full items-center justify-between border-b border-b-[#E0E3E9] pb-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <span className="text-lg font-medium text-[#2A2A2A]">Botão</span>
+              <span className="font-manrope text-lg font-medium text-[#2A2A2A]">
+                Botão
+              </span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();

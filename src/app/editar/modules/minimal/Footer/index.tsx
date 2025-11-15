@@ -4,105 +4,216 @@ import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
-import EditableButton from "#/app/editar/components/EditableButton";
 
 export default function FlashFooter({
-  mainColor,
   hideSection,
   callToAction,
-  disclaimer,
-  hideDisclaimer,
+  buttonConfig,
 }: FooterSection) {
   const { updateFooter, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
-  const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
 
   const canEdit = activeEditingId === null;
   return (
-    <div style={{ background: mainColor }} className="relative overflow-hidden">
-      {!hideSection && (
-        <>
-          <div className="mx-auto max-w-[1440px] px-6 pt-10 pb-43 lg:px-41 lg:pt-42">
-            <div className="mb-15 max-w-[1100px] lg:border-l lg:border-l-[#ffffff]/50 lg:pt-11 lg:pl-10">
-              <EditableText
-                value={callToAction || ""}
-                onChange={(newCallToAction: string) =>
-                  updateFooter({ callToAction: newCallToAction })
-                }
-                className="mb-7 w-full text-[32px] leading-[1.2] font-normal text-[#E6E6E6] lg:text-[88px]"
-                editingId="footer-callToAction"
-              />
+    <>
+      <style jsx>{`
+        .footer {
+          background-color: #ffffff;
+          color: #000000;
+          overflow: hidden;
+        }
 
-              {projectData?.projectValidUntil && (
-                <div
-                  className="self-start"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (canEdit) {
-                      setIsDateModalOpen(true);
-                    }
-                  }}
-                >
-                  <p
-                    className={`inline text-sm font-bold text-[#E6E6E6] lg:ml-[10px] lg:pt-0 ${canEdit ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed"} ${isDateModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border border-transparent bg-transparent"}`}
-                  >
-                    Proposta válida até -{" "}
-                    <span className="font-normal text-[#E6E6E6]/40">
-                      {formatDateToDDDeMonthDeYYYY(
-                        projectData.projectValidUntil.toString()
-                      )}
-                    </span>
-                  </p>
-                  <EditableDate
-                    isModalOpen={isDateModalOpen}
-                    setIsModalOpen={setIsDateModalOpen}
-                    editingId="footer-date"
-                  />
+        .padding-global {
+          padding-left: 2.5rem;
+          padding-right: 2.5rem;
+        }
+
+        .container-large {
+          width: 100%;
+          max-width: 90rem;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .footer-component {
+          display: flex;
+          justify-content: flex-start;
+          align-items: flex-start;
+          padding-top: 8rem;
+          padding-bottom: 7rem;
+          grid-column-gap: 6rem;
+          grid-row-gap: 4rem;
+        }
+
+        .footer-heading {
+          display: flex;
+          flex-flow: column;
+          max-width: 107ch;
+          grid-column-gap: 1.5rem;
+          grid-row-gap: 1.5rem;
+        }
+
+        .heading-style-h1 {
+          font-size: 3rem;
+          font-weight: 700;
+          line-height: 1.4;
+        }
+
+        .text-weight-normal {
+          font-weight: 400;
+        }
+
+        .footer-proposal {
+          opacity: 0.6;
+        }
+
+        .text-size-regular {
+          font-size: 1rem;
+        }
+
+        .footer_subtitle {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        @media screen and (max-width: 991px) {
+          .footer-component {
+            flex-flow: column;
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+          }
+        }
+
+        @media screen and (max-width: 767px) {
+          .heading-style-h1 {
+            font-size: 2.5rem;
+          }
+
+          .padding-global {
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+          }
+        }
+
+        @media screen and (max-width: 479px) {
+          .footer-component {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+          }
+        }
+      `}</style>
+      <div className="footer">
+        {!hideSection && (
+          <>
+            <div className="padding-global">
+              <div className="container-large">
+                <div className="footer-component">
+                  <div className="footer-heading">
+                    <EditableText
+                      value={callToAction || ""}
+                      onChange={(newCallToAction: string) =>
+                        updateFooter({ callToAction: newCallToAction })
+                      }
+                      className="text-weight-normal text-[3rem] leading-[1.4] font-light text-[#000000]"
+                      editingId="footer-callToAction"
+                    />
+
+                    {projectData?.projectValidUntil && (
+                      <div className="footer-proposal">
+                        <div
+                          className="m-0 h-auto w-auto border p-0"
+                          style={{
+                            border: isDateModalOpen
+                              ? "1px solid #0170D6"
+                              : "1px solid transparent",
+                            background: isDateModalOpen
+                              ? "#0170D666"
+                              : "transparent",
+                          }}
+                        >
+                          <div
+                            className={`text-[1rem] leading-[1.5] font-normal text-[#000000] ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (canEdit) {
+                                setIsDateModalOpen(true);
+                              }
+                            }}
+                            style={{
+                              border: isDateModalOpen
+                                ? "1px solid #0170D6"
+                                : "1px solid transparent",
+                              background: isDateModalOpen
+                                ? "#0170D666"
+                                : "transparent",
+                              padding: "4px",
+                            }}
+                            onMouseEnter={(e) => {
+                              if (canEdit && !isDateModalOpen) {
+                                e.currentTarget.style.border =
+                                  "1px solid #0170D6";
+                                e.currentTarget.style.background = "#0170D666";
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isDateModalOpen) {
+                                e.currentTarget.style.border =
+                                  "1px solid transparent";
+                                e.currentTarget.style.background =
+                                  "transparent";
+                              }
+                            }}
+                          >
+                            Proposta válida até —{" "}
+                            <span>
+                              {formatDateToDDDeMonthDeYYYY(
+                                projectData.projectValidUntil.toString()
+                              )}
+                            </span>
+                            <EditableDate
+                              isModalOpen={isDateModalOpen}
+                              setIsModalOpen={setIsDateModalOpen}
+                              editingId="footer-date"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-6">
+                      <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
+                        Email
+                      </div>
+                      <div>
+                        <div className="text-[1.5rem] leading-[1.5] font-light text-[#000000]">
+                          teste@teste.com
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-6">
+                      <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
+                        Whatsapp
+                      </div>
+                      <div>
+                        <div className="text-[1.5rem] leading-[1.5] font-light text-[#000000]">
+                          +55 (11) 99911-9911
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
-
-              <div
-                className={`relative z-5 mt-10 h-auto w-auto py-2 lg:w-[336px] ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (canEdit) {
-                    setIsButtonModalOpen(true);
-                  }
-                }}
-              >
-                <div
-                  className={`absolute inset-0 ${canEdit ? "hover:border-[#0170D6] hover:bg-[#0170D666]" : ""} ${isButtonModalOpen ? "border border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
-                />
-                <button className="mx-auto block w-full rounded-full bg-[#FBFBFB] py-4 text-sm font-semibold text-[#121212] lg:w-[326px]">
-                  {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
-                </button>
-                <EditableButton
-                  isModalOpen={isButtonModalOpen}
-                  setIsModalOpen={setIsButtonModalOpen}
-                  editingId="footer-button"
-                />
               </div>
             </div>
-
-            {!hideDisclaimer && (
-              <div className="mb-16 flex w-full justify-end">
-                <EditableText
-                  value={disclaimer || ""}
-                  onChange={(newDisclaimer: string) =>
-                    updateFooter({ disclaimer: newDisclaimer })
-                  }
-                  className="w-[430px] text-[15px] text-[#E6E6E6]"
-                  editingId="footer-disclaimer"
-                />
+            <div className="flex max-h-[10rem] items-center justify-center overflow-hidden">
+              <div className="is-footer pt-[3rem] text-[15vw] font-light text-[#000000]">
+                {buttonConfig?.buttonTitle}
               </div>
-            )}
-          </div>
-
-          <p className="absolute bottom-0 left-1/2 m-0 -translate-x-1/2 p-0 text-[61px] text-nowrap text-[#E6E6E6] lg:bottom-[-140px] lg:text-[226px]">
-            {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
-          </p>
-        </>
-      )}
-    </div>
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 }

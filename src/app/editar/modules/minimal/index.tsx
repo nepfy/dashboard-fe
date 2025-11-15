@@ -1,17 +1,13 @@
 import { useEditor } from "../../contexts/EditorContext";
 import MinimalIntro from "./Intro";
 import MinimalAboutUs from "./AboutUs";
-import MinimalTeam from "./Team";
 import MinimalExpertise from "./Expertise";
-import MinimalResults from "./Results";
-import MinimalSteps from "./Steps";
-import MinimalInvestment from "./Investment";
-import MinimalTestimonials from "./Testimonials";
+
 import MinimalPlans from "./Plans";
-// Reusing Flash components for sections with identical structure
-import FlashFAQ from "../flash/FAQ";
-import FlashFooter from "../flash/Footer";
-import FlashScope from "../flash/Scope";
+import MinimalScope from "./Scope";
+import MinimalTermsAndConditions from "./MinimalTermsAndConditions";
+import MinimalFAQ from "./FAQ";
+import MinimalFooter from "./Footer";
 
 export default function Minimal() {
   const { projectData } = useEditor();
@@ -20,56 +16,30 @@ export default function Minimal() {
     return null;
   }
   return (
-    <div className="overflow-hidden">
-      <MinimalIntro
-        {...projectData?.proposalData?.introduction}
-        mainColor={projectData?.mainColor}
-      />
-      <MinimalAboutUs
-        {...projectData?.proposalData?.aboutUs}
-        mainColor={projectData?.mainColor}
-      />
-      <MinimalTeam
-        {...projectData?.proposalData?.team}
-        mainColor={projectData?.mainColor}
-      />
+    <div className="font-overused overflow-hidden">
+      <MinimalIntro {...projectData?.proposalData?.introduction} />
+      <MinimalAboutUs {...projectData?.proposalData?.aboutUs} />
       <MinimalExpertise
         {...projectData?.proposalData?.expertise}
         mainColor={projectData?.mainColor}
       />
-      <MinimalResults
-        {...projectData?.proposalData?.results}
-        mainColor={projectData?.mainColor}
-      />
-      <MinimalTestimonials
-        {...projectData?.proposalData?.testimonials}
-        mainColor={projectData?.mainColor}
-      />
-      <MinimalSteps
-        {...projectData?.proposalData?.steps}
-        mainColor={projectData?.mainColor}
-      />
-      <MinimalInvestment
-        {...projectData?.proposalData?.investment}
-        mainColor={projectData?.mainColor}
-        hideProjectScope={projectData?.proposalData?.escope?.hideSection}
-      />
-      <FlashScope
+      <MinimalScope
         hideProjectScope={projectData?.proposalData?.escope?.hideSection}
         projectScope={projectData?.proposalData?.investment?.projectScope}
       />
+
       <MinimalPlans
         {...projectData?.proposalData?.plans}
         mainColor={projectData?.mainColor}
       />
-      <FlashFAQ
-        {...projectData?.proposalData?.faq}
-        mainColor={projectData?.mainColor}
+      <MinimalTermsAndConditions
+        {...projectData?.proposalData?.termsConditions}
       />
-      <FlashFooter
+      <MinimalFAQ {...projectData?.proposalData?.faq} />
+      <MinimalFooter
         {...projectData?.proposalData?.footer}
         validity={projectData?.projectValidUntil}
-        mainColor={projectData?.mainColor}
+        buttonConfig={projectData?.buttonConfig || { buttonTitle: "" }}
       />
     </div>
   );

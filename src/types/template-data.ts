@@ -114,6 +114,7 @@ export interface FooterSection extends BaseSection {
   hideCallToAction?: boolean;
   disclaimer?: string;
   validity?: Date | string;
+  buttonConfig?: ButtonConfig;
 }
 
 // About Us related interfaces
@@ -163,6 +164,7 @@ export interface InvestmentSection extends BaseSection {
   mainColor?: string;
   hideSection?: boolean;
   title?: string;
+  subtitle?: string;
   projectScope?: string;
   hideProjectScope?: boolean;
 }

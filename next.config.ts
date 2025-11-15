@@ -62,8 +62,26 @@ const nextConfig = {
         ],
       },
       {
-        // Keep security headers for all other routes (excluding template-flash)
-        source: "/((?!template-flash).*)",
+        // Allow iframe embedding for template-minimal-visualize files
+        source: "/template-minimal-visualize/:path*",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN", // Allow same-origin embedding
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
+        // Keep security headers for all other routes (excluding template-flash and template-minimal-visualize)
+        source: "/((?!template-flash|template-minimal-visualize).*)",
         headers: [
           {
             key: "X-Frame-Options",

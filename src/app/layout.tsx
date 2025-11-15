@@ -40,6 +40,53 @@ const manrope = localFont({
   display: "swap",
 });
 
+const overused = localFont({
+  src: [
+    {
+      path: "../../public/fonts/overused-black.ttf",
+      weight: "900",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/overused-extrabold.ttf",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/overused-bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/overused-semibold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/overused-medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/overused-roman.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/overused-book.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/overused-extralight.ttf",
+      weight: "200",
+      style: "normal",
+    },
+  ],
+  variable: "--font-overused",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: ".Nepfy",
   description: "Faça a gestão das suas propostas de forma simples e elegante.",
@@ -89,7 +136,7 @@ export default async function RootLayout({
               <meta name="x-is-subdomain" content="false" />
             </head>
             <body
-              className={`${satoshi.variable} ${manrope.variable} antialiased`}
+              className={`${satoshi.variable} ${manrope.variable} ${overused.variable} antialiased`}
             >
               {children}
             </body>
@@ -104,7 +151,9 @@ export default async function RootLayout({
       <head>
         <meta name="x-is-subdomain" content={isSubdomain ? "true" : "false"} />
       </head>
-      <body className={`${satoshi.variable} ${manrope.variable} antialiased`}>
+      <body
+        className={`${satoshi.variable} ${manrope.variable} ${overused.variable} antialiased`}
+      >
         {children}
       </body>
     </html>

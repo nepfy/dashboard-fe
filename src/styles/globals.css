@@ -102,6 +102,11 @@
   --font-sans: var(--font-satoshi);
   --font-mono: var(--font-satoshi);
   --font-manrope: var(--font-manrope);
+  --font-overused: var(--font-overused);
+}
+
+.font-overused {
+  font-family: var(--font-overused);
 }
 
 body {
@@ -157,8 +162,10 @@ body {
 }
 
 .gradient-border {
-  background: linear-gradient(white, white) padding-box,
-              linear-gradient(135deg, white 0%, white 40%, #ac99f3 60%, #815ffd 100%) border-box;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(135deg, white 0%, white 40%, #ac99f3 60%, #815ffd 100%)
+      border-box;
   border: 2px solid transparent;
   border-radius: 12px;
   background-clip: padding-box, border-box;
@@ -201,7 +208,8 @@ body {
 }
 
 .lootie-bg {
-  background: radial-gradient(
+  background:
+    radial-gradient(
       92.09% 85.42% at 86.3% 87.5%,
       rgba(0, 0, 0, 0.23) 0%,
       rgba(0, 0, 0, 0) 86.18%

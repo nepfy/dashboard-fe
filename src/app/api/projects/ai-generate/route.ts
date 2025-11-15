@@ -325,8 +325,8 @@ export async function POST(request: NextRequest) {
     if (!agent) {
       return NextResponse.json(
         {
-          error: "Service not found",
-          details: `No agent found for service: ${selectedService} and template: ${templateType}`,
+          error: "Serviço não encontrado",
+          details: `Nenhum agente encontrado para o serviço: ${selectedService} e template: ${templateType}`,
         },
         { status: 404 }
       );

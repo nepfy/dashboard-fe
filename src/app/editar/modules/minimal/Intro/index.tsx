@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -8,15 +9,7 @@ import EditableDate from "#/app/editar/components/EditableDate";
 import EditableButton from "#/app/editar/components/EditableButton";
 import { useEditor } from "../../../contexts/EditorContext";
 
-interface MinimalIntroProps extends IntroductionSection {
-  mainColor?: string;
-}
-
-export default function MinimalIntro({
-  userName,
-  title,
-  mainColor = "#000000",
-}: MinimalIntroProps) {
+export default function MinimalIntro({ userName, title }: IntroductionSection) {
   const { updateIntroduction, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
@@ -28,27 +21,27 @@ export default function MinimalIntro({
       <style jsx global>{`
         .section_hero {
           position: relative;
-          background-color: ${mainColor};
-          min-height: 100vh;
+          background-color: #000000;
+          min-height: 90vh;
         }
-        
+
         .nav_component {
           position: relative;
           z-index: 10;
         }
-        
+
         .padding-global {
           padding-left: 2.5rem;
           padding-right: 2.5rem;
         }
-        
+
         .container-large {
           width: 100%;
           max-width: 90rem;
           margin-left: auto;
           margin-right: auto;
         }
-        
+
         .nav_wrap {
           justify-content: space-between;
           align-items: center;
@@ -56,40 +49,40 @@ export default function MinimalIntro({
           padding-bottom: 2rem;
           display: flex;
         }
-        
+
         .nav_brand {
           color: #fbfbfb;
           font-weight: 500;
           font-size: 1.125rem;
         }
-        
+
         .btn-animate-chars {
           position: relative;
           overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, .2);
-          border-radius: .5rem;
-          padding: .875rem 1.5rem;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 0.5rem;
+          padding: 0.875rem 1.5rem;
           text-decoration: none;
           display: inline-block;
-          transition: border-color .3s;
-          background: transparent;
+          transition: border-color 0.3s;
+          background: #202020;
           cursor: pointer;
         }
-        
+
         .btn-animate-chars:hover {
-          border-color: rgba(255, 255, 255, .5);
+          border-color: rgba(255, 255, 255, 0.5);
         }
-        
+
         .btn-animate-chars__text {
           color: #fbfbfb;
           font-size: 1rem;
         }
-        
+
         .padding-section-large {
           padding-top: 8rem;
           padding-bottom: 8rem;
         }
-        
+
         .hero_component {
           grid-column-gap: 4rem;
           grid-row-gap: 4rem;
@@ -97,31 +90,31 @@ export default function MinimalIntro({
           align-items: flex-end;
           display: flex;
         }
-        
+
         .hero_left {
           flex: 1;
         }
-        
+
         .heading-wrap {
           align-items: center;
           display: flex;
           flex-wrap: wrap;
           gap: 1rem;
         }
-        
+
         .heading-style-h1 {
           color: #fbfbfb;
           margin: 0;
-          font-size: 4.5rem;
+          font-size: 3rem;
           font-weight: 300;
           line-height: 1.2;
-          font-family: Overusedgrotesk, Arial, sans-serif;
+          font-family: var(--font-overused);
         }
-        
+
         .text-weight-light {
           font-weight: 300;
         }
-        
+
         .heading-client-image {
           width: 4rem;
           height: 4rem;
@@ -129,63 +122,65 @@ export default function MinimalIntro({
           border-radius: 50%;
           flex-shrink: 0;
         }
-        
+
         .heading-line {
-          color: rgba(255, 255, 255, .3);
-          margin: 1.5rem 0;
-          font-size: 4.5rem;
+          color: rgba(255, 255, 255);
+          margin: 1rem 0 0 0;
+          font-size: 3rem;
           font-weight: 300;
           line-height: 1;
         }
-        
+
         .hero_right {
           flex-shrink: 0;
         }
-        
+
         .text-size-regular {
           font-size: 1rem;
           line-height: 1.5;
           color: #fbfbfb;
         }
-        
+
         .text-color-grey {
-          color: rgba(255, 255, 255, .5);
+          color: rgba(255, 255, 255, 0.5);
         }
-        
+
         .marquee_component {
           position: relative;
           overflow: hidden;
           margin-top: 4rem;
         }
-        
+
         .marquee_content {
           display: flex;
           gap: 1rem;
           animation: marquee 30s linear infinite;
+          max-height: 560px;
         }
-        
+
         .marquee_item {
           display: flex;
           gap: 1rem;
           flex-shrink: 0;
+          max-height: 560px;
         }
-        
+
         .marquee-img {
           width: 72.5rem;
-          height: 45rem;
+          height: 100%;
           border-radius: 1rem;
           overflow: hidden;
-          background: rgba(255, 255, 255, .05);
+          background: rgba(255, 255, 255, 0.05);
           flex-shrink: 0;
         }
-        
+
         .marquee-img img,
         .marquee-img video {
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
-        
+
         @keyframes marquee {
           0% {
             transform: translateX(0);
@@ -194,7 +189,7 @@ export default function MinimalIntro({
             transform: translateX(-50%);
           }
         }
-        
+
         @media screen and (max-width: 991px) {
           .heading-style-h1 {
             font-size: 3.5rem;
@@ -211,7 +206,7 @@ export default function MinimalIntro({
             height: 31.25rem;
           }
         }
-        
+
         @media screen and (max-width: 767px) {
           .hero_component {
             flex-direction: column;
@@ -253,29 +248,33 @@ export default function MinimalIntro({
                   />
                 </div>
                 <div
-                  className={`btn-animate-chars ${canEdit ? "" : "cursor-not-allowed"}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (canEdit) {
-                      setIsButtonModalOpen(true);
-                    }
-                  }}
-                  style={{
-                    border: isButtonModalOpen
-                      ? "1px solid #0170D6"
-                      : "1px solid rgba(255, 255, 255, .2)",
-                    background: isButtonModalOpen ? "#0170D666" : "transparent",
-                  }}
+                  className={`m-0 h-[60px] w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                 >
-                  <span className="btn-animate-chars__text">
-                    {projectData?.buttonConfig?.buttonTitle || "Iniciar Projeto"}
-                  </span>
-                  <EditableButton
-                    isModalOpen={isButtonModalOpen}
-                    setIsModalOpen={setIsButtonModalOpen}
-                    position="below"
-                    editingId="intro-button"
-                  />
+                  <div
+                    className={`btn-animate-chars ${canEdit ? "" : "cursor-not-allowed"}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (canEdit) {
+                        setIsButtonModalOpen(true);
+                      }
+                    }}
+                    style={{
+                      border: isButtonModalOpen
+                        ? "1px solid #0170D6"
+                        : "1px solid rgba(255, 255, 255, .2)",
+                    }}
+                  >
+                    <span className="btn-animate-chars__text">
+                      {projectData?.buttonConfig?.buttonTitle ||
+                        "Iniciar Projeto"}
+                    </span>
+                    <EditableButton
+                      isModalOpen={isButtonModalOpen}
+                      setIsModalOpen={setIsButtonModalOpen}
+                      position="below"
+                      editingId="intro-button"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -289,7 +288,9 @@ export default function MinimalIntro({
               <div className="hero_left">
                 <div className="heading-wrap">
                   <h1 className="heading-style-h1 text-weight-light">Olá,</h1>
-                  <div className="heading-client-image"></div>
+                  <div className="heading-client-image overflow-hidden">
+                    <img src="/images/templates/flash/placeholder.png" alt="" />
+                  </div>
                   <EditableText
                     value={userName || "Cliente"}
                     onChange={(newUserName: string) =>
@@ -305,33 +306,40 @@ export default function MinimalIntro({
                   onChange={(newTitle: string) =>
                     updateIntroduction({ title: newTitle })
                   }
-                  className="heading-style-h1 text-weight-light"
+                  className="heading-style-h1 text-weight-light w-full"
                   editingId="intro-title"
                 />
               </div>
               <div className="hero_right">
                 {projectData?.projectValidUntil && (
                   <div
-                    className={`text-size-regular ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (canEdit) {
-                        setIsDateModalOpen(true);
-                      }
-                    }}
-                    style={{
-                      border: isDateModalOpen
-                        ? "1px solid #0170D6"
-                        : "1px solid transparent",
-                      background: isDateModalOpen ? "#0170D666" : "transparent",
-                      padding: "4px",
-                    }}
+                    className={`relative m-0 h-auto w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                   >
-                    Proposta — <span className="text-color-grey">
-                      {formatDateToDDDeMonthDeYYYY(
-                        projectData.projectValidUntil.toString()
-                      )}
-                    </span>
+                    <div
+                      className={`text-size-regular ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (canEdit) {
+                          setIsDateModalOpen(true);
+                        }
+                      }}
+                      style={{
+                        border: isDateModalOpen
+                          ? "1px solid #0170D6"
+                          : "1px solid transparent",
+                        background: isDateModalOpen
+                          ? "#0170D666"
+                          : "transparent",
+                        padding: "4px",
+                      }}
+                    >
+                      Proposta —{" "}
+                      <span className="text-color-grey">
+                        {formatDateToDDDeMonthDeYYYY(
+                          projectData.projectValidUntil.toString()
+                        )}
+                      </span>
+                    </div>
                     <EditableDate
                       isModalOpen={isDateModalOpen}
                       setIsModalOpen={setIsDateModalOpen}
@@ -349,38 +357,38 @@ export default function MinimalIntro({
           <div className="marquee_content">
             <div className="marquee_item">
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img1.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img2.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img4.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img6.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
             </div>
             <div className="marquee_item">
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img1.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img2.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img4.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
               <div className="marquee-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/template-minimal/images/img6.jpg" alt="" />
+                {}
+                <img src="/images/templates/flash/placeholder.png" alt="" />
               </div>
             </div>
           </div>

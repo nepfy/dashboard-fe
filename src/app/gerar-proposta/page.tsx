@@ -17,6 +17,7 @@ import { CompanyInfo } from "#/modules/ai-generator/components/generation-steps/
 import { PricingStep } from "#/modules/ai-generator/components/generation-steps/PricingStep";
 import { FinalStep } from "#/modules/ai-generator/components/generation-steps/FinalStep";
 import { Loading } from "#/modules/ai-generator/components/loading/Loading";
+import { Error } from "#/modules/ai-generator/components/error/error";
 import CloseIcon from "#/components/icons/CloseIcon";
 import {
   trackProposalCreationStarted,
@@ -54,6 +55,8 @@ export default function NepfyAIPage() {
     userName,
     isLoading,
     setIsLoading,
+    error,
+    setError,
   } = useProposalGenerator();
 
   const router = useRouter();
@@ -84,10 +87,7 @@ export default function NepfyAIPage() {
     }
   }, [clientName, originalPageUrl, setOriginalPageUrl]);
   const handleClientNameSubmit = (name: string) => {
-    const suggestedSlug = truncateSlug(
-      slugify(name),
-      PROJECT_SLUG_MAX_LENGTH
-    );
+    const suggestedSlug = truncateSlug(slugify(name), PROJECT_SLUG_MAX_LENGTH);
     if (!suggestedSlug) {
       return;
     }
@@ -173,6 +173,7 @@ export default function NepfyAIPage() {
           generation_time_seconds: generationTimeSeconds,
           success: true,
         });
+        setError(null);
 
         router.push(
           `/editar?projectId=${result.data.project.id}&templateType=${templateType}`
@@ -180,7 +181,11 @@ export default function NepfyAIPage() {
 
         return;
       } else {
-        console.error("Error generating proposal:", result.error);
+        console.error("Erro ao gerar proposta:", result.error);
+        setError({
+          message: result.error,
+          details: result.details,
+        });
 
         // Track failed generation
         trackProposalAIGenerationCompleted({
@@ -207,20 +212,8 @@ export default function NepfyAIPage() {
           className: "font-satoshi",
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error generating proposal:", error);
-
-      // Track failed generation
-      trackProposalAIGenerationCompleted({
-        template_type: templateType || "flash",
-        project_id: "",
-        project_name: projectName,
-        generation_time_seconds: generationStartTime.current
-          ? Math.round((Date.now() - generationStartTime.current) / 1000)
-          : undefined,
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
 
       toast.error("Erro ao gerar proposta. Tente novamente.", {
         position: "top-right",
@@ -238,6 +231,19 @@ export default function NepfyAIPage() {
       setIsLoading(false);
     }
   };
+
+  if (error) {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-7">
+        <Error
+          error={error}
+          handleRetry={handleGenerateProposal}
+          handleExit={() => router.push("/dashboard")}
+          isLoading={isLoading}
+        />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
