@@ -44,9 +44,10 @@ export function generateSubdomainUrl(
 ): string {
   // Check if we should use a specific domain (useful for localhost testing)
   const projectBaseDomain = options?.forceDomain || getProjectBaseDomain();
-  
+
   // Detect if running in localhost/development
-  const isLocalhost = projectBaseDomain === "localhost:3000" ||
+  const isLocalhost =
+    projectBaseDomain === "localhost:3000" ||
     (typeof window !== "undefined" &&
       (window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"));
@@ -56,7 +57,7 @@ export function generateSubdomainUrl(
   const slugSegment = normalizedProjectUrl
     ? encodeURIComponent(normalizedProjectUrl)
     : "";
-  
+
   // Use http for localhost, https for production
   const protocol = isLocalhost ? "http" : "https";
   const baseUrl = `${protocol}://${normalizedUserName}.${projectBaseDomain}`;

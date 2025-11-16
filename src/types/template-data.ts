@@ -107,6 +107,8 @@ export interface StepsSection extends BaseSection {
 
 // Footer related interfaces
 export interface FooterSection extends BaseSection {
+  email?: string;
+  phone?: string;
   mainColor?: string;
   marquee?: string[];
   callToAction?: string;
@@ -129,17 +131,19 @@ export interface AboutUsSection extends BaseSection {
 }
 
 // Clients related interfaces
-export interface Client {
+export interface Client extends HideableItem, SortableItem {
+  id?: string;
   name: string;
   logo?: string;
   testimonial?: string;
   hideClient?: boolean;
-  sortOrder: number;
 }
 
 export interface ClientsSection extends BaseSection {
   title?: string;
-  items: Client[];
+  description?: string;
+  paragraphs?: string[];
+  items?: Client[];
 }
 
 // Expertise related interfaces

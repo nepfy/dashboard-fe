@@ -199,6 +199,101 @@
     }
   }
 
+  function updateFooterEmail(email, fallback) {
+    const button = document.querySelector(".copy-email-button");
+    if (!button) return;
+    const emailValue = email || fallback || "";
+    if (emailValue) {
+      button.setAttribute("data-copy-email", emailValue);
+      const textEl = button.querySelector("[data-copy-email-element]");
+      if (textEl) {
+        textEl.textContent = emailValue;
+      }
+    }
+  }
+
+  function updateFooterPhone(phone) {
+    const phoneElement = document.getElementById("footer-phone");
+    if (phoneElement && phone) {
+      phoneElement.textContent = phone;
+    }
+  }
+
+  function renderClientsSection(clients) {
+    const sectionSelector = ".section_partners--dynamic";
+    if (!clients) {
+      toggleSectionVisibility(sectionSelector, true);
+      return;
+    }
+
+    toggleSectionVisibility(sectionSelector, clients.hideSection === true);
+
+    if (clients.title) {
+      updateTextField("clients-title", clients.title);
+    }
+    if (clients.description) {
+      updateTextField("clients-description", clients.description);
+    }
+    const paragraphs = clients.paragraphs || [];
+    if (paragraphs[0]) {
+      updateTextField("clients-paragraph-1", paragraphs[0]);
+    }
+    if (paragraphs[1]) {
+      updateTextField("clients-paragraph-2", paragraphs[1]);
+    }
+
+    const logosContainer = document.getElementById("clients-logos");
+    if (logosContainer) {
+      const template =
+        logosContainer.querySelector("[data-logo-template]") ||
+        document.createElement("div");
+      logosContainer.innerHTML = "";
+
+      const logos = clients.items || [];
+
+      logos.forEach((logo) => {
+        const clone = template.cloneNode(true);
+        clone.removeAttribute("data-logo-template");
+
+        const textElement = clone.querySelector(".logo-text");
+        const imgElement = clone.querySelector(".logo-img");
+
+        if (logo.logo && imgElement) {
+          imgElement.src = logo.logo;
+          imgElement.alt = logo.name || "Cliente";
+          imgElement.style.display = "block";
+          if (textElement) {
+            textElement.style.display = "none";
+          }
+        } else {
+          if (imgElement) {
+            imgElement.style.display = "none";
+          }
+          if (textElement) {
+            textElement.textContent = logo.name || "";
+            textElement.style.display = "block";
+          }
+        }
+
+        logosContainer.appendChild(clone);
+      });
+
+      if (logos.length === 0 && template) {
+        const placeholder = template.cloneNode(true);
+        placeholder.removeAttribute("data-logo-template");
+        const textElement = placeholder.querySelector(".logo-text");
+        if (textElement) {
+          textElement.textContent = "Sua marca";
+        }
+        const imgElement = placeholder.querySelector(".logo-img");
+        if (imgElement) {
+          imgElement.style.display = "none";
+        }
+        logosContainer.appendChild(placeholder);
+      }
+    }
+  }
+
   // Icon mapping for expertise topics
   const iconMap = {
     AwardIcon:
@@ -1170,12 +1265,12 @@
         ".pricing_button .btn-magnetic__text-p"
       );
       if (buttonText && !plan.hideButtonTitle) {
-        buttonText.textContent = plan.buttonTitle || "";
+        buttonText.textContent = plan.buttonTitle || "Fechar pacote";
         const duplicate = clone.querySelector(
           ".pricing_button .btn-magnetic__text-p.is--duplicate"
         );
         if (duplicate) {
-          duplicate.textContent = plan.buttonTitle || "";
+          duplicate.textContent = plan.buttonTitle || "Fechar pacote";
         }
       } else if (buttonText && plan.hideButtonTitle) {
         const button = clone.querySelector(".pricing_button");
@@ -1347,6 +1442,13 @@
       );
     }
 
+    // Clients / Brands
+    if (pd.clients) {
+      renderClientsSection(pd.clients);
+    } else {
+      toggleSectionVisibility(".section_partners--dynamic", true);
+    }
+
     // Steps
     if (pd.steps) {
       renderSteps("steps-list", pd.steps.topics);
@@ -1404,6 +1506,8 @@
       updateTextField("footer-callToAction", pd.footer.callToAction);
       updateTextField("footer-validity", formatDate(data.projectValidUntil));
       updateTextField("footer-disclaimer", pd.footer.disclaimer);
+      updateFooterEmail(pd.footer.email, data?.userEmail || data?.user?.email);
+      updateFooterPhone(pd.footer.phone);
 
       if (pd.footer.hideCallToAction) {
         toggleElementVisibility("footer-callToAction", true);

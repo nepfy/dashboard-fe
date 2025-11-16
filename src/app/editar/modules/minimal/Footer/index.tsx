@@ -8,6 +8,8 @@ import { useEditor } from "#/app/editar/contexts/EditorContext";
 export default function FlashFooter({
   hideSection,
   callToAction,
+  email,
+  phone,
   buttonConfig,
 }: FooterSection) {
   const { updateFooter, projectData, activeEditingId } = useEditor();
@@ -181,27 +183,43 @@ export default function FlashFooter({
                     )}
                   </div>
                   <div className="flex flex-col gap-8">
-                    <div className="flex flex-col gap-6">
-                      <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
-                        Email
-                      </div>
-                      <div>
-                        <div className="text-[1.5rem] leading-[1.5] font-light text-[#000000]">
-                          teste@teste.com
+                    {email && (
+                      <div className="flex flex-col gap-6">
+                        <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
+                          Email
+                        </div>
+                        <div>
+                          <EditableText
+                            value={email}
+                            onChange={(newEmail) =>
+                              updateFooter({ email: newEmail })
+                            }
+                            editingId="footer-email"
+                            className="text-[1.5rem] leading-[1.5] font-light text-[#000000]"
+                            canEdit={canEdit}
+                          />
                         </div>
                       </div>
-                    </div>
+                    )}
 
-                    <div className="flex flex-col gap-6">
-                      <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
-                        Whatsapp
-                      </div>
-                      <div>
-                        <div className="text-[1.5rem] leading-[1.5] font-light text-[#000000]">
-                          +55 (11) 99911-9911
+                    {phone && (
+                      <div className="flex flex-col gap-6">
+                        <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
+                          Whatsapp
+                        </div>
+                        <div>
+                          <EditableText
+                            value={phone}
+                            onChange={(newPhone) =>
+                              updateFooter({ phone: newPhone })
+                            }
+                            editingId="footer-phone"
+                            className="text-[1.5rem] leading-[1.5] font-light text-[#000000]"
+                            canEdit={canEdit}
+                          />
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>

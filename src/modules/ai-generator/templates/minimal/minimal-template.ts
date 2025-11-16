@@ -115,6 +115,22 @@ export interface MinimalTestimonialsSection {
   items?: MinimalTestimonialItem[];
 }
 
+export interface MinimalClientLogo {
+  id: string;
+  name: string;
+  logo?: string;
+  hideClient?: boolean;
+  sortOrder?: number;
+}
+
+export interface MinimalClientsSection {
+  hideSection?: boolean;
+  title?: string;
+  description?: string;
+  paragraphs?: string[];
+  items?: MinimalClientLogo[];
+}
+
 // Steps Section
 export interface MinimalStepTopic {
   id: string;
@@ -200,6 +216,8 @@ export interface MinimalFooterSection {
   hideCallToAction?: boolean;
   disclaimer?: string;
   hideDisclaimer?: boolean;
+  email?: string;
+  phone?: string;
 }
 
 // Complete Minimal Proposal
@@ -210,6 +228,7 @@ export interface MinimalProposal {
   expertise: MinimalExpertiseSection;
   results: MinimalResultsSection;
   testimonials: MinimalTestimonialsSection;
+  clients: MinimalClientsSection;
   steps: MinimalStepsSection;
   escope: MinimalEscopeSection;
   investment: MinimalInvestmentSection;
@@ -425,6 +444,22 @@ export function getMinimalTemplateDefaults(): Partial<MinimalProposal> {
       hideSection: false,
       items: [],
     },
+    clients: {
+      hideSection: false,
+      title: "Marcas que já confiaram",
+      description:
+        "Estratégia, posicionamento e conteúdo com foco em resultados reais.",
+      paragraphs: [
+        "Na União Co., cuidamos dos bastidores da sua presença online com o mesmo cuidado que você dedica aos seus clientes. Garantimos consistência, clareza e uma pitada de criatividade estratégica.",
+        "Unimos estratégia, design e performance para transformar sua comunicação em um ativo poderoso de atração e relacionamento.",
+      ],
+      items: [
+        { id: "1", name: "Ino", sortOrder: 1 },
+        { id: "2", name: "Circle", sortOrder: 2 },
+        { id: "3", name: "Acme", sortOrder: 3 },
+        { id: "4", name: "Nova", sortOrder: 4 },
+      ],
+    },
     steps: {
       hideSection: false,
       topics: [],
@@ -448,6 +483,8 @@ export function getMinimalTemplateDefaults(): Partial<MinimalProposal> {
     footer: {
       hideCallToAction: false,
       hideDisclaimer: false,
+      email: "",
+      phone: "",
     },
   };
 }
@@ -524,6 +561,19 @@ export function generateMinimalProposalOutline(): Partial<MinimalProposal> {
           name: "[Nome do cliente]",
           role: "[Cargo]",
           testimonial: "[Depoimento]",
+          sortOrder: 1,
+        },
+      ],
+    },
+    clients: {
+      hideSection: false,
+      title: "[Empresas que já confiam]",
+      description: "[Resumo da proposta de valor]",
+      paragraphs: ["[Parágrafo 1]", "[Parágrafo 2]"],
+      items: [
+        {
+          id: "1",
+          name: "[Nome da marca]",
           sortOrder: 1,
         },
       ],

@@ -103,69 +103,6 @@ export default function MinimalAboutUs({
           margin-top: 6rem;
         }
 
-        .section_partners {
-          background-color: #fbfbfb;
-          color: #040404;
-          padding: 8rem 0;
-        }
-
-        .partners-component {
-          display: flex;
-          flex-direction: column;
-          gap: 6rem;
-        }
-
-        .partners-heading {
-          max-width: 980px;
-          padding-bottom: 2rem;
-        }
-
-        .heading-style-h2 {
-          font-size: 2.5rem;
-          font-weight: 400;
-          line-height: 1.5;
-          margin: 0;
-        }
-
-        .text-weight-normal {
-          font-weight: 400;
-        }
-
-        .partners-paragraph {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          justify-content: flex-end;
-          gap: 1rem;
-          max-width: 100%;
-        }
-
-        .text-size-medium {
-          font-size: 1.25rem;
-          line-height: 1.5;
-          color: rgba(4, 4, 4, 0.9);
-          font-weight: 300;
-        }
-
-        .partners-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 2rem;
-          margin-top: 2rem;
-        }
-
-        .partners-logo {
-          aspect-ratio: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid #ffffff;
-        }
-
-        .partners-logo:hover {
-          opacity: 1;
-        }
-
         @media screen and (max-width: 991px) {
           .about-heading {
             grid-template-columns: 1fr;
@@ -180,15 +117,6 @@ export default function MinimalAboutUs({
         }
 
         @media screen and (max-width: 767px) {
-          .section_partners {
-            padding: 5rem 0;
-          }
-          .heading-style-h2 {
-            font-size: 1.75rem;
-          }
-          .partners-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
         }
       `}</style>
 
@@ -288,92 +216,6 @@ export default function MinimalAboutUs({
         </div>
       </section>
 
-      <section className="section_partners">
-        <div className="padding-global">
-          <div className="container-large">
-            <div className="partners-component">
-              <div className="partners-heading">
-                <h2 className="heading-style-h2 text-weight-normal">
-                  We recognized a gap in the creative industry—small businesses
-                  often struggle to find high-quality, yet affordable, design
-                  solutions. That&apos;s why we exist.
-                </h2>
-              </div>
-              <div className="partners-paragraph">
-                <div className="flex max-w-[45rem] flex-col items-end justify-end gap-6">
-                  <p className="text-size-medium">
-                    Your website is most likely the first point of contact
-                    someone will have with your brand. Cut through the noise and
-                    stand out from the crowd by creating a website that will
-                    help you achieve your business goals while showing who you
-                    are in a way people will not forget.
-                  </p>
-                  <p className="text-size-medium">
-                    Design is about creating experiences, making the lives of
-                    people easier, or even making it fun when you&apos;re not
-                    having the best day. With that in mind, we provide services
-                    to be your partner on your next project.
-                  </p>
-                </div>
-              </div>
-              <div className="partners-grid">
-                <div className="partners-logo">
-                  <span className="logo-embed w-embed flex max-h-[50px] max-w-[100px] items-center justify-center overflow-hidden">
-                    <img
-                      src="/images/templates/flash/placeholder.png"
-                      alt=""
-                      style={{
-                        objectFit: "cover",
-                        display: "block",
-                        margin: "0 auto",
-                      }}
-                    />
-                  </span>
-                </div>
-                <div className="partners-logo">
-                  <span className="logo-embed w-embed flex max-h-[50px] max-w-[100px] items-center justify-center overflow-hidden">
-                    <img
-                      src="/images/templates/flash/placeholder.png"
-                      alt=""
-                      style={{
-                        objectFit: "cover",
-                        display: "block",
-                        margin: "0 auto",
-                      }}
-                    />
-                  </span>
-                </div>
-                <div className="partners-logo">
-                  <span className="logo-embed w-embed flex max-h-[50px] max-w-[100px] items-center justify-center overflow-hidden">
-                    <img
-                      src="/images/templates/flash/placeholder.png"
-                      alt=""
-                      style={{
-                        objectFit: "cover",
-                        display: "block",
-                        margin: "0 auto",
-                      }}
-                    />
-                  </span>
-                </div>
-                <div className="partners-logo">
-                  <span className="logo-embed w-embed flex max-h-[50px] max-w-[100px] items-center justify-center overflow-hidden">
-                    <img
-                      src="/images/templates/flash/placeholder.png"
-                      alt=""
-                      style={{
-                        objectFit: "cover",
-                        display: "block",
-                        margin: "0 auto",
-                      }}
-                    />
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

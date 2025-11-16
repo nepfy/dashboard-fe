@@ -65,7 +65,9 @@ export class MinimalTheme {
     return this.applyPromptReplacements(promptTemplate, data);
   }
 
-  private getSectionExpectedFormat(sectionKey: MinimalSectionKey): string | null {
+  private getSectionExpectedFormat(
+    sectionKey: MinimalSectionKey
+  ): string | null {
     const sectionConfig = this.getSectionConfig(sectionKey);
     if (sectionConfig && "expectedFormat" in sectionConfig) {
       return sectionConfig.expectedFormat as string;
@@ -128,7 +130,9 @@ export class MinimalTheme {
     );
   }
 
-  private validateIntroductionSection(section: MinimalProposal["introduction"]): void {
+  private validateIntroductionSection(
+    section: MinimalProposal["introduction"]
+  ): void {
     this.ensureMaxLength(section.title, 120, "introduction.title");
     if (section.subtitle) {
       this.ensureMaxLength(section.subtitle, 200, "introduction.subtitle");
@@ -136,7 +140,11 @@ export class MinimalTheme {
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
       section.services.forEach((service, index) => {
-        this.ensureMaxLength(service.serviceName, 50, `introduction.services[${index}].serviceName`);
+        this.ensureMaxLength(
+          service.serviceName,
+          50,
+          `introduction.services[${index}].serviceName`
+        );
       });
     }
   }
@@ -156,13 +164,23 @@ export class MinimalTheme {
     }
   }
 
-  private validateExpertiseSection(section: MinimalProposal["expertise"]): void {
+  private validateExpertiseSection(
+    section: MinimalProposal["expertise"]
+  ): void {
     this.ensureMaxLength(section.title, 100, "expertise.title");
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 8, "expertise.topics");
       section.topics.forEach((topic, index) => {
-        this.ensureMaxLength(topic.title, 60, `expertise.topics[${index}].title`);
-        this.ensureMaxLength(topic.description, 250, `expertise.topics[${index}].description`);
+        this.ensureMaxLength(
+          topic.title,
+          60,
+          `expertise.topics[${index}].title`
+        );
+        this.ensureMaxLength(
+          topic.description,
+          250,
+          `expertise.topics[${index}].description`
+        );
       });
     }
   }
@@ -174,19 +192,57 @@ export class MinimalTheme {
       section.items.forEach((item, index) => {
         this.ensureMaxLength(item.client, 50, `results.items[${index}].client`);
         if (item.instagram) {
-          this.ensureMaxLength(item.instagram, 50, `results.items[${index}].instagram`);
+          this.ensureMaxLength(
+            item.instagram,
+            50,
+            `results.items[${index}].instagram`
+          );
         }
       });
     }
   }
 
-  private validateTestimonialsSection(section: MinimalProposal["testimonials"]): void {
+  private validateTestimonialsSection(
+    section: MinimalProposal["testimonials"]
+  ): void {
     if (section.items) {
       this.ensureArrayRange(section.items, 2, 4, "testimonials.items");
       section.items.forEach((item, index) => {
-        this.ensureMaxLength(item.name, 50, `testimonials.items[${index}].name`);
-        this.ensureMaxLength(item.role, 50, `testimonials.items[${index}].role`);
-        this.ensureMaxLength(item.testimonial, 400, `testimonials.items[${index}].testimonial`);
+        this.ensureMaxLength(
+          item.name,
+          50,
+          `testimonials.items[${index}].name`
+        );
+        this.ensureMaxLength(
+          item.role,
+          50,
+          `testimonials.items[${index}].role`
+        );
+        this.ensureMaxLength(
+          item.testimonial,
+          400,
+          `testimonials.items[${index}].testimonial`
+        );
+      });
+    }
+  }
+
+  private validateClientsSection(section: MinimalProposal["clients"]): void {
+    if (section.title) {
+      this.ensureMaxLength(section.title, 120, "clients.title");
+    }
+    if (section.description) {
+      this.ensureMaxLength(section.description, 200, "clients.description");
+    }
+    if (section.paragraphs) {
+      section.paragraphs.forEach((paragraph, index) => {
+        this.ensureMaxLength(paragraph, 280, `clients.paragraphs[${index}]`);
+      });
+    }
+    if (section.items) {
+      this.ensureArrayRange(section.items, 4, 8, "clients.items");
+      section.items.forEach((client, index) => {
+        this.ensureMaxLength(client.name, 60, `clients.items[${index}].name`);
       });
     }
   }
@@ -196,12 +252,18 @@ export class MinimalTheme {
       this.ensureArrayRange(section.topics, 3, 6, "steps.topics");
       section.topics.forEach((topic, index) => {
         this.ensureMaxLength(topic.title, 50, `steps.topics[${index}].title`);
-        this.ensureMaxLength(topic.description, 400, `steps.topics[${index}].description`);
+        this.ensureMaxLength(
+          topic.description,
+          400,
+          `steps.topics[${index}].description`
+        );
       });
     }
   }
 
-  private parseCurrencyValue(value: string | number | null | undefined): number {
+  private parseCurrencyValue(
+    value: string | number | null | undefined
+  ): number {
     if (value === null || value === undefined) return 0;
     if (typeof value === "number") {
       ensureCondition(!Number.isNaN(value), "Invalid currency value");
@@ -233,7 +295,11 @@ export class MinimalTheme {
   ): void {
     this.ensureMaxLength(section.title, 150, "investment.title");
     if (section.projectScope) {
-      this.ensureMaxLength(section.projectScope, 200, "investment.projectScope");
+      this.ensureMaxLength(
+        section.projectScope,
+        200,
+        "investment.projectScope"
+      );
     }
   }
 
@@ -259,9 +325,8 @@ export class MinimalTheme {
       );
     }
 
-    const recommendedPlans = section.plansItems?.filter(
-      (plan) => plan.recommended === true
-    ) ?? [];
+    const recommendedPlans =
+      section.plansItems?.filter((plan) => plan.recommended === true) ?? [];
     ensureCondition(
       recommendedPlans.length === 1,
       "Exactly one plan must be marked as recommended"
@@ -282,10 +347,19 @@ export class MinimalTheme {
 
     section.plansItems?.forEach((plan, index) => {
       this.ensureMaxLength(plan.title, 50, `plans.plansItems[${index}].title`);
-      this.ensureMaxLength(plan.description, 150, `plans.plansItems[${index}].description`);
+      this.ensureMaxLength(
+        plan.description,
+        150,
+        `plans.plansItems[${index}].description`
+      );
 
       if (plan.includedItems) {
-        this.ensureArrayRange(plan.includedItems, 3, 8, `plans.plansItems[${index}].includedItems`);
+        this.ensureArrayRange(
+          plan.includedItems,
+          3,
+          8,
+          `plans.plansItems[${index}].includedItems`
+        );
         plan.includedItems.forEach((item, itemIndex) => {
           this.ensureMaxLength(
             item.description,
@@ -301,7 +375,11 @@ export class MinimalTheme {
     if (section.items) {
       this.ensureArrayRange(section.items, 3, 8, "faq.items");
       section.items.forEach((item, index) => {
-        this.ensureMaxLength(item.question, 150, `faq.items[${index}].question`);
+        this.ensureMaxLength(
+          item.question,
+          150,
+          `faq.items[${index}].question`
+        );
         this.ensureMaxLength(item.answer, 500, `faq.items[${index}].answer`);
       });
     }
@@ -314,15 +392,38 @@ export class MinimalTheme {
     if (section.disclaimer) {
       this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
     }
+    if (section.email) {
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      ensureCondition(
+        emailRegex.test(section.email),
+        "footer.email must be a valid email address"
+      );
+    }
+    if (section.phone) {
+      // Basic phone validation (Brazilian format - more flexible)
+      const cleanedPhone = section.phone
+        .replace(/\s/g, "")
+        .replace(/[()]/g, "");
+      const phoneRegex = /^\+?55\d{10,11}$|^\d{10,11}$/;
+      ensureCondition(
+        phoneRegex.test(cleanedPhone) || cleanedPhone.length >= 10,
+        "footer.phone must be a valid phone number"
+      );
+    }
   }
 
-  private validateProposal(proposal: MinimalProposal, expectedPlans: number): void {
+  private validateProposal(
+    proposal: MinimalProposal,
+    expectedPlans: number
+  ): void {
     this.validateIntroductionSection(proposal.introduction);
     this.validateAboutUsSection(proposal.aboutUs);
     this.validateTeamSection(proposal.team);
     this.validateExpertiseSection(proposal.expertise);
     this.validateResultsSection(proposal.results);
     this.validateTestimonialsSection(proposal.testimonials);
+    this.validateClientsSection(proposal.clients);
     this.validateStepsSection(proposal.steps);
     this.validateInvestmentSection(proposal.investment);
     this.validatePlansSection(proposal.plans, expectedPlans);
@@ -364,7 +465,10 @@ export class MinimalTheme {
         return parsed;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        console.error(`Minimal template: Attempt ${attempt} failed:`, lastError.message);
+        console.error(
+          `Minimal template: Attempt ${attempt} failed:`,
+          lastError.message
+        );
 
         if (attempt < maxRetries) {
           userPrompt = generateJSONRetryPrompt(
@@ -414,7 +518,7 @@ export class MinimalTheme {
     console.log("Generating Minimal proposal sections...");
 
     const sections = await this.generateAllSections(data, agent);
-    
+
     const proposal: MinimalProposal = {
       introduction: sections.introduction,
       aboutUs: sections.aboutUs,
@@ -422,6 +526,12 @@ export class MinimalTheme {
       expertise: sections.expertise,
       results: sections.results,
       testimonials: sections.testimonials,
+      clients: sections.clients || {
+        hideSection: false,
+        title: "",
+        items: [],
+        paragraphs: [],
+      },
       steps: sections.steps,
       escope: sections.escope,
       investment: sections.investment,
@@ -431,7 +541,8 @@ export class MinimalTheme {
     };
 
     // Validate the complete proposal
-    const expectedPlans = typeof data.selectedPlans === "number" ? data.selectedPlans : 1;
+    const expectedPlans =
+      typeof data.selectedPlans === "number" ? data.selectedPlans : 1;
     this.validateProposal(proposal, expectedPlans);
 
     return proposal;
@@ -470,10 +581,9 @@ export class MinimalTheme {
     // Generate expertise
     const expertisePrompt = this.getSectionPrompt("specialties", data);
     const expertiseSystemPrompt = this.buildSystemPrompt(agent, "specialties");
-    const expertiseResult = await this.runLLMWithJSONRetry<MinimalProposal["expertise"]>(
-      expertisePrompt,
-      expertiseSystemPrompt
-    );
+    const expertiseResult = await this.runLLMWithJSONRetry<
+      MinimalProposal["expertise"]
+    >(expertisePrompt, expertiseSystemPrompt);
     sections.expertise = expertiseResult;
 
     // Generate results section
@@ -502,7 +612,7 @@ Formato JSON esperado:
     }
   ]
 }`;
-    
+
     const resultsSystemPrompt = `Você é um especialista em ${agent.sector} gerando cases de sucesso realistas e inspiradores.
     
 REGRAS:
@@ -594,13 +704,42 @@ REGRAS OBRIGATÓRIAS:
       })),
     };
 
+    // Generate clients/brands section
+    const clientsPrompt = this.getSectionPrompt("clients", data);
+    const clientsSystemPrompt = this.buildSystemPrompt(agent, "clients");
+    const clientsResult = await this.runLLMWithJSONRetry<{
+      hideSection?: boolean;
+      title?: string;
+      description?: string;
+      paragraphs?: string[];
+      items?: Array<{
+        id?: string;
+        name: string;
+        logo?: string;
+        sortOrder?: number;
+      }>;
+    }>(clientsPrompt, clientsSystemPrompt);
+
+    sections.clients = {
+      hideSection: clientsResult.hideSection ?? false,
+      title: clientsResult.title,
+      description: clientsResult.description,
+      paragraphs: clientsResult.paragraphs || [],
+      items:
+        clientsResult.items?.map((item, index) => ({
+          id: item.id || crypto.randomUUID(),
+          name: item.name,
+          logo: item.logo,
+          sortOrder: item.sortOrder ?? index,
+        })) || [],
+    };
+
     // Generate steps
     const stepsPrompt = this.getSectionPrompt("steps", data);
     const stepsSystemPrompt = this.buildSystemPrompt(agent, "steps");
-    const stepsResult = await this.runLLMWithJSONRetry<MinimalProposal["steps"]>(
-      stepsPrompt,
-      stepsSystemPrompt
-    );
+    const stepsResult = await this.runLLMWithJSONRetry<
+      MinimalProposal["steps"]
+    >(stepsPrompt, stepsSystemPrompt);
     sections.steps = stepsResult;
 
     // Escope (static section)
@@ -616,45 +755,63 @@ REGRAS OBRIGATÓRIAS:
       investmentSystemPrompt
     );
 
-    // TODO: Add plans section when template config is updated
-    const planCount = Math.min(Math.max(data.selectedPlans || 1, 1), 3);
-    const placeholderPlans = [];
-    for (let i = 0; i < planCount; i++) {
-      const includedItemsCount = 3 + i; // 3, 4, 5 items per plan
-      const includedItems = [];
-      for (let j = 0; j < includedItemsCount; j++) {
-        includedItems.push({
-          id: crypto.randomUUID(),
-          description: `Item incluído ${j + 1}`,
-          hideItem: false,
-          sortOrder: j,
-        });
-      }
-      
-      placeholderPlans.push({
-        id: crypto.randomUUID(),
-        title: `Plano ${i + 1}`,
-        description: "Descrição do plano",
-        value: (i + 1) * 1000,
-        planPeriod: "mensal",
-        recommended: i === planCount - 1, // Last plan is recommended
-        buttonTitle: "Contratar",
-        buttonWhereToOpen: "_blank",
+    // Generate Plans
+    const plansPrompt = this.getSectionPrompt("plans", data);
+    const plansSystemPrompt = this.buildSystemPrompt(agent, "plans");
+    const plansResult = await this.runLLMWithJSONRetry<{
+      hideSection: boolean;
+      plansItems: Array<{
+        id: string;
+        title: string;
+        description: string;
+        value: number;
+        planPeriod: string;
+        recommended: boolean;
+        buttonTitle: string;
+        hideTitleField: boolean;
+        hideDescription: boolean;
+        hidePrice: boolean;
+        hidePlanPeriod: boolean;
+        hideButtonTitle: boolean;
+        hideItem: boolean;
+        sortOrder: number;
+        includedItems: Array<{
+          id: string;
+          description: string;
+          hideItem: boolean;
+          sortOrder: number;
+        }>;
+      }>;
+    }>(plansPrompt, plansSystemPrompt);
+
+    // Map AI result to MinimalProposal format
+    sections.plans = {
+      hideSection: plansResult.hideSection || false,
+      plansItems: plansResult.plansItems.map((plan) => ({
+        id: plan.id || crypto.randomUUID(),
+        title: plan.title,
+        description: plan.description,
+        value: plan.value,
+        planPeriod: plan.planPeriod || "mensal",
+        recommended: plan.recommended || false,
+        buttonTitle: plan.buttonTitle || "Contratar",
+        buttonWhereToOpen: "_blank" as const,
         buttonHref: "#",
         buttonPhone: "",
-        hideTitleField: false,
-        hideDescription: false,
-        hidePrice: false,
-        hidePlanPeriod: false,
-        hideButtonTitle: false,
-        hideItem: false,
-        sortOrder: i,
-        includedItems: includedItems,
-      });
-    }
-    sections.plans = {
-      hideSection: false,
-      plansItems: placeholderPlans,
+        hideTitleField: plan.hideTitleField || false,
+        hideDescription: plan.hideDescription || false,
+        hidePrice: plan.hidePrice || false,
+        hidePlanPeriod: plan.hidePlanPeriod || false,
+        hideButtonTitle: plan.hideButtonTitle || false,
+        hideItem: plan.hideItem || false,
+        sortOrder: plan.sortOrder,
+        includedItems: plan.includedItems.map((item) => ({
+          id: item.id || crypto.randomUUID(),
+          description: item.description,
+          hideItem: item.hideItem || false,
+          sortOrder: item.sortOrder,
+        })),
+      })),
     };
 
     // Generate FAQ
@@ -666,14 +823,42 @@ REGRAS OBRIGATÓRIAS:
     );
     sections.faq = faqResult;
 
-    // Footer (static section - uses config values)
-    const config = templateConfigManager.getConfig("minimal");
-    sections.footer = {
-      callToAction: config?.sections?.footer?.callToAction || "Vamos transformar sua ideia em realidade?",
-      disclaimer: config?.sections?.footer?.disclaimer || "Esta proposta é válida pelo período indicado.",
-      hideCallToAction: false,
-      hideDisclaimer: false,
-    };
+    // Generate Footer
+    const footerConfig = this.getSectionConfig("footer");
+    if (footerConfig && "prompt" in footerConfig) {
+      const footerPrompt = this.getSectionPrompt("footer", data);
+      const footerSystemPrompt = this.buildSystemPrompt(agent, "footer");
+      const footerResult = await this.runLLMWithJSONRetry<{
+        callToAction: string;
+        disclaimer: string;
+        email: string;
+        phone: string;
+      }>(footerPrompt, footerSystemPrompt);
+
+      sections.footer = {
+        callToAction: footerResult.callToAction,
+        disclaimer: footerResult.disclaimer,
+        email: footerResult.email || data.userEmail || "",
+        phone: footerResult.phone || "",
+        hideCallToAction: false,
+        hideDisclaimer: false,
+      };
+    } else {
+      // Fallback to config values
+      const config = templateConfigManager.getConfig("minimal");
+      sections.footer = {
+        callToAction:
+          config?.sections?.footer?.callToAction ||
+          "Vamos transformar sua ideia em realidade?",
+        disclaimer:
+          config?.sections?.footer?.disclaimer ||
+          "Esta proposta é válida pelo período indicado.",
+        email: data.userEmail || "",
+        phone: "",
+        hideCallToAction: false,
+        hideDisclaimer: false,
+      };
+    }
 
     return sections as MinimalProposal;
   }
@@ -736,7 +921,4 @@ export class MinimalTemplateWorkflow {
 }
 
 // Type exports
-export type {
-  MinimalProposal,
-} from "../templates/minimal/minimal-template";
-
+export type { MinimalProposal } from "../templates/minimal/minimal-template";

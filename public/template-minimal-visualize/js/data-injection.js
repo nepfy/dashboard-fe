@@ -199,6 +199,110 @@
     }
   }
 
+  function updateFooterEmailVisualize(email, fallback) {
+    const button = document.querySelector(".copy-email-button");
+    if (!button) return;
+    const emailValue = email || fallback || "";
+    if (emailValue) {
+      button.setAttribute("data-copy-email", emailValue);
+      const textEl = document.getElementById("footer-email-visualize");
+      if (textEl) {
+        textEl.textContent = emailValue;
+      }
+    }
+  }
+
+  function updateFooterPhoneVisualize(phone) {
+    const phoneElement = document.getElementById("footer-phone-visualize");
+    if (phoneElement && phone) {
+      phoneElement.textContent = phone;
+    }
+  }
+
+  function renderClientsSectionVisualize(clients) {
+    const sectionSelector = ".section_partners--dynamic";
+    if (!clients) {
+      const section = document.querySelector(sectionSelector);
+      if (section) {
+        section.style.display = "none";
+      }
+      return;
+    }
+
+    const section = document.querySelector(sectionSelector);
+    if (section) {
+      section.style.display = clients.hideSection === true ? "none" : "";
+    }
+
+    const titleEl = document.getElementById("clients-title-visualize");
+    if (titleEl && clients.title) {
+      titleEl.textContent = clients.title;
+    }
+
+    const descriptionEl = document.getElementById(
+      "clients-description-visualize"
+    );
+    if (descriptionEl && clients.description) {
+      descriptionEl.textContent = clients.description;
+    }
+
+    const paragraphs = clients.paragraphs || [];
+    const paragraphOne = document.getElementById("clients-paragraph-1-visualize");
+    if (paragraphOne && paragraphs[0]) {
+      paragraphOne.textContent = paragraphs[0];
+    }
+    const paragraphTwo = document.getElementById("clients-paragraph-2-visualize");
+    if (paragraphTwo && paragraphs[1]) {
+      paragraphTwo.textContent = paragraphs[1];
+    }
+
+    const logosContainer = document.getElementById("clients-logos-visualize");
+    if (logosContainer) {
+      const template =
+        logosContainer.querySelector("[data-logo-template]") ||
+        document.createElement("div");
+      logosContainer.innerHTML = "";
+      const logos = clients.items || [];
+      logos.forEach((logo) => {
+        const clone = template.cloneNode(true);
+        clone.removeAttribute("data-logo-template");
+        const textElement = clone.querySelector(".logo-text");
+        const imgElement = clone.querySelector(".logo-img");
+        if (logo.logo && imgElement) {
+          imgElement.src = logo.logo;
+          imgElement.alt = logo.name || "Cliente";
+          imgElement.style.display = "block";
+          if (textElement) {
+            textElement.style.display = "none";
+          }
+        } else {
+          if (imgElement) {
+            imgElement.style.display = "none";
+          }
+          if (textElement) {
+            textElement.textContent = logo.name || "";
+            textElement.style.display = "block";
+          }
+        }
+        logosContainer.appendChild(clone);
+      });
+
+      if (logos.length === 0 && template) {
+        const placeholder = template.cloneNode(true);
+        placeholder.removeAttribute("data-logo-template");
+        const textElement = placeholder.querySelector(".logo-text");
+        if (textElement) {
+          textElement.textContent = "Sua marca";
+        }
+        const imgElement = placeholder.querySelector(".logo-img");
+        if (imgElement) {
+          imgElement.style.display = "none";
+        }
+        logosContainer.appendChild(placeholder);
+      }
+    }
+  }
+
   // Icon mapping for expertise topics
   const iconMap = {
     AwardIcon:
@@ -1170,12 +1274,12 @@
         ".pricing_button .btn-magnetic__text-p"
       );
       if (buttonText && !plan.hideButtonTitle) {
-        buttonText.textContent = plan.buttonTitle || "";
+        buttonText.textContent = plan.buttonTitle || "Fechar pacote";
         const duplicate = clone.querySelector(
           ".pricing_button .btn-magnetic__text-p.is--duplicate"
         );
         if (duplicate) {
-          duplicate.textContent = plan.buttonTitle || "";
+          duplicate.textContent = plan.buttonTitle || "Fechar pacote";
         }
       } else if (buttonText && plan.hideButtonTitle) {
         const button = clone.querySelector(".pricing_button");
@@ -1347,6 +1451,16 @@
       );
     }
 
+    // Clients / Brands
+    if (pd.clients) {
+      renderClientsSectionVisualize(pd.clients);
+    } else {
+      const section = document.querySelector(".section_partners--dynamic");
+      if (section) {
+        section.style.display = "none";
+      }
+    }
+
     // Steps
     if (pd.steps) {
       renderSteps("steps-list", pd.steps.topics);
@@ -1404,6 +1518,8 @@
       updateTextField("footer-callToAction", pd.footer.callToAction);
       updateTextField("footer-validity", formatDate(data.projectValidUntil));
       updateTextField("footer-disclaimer", pd.footer.disclaimer);
+      updateFooterEmailVisualize(pd.footer.email, data?.userEmail || data?.user?.email);
+      updateFooterPhoneVisualize(pd.footer.phone);
 
       if (pd.footer.hideCallToAction) {
         toggleElementVisibility("footer-callToAction", true);

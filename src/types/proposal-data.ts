@@ -151,7 +151,10 @@ export interface ProposalData {
     hideSection?: boolean;
     title?: string;
     hideTitle?: boolean;
+    description?: string;
+    paragraphs?: string[];
     items?: Array<{
+      id?: string;
       name: string;
       logo?: string;
       hideClient?: boolean;
@@ -218,6 +221,8 @@ export interface ProposalData {
     disclaimer?: string;
     hideCallToAction?: boolean;
     hideDisclaimer?: boolean;
+    email?: string;
+    phone?: string;
     marquee?: Array<{
       text: string;
       hideItem?: boolean;

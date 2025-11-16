@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import Navbar from "#/components/Navbar";
 import Footer from "#/components/Footer";
@@ -213,6 +213,7 @@ type BannerState = {
 export default function Onboarding() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
   const [banner, setBanner] = useState<BannerState | null>(null);
   const [isHydrating, setIsHydrating] = useState(true);
   const [initialFormData, setInitialFormData] = useState<
@@ -275,7 +276,10 @@ export default function Onboarding() {
         }
 
         if (!result.data.needsOnboarding) {
-          router.replace("/dashboard");
+          // Only redirect if we're not already on dashboard
+          if (!pathname?.startsWith("/dashboard")) {
+            router.replace("/dashboard");
+          }
           return;
         }
 
@@ -362,7 +366,7 @@ export default function Onboarding() {
     return () => {
       isActive = false;
     };
-  }, [isLoaded, userId, router]);
+  }, [isLoaded, userId, router, pathname]);
 
   const handleOnboardingComplete = async (formData: FormData) => {
     try {

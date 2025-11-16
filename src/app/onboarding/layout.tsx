@@ -1,9 +1,10 @@
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Removido verificação server-side que causava loop infinito
-  // A página de onboarding já faz verificação client-side e redireciona se necessário
+  // Removed server-side redirect to prevent infinite loop
+  // The onboarding page handles redirects client-side using the API
+  // which checks both onboardingComplete and hasPersonRecord
   return <>{children}</>;
 }

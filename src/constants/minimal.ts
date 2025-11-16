@@ -166,6 +166,25 @@ const minimal = {
     ],
   },
 
+  clients: {
+    hideSection: false,
+    title: "Marcas que já confiaram no nosso trabalho",
+    description:
+      "Estratégia, posicionamento e conteúdo com foco em autoridade e crescimento real no digital.",
+    paragraphs: [
+      "Na União Co., cuidamos dos bastidores da sua presença online com o mesmo cuidado que você dedica aos seus clientes. Da construção da identidade visual ao posicionamento nas redes, nossa missão é garantir confiança, profissionalismo e autoridade com consistência e uma pitada de criatividade estratégica.",
+      "Unimos estratégia, design e performance para transformar sua comunicação em uma ferramenta poderosa de atração e relacionamento. Enquanto você se concentra em atender e encantar, a gente garante que sua marca fale por você.",
+    ],
+    items: [
+      { id: "1", name: "Ino", sortOrder: 1 },
+      { id: "2", name: "Circle", sortOrder: 2 },
+      { id: "3", name: "Nova", sortOrder: 3 },
+      { id: "4", name: "Acme", sortOrder: 4 },
+      { id: "5", name: "Studio N", sortOrder: 5 },
+      { id: "6", name: "Onda", sortOrder: 6 },
+    ],
+  },
+
   steps: {
     hideSection: false,
     topics: [

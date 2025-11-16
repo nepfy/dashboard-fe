@@ -69,6 +69,18 @@ export interface TemplateConfig {
       expectedFormat: string;
       rules: string[];
     };
+    plans?: {
+      enabled: boolean;
+      prompt: string;
+      expectedFormat: string;
+      rules: string[];
+    };
+    clients?: {
+      enabled: boolean;
+      prompt: string;
+      expectedFormat: string;
+      rules: string[];
+    };
     faq: {
       enabled: boolean;
       prompt: string;
@@ -80,6 +92,9 @@ export interface TemplateConfig {
       enabled: boolean;
       callToAction: string;
       disclaimer: string;
+      prompt?: string;
+      expectedFormat?: string;
+      rules?: string[];
     };
   };
 
@@ -814,6 +829,58 @@ REGRAS:
         ],
       },
 
+      clients: {
+        enabled: true,
+        prompt: `Gere a seção de marcas/parceiros atendidos.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+
+FORMATO:
+{
+  "hideSection": false,
+  "title": "Título com até 120 caracteres",
+  "description": "Resumo curto com até 200 caracteres",
+  "paragraphs": [
+    "Parágrafo 1 com até 280 caracteres",
+    "Parágrafo 2 com até 280 caracteres"
+  ],
+  "items": [
+    {
+      "id": "1",
+      "name": "Nome da marca/cliente",
+      "logo": "URL opcional",
+      "sortOrder": 0
+    }
+  ]
+}
+
+REGRAS:
+- Gere 6 a 8 marcas reais ou plausíveis para o setor
+- Valorize autoridade e confiança
+- Parágrafos devem reforçar proposta de valor e abordagem estratégica`,
+        expectedFormat: `{
+  "hideSection": false,
+  "title": "string (max 120 chars)",
+  "description": "string (max 200 chars)",
+  "paragraphs": ["string (max 280 chars)", "string (max 280 chars)"],
+  "items": [{
+    "id": "string",
+    "name": "string",
+    "logo": "string",
+    "sortOrder": number
+  }]
+}`,
+        rules: [
+          "6-8 marcas",
+          "Parágrafos até 280 caracteres",
+          "Marcas relevantes ao setor",
+        ],
+      },
+
       specialties: {
         enabled: true,
         prompt: `Gere seção de expertise/áreas de atuação.
@@ -950,6 +1017,89 @@ REGRAS:
         rules: [],
       },
 
+      plans: {
+        enabled: true,
+        prompt: `Gere planos de preços para a proposta minimalista.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Projeto: {projectName}
+- Descrição: {projectDescription}
+- Empresa: {companyInfo}
+- Quantidade de planos: {selectedPlans}
+
+FORMATO:
+{
+  "hideSection": false,
+  "plansItems": [
+    {
+      "id": "1",
+      "title": "Nome do plano com até 50 caracteres",
+      "description": "Descrição do plano com até 150 caracteres",
+      "value": número (ex: 980, 1750, 2950),
+      "planPeriod": "mensal",
+      "recommended": true/false,
+      "buttonTitle": "Texto do botão com até 25 caracteres",
+      "hideTitleField": false,
+      "hideDescription": false,
+      "hidePrice": false,
+      "hidePlanPeriod": false,
+      "hideButtonTitle": false,
+      "hideItem": false,
+      "sortOrder": 0,
+      "includedItems": [
+        {
+          "id": "1",
+          "description": "Item incluído com até 100 caracteres",
+          "hideItem": false,
+          "sortOrder": 0
+        }
+      ]
+    }
+  ]
+}
+
+REGRAS:
+- Gere exatamente {selectedPlans} planos (entre 1 e 3)
+- O plano de maior valor DEVE ter recommended = true
+- Cada plano deve ter entre 3 e 8 itens incluídos
+- Valores devem ser realistas para o setor
+- Descrições dos itens devem ser claras e diretas
+- Use verbos no infinitivo ou substantivos fortes`,
+        expectedFormat: `{
+  "hideSection": false,
+  "plansItems": [{
+    "id": "string",
+    "title": "string (max 50 chars)",
+    "description": "string (max 150 chars)",
+    "value": number,
+    "planPeriod": "string",
+    "recommended": boolean,
+    "buttonTitle": "string (max 25 chars)",
+    "hideTitleField": false,
+    "hideDescription": false,
+    "hidePrice": false,
+    "hidePlanPeriod": false,
+    "hideButtonTitle": false,
+    "hideItem": false,
+    "sortOrder": number,
+    "includedItems": [{
+      "id": "string",
+      "description": "string (max 100 chars)",
+      "hideItem": false,
+      "sortOrder": number
+    }]
+  }]
+}`,
+        rules: [
+          "Gere exatamente a quantidade de planos solicitada",
+          "Plano de maior valor deve ser recommended",
+          "3-8 itens por plano",
+          "Valores realistas",
+          "Descrições claras e diretas",
+        ],
+      },
+
       faq: {
         enabled: true,
         prompt: `Gere seção de FAQ minimalista.
@@ -991,6 +1141,39 @@ REGRAS:
 
       footer: {
         enabled: true,
+        prompt: `Gere informações de contato para o rodapé da proposta.
+
+DADOS DO PROJETO:
+- Cliente: {clientName}
+- Empresa: {companyInfo}
+- Usuário: {userName}
+- Email: {userEmail}
+
+FORMATO:
+{
+  "callToAction": "Pergunta de chamada para ação com até 100 caracteres",
+  "disclaimer": "Texto de aviso legal com até 300 caracteres",
+  "email": "Email de contato (use {userEmail} se disponível, senão gere um email profissional)",
+  "phone": "Telefone de contato no formato brasileiro (+55 XX XXXXX-XXXX)"
+}
+
+REGRAS:
+- callToAction: pergunta convidativa e direta (até 100 caracteres)
+- disclaimer: texto sobre validade da proposta (até 300 caracteres)
+- email: use {userEmail} se disponível, senão gere email profissional baseado em {companyInfo}
+- phone: formato brasileiro com DDD e 9 dígitos`,
+        expectedFormat: `{
+  "callToAction": "string (max 100 chars)",
+  "disclaimer": "string (max 300 chars)",
+  "email": "string (valid email format)",
+  "phone": "string (format: +55 XX XXXXX-XXXX)"
+}`,
+        rules: [
+          "callToAction: até 100 caracteres, pergunta convidativa",
+          "disclaimer: até 300 caracteres, texto sobre validade",
+          "email: usar {userEmail} se disponível",
+          "phone: formato brasileiro com DDD",
+        ],
         callToAction: "Vamos transformar sua ideia em realidade?",
         disclaimer:
           "Esta proposta é válida pelo período indicado. Estamos à disposição para esclarecer dúvidas e personalizar soluções de acordo com suas necessidades.",

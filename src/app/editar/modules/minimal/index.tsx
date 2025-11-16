@@ -1,6 +1,7 @@
 import { useEditor } from "../../contexts/EditorContext";
 import MinimalIntro from "./Intro";
 import MinimalAboutUs from "./AboutUs";
+import MinimalClients from "./Clients";
 import MinimalExpertise from "./Expertise";
 
 import MinimalPlans from "./Plans";
@@ -19,6 +20,7 @@ export default function Minimal() {
     <div className="font-overused overflow-hidden">
       <MinimalIntro {...projectData?.proposalData?.introduction} />
       <MinimalAboutUs {...projectData?.proposalData?.aboutUs} />
+      <MinimalClients {...projectData?.proposalData?.clients} />
       <MinimalExpertise
         {...projectData?.proposalData?.expertise}
         mainColor={projectData?.mainColor}
@@ -30,6 +32,7 @@ export default function Minimal() {
 
       <MinimalPlans
         {...projectData?.proposalData?.plans}
+        investment={projectData?.proposalData?.investment}
         mainColor={projectData?.mainColor}
       />
       <MinimalTermsAndConditions
