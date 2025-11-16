@@ -12,6 +12,7 @@ import Portal from "#/components/Portal";
 
 import ArchiveIcon from "./ArchiveIcon";
 import DuplicateIcon from "./DuplicateIcon";
+import DeleteIcon from "./DeleteIcon";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 import { getStatusBadge } from "../ProjectsTable/getStatusBadge";
 import { trackProposalClicked } from "#/lib/analytics/track";
@@ -25,6 +26,7 @@ interface RowEditMenuProps {
   viewMode?: "active" | "archived";
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onDuplicate?: (projectId: string) => Promise<void>;
+  onDelete?: (projectId: string) => Promise<void>;
   isUpdating?: boolean;
   triggerElement?: HTMLElement | null;
   onRefresh?: () => Promise<void>;
@@ -74,6 +76,7 @@ export default function RowEditMenu({
   viewMode = "active",
   onStatusUpdate,
   onDuplicate,
+  onDelete,
   isUpdating = false,
   triggerElement,
   onRefresh,
@@ -89,8 +92,10 @@ export default function RowEditMenu({
 
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [isCopyingLink, setIsCopyingLink] = useState(false);
   const [copyLinkMessage, setCopyLinkMessage] = useState<string | null>(null);
@@ -209,6 +214,9 @@ export default function RowEditMenu({
       case "archive":
         setShowArchiveModal(true);
         break;
+      case "delete":
+        setShowDeleteModal(true);
+        break;
       default:
         onClose();
     }
@@ -287,6 +295,30 @@ export default function RowEditMenu({
     setShowDuplicateModal(false);
   };
 
+  const handleDeleteConfirm = async () => {
+    if (onDelete) {
+      try {
+        setIsDeleting(true);
+        await onDelete(projectId);
+
+        if (onRefresh) {
+          await onRefresh();
+        }
+
+        setShowDeleteModal(false);
+        onClose();
+      } catch (error) {
+        console.error("Failed to delete project:", error);
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+  };
+
   const getStatusOptions = () => {
     return viewMode === "archived" ? archivedStatusOptions : statusOptions;
   };
@@ -296,12 +328,12 @@ export default function RowEditMenu({
   };
 
   const isMenuDisabled =
-    isUpdating || isProcessing || isArchiving || isDuplicating || isCopyingLink;
+    isUpdating || isProcessing || isArchiving || isDuplicating || isDeleting || isCopyingLink;
   const hasStatusChanged = selectedStatus !== currentStatus;
 
   return (
     <>
-      {!showArchiveModal && !showDuplicateModal && (
+      {!showArchiveModal && !showDuplicateModal && !showDeleteModal && (
         <Portal>
           <div
             ref={menuRef}
@@ -310,7 +342,7 @@ export default function RowEditMenu({
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
               display:
-                showArchiveModal || showDuplicateModal ? "none" : "block",
+                showArchiveModal || showDuplicateModal || showDeleteModal ? "none" : "block",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -405,7 +437,7 @@ export default function RowEditMenu({
                     <button
                       onClick={() => handleMenuItemClick("archive")}
                       disabled={isMenuDisabled}
-                      className={`text-white-neutral-light-900 my-1 mb-2 flex items-center gap-1 rounded-lg px-2 pt-3 pb-4 text-left text-sm font-medium transition-colors ${
+                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
                         isMenuDisabled
                           ? "cursor-not-allowed opacity-50"
                           : "hover:bg-white-neutral-light-300 cursor-pointer"
@@ -413,6 +445,32 @@ export default function RowEditMenu({
                     >
                       <Archive width="16" height="16" />
                       {getArchiveButtonText()}
+                    </button>
+                  )}
+
+                  {viewMode === "active" && (
+                    <button
+                      onClick={() => handleMenuItemClick("delete")}
+                      disabled={isMenuDisabled}
+                      className={`text-white-neutral-light-900 my-1 mb-2 flex items-center gap-1 rounded-lg px-2 pt-3 pb-4 text-left text-sm font-medium transition-colors ${
+                        isMenuDisabled
+                          ? "cursor-not-allowed opacity-50"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      </svg>
+                      Excluir proposta
                     </button>
                   )}
                 </div>
@@ -511,24 +569,33 @@ export default function RowEditMenu({
           <ArchiveIcon />
         </div>
 
-        <div className="mb-2 p-6">
-          <p className="text-white-neutral-light-500 text-sm leading-relaxed">
-            {viewMode === "archived" ? (
-              <>
-                Ao restaurar, o item voltará para a <br />
-                lista principal e ficará visível <br />
-                novamente.
-              </>
-            ) : (
-              <>
-                Ao arquivar, o item será movido para a<br /> área de itens
-                arquivados e não ficará <br /> mais visível na lista principal.
-              </>
-            )}
-          </p>
-        </div>
+        <p className="text-white-neutral-light-500 px-6 py-2 text-sm sm:p-6">
+          {viewMode === "archived" ? (
+            <>
+              Ao restaurar, o item voltará para a lista principal e ficará
+              visível novamente.
+            </>
+          ) : (
+            <>
+              Ao arquivar, o item será movido para a área de itens arquivados
+              e não ficará mais visível na lista principal.
+            </>
+          )}
+        </p>
 
         <div className="border-t-white-neutral-light-300 flex justify-start space-x-3 border-t p-6">
+          <button
+            type="button"
+            onClick={handleArchiveCancel}
+            disabled={isArchiving}
+            className={`rounded-xs border px-4 py-2 text-sm font-medium ${
+              isArchiving
+                ? "border-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
+                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner cursor-pointer"
+            }`}
+          >
+            Cancelar
+          </button>
           <button
             type="button"
             onClick={handleArchiveConfirm}
@@ -545,20 +612,8 @@ export default function RowEditMenu({
                 {viewMode === "archived" ? "Restaurando..." : "Arquivando..."}
               </div>
             ) : (
-              getArchiveButtonText()
+              viewMode === "archived" ? "Restaurar item" : "Arquivar item"
             )}
-          </button>
-          <button
-            type="button"
-            onClick={handleArchiveCancel}
-            disabled={isArchiving}
-            className={`rounded-xs border px-4 py-2 text-sm font-medium ${
-              isArchiving
-                ? "border-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
-                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner cursor-pointer"
-            }`}
-          >
-            Cancelar
           </button>
         </div>
       </Modal>
@@ -567,7 +622,7 @@ export default function RowEditMenu({
       <Modal
         isOpen={showDuplicateModal}
         onClose={handleDuplicateCancel}
-        title="Confirmar Duplicação"
+        title="Duplicar este item?"
         footer={false}
         closeOnClickOutside={!isDuplicating}
         showCloseButton={!isDuplicating}
@@ -578,12 +633,23 @@ export default function RowEditMenu({
         </div>
 
         <p className="text-white-neutral-light-500 px-6 py-2 text-sm sm:p-6">
-          Tem certeza que deseja duplicar esta proposta? Uma cópia será criada
-          imediatamente e você poderá editar todas as informações conforme
-          necessário.
+          Tem certeza que deseja duplicar este item? Uma cópia será criada
+          imediatamente.
         </p>
 
         <div className="border-t-white-neutral-light-300 flex justify-start space-x-3 border-t p-6">
+          <button
+            type="button"
+            onClick={handleDuplicateCancel}
+            disabled={isDuplicating}
+            className={`rounded-xs border px-4 py-2 text-sm font-medium ${
+              isDuplicating
+                ? "border-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
+                : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner cursor-pointer"
+            }`}
+          >
+            Cancelar
+          </button>
           <button
             type="button"
             onClick={handleDuplicateConfirm}
@@ -600,20 +666,62 @@ export default function RowEditMenu({
                 Duplicando...
               </div>
             ) : (
-              "Duplicar"
+              "Duplicar item"
             )}
           </button>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={handleDeleteCancel}
+        title="Excluir este item?"
+        footer={false}
+        closeOnClickOutside={!isDeleting}
+        showCloseButton={!isDeleting}
+        width="340px"
+      >
+        <div className="w-full px-2 pt-4 pb-0">
+          <DeleteIcon />
+        </div>
+
+        <p className="text-white-neutral-light-500 px-6 py-2 text-sm sm:p-6">
+          Tem certeza que deseja excluir este item? Essa ação não poderá ser
+          desfeita.
+        </p>
+
+        <div className="border-t-white-neutral-light-300 flex justify-start space-x-3 border-t p-6">
           <button
             type="button"
-            onClick={handleDuplicateCancel}
-            disabled={isDuplicating}
+            onClick={handleDeleteCancel}
+            disabled={isDeleting}
             className={`rounded-xs border px-4 py-2 text-sm font-medium ${
-              isDuplicating
+              isDeleting
                 ? "border-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
                 : "text-white-neutral-light-800 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner cursor-pointer"
             }`}
           >
             Cancelar
+          </button>
+          <button
+            type="button"
+            onClick={handleDeleteConfirm}
+            disabled={isDeleting}
+            className={`rounded-xs px-4 py-2 text-sm font-medium text-white ${
+              isDeleting
+                ? "bg-white-neutral-light-300 cursor-not-allowed"
+                : "bg-primary-light-500 hover:bg-primary-light-600 button-inner-inverse cursor-pointer"
+            }`}
+          >
+            {isDeleting ? (
+              <div className="flex items-center">
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                Excluindo...
+              </div>
+            ) : (
+              "Excluir item"
+            )}
           </button>
         </div>
       </Modal>

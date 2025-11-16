@@ -21,6 +21,7 @@ interface EnhancedTableProps extends TableProps {
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
+  onDelete?: (projectId: string) => Promise<void>;
   viewMode?: "active" | "archived";
   onRefresh?: () => Promise<void>;
 }
@@ -116,6 +117,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   onBulkStatusUpdate,
   onStatusUpdate,
   onBulkDuplicate,
+  onDelete,
   viewMode = "active",
   onRefresh,
 }) => {
@@ -222,6 +224,18 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         setMenuTriggerElement(null);
       } catch (error) {
         console.error("Falha ao duplicar proposta:", error);
+      }
+    }
+  };
+
+  const handleRowDelete = async (projectId: string) => {
+    if (onDelete) {
+      try {
+        await onDelete(projectId);
+        setOpenMenuRowId(null);
+        setMenuTriggerElement(null);
+      } catch (error) {
+        console.error("Falha ao excluir proposta:", error);
       }
     }
   };
@@ -412,6 +426,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           viewMode={viewMode}
           onStatusUpdate={handleRowStatusUpdate}
           onDuplicate={handleRowDuplicate}
+          onDelete={handleRowDelete}
           isUpdating={isUpdating}
           triggerElement={menuTriggerElement}
           onRefresh={onRefresh}

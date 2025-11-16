@@ -196,3 +196,72 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
+    const emailAddress = user?.emailAddresses[0]?.emailAddress;
+    if (!emailAddress) {
+      return NextResponse.json(
+        { success: false, error: "Email não encontrado" },
+        { status: 400 }
+      );
+    }
+
+    const { id: projectId } = await params;
+
+    const personResult = await db
+      .select({
+        id: personUserTable.id,
+      })
+      .from(personUserTable)
+      .where(eq(personUserTable.email, emailAddress));
+
+    if (!personResult[0]?.id) {
+      return NextResponse.json(
+        { success: false, error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    const userId = personResult[0].id;
+
+    // Verify project belongs to user and delete it
+    const deletedProject = await db
+      .delete(projectsTable)
+      .where(
+        and(eq(projectsTable.id, projectId), eq(projectsTable.personId, userId))
+      )
+      .returning();
+
+    if (deletedProject.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Projeto não encontrado ou acesso negado" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Projeto excluído com sucesso",
+      data: deletedProject[0],
+    });
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    return NextResponse.json(
+      { success: false, error: `Erro interno do servidor: ${error}` },
+      { status: 500 }
+    );
+  }
+}

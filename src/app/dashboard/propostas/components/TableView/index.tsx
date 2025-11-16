@@ -115,6 +115,26 @@ export default function TableView({ viewMode }: TableViewProps) {
     }
   };
 
+  const handleDelete = async (projectId: string) => {
+    try {
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log("Successfully deleted project");
+        await handleRefresh();
+      } else {
+        throw new Error(result.error || "Failed to delete project");
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      throw error;
+    }
+  };
+
   const currentData =
     viewMode === "archived" ? archivedProjectsData : projectsData;
   const currentPagination =
@@ -147,6 +167,7 @@ export default function TableView({ viewMode }: TableViewProps) {
           onBulkStatusUpdate={handleBulkStatusUpdate}
           onStatusUpdate={handleStatusUpdate}
           onBulkDuplicate={handleBulkDuplicate}
+          onDelete={handleDelete}
           viewMode={viewMode}
           onRefresh={handleRefresh}
         />
