@@ -5,6 +5,26 @@ function normalizeHostname(hostname: string): string {
 }
 
 export function getProjectBaseDomain(): string {
+  // In development/localhost, use localhost instead of staging domain
+  const isDevelopment =
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ||
+    process.env.NODE_ENV === "development";
+
+  if (isDevelopment) {
+    // Check if we're actually running on localhost (client-side check)
+    if (typeof window !== "undefined") {
+      const hostname = window.location.hostname;
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
+        return "localhost:3000";
+      }
+    }
+    // Server-side: check if NEXT_PUBLIC_VERCEL_URL indicates localhost
+    const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL;
+    if (vercelUrl && vercelUrl.includes("localhost")) {
+      return "localhost:3000";
+    }
+  }
+
   const envValue = process.env.NEXT_PUBLIC_PROJECT_BASE_DOMAIN?.trim();
 
   if (!envValue) {
@@ -19,15 +39,27 @@ export function getProjectBaseDomain(): string {
 
 export function generateSubdomainUrl(
   userName: string,
-  projectUrl: string
+  projectUrl: string,
+  options?: { forceDomain?: string }
 ): string {
-  const projectBaseDomain = getProjectBaseDomain();
+  // Check if we should use a specific domain (useful for localhost testing)
+  const projectBaseDomain = options?.forceDomain || getProjectBaseDomain();
+  
+  // Detect if running in localhost/development
+  const isLocalhost = projectBaseDomain === "localhost:3000" ||
+    (typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"));
+
   const normalizedUserName = userName.trim().toLowerCase();
   const normalizedProjectUrl = projectUrl.trim().replace(/^\/+/, "");
   const slugSegment = normalizedProjectUrl
     ? encodeURIComponent(normalizedProjectUrl)
     : "";
-  const baseUrl = `https://${normalizedUserName}.${projectBaseDomain}`;
+  
+  // Use http for localhost, https for production
+  const protocol = isLocalhost ? "http" : "https";
+  const baseUrl = `${protocol}://${normalizedUserName}.${projectBaseDomain}`;
 
   return slugSegment ? `${baseUrl}/${slugSegment}` : baseUrl;
 }
@@ -35,6 +67,7 @@ export function generateSubdomainUrl(
 export function isMainDomain(hostname: string): boolean {
   const normalized = normalizeHostname(hostname);
   const projectBaseDomain = getProjectBaseDomain();
+  const normalizedBaseDomain = normalizeHostname(projectBaseDomain);
 
   return (
     normalized === "staging-app.nepfy.com" ||
@@ -42,22 +75,23 @@ export function isMainDomain(hostname: string): boolean {
     normalized === "nepfy.com" ||
     normalized === "www.nepfy.com" ||
     normalized === "localhost" ||
-    normalized === "localhost:3000" ||
-    normalized === projectBaseDomain ||
-    normalized === `www.${projectBaseDomain}`
+    normalized === normalizedBaseDomain ||
+    normalized === `www.${normalizedBaseDomain}`
   );
 }
 
 function stripBaseDomain(hostname: string): string | null {
   const normalizedHost = normalizeHostname(hostname);
   const projectBaseDomain = getProjectBaseDomain();
+  // Normalize base domain (remove port) for comparison
+  const normalizedBaseDomain = normalizeHostname(projectBaseDomain);
 
-  if (normalizedHost === projectBaseDomain) {
+  if (normalizedHost === normalizedBaseDomain) {
     return "";
   }
 
-  if (normalizedHost.endsWith(`.${projectBaseDomain}`)) {
-    return normalizedHost.slice(0, -(projectBaseDomain.length + 1));
+  if (normalizedHost.endsWith(`.${normalizedBaseDomain}`)) {
+    return normalizedHost.slice(0, -(normalizedBaseDomain.length + 1));
   }
 
   return null;
