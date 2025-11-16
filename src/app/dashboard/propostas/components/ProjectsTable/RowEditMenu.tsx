@@ -13,6 +13,7 @@ import Portal from "#/components/Portal";
 import ArchiveIcon from "./ArchiveIcon";
 import DuplicateIcon from "./DuplicateIcon";
 import DeleteIcon from "./DeleteIcon";
+import PasswordManagerModal from "./PasswordManagerModal";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 import { getStatusBadge } from "../ProjectsTable/getStatusBadge";
 import { trackProposalClicked } from "#/lib/analytics/track";
@@ -93,6 +94,8 @@ export default function RowEditMenu({
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState<string | null>(null);
   const [isArchiving, setIsArchiving] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -217,8 +220,72 @@ export default function RowEditMenu({
       case "delete":
         setShowDeleteModal(true);
         break;
+      case "manage-password":
+        handleManagePassword();
+        break;
       default:
         onClose();
+    }
+  };
+
+  const handleManagePassword = async () => {
+    try {
+      // Fetch current password
+      const response = await fetch(`/api/projects/${projectId}`);
+      const result = await response.json();
+
+      if (result.success && result.data && result.data.length > 0) {
+        setCurrentPassword(result.data[0].pagePassword || null);
+        setShowPasswordModal(true);
+      } else {
+        setCurrentPassword(null);
+        setShowPasswordModal(true);
+      }
+    } catch (error) {
+      console.error("Failed to fetch password:", error);
+      setCurrentPassword(null);
+      setShowPasswordModal(true);
+    }
+  };
+
+  const handlePasswordChange = async (newPassword: string) => {
+    try {
+      // First, get the current project data
+      const getResponse = await fetch(`/api/projects/${projectId}`);
+      const getResult = await getResponse.json();
+
+      if (!getResult.success || !getResult.data || getResult.data.length === 0) {
+        throw new Error("Failed to fetch project data");
+      }
+
+      const currentProject = getResult.data[0];
+
+      // Update only the password field, keeping all other fields unchanged
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...currentProject,
+          pagePassword: newPassword,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to update password");
+      }
+
+      setCurrentPassword(newPassword);
+
+      if (onRefresh) {
+        await onRefresh();
+      }
+    } catch (error) {
+      console.error("Failed to update password:", error);
+      throw error;
     }
   };
 
@@ -333,7 +400,7 @@ export default function RowEditMenu({
 
   return (
     <>
-      {!showArchiveModal && !showDuplicateModal && !showDeleteModal && (
+      {!showArchiveModal && !showDuplicateModal && !showDeleteModal && !showPasswordModal && (
         <Portal>
           <div
             ref={menuRef}
@@ -342,7 +409,7 @@ export default function RowEditMenu({
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
               display:
-                showArchiveModal || showDuplicateModal || showDeleteModal ? "none" : "block",
+                showArchiveModal || showDuplicateModal || showDeleteModal || showPasswordModal ? "none" : "block",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -416,6 +483,32 @@ export default function RowEditMenu({
                     >
                       {copyLinkMessage}
                     </div>
+                  )}
+
+                  {viewMode === "active" && (
+                    <button
+                      onClick={() => handleMenuItemClick("manage-password")}
+                      disabled={isMenuDisabled}
+                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                        isMenuDisabled
+                          ? "cursor-not-allowed opacity-50"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                      </svg>
+                      Gerenciar senha
+                    </button>
                   )}
 
                   {viewMode === "active" && (
@@ -725,6 +818,18 @@ export default function RowEditMenu({
           </button>
         </div>
       </Modal>
+
+      {/* Password Manager Modal */}
+      <PasswordManagerModal
+        isOpen={showPasswordModal}
+        onClose={() => {
+          setShowPasswordModal(false);
+          onClose();
+        }}
+        projectId={projectId}
+        currentPassword={currentPassword}
+        onPasswordChange={handlePasswordChange}
+      />
     </>
   );
 }
