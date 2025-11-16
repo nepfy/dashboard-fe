@@ -18,6 +18,10 @@ import {
   notificationsTable,
   notificationPreferencesTable,
 } from "./notifications";
+import {
+  proposalAdjustmentsTable,
+  proposalAcceptancesTable,
+} from "./proposal-adjustments";
 
 export {
   // Users
@@ -40,4 +44,7 @@ export {
   // Notifications
   notificationsTable,
   notificationPreferencesTable,
+  // Proposal Adjustments & Acceptances
+  proposalAdjustmentsTable,
+  proposalAcceptancesTable,
 };

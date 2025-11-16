@@ -7,6 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { NotificationHelper } from "#/lib/services/notification-helper";
 import { db } from "#/lib/db";
 import { projectsTable } from "#/lib/db/schema";
+import {
+  proposalAdjustmentsTable,
+  proposalAcceptancesTable,
+} from "#/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 interface ProposalEventPayload {
@@ -18,6 +22,12 @@ interface ProposalEventPayload {
   projectId: string;
   clientName?: string;
   feedbackText?: string;
+  feedbackType?: "adjustment_request" | "question" | "other";
+  adjustmentType?: "change_values_or_plans" | "change_scope" | "change_timeline" | "other";
+  chosenPlan?: string;
+  chosenPlanValue?: string;
+  acceptedBy?: string;
+  requestedBy?: string;
   timestamp?: string;
 }
 
@@ -26,7 +36,18 @@ export async function POST(request: NextRequest) {
     // In production, you should verify the webhook signature
     const body: ProposalEventPayload = await request.json();
 
-    const { event, projectId, clientName, feedbackText } = body;
+    const {
+      event,
+      projectId,
+      clientName,
+      feedbackText,
+      feedbackType,
+      adjustmentType,
+      chosenPlan,
+      chosenPlanValue,
+      acceptedBy,
+      requestedBy,
+    } = body;
 
     // Get project details
     const [project] = await db
@@ -86,6 +107,34 @@ export async function POST(request: NextRequest) {
             updated_at: new Date(),
           })
           .where(eq(projectsTable.id, projectId));
+
+        // Store acceptance information
+        const acceptanceData = {
+          projectId,
+          chosenPlan: body.chosenPlan,
+          chosenPlanValue: body.chosenPlanValue,
+          clientName: client,
+          acceptedBy: body.acceptedBy || client,
+          metadata: {
+            timestamp: body.timestamp || new Date().toISOString(),
+          },
+        };
+
+        // Check if acceptance already exists
+        const [existingAcceptance] = await db
+          .select()
+          .from(proposalAcceptancesTable)
+          .where(eq(proposalAcceptancesTable.projectId, projectId))
+          .limit(1);
+
+        if (existingAcceptance) {
+          await db
+            .update(proposalAcceptancesTable)
+            .set(acceptanceData)
+            .where(eq(proposalAcceptancesTable.id, existingAcceptance.id));
+        } else {
+          await db.insert(proposalAcceptancesTable).values(acceptanceData);
+        }
         break;
 
       case "proposal_rejected":
@@ -114,6 +163,26 @@ export async function POST(request: NextRequest) {
           client,
           feedbackText
         );
+
+        // If feedback is an adjustment request, store it
+        if (
+          body.feedbackType === "adjustment_request" &&
+          feedbackText &&
+          body.adjustmentType
+        ) {
+          await db.insert(proposalAdjustmentsTable).values({
+            projectId,
+            type: body.adjustmentType,
+            description: feedbackText,
+            clientName: client,
+            requestedBy: body.requestedBy || client,
+            status: "pending",
+            metadata: {
+              feedbackType: body.feedbackType,
+              timestamp: body.timestamp || new Date().toISOString(),
+            },
+          });
+        }
         break;
 
       default:

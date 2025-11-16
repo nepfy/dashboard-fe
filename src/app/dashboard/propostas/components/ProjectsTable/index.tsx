@@ -13,6 +13,7 @@ import RowEditMenu from "./RowEditMenu";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
+import ProposalModals from "../ProposalModals";
 
 interface EnhancedTableProps extends TableProps {
   isUpdating?: boolean;
@@ -415,6 +416,21 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           triggerElement={menuTriggerElement}
           onRefresh={onRefresh}
         />
+      )}
+
+      {/* Proposal Modals - Show for all projects to handle adjustments and acceptances */}
+      {data && data.length > 0 && (
+        <>
+          {data.map((row) => (
+            <ProposalModals
+              key={row.id}
+              projectId={row.id}
+              projectName={row.projectName}
+              projectStatus={row.projectStatus}
+              templateType={row.templateType}
+            />
+          ))}
+        </>
       )}
     </div>
   );
