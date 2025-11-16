@@ -8,7 +8,7 @@ import KeyIcon from "./KeyIcon";
 interface PasswordManagerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
+  projectId?: string;
   currentPassword?: string | null;
   onPasswordChange?: (newPassword: string) => Promise<void>;
 }
@@ -16,7 +16,6 @@ interface PasswordManagerModalProps {
 export default function PasswordManagerModal({
   isOpen,
   onClose,
-  projectId,
   currentPassword,
   onPasswordChange,
 }: PasswordManagerModalProps) {

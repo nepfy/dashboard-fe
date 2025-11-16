@@ -6,8 +6,8 @@ import Modal from "#/components/Modal";
 interface AcceptanceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
-  projectName: string;
+  projectId?: string;
+  projectName?: string;
   clientName?: string;
   chosenPlan?: string;
   chosenPlanValue?: string;
@@ -17,9 +17,6 @@ interface AcceptanceModalProps {
 export default function AcceptanceModal({
   isOpen,
   onClose,
-  projectId,
-  projectName,
-  clientName,
   chosenPlan,
   chosenPlanValue,
   acceptedBy,
@@ -28,12 +25,7 @@ export default function AcceptanceModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={
-        <div className="flex items-center gap-2">
-          <span>Proposta aceita pelo cliente!</span>
-          <span className="text-2xl">🎉</span>
-        </div>
-      }
+      title="Proposta aceita pelo cliente! 🎉"
       showCloseButton={true}
       width="520px"
       footer={false}

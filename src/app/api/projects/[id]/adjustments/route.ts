@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "#/lib/db";
-import {
-  proposalAdjustmentsTable,
-  proposalAcceptancesTable,
-} from "#/lib/db/schema";
+import { proposalAdjustmentsTable } from "#/lib/db/schema";
 import { projectsTable } from "#/lib/db/schema";
 import { personUserTable } from "#/lib/db/schema/users";
 import { eq, and, desc } from "drizzle-orm";

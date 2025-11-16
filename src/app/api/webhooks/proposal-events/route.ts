@@ -41,12 +41,6 @@ export async function POST(request: NextRequest) {
       projectId,
       clientName,
       feedbackText,
-      feedbackType,
-      adjustmentType,
-      chosenPlan,
-      chosenPlanValue,
-      acceptedBy,
-      requestedBy,
     } = body;
 
     // Get project details
@@ -111,8 +105,8 @@ export async function POST(request: NextRequest) {
         // Store acceptance information
         const acceptanceData = {
           projectId,
-          chosenPlan: body.chosenPlan,
-          chosenPlanValue: body.chosenPlanValue,
+          chosenPlan: body.chosenPlan || undefined,
+          chosenPlanValue: body.chosenPlanValue || undefined,
           clientName: client,
           acceptedBy: body.acceptedBy || client,
           metadata: {

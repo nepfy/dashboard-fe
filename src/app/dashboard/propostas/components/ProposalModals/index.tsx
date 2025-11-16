@@ -8,7 +8,7 @@ import { useProposalDetails } from "../../hooks/useProposalDetails";
 
 interface ProposalModalsProps {
   projectId: string | null;
-  projectName: string;
+  projectName?: string;
   projectStatus?: string;
   templateType?: string | null;
   onClose?: () => void;
@@ -16,15 +16,12 @@ interface ProposalModalsProps {
 
 export default function ProposalModals({
   projectId,
-  projectName,
   projectStatus,
   templateType,
   onClose,
 }: ProposalModalsProps) {
   const router = useRouter();
-  const { adjustments, acceptance, isLoading, refetch } = useProposalDetails(
-    projectId
-  );
+  const { adjustments, acceptance } = useProposalDetails(projectId);
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
 
@@ -96,16 +93,12 @@ export default function ProposalModals({
         isOpen={showAdjustmentModal}
         onClose={handleAdjustmentModalClose}
         adjustments={adjustments.filter((adj) => adj.status === "pending")}
-        projectId={projectId}
-        projectName={projectName}
         onEditProposal={handleEditProposal}
       />
 
       <AcceptanceModal
         isOpen={showAcceptanceModal}
         onClose={handleAcceptanceModalClose}
-        projectId={projectId}
-        projectName={projectName}
         clientName={acceptance?.clientName}
         chosenPlan={acceptance?.chosenPlan}
         chosenPlanValue={acceptance?.chosenPlanValue}

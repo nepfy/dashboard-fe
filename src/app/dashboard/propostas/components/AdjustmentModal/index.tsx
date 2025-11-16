@@ -17,8 +17,8 @@ interface AdjustmentModalProps {
   isOpen: boolean;
   onClose: () => void;
   adjustments: Adjustment[];
-  projectId: string;
-  projectName: string;
+  projectId?: string;
+  projectName?: string;
   onEditProposal?: () => void;
 }
 
@@ -33,8 +33,6 @@ export default function AdjustmentModal({
   isOpen,
   onClose,
   adjustments,
-  projectId,
-  projectName,
   onEditProposal,
 }: AdjustmentModalProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
