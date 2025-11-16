@@ -6,6 +6,7 @@ import {
   timestamp,
   boolean,
   jsonb,
+  integer,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { timestamps } from "#/lib/db/schema/helpers/columns.helpers";
@@ -28,6 +29,7 @@ export const projectsTable = pgTable("projects", {
   projectVisualizationDate: timestamp("project_visualization_date", {
     mode: "date",
   }),
+  viewCount: integer("view_count").notNull().default(0),
 
   templateType: varchar("template_type", { length: 50 }),
   mainColor: varchar("main_color", { length: 7 }),

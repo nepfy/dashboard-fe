@@ -11,7 +11,7 @@ import {
   proposalAdjustmentsTable,
   proposalAcceptancesTable,
 } from "#/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 interface ProposalEventPayload {
   event:
@@ -73,16 +73,16 @@ export async function POST(request: NextRequest) {
           client
         );
 
-        // Update project visualization date if not set
-        if (!project.projectVisualizationDate) {
-          await db
-            .update(projectsTable)
-            .set({
-              projectVisualizationDate: new Date(),
-              updated_at: new Date(),
-            })
-            .where(eq(projectsTable.id, projectId));
-        }
+        // Increment view count and update visualization date if not set
+        await db
+          .update(projectsTable)
+          .set({
+            viewCount: sql`view_count + 1`,
+            projectVisualizationDate:
+              project.projectVisualizationDate || new Date(),
+            updated_at: new Date(),
+          })
+          .where(eq(projectsTable.id, projectId));
         break;
 
       case "proposal_accepted":
