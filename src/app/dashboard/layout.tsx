@@ -6,6 +6,8 @@ import Navbar from "./components/Navbar";
 import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { CopyLinkCacheProvider } from "#/contexts/CopyLinkCacheContext";
 import type { OnboardingStatusApiResponse } from "#/types/onboarding";
@@ -115,6 +117,24 @@ export default function DashboardLayout({
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{
+          borderRadius: "12px",
+        }}
+        toastStyle={{
+          borderRadius: "12px",
+        }}
+      />
     </CopyLinkCacheProvider>
   );
 }

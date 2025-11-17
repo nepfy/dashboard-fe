@@ -4,7 +4,7 @@ import { db } from "#/lib/db";
 import { proposalAcceptancesTable } from "#/lib/db/schema";
 import { projectsTable } from "#/lib/db/schema";
 import { personUserTable } from "#/lib/db/schema/users";
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 
 /**
  * GET /api/projects/[id]/acceptance
@@ -68,7 +68,12 @@ export async function GET(
     const [acceptance] = await db
       .select()
       .from(proposalAcceptancesTable)
-      .where(eq(proposalAcceptancesTable.projectId, id))
+      .where(
+        and(
+          eq(proposalAcceptancesTable.projectId, id),
+          isNull(proposalAcceptancesTable.deleted_at)
+        )
+      )
       .limit(1);
 
     return NextResponse.json({

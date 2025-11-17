@@ -21,7 +21,7 @@ export default function ProposalModals({
   onClose,
 }: ProposalModalsProps) {
   const router = useRouter();
-  const { adjustments, acceptance } = useProposalDetails(projectId);
+  const { adjustments, acceptance, refetch } = useProposalDetails(projectId);
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
 
@@ -94,6 +94,8 @@ export default function ProposalModals({
         onClose={handleAdjustmentModalClose}
         adjustments={adjustments.filter((adj) => adj.status === "pending")}
         onEditProposal={handleEditProposal}
+        projectId={projectId}
+        onAdjustmentDeleted={() => refetch()}
       />
 
       <AcceptanceModal

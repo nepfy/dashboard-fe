@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
+import { toast } from "react-toastify";
 
 import UpdateIcon from "#/components/icons/UpdateIcon";
 import CopyIcon from "#/components/icons/CopyIcon";
@@ -254,7 +255,11 @@ export default function RowEditMenu({
       const getResponse = await fetch(`/api/projects/${projectId}`);
       const getResult = await getResponse.json();
 
-      if (!getResult.success || !getResult.data || getResult.data.length === 0) {
+      if (
+        !getResult.success ||
+        !getResult.data ||
+        getResult.data.length === 0
+      ) {
         throw new Error("Failed to fetch project data");
       }
 
@@ -362,23 +367,50 @@ export default function RowEditMenu({
     setShowDuplicateModal(false);
   };
 
-  const handleDeleteConfirm = async () => {
-    if (onDelete) {
-      try {
-        setIsDeleting(true);
-        await onDelete(projectId);
+  const handleDeleteConfirm = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-        if (onRefresh) {
-          await onRefresh();
-        }
+    if (!onDelete) return;
 
-        setShowDeleteModal(false);
-        onClose();
-      } catch (error) {
-        console.error("Failed to delete project:", error);
-      } finally {
-        setIsDeleting(false);
+    try {
+      setIsDeleting(true);
+      await onDelete(projectId);
+
+      if (onRefresh) {
+        await onRefresh();
       }
+
+      // Mostra o toast primeiro
+      toast.success("Proposta excluída com sucesso!", {
+        position: "top-right",
+        autoClose: 3000,
+        style: {
+          borderRadius: "12px",
+        },
+      });
+
+      // Pequeno delay para garantir que o toast apareça antes de fechar o modal
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Só fecha o modal DEPOIS do toast aparecer
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+      onClose();
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+      setIsDeleting(false);
+
+      toast.error("Erro ao excluir a proposta. Tente novamente.", {
+        position: "top-right",
+        autoClose: 3000,
+        style: {
+          borderRadius: "12px",
+        },
+      });
+      // Não fecha o modal em caso de erro, para o usuário ver o toast
     }
   };
 
@@ -395,254 +427,267 @@ export default function RowEditMenu({
   };
 
   const isMenuDisabled =
-    isUpdating || isProcessing || isArchiving || isDuplicating || isDeleting || isCopyingLink;
+    isUpdating ||
+    isProcessing ||
+    isArchiving ||
+    isDuplicating ||
+    isDeleting ||
+    isCopyingLink;
   const hasStatusChanged = selectedStatus !== currentStatus;
 
   return (
     <>
-      {!showArchiveModal && !showDuplicateModal && !showDeleteModal && !showPasswordModal && (
-        <Portal>
-          <div
-            ref={menuRef}
-            className="border-white-neutral-light-300 bg-white-neutral-light-100 fixed z-50 min-w-[230px] rounded-[12px] border shadow-lg sm:min-w-[280px]"
-            style={{
-              top: `${menuPosition.top}px`,
-              left: `${menuPosition.left}px`,
-              display:
-                showArchiveModal || showDuplicateModal || showDeleteModal || showPasswordModal ? "none" : "block",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
+      {!showArchiveModal &&
+        !showDuplicateModal &&
+        !showDeleteModal &&
+        !showPasswordModal && (
+          <Portal>
             <div
-              className={`relative ${showStatusPanel ? "h-[390px]" : "h-full"}`}
+              ref={menuRef}
+              className="border-white-neutral-light-300 bg-white-neutral-light-100 fixed z-50 min-w-[230px] rounded-[12px] border shadow-lg sm:min-w-[280px]"
+              style={{
+                top: `${menuPosition.top}px`,
+                left: `${menuPosition.left}px`,
+                display:
+                  showArchiveModal ||
+                  showDuplicateModal ||
+                  showDeleteModal ||
+                  showPasswordModal
+                    ? "none"
+                    : "block",
+              }}
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* Main Menu */}
               <div
-                className={`${
-                  showStatusPanel
-                    ? "pointer-events-none opacity-0"
-                    : "opacity-100"
-                } transition-opacity duration-200`}
+                className={`relative ${showStatusPanel ? "h-[390px]" : "h-full"}`}
               >
-                <p className="text-white-neutral-light-900 px-4 py-4 font-medium">
-                  Opções
-                </p>
-                <div className="flex cursor-pointer flex-col gap-1 px-2">
-                  <button
-                    onClick={() => handleMenuItemClick("update-status")}
-                    disabled={isMenuDisabled}
-                    className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
-                      isMenuDisabled
-                        ? "cursor-not-allowed opacity-50"
-                        : "hover:bg-white-neutral-light-300 cursor-pointer"
-                    }`}
-                  >
-                    <UpdateIcon width="16" height="16" />
-                    {viewMode === "archived"
-                      ? "Restaurar Status"
-                      : "Atualizar Status"}
-                  </button>
-
-                  <button
-                    onClick={() => handleMenuItemClick("duplicate")}
-                    disabled={isMenuDisabled}
-                    className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
-                      isMenuDisabled
-                        ? "cursor-not-allowed opacity-50"
-                        : "hover:bg-white-neutral-light-300 cursor-pointer"
-                    }`}
-                  >
-                    <CopyIcon width="16" height="16" />
-                    Duplicar
-                  </button>
-
-                  <button
-                    onClick={() => handleMenuItemClick("copy-link")}
-                    disabled={isMenuDisabled}
-                    className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
-                      isMenuDisabled
-                        ? "cursor-not-allowed opacity-50"
-                        : "hover:bg-white-neutral-light-300 cursor-pointer"
-                    }`}
-                  >
-                    {isCopyingLink ? (
-                      <LoaderCircle className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <AnchorLinkIcon width="16" height="16" />
-                    )}
-                    Copiar Link
-                  </button>
-
-                  {copyLinkMessage && (
-                    <div
-                      className={`mx-2 rounded px-2 py-1 text-xs ${
-                        copyLinkMessage.includes("sucesso")
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {copyLinkMessage}
-                    </div>
-                  )}
-
-                  {viewMode === "active" && (
-                    <button
-                      onClick={() => handleMenuItemClick("manage-password")}
-                      disabled={isMenuDisabled}
-                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
-                        isMenuDisabled
-                          ? "cursor-not-allowed opacity-50"
-                          : "hover:bg-white-neutral-light-300 cursor-pointer"
-                      }`}
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
-                      </svg>
-                      Gerenciar senha
-                    </button>
-                  )}
-
-                  {viewMode === "active" && (
-                    <button
-                      onClick={() => handleMenuItemClick("edit")}
-                      disabled={isMenuDisabled}
-                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
-                        isMenuDisabled
-                          ? "cursor-not-allowed opacity-50"
-                          : "hover:bg-white-neutral-light-300 cursor-pointer"
-                      }`}
-                    >
-                      <EditIcon width="16" height="16" />
-                      Editar
-                    </button>
-                  )}
-
-                  {viewMode === "active" && (
-                    <button
-                      onClick={() => handleMenuItemClick("archive")}
-                      disabled={isMenuDisabled}
-                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
-                        isMenuDisabled
-                          ? "cursor-not-allowed opacity-50"
-                          : "hover:bg-white-neutral-light-300 cursor-pointer"
-                      }`}
-                    >
-                      <Archive width="16" height="16" />
-                      {getArchiveButtonText()}
-                    </button>
-                  )}
-
-                  {viewMode === "active" && (
-                    <button
-                      onClick={() => handleMenuItemClick("delete")}
-                      disabled={isMenuDisabled}
-                      className={`text-white-neutral-light-900 my-1 mb-2 flex items-center gap-1 rounded-lg px-2 pt-3 pb-4 text-left text-sm font-medium transition-colors ${
-                        isMenuDisabled
-                          ? "cursor-not-allowed opacity-50"
-                          : "hover:bg-white-neutral-light-300 cursor-pointer"
-                      }`}
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                      </svg>
-                      Excluir proposta
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Status Update Panel */}
-              <div
-                className={`bg-white-neutral-light-100 absolute top-0 flex h-[350px] w-full flex-col justify-between rounded-[12px] transition-opacity duration-200 ${
-                  showStatusPanel
-                    ? "pointer-events-auto opacity-100"
-                    : "pointer-events-none opacity-0"
-                }`}
-              >
-                <div className="flex-1">
-                  <p className="text-white-neutral-light-900 border-white-neutral-light-300 border-b p-3 font-medium">
-                    {viewMode === "archived"
-                      ? "Restaurar Status"
-                      : "Atualizar Status"}
+                {/* Main Menu */}
+                <div
+                  className={`${
+                    showStatusPanel
+                      ? "pointer-events-none opacity-0"
+                      : "opacity-100"
+                  } transition-opacity duration-200`}
+                >
+                  <p className="text-white-neutral-light-900 px-4 py-4 font-medium">
+                    Opções
                   </p>
+                  <div className="flex cursor-pointer flex-col gap-1 px-2">
+                    <button
+                      onClick={() => handleMenuItemClick("update-status")}
+                      disabled={isMenuDisabled}
+                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                        isMenuDisabled
+                          ? "cursor-not-allowed opacity-50"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      <UpdateIcon width="16" height="16" />
+                      {viewMode === "archived"
+                        ? "Restaurar Status"
+                        : "Atualizar Status"}
+                    </button>
 
-                  <div className="max-h-[240px] space-y-3 overflow-y-auto px-3 py-4">
-                    {getStatusOptions().map((option) => (
-                      <label
-                        key={option.value}
-                        className={`flex items-center space-x-3 rounded-lg p-2 transition-colors ${
-                          isProcessing
-                            ? "cursor-not-allowed opacity-50"
-                            : "hover:bg-white-neutral-light-200 cursor-pointer"
+                    <button
+                      onClick={() => handleMenuItemClick("duplicate")}
+                      disabled={isMenuDisabled}
+                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                        isMenuDisabled
+                          ? "cursor-not-allowed opacity-50"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      <CopyIcon width="16" height="16" />
+                      Duplicar
+                    </button>
+
+                    <button
+                      onClick={() => handleMenuItemClick("copy-link")}
+                      disabled={isMenuDisabled}
+                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                        isMenuDisabled
+                          ? "cursor-not-allowed opacity-50"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      {isCopyingLink ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <AnchorLinkIcon width="16" height="16" />
+                      )}
+                      Copiar Link
+                    </button>
+
+                    {copyLinkMessage && (
+                      <div
+                        className={`mx-2 rounded px-2 py-1 text-xs ${
+                          copyLinkMessage.includes("sucesso")
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
                         }`}
                       >
-                        <input
-                          type="radio"
-                          name="projectStatus"
-                          value={option.value}
-                          checked={selectedStatus === option.value}
-                          onChange={(e) =>
-                            setSelectedStatus(e.target.value as ProjectStatus)
-                          }
-                          disabled={isProcessing}
-                          className="text-primary-light-400 border-white-neutral-light-300 h-4 w-4"
-                        />
-                        <div className="flex items-center gap-2">
-                          {getStatusBadge(option.value)}
-                        </div>
-                      </label>
-                    ))}
+                        {copyLinkMessage}
+                      </div>
+                    )}
+
+                    {viewMode === "active" && (
+                      <button
+                        onClick={() => handleMenuItemClick("manage-password")}
+                        disabled={isMenuDisabled}
+                        className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                          isMenuDisabled
+                            ? "cursor-not-allowed opacity-50"
+                            : "hover:bg-white-neutral-light-300 cursor-pointer"
+                        }`}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                        </svg>
+                        Gerenciar senha
+                      </button>
+                    )}
+
+                    {viewMode === "active" && (
+                      <button
+                        onClick={() => handleMenuItemClick("edit")}
+                        disabled={isMenuDisabled}
+                        className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                          isMenuDisabled
+                            ? "cursor-not-allowed opacity-50"
+                            : "hover:bg-white-neutral-light-300 cursor-pointer"
+                        }`}
+                      >
+                        <EditIcon width="16" height="16" />
+                        Editar
+                      </button>
+                    )}
+
+                    {viewMode === "active" && (
+                      <button
+                        onClick={() => handleMenuItemClick("archive")}
+                        disabled={isMenuDisabled}
+                        className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                          isMenuDisabled
+                            ? "cursor-not-allowed opacity-50"
+                            : "hover:bg-white-neutral-light-300 cursor-pointer"
+                        }`}
+                      >
+                        <Archive width="16" height="16" />
+                        {getArchiveButtonText()}
+                      </button>
+                    )}
+
+                    {viewMode === "active" && (
+                      <button
+                        onClick={() => handleMenuItemClick("delete")}
+                        disabled={isMenuDisabled}
+                        className={`text-white-neutral-light-900 my-1 mb-2 flex items-center gap-1 rounded-lg px-2 pt-3 pb-4 text-left text-sm font-medium transition-colors ${
+                          isMenuDisabled
+                            ? "cursor-not-allowed opacity-50"
+                            : "hover:bg-white-neutral-light-300 cursor-pointer"
+                        }`}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        </svg>
+                        Excluir proposta
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                <div className="border-white-neutral-light-300 flex gap-2 border-t p-3">
-                  <button
-                    onClick={handleStatusSave}
-                    disabled={isProcessing || !hasStatusChanged}
-                    className={`h-[36px] flex-1 rounded-[var(--radius-s)] text-sm font-medium transition-colors ${
-                      isProcessing || !hasStatusChanged
-                        ? "cursor-not-allowed bg-gray-400 opacity-50"
-                        : "bg-primary-light-400 hover:bg-primary-light-500 button-inner-inverse text-white-neutral-light-100 cursor-pointer"
-                    }`}
-                  >
-                    {isProcessing ? "Salvando..." : "Salvar"}
-                  </button>
+                {/* Status Update Panel */}
+                <div
+                  className={`bg-white-neutral-light-100 absolute top-0 flex h-[350px] w-full flex-col justify-between rounded-[12px] transition-opacity duration-200 ${
+                    showStatusPanel
+                      ? "pointer-events-auto opacity-100"
+                      : "pointer-events-none opacity-0"
+                  }`}
+                >
+                  <div className="flex-1">
+                    <p className="text-white-neutral-light-900 border-white-neutral-light-300 border-b p-3 font-medium">
+                      {viewMode === "archived"
+                        ? "Restaurar Status"
+                        : "Atualizar Status"}
+                    </p>
 
-                  <button
-                    onClick={handleStatusCancel}
-                    disabled={isProcessing}
-                    className={`border-white-neutral-light-300 button-inner h-[36px] flex-1 rounded-[var(--radius-s)] border text-sm font-medium transition-colors ${
-                      isProcessing
-                        ? "bg-white-neutral-light-100 cursor-not-allowed opacity-50"
-                        : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200 cursor-pointer"
-                    }`}
-                  >
-                    Cancelar
-                  </button>
+                    <div className="max-h-[240px] space-y-3 overflow-y-auto px-3 py-4">
+                      {getStatusOptions().map((option) => (
+                        <label
+                          key={option.value}
+                          className={`flex items-center space-x-3 rounded-lg p-2 transition-colors ${
+                            isProcessing
+                              ? "cursor-not-allowed opacity-50"
+                              : "hover:bg-white-neutral-light-200 cursor-pointer"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="projectStatus"
+                            value={option.value}
+                            checked={selectedStatus === option.value}
+                            onChange={(e) =>
+                              setSelectedStatus(e.target.value as ProjectStatus)
+                            }
+                            disabled={isProcessing}
+                            className="text-primary-light-400 border-white-neutral-light-300 h-4 w-4"
+                          />
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(option.value)}
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="border-white-neutral-light-300 flex gap-2 border-t p-3">
+                    <button
+                      onClick={handleStatusSave}
+                      disabled={isProcessing || !hasStatusChanged}
+                      className={`h-[36px] flex-1 rounded-[var(--radius-s)] text-sm font-medium transition-colors ${
+                        isProcessing || !hasStatusChanged
+                          ? "cursor-not-allowed bg-gray-400 opacity-50"
+                          : "bg-primary-light-400 hover:bg-primary-light-500 button-inner-inverse text-white-neutral-light-100 cursor-pointer"
+                      }`}
+                    >
+                      {isProcessing ? "Salvando..." : "Salvar"}
+                    </button>
+
+                    <button
+                      onClick={handleStatusCancel}
+                      disabled={isProcessing}
+                      className={`border-white-neutral-light-300 button-inner h-[36px] flex-1 rounded-[var(--radius-s)] border text-sm font-medium transition-colors ${
+                        isProcessing
+                          ? "bg-white-neutral-light-100 cursor-not-allowed opacity-50"
+                          : "bg-white-neutral-light-100 hover:bg-white-neutral-light-200 cursor-pointer"
+                      }`}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Portal>
-      )}
+          </Portal>
+        )}
 
       {/* Archive Confirmation Modal */}
       <Modal
@@ -670,8 +715,8 @@ export default function RowEditMenu({
             </>
           ) : (
             <>
-              Ao arquivar, o item será movido para a área de itens arquivados
-              e não ficará mais visível na lista principal.
+              Ao arquivar, o item será movido para a área de itens arquivados e
+              não ficará mais visível na lista principal.
             </>
           )}
         </p>
@@ -704,8 +749,10 @@ export default function RowEditMenu({
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                 {viewMode === "archived" ? "Restaurando..." : "Arquivando..."}
               </div>
+            ) : viewMode === "archived" ? (
+              "Restaurar item"
             ) : (
-              viewMode === "archived" ? "Restaurar item" : "Arquivar item"
+              "Arquivar item"
             )}
           </button>
         </div>

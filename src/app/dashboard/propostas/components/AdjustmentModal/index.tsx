@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react";
 import Modal from "#/components/Modal";
 
 interface Adjustment {
@@ -20,6 +20,7 @@ interface AdjustmentModalProps {
   projectId?: string;
   projectName?: string;
   onEditProposal?: () => void;
+  onAdjustmentDeleted?: () => Promise<void> | void;
 }
 
 const adjustmentTypeLabels: Record<string, string> = {
@@ -34,8 +35,11 @@ export default function AdjustmentModal({
   onClose,
   adjustments,
   onEditProposal,
+  projectId,
+  onAdjustmentDeleted,
 }: AdjustmentModalProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeletingAdjustment, setIsDeletingAdjustment] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,6 +65,33 @@ export default function AdjustmentModal({
       onEditProposal();
     }
     onClose();
+  };
+
+  const handleDeleteAdjustment = async () => {
+    if (!projectId || !currentAdjustment) return;
+    setIsDeletingAdjustment(true);
+    try {
+      const response = await fetch(
+        `/api/projects/${projectId}/adjustments/${currentAdjustment.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Não foi possível excluir o ajuste.");
+      }
+
+      if (onAdjustmentDeleted) {
+        await onAdjustmentDeleted();
+      }
+
+      onClose();
+    } catch (error) {
+      console.error("Failed to delete adjustment:", error);
+    } finally {
+      setIsDeletingAdjustment(false);
+    }
   };
 
   return (
@@ -139,12 +170,31 @@ export default function AdjustmentModal({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white-neutral-light-300">
+        <div className="border-t-white-neutral-light-300 flex flex-wrap items-center justify-end gap-3 border-t p-6 pt-4">
           <button
             onClick={onClose}
             className="px-4 py-2 rounded-lg border border-white-neutral-light-300 text-white-neutral-light-800 text-sm font-medium hover:bg-white-neutral-light-200 transition-colors"
           >
             Fechar
+          </button>
+          <button
+            type="button"
+            onClick={handleDeleteAdjustment}
+            disabled={isDeletingAdjustment}
+            className={`px-4 py-2 rounded-lg border text-sm font-medium ${
+              isDeletingAdjustment
+                ? "border-white-neutral-light-300 text-white-neutral-light-500 cursor-not-allowed"
+                : "border-primary-light-500 text-primary-light-500 hover:bg-primary-light-50"
+            }`}
+          >
+            {isDeletingAdjustment ? (
+              <div className="flex items-center justify-center gap-2">
+                <LoaderCircle className="h-4 w-4 animate-spin text-primary-light-400" />
+                Excluindo ajuste...
+              </div>
+            ) : (
+              "Excluir ajuste"
+            )}
           </button>
           <button
             onClick={handleEditProposal}

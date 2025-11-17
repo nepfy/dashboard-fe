@@ -32,6 +32,8 @@ interface ProjectViewProps {
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
+  onDelete?: (projectId: string) => Promise<void>;
+  onRefresh?: () => Promise<void>;
 }
 
 export default function ProjectsView({
@@ -44,6 +46,8 @@ export default function ProjectsView({
   onBulkStatusUpdate,
   onStatusUpdate,
   onBulkDuplicate,
+  onDelete,
+  onRefresh,
 }: ProjectViewProps) {
   if (error) {
     return (
@@ -54,13 +58,13 @@ export default function ProjectsView({
   }
 
   return (
-    <div className="bg-white-neutral-light-100 rounded-2xs border border-white-neutral-light-300 my-4">
-      <div className="border-b border-white-neutral-light-300 p-6 flex items-center justify-between flex-wrap gap-4">
-        <p className="font-medium text-white-neutral-light-900 flex items-center gap-1">
+    <div className="bg-white-neutral-light-100 rounded-2xs border-white-neutral-light-300 my-4 border">
+      <div className="border-white-neutral-light-300 flex flex-wrap items-center justify-between gap-4 border-b p-6">
+        <p className="text-white-neutral-light-900 flex items-center gap-1 font-medium">
           <FileIcon width="24" height="24" />
           Propostas
           <span
-            className="px-2 py-1 border border-white-neutral-light-300 bg-white-neutral-light-200 rounded-4xl text-[12px] ml-1"
+            className="border-white-neutral-light-300 bg-white-neutral-light-200 ml-1 rounded-4xl border px-2 py-1 text-[12px]"
             style={{
               backgroundImage: `repeating-linear-gradient(
                   45deg,
@@ -77,7 +81,7 @@ export default function ProjectsView({
 
         <div className="flex flex-wrap items-start gap-2">
           <Link href="/gerar-proposta">
-            <div className="flex items-center justify-center w-38 h-[36px] gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
+            <div className="bg-primary-light-400 hover:bg-primary-light-500 border-primary-light-25 button-inner-inverse flex h-[36px] w-38 cursor-pointer items-center justify-center gap-1 rounded-[var(--radius-s)] border text-sm font-medium text-white">
               <PlusIcon fill="#FFFFFF" />
               Criar proposta
             </div>
@@ -90,7 +94,7 @@ export default function ProjectsView({
           </Link> */}
 
           <Link href="/dashboard/propostas">
-            <div className="w-[100px] h-[36px] flex items-center justify-center text-white-neutral-light-900 text-sm font-medium rounded-[var(--radius-s)] cursor-pointer bg-white-neutral-light-100 hover:bg-white-neutral-light-200 border border-white-neutral-light-300 button-inner">
+            <div className="text-white-neutral-light-900 bg-white-neutral-light-100 hover:bg-white-neutral-light-200 border-white-neutral-light-300 button-inner flex h-[36px] w-[100px] cursor-pointer items-center justify-center rounded-[var(--radius-s)] border text-sm font-medium">
               Ver todas
             </div>
           </Link>
@@ -99,8 +103,8 @@ export default function ProjectsView({
 
       <div className="relative h-full">
         {isPaginationLoading && (
-          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-2xs">
-            <LoaderCircle className="animate-spin text-primary-light-400" />
+          <div className="bg-opacity-75 rounded-2xs absolute inset-0 z-10 flex items-center justify-center bg-white">
+            <LoaderCircle className="text-primary-light-400 animate-spin" />
           </div>
         )}
         <ProjectsTable
@@ -109,11 +113,13 @@ export default function ProjectsView({
           onStatusUpdate={onStatusUpdate}
           isDuplicating={isDuplicating}
           onBulkDuplicate={onBulkDuplicate}
+          onDelete={onDelete}
+          onRefresh={onRefresh}
         />
       </div>
 
       {pagination && pagination.totalPages > 1 && (
-        <div className="p-5 sm:p-6 border-t border-t-white-neutral-light-300 flex items-center justify-between gap-2">
+        <div className="border-t-white-neutral-light-300 flex items-center justify-between gap-2 border-t p-5 sm:p-6">
           <Pagination
             totalPages={pagination.totalPages}
             currentPage={pagination.currentPage}

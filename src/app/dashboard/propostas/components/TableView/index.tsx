@@ -124,7 +124,6 @@ export default function TableView({ viewMode }: TableViewProps) {
       const result = await response.json();
 
       if (result.success) {
-        console.log("Successfully deleted project");
         await handleRefresh();
       } else {
         throw new Error(result.error || "Failed to delete project");
@@ -156,8 +155,8 @@ export default function TableView({ viewMode }: TableViewProps) {
   }
 
   return (
-    <div className="w-full animate-fadeIn p-3">
-      <div className="rounded-2xs border border-white-neutral-light-300 p-2 bg-white-neutral-light-100">
+    <div className="animate-fadeIn w-full p-3">
+      <div className="rounded-2xs border-white-neutral-light-300 bg-white-neutral-light-100 border p-2">
         <ProjectsTable
           isLoading={currentIsLoading}
           isInitialLoading={viewMode === "active" ? isInitialLoading : false}
@@ -173,7 +172,7 @@ export default function TableView({ viewMode }: TableViewProps) {
         />
 
         {currentPagination && currentPagination.totalPages > 1 && (
-          <div className="p-3 border-t border-t-white-neutral-light-300 flex items-center justify-between bg-white-neutral-light-100 rounded-2xs">
+          <div className="border-t-white-neutral-light-300 bg-white-neutral-light-100 rounded-2xs flex items-center justify-between border-t p-3">
             <Pagination
               totalPages={currentPagination.totalPages}
               currentPage={currentPagination.currentPage}
@@ -190,8 +189,8 @@ export default function TableView({ viewMode }: TableViewProps) {
       {viewMode === "archived" &&
         currentData.length === 0 &&
         !currentIsLoading && (
-          <div className="text-center py-12">
-            <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <div className="py-12 text-center">
+            <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
               <svg
                 width="32"
                 height="32"
@@ -203,7 +202,7 @@ export default function TableView({ viewMode }: TableViewProps) {
                 <path d="M9.5 11h5v2h-5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               Nenhuma proposta arquivada
             </h3>
             <p className="text-gray-500">

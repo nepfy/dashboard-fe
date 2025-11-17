@@ -37,6 +37,8 @@ interface DashboardProjectViewProps {
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
   onBulkDuplicate?: (projectIds: string[]) => Promise<void>;
+  onDelete?: (projectId: string) => Promise<void>;
+  onRefresh?: () => Promise<void>;
 }
 
 const BUTTON_CLASS = `p-3 h-[44px] w-[180px] 
@@ -56,6 +58,8 @@ export default function DashboardProjectView({
   onBulkStatusUpdate,
   onStatusUpdate,
   onBulkDuplicate,
+  onDelete,
+  onRefresh,
 }: DashboardProjectViewProps) {
   const { userData } = useUserAccount();
   const [isMobile, setIsMobile] = useState(false);
@@ -204,6 +208,8 @@ export default function DashboardProjectView({
         onBulkStatusUpdate={onBulkStatusUpdate}
         onStatusUpdate={onStatusUpdate}
         onBulkDuplicate={onBulkDuplicate}
+        onDelete={onDelete}
+        onRefresh={onRefresh}
       />
     </div>
   );

@@ -78,15 +78,15 @@ const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
       <button
         onClick={handleCopyClick}
         disabled={isLoading}
-        className={`inline-flex items-center justify-center p-1 rounded-full transition-all duration-200 ${
+        className={`inline-flex items-center justify-center rounded-full p-1 transition-all duration-200 ${
           isVisible
-            ? "opacity-100 cursor-pointer hover:bg-white-neutral-light-300"
-            : "opacity-0 cursor-default"
-        } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+            ? "hover:bg-white-neutral-light-300 cursor-pointer opacity-100"
+            : "cursor-default opacity-0"
+        } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
         title="Copiar link do projeto"
       >
         {isLoading ? (
-          <LoaderCircle className="w-4 h-4 animate-spin" />
+          <LoaderCircle className="h-4 w-4 animate-spin" />
         ) : (
           <AnchorLinkIcon width="16" height="16" />
         )}
@@ -94,7 +94,7 @@ const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
 
       {message && (
         <div
-          className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 text-xs rounded whitespace-nowrap z-10 ${
+          className={`absolute top-full left-1/2 z-10 mt-1 -translate-x-1/2 transform rounded px-2 py-1 text-xs whitespace-nowrap ${
             message.includes("Erro")
               ? "bg-red-100 text-red-700"
               : "bg-green-100 text-green-700"
@@ -245,16 +245,16 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
 
   if (isLoading || isInitialLoading) {
     return (
-      <div className="w-full p-7 bg-white-neutral-light-100 rounded-2xs">
-        <div className="flex items-center justify-center h-64">
-          <LoaderCircle className="animate-spin text-primary-light-400" />
+      <div className="bg-white-neutral-light-100 rounded-2xs w-full p-7">
+        <div className="flex h-64 items-center justify-center">
+          <LoaderCircle className="text-primary-light-400 animate-spin" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="h-full w-full">
       {showBulkEdit && (
         <TableBulkEdit
           selectedCount={selectedRows.size}
@@ -269,20 +269,20 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
         />
       )}
 
-      <div className="w-full overflow-x-auto bg-white-neutral-light-100 rounded-2xs">
+      <div className="bg-white-neutral-light-100 rounded-2xs w-full overflow-x-auto">
         <div className="p-4">
-          <table className="w-full h-full p-3 box-border relative">
+          <table className="relative box-border h-full w-full p-3">
             <thead className="bg-white-neutral-light-200 rounded-2xs">
               <tr>
                 <th
                   scope="col"
-                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white-neutral-light-900"
+                  className="text-white-neutral-light-900 py-3.5 pr-3 pl-4 text-left text-sm font-semibold"
                 >
                   <input
                     type="checkbox"
                     id="select-all"
                     name="select-all"
-                    className="w-4 h-4 rounded-[var(--radius-l)] border-[var(--color-white-neutral-light-300)] text-[var(--color-primary-light-400)] focus:ring-[var(--color-primary-light-400)] mr-2"
+                    className="mr-2 h-4 w-4 rounded-[var(--radius-l)] border-[var(--color-white-neutral-light-300)] text-[var(--color-primary-light-400)] focus:ring-[var(--color-primary-light-400)]"
                     checked={selectAll}
                     onChange={handleSelectAll}
                   />
@@ -326,22 +326,22 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                     onClick={() => handleRowSelect(row.id)}
                     onMouseEnter={() => setHoveredRowId(row.id)}
                     onMouseLeave={() => setHoveredRowId(null)}
-                    className={`py-4 hover:bg-white-neutral-light-200 cursor-pointer ${
+                    className={`hover:bg-white-neutral-light-200 cursor-pointer py-4 ${
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
                     }`}
                   >
-                    <td className="py-4 pl-4 pr-3 text-sm text-white-neutral-light-900 flex align-middle">
+                    <td className="text-white-neutral-light-900 flex py-4 pr-3 pl-4 align-middle text-sm">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded-xl border border-white-neutral-light-300 text-blue-600 focus:ring-blue-500 mr-2 flex-shrink-0 self-baseline mt-0.5"
+                        className="border-white-neutral-light-300 mt-0.5 mr-2 h-4 w-4 flex-shrink-0 self-baseline rounded-xl border text-blue-600 focus:ring-blue-500"
                         checked={selectedRows.has(row.id)}
                         onChange={() => handleRowSelect(row.id)}
                         disabled={isOperationInProgress}
                       />
                       <span
-                        className="flex justify-center gap-2 truncate md:whitespace-nowrap max-w-[100px] sm:max-w-none"
+                        className="flex max-w-[100px] justify-center gap-2 truncate sm:max-w-none md:whitespace-nowrap"
                         title={row.clientName}
                       >
                         {row.clientName}
@@ -353,24 +353,24 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         />
                       </span>
                     </td>
-                    <td className="px-3 py-4 text-sm text-white-neutral-light-900 align-middle">
+                    <td className="text-white-neutral-light-900 px-3 py-4 align-middle text-sm">
                       <span
-                        className="truncate md:whitespace-nowrap max-w-[120px] sm:max-w-none block mb-2"
+                        className="mb-2 block max-w-[120px] truncate sm:max-w-none md:whitespace-nowrap"
                         title={row.projectName}
                       >
                         {row.projectName}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 flex items-center justify-start gap-1">
+                    <td className="text-white-neutral-light-900 flex items-center justify-start gap-1 px-3 py-4 text-sm whitespace-nowrap">
                       <CalendarIcon width="16" height="16" />
                       {formatVisualizationDate(row.projectVisualizationDate) ??
                         "Não visualizado"}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 align-top">
+                    <td className="text-white-neutral-light-900 px-3 py-4 align-top text-sm whitespace-nowrap">
                       <CalendarIcon
                         width="16"
                         height="16"
-                        className="inline mr-1 mb-1"
+                        className="mr-1 mb-1 inline"
                       />
                       {formatValidityDate(
                         row.projectValidUntil instanceof Date
@@ -378,10 +378,10 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                           : row.projectValidUntil
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-white-neutral-light-900 align-top">
+                    <td className="text-white-neutral-light-900 px-3 py-4 align-top text-sm whitespace-nowrap">
                       {getStatusBadge(row.projectStatus)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2 text-sm text-white-neutral-light-900 align-top">
+                    <td className="text-white-neutral-light-900 px-3 py-2 align-top text-sm whitespace-nowrap">
                       <button
                         ref={(el) => {
                           if (el) {
@@ -389,7 +389,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                           }
                         }}
                         onClick={(e) => handleMenuToggle(row.id, e)}
-                        className="cursor-pointer hover:bg-gray-100 p-1 rounded"
+                        className="cursor-pointer rounded p-1 hover:bg-gray-100"
                         disabled={isOperationInProgress}
                       >
                         ...
@@ -401,7 +401,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                 <tr>
                   <td
                     colSpan={6}
-                    className="py-4 text-center text-sm text-white-neutral-light-900"
+                    className="text-white-neutral-light-900 py-4 text-center text-sm"
                   >
                     Nenhum dado disponível
                   </td>

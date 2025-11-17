@@ -33,6 +33,7 @@ export default function Dashboard() {
     updateMultipleProjectsStatus,
     updateProjectStatus,
     duplicateProjects,
+    refetch,
   } = useProjects(1, 10);
 
   // Check for success parameter when component mounts
@@ -128,6 +129,29 @@ export default function Dashboard() {
     }
   };
 
+  const handleDelete = async (projectId: string) => {
+    try {
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await refetch();
+      } else {
+        throw new Error(result.error || "Failed to delete project");
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      throw error;
+    }
+  };
+
+  const handleRefresh = async () => {
+    await refetch();
+  };
+
   if (isInitialLoading) {
     return (
       <div className="p-7">
@@ -170,6 +194,8 @@ export default function Dashboard() {
           onBulkStatusUpdate={handleBulkStatusUpdate}
           onStatusUpdate={handleStatusUpdate}
           onBulkDuplicate={handleBulkDuplicate}
+          onDelete={handleDelete}
+          onRefresh={handleRefresh}
         />
       </div>
 
