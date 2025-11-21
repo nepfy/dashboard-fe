@@ -140,9 +140,6 @@ export class MinimalTheme {
     section: MinimalProposal["introduction"]
   ): void {
     this.ensureMaxLength(section.title, 120, "introduction.title");
-    if (section.description) {
-      this.ensureMaxLength(section.description, 100, "introduction.description");
-    }
     if (section.subtitle) {
       this.ensureMaxLength(section.subtitle, 180, "introduction.subtitle");
     }
@@ -160,9 +157,6 @@ export class MinimalTheme {
 
   private validateAboutUsSection(section: MinimalProposal["aboutUs"]): void {
     this.ensureMaxLength(section.title, 200, "aboutUs.title");
-    if (section.marqueeText) {
-      this.ensureMaxLength(section.marqueeText, 200, "aboutUs.marqueeText");
-    }
   }
 
   private validateTeamSection(section: MinimalProposal["team"]): void {
@@ -179,9 +173,6 @@ export class MinimalTheme {
   private validateExpertiseSection(
     section: MinimalProposal["expertise"]
   ): void {
-    if (section.subtitle) {
-      this.ensureMaxLength(section.subtitle, 50, "expertise.subtitle");
-    }
     this.ensureMaxLength(section.title, 100, "expertise.title");
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 9, "expertise.topics");
@@ -243,9 +234,6 @@ export class MinimalTheme {
   }
 
   private validateClientsSection(section: MinimalProposal["clients"]): void {
-    if (section.subtitle) {
-      this.ensureMaxLength(section.subtitle, 50, "clients.subtitle");
-    }
     if (section.title) {
       this.ensureMaxLength(section.title, 100, "clients.title");
     }
@@ -325,13 +313,6 @@ export class MinimalTheme {
     section: MinimalProposal["plans"],
     expectedPlans: number
   ): void {
-    if (section.subtitle) {
-      this.ensureMaxLength(section.subtitle, 50, "plans.subtitle");
-    }
-    if (section.title) {
-      this.ensureMaxLength(section.title, 120, "plans.title");
-    }
-    
     const planCount = section.plansItems?.length ?? 0;
     ensureCondition(
       planCount > 0 && planCount <= 3,
@@ -446,9 +427,6 @@ export class MinimalTheme {
     }
     if (section.disclaimer) {
       this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
-    }
-    if (section.marqueeText) {
-      this.ensureMaxLength(section.marqueeText, 200, "footer.marqueeText");
     }
     if (section.email) {
       // Basic email validation
@@ -645,13 +623,7 @@ export class MinimalTheme {
     sections.introduction = {
       userName: introResult.userName || data.userName || "",
       email: introResult.email || data.userEmail || "",
-      logo: introResult.logo || null,
-      hideLogo: introResult.hideLogo ?? false,
-      clientPhoto: introResult.clientPhoto || null,
-      hideClientPhoto: introResult.hideClientPhoto ?? false,
       title: introResult.title || "Título da proposta",
-      description: introResult.description || "Descrição da proposta de valor",
-      hideDescription: introResult.hideDescription ?? false,
       subtitle: introResult.subtitle || "Subtítulo explicativo sobre o projeto",
       hideSubtitle: introResult.hideSubtitle ?? false,
       services: (introResult.services || []).map((service, index) => ({
@@ -664,11 +636,9 @@ export class MinimalTheme {
     console.log("✅ DEBUG - Introduction Section Generated:", {
       title: sections.introduction.title,
       titleLength: sections.introduction.title.length,
-      description: sections.introduction.description,
-      descriptionLength: sections.introduction.description.length,
       subtitle: sections.introduction.subtitle,
-      subtitleLength: sections.introduction.subtitle.length,
-      subtitleOK: sections.introduction.subtitle.length <= 180 ? "✓" : "✗ EXCEEDED!"
+      subtitleLength: sections.introduction.subtitle?.length ?? 0,
+      subtitleOK: (sections.introduction.subtitle?.length ?? 0) <= 180 ? "✓" : "✗ EXCEEDED!"
     });
 
     // Generate aboutUs
@@ -690,31 +660,9 @@ export class MinimalTheme {
         sortOrder?: number;
       }>;
     }>(aboutUsPrompt, aboutUsSystemPrompt);
-    
-    // Generate default about us items if not provided
-    const defaultAboutUsItems = [
-      { id: crypto.randomUUID(), image: null, caption: "Nossa expertise", sortOrder: 0 },
-      { id: crypto.randomUUID(), image: null, caption: "Nossa metodologia", sortOrder: 1 }
-    ];
-
     sections.aboutUs = {
       hideSection: aboutUsResult.hideSection ?? false,
       title: aboutUsResult.title || "Sobre nós",
-      description: aboutUsResult.description || "Nossa proposta de valor",
-      paragraphs: aboutUsResult.paragraphs || [],
-      marqueeText: aboutUsResult.marqueeText || "Brand Design → UI Design → Development → Strategy",
-      hideMarquee: aboutUsResult.hideMarquee ?? false,
-      items: (aboutUsResult.items && aboutUsResult.items.length > 0
-        ? aboutUsResult.items
-        : defaultAboutUsItems
-      ).map((item, index) => ({
-        id: item.id || crypto.randomUUID(),
-        image: item.image || null,
-        caption: item.caption || `Item ${index + 1}`,
-        hideImage: item.hideImage ?? false,
-        hideCaption: item.hideCaption ?? false,
-        sortOrder: item.sortOrder ?? index,
-      })),
     };
 
     // Generate team
@@ -763,8 +711,6 @@ export class MinimalTheme {
 
     sections.expertise = {
       hideSection: expertiseResult.hideSection ?? false,
-      subtitle: expertiseResult.subtitle || "NOSSA EXPERTISE",
-      hideSubtitle: expertiseResult.hideSubtitle ?? false,
       title: expertiseResult.title || "Áreas de atuação",
       topics: (expertiseResult.topics && expertiseResult.topics.length > 0
         ? expertiseResult.topics

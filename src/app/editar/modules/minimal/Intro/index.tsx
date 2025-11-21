@@ -11,7 +11,7 @@ import EditableLogo from "#/app/editar/components/EditableLogo";
 import EditableAvatar from "#/app/editar/components/EditableAvatar";
 import { useEditor } from "../../../contexts/EditorContext";
 
-export default function MinimalIntro({ userName, title, subtitle, logo, clientPhoto, description }: IntroductionSection) {
+export default function MinimalIntro({ userName, title, subtitle, logo, clientPhoto }: IntroductionSection) {
   const { updateIntroduction, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);

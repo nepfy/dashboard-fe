@@ -49,7 +49,7 @@ export default function SectionsModal({
   // Update sections when template changes
   useEffect(() => {
     setSections(templateSections);
-  }, [projectData?.templateType]);
+  }, [projectData?.templateType, templateSections]);
 
   // Load section visibility from context and track initial state when modal opens
   useEffect(() => {

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import EditableText from "#/app/editar/components/EditableText";
@@ -10,10 +11,6 @@ interface MinimalClientsProps extends ClientsSection {
 
 export default function MinimalClients({
   hideSection,
-  subtitle,
-  hideSubtitle,
-  title,
-  hideTitle,
   description,
   hideDescription,
   paragraphs,

@@ -147,9 +147,6 @@ export default function AcceptProposalModal({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-0 text-gray-900"
-                style={{
-                  focusRing: projectData.mainColor || "#6366f1"
-                }}
                 placeholder="Digite seu nome completo"
                 disabled={isSubmitting}
               />
