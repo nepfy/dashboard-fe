@@ -74,7 +74,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   if (url.pathname.startsWith("/api/")) {
     const { userId } = await auth();
 
-    const publicApiRoutes = ["/api/public", "/api/health"];
+    const publicApiRoutes = ["/api/public", "/api/health", "/api/webhooks"];
     const isPublicApi = publicApiRoutes.some((route) =>
       url.pathname.startsWith(route)
     );

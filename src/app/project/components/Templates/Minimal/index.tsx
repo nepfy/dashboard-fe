@@ -10,6 +10,7 @@ import "lenis/dist/lenis.css";
 
 import type { TemplateData } from "#/types/template-data";
 import PasswordSection from "../Flash/PasswordSection";
+import ProposalActions from "../../ProposalActions";
 
 interface MinimalTemplateProps {
   data?: TemplateData;
@@ -190,15 +191,19 @@ export default function MinimalTemplate({ data }: MinimalTemplateProps) {
   };
 
   return (
-    <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
-      <iframe
-        ref={iframeRef}
-        src="/template-minimal/index.html"
-        style={{ width: "100%", height: "100vh", border: "none" }}
-        title="Minimal Template"
-        onLoad={handleIframeLoad}
-      />
-    </ReactLenis>
+    <>
+      <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
+        <iframe
+          ref={iframeRef}
+          src="/template-minimal/index.html"
+          style={{ width: "100%", height: "100vh", border: "none" }}
+          title="Minimal Template"
+          onLoad={handleIframeLoad}
+        />
+      </ReactLenis>
+      
+      {data && <ProposalActions projectData={data} />}
+    </>
   );
 }
 

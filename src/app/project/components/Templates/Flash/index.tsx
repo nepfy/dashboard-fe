@@ -10,6 +10,7 @@ import "lenis/dist/lenis.css";
 
 import type { TemplateData } from "#/types/template-data";
 import PasswordSection from "./PasswordSection";
+import ProposalActions from "../../ProposalActions";
 
 interface FlashTemplateProps {
   data?: TemplateData;
@@ -190,14 +191,18 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   };
 
   return (
-    <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
-      <iframe
-        ref={iframeRef}
-        src="/template-flash/index.html"
-        style={{ width: "100%", height: "100vh", border: "none" }}
-        title="Flash Template"
-        onLoad={handleIframeLoad}
-      />
-    </ReactLenis>
+    <>
+      <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
+        <iframe
+          ref={iframeRef}
+          src="/template-flash/index.html"
+          style={{ width: "100%", height: "100vh", border: "none" }}
+          title="Flash Template"
+          onLoad={handleIframeLoad}
+        />
+      </ReactLenis>
+      
+      {data && <ProposalActions projectData={data} />}
+    </>
   );
 }
