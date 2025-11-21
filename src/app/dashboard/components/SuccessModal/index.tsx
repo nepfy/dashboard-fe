@@ -5,6 +5,7 @@ import Lottie from "lottie-react";
 
 import Modal from "#/components/Modal";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
+import { trackProposalShared } from "#/lib/analytics/track";
 import propostaCriada from "#/lotties/proposta-criada.json";
 
 interface SuccessModalProps {
@@ -64,6 +65,14 @@ export default function SuccessModal({
       const result = await copyLinkWithCache(projectId);
 
       await navigator.clipboard.writeText(result.fullUrl);
+
+      // Track proposal shared
+      if (projectId) {
+        trackProposalShared({
+          proposal_id: projectId,
+          share_method: "link",
+        });
+      }
 
       const successMessage = result.fromCache
         ? "Link copiado novamente com sucesso!"

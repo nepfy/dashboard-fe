@@ -1,5 +1,6 @@
 import { useEditor } from "../../contexts/EditorContext";
 import { useState } from "react";
+import { trackProposalPublished } from "#/lib/analytics/track";
 
 export default function Publish() {
   const { saveProject, isDirty, isSaving, projectData } = useEditor();
@@ -16,6 +17,16 @@ export default function Publish() {
         projectStatus: "active",
         isPublished: true,
       });
+      
+      // Track proposal published
+      if (projectData?.id) {
+        trackProposalPublished({
+          proposal_id: projectData.id,
+          publish_method: "button",
+          template_type: projectData.templateType,
+        });
+      }
+      
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {

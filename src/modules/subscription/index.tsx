@@ -127,6 +127,12 @@ export function Subscription() {
 
   const handleSwitchPlan = async (planId: string) => {
     try {
+      // Track upgrade modal opened
+      const { trackUpgradeModalOpened } = await import("#/lib/analytics/track");
+      trackUpgradeModalOpened({
+        source: "subscription_page",
+      });
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/create-checkout-session`,
         {

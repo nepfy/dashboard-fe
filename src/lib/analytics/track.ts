@@ -15,6 +15,8 @@ import type {
   EditorOpenedProperties,
   EditorTextEditedProperties,
   EditorSettingsChangedProperties,
+  BlockAddedProperties,
+  ProposalSavedProperties,
   ProposalPublishedProperties,
   ProposalSharedProperties,
   ProposalViewedByClientProperties,
@@ -24,6 +26,23 @@ import type {
   PlanUpgradedProperties,
   PlanLimitReachedProperties,
   PlanCanceledProperties,
+  UpgradeModalOpenedProperties,
+  UpgradeSuccessProperties,
+  ErrorTriggeredProperties,
+  EditorLoadTimeProperties,
+  AppLoadTimeProperties,
+  UserRetentionD7Properties,
+  FunnelMainCompletedProperties,
+  FunnelMainAbandonedProperties,
+  UserSessionStartedProperties,
+  UserSegmentIdentifiedProperties,
+  UserEnvironmentDetectedProperties,
+  AIFunnelCompletedProperties,
+  AIFunnelAbandonedProperties,
+  EditorFunnelCompletedProperties,
+  EditorSessionStartedProperties,
+  EditorSessionEndedProperties,
+  ManagerActionTriggeredProperties,
   NotificationCenterOpenedProperties,
   NotificationClickedProperties,
   NotificationsMarkedAllReadProperties,
@@ -352,6 +371,207 @@ export function trackPlanCanceled(properties: PlanCanceledProperties) {
   if (!posthog) return;
 
   posthog.capture("plan_canceled", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Block Tracking
+export function trackBlockAdded(properties: BlockAddedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("block_added", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Proposal Save Tracking
+export function trackProposalSaved(properties: ProposalSavedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("proposal_saved", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Upgrade Tracking
+export function trackUpgradeModalOpened(properties: UpgradeModalOpenedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("upgrade_modal_opened", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackUpgradeSuccess(properties: UpgradeSuccessProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("upgrade_success", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Error Tracking
+export function trackErrorTriggered(properties: ErrorTriggeredProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("error_triggered", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Performance Tracking
+export function trackEditorLoadTime(properties: EditorLoadTimeProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("editor_load_time", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackAppLoadTime(properties: AppLoadTimeProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("app_load_time", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Retention Tracking
+export function trackUserRetentionD7(properties: UserRetentionD7Properties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("user_retention_d7", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Funnel Tracking
+export function trackFunnelMainCompleted(properties: FunnelMainCompletedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("funnel_main_completed", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackFunnelMainAbandoned(properties: FunnelMainAbandonedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("funnel_main_abandoned", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Session Tracking
+export function trackUserSessionStarted(properties: UserSessionStartedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("user_session_started", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackUserSegmentIdentified(properties: UserSegmentIdentifiedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("user_segment_identified", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackUserEnvironmentDetected(properties: UserEnvironmentDetectedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("user_environment_detected", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// AI Funnel Tracking
+export function trackAIFunnelCompleted(properties: AIFunnelCompletedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("ai_funnel_completed", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackAIFunnelAbandoned(properties: AIFunnelAbandonedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("ai_funnel_abandoned", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Editor Funnel Tracking
+export function trackEditorFunnelCompleted(properties: EditorFunnelCompletedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("editor_funnel_completed", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackEditorSessionStarted(properties: EditorSessionStartedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("editor_session_started", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function trackEditorSessionEnded(properties: EditorSessionEndedProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("editor_session_ended", {
+    ...properties,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+// Manager Actions Tracking
+export function trackManagerActionTriggered(properties: ManagerActionTriggeredProperties) {
+  const posthog = getPostHog();
+  if (!posthog) return;
+
+  posthog.capture("manager_action_triggered", {
     ...properties,
     timestamp: new Date().toISOString(),
   });

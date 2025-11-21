@@ -79,40 +79,59 @@ export interface ProposalAIFeedbackSubmittedProperties {
 
 // Editor Events
 export interface EditorOpenedProperties {
-  project_id: string;
+  proposal_id: string;
+  user_id?: string;
+  workspace_id?: string;
   template_type?: string;
   timestamp?: string;
 }
 
 export interface EditorTextEditedProperties {
-  project_id: string;
+  proposal_id: string;
+  field?: string;
+  chars_count?: number;
   section_name?: string;
   edit_type?: "text" | "settings" | "content";
   timestamp?: string;
 }
 
 export interface EditorSettingsChangedProperties {
-  project_id: string;
-  setting_type: string;
-  setting_value: string | boolean | number;
+  proposal_id: string;
+  setting_name: string;
+  new_value: string | boolean | number;
+  setting_type?: string;
+  timestamp?: string;
+}
+
+export interface BlockAddedProperties {
+  proposal_id: string;
+  block_type: string;
+  timestamp?: string;
+}
+
+export interface ProposalSavedProperties {
+  proposal_id: string;
+  auto_or_manual: "auto" | "manual";
   timestamp?: string;
 }
 
 export interface ProposalPublishedProperties {
-  project_id: string;
+  proposal_id: string;
+  publish_method?: string;
   template_type?: string;
   timestamp?: string;
 }
 
 export interface ProposalSharedProperties {
-  project_id: string;
+  proposal_id: string;
   share_method: "link" | "email" | "whatsapp" | "other";
   timestamp?: string;
 }
 
 // Client Interaction Events
 export interface ProposalViewedByClientProperties {
-  project_id: string;
+  proposal_id: string;
+  viewer_session_id?: string;
   project_url?: string;
   timestamp?: string;
 }
@@ -195,6 +214,119 @@ export interface PlanLimitReachedProperties {
 export interface PlanCanceledProperties {
   plan_type: string;
   cancellation_reason?: string;
+  timestamp?: string;
+}
+
+export interface UpgradeModalOpenedProperties {
+  source: string;
+  timestamp?: string;
+}
+
+export interface UpgradeSuccessProperties {
+  plan_id: string;
+  value?: number;
+  plan_name?: string;
+  billing_cycle?: "monthly" | "yearly";
+  timestamp?: string;
+}
+
+export interface ErrorTriggeredProperties {
+  error_type: string;
+  user_id?: string;
+  device_info?: string;
+  error_message?: string;
+  error_stack?: string;
+  timestamp?: string;
+}
+
+export interface EditorLoadTimeProperties {
+  duration_ms: number;
+  proposal_id: string;
+  timestamp?: string;
+}
+
+export interface AppLoadTimeProperties {
+  duration_ms: number;
+  route: string;
+  timestamp?: string;
+}
+
+export interface UserRetentionD7Properties {
+  user_id: string;
+  signup_date?: string;
+  last_active_day?: string;
+  timestamp?: string;
+}
+
+export interface FunnelMainCompletedProperties {
+  user_id: string;
+  proposal_id: string;
+  timestamp?: string;
+}
+
+export interface FunnelMainAbandonedProperties {
+  step: string;
+  user_id: string;
+  proposal_id?: string;
+  timestamp?: string;
+}
+
+export interface UserSessionStartedProperties {
+  user_id: string;
+  session_id?: string;
+  timestamp?: string;
+}
+
+export interface UserSegmentIdentifiedProperties {
+  segment: string;
+  user_id?: string;
+  timestamp?: string;
+}
+
+export interface UserEnvironmentDetectedProperties {
+  os?: string;
+  browser?: string;
+  device_type?: string;
+  user_id?: string;
+  timestamp?: string;
+}
+
+export interface AIFunnelCompletedProperties {
+  user_id: string;
+  proposal_id: string;
+  timestamp?: string;
+}
+
+export interface AIFunnelAbandonedProperties {
+  step: string;
+  user_id: string;
+  proposal_id?: string;
+  timestamp?: string;
+}
+
+export interface EditorFunnelCompletedProperties {
+  user_id: string;
+  proposal_id: string;
+  timestamp?: string;
+}
+
+export interface EditorSessionStartedProperties {
+  session_id: string;
+  user_id: string;
+  proposal_id: string;
+  timestamp?: string;
+}
+
+export interface EditorSessionEndedProperties {
+  session_id: string;
+  duration_ms: number;
+  timestamp?: string;
+}
+
+export interface ManagerActionTriggeredProperties {
+  action_type: string;
+  proposal_id?: string;
+  user_id?: string;
   timestamp?: string;
 }
 

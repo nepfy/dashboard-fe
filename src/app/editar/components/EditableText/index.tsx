@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
+import { trackEditorTextEdited } from "#/lib/analytics/track";
 
 interface EditableTextProps {
   value: string;
@@ -10,6 +11,8 @@ interface EditableTextProps {
   placeholder?: string;
   editingId: string;
   canEdit?: boolean;
+  field?: string;
+  sectionName?: string;
 }
 
 export default function EditableText({
@@ -19,12 +22,15 @@ export default function EditableText({
   placeholder = "",
   editingId,
   canEdit = true,
+  field,
+  sectionName,
 }: EditableTextProps) {
-  const { startEditing, stopEditing, activeEditingId } = useEditor();
+  const { startEditing, stopEditing, activeEditingId, projectData } = useEditor();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const [isHovered, setIsHovered] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editDebounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   console.log({ canEdit });
 
@@ -73,12 +79,39 @@ export default function EditableText({
 
   const handleSave = () => {
     if (localValue.trim() !== value) {
-      onChange(localValue.trim());
+      const newValue = localValue.trim();
+      onChange(newValue);
+      
+      // Track text edit with debounce
+      if (editDebounceTimer.current) {
+        clearTimeout(editDebounceTimer.current);
+      }
+      
+      editDebounceTimer.current = setTimeout(() => {
+        if (projectData?.id) {
+          trackEditorTextEdited({
+            proposal_id: projectData.id,
+            field: field || editingId,
+            chars_count: newValue.length,
+            section_name: sectionName,
+            edit_type: "text",
+          });
+        }
+      }, 1000); // 1 second debounce
     }
     setIsEditing(false);
     setIsHovered(false); // Reset hover state
     stopEditing(editingId);
   };
+  
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (editDebounceTimer.current) {
+        clearTimeout(editDebounceTimer.current);
+      }
+    };
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

@@ -8,6 +8,8 @@ import UploadImageInfo from "./UploadImageInfo";
 import PexelsGallery from "./PexelsGallery";
 import UploadImage from "./UploadImage";
 import ConfirmExclusion from "./ConfirmExclusion";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
+import { trackBlockAdded } from "#/lib/analytics/track";
 import {
   TeamMember,
   Result,
@@ -66,6 +68,7 @@ export default function ItemEditorModal({
   onUpdateSection,
   hideIcon,
 }: ItemEditorModalProps) {
+  const { projectData } = useEditor();
   const [activeTab, setActiveTab] = useState<TabType>("conteudo");
   const [showExploreGalleryInfo, setShowExploreGalleryInfo] = useState(false);
   const [showPexelsGallery, setShowPexelsGallery] = useState(false);
@@ -229,6 +232,14 @@ export default function ItemEditorModal({
 
       setSelectedItemId(newItem.id!);
       setActiveTab("conteudo");
+      
+      // Track block added
+      if (projectData?.id) {
+        trackBlockAdded({
+          proposal_id: projectData.id,
+          block_type: itemType,
+        });
+      }
     }
   };
 

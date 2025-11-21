@@ -13,6 +13,7 @@ import RowEditMenu from "./RowEditMenu";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
+import { trackProposalShared } from "#/lib/analytics/track";
 import ProposalModals from "../ProposalModals";
 
 interface EnhancedTableProps extends TableProps {
@@ -51,6 +52,12 @@ const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
       const result = await copyLinkWithCache(projectId);
 
       await navigator.clipboard.writeText(result.fullUrl);
+
+      // Track proposal shared
+      trackProposalShared({
+        proposal_id: projectId,
+        share_method: "link",
+      });
 
       const successMessage = result.fromCache
         ? "Link copiado! (cache)"

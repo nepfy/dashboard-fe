@@ -1,28 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import Flash from "./modules/flash";
 import Minimal from "./modules/minimal";
 import Prime from "./modules/prime";
 import { TemplateData } from "#/types/template-data";
 import { useEditor } from "./contexts/EditorContext";
+import { trackEditorOpened, trackEditorLoadTime } from "#/lib/analytics/track";
 
 export default function EditarPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams?.get("projectId");
   const templateType = searchParams?.get("templateType");
+  const { user } = useUser();
 
   const { projectData, setProjectData, isLoading, error } = useEditor();
   const [localLoading, setLocalLoading] = useState(true);
   const [localError, setLocalError] = useState<string | null>(null);
+  const editorLoadStartTime = useRef<number | null>(null);
+  const hasTrackedOpened = useRef(false);
 
   useEffect(() => {
     if (!projectId) {
       setLocalError("ID do projeto não fornecido");
       setLocalLoading(false);
       return;
+    }
+
+    // Track editor opened
+    if (!hasTrackedOpened.current && projectId) {
+      trackEditorOpened({
+        proposal_id: projectId,
+        user_id: user?.id,
+        workspace_id: user?.id, // Using user ID as workspace ID for now
+        template_type: templateType || undefined,
+      });
+      hasTrackedOpened.current = true;
+      editorLoadStartTime.current = Date.now();
     }
 
     const loadProjectData = async () => {
@@ -44,6 +61,15 @@ export default function EditarPage() {
         }
 
         setProjectData(templateDataResult.data[0]);
+
+        // Track editor load time
+        if (editorLoadStartTime.current && projectId) {
+          const loadTime = Date.now() - editorLoadStartTime.current;
+          trackEditorLoadTime({
+            duration_ms: loadTime,
+            proposal_id: projectId,
+          });
+        }
       } catch (err) {
         console.error("Error loading project data:", err);
         setLocalError(
@@ -55,7 +81,7 @@ export default function EditarPage() {
     };
 
     loadProjectData();
-  }, [projectId, templateType, setProjectData]);
+  }, [projectId, templateType, setProjectData, user]);
 
   if (localLoading || isLoading) {
     return (

@@ -11,6 +11,7 @@ import "lenis/dist/lenis.css";
 import type { TemplateData } from "#/types/template-data";
 import PasswordSection from "./PasswordSection";
 import ProposalActions from "../../ProposalActions";
+import { trackProposalViewedByClient } from "#/lib/analytics/track";
 
 interface FlashTemplateProps {
   data?: TemplateData;
@@ -19,6 +20,7 @@ interface FlashTemplateProps {
 export default function FlashTemplate({ data }: FlashTemplateProps) {
   const lenis = useLenis();
   const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+  const hasTrackedView = useRef(false);
 
   const lenisRef = useRef<LenisRef>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -38,6 +40,26 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
       }
     }
   }, [needsPassword, data?.id]);
+
+  // Track proposal viewed by client (only once, after password check)
+  useEffect(() => {
+    if (isPasswordCorrect && data?.id && !hasTrackedView.current) {
+      const sessionId = typeof window !== "undefined" 
+        ? sessionStorage.getItem("viewer_session_id") || `session-${Date.now()}`
+        : `session-${Date.now()}`;
+      
+      if (typeof window !== "undefined" && !sessionStorage.getItem("viewer_session_id")) {
+        sessionStorage.setItem("viewer_session_id", sessionId);
+      }
+
+      trackProposalViewedByClient({
+        proposal_id: data.id,
+        viewer_session_id: sessionId,
+        project_url: data.projectUrl || undefined,
+      });
+      hasTrackedView.current = true;
+    }
+  }, [isPasswordCorrect, data?.id, data?.projectUrl]);
 
   const handlePasswordCorrect = () => {
     setIsPasswordCorrect(true);

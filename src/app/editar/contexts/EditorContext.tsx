@@ -36,6 +36,7 @@ import {
   FAQItem,
 } from "#/types/template-data";
 import { useRouter } from "next/navigation";
+import { trackProposalSaved, trackEditorSettingsChanged } from "#/lib/analytics/track";
 
 interface EditorContextType {
   // State
@@ -333,6 +334,31 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
       setIsDirty(true);
       setError(null);
+
+      // Track settings changes
+      if (projectData.id) {
+        if (data.mainColor !== undefined) {
+          trackEditorSettingsChanged({
+            proposal_id: projectData.id,
+            setting_name: "mainColor",
+            new_value: data.mainColor,
+          });
+        }
+        if (data.projectUrl !== undefined) {
+          trackEditorSettingsChanged({
+            proposal_id: projectData.id,
+            setting_name: "projectUrl",
+            new_value: data.projectUrl,
+          });
+        }
+        if (data.pagePassword !== undefined) {
+          trackEditorSettingsChanged({
+            proposal_id: projectData.id,
+            setting_name: "pagePassword",
+            new_value: data.pagePassword ? "***" : "", // Don't track actual password
+          });
+        }
+      }
     },
     [projectData]
   );
@@ -482,6 +508,12 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         }
 
         setIsDirty(false);
+
+        // Track proposal saved
+        trackProposalSaved({
+          proposal_id: projectData.id,
+          auto_or_manual: options?.isPublished ? "manual" : "auto",
+        });
 
         // Only navigate if skipNavigation is not true
         if (!options?.skipNavigation) {
