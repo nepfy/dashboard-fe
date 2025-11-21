@@ -5,17 +5,20 @@ import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 
-export default function FlashFooter({
+export default function MinimalFooter({
   hideSection,
   callToAction,
-  email,
-  phone,
-  buttonConfig,
+  disclaimer,
+  email = "contato@nepfy.com.br",
+  phone = "+55 11 99999-9999",
+  marqueeText = "Brand Design → Design Systems → UI Design → Webflow Development",
+  hideMarquee,
 }: FooterSection) {
   const { updateFooter, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
 
   const canEdit = activeEditingId === null;
+
   return (
     <>
       <style jsx>{`
@@ -39,7 +42,7 @@ export default function FlashFooter({
 
         .footer-component {
           display: flex;
-          justify-content: flex-start;
+          justify-content: space-between;
           align-items: flex-start;
           padding-top: 8rem;
           padding-bottom: 7rem;
@@ -50,9 +53,16 @@ export default function FlashFooter({
         .footer-heading {
           display: flex;
           flex-flow: column;
-          max-width: 107ch;
+          max-width: 52ch;
           grid-column-gap: 1.5rem;
           grid-row-gap: 1.5rem;
+        }
+
+        .footer-contact {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          flex-shrink: 0;
         }
 
         .heading-style-h1 {
@@ -78,11 +88,32 @@ export default function FlashFooter({
           margin-bottom: 0;
         }
 
+        .footer-marquee {
+          padding: 2rem 0;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          overflow: hidden;
+          max-height: 390px;
+        }
+
+        .footer-marquee_text {
+          font-size: 15vw;
+          font-weight: 300;
+          color: rgba(0, 0, 0);
+          white-space: nowrap;
+          animation: marquee 200s linear infinite;
+          margin-top: 3rem;
+        }
+
         @media screen and (max-width: 991px) {
           .footer-component {
-            flex-flow: column;
+            flex-direction: column;
+            gap: 4rem;
             padding-top: 6rem;
             padding-bottom: 6rem;
+          }
+
+          .footer-heading {
+            max-width: 100%;
           }
         }
 
@@ -121,7 +152,7 @@ export default function FlashFooter({
                     />
 
                     {projectData?.projectValidUntil && (
-                      <div className="footer-proposal">
+                      <div className="footer-proposal mt-6">
                         <div
                           className="m-0 h-auto w-auto border p-0"
                           style={{
@@ -179,14 +210,27 @@ export default function FlashFooter({
                             />
                           </div>
                         </div>
+                        {disclaimer && (
+                          <div className="mt-3 max-w-[500px]">
+                            <EditableText
+                              value={disclaimer}
+                              onChange={(newDisclaimer: string) =>
+                                updateFooter({ disclaimer: newDisclaimer })
+                              }
+                              className="text-size-regular opacity-60"
+                              editingId="footer-disclaimer"
+                              canEdit={canEdit}
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col gap-8">
+                  <div className="footer-contact">
                     {email && (
-                      <div className="flex flex-col gap-6">
-                        <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
-                          Email
+                      <div className="flex flex-col gap-2">
+                        <div className="text-[0.875rem] font-medium tracking-wider text-[#000000] uppercase opacity-60">
+                          EMAIL
                         </div>
                         <div>
                           <EditableText
@@ -195,7 +239,7 @@ export default function FlashFooter({
                               updateFooter({ email: newEmail })
                             }
                             editingId="footer-email"
-                            className="text-[1.5rem] leading-[1.5] font-light text-[#000000]"
+                            className="text-[1.25rem] leading-[1.5] font-normal text-[#000000]"
                             canEdit={canEdit}
                           />
                         </div>
@@ -203,9 +247,9 @@ export default function FlashFooter({
                     )}
 
                     {phone && (
-                      <div className="flex flex-col gap-6">
-                        <div className="text-uppercase text-[1.25rem] leading-[1.5] font-normal text-[#000000]">
-                          Whatsapp
+                      <div className="flex flex-col gap-2">
+                        <div className="text-[0.875rem] font-medium tracking-wider text-[#000000] uppercase opacity-60">
+                          WHATSAPP
                         </div>
                         <div>
                           <EditableText
@@ -214,7 +258,7 @@ export default function FlashFooter({
                               updateFooter({ phone: newPhone })
                             }
                             editingId="footer-phone"
-                            className="text-[1.5rem] leading-[1.5] font-light text-[#000000]"
+                            className="text-[1.25rem] leading-[1.5] font-normal text-[#000000]"
                             canEdit={canEdit}
                           />
                         </div>
@@ -224,11 +268,25 @@ export default function FlashFooter({
                 </div>
               </div>
             </div>
-            <div className="flex max-h-[10rem] items-center justify-center overflow-hidden">
-              <div className="is-footer pt-[3rem] text-[15vw] font-light text-[#000000]">
-                {buttonConfig?.buttonTitle}
+            {!hideMarquee && (
+              <div className="footer-marquee">
+                <div className="marquee_content">
+                  <div className="footer-marquee_text">
+                    <EditableText
+                      value={
+                        marqueeText ||
+                        "Brand Design → Design Systems → UI Design → Webflow Development"
+                      }
+                      onChange={(newMarqueeText) =>
+                        updateFooter({ marqueeText: newMarqueeText })
+                      }
+                      className="footer-marquee_text"
+                      editingId="footer-marquee"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>

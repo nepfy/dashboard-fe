@@ -26,21 +26,14 @@ const templates: TemplateModel[] = [
     ],
     preview: "flash",
   },
-  // {
-  //   id: "minimal",
-  //   title: "Minimal",
-  //   description:
-  //     "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
-  //   colorsList: [
-  //     "#000000",
-  //     "#4F21A1",
-  //     "#BE8406",
-  //     "#9B3218",
-  //     "#05722C",
-  //     "#182E9B",
-  //   ],
-  //   preview: "minimal",
-  // },
+  {
+    id: "minimal",
+    title: "Minimal",
+    description:
+      "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
+    colorsList: ["#000000"],
+    preview: "minimal",
+  },
   // {
   //   id: "prime",
   //   title: "Prime",
@@ -87,8 +80,8 @@ export function SelectTemplate({
   }, []);
 
   return (
-    <div className="h-full w-full md:flex flex-col justify-center pb-6">
-      <h2 className="text-neutral-light-600 text-[24px] text-center font-medium py-4 px-6 sm:px-0 lg:pt-10 pb-0">
+    <div className="h-full w-full flex-col justify-center pb-6 md:flex">
+      <h2 className="text-neutral-light-600 px-6 py-4 pb-0 text-center text-[24px] font-medium sm:px-0 lg:pt-10">
         Escolha o modelo da sua proposta
       </h2>
       <TemplateSelection

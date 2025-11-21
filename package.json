@@ -18,6 +18,8 @@
     "test-minimal": "npx tsx src/scripts/test-agent-proposals.ts --template=minimal",
     "test-flash": "npx tsx src/scripts/test-agent-proposals.ts --template=flash",
     "test-prime": "npx tsx src/scripts/test-agent-proposals.ts --template=prime",
+    "update-agents-language": "npx tsx src/scripts/update-agents-language.ts",
+    "create-minimal-agents": "npx tsx src/scripts/create-minimal-agents.ts",
     "check-expiring-proposals": "npx tsx src/scripts/check-expiring-proposals.ts",
     "prepare": "husky",
     "test": "vitest"

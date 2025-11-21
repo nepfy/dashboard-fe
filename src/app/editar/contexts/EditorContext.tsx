@@ -134,6 +134,7 @@ interface EditorContextType {
   stopEditing: (id: string) => void;
   isCurrentlyEditing: (id: string) => boolean;
   getActiveEditingId: () => string | null;
+  setActiveEditingId: (id: string | null) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -641,7 +642,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     if (!projectData?.proposalData?.expertise?.topics) return;
 
     const currentTopics = projectData.proposalData.expertise.topics;
-    if (currentTopics.length >= 6) return; // Max 6 topics
+    if (currentTopics.length >= 9) return; // Max 9 topics (3x3 grid)
 
     const newTopic: ExpertiseTopic = {
       id: `topic-${Date.now()}`,
@@ -1027,6 +1028,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     stopEditing,
     isCurrentlyEditing,
     getActiveEditingId,
+    setActiveEditingId,
   };
 
   return (
@@ -1036,8 +1038,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
 export function useEditor() {
   const context = useContext(EditorContext);
+
   if (context === undefined) {
     throw new Error("useEditor must be used within an EditorProvider");
   }
+
   return context;
 }

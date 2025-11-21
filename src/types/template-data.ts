@@ -78,6 +78,8 @@ export interface Plan extends HideableItem, SortableItem {
 export interface PlansSection extends BaseSection {
   mainColor?: string;
   hideSection?: boolean;
+  subtitle?: string;
+  hideSubtitle?: boolean;
   title?: string;
   plansItems?: Plan[];
 }
@@ -111,6 +113,8 @@ export interface FooterSection extends BaseSection {
   phone?: string;
   mainColor?: string;
   marquee?: string[];
+  marqueeText?: string;
+  hideMarquee?: boolean;
   callToAction?: string;
   hideDisclaimer?: boolean;
   hideCallToAction?: boolean;
@@ -120,6 +124,14 @@ export interface FooterSection extends BaseSection {
 }
 
 // About Us related interfaces
+export interface AboutUsItem extends HideableItem, SortableItem {
+  id: string;
+  image?: string;
+  caption?: string;
+  hideImage?: boolean;
+  hideCaption?: boolean;
+}
+
 export interface AboutUsSection extends BaseSection {
   mainColor?: string;
   hideSection?: boolean;
@@ -128,6 +140,9 @@ export interface AboutUsSection extends BaseSection {
   supportText?: string;
   hideSubtitle?: boolean;
   hideSupportText?: boolean;
+  marqueeText?: string;
+  hideMarquee?: boolean;
+  items?: AboutUsItem[];
 }
 
 // Clients related interfaces
@@ -140,8 +155,13 @@ export interface Client extends HideableItem, SortableItem {
 }
 
 export interface ClientsSection extends BaseSection {
+  hideSection?: boolean;
+  subtitle?: string;
+  hideSubtitle?: boolean;
   title?: string;
+  hideTitle?: boolean;
   description?: string;
+  hideDescription?: boolean;
   paragraphs?: string[];
   items?: Client[];
 }
@@ -158,6 +178,8 @@ export interface ExpertiseTopic extends HideableItem, SortableItem {
 
 export interface ExpertiseSection extends BaseSection {
   hideSection?: boolean;
+  subtitle?: string;
+  hideSubtitle?: boolean;
   title?: string;
   topics?: ExpertiseTopic[];
   hideIcon?: boolean;
@@ -212,7 +234,13 @@ export interface IntroductionSection {
   mainColor?: string;
   userName?: string;
   email?: string;
+  logo?: string;
+  hideLogo?: boolean;
+  clientPhoto?: string;
+  hideClientPhoto?: boolean;
   title?: string;
+  description?: string;
+  hideDescription?: boolean;
   services?: IntroductionService[];
   subtitle?: string;
   validity?: string;

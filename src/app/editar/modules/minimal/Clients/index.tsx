@@ -4,12 +4,18 @@ import EditableText from "#/app/editar/components/EditableText";
 import { useEditor } from "../../../contexts/EditorContext";
 import type { ClientsSection } from "#/types/template-data";
 
-interface MinimalClientsProps extends ClientsSection {}
+interface MinimalClientsProps extends ClientsSection {
+  canEdit?: boolean;
+}
 
 export default function MinimalClients({
   hideSection,
+  subtitle,
+  hideSubtitle,
   title,
+  hideTitle,
   description,
+  hideDescription,
   paragraphs,
   items,
 }: MinimalClientsProps) {
@@ -20,7 +26,8 @@ export default function MinimalClients({
     return null;
   }
 
-  const safeParagraphs = paragraphs && paragraphs.length > 0 ? paragraphs : ["", ""];
+  const safeParagraphs =
+    paragraphs && paragraphs.length > 0 ? paragraphs : ["", ""];
 
   const handleParagraphChange = (index: number, value: string) => {
     const updated = [...safeParagraphs];
@@ -28,13 +35,18 @@ export default function MinimalClients({
     updateClients({ paragraphs: updated });
   };
 
-  const handleLogoNameChange = (id: string | undefined, value: string, sortOrder?: number) => {
+  const handleLogoNameChange = (
+    id: string | undefined,
+    value: string,
+    sortOrder?: number
+  ) => {
     if (!items) return;
     const updated = items.map((logo) =>
       logo.id === id
         ? {
             ...logo,
             name: value,
+            sortOrder: sortOrder,
           }
         : logo
     );
@@ -43,13 +55,32 @@ export default function MinimalClients({
 
   const logos = items && items.length > 0 ? items : [];
 
+  const logoDefaults =
+    logos.length === 0
+      ? [
+          { id: "1", name: "Ino", sortOrder: 1 },
+          { id: "2", name: "Circle", sortOrder: 2 },
+          { id: "3", name: "Nova", sortOrder: 3 },
+          { id: "4", name: "Acme", sortOrder: 4 },
+        ]
+      : logos;
+
   return (
     <>
       <style jsx global>{`
         .section_partners {
-          background-color: #fbfbfb;
-          color: #040404;
+          background-color: #fff;
+          color: #000;
           padding: 8rem 0;
+        }
+
+        .w-layout-grid {
+          grid-row-gap: 16px;
+          grid-column-gap: 16px;
+          grid-template-rows: auto auto;
+          grid-template-columns: 1fr 1fr;
+          grid-auto-columns: 1fr;
+          display: grid;
         }
 
         .partners-component {
@@ -63,6 +94,16 @@ export default function MinimalClients({
           padding-bottom: 2rem;
         }
 
+        .partners-subtitle {
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          font-size: 1em;
+          font-weight: 500;
+          color: #000;
+          opacity: 0.6;
+          margin-bottom: 1rem;
+        }
+
         .partners-paragraph {
           display: flex;
           flex-direction: column;
@@ -70,13 +111,13 @@ export default function MinimalClients({
           justify-content: flex-end;
           gap: 1rem;
           max-width: 100%;
+          font-size: 1.25rem;
+          line-height: 1.5;
+          color: #000;
         }
 
         .partners-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 2rem;
-          margin-top: 2rem;
+          grid-template-columns: 1fr 1fr 1fr;
         }
 
         .partners-logo {
@@ -84,14 +125,19 @@ export default function MinimalClients({
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 1px solid #dcdcdc;
-          border-radius: 0.5rem;
-          padding: 1.5rem;
+          background: whitesmoke;
+          transition: all 0.2s ease;
+          max-width: 228px;
+          max-height: 228px;
+        }
+
+        .partners-logo:hover {
+          background: #e7e9ec;
         }
 
         .partners-logo .logo-embed {
           width: 100%;
-          max-width: 120px;
+          max-width: 80px;
           text-align: center;
           display: flex;
           align-items: center;
@@ -102,7 +148,9 @@ export default function MinimalClients({
         }
 
         .partners-logo .logo-text {
-          font-size: 1.1rem;
+          font-size: 0.75rem;
+          line-height: 1.2;
+          color: #000;
         }
 
         @media screen and (max-width: 991px) {
@@ -117,6 +165,13 @@ export default function MinimalClients({
           }
           .partners-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+          }
+        }
+
+        @media screen and (min-width: 768px) and (max-width: 991px) {
+          .partners-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
           }
         }
       `}</style>
@@ -125,25 +180,20 @@ export default function MinimalClients({
           <div className="container-large">
             <div className="partners-component">
               <div className="partners-heading">
-                <EditableText
-                  value={title || "Empresas que já confiaram no nosso trabalho"}
-                  onChange={(newTitle) => updateClients({ title: newTitle })}
-                  editingId="clients-title"
-                  className="heading-style-h2 text-weight-normal"
-                  canEdit={canEdit}
-                />
-                <EditableText
-                  value={
-                    description ||
-                    "Construímos parcerias de longo prazo com empresas que valorizam estratégia, clareza e performance."
-                  }
-                  onChange={(newDescription) =>
-                    updateClients({ description: newDescription })
-                  }
-                  editingId="clients-description"
-                  className="text-size-medium text-weight-light mt-4 block max-w-[42rem]"
-                  canEdit={canEdit}
-                />
+                {!hideDescription && (
+                  <EditableText
+                    value={
+                      description ||
+                      "Construímos parcerias de longo prazo com empresas que valorizam estratégia, clareza e performance."
+                    }
+                    onChange={(newDescription) =>
+                      updateClients({ description: newDescription })
+                    }
+                    editingId="clients-description"
+                    className="mt-4 block max-w-[42rem] text-4xl text-black opacity-80"
+                    canEdit={canEdit}
+                  />
+                )}
               </div>
               <div className="partners-paragraph">
                 <div className="flex max-w-[45rem] flex-col items-end justify-end gap-6">
@@ -154,7 +204,7 @@ export default function MinimalClients({
                     }
                     onChange={(value) => handleParagraphChange(0, value)}
                     editingId="clients-paragraph-1"
-                    className="text-size-medium text-right"
+                    className="text-size-medium text-start text-black opacity-70"
                     canEdit={canEdit}
                   />
                   <EditableText
@@ -164,46 +214,43 @@ export default function MinimalClients({
                     }
                     onChange={(value) => handleParagraphChange(1, value)}
                     editingId="clients-paragraph-2"
-                    className="text-size-medium text-right"
+                    className="text-size-medium text-start text-black opacity-70"
                     canEdit={canEdit}
                   />
                 </div>
               </div>
-              <div className="partners-grid">
-                {logos.length > 0 ? (
-                  logos
-                    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-                    .map((logo) => (
-                      <div className="partners-logo" key={logo.id || logo.name}>
-                        <span className="logo-embed w-embed flex max-h-[50px] max-w-[100px] items-center justify-center overflow-hidden">
-                          <img
-                            src="/images/templates/flash/placeholder.png"
-                            alt=""
-                            className="logo-img hidden"
-                          />
-                          <EditableText
-                            value={logo.name}
-                            onChange={(value) =>
-                              handleLogoNameChange(
-                                logo.id,
-                                value,
-                                logo.sortOrder
-                              )
-                            }
-                            editingId={`clients-logo-${logo.id}`}
-                            className="logo-text text-center text-[1.1rem] font-medium uppercase tracking-wide"
-                            canEdit={canEdit}
-                          />
-                        </span>
-                      </div>
-                    ))
-                ) : (
-                  <div className="partners-logo">
-                    <span className="text-size-medium text-weight-light">
-                      Adicione marcas na seção Clients
-                    </span>
-                  </div>
-                )}
+              <div className="w-layout-grid partners-grid">
+                {logoDefaults.length > 0
+                  ? logoDefaults
+                      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+                      .map((logo) => (
+                        <div
+                          className="partners-logo"
+                          key={logo.id || logo.name}
+                        >
+                          <span className="logo-embed w-embed flex max-h-[50px] max-w-[100px] items-center justify-center overflow-hidden">
+                            <img
+                              src="/images/templates/flash/placeholder.png"
+                              alt=""
+                              className="logo-img hidden"
+                            />
+                            <EditableText
+                              value={logo.name}
+                              onChange={(value) =>
+                                handleLogoNameChange(
+                                  logo.id,
+                                  value,
+                                  logo.sortOrder
+                                )
+                              }
+                              editingId={`clients-logo-${logo.id}`}
+                              className="logo-text text-center text-[0.75rem] leading-tight font-medium tracking-wide uppercase"
+                              canEdit={canEdit}
+                            />
+                          </span>
+                        </div>
+                      ))
+                  : null}
               </div>
             </div>
           </div>
@@ -212,4 +259,3 @@ export default function MinimalClients({
     </>
   );
 }
-

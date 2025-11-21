@@ -57,16 +57,6 @@ export default function DashboardLayout({
 
         if (response.ok) {
           const result = (await response.json()) as OnboardingStatusApiResponse;
-<<<<<<< HEAD
-          if (result.success && result.data.needsOnboarding && isMounted && !hasRedirected) {
-            setHasRedirected(true);
-            router.replace("/onboarding?recovery=1");
-            return;
-||||||| parent of 0b966d7 (feat: minimal revamp)
-          if (result.success && result.data.needsOnboarding) {
-            router.replace("/onboarding?recovery=1");
-            return;
-=======
           if (result.success && result.data.needsOnboarding) {
             // Only redirect if we're not already on onboarding page
             if (!pathname?.startsWith("/onboarding")) {
@@ -74,7 +64,6 @@ export default function DashboardLayout({
               router.replace("/onboarding?recovery=1");
               return;
             }
->>>>>>> 0b966d7 (feat: minimal revamp)
           }
         }
       } catch (error) {
@@ -90,14 +79,7 @@ export default function DashboardLayout({
           user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
         )?.subscriptionActive;
 
-<<<<<<< HEAD
-        if (!hasActiveSubscription) {
-          setHasRedirected(true);
-||||||| parent of 0b966d7 (feat: minimal revamp)
-        if (!hasActiveSubscription) {
-=======
         if (!hasActiveSubscription && !pathname?.startsWith("/planos")) {
->>>>>>> 0b966d7 (feat: minimal revamp)
           router.push("/planos");
         }
       }
@@ -108,13 +90,7 @@ export default function DashboardLayout({
     return () => {
       isMounted = false;
     };
-<<<<<<< HEAD
-  }, [user, isLoaded, router, hasRedirected]);
-||||||| parent of 0b966d7 (feat: minimal revamp)
-  }, [user, isLoaded, router]);
-=======
-  }, [user, isLoaded, router, pathname]);
->>>>>>> 0b966d7 (feat: minimal revamp)
+  }, [user, isLoaded, hasRedirected, router, pathname]);
 
   if (!isLoaded || isCheckingOnboarding) {
     return (

@@ -7,9 +7,11 @@ import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import EditableButton from "#/app/editar/components/EditableButton";
+import EditableLogo from "#/app/editar/components/EditableLogo";
+import EditableAvatar from "#/app/editar/components/EditableAvatar";
 import { useEditor } from "../../../contexts/EditorContext";
 
-export default function MinimalIntro({ userName, title }: IntroductionSection) {
+export default function MinimalIntro({ userName, title, subtitle, logo, clientPhoto, description }: IntroductionSection) {
   const { updateIntroduction, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
@@ -54,28 +56,33 @@ export default function MinimalIntro({ userName, title }: IntroductionSection) {
           color: #fbfbfb;
           font-weight: 500;
           font-size: 1.125rem;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
         }
 
         .btn-animate-chars {
           position: relative;
           overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 0.5rem;
-          padding: 0.875rem 1.5rem;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 0.75rem;
+          padding: 1rem 1.75rem;
           text-decoration: none;
           display: inline-block;
-          transition: border-color 0.3s;
-          background: #202020;
+          transition: all 0.3s ease;
+          background: transparent;
           cursor: pointer;
         }
 
         .btn-animate-chars:hover {
-          border-color: rgba(255, 255, 255, 0.5);
+          border-color: rgba(255, 255, 255, 0.7);
+          background: rgba(255, 255, 255, 0.05);
         }
 
         .btn-animate-chars__text {
           color: #fbfbfb;
           font-size: 1rem;
+          font-weight: 400;
         }
 
         .padding-section-large {
@@ -116,10 +123,6 @@ export default function MinimalIntro({ userName, title }: IntroductionSection) {
         }
 
         .heading-client-image {
-          width: 4rem;
-          height: 4rem;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 50%;
           flex-shrink: 0;
         }
 
@@ -238,6 +241,14 @@ export default function MinimalIntro({ userName, title }: IntroductionSection) {
             <div className="container-large">
               <div className="nav_wrap">
                 <div className="nav_brand">
+                  <EditableLogo
+                    logoUrl={logo}
+                    onLogoChange={(newLogo: string | null) =>
+                      updateIntroduction({ logo: newLogo || undefined })
+                    }
+                    size="md"
+                    editingId="intro-logo"
+                  />
                   <EditableText
                     value={userName || "Your Name"}
                     onChange={(newUserName: string) =>
@@ -248,7 +259,7 @@ export default function MinimalIntro({ userName, title }: IntroductionSection) {
                   />
                 </div>
                 <div
-                  className={`m-0 h-[60px] w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
+                  className={`m-0 h-auto w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isButtonModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                 >
                   <div
                     className={`btn-animate-chars ${canEdit ? "" : "cursor-not-allowed"}`}
@@ -257,11 +268,6 @@ export default function MinimalIntro({ userName, title }: IntroductionSection) {
                       if (canEdit) {
                         setIsButtonModalOpen(true);
                       }
-                    }}
-                    style={{
-                      border: isButtonModalOpen
-                        ? "1px solid #0170D6"
-                        : "1px solid rgba(255, 255, 255, .2)",
                     }}
                   >
                     <span className="btn-animate-chars__text">
@@ -288,9 +294,15 @@ export default function MinimalIntro({ userName, title }: IntroductionSection) {
               <div className="hero_left">
                 <div className="heading-wrap">
                   <h1 className="heading-style-h1 text-weight-light">Olá,</h1>
-                  <div className="heading-client-image overflow-hidden">
-                    <img src="/images/templates/flash/placeholder.png" alt="" />
-                  </div>
+                  <EditableAvatar
+                    imageUrl={clientPhoto}
+                    onImageChange={(newPhoto: string | null) =>
+                      updateIntroduction({ clientPhoto: newPhoto || undefined })
+                    }
+                    size="lg"
+                    editingId="intro-clientPhoto"
+                    className="heading-client-image"
+                  />
                   <EditableText
                     value={userName || "Cliente"}
                     onChange={(newUserName: string) =>
@@ -312,39 +324,53 @@ export default function MinimalIntro({ userName, title }: IntroductionSection) {
               </div>
               <div className="hero_right">
                 {projectData?.projectValidUntil && (
-                  <div
-                    className={`relative m-0 h-auto w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
-                  >
+                  <div className="flex flex-col gap-3 items-end">
                     <div
-                      className={`text-size-regular ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (canEdit) {
-                          setIsDateModalOpen(true);
-                        }
-                      }}
-                      style={{
-                        border: isDateModalOpen
-                          ? "1px solid #0170D6"
-                          : "1px solid transparent",
-                        background: isDateModalOpen
-                          ? "#0170D666"
-                          : "transparent",
-                        padding: "4px",
-                      }}
+                      className={`relative m-0 h-auto w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                     >
-                      Proposta —{" "}
-                      <span className="text-color-grey">
-                        {formatDateToDDDeMonthDeYYYY(
-                          projectData.projectValidUntil.toString()
-                        )}
-                      </span>
+                      <div
+                        className={`text-size-regular ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (canEdit) {
+                            setIsDateModalOpen(true);
+                          }
+                        }}
+                        style={{
+                          border: isDateModalOpen
+                            ? "1px solid #0170D6"
+                            : "1px solid transparent",
+                          background: isDateModalOpen
+                            ? "#0170D666"
+                            : "transparent",
+                          padding: "4px",
+                        }}
+                      >
+                        Proposta —{" "}
+                        <span className="text-color-grey">
+                          {formatDateToDDDeMonthDeYYYY(
+                            projectData.projectValidUntil.toString()
+                          )}
+                        </span>
+                      </div>
+                      <EditableDate
+                        isModalOpen={isDateModalOpen}
+                        setIsModalOpen={setIsDateModalOpen}
+                        editingId="intro-date"
+                      />
                     </div>
-                    <EditableDate
-                      isModalOpen={isDateModalOpen}
-                      setIsModalOpen={setIsDateModalOpen}
-                      editingId="intro-date"
-                    />
+                    {subtitle && (
+                      <div className="max-w-[340px] text-right">
+                        <EditableText
+                          value={subtitle}
+                          onChange={(newSubtitle: string) =>
+                            updateIntroduction({ subtitle: newSubtitle })
+                          }
+                          className="text-size-regular text-color-grey"
+                          editingId="intro-subtitle"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

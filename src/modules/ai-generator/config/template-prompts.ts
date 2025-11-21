@@ -139,7 +139,10 @@ export const defaultTemplateConfigs: Record<string, TemplateConfig> = {
     sections: {
       introduction: {
         enabled: true,
-        prompt: `DADOS DO PROJETO:
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+DADOS DO PROJETO:
 - Cliente: {clientName}
 - Projeto: {projectName}
 - Descrição: {projectDescription}
@@ -230,7 +233,10 @@ PROCESSO:
 
       aboutUs: {
         enabled: true,
-        prompt: `Crie uma seção "Sobre Nós" premium e personalizada para o projeto {projectName} de {clientName}.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Crie uma seção "Sobre Nós" premium e personalizada para o projeto {projectName} de {clientName}.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -274,7 +280,10 @@ REGRAS RÍGIDAS
 
       team: {
         enabled: true,
-        prompt: `Gere título e membros da equipe para o projeto.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere título e membros da equipe para o projeto.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -323,7 +332,10 @@ Retorne APENAS um JSON válido com:
 
       specialties: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para a seção "Especialidades" seguindo, sem desvios, os limites abaixo.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere APENAS um JSON válido para a seção "Especialidades" seguindo, sem desvios, os limites abaixo.
 
 PROJETO: {projectName} - {projectDescription}
 
@@ -412,7 +424,10 @@ REGRAS OBRIGATÓRIAS:
 
       steps: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para a seção "Processo" respeitando rigorosamente os limites abaixo.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere APENAS um JSON válido para a seção "Processo" respeitando rigorosamente os limites abaixo.
 
 PROJETO: {projectName} - {projectDescription}
 
@@ -462,7 +477,10 @@ REGRAS RÍGIDAS
 
       scope: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para o escopo do projeto.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere APENAS um JSON válido para o escopo do projeto.
 
 PROJETO: {projectName} - {projectDescription}
 
@@ -489,7 +507,10 @@ REGRAS RÍGIDAS
 
       investment: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para a seção "Investimento" obedecendo todos os limites e estrutura abaixo.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere APENAS um JSON válido para a seção "Investimento" obedecendo todos os limites e estrutura abaixo.
 
 PROJETO: {projectName} - {projectDescription}
 PLANOS INFORMADOS PELO USUÁRIO: {selectedPlans}
@@ -590,7 +611,10 @@ REGRAS RÍGIDAS
 
       terms: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido (ARRAY) para termos e condições dentro dos limites abaixo.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere APENAS um JSON válido (ARRAY) para termos e condições dentro dos limites abaixo.
 
 PROJETO: {projectName} - {projectDescription}
 
@@ -628,7 +652,10 @@ REGRAS RÍGIDAS
 
       faq: {
         enabled: true,
-        prompt: `Gere APENAS um JSON válido para perguntas frequentes, respeitando rigorosamente os limites.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere APENAS um JSON válido para perguntas frequentes, respeitando rigorosamente os limites.
 
 PROJETO: {projectName} - {projectDescription}
 
@@ -705,7 +732,10 @@ REGRAS RÍGIDAS
     sections: {
       introduction: {
         enabled: true,
-        prompt: `Gere uma introdução minimalista e direta para a proposta.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere uma introdução minimalista e direta para a proposta.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -719,8 +749,14 @@ FORMATO:
 {
   "userName": "{userName}",
   "email": "{userEmail}",
-  "title": "Título direto e claro com até 120 caracteres",
-  "subtitle": "Subtítulo explicativo com até 200 caracteres",
+  "logo": null,
+  "hideLogo": false,
+  "clientPhoto": null,
+  "hideClientPhoto": false,
+  "title": "Título direto e claro (MÁXIMO 120 caracteres)",
+  "description": "Descrição concisa da proposta de valor (MÁXIMO 100 caracteres)",
+  "hideDescription": false,
+  "subtitle": "Subtítulo explicativo (MÁXIMO 180 caracteres - CONTE!)",
   "hideSubtitle": false,
   "services": [
     { "id": "1", "serviceName": "Serviço 1 com até 50 caracteres", "sortOrder": 1 },
@@ -729,22 +765,77 @@ FORMATO:
   ]
 }
 
-REGRAS:
+🚨🚨🚨 INSTRUÇÕES CRÍTICAS DE CONTAGEM - LEIA ANTES DE GERAR 🚨🚨🚨
+
+⚠️ ATENÇÃO MÁXIMA: Cada campo tem um limite RÍGIDO que é VERIFICADO AUTOMATICAMENTE!
+⚠️ Se você ultrapassar qualquer limite, sua resposta será REJEITADA e você terá que gerar TUDO NOVAMENTE!
+⚠️ O sistema NÃO vai cortar/truncar seu texto. Ele vai REJEITAR e você vai refazer TODO o trabalho!
+
+🔒 LIMITES ABSOLUTOS E INEGOCIÁVEIS (incluindo espaços, pontos, vírgulas, TUDO):
+- title: MÁXIMO ABSOLUTO 120 caracteres | RECOMENDADO: 60-100 caracteres
+- description: MÁXIMO ABSOLUTO 100 caracteres | RECOMENDADO: 50-80 caracteres  
+- subtitle: MÁXIMO ABSOLUTO 180 caracteres | RECOMENDADO: 120-160 caracteres
+- serviceName: MÁXIMO ABSOLUTO 50 caracteres CADA | RECOMENDADO: 30-40 caracteres
+
+📏 MÉTODO OBRIGATÓRIO DE CONTAGEM:
+1. Escreva o texto
+2. CONTE caractere por caractere, incluindo TODOS os espaços
+3. Se estiver acima do limite, DELETE palavras até ficar ABAIXO
+4. Valide contando NOVAMENTE de trás para frente
+5. Só envie depois de ter CERTEZA absoluta
+
+✅ EXEMPLOS VALIDADOS (subtitle 180 chars MAX):
+
+CORRETO ✓ (140 chars - seguro):
+"Desenvolvemos sites modernos e responsivos que destacam sua marca e conectam você com novos clientes através de experiências digitais intuitivas"
+Contagem: D-e-s-e-n-v... = 140 caracteres ✓
+
+CORRETO ✓ (165 chars - no limite):
+"Criamos experiências digitais estratégicas que elevam marcas, conquistam audiências engajadas e transformam visitantes em clientes através de design e tecnologia"
+Contagem: C-r-i-a-m-o-s... = 165 caracteres ✓
+
+❌ ERRADO ✗ (218 chars - REJEITADO):
+"Desenvolvemos sites institucionais modernos e vitrines digitais que destacam sua empresa, produtos e serviços, oferecendo experiências de navegação claras e intuitivas para fortalecer sua presença online"
+Contagem: D-e-s-e-n-v... = 218 caracteres ✗ ISTO VAI SER REJEITADO!
+
+COMO CORRIGIR O EXEMPLO ERRADO:
+Original: 218 chars ✗
+Removendo "produtos e serviços, oferecendo": 168 chars ✓
+Resultado: "Desenvolvemos sites institucionais modernos e vitrines digitais que destacam sua empresa, com experiências de navegação claras e intuitivas para fortalecer sua presença online"
+
+⚠️ PROCESSO RIGOROSO ANTES DE ENVIAR:
+1. Escreva o texto normalmente
+2. Copie mentalmente e conte: 1, 2, 3, 4... até o fim
+3. Se passar do MÁXIMO, corte palavras imediatamente
+4. Sempre use 20 caracteres ABAIXO do limite máximo para segurança
+5. subtitle: nunca passe de 160 chars (margem de segurança)
+6. title: nunca passe de 100 chars (margem de segurança)
+7. description: nunca passe de 80 chars (margem de segurança)
+
+REGRAS DE ESTILO:
 - Linguagem direta e profissional
 - Evite excesso de adjetivos
 - Foco em benefícios concretos
-- Máximo 3-4 serviços principais`,
+- Máximo 3-4 serviços principais
+- logo e clientPhoto sempre começam como null (usuário adiciona depois)`,
         expectedFormat: `{
   "userName": "string",
   "email": "string",
+  "logo": null,
+  "hideLogo": false,
+  "clientPhoto": null,
+  "hideClientPhoto": false,
   "title": "string (max 120 chars)",
-  "subtitle": "string (max 200 chars)",
+  "description": "string (max 100 chars)",
+  "hideDescription": false,
+  "subtitle": "string (max 180 chars)",
   "hideSubtitle": false,
   "services": [{"id": "string", "serviceName": "string (max 50 chars)", "sortOrder": number}]
 }`,
         rules: [
           "title: até 120 caracteres, direto e claro",
-          "subtitle: até 200 caracteres",
+          "description: até 100 caracteres, proposta de valor concisa",
+          "subtitle: até 180 caracteres (CRÍTICO: conte os caracteres antes de gerar!)",
           "services: 3-4 itens, cada um com até 50 caracteres",
           "Tom profissional e minimalista",
         ],
@@ -752,7 +843,10 @@ REGRAS:
 
       aboutUs: {
         enabled: true,
-        prompt: `Crie uma seção "Sobre" minimalista e personalizada.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Crie uma seção "Sobre" minimalista e personalizada.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -764,24 +858,68 @@ FORMATO:
 {
   "hideSection": false,
   "title": "Proposta de valor clara e direta (até 100 caracteres)",
-  "subtitle": "Descrição detalhada conectando a empresa ao projeto do cliente. DEVE mencionar {clientName} de forma natural (até 250 caracteres)"
+  "subtitle": "Descrição detalhada conectando a empresa ao projeto do cliente. DEVE mencionar {clientName} de forma natural (até 250 caracteres)",
+  "marqueeText": "Texto marquee com serviços separados por → (ex: Brand Design → UI Design → Development) (até 200 caracteres)",
+  "hideMarquee": false,
+  "items": [
+    {
+      "id": "1",
+      "image": null,
+      "caption": "Descrição concisa e impactante sobre expertise (até 100 caracteres)",
+      "hideImage": false,
+      "hideCaption": false,
+      "sortOrder": 0
+    },
+    {
+      "id": "2",
+      "image": null,
+      "caption": "Descrição concisa e impactante sobre metodologia (até 100 caracteres)",
+      "hideImage": false,
+      "hideCaption": false,
+      "sortOrder": 1
+    }
+  ]
 }
 
+INSTRUÇÕES CRÍTICAS DE CONTAGEM:
+⚠️ ANTES de gerar cada texto, CONTE os caracteres mentalmente!
+⚠️ Se ultrapassar o limite, REESCREVA o texto mais curto!
+⚠️ Nunca envie texto que ultrapasse os limites abaixo:
+
 REGRAS:
-- title: proposta de valor clara (até 100 caracteres)
-- subtitle: OBRIGATÓRIO incluir o nome do cliente ({clientName}) de forma natural
-- subtitle: explicar como vamos ajudar especificamente este cliente (até 250 caracteres)
+- title: MÁXIMO 100 caracteres (conte letra por letra incluindo espaços!)
+- subtitle: MÁXIMO 250 caracteres (conte!) - OBRIGATÓRIO incluir {clientName}
+- marqueeText: MÁXIMO 200 caracteres (conte!) - 4-6 serviços separados por " → "
+- items: SEMPRE 2 itens (NÃO MAIS, NÃO MENOS!)
+- caption: MÁXIMO 100 caracteres cada (conte!)
+- image: sempre null (usuário adiciona depois)
 - Linguagem direta e autêntica
 - Foco na proposta de valor personalizada
 - Evite clichês e jargões`,
         expectedFormat: `{
   "hideSection": false,
   "title": "string (max 100 chars)",
-  "subtitle": "string (max 250 chars, must mention client name)"
+  "subtitle": "string (max 250 chars, must mention client name)",
+  "marqueeText": "string (max 200 chars, services separated by →)",
+  "hideMarquee": false,
+  "items": [
+    {
+      "id": "string",
+      "image": null,
+      "caption": "string (max 100 chars)",
+      "hideImage": false,
+      "hideCaption": false,
+      "sortOrder": number
+    }
+  ]
 }`,
         rules: [
           "title: até 100 caracteres",
           "subtitle: até 250 caracteres, DEVE mencionar o cliente",
+          "marqueeText: até 200 caracteres, 4-6 serviços separados por →",
+          "items: sempre 2 itens",
+          "caption: até 100 caracteres por item",
+          "image: sempre null",
           "Mensagem clara e direta",
           "Tom autêntico e personalizado",
         ],
@@ -789,7 +927,10 @@ REGRAS:
 
       team: {
         enabled: true,
-        prompt: `Gere a seção de equipe minimalista.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere a seção de equipe minimalista.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -831,7 +972,10 @@ REGRAS:
 
       clients: {
         enabled: true,
-        prompt: `Gere a seção de marcas/parceiros atendidos.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere seção de clientes/parceiros com estilo minimalista e profissional.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -842,48 +986,84 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
-  "title": "Título com até 120 caracteres",
-  "description": "Resumo curto com até 200 caracteres",
+  "subtitle": "Subtítulo curto em MAIÚSCULAS com até 50 caracteres (ex: PARCEIROS QUE CONFIAM)",
+  "hideSubtitle": false,
+  "title": "Título principal sobre confiança/parceria com até 100 caracteres",
+  "hideTitle": false,
+  "description": "Descrição sobre a relação com clientes com até 180 caracteres",
+  "hideDescription": false,
   "paragraphs": [
-    "Parágrafo 1 com até 280 caracteres",
-    "Parágrafo 2 com até 280 caracteres"
+    "Parágrafo 1 sobre abordagem de trabalho com até 200 caracteres",
+    "Parágrafo 2 sobre proposta de valor com até 200 caracteres"
   ],
   "items": [
     {
       "id": "1",
-      "name": "Nome da marca/cliente",
-      "logo": "URL opcional",
-      "sortOrder": 0
+      "name": "NOME MARCA",
+      "logo": null,
+      "sortOrder": 0,
+      "hideClient": false
     }
   ]
 }
 
+INSTRUÇÕES CRÍTICAS DE CONTAGEM:
+⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO que NÃO PODE ser ultrapassado!
+⚠️ Escreva, CONTE manualmente, e se ultrapassar, REESCREVA mais curto!
+⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
+
+LIMITES OBRIGATÓRIOS:
+- subtitle: ATÉ 50 caracteres (conte letra por letra!)
+- title: ATÉ 100 caracteres (conte letra por letra!)
+- description: ATÉ 180 caracteres (conte letra por letra!)
+- paragraphs: 2 parágrafos, ATÉ 200 caracteres CADA (conte!)
+- items: EXATAMENTE 12 nomes (NÃO MAIS, NÃO MENOS!)
+- item.name: ATÉ 50 caracteres, MAIÚSCULAS (conte!)
+
+EXEMPLOS CORRETOS:
+
+✅ subtitle (50 chars ou menos):
+"PARCEIROS QUE CONFIAM" = 21 chars ✓
+"CLIENTES DE SUCESSO" = 19 chars ✓
+
+✅ paragraphs (200 chars ou menos):
+"Trabalhamos lado a lado com nossos clientes, entendendo suas necessidades únicas e desenvolvendo soluções personalizadas que geram resultados concretos e duradouros" = 168 chars ✓
+
+❌ ERRADO:
+"Trabalhamos de forma colaborativa lado a lado com todos os nossos clientes, entendendo profundamente suas necessidades específicas e únicas e desenvolvendo soluções completamente personalizadas" = 198 chars... ✗ MUITO LONGO!
+
 REGRAS:
-- Gere 6 a 8 marcas reais ou plausíveis para o setor
-- Valorize autoridade e confiança
-- Parágrafos devem reforçar proposta de valor e abordagem estratégica`,
+- logo sempre null (usuário adiciona depois)
+- Nomes devem ser plausíveis para o setor do projeto
+- Usar linguagem direta, profissional e confiável`,
         expectedFormat: `{
   "hideSection": false,
-  "title": "string (max 120 chars)",
-  "description": "string (max 200 chars)",
-  "paragraphs": ["string (max 280 chars)", "string (max 280 chars)"],
-  "items": [{
-    "id": "string",
-    "name": "string",
-    "logo": "string",
-    "sortOrder": number
-  }]
+  "subtitle": "string (max 50 chars, UPPERCASE)",
+  "hideSubtitle": false,
+  "title": "string (max 100 chars)",
+  "hideTitle": false,
+  "description": "string (max 180 chars)",
+  "hideDescription": false,
+  "paragraphs": ["string (max 200 chars)", "string (max 200 chars)"],
+  "items": [{"id": "string", "name": "string (UPPERCASE)", "logo": null, "sortOrder": number, "hideClient": false}]
 }`,
         rules: [
-          "6-8 marcas",
-          "Parágrafos até 280 caracteres",
-          "Marcas relevantes ao setor",
+          "subtitle: até 50 caracteres, EM MAIÚSCULAS",
+          "title: até 100 caracteres",
+          "description: até 180 caracteres",
+          "paragraphs: 2 parágrafos, até 200 caracteres cada",
+          "EXATAMENTE 12 marcas/clientes",
+          "Nomes em MAIÚSCULAS, curtos e plausíveis",
+          "Linguagem profissional e confiável",
         ],
       },
 
       specialties: {
         enabled: true,
-        prompt: `Gere seção de expertise/áreas de atuação.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere seção de expertise/áreas de atuação com estilo minimalista e profissional.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -894,44 +1074,85 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
-  "title": "Título da seção com até 100 caracteres",
+  "subtitle": "Subtítulo curto e impactante em MAIÚSCULAS com até 50 caracteres (ex: TRANSFORME IDEIA EM RESULTADO)",
+  "hideSubtitle": false,
+  "title": "Título principal da seção, direto e profissional com até 100 caracteres",
   "hideIcon": false,
   "topics": [
     {
       "id": "1",
-      "icon": "StarIcon",
-      "title": "Título da área com até 60 caracteres",
-      "description": "Descrição direta com até 250 caracteres",
+      "icon": "DiamondIcon",
+      "title": "Nome da área de atuação com até 30 caracteres",
+      "description": "Descrição concisa do serviço com até 120 caracteres",
       "sortOrder": 1
     }
   ]
 }
 
 ÍCONES DISPONÍVEIS:
-AwardIcon, BellIcon, BulbIcon, DiamondIcon, EyeIcon, FolderIcon, GearIcon, GlobeIcon, HeartIcon, HexagonalIcon, KeyIcon, PlayIcon, StarIcon, ThunderIcon
+DiamondIcon (para branding/identidade), BulbIcon (para criatividade/ideias), ThunderIcon (para performance/rapidez), 
+GearIcon (para processos/gestão), GlobeIcon (para web/digital), FolderIcon (para organização/arquivos),
+EyeIcon (para consultoria/análise), StarIcon (para qualidade premium), HeartIcon (para experiência/relacionamento),
+AwardIcon (para conquistas/resultados), KeyIcon (para soluções/acesso), PlayIcon (para ação/execução),
+CrownIcon (para liderança/premium), HexagonalIcon (para estrutura/solidez), BellIcon (para comunicação/alertas)
 
-REGRAS:
-- 3-6 áreas de expertise
-- Descrições diretas e práticas
-- Ícones relevantes para cada área`,
+INSTRUÇÕES CRÍTICAS DE CONTAGEM:
+⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO que NÃO PODE ser ultrapassado!
+⚠️ Escreva, CONTE manualmente, e se ultrapassar, REESCREVA mais curto!
+⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
+
+LIMITES OBRIGATÓRIOS:
+- subtitle: ATÉ 50 caracteres (conte letra por letra!)
+- title: ATÉ 100 caracteres (conte letra por letra!)
+- topics: EXATAMENTE 9 áreas (grid 3x3) - NÃO MAIS, NÃO MENOS!
+- topic.title: ATÉ 30 caracteres CADA (conte!)
+- topic.description: ATÉ 120 caracteres CADA (conte!)
+
+EXEMPLOS CORRETOS:
+
+✅ topic.title (30 chars ou menos):
+"Brand Strategy" = 14 chars ✓
+"Social Media" = 12 chars ✓
+"Growth Hacking" = 14 chars ✓
+
+✅ topic.description (120 chars ou menos):
+"Desenvolvemos estratégias de marca que elevam seu posicionamento e criam conexões autênticas" = 94 chars ✓
+"Gestão completa das suas redes sociais com conteúdo estratégico e engajamento real" = 84 chars ✓
+
+❌ ERRADO:
+"Desenvolvemos estratégias completas e integradas de marca que elevam significativamente seu posicionamento no mercado e criam conexões profundas" = 145 chars ✗ REJEITADO!
+
+OUTRAS REGRAS:
+- Selecionar ícones que representem visualmente cada área
+- Usar linguagem direta, profissional e orientada a resultados
+- EVITAR adjetivos excessivos ou linguagem genérica`,
         expectedFormat: `{
   "hideSection": false,
+  "subtitle": "string (max 50 chars, UPPERCASE)",
+  "hideSubtitle": false,
   "title": "string (max 100 chars)",
   "hideIcon": false,
-  "topics": [{"id": "string", "icon": "string", "title": "string (max 60 chars)", "description": "string (max 250 chars)", "sortOrder": number}]
+  "topics": [{"id": "string", "icon": "string", "title": "string (max 30 chars)", "description": "string (max 120 chars)", "sortOrder": number}]
 }`,
         rules: [
+          "subtitle: até 50 caracteres, EM MAIÚSCULAS",
           "title: até 100 caracteres",
-          "3-6 topics",
-          "Descrições práticas e diretas",
+          "EXATAMENTE 9 topics (grid 3x3)",
+          "topic.title: até 30 caracteres",
+          "topic.description: até 120 caracteres",
+          "Ícones apropriados para cada área",
+          "Linguagem direta e profissional",
         ],
-        minTopics: 3,
-        maxTopics: 8,
+        minTopics: 9,
+        maxTopics: 9,
       },
 
       steps: {
         enabled: true,
-        prompt: `Gere seção de processo/metodologia.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere seção de processo/metodologia.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -977,7 +1198,10 @@ REGRAS:
 
       investment: {
         enabled: true,
-        prompt: `Gere seção de investimento minimalista.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere seção de investimento minimalista.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -1019,7 +1243,10 @@ REGRAS:
 
       plans: {
         enabled: true,
-        prompt: `Gere planos de preços para a proposta minimalista.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere planos de investimento para a proposta com estilo minimalista e profissional.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -1031,15 +1258,22 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
+  "subtitle": "Subtítulo curto em MAIÚSCULAS com até 50 caracteres (ex: ESCOLHA SEU PLANO)",
+  "hideSubtitle": false,
+  "title": "Título principal sobre os planos com até 120 caracteres",
+  "hideTitle": false,
   "plansItems": [
     {
       "id": "1",
-      "title": "Nome do plano com até 50 caracteres",
-      "description": "Descrição do plano com até 150 caracteres",
-      "value": número (ex: 980, 1750, 2950),
-      "planPeriod": "mensal",
-      "recommended": true/false,
-      "buttonTitle": "Texto do botão com até 25 caracteres",
+      "title": "Nome do plano com até 30 caracteres",
+      "description": "Descrição curta e persuasiva com até 120 caracteres",
+      "value": "R$ 1.750",
+      "planPeriod": "Investimento único",
+      "recommended": false,
+      "buttonTitle": "Escolher plano",
+      "buttonWhereToOpen": "link",
+      "buttonHref": "#",
+      "buttonPhone": "",
       "hideTitleField": false,
       "hideDescription": false,
       "hidePrice": false,
@@ -1050,7 +1284,8 @@ FORMATO:
       "includedItems": [
         {
           "id": "1",
-          "description": "Item incluído com até 100 caracteres",
+          "description": "Benefício/item incluído com até 60 caracteres",
+          "hideDescription": false,
           "hideItem": false,
           "sortOrder": 0
         }
@@ -1059,23 +1294,81 @@ FORMATO:
   ]
 }
 
-REGRAS:
-- Gere exatamente {selectedPlans} planos (entre 1 e 3)
-- O plano de maior valor DEVE ter recommended = true
-- Cada plano deve ter entre 3 e 8 itens incluídos
-- Valores devem ser realistas para o setor
-- Descrições dos itens devem ser claras e diretas
-- Use verbos no infinitivo ou substantivos fortes`,
+INSTRUÇÕES CRÍTICAS PARA VARIAÇÕES:
+
+SE {selectedPlans} = 1 (UM PLANO):
+- Criar 1 plano completo e robusto
+- recommended: false (não há comparação)
+- 6-8 itens incluídos para demonstrar valor completo
+- Título do plano: nome do pacote principal
+- Valor sugerido: faixa R$ 1.500 a R$ 3.500
+
+SE {selectedPlans} = 2 (DOIS PLANOS):
+- Criar 2 planos: Básico + Premium
+- O plano mais caro DEVE ter recommended: true
+- Plano 1 (básico): 4-5 itens, valor R$ 980 a R$ 1.500
+- Plano 2 (premium): 6-8 itens, valor R$ 1.750 a R$ 2.950
+- Diferenciação clara entre os planos
+
+SE {selectedPlans} = 3 (TRÊS PLANOS):
+- Criar 3 planos: Essencial + Profissional + Completo
+- O plano intermediário (do meio) DEVE ter recommended: true
+- Plano 1 (essencial): 3-4 itens, valor R$ 980 a R$ 1.500
+- Plano 2 (profissional): 5-6 itens, valor R$ 1.750 a R$ 2.500 [RECOMMENDED]
+- Plano 3 (completo): 7-9 itens, valor R$ 2.950 a R$ 5.000
+- Progressão lógica de recursos e valor
+
+INSTRUÇÕES CRÍTICAS DE CONTAGEM:
+⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO de caracteres que NÃO PODE ser ultrapassado!
+⚠️ Escreva o texto, CONTE manualmente os caracteres, e se ultrapassar, REESCREVA mais curto!
+⚠️ NÃO envie textos mais longos esperando que sejam cortados - eles serão REJEITADOS!
+
+LIMITES OBRIGATÓRIOS (incluindo espaços):
+- subtitle: ATÉ 50 caracteres (conte letra por letra!)
+- title: ATÉ 120 caracteres (conte letra por letra!)
+- plan.title: ATÉ 30 caracteres CADA (conte!)
+- plan.description: ATÉ 120 caracteres CADA (conte!)
+- includedItems.description: ATÉ 60 caracteres CADA (este é o mais importante - conte!)
+
+EXEMPLOS CORRETOS de includedItems (60 chars ou menos):
+
+✅ CORRETO (60 chars ou menos):
+"Design completo e responsivo para todas as telas" = 51 chars ✓
+"SEO avançado com otimização técnica e de conteúdo" = 50 chars ✓  
+"Suporte dedicado por 30 dias após lançamento" = 45 chars ✓
+
+❌ ERRADO (mais de 60 chars):
+"Design completo e totalmente responsivo para todas as telas e dispositivos" = 75 chars ✗ REJEITADO!
+"SEO avançado com otimização técnica completa e auditoria de conteúdo detalhada" = 79 chars ✗ REJEITADO!
+
+PROCESSO OBRIGATÓRIO:
+1. Escreva o benefício
+2. Conte CADA caractere (incluindo espaços)
+3. Se passar de 60, REESCREVA mais curto
+4. Valide novamente antes de enviar
+
+OUTRAS REGRAS:
+- value: formato "R$ X.XXX" (SEM centavos, COM espaço após R$)
+- planPeriod: "Investimento único" OU "por mês" OU "mensal"
+- Linguagem persuasiva, profissional e orientada a valor
+- Items devem ser benefícios tangíveis, não features técnicas`,
         expectedFormat: `{
   "hideSection": false,
+  "subtitle": "string (max 50 chars, UPPERCASE)",
+  "hideSubtitle": false,
+  "title": "string (max 120 chars)",
+  "hideTitle": false,
   "plansItems": [{
     "id": "string",
-    "title": "string (max 50 chars)",
-    "description": "string (max 150 chars)",
-    "value": number,
+    "title": "string (max 30 chars)",
+    "description": "string (max 120 chars)",
+    "value": "string (format: R$ X.XXX)",
     "planPeriod": "string",
     "recommended": boolean,
     "buttonTitle": "string (max 25 chars)",
+    "buttonWhereToOpen": "link",
+    "buttonHref": "#",
+    "buttonPhone": "",
     "hideTitleField": false,
     "hideDescription": false,
     "hidePrice": false,
@@ -1085,24 +1378,32 @@ REGRAS:
     "sortOrder": number,
     "includedItems": [{
       "id": "string",
-      "description": "string (max 100 chars)",
+      "description": "string (max 60 chars)",
+      "hideDescription": false,
       "hideItem": false,
       "sortOrder": number
     }]
   }]
 }`,
         rules: [
-          "Gere exatamente a quantidade de planos solicitada",
-          "Plano de maior valor deve ser recommended",
-          "3-8 itens por plano",
-          "Valores realistas",
-          "Descrições claras e diretas",
+          "subtitle: até 50 caracteres, EM MAIÚSCULAS",
+          "title: até 120 caracteres",
+          "Gerar EXATAMENTE {selectedPlans} planos",
+          "1 plano: 6-8 items, recommended: false",
+          "2 planos: 4-5 e 6-8 items, recommended no mais caro",
+          "3 planos: 3-4, 5-6, 7-9 items, recommended no do meio",
+          "value: formato R$ X.XXX (sem centavos)",
+          "includedItems description: até 60 caracteres",
+          "Linguagem persuasiva e profissional",
         ],
       },
 
       faq: {
         enabled: true,
-        prompt: `Gere seção de FAQ minimalista.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere seção de FAQ minimalista.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -1141,7 +1442,10 @@ REGRAS:
 
       footer: {
         enabled: true,
-        prompt: `Gere informações de contato para o rodapé da proposta.
+        prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+
+Gere informações de contato para o rodapé da proposta.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -1153,26 +1457,35 @@ FORMATO:
 {
   "callToAction": "Pergunta de chamada para ação com até 100 caracteres",
   "disclaimer": "Texto de aviso legal com até 300 caracteres",
-  "email": "Email de contato (use {userEmail} se disponível, senão gere um email profissional)",
-  "phone": "Telefone de contato no formato brasileiro (+55 XX XXXXX-XXXX)"
+  "email": "{userEmail}",
+  "phone": "Telefone de contato no formato brasileiro (+55 XX XXXXX-XXXX)",
+  "marqueeText": "Texto marquee com serviços separados por → (ex: Design → Desenvolvimento → Marketing) (até 200 caracteres)",
+  "hideMarquee": false
 }
 
-REGRAS:
-- callToAction: pergunta convidativa e direta (até 100 caracteres)
-- disclaimer: texto sobre validade da proposta (até 300 caracteres)
-- email: use {userEmail} se disponível, senão gere email profissional baseado em {companyInfo}
-- phone: formato brasileiro com DDD e 9 dígitos`,
+INSTRUÇÕES CRÍTICAS:
+- callToAction: pergunta convidativa e direta (MÁXIMO 100 caracteres - CONTE!)
+- disclaimer: texto sobre validade da proposta (MÁXIMO 300 caracteres - CONTE!)
+- email: SEMPRE usar {userEmail} fornecido
+- phone: formato brasileiro com DDD e 9 dígitos (+55 XX XXXXX-XXXX)
+- marqueeText: serviços separados por → (MÁXIMO 200 caracteres - CONTE!)
+- TODOS os campos devem ser preenchidos
+- Linguagem profissional e acessível`,
         expectedFormat: `{
   "callToAction": "string (max 100 chars)",
   "disclaimer": "string (max 300 chars)",
   "email": "string (valid email format)",
-  "phone": "string (format: +55 XX XXXXX-XXXX)"
+  "phone": "string (format: +55 XX XXXXX-XXXX)",
+  "marqueeText": "string (max 200 chars)",
+  "hideMarquee": false
 }`,
         rules: [
           "callToAction: até 100 caracteres, pergunta convidativa",
           "disclaimer: até 300 caracteres, texto sobre validade",
-          "email: usar {userEmail} se disponível",
-          "phone: formato brasileiro com DDD",
+          "email: SEMPRE usar {userEmail}",
+          "phone: formato brasileiro +55 XX XXXXX-XXXX",
+          "marqueeText: até 200 caracteres, serviços separados por →",
+          "Todos os campos obrigatórios",
         ],
         callToAction: "Vamos transformar sua ideia em realidade?",
         disclaimer:

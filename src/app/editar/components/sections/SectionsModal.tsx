@@ -5,67 +5,31 @@ import { SectionsModalProps } from "./types";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useEditor } from "../../contexts/EditorContext";
 
-const SECTIONS = [
-  {
-    id: "introduction",
-    name: "Introdução",
-    hidden: false,
-  },
-  {
-    id: "aboutUs",
-    name: "Sobre Nós",
-    hidden: false,
-  },
-  {
-    id: "team",
-    name: "Time",
-    hidden: false,
-  },
-  {
-    id: "expertise",
-    name: "Especialidades",
-    hidden: false,
-  },
-  {
-    id: "steps",
-    name: "Etapas",
-    hidden: false,
-  },
-  {
-    id: "results",
-    name: "Resultados",
-    hidden: false,
-  },
-  {
-    id: "testimonials",
-    name: "Depoimentos",
-    hidden: false,
-  },
-  {
-    id: "plans",
-    name: "Planos",
-    hidden: false,
-  },
-  {
-    id: "investment",
-    name: "Investimento",
-    hidden: false,
-  },
-  {
-    id: "escope",
-    name: "Escopo",
-    hidden: false,
-  },
-  {
-    id: "faq",
-    name: "FAQ",
-    hidden: false,
-  },
-  {
-    id: "footer",
-    name: "Rodapé",
-    hidden: false,
-  },
+const FLASH_SECTIONS = [
+  { id: "introduction", name: "Introdução", hidden: false },
+  { id: "aboutUs", name: "Sobre Nós", hidden: false },
+  { id: "team", name: "Time", hidden: false },
+  { id: "expertise", name: "Especialidades", hidden: false },
+  { id: "steps", name: "Etapas", hidden: false },
+  { id: "results", name: "Resultados", hidden: false },
+  { id: "testimonials", name: "Depoimentos", hidden: false },
+  { id: "plans", name: "Planos", hidden: false },
+  { id: "investment", name: "Investimento", hidden: false },
+  { id: "escope", name: "Escopo", hidden: false },
+  { id: "faq", name: "FAQ", hidden: false },
+  { id: "footer", name: "Rodapé", hidden: false },
+];
+
+const MINIMAL_SECTIONS = [
+  { id: "introduction", name: "Introdução", hidden: false },
+  { id: "aboutUs", name: "Sobre Nós", hidden: false },
+  { id: "clients", name: "Clientes", hidden: false },
+  { id: "expertise", name: "Especialidades", hidden: false },
+  { id: "escope", name: "Escopo", hidden: false },
+  { id: "plans", name: "Planos", hidden: false },
+  { id: "termsConditions", name: "Termos", hidden: false },
+  { id: "faq", name: "FAQ", hidden: false },
+  { id: "footer", name: "Rodapé", hidden: false },
 ];
 
 export default function SectionsModal({
@@ -73,10 +37,19 @@ export default function SectionsModal({
   onClose,
   handleSave,
 }: SectionsModalProps) {
-  const { getSectionVisibility, updateSectionVisibility } = useEditor();
-  const [sections, setSections] = useState(SECTIONS);
+  const { getSectionVisibility, updateSectionVisibility, projectData } = useEditor();
+  
+  // Determine which sections to use based on template type
+  const templateSections = projectData?.templateType === 'minimal' ? MINIMAL_SECTIONS : FLASH_SECTIONS;
+  
+  const [sections, setSections] = useState(templateSections);
   const initialVisibilityRef = useRef<Record<string, boolean> | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Update sections when template changes
+  useEffect(() => {
+    setSections(templateSections);
+  }, [projectData?.templateType]);
 
   // Load section visibility from context and track initial state when modal opens
   useEffect(() => {

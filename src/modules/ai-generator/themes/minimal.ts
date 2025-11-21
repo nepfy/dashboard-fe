@@ -101,9 +101,15 @@ export class MinimalTheme {
   }
 
   private ensureMaxLength(value: string, max: number, label: string) {
+    if (value.length > max) {
+      console.error(`❌ VALIDATION FAILED: ${label}`);
+      console.error(`   Expected: max ${max} chars`);
+      console.error(`   Received: ${value.length} chars (${value.length - max} chars over limit)`);
+      console.error(`   Content: "${value}"`);
+    }
     ensureCondition(
       value.length <= max,
-      `${label} must contain at most ${max} characters`
+      `${label} must contain at most ${max} characters (received ${value.length} characters: "${value.substring(0, 100)}...")`
     );
   }
 
@@ -134,8 +140,11 @@ export class MinimalTheme {
     section: MinimalProposal["introduction"]
   ): void {
     this.ensureMaxLength(section.title, 120, "introduction.title");
+    if (section.description) {
+      this.ensureMaxLength(section.description, 100, "introduction.description");
+    }
     if (section.subtitle) {
-      this.ensureMaxLength(section.subtitle, 200, "introduction.subtitle");
+      this.ensureMaxLength(section.subtitle, 180, "introduction.subtitle");
     }
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
@@ -151,6 +160,9 @@ export class MinimalTheme {
 
   private validateAboutUsSection(section: MinimalProposal["aboutUs"]): void {
     this.ensureMaxLength(section.title, 200, "aboutUs.title");
+    if (section.marqueeText) {
+      this.ensureMaxLength(section.marqueeText, 200, "aboutUs.marqueeText");
+    }
   }
 
   private validateTeamSection(section: MinimalProposal["team"]): void {
@@ -167,18 +179,21 @@ export class MinimalTheme {
   private validateExpertiseSection(
     section: MinimalProposal["expertise"]
   ): void {
+    if (section.subtitle) {
+      this.ensureMaxLength(section.subtitle, 50, "expertise.subtitle");
+    }
     this.ensureMaxLength(section.title, 100, "expertise.title");
     if (section.topics) {
-      this.ensureArrayRange(section.topics, 3, 8, "expertise.topics");
+      this.ensureArrayRange(section.topics, 3, 9, "expertise.topics");
       section.topics.forEach((topic, index) => {
         this.ensureMaxLength(
           topic.title,
-          60,
+          30,
           `expertise.topics[${index}].title`
         );
         this.ensureMaxLength(
           topic.description,
-          250,
+          120,
           `expertise.topics[${index}].description`
         );
       });
@@ -228,21 +243,24 @@ export class MinimalTheme {
   }
 
   private validateClientsSection(section: MinimalProposal["clients"]): void {
+    if (section.subtitle) {
+      this.ensureMaxLength(section.subtitle, 50, "clients.subtitle");
+    }
     if (section.title) {
-      this.ensureMaxLength(section.title, 120, "clients.title");
+      this.ensureMaxLength(section.title, 100, "clients.title");
     }
     if (section.description) {
-      this.ensureMaxLength(section.description, 200, "clients.description");
+      this.ensureMaxLength(section.description, 180, "clients.description");
     }
     if (section.paragraphs) {
       section.paragraphs.forEach((paragraph, index) => {
-        this.ensureMaxLength(paragraph, 280, `clients.paragraphs[${index}]`);
+        this.ensureMaxLength(paragraph, 200, `clients.paragraphs[${index}]`);
       });
     }
     if (section.items) {
-      this.ensureArrayRange(section.items, 4, 8, "clients.items");
+      this.ensureArrayRange(section.items, 6, 12, "clients.items");
       section.items.forEach((client, index) => {
-        this.ensureMaxLength(client.name, 60, `clients.items[${index}].name`);
+        this.ensureMaxLength(client.name, 50, `clients.items[${index}].name`);
       });
     }
   }
@@ -307,6 +325,13 @@ export class MinimalTheme {
     section: MinimalProposal["plans"],
     expectedPlans: number
   ): void {
+    if (section.subtitle) {
+      this.ensureMaxLength(section.subtitle, 50, "plans.subtitle");
+    }
+    if (section.title) {
+      this.ensureMaxLength(section.title, 120, "plans.title");
+    }
+    
     const planCount = section.plansItems?.length ?? 0;
     ensureCondition(
       planCount > 0 && planCount <= 3,
@@ -327,29 +352,59 @@ export class MinimalTheme {
 
     const recommendedPlans =
       section.plansItems?.filter((plan) => plan.recommended === true) ?? [];
-    ensureCondition(
-      recommendedPlans.length === 1,
-      "Exactly one plan must be marked as recommended"
-    );
-
-    const highestValuePlan = section.plansItems?.reduce((prev, current) => {
-      const prevValue = this.parseCurrencyValue(prev.value);
-      const currentValue = this.parseCurrencyValue(current.value);
-      return currentValue > prevValue ? current : prev;
-    });
-
-    if (highestValuePlan) {
+    
+    // Para 1 plano: pode ter 0 ou 1 recommended
+    // Para 2 planos: deve ter 1 recommended (o mais caro)
+    // Para 3 planos: deve ter 1 recommended (o do meio)
+    if (planCount === 1) {
       ensureCondition(
-        highestValuePlan.recommended || false,
-        "Only the highest value plan can be marked as recommended"
+        recommendedPlans.length <= 1,
+        "Only one plan can be marked as recommended"
+      );
+    } else {
+      ensureCondition(
+        recommendedPlans.length === 1,
+        "Exactly one plan must be marked as recommended"
       );
     }
 
+    // Validação específica por quantidade de planos
+    if (planCount === 2 && recommendedPlans.length === 1) {
+      // Para 2 planos: o recommended deve ser o mais caro
+      const highestValuePlan = section.plansItems?.reduce((prev, current) => {
+        const prevValue = this.parseCurrencyValue(prev.value);
+        const currentValue = this.parseCurrencyValue(current.value);
+        return currentValue > prevValue ? current : prev;
+      });
+      
+      if (highestValuePlan) {
+        ensureCondition(
+          highestValuePlan.recommended || false,
+          "For 2 plans, the highest value plan must be marked as recommended"
+        );
+      }
+    } else if (planCount === 3 && recommendedPlans.length === 1) {
+      // Para 3 planos: o recommended deve ser o do meio (sortOrder 1)
+      const sortedPlans = [...(section.plansItems || [])].sort((a, b) => {
+        const aValue = this.parseCurrencyValue(a.value);
+        const bValue = this.parseCurrencyValue(b.value);
+        return aValue - bValue;
+      });
+      
+      if (sortedPlans.length === 3) {
+        const middlePlan = sortedPlans[1]; // Índice 1 = plano do meio
+        ensureCondition(
+          middlePlan.recommended || false,
+          "For 3 plans, the middle-priced plan must be marked as recommended"
+        );
+      }
+    }
+
     section.plansItems?.forEach((plan, index) => {
-      this.ensureMaxLength(plan.title, 50, `plans.plansItems[${index}].title`);
+      this.ensureMaxLength(plan.title, 30, `plans.plansItems[${index}].title`);
       this.ensureMaxLength(
         plan.description,
-        150,
+        120,
         `plans.plansItems[${index}].description`
       );
 
@@ -357,13 +412,13 @@ export class MinimalTheme {
         this.ensureArrayRange(
           plan.includedItems,
           3,
-          8,
+          9,
           `plans.plansItems[${index}].includedItems`
         );
         plan.includedItems.forEach((item, itemIndex) => {
           this.ensureMaxLength(
             item.description,
-            100,
+            60,
             `plans.plansItems[${index}].includedItems[${itemIndex}].description`
           );
         });
@@ -373,14 +428,14 @@ export class MinimalTheme {
 
   private validateFAQSection(section: MinimalProposal["faq"]): void {
     if (section.items) {
-      this.ensureArrayRange(section.items, 3, 8, "faq.items");
+      this.ensureArrayRange(section.items, 5, 10, "faq.items");
       section.items.forEach((item, index) => {
         this.ensureMaxLength(
           item.question,
-          150,
+          100,
           `faq.items[${index}].question`
         );
-        this.ensureMaxLength(item.answer, 500, `faq.items[${index}].answer`);
+        this.ensureMaxLength(item.answer, 300, `faq.items[${index}].answer`);
       });
     }
   }
@@ -391,6 +446,9 @@ export class MinimalTheme {
     }
     if (section.disclaimer) {
       this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
+    }
+    if (section.marqueeText) {
+      this.ensureMaxLength(section.marqueeText, 200, "footer.marqueeText");
     }
     if (section.email) {
       // Basic email validation
@@ -557,18 +615,107 @@ export class MinimalTheme {
     // Generate introduction
     const introPrompt = this.getSectionPrompt("introduction", data);
     const introSystemPrompt = this.buildSystemPrompt(agent, "introduction");
-    sections.introduction = await this.runLLMWithJSONRetry(
-      introPrompt,
-      introSystemPrompt
-    );
+    const introResult = await this.runLLMWithJSONRetry<{
+      userName?: string;
+      email?: string;
+      logo?: string | null;
+      hideLogo?: boolean;
+      clientPhoto?: string | null;
+      hideClientPhoto?: boolean;
+      title?: string;
+      description?: string;
+      hideDescription?: boolean;
+      subtitle?: string;
+      hideSubtitle?: boolean;
+      services?: Array<{
+        id?: string;
+        serviceName: string;
+        sortOrder?: number;
+      }>;
+    }>(introPrompt, introSystemPrompt);
+    
+    // Log AI result for debugging
+    console.log("🔍 DEBUG - Introduction AI Result:", JSON.stringify({
+      hasTitle: !!introResult.title,
+      hasDescription: !!introResult.description,
+      hasSubtitle: !!introResult.subtitle,
+      servicesCount: introResult.services?.length || 0,
+    }));
+
+    sections.introduction = {
+      userName: introResult.userName || data.userName || "",
+      email: introResult.email || data.userEmail || "",
+      logo: introResult.logo || null,
+      hideLogo: introResult.hideLogo ?? false,
+      clientPhoto: introResult.clientPhoto || null,
+      hideClientPhoto: introResult.hideClientPhoto ?? false,
+      title: introResult.title || "Título da proposta",
+      description: introResult.description || "Descrição da proposta de valor",
+      hideDescription: introResult.hideDescription ?? false,
+      subtitle: introResult.subtitle || "Subtítulo explicativo sobre o projeto",
+      hideSubtitle: introResult.hideSubtitle ?? false,
+      services: (introResult.services || []).map((service, index) => ({
+        id: service.id || crypto.randomUUID(),
+        serviceName: service.serviceName || `Serviço ${index + 1}`,
+        sortOrder: service.sortOrder ?? index,
+      })),
+    };
+    
+    console.log("✅ DEBUG - Introduction Section Generated:", {
+      title: sections.introduction.title,
+      titleLength: sections.introduction.title.length,
+      description: sections.introduction.description,
+      descriptionLength: sections.introduction.description.length,
+      subtitle: sections.introduction.subtitle,
+      subtitleLength: sections.introduction.subtitle.length,
+      subtitleOK: sections.introduction.subtitle.length <= 180 ? "✓" : "✗ EXCEEDED!"
+    });
 
     // Generate aboutUs
     const aboutUsPrompt = this.getSectionPrompt("aboutUs", data);
     const aboutUsSystemPrompt = this.buildSystemPrompt(agent, "aboutUs");
-    sections.aboutUs = await this.runLLMWithJSONRetry(
-      aboutUsPrompt,
-      aboutUsSystemPrompt
-    );
+    const aboutUsResult = await this.runLLMWithJSONRetry<{
+      hideSection?: boolean;
+      title?: string;
+      description?: string;
+      paragraphs?: string[];
+      marqueeText?: string;
+      hideMarquee?: boolean;
+      items?: Array<{
+        id?: string;
+        image?: string | null;
+        caption?: string;
+        hideImage?: boolean;
+        hideCaption?: boolean;
+        sortOrder?: number;
+      }>;
+    }>(aboutUsPrompt, aboutUsSystemPrompt);
+    
+    // Generate default about us items if not provided
+    const defaultAboutUsItems = [
+      { id: crypto.randomUUID(), image: null, caption: "Nossa expertise", sortOrder: 0 },
+      { id: crypto.randomUUID(), image: null, caption: "Nossa metodologia", sortOrder: 1 }
+    ];
+
+    sections.aboutUs = {
+      hideSection: aboutUsResult.hideSection ?? false,
+      title: aboutUsResult.title || "Sobre nós",
+      description: aboutUsResult.description || "Nossa proposta de valor",
+      paragraphs: aboutUsResult.paragraphs || [],
+      marqueeText: aboutUsResult.marqueeText || "Brand Design → UI Design → Development → Strategy",
+      hideMarquee: aboutUsResult.hideMarquee ?? false,
+      items: (aboutUsResult.items && aboutUsResult.items.length > 0
+        ? aboutUsResult.items
+        : defaultAboutUsItems
+      ).map((item, index) => ({
+        id: item.id || crypto.randomUUID(),
+        image: item.image || null,
+        caption: item.caption || `Item ${index + 1}`,
+        hideImage: item.hideImage ?? false,
+        hideCaption: item.hideCaption ?? false,
+        sortOrder: item.sortOrder ?? index,
+      })),
+    };
 
     // Generate team
     const teamPrompt = this.getSectionPrompt("team", data);
@@ -581,10 +728,64 @@ export class MinimalTheme {
     // Generate expertise
     const expertisePrompt = this.getSectionPrompt("specialties", data);
     const expertiseSystemPrompt = this.buildSystemPrompt(agent, "specialties");
-    const expertiseResult = await this.runLLMWithJSONRetry<
-      MinimalProposal["expertise"]
-    >(expertisePrompt, expertiseSystemPrompt);
-    sections.expertise = expertiseResult;
+    const expertiseResult = await this.runLLMWithJSONRetry<{
+      hideSection?: boolean;
+      subtitle?: string;
+      hideSubtitle?: boolean;
+      title?: string;
+      topics?: Array<{
+        id?: string;
+        icon?: string;
+        title?: string;
+        description?: string;
+        hideIcon?: boolean;
+        hideTitle?: boolean;
+        hideDescription?: boolean;
+        sortOrder?: number;
+      }>;
+    }>(expertisePrompt, expertiseSystemPrompt);
+    
+    // Generate default topics if AI didn't generate enough
+    const defaultTopics = Array.from({ length: 9 }, (_, i) => ({
+      id: crypto.randomUUID(),
+      icon: "DiamondIcon",
+      title: `Área ${i + 1}`,
+      description: "Descrição da área de atuação",
+      sortOrder: i,
+    }));
+
+    // Log AI result for debugging
+    console.log("🔍 DEBUG - Expertise AI Result:", JSON.stringify({
+      topicsCount: expertiseResult.topics?.length || 0,
+      hasSubtitle: !!expertiseResult.subtitle,
+      hasTitle: !!expertiseResult.title,
+    }));
+
+    sections.expertise = {
+      hideSection: expertiseResult.hideSection ?? false,
+      subtitle: expertiseResult.subtitle || "NOSSA EXPERTISE",
+      hideSubtitle: expertiseResult.hideSubtitle ?? false,
+      title: expertiseResult.title || "Áreas de atuação",
+      topics: (expertiseResult.topics && expertiseResult.topics.length > 0
+        ? expertiseResult.topics
+        : defaultTopics
+      ).map((topic, index) => ({
+        id: topic.id || crypto.randomUUID(),
+        icon: topic.icon || "DiamondIcon",
+        title: topic.title || `Área ${index + 1}`,
+        description: topic.description || "Descrição da área de atuação",
+        hideIcon: topic.hideIcon ?? false,
+        hideTitle: topic.hideTitle ?? false,
+        hideDescription: topic.hideDescription ?? false,
+        sortOrder: topic.sortOrder ?? index,
+      })),
+    };
+    
+    console.log("✅ DEBUG - Expertise Section Generated:", {
+      topicsCount: sections.expertise.topics.length,
+      firstTopic: sections.expertise.topics[0]?.title,
+      subtitle: sections.expertise.subtitle,
+    });
 
     // Generate results section
     const resultsPrompt = `Com base nas informações do projeto, gere 2-3 cases de sucesso relevantes para o setor de ${agent.sector}.
@@ -709,8 +910,12 @@ REGRAS OBRIGATÓRIAS:
     const clientsSystemPrompt = this.buildSystemPrompt(agent, "clients");
     const clientsResult = await this.runLLMWithJSONRetry<{
       hideSection?: boolean;
+      subtitle?: string;
+      hideSubtitle?: boolean;
       title?: string;
+      hideTitle?: boolean;
       description?: string;
+      hideDescription?: boolean;
       paragraphs?: string[];
       items?: Array<{
         id?: string;
@@ -720,19 +925,48 @@ REGRAS OBRIGATÓRIAS:
       }>;
     }>(clientsPrompt, clientsSystemPrompt);
 
+    // Generate default client items if not enough were generated
+    const defaultClientItems = Array.from({ length: 12 }, (_, i) => ({
+      id: crypto.randomUUID(),
+      name: `CLIENTE ${i + 1}`,
+      logo: null,
+      sortOrder: i,
+    }));
+
+    // Log AI result for debugging
+    console.log("🔍 DEBUG - Clients AI Result:", JSON.stringify({
+      itemsCount: clientsResult.items?.length || 0,
+      hasSubtitle: !!clientsResult.subtitle,
+      hasTitle: !!clientsResult.title,
+      hasDescription: !!clientsResult.description,
+      paragraphsCount: clientsResult.paragraphs?.length || 0,
+    }));
+
     sections.clients = {
       hideSection: clientsResult.hideSection ?? false,
-      title: clientsResult.title,
-      description: clientsResult.description,
+      subtitle: clientsResult.subtitle || "CLIENTES QUE CONFIAM",
+      hideSubtitle: clientsResult.hideSubtitle ?? false,
+      title: clientsResult.title || "Parceiros de sucesso",
+      hideTitle: clientsResult.hideTitle ?? false,
+      description: clientsResult.description || "Empresas que confiaram em nosso trabalho",
+      hideDescription: clientsResult.hideDescription ?? false,
       paragraphs: clientsResult.paragraphs || [],
-      items:
-        clientsResult.items?.map((item, index) => ({
-          id: item.id || crypto.randomUUID(),
-          name: item.name,
-          logo: item.logo,
-          sortOrder: item.sortOrder ?? index,
-        })) || [],
+      items: (clientsResult.items && clientsResult.items.length >= 6
+        ? clientsResult.items
+        : defaultClientItems
+      ).map((item, index) => ({
+        id: item.id || crypto.randomUUID(),
+        name: item.name || `CLIENTE ${index + 1}`,
+        logo: item.logo || null,
+        sortOrder: item.sortOrder ?? index,
+      })),
     };
+    
+    console.log("✅ DEBUG - Clients Section Generated:", {
+      itemsCount: sections.clients.items.length,
+      firstItem: sections.clients.items[0]?.name,
+      subtitle: sections.clients.subtitle,
+    });
 
     // Generate steps
     const stepsPrompt = this.getSectionPrompt("steps", data);
@@ -759,57 +993,86 @@ REGRAS OBRIGATÓRIAS:
     const plansPrompt = this.getSectionPrompt("plans", data);
     const plansSystemPrompt = this.buildSystemPrompt(agent, "plans");
     const plansResult = await this.runLLMWithJSONRetry<{
-      hideSection: boolean;
-      plansItems: Array<{
-        id: string;
-        title: string;
-        description: string;
-        value: number;
-        planPeriod: string;
-        recommended: boolean;
-        buttonTitle: string;
-        hideTitleField: boolean;
-        hideDescription: boolean;
-        hidePrice: boolean;
-        hidePlanPeriod: boolean;
-        hideButtonTitle: boolean;
-        hideItem: boolean;
-        sortOrder: number;
-        includedItems: Array<{
-          id: string;
-          description: string;
-          hideItem: boolean;
-          sortOrder: number;
+      hideSection?: boolean;
+      subtitle?: string;
+      hideSubtitle?: boolean;
+      title?: string;
+      plansItems?: Array<{
+        id?: string;
+        title?: string;
+        description?: string;
+        value?: number;
+        planPeriod?: string;
+        recommended?: boolean;
+        buttonTitle?: string;
+        hideTitleField?: boolean;
+        hideDescription?: boolean;
+        hidePrice?: boolean;
+        hidePlanPeriod?: boolean;
+        hideButtonTitle?: boolean;
+        hideItem?: boolean;
+        sortOrder?: number;
+        includedItems?: Array<{
+          id?: string;
+          description?: string;
+          hideItem?: boolean;
+          sortOrder?: number;
         }>;
       }>;
     }>(plansPrompt, plansSystemPrompt);
 
+    // Generate default plans if not enough were generated
+    const expectedPlanCount = typeof data.selectedPlans === "number" ? data.selectedPlans : 3;
+    const defaultPlans = Array.from({ length: expectedPlanCount }, (_, i) => ({
+      id: crypto.randomUUID(),
+      title: `Plano ${i + 1}`,
+      description: "Descrição do plano",
+      value: 1000 * (i + 1),
+      planPeriod: "mensal",
+      recommended: i === 1, // Middle plan is recommended
+      sortOrder: i,
+      includedItems: Array.from({ length: 5 }, (_, j) => ({
+        id: crypto.randomUUID(),
+        description: `Benefício incluído ${j + 1}`,
+        sortOrder: j,
+      })),
+    }));
+
     // Map AI result to MinimalProposal format
     sections.plans = {
-      hideSection: plansResult.hideSection || false,
-      plansItems: plansResult.plansItems.map((plan) => ({
+      hideSection: plansResult.hideSection ?? false,
+      subtitle: plansResult.subtitle || "ESCOLHA SEU PLANO",
+      hideSubtitle: plansResult.hideSubtitle ?? false,
+      title: plansResult.title || "Investimento Personalizado",
+      plansItems: (plansResult.plansItems && plansResult.plansItems.length > 0
+        ? plansResult.plansItems
+        : defaultPlans
+      ).map((plan, index) => ({
         id: plan.id || crypto.randomUUID(),
-        title: plan.title,
-        description: plan.description,
-        value: plan.value,
+        title: plan.title || `Plano ${index + 1}`,
+        description: plan.description || "Descrição do plano",
+        value: plan.value || 0,
         planPeriod: plan.planPeriod || "mensal",
-        recommended: plan.recommended || false,
+        recommended: plan.recommended ?? false,
         buttonTitle: plan.buttonTitle || "Contratar",
         buttonWhereToOpen: "_blank" as const,
         buttonHref: "#",
         buttonPhone: "",
-        hideTitleField: plan.hideTitleField || false,
-        hideDescription: plan.hideDescription || false,
-        hidePrice: plan.hidePrice || false,
-        hidePlanPeriod: plan.hidePlanPeriod || false,
-        hideButtonTitle: plan.hideButtonTitle || false,
-        hideItem: plan.hideItem || false,
-        sortOrder: plan.sortOrder,
-        includedItems: plan.includedItems.map((item) => ({
+        hideTitleField: plan.hideTitleField ?? false,
+        hideDescription: plan.hideDescription ?? false,
+        hidePrice: plan.hidePrice ?? false,
+        hidePlanPeriod: plan.hidePlanPeriod ?? false,
+        hideButtonTitle: plan.hideButtonTitle ?? false,
+        hideItem: plan.hideItem ?? false,
+        sortOrder: plan.sortOrder ?? index,
+        includedItems: (plan.includedItems && plan.includedItems.length > 0
+          ? plan.includedItems
+          : Array.from({ length: 5 }, (_, j) => ({ description: `Benefício ${j + 1}`, sortOrder: j }))
+        ).map((item, itemIndex) => ({
           id: item.id || crypto.randomUUID(),
-          description: item.description,
-          hideItem: item.hideItem || false,
-          sortOrder: item.sortOrder,
+          description: item.description || `Benefício incluído ${itemIndex + 1}`,
+          hideItem: item.hideItem ?? false,
+          sortOrder: item.sortOrder ?? itemIndex,
         })),
       })),
     };
@@ -829,17 +1092,21 @@ REGRAS OBRIGATÓRIAS:
       const footerPrompt = this.getSectionPrompt("footer", data);
       const footerSystemPrompt = this.buildSystemPrompt(agent, "footer");
       const footerResult = await this.runLLMWithJSONRetry<{
-        callToAction: string;
-        disclaimer: string;
-        email: string;
-        phone: string;
+        callToAction?: string;
+        disclaimer?: string;
+        email?: string;
+        phone?: string;
+        marqueeText?: string;
+        hideMarquee?: boolean;
       }>(footerPrompt, footerSystemPrompt);
 
       sections.footer = {
-        callToAction: footerResult.callToAction,
-        disclaimer: footerResult.disclaimer,
-        email: footerResult.email || data.userEmail || "",
-        phone: footerResult.phone || "",
+        callToAction: footerResult.callToAction || "Vamos construir algo incrível juntos?",
+        disclaimer: footerResult.disclaimer || "Proposta válida por 15 dias. Valores e prazos podem variar conforme escopo.",
+        email: footerResult.email || data.userEmail || "contato@empresa.com.br",
+        phone: footerResult.phone || "+55 11 99999-9999",
+        marqueeText: footerResult.marqueeText || "Brand Design → UI Design → Development → Strategy → Marketing",
+        hideMarquee: footerResult.hideMarquee ?? false,
         hideCallToAction: false,
         hideDisclaimer: false,
       };
@@ -853,8 +1120,10 @@ REGRAS OBRIGATÓRIAS:
         disclaimer:
           config?.sections?.footer?.disclaimer ||
           "Esta proposta é válida pelo período indicado.",
-        email: data.userEmail || "",
-        phone: "",
+        email: data.userEmail || "contato@empresa.com.br",
+        phone: "+55 11 99999-9999",
+        marqueeText: "Brand Design → UI Design → Development → Strategy → Marketing",
+        hideMarquee: false,
         hideCallToAction: false,
         hideDisclaimer: false,
       };

@@ -5,6 +5,7 @@ import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 import EditableButton from "#/app/editar/components/EditableButton";
+import EditableLogo from "#/app/editar/components/EditableLogo";
 import { getHeroGradientColors } from "#/helpers/colorUtils";
 
 export default function FlashIntro({
@@ -14,6 +15,7 @@ export default function FlashIntro({
   subtitle,
   hideSubtitle,
   services,
+  logo,
 }: IntroductionSection) {
   const { updateIntroduction, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
@@ -30,16 +32,26 @@ export default function FlashIntro({
     <div className="relative overflow-hidden px-6">
       <div className="relative z-10 py-11 lg:px-12">
         <nav className="mx-auto flex max-w-[1440px] items-center justify-between text-[#E6E6E6]">
-          <span className="text-lg font-semibold lg:text-base lg:font-normal">
-            <EditableText
-              value={userName || ""}
-              onChange={(newUserName: string) =>
-                updateIntroduction({ userName: newUserName })
+          <div className="flex items-center gap-3">
+            <EditableLogo
+              logoUrl={logo}
+              onLogoChange={(newLogo: string | null) =>
+                updateIntroduction({ logo: newLogo || undefined })
               }
-              className="text-lg font-medium"
-              editingId="intro-userName"
-            />{" "}
-          </span>
+              size="md"
+              editingId="intro-logo"
+            />
+            <span className="text-lg font-semibold lg:text-base lg:font-normal">
+              <EditableText
+                value={userName || ""}
+                onChange={(newUserName: string) =>
+                  updateIntroduction({ userName: newUserName })
+                }
+                className="text-lg font-medium"
+                editingId="intro-userName"
+              />{" "}
+            </span>
+          </div>
           <div className="flex items-center gap-12">
             {/* <EditableText
             value={email || ""}

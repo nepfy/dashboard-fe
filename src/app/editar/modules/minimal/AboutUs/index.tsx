@@ -12,6 +12,9 @@ export default function MinimalAboutUs({
   title,
   subtitle,
   hideSection,
+  marqueeText,
+  hideMarquee,
+  items,
 }: AboutUsSection) {
   const { updateAboutUs, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
@@ -58,8 +61,7 @@ export default function MinimalAboutUs({
           gap: 2rem;
         }
 
-        .about-dev,
-        .about-design {
+        .about-item {
           display: flex;
           flex-direction: column;
           gap: 1rem;
@@ -87,7 +89,6 @@ export default function MinimalAboutUs({
         }
 
         .about-marquee {
-          margin-top: 4rem;
           padding: 2rem 0;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           overflow: hidden;
@@ -100,7 +101,7 @@ export default function MinimalAboutUs({
           color: rgba(255, 255, 255);
           white-space: nowrap;
           animation: marquee 200s linear infinite;
-          margin-top: 6rem;
+          margin-top: 3rem;
         }
 
         @media screen and (max-width: 991px) {
@@ -178,44 +179,89 @@ export default function MinimalAboutUs({
               </div>
 
               <div className="about-content">
-                <div className="about-dev">
-                  <div className="about-video">
-                    {}
-                    <img src="/images/templates/flash/placeholder.png" alt="" />
-                  </div>
-                  <div className="about-paragraph">
-                    <p>
-                      We&apos;re a creative studio focused on bringing brands to
-                      life through thoughtful design and smart technology.
-                    </p>
-                  </div>
-                </div>
-                <div className="about-design">
-                  <div className="about-video">
-                    {}
-                    <img src="/images/templates/flash/placeholder.png" alt="" />
-                  </div>
-                  <div className="about-paragraph">
-                    <p>
-                      We&apos;re a creative studio focused on bringing brands to
-                      life through thoughtful design and smart technology.
-                    </p>
-                  </div>
-                </div>
+                {items && items.length > 0 ? (
+                  items.map((item, index) => (
+                    <div
+                      key={item.id || index}
+                      className={`about-item about-item-${index + 1}`}
+                    >
+                      <div className="about-video">
+                        <img
+                          src={
+                            item.image ||
+                            "/images/templates/flash/placeholder.png"
+                          }
+                          alt={item.caption || ""}
+                        />
+                      </div>
+                      <div className="about-paragraph">
+                        <EditableText
+                          value={item.caption || "Descrição da imagem"}
+                          onChange={(newCaption: string) => {
+                            const updatedItems = [...(items || [])];
+                            updatedItems[index] = {
+                              ...item,
+                              caption: newCaption,
+                            };
+                            updateAboutUs({ items: updatedItems });
+                          }}
+                          className="text-size-regular text-color-grey"
+                          editingId={`aboutUs-item-${index}-caption`}
+                        />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="about-item about-item-1">
+                      <div className="about-video">
+                        <img
+                          src="/images/templates/flash/placeholder.png"
+                          alt=""
+                        />
+                      </div>
+                      <div className="about-paragraph">
+                        <p>Descrição da primeira imagem</p>
+                      </div>
+                    </div>
+                    <div className="about-item about-item-2">
+                      <div className="about-video">
+                        <img
+                          src="/images/templates/flash/placeholder.png"
+                          alt=""
+                        />
+                      </div>
+                      <div className="about-paragraph">
+                        <p>Descrição da segunda imagem</p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="about-marquee">
-          <div className="marquee_content">
-            <div className="about-marquee_text">
-              Brand Design → Design Systems → UI Design → Webflow Development
+        {!hideMarquee && (
+          <div className="about-marquee">
+            <div className="marquee_content">
+              <div className="about-marquee_text">
+                <EditableText
+                  value={
+                    marqueeText ||
+                    "Brand Design → Design Systems → UI Design → Webflow Development"
+                  }
+                  onChange={(newMarqueeText: string) =>
+                    updateAboutUs({ marqueeText: newMarqueeText })
+                  }
+                  className="about-marquee_text"
+                  editingId="aboutUs-marquee"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
-
     </>
   );
 }

@@ -56,6 +56,8 @@ interface MinimalExpertiseProps extends ExpertiseSection {
 
 export default function MinimalExpertise({
   title,
+  subtitle,
+  hideSubtitle,
   topics,
   hideSection,
 }: MinimalExpertiseProps) {
@@ -82,15 +84,15 @@ export default function MinimalExpertise({
         .section_expertise {
           position: relative;
           z-index: 3;
-          background-color: var(--background-color--background-secondary);
-          color: var(--text-color--text-primary);
-          margin-top: -0.5rem;
-          padding-top: 2rem;
+          background-color: #f8f8f8;
+          color: #040404;
+          padding-top: 0;
+          padding-bottom: 0;
         }
 
         .padding-global {
-          padding-left: 2.5rem;
-          padding-right: 2.5rem;
+          padding-left: 2rem;
+          padding-right: 2rem;
         }
 
         .container-large {
@@ -105,9 +107,9 @@ export default function MinimalExpertise({
           flex-flow: column;
           justify-content: flex-start;
           align-items: center;
-          grid-column-gap: 7rem;
-          grid-row-gap: 7rem;
-          margin-bottom: 12rem;
+          gap: 4rem;
+          margin-bottom: 8rem;
+          padding-top: 4rem;
         }
 
         .expertise-heading {
@@ -132,46 +134,58 @@ export default function MinimalExpertise({
         }
 
         .heading-style-h2 {
-          color: var(--white);
-          margin: 1rem 0 0;
+          color: #040404;
+          margin: 0.75rem 0 0;
           font-size: 2.5rem;
           font-weight: 400;
-          line-height: 1.3;
+          line-height: 1.25;
+          max-width: 48ch;
         }
 
         .expertise-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          grid-column-gap: 1rem;
-          grid-row-gap: 1rem;
+          grid-template-columns: repeat(3, 1fr);
+          grid-column-gap: 1.5rem;
+          grid-row-gap: 1.5rem;
           width: 100%;
-          margin-bottom: 3rem;
+          max-width: 1140px;
+          margin: 0 auto;
         }
 
         .expertise-card {
           display: flex;
           flex-flow: column;
-          justify-content: space-between;
+          justify-content: flex-start;
           align-items: center;
           text-align: center;
           grid-column-gap: 0.5rem;
           grid-row-gap: 0.5rem;
           background-color: #fff;
-          border: 1px solid #d1d1d1;
-          padding: 5rem 2.5rem;
+          border: 1px solid #e8e8e8;
+          border-radius: 0.5rem;
+          padding: 2.5rem 2rem;
+          transition: all 0.2s ease;
+        }
+
+        .expertise-card:hover {
+          border-color: #d0d0d0;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
 
         .expertise-icon_wrapper {
-          aspect-ratio: 1;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 1rem;
-          padding: 2rem;
+          margin-bottom: 1.25rem;
+          width: 3rem;
+          height: 3rem;
+          background: #f8f8f8;
+          border-radius: 0.5rem;
         }
 
         .expertise-icon {
-          width: 1.3rem;
+          width: 1.5rem;
+          height: 1.5rem;
         }
 
         .text-weight-medium {
@@ -179,20 +193,21 @@ export default function MinimalExpertise({
         }
 
         .text-size-medium {
-          font-size: 1.25rem;
-          line-height: 1.5;
-          margin-bottom: 0.75rem;
+          font-size: 1.125rem;
+          line-height: 1.35;
+          margin-bottom: 0.625rem;
           font-weight: 500;
+          color: #040404;
         }
 
         .expertise-paragraph {
           opacity: 0.7;
-          max-width: 37ch;
+          max-width: 100%;
         }
 
         .text-size-regular {
-          font-size: 1rem;
-          line-height: 1.6;
+          font-size: 0.9375rem;
+          line-height: 1.5;
           color: #040404;
         }
 
@@ -228,22 +243,40 @@ export default function MinimalExpertise({
           }
 
           .expertise-grid {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            grid-column-gap: 1.25rem;
+            grid-row-gap: 1.25rem;
+          }
+          
+          .expertise-card {
+            padding: 2rem 1.5rem;
           }
         }
 
         @media screen and (max-width: 767px) {
           .padding-global {
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
           }
           .expertise-component {
             margin-bottom: 4rem;
           }
+          .expertise-grid {
+            grid-template-columns: 1fr;
+            grid-column-gap: 1rem;
+            grid-row-gap: 1rem;
+          }
           .expertise-card {
             width: 100%;
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding: 2rem 1.5rem;
+          }
+          .expertise-icon_wrapper {
+            width: 2.5rem;
+            height: 2.5rem;
+          }
+          .expertise-icon {
+            width: 1.25rem;
+            height: 1.25rem;
           }
         }
       `}</style>
@@ -253,9 +286,16 @@ export default function MinimalExpertise({
           <div className="container-large">
             <div className="expertise-component">
               <div className="expertise-heading">
-                <div className="text-style-allcaps text-size-small">
-                  Transforme ideia em resultado
-                </div>
+                {!hideSubtitle && (
+                  <EditableText
+                    value={subtitle || "TRANSFORME IDEIA EM RESULTADO"}
+                    onChange={(newSubtitle: string) =>
+                      updateExpertise({ subtitle: newSubtitle })
+                    }
+                    className="text-style-allcaps text-size-small"
+                    editingId="expertise-subtitle"
+                  />
+                )}
                 <EditableText
                   value={title || ""}
                   onChange={(newTitle: string) =>

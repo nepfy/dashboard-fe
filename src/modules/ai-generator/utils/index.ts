@@ -145,7 +145,7 @@ export const serviceMapping: Record<string, string> = {
   consultorias: "agencias-consultoria",
 };
 
-// Template-specific service mapping for flash and prime templates
+// Template-specific service mapping for flash, minimal and prime templates
 export const flashServiceMapping: Record<string, string> = {
   "marketing-digital": "Flash - Marketing Digital",
   designer: "Flash - Designer",
@@ -157,6 +157,19 @@ export const flashServiceMapping: Record<string, string> = {
   agências: "Flash - Agências / Consultoria",
   consultoria: "Flash - Agências / Consultoria",
   consultorias: "Flash - Agências / Consultoria",
+};
+
+export const minimalServiceMapping: Record<string, string> = {
+  "marketing-digital": "Minimal - Marketing Digital",
+  designer: "Minimal - Designer",
+  desenvolvedor: "Minimal - Desenvolvedor",
+  arquiteto: "Minimal - Arquiteto",
+  fotografo: "Minimal - Fotógrafo",
+  fotógrafo: "Minimal - Fotógrafo",
+  agencias: "Minimal - Agências / Consultoria",
+  agências: "Minimal - Agências / Consultoria",
+  consultoria: "Minimal - Agências / Consultoria",
+  consultorias: "Minimal - Agências / Consultoria",
 };
 
 export const primeServiceMapping: Record<string, string> = {

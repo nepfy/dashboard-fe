@@ -9,6 +9,7 @@ interface EditableTextProps {
   className?: string;
   placeholder?: string;
   editingId: string;
+  canEdit?: boolean;
 }
 
 export default function EditableText({
@@ -17,12 +18,15 @@ export default function EditableText({
   className = "",
   placeholder = "",
   editingId,
+  canEdit = true,
 }: EditableTextProps) {
   const { startEditing, stopEditing, activeEditingId } = useEditor();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const [isHovered, setIsHovered] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  console.log({ canEdit });
 
   // Update local value when prop value changes
   useEffect(() => {

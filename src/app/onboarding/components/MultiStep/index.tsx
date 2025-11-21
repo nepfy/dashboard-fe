@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "#/app/onboarding/helpers/FormContext";
+import { LoaderCircle } from "lucide-react";
 
 interface Step {
   name: string;
@@ -21,6 +22,7 @@ const MultiStep: React.FC<MultiStepProps> = ({
   isLastOptionSelected,
   onComplete,
 }) => {
+  const [isFinalizing, setIsFinalizing] = useState<boolean>(false);
   const {
     nextStep,
     prevStep,
@@ -66,11 +68,14 @@ const MultiStep: React.FC<MultiStepProps> = ({
   const isFinalStep = currentStep === steps.length;
   const primaryDisabled = isFinalStep ? !isLastOptionSelected : !enableNextStep;
 
-  const handlePrimaryAction = () => {
+  const handlePrimaryAction = async () => {
     if (isFinalStep) {
-      void onComplete?.();
+      setIsFinalizing(true);
+      await onComplete?.();
+      setIsFinalizing(false);
       return;
     }
+
     nextStep();
   };
 
@@ -136,7 +141,12 @@ const MultiStep: React.FC<MultiStepProps> = ({
                 : "button-inner-inverse bg-[var(--color-primary-light-400)] hover:cursor-pointer hover:bg-[var(--color-primary-light-500)]"
           }`}
         >
-          {isFinalStep ? "Finalizar cadastro" : "Próximo"}
+          {isFinalStep && !isFinalizing ? "Finalizar cadastro" : "Próximo"}
+          {isFinalizing && (
+            <div className="flex items-center justify-center">
+              <LoaderCircle className="animate-spin" />
+            </div>
+          )}
         </button>
       </div>
     </div>

@@ -30,7 +30,7 @@ export default function FlashScope({
           width: 100%;
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
+          align-items: center;
           gap: 4rem;
         }
 

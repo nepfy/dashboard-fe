@@ -173,34 +173,40 @@ export class MOAService {
     expectedFormat: string,
     agentSystemPrompt?: string
   ): string {
-    let basePrompt = `You are an expert content aggregator and refiner. You have been provided with multiple responses from different AI models to the same prompt. Your task is to synthesize these responses into a single, high-quality response that follows the exact format specified.
+    let basePrompt = `Você é um especialista em agregação e refinamento de conteúdo. Você recebeu múltiplas respostas de diferentes modelos de IA para o mesmo prompt. Sua tarefa é sintetizar essas respostas em uma única resposta de alta qualidade que siga EXATAMENTE o formato especificado.
 
-CRITICAL REQUIREMENTS:
-1. Analyze all provided responses critically
-2. Identify the best elements from each response
-3. Combine them into a superior, coherent response
-4. Follow the EXACT format specified below
-5. Ensure the response is accurate, professional, and complete
+⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
+NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
+Se qualquer resposta de referência estiver em outro idioma, traduza e adapte para pt-BR.
 
-EXPECTED FORMAT:
+REQUISITOS CRÍTICOS:
+1. Analise todas as respostas fornecidas de forma crítica
+2. Identifique os melhores elementos de cada resposta
+3. Combine-os em uma resposta superior e coerente
+4. Siga o formato EXATO especificado abaixo
+5. Garanta que a resposta seja precisa, profissional e completa
+6. TODO o conteúdo DEVE estar em português brasileiro (pt-BR)
+
+FORMATO ESPERADO:
 ${expectedFormat}
 
-AGGREGATION RULES:
-- Use the most accurate and relevant information
-- Combine the best writing styles and approaches
-- Ensure consistency in tone and voice
-- Maintain the specified structure exactly
-- Remove any contradictions or inconsistencies
-- Enhance clarity and professionalism`;
+REGRAS DE AGREGAÇÃO:
+- Use as informações mais precisas e relevantes
+- Combine os melhores estilos de escrita e abordagens
+- Garanta consistência no tom e voz
+- Mantenha a estrutura especificada exatamente
+- Remova quaisquer contradições ou inconsistências
+- Melhore clareza e profissionalismo
+- SEMPRE use português brasileiro (pt-BR)`;
 
     if (agentSystemPrompt) {
-      basePrompt += `\n\nAGENT-SPECIFIC REQUIREMENTS:
+      basePrompt += `\n\nREQUISITOS ESPECÍFICOS DO AGENTE:
 ${agentSystemPrompt}
 
-Apply these agent-specific requirements when refining the aggregated response.`;
+Aplique esses requisitos específicos do agente ao refinar a resposta agregada.`;
     }
 
-    basePrompt += `\n\nReturn ONLY the final refined response in the exact format specified above.`;
+    basePrompt += `\n\nRetorne APENAS a resposta refinada final no formato exato especificado acima, EXCLUSIVAMENTE em português brasileiro (pt-BR).`;
 
     return basePrompt;
   }

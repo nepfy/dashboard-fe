@@ -12,6 +12,7 @@ import { PrimeWorkflowResult } from "#/modules/ai-generator/themes/prime";
 import {
   serviceMapping,
   flashServiceMapping,
+  minimalServiceMapping,
   primeServiceMapping,
 } from "#/modules/ai-generator/utils";
 import { db } from "#/lib/db";
@@ -313,6 +314,7 @@ export async function POST(request: NextRequest) {
       agentServiceId,
       originalServiceId,
       flashServiceMapping: flashServiceMapping[selectedService],
+      minimalServiceMapping: minimalServiceMapping[selectedService],
       primeServiceMapping: primeServiceMapping[selectedService],
     });
 

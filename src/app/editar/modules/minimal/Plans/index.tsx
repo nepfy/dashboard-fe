@@ -42,135 +42,193 @@ export default function MinimalPlans({
         .section_plans {
           background-color: #000000;
           color: #fbfbfb;
-          padding: 8rem 0;
+          padding: 8rem 0 10rem;
         }
 
         .invest-component {
           display: flex;
           flex-direction: column;
-          gap: 3rem;
+          gap: 4rem;
         }
 
         .invest-heading {
           display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 2rem;
+          grid-template-columns: 280px 1fr;
+          gap: 4rem;
           align-items: flex-start;
         }
 
         .invest-label {
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.75rem;
         }
 
         .invest-label .label {
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          font-size: 0.85rem;
+          text-transform: capitalize;
+          font-size: 1rem;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 0.85);
+          line-height: 1.4;
+        }
+
+        .invest-label-description {
+          font-size: 0.9375rem;
+          line-height: 1.5;
           color: rgba(255, 255, 255, 0.6);
         }
 
         .invest-title {
-          font-size: 2.8rem;
-          font-weight: 300;
-          line-height: 1.3;
+          font-size: 2.75rem;
+          font-weight: 400;
+          line-height: 1.25;
           margin: 0;
           color: #fbfbfb;
         }
 
         .invest-grid {
-          display: flex;
-          gap: 1rem;
-          justify-content: space-between;
-          align-items: stretch;
+          display: grid;
+          gap: 1.5rem;
+          width: 100%;
+        }
+
+        /* 3 planos: grid de 3 colunas */
+        .invest-grid[data-plans="3"] {
+          grid-template-columns: repeat(3, 1fr);
+          max-width: 100%;
+        }
+
+        /* 2 planos: grid de 2 colunas */
+        .invest-grid[data-plans="2"] {
+          grid-template-columns: repeat(2, 1fr);
+          max-width: 900px;
+          margin: 0 auto;
+        }
+
+        /* 1 plano: centralizado e menor */
+        .invest-grid[data-plans="1"] {
+          grid-template-columns: 1fr;
+          max-width: 420px;
+          margin: 0 auto;
         }
 
         .invest-card {
-          background-color: #040404;
-          border: 1px solid #333030;
-          border-radius: 4px;
-          flex: 1;
-          padding: 2rem;
+          background-color: #0a0a0a;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 0.5rem;
+          padding: 2rem 1.75rem;
           display: flex;
           flex-direction: column;
-          gap: 2rem;
           position: relative;
           height: 100%;
+          transition: all 0.2s ease;
+        }
+
+        .invest-card:hover {
+          border-color: rgba(255, 255, 255, 0.12);
         }
 
         .invest-card.is-best {
+          border-color: #0c8ae5;
+          border-width: 1px;
+          background-color: #0a0a0a;
+        }
+
+        .invest-card.is-best:hover {
           border-color: #0c8ae5;
         }
 
         .invest-top {
           display: flex;
           flex-direction: column;
-          gap: 0.7rem;
-          margin-bottom: 2rem;
-          min-height: 5rem;
+          gap: 0.5rem;
         }
 
         .plan-name {
-          font-size: 1.125rem;
-          font-weight: 500;
-          color: #fbfbfb;
-          min-height: 1.5rem;
+          font-size: 1rem;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 0.85);
+          line-height: 1.4;
         }
 
         .plan-price {
-          font-size: 3rem;
+          font-size: 2.5rem;
           font-weight: 600;
           color: #fbfbfb;
           line-height: 1;
+          margin-bottom: 1rem;
+        }
+
+        .plan-price .period {
+          font-size: 1rem;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 0.6);
+          margin-left: 0.375rem;
         }
 
         .invest-button-wrap {
           display: flex;
           flex-direction: column;
-          gap: 1.3rem;
-          flex-grow: 1;
+          gap: 1rem;
+          margin-bottom: 2rem;
         }
 
         .plan-description {
-          font-size: 1rem;
-          line-height: 1.6;
-          color: rgba(255, 255, 255, 0.7);
+          font-size: 0.9375rem;
+          line-height: 1.5;
+          color: rgba(255, 255, 255, 0.65);
+          margin-bottom: 0.5rem;
         }
 
         .btn-animate-chars {
           color: #fbfbfb;
           cursor: pointer;
-          border-radius: 0.5rem;
-          flex-grow: 1;
+          border-radius: 0.375rem;
           justify-content: center;
           align-items: center;
-          max-width: none;
-          padding: 1.2rem 2rem;
+          width: 100%;
+          padding: 1rem 2rem;
           line-height: 1;
           text-decoration: none;
           display: flex;
           position: relative;
-          border: none;
+          border: 1px solid rgba(255, 255, 255, 0.1);
           background: transparent;
-          font-size: 1rem;
+          font-size: 0.9375rem;
           font-weight: 500;
+          transition: all 0.2s ease;
+        }
+
+        .btn-animate-chars:hover {
+          border-color: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.05);
         }
 
         .btn-animate-chars__bg {
-          background-color: #202020;
-          border-radius: 0.25rem;
+          background-color: transparent;
+          border-radius: 0.375rem;
           position: absolute;
           inset: 0;
+          z-index: 0;
         }
 
         .btn-animate-chars__bg.is-best {
-          background-color: #006dc5;
+          background-color: #0c8ae5;
+        }
+
+        .btn-animate-chars.is-best {
+          background-color: #0c8ae5;
+          border-color: #0c8ae5;
+        }
+
+        .btn-animate-chars.is-best:hover {
+          background-color: #0a7bd4;
+          border-color: #0a7bd4;
         }
 
         .btn-animate-chars__text {
           white-space: nowrap;
-          line-height: 1.3;
+          line-height: 1;
           z-index: 1;
           position: relative;
         }
@@ -182,79 +240,126 @@ export default function MinimalPlans({
 
         .invest-best_wrap {
           display: flex;
-          flex-flow: wrap;
-          gap: 1rem;
           justify-content: space-between;
-          align-items: flex-start;
-          min-height: 3rem;
+          align-items: center;
+          width: 100%;
+          margin-bottom: 0.25rem;
         }
 
         .invest-best-tag {
           display: flex;
-          gap: 0.5rem;
-          justify-content: flex-start;
+          gap: 0.375rem;
           align-items: center;
+          font-size: 0.8125rem;
+          font-weight: 500;
+          color: #fbfbfb;
         }
 
         .invest-divider {
-          background-color: #fbfbfb;
-          opacity: 0.1;
-          width: 100%;
-          height: 1px;
-          margin-top: 2rem;
-          margin-bottom: 2rem;
+          display: none;
         }
 
         .invest-incluse {
           display: flex;
           flex-direction: column;
-          gap: 1.3rem;
+          gap: 1rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .text-style-allcaps {
           text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: rgba(255, 255, 255);
+          letter-spacing: 0.08em;
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 0.75rem;
+          font-weight: 500;
+          margin-bottom: 0.5rem;
         }
 
         .invest-feature {
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.875rem;
         }
 
         .invest-list {
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
+          align-items: flex-start;
+          gap: 0.625rem;
           font-weight: 300;
+          font-size: 0.9375rem;
+          line-height: 1.5;
+          color: rgba(255, 255, 255, 0.85);
         }
 
         .invest-icon {
           width: 1rem;
           height: 1rem;
           flex-shrink: 0;
+          margin-top: 0.125rem;
+        }
+
+        .invest-best-icon {
+          width: 0.875rem;
+          height: 0.875rem;
+        }
+
+        @media screen and (max-width: 1200px) {
+          .invest-grid[data-plans="3"] {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin: 0 auto;
+          }
+        }
+
+        @media screen and (max-width: 991px) {
+          .invest-heading {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+
+          .invest-title {
+            font-size: 2.25rem;
+          }
+
+          .invest-grid[data-plans="2"] {
+            grid-template-columns: 1fr;
+            max-width: 100%;
+          }
         }
 
         @media screen and (max-width: 767px) {
           .section_plans {
-            padding: 5rem 0;
+            padding: 5rem 0 6rem;
           }
+          
           .invest-heading {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 2rem;
           }
+          
           .invest-title {
-            font-size: 2.2rem;
+            font-size: 2rem;
+            line-height: 1.3;
           }
-          .invest-grid {
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: stretch;
+          
+          .invest-grid[data-plans="3"],
+          .invest-grid[data-plans="2"],
+          .invest-grid[data-plans="1"] {
+            grid-template-columns: 1fr;
+            max-width: 100%;
           }
 
           .invest-card.is-best {
             order: -1;
+          }
+
+          .invest-card {
+            padding: 2rem 1.5rem;
+          }
+
+          .plan-price {
+            font-size: 2rem;
           }
         }
       `}</style>
@@ -265,7 +370,7 @@ export default function MinimalPlans({
             <div className="invest-component">
               <div className="invest-heading">
                 <div className="invest-label">
-                  <span className="label">Investimento</span>
+                  <div className="label">Investimento</div>
                   <EditableText
                     value={
                       investment?.projectScope ||
@@ -273,7 +378,7 @@ export default function MinimalPlans({
                     }
                     onChange={(value) => updateInvestment({ projectScope: value })}
                     editingId="investment-projectScope"
-                    className="text-size-regular text-weight-light text-[#fbfbfb]"
+                    className="invest-label-description"
                     canEdit={canEdit}
                   />
                 </div>
@@ -288,7 +393,7 @@ export default function MinimalPlans({
                   canEdit={canEdit}
                 />
               </div>
-              <div className="invest-grid">
+              <div className="invest-grid" data-plans={plansItems.length}>
               {plansItems.map((plan) => (
                 <div
                   key={plan.id}
@@ -305,34 +410,31 @@ export default function MinimalPlans({
                     }
                   }}
                 >
-                  <div className="invest-top">
-                    {plan.recommended ? (
-                      <div className="invest-best_wrap">
-                        <div className="plan-name">{plan.title}</div>
-                        <div className="invest-best-tag">
-                          <Image
-                            src="/template-minimal/images/star.svg"
-                            alt=""
-                            width={16}
-                            height={16}
-                            className="invest-icon"
-                          />
-                          <div>Melhor oferta!</div>
-                        </div>
-                      </div>
-                    ) : (
+                  {plan.recommended && (
+                    <div className="invest-best_wrap">
                       <div className="plan-name">{plan.title}</div>
-                    )}
+                      <div className="invest-best-tag">
+                        <Image
+                          src="/template-minimal/images/star.svg"
+                          alt=""
+                          width={14}
+                          height={14}
+                          className="invest-best-icon"
+                        />
+                        <span>MELHOR OFERTA!</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {!plan.recommended && (
+                    <div className="plan-name">{plan.title}</div>
+                  )}
+
+                  <div className="invest-top">
                     <div className="plan-price">
                       {formatCurrencyDisplay(plan.value)}
                       {plan.planPeriod && (
-                        <span
-                          style={{
-                            fontSize: "1rem",
-                            fontWeight: 400,
-                            marginLeft: "0.5rem",
-                          }}
-                        >
+                        <span className="period">
                           /{plan.planPeriod}
                         </span>
                       )}
@@ -340,14 +442,9 @@ export default function MinimalPlans({
                   </div>
 
                   <div className="invest-button-wrap">
-                    <div className="max-width-small">
-                      <div className="plan-description">{plan.description}</div>
-                    </div>
-                    <button className="btn-animate-chars is-invest">
-                      <div
-                        className={`btn-animate-chars__bg ${plan.recommended ? "is-best" : ""}`}
-                      ></div>
-                      <span className="btn-animate-chars__text text-size-regular text-weight-medium">
+                    <div className="plan-description">{plan.description}</div>
+                    <button className={`btn-animate-chars ${plan.recommended ? "is-best" : ""}`}>
+                      <span className="btn-animate-chars__text">
                         {plan.buttonTitle || "Fechar pacote"}
                       </span>
                     </button>
