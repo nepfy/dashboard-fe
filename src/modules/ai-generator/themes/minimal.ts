@@ -720,17 +720,17 @@ export class MinimalTheme {
         icon: topic.icon || "DiamondIcon",
         title: topic.title || `Área ${index + 1}`,
         description: topic.description || "Descrição da área de atuação",
-        hideIcon: topic.hideIcon ?? false,
-        hideTitle: topic.hideTitle ?? false,
-        hideDescription: topic.hideDescription ?? false,
+        hideIcon: false,
+        hideTitleField: false,
+        hideDescription: false,
         sortOrder: topic.sortOrder ?? index,
       })),
     };
     
     console.log("✅ DEBUG - Expertise Section Generated:", {
-      topicsCount: sections.expertise.topics.length,
-      firstTopic: sections.expertise.topics[0]?.title,
-      subtitle: sections.expertise.subtitle,
+      topicsCount: sections.expertise.topics?.length || 0,
+      firstTopic: sections.expertise.topics?.[0]?.title,
+      title: sections.expertise.title,
     });
 
     // Generate results section
@@ -890,12 +890,8 @@ REGRAS OBRIGATÓRIAS:
 
     sections.clients = {
       hideSection: clientsResult.hideSection ?? false,
-      subtitle: clientsResult.subtitle || "CLIENTES QUE CONFIAM",
-      hideSubtitle: clientsResult.hideSubtitle ?? false,
       title: clientsResult.title || "Parceiros de sucesso",
-      hideTitle: clientsResult.hideTitle ?? false,
       description: clientsResult.description || "Empresas que confiaram em nosso trabalho",
-      hideDescription: clientsResult.hideDescription ?? false,
       paragraphs: clientsResult.paragraphs || [],
       items: (clientsResult.items && clientsResult.items.length >= 6
         ? clientsResult.items
@@ -903,15 +899,15 @@ REGRAS OBRIGATÓRIAS:
       ).map((item, index) => ({
         id: item.id || crypto.randomUUID(),
         name: item.name || `CLIENTE ${index + 1}`,
-        logo: item.logo || null,
+        logo: item.logo || undefined,
         sortOrder: item.sortOrder ?? index,
       })),
     };
     
     console.log("✅ DEBUG - Clients Section Generated:", {
-      itemsCount: sections.clients.items.length,
-      firstItem: sections.clients.items[0]?.name,
-      subtitle: sections.clients.subtitle,
+      itemsCount: sections.clients.items?.length || 0,
+      firstItem: sections.clients.items?.[0]?.name,
+      title: sections.clients.title,
     });
 
     // Generate steps
@@ -987,9 +983,6 @@ REGRAS OBRIGATÓRIAS:
     // Map AI result to MinimalProposal format
     sections.plans = {
       hideSection: plansResult.hideSection ?? false,
-      subtitle: plansResult.subtitle || "ESCOLHA SEU PLANO",
-      hideSubtitle: plansResult.hideSubtitle ?? false,
-      title: plansResult.title || "Investimento Personalizado",
       plansItems: (plansResult.plansItems && plansResult.plansItems.length > 0
         ? plansResult.plansItems
         : defaultPlans
@@ -1000,25 +993,20 @@ REGRAS OBRIGATÓRIAS:
         value: plan.value || 0,
         planPeriod: plan.planPeriod || "mensal",
         recommended: plan.recommended ?? false,
-        buttonTitle: plan.buttonTitle || "Contratar",
-        buttonWhereToOpen: "_blank" as const,
+        buttonTitle: "Contratar",
+        buttonWhereToOpen: "_blank",
         buttonHref: "#",
         buttonPhone: "",
-        hideTitleField: plan.hideTitleField ?? false,
-        hideDescription: plan.hideDescription ?? false,
-        hidePrice: plan.hidePrice ?? false,
-        hidePlanPeriod: plan.hidePlanPeriod ?? false,
-        hideButtonTitle: plan.hideButtonTitle ?? false,
-        hideItem: plan.hideItem ?? false,
+        hideTitleField: false,
+        hideDescription: false,
+        hidePrice: false,
+        hidePlanPeriod: false,
+        hideButtonTitle: false,
         sortOrder: plan.sortOrder ?? index,
-        includedItems: (plan.includedItems && plan.includedItems.length > 0
-          ? plan.includedItems
-          : Array.from({ length: 5 }, (_, j) => ({ description: `Benefício ${j + 1}`, sortOrder: j }))
-        ).map((item, itemIndex) => ({
-          id: item.id || crypto.randomUUID(),
-          description: item.description || `Benefício incluído ${itemIndex + 1}`,
-          hideItem: item.hideItem ?? false,
-          sortOrder: item.sortOrder ?? itemIndex,
+        includedItems: Array.from({ length: 5 }, (_, j) => ({
+          id: crypto.randomUUID(),
+          description: `Benefício ${j + 1}`,
+          sortOrder: j,
         })),
       })),
     };
@@ -1051,8 +1039,6 @@ REGRAS OBRIGATÓRIAS:
         disclaimer: footerResult.disclaimer || "Proposta válida por 15 dias. Valores e prazos podem variar conforme escopo.",
         email: footerResult.email || data.userEmail || "contato@empresa.com.br",
         phone: footerResult.phone || "+55 11 99999-9999",
-        marqueeText: footerResult.marqueeText || "Brand Design → UI Design → Development → Strategy → Marketing",
-        hideMarquee: footerResult.hideMarquee ?? false,
         hideCallToAction: false,
         hideDisclaimer: false,
       };
@@ -1068,8 +1054,6 @@ REGRAS OBRIGATÓRIAS:
           "Esta proposta é válida pelo período indicado.",
         email: data.userEmail || "contato@empresa.com.br",
         phone: "+55 11 99999-9999",
-        marqueeText: "Brand Design → UI Design → Development → Strategy → Marketing",
-        hideMarquee: false,
         hideCallToAction: false,
         hideDisclaimer: false,
       };
