@@ -249,6 +249,17 @@ export async function POST(request: NextRequest) {
       mainColor = "#3B82F6",
     } = body;
 
+    // Temporarily disable minimal template
+    if (templateType === "minimal") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "O template Minimal está temporariamente indisponível. Por favor, escolha outro template.",
+        },
+        { status: 400 }
+      );
+    }
+
     const effectiveClientDescription =
       clientDescription ?? detailedClientInfo ?? "";
 

@@ -5,7 +5,7 @@ import { LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Flash from "./modules/flash";
-import Minimal from "./modules/minimal";
+// import Minimal from "./modules/minimal"; // Temporarily disabled
 import Prime from "./modules/prime";
 import { TemplateData } from "#/types/template-data";
 import { useEditor } from "./contexts/EditorContext";
@@ -119,7 +119,20 @@ export default function EditarPage() {
   }
 
   if (projectData.templateType === "minimal") {
-    return <Minimal />;
+    // Temporarily disable minimal template editing
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center text-red-600">
+          <h1 className="text-2xl font-bold mb-4">Template Indisponível</h1>
+          <p className="mb-4">
+            O template Minimal está temporariamente indisponível para edição.
+          </p>
+          <p className="text-sm text-gray-600">
+            Este projeto foi criado com um template que não está mais disponível.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (projectData.templateType === "prime") {
