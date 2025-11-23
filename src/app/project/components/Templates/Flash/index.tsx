@@ -229,7 +229,7 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
         />
       </ReactLenis>
 
-      {/* {data && <ProposalActions projectData={data} />} */}
+      {data && <ProposalActions projectData={data} />}
     </>
   );
 }
