@@ -44,11 +44,16 @@ export default function MinimalTemplate({ data }: MinimalTemplateProps) {
   // Track proposal viewed by client (only once, after password check)
   useEffect(() => {
     if (isPasswordCorrect && data?.id && !hasTrackedView.current) {
-      const sessionId = typeof window !== "undefined" 
-        ? sessionStorage.getItem("viewer_session_id") || `session-${Date.now()}`
-        : `session-${Date.now()}`;
-      
-      if (typeof window !== "undefined" && !sessionStorage.getItem("viewer_session_id")) {
+      const sessionId =
+        typeof window !== "undefined"
+          ? sessionStorage.getItem("viewer_session_id") ||
+            `session-${Date.now()}`
+          : `session-${Date.now()}`;
+
+      if (
+        typeof window !== "undefined" &&
+        !sessionStorage.getItem("viewer_session_id")
+      ) {
         sessionStorage.setItem("viewer_session_id", sessionId);
       }
 
@@ -223,9 +228,8 @@ export default function MinimalTemplate({ data }: MinimalTemplateProps) {
           onLoad={handleIframeLoad}
         />
       </ReactLenis>
-      
-      {data && <ProposalActions projectData={data} />}
+
+      {/* {data && <ProposalActions projectData={data} />} */}
     </>
   );
 }
-
