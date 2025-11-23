@@ -33,7 +33,7 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
           borderTopColor: "#e5e7eb",
         }}
       >
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[1440px] py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Info text */}
             <div className="hidden sm:block">
