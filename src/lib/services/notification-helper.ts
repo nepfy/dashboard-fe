@@ -9,7 +9,6 @@ import type { NotificationType } from "#/lib/db/schema/notifications";
 import { db } from "#/lib/db";
 import { personUserTable } from "#/lib/db/schema/users";
 import { eq } from "drizzle-orm";
-import { trackNotificationSent } from "#/lib/analytics/track";
 
 export class NotificationHelper {
   /**
@@ -75,18 +74,18 @@ export class NotificationHelper {
       actionUrl: `/dashboard/propostas/${projectId}`,
     });
 
-    // Track notification sent
-    trackNotificationSent({
-      notification_id: notification.id,
-      notification_type: notification.type,
-      user_id: userId,
-      via_email: true,
-    });
-
     // Send email asynchronously
     this.sendEmailForNotification(userId, notification);
 
-    return notification;
+    return {
+      notification,
+      trackingData: {
+        notification_id: notification.id,
+        notification_type: notification.type,
+        user_id: userId,
+        via_email: true,
+      },
+    };
   }
 
   /**
@@ -121,18 +120,18 @@ export class NotificationHelper {
       actionUrl: `/dashboard/propostas/${projectId}`,
     });
 
-    // Track notification sent
-    trackNotificationSent({
-      notification_id: notification.id,
-      notification_type: notification.type,
-      user_id: userId,
-      via_email: true,
-    });
-
     // Send email asynchronously
     this.sendEmailForNotification(userId, notification);
 
-    return notification;
+    return {
+      notification,
+      trackingData: {
+        notification_id: notification.id,
+        notification_type: notification.type,
+        user_id: userId,
+        via_email: true,
+      },
+    };
   }
 
   /**

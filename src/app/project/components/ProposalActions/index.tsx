@@ -46,11 +46,11 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex w-full items-center justify-between">
+            <div className="flex w-full items-center gap-3 sm:w-auto">
               <button
                 onClick={() => setShowAdjustmentModal(true)}
                 disabled={isSubmitting}
-                className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
                 style={{
                   borderColor: "#d1d5db",
                   color: "#374151",
@@ -62,7 +62,7 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
               <button
                 onClick={() => setShowAcceptModal(true)}
                 disabled={isSubmitting}
-                className="flex-1 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
                 style={{
                   backgroundColor: projectData.mainColor || "#6366f1",
                 }}

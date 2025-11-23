@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { TemplateData } from "#/types/template-data";
+import { trackNotificationSent } from "#/lib/analytics/track";
 
 interface AcceptProposalModalProps {
   isOpen: boolean;
@@ -65,6 +66,13 @@ export default function AcceptProposalModal({
 
       if (!response.ok) {
         throw new Error("Erro ao aceitar proposta");
+      }
+
+      const data = await response.json();
+
+      // Track notification sent if tracking data is provided by the server
+      if (data.trackingData) {
+        trackNotificationSent(data.trackingData);
       }
 
       setSuccess(true);
