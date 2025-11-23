@@ -229,7 +229,7 @@ export default function MinimalTemplate({ data }: MinimalTemplateProps) {
         />
       </ReactLenis>
 
-      {/* {data && <ProposalActions projectData={data} />} */}
+      {data && <ProposalActions projectData={data} />}
     </>
   );
 }
