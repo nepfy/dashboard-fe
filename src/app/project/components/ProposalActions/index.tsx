@@ -27,13 +27,13 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
     <>
       {/* Fixed Action Bar */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg"
-        style={{ 
+        className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white shadow-lg"
+        style={{
           backgroundColor: "white",
-          borderTopColor: "#e5e7eb"
+          borderTopColor: "#e5e7eb",
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
             {/* Info text */}
             <div className="hidden sm:block">
@@ -46,25 +46,25 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="flex w-full items-center justify-between">
               <button
                 onClick={() => setShowAdjustmentModal(true)}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg border-2 border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 style={{
                   borderColor: "#d1d5db",
-                  color: "#374151"
+                  color: "#374151",
                 }}
               >
                 Solicitar ajuste
               </button>
-              
+
               <button
                 onClick={() => setShowAcceptModal(true)}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-white font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 style={{
-                  backgroundColor: projectData.mainColor || "#6366f1"
+                  backgroundColor: projectData.mainColor || "#6366f1",
                 }}
               >
                 Aceitar proposta
@@ -93,4 +93,3 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
     </>
   );
 }
-
