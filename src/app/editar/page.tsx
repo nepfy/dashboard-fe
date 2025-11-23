@@ -10,6 +10,8 @@ import Prime from "./modules/prime";
 import { TemplateData } from "#/types/template-data";
 import { useEditor } from "./contexts/EditorContext";
 import { trackEditorOpened, trackEditorLoadTime } from "#/lib/analytics/track";
+import ProposalActions from "../project/components/ProposalActions";
+import Minimal from "./modules/minimal";
 
 export default function EditarPage() {
   const searchParams = useSearchParams();
@@ -85,10 +87,10 @@ export default function EditarPage() {
 
   if (localLoading || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="p-7">
-          <div className="flex items-center justify-center h-64">
-            <LoaderCircle className="animate-spin text-primary-light-400" />
+          <div className="flex h-64 items-center justify-center">
+            <LoaderCircle className="text-primary-light-400 animate-spin" />
           </div>
         </div>
       </div>
@@ -97,9 +99,9 @@ export default function EditarPage() {
 
   if (localError || error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center text-red-600">
-          <p className="text-xl font-semibold mb-2">Erro</p>
+          <p className="mb-2 text-xl font-semibold">Erro</p>
           <p>{localError || error}</p>
         </div>
       </div>
@@ -108,30 +110,28 @@ export default function EditarPage() {
 
   if (!projectData) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <p>Projeto não encontrado</p>
       </div>
     );
   }
 
   if (projectData.templateType === "flash") {
-    return <Flash />;
+    return (
+      <>
+        <Flash />
+        <ProposalActions projectData={projectData} isEditing />
+      </>
+    );
   }
 
   if (projectData.templateType === "minimal") {
     // Temporarily disable minimal template editing
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center text-red-600">
-          <h1 className="text-2xl font-bold mb-4">Template Indisponível</h1>
-          <p className="mb-4">
-            O template Minimal está temporariamente indisponível para edição.
-          </p>
-          <p className="text-sm text-gray-600">
-            Este projeto foi criado com um template que não está mais disponível.
-          </p>
-        </div>
-      </div>
+      <>
+        <Minimal />
+        <ProposalActions projectData={projectData} isEditing />
+      </>
     );
   }
 
@@ -141,7 +141,7 @@ export default function EditarPage() {
 
   // Fallback for unsupported template types
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex min-h-screen items-center justify-center">
       <p>Template tipo &quot;{templateType}&quot; não suportado</p>
     </div>
   );

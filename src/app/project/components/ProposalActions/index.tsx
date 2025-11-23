@@ -7,9 +7,13 @@ import type { TemplateData } from "#/types/template-data";
 
 interface ProposalActionsProps {
   projectData: TemplateData;
+  isEditing?: boolean;
 }
 
-export default function ProposalActions({ projectData }: ProposalActionsProps) {
+export default function ProposalActions({
+  projectData,
+  isEditing,
+}: ProposalActionsProps) {
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +52,7 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
             {/* Action Buttons */}
             <div className="flex w-full items-center gap-3 sm:w-auto">
               <button
-                onClick={() => setShowAdjustmentModal(true)}
+                onClick={() => !isEditing && setShowAdjustmentModal(true)}
                 disabled={isSubmitting}
                 className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
                 style={{
@@ -60,7 +64,7 @@ export default function ProposalActions({ projectData }: ProposalActionsProps) {
               </button>
 
               <button
-                onClick={() => setShowAcceptModal(true)}
+                onClick={() => !isEditing && setShowAcceptModal(true)}
                 disabled={isSubmitting}
                 className="flex-1 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
                 style={{
