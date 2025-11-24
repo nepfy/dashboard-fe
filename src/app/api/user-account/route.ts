@@ -25,6 +25,9 @@ export async function GET() {
       );
     }
 
+    console.log("🔍 Searching for user with Clerk ID:", clerkUserId);
+    console.log("📧 User email:", emailAddress);
+
     // Search by clerkUserId instead of email
     const personData = await db
       .select()
@@ -32,11 +35,51 @@ export async function GET() {
       .where(eq(personUserTable.clerkUserId, clerkUserId))
       .limit(1);
 
+    console.log("📊 Person data found:", personData.length > 0 ? "Yes" : "No");
+    if (personData.length > 0) {
+      console.log("✅ User found:", personData[0].email);
+    }
+
     if (personData.length === 0) {
-      return NextResponse.json(
-        { success: false, error: "User not found in database" },
-        { status: 404 }
-      );
+      // Try searching by email as fallback
+      console.log("⚠️ User not found by Clerk ID, trying by email...");
+      const personDataByEmail = await db
+        .select()
+        .from(personUserTable)
+        .where(eq(personUserTable.email, emailAddress))
+        .limit(1);
+
+      if (personDataByEmail.length > 0) {
+        console.log("✅ User found by email, updating Clerk ID...");
+        // Update the clerk_user_id
+        await db
+          .update(personUserTable)
+          .set({ clerkUserId: clerkUserId, updated_at: new Date() })
+          .where(eq(personUserTable.email, emailAddress));
+
+        // Re-fetch the user data
+        const updatedPersonData = await db
+          .select()
+          .from(personUserTable)
+          .where(eq(personUserTable.clerkUserId, clerkUserId))
+          .limit(1);
+
+        if (updatedPersonData.length === 0) {
+          return NextResponse.json(
+            { success: false, error: "Failed to update user Clerk ID" },
+            { status: 500 }
+          );
+        }
+
+        // Continue with the updated data
+        personData.push(updatedPersonData[0]);
+      } else {
+        console.error("❌ User not found by Clerk ID or email");
+        return NextResponse.json(
+          { success: false, error: "User not found in database" },
+          { status: 404 }
+        );
+      }
     }
 
     const companyData = await db
@@ -50,7 +93,11 @@ export async function GET() {
       ...personData[0],
       // Use Clerk data if database fields are null/empty
       // If both are null, extract name from email
-      firstName: personData[0].firstName || user.firstName || emailAddress.split('@')[0] || 'Usuário',
+      firstName:
+        personData[0].firstName ||
+        user.firstName ||
+        emailAddress.split("@")[0] ||
+        "Usuário",
       lastName: personData[0].lastName || user.lastName || null,
       email: personData[0].email || emailAddress,
       companyData: companyData.length > 0 ? companyData[0] : null,
@@ -93,11 +140,44 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { companyData, ...personData } = body;
 
-    // Update by clerkUserId instead of email
+    console.log("🔄 Updating user with Clerk ID:", clerkUserId);
+
+    // First, ensure the user has the correct clerkUserId
+    const existingUser = await db
+      .select()
+      .from(personUserTable)
+      .where(eq(personUserTable.clerkUserId, clerkUserId))
+      .limit(1);
+
+    if (existingUser.length === 0) {
+      console.log("⚠️ User not found by Clerk ID, trying by email...");
+      // Try to find by email and update the clerkUserId
+      const userByEmail = await db
+        .select()
+        .from(personUserTable)
+        .where(eq(personUserTable.email, emailAddress))
+        .limit(1);
+
+      if (userByEmail.length > 0) {
+        console.log("✅ User found by email, updating Clerk ID first...");
+        await db
+          .update(personUserTable)
+          .set({ clerkUserId: clerkUserId, updated_at: new Date() })
+          .where(eq(personUserTable.email, emailAddress));
+      } else {
+        return NextResponse.json(
+          { success: false, error: "User not found in database" },
+          { status: 404 }
+        );
+      }
+    }
+
+    // Update by clerkUserId
     const updatedUser = await db
       .update(personUserTable)
       .set({
         ...personData,
+        clerkUserId: clerkUserId, // Ensure clerkUserId is always set
         updated_at: new Date(),
       })
       .where(eq(personUserTable.clerkUserId, clerkUserId))
@@ -109,6 +189,8 @@ export async function PUT(request: Request) {
         { status: 500 }
       );
     }
+
+    console.log("✅ User updated successfully:", updatedUser[0].email);
 
     if (companyData) {
       const existingCompany = await db
@@ -146,7 +228,11 @@ export async function PUT(request: Request) {
       ...updatedUser[0],
       // Merge with Clerk data
       // If both are null, extract name from email
-      firstName: updatedUser[0].firstName || user.firstName || emailAddress.split('@')[0] || 'Usuário',
+      firstName:
+        updatedUser[0].firstName ||
+        user.firstName ||
+        emailAddress.split("@")[0] ||
+        "Usuário",
       lastName: updatedUser[0].lastName || user.lastName || null,
       email: updatedUser[0].email || emailAddress,
       companyData: updatedCompany.length > 0 ? updatedCompany[0] : null,
