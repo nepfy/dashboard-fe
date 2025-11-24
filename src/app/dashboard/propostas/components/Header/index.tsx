@@ -1,15 +1,11 @@
 import Link from "next/link";
 
-import DashboardPageHeader from "#/components/DashboardPageHeader";
-import PlusIcon from "#/components/icons/PlusIcon";
-import Archive from "#/components/icons/Archive";
-// import ColumnIcon from "#/components/icons/ColumnIcon";
-
 interface HeaderProps {
   tab: string;
   setTab: (tab: string) => void;
   viewMode: "active" | "archived";
   setViewMode: (mode: "active" | "archived") => void;
+  proposalsCount?: number;
 }
 
 export default function Header({
@@ -17,6 +13,7 @@ export default function Header({
   // setTab,
   viewMode,
   setViewMode,
+  proposalsCount = 0,
 }: HeaderProps) {
   const handleArchiveToggle = () => {
     setViewMode(viewMode === "active" ? "archived" : "active");
@@ -28,110 +25,73 @@ export default function Header({
       : "Voltar às propostas";
   };
 
-  const getArchiveButtonIcon = () => {
-    return viewMode === "active" ? (
-      <Archive width="20px" height="20px" />
-    ) : (
-      <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-      </svg>
-    );
-  };
-
   return (
-    <DashboardPageHeader
-      title={viewMode === "active" ? "Propostas" : "Propostas Arquivadas"}
-    >
-      <div className="flex flex-wrap items-start">
-        <div className="flex flex-row flex-wrap w-full gap-1 items-start sm:items-center">
-          {viewMode === "active" && (
-            <Link href="/gerar-proposta" className="w-full sm:w-40">
-              <div className="flex items-center justify-center w-full sm:w-40 h-11 gap-1 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse">
-                <PlusIcon fill="#FFFFFF" />
-                Criar proposta
-              </div>
-            </Link>
-          )}
-
-          {/* <Link
-            href="/gerar-proposta"
-            className="flex items-center justify-center h-11 text-sm font-medium text-white rounded-[var(--radius-s)] cursor-pointer bg-primary-light-400 hover:bg-primary-light-500 border border-primary-light-25 button-inner-inverse px-4 gap-2"
-          >
-            <BrainIcon size={20} />
-            <span className="hidden sm:block">Gerar proposta com AI</span>
-          </Link> */}
-          <button
-            onClick={handleArchiveToggle}
-            className="hidden sm:flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer sm:w-52 border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
-          >
-            {getArchiveButtonIcon()}
-            <span className="hidden sm:block">{getArchiveButtonText()}</span>
-          </button>
-
-          <div className="flex sm:hidden items-center justify-between w-full mt-2">
-            <div className="flex items-center justify-center w-full">
-              {/* <button
-                onClick={handleArchiveToggle}
-                className="flex items-center justify-center w-11 h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
-              >
-                {getArchiveButtonIcon()}
-              </button> */}
-
-              <button
-                onClick={handleArchiveToggle}
-                className="flex items-center justify-center w-full h-[46px] gap-1 text-sm font-medium border rounded-[var(--radius-s)] cursor-pointer border-white-neutral-light-300 hover:bg-white-neutral-light-200 button-inner bg-white-neutral-light-100"
-              >
-                {getArchiveButtonIcon()}
-                <span className="block">{getArchiveButtonText()}</span>
-              </button>
-            </div>
-
-            {/* <div className="flex items-center justify-center w-[86px] h-[46px] border border-white-neutral-light-300 rounded-2xl">
-              <button
-                onClick={() => setTab("table")}
-                className={`flex items-center justify-center 
-                w-10 h-10 rounded-[var(--radius-s)] cursor-pointer
-              hover:bg-white-neutral-light-200 
-                transition duration-300 ease-in-out
-                active:transform
-                ${
-                  tab === "table"
-                    ? "bg-white-neutral-light-100 e0 text-primary-light-500"
-                    : "bg-transparent"
-                }
-                `}
-              >
-                <ColumnIcon
-                  width="24"
-                  height="24"
-                  fill={tab === "table" ? "#5B32F4" : "#23232C"}
-                />
-              </button>
-
-              <button
-                onClick={() => setTab("kanban")}
-                className={`flex items-center justify-center 
-                  w-10 h-10 rounded-[var(--radius-s)] cursor-pointer
-                hover:bg-white-neutral-light-200 
-                  transition duration-300 ease-in-out
-                  active:transform rotate-90
-                  ${
-                    tab === "kanban"
-                      ? "bg-white-neutral-light-100 e0 text-primary-light-500"
-                      : "bg-transparent"
-                  }
-                  `}
-              >
-                <ColumnIcon
-                  width="24"
-                  height="24"
-                  fill={tab === "kanban" ? "#5B32F4" : "#23232C"}
-                />
-              </button>
-            </div> */}
-          </div>
-        </div>
+    <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+      {/* Left: Folder + Count */}
+      <div className="flex items-center gap-2.5">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="text-gray-900"
+        >
+          <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z" />
+        </svg>
+        <span className="text-sm font-medium text-gray-900">Propostas</span>
+        <span className="flex h-5 min-w-[20px] items-center justify-center rounded bg-gray-100 px-2 text-xs font-medium text-gray-600">
+          {proposalsCount}
+        </span>
       </div>
-    </DashboardPageHeader>
+
+      {/* Right: Action Buttons */}
+      <div className="flex items-center gap-2">
+        {/* Filter Button */}
+        <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
+          </svg>
+        </button>
+
+        {/* Create Proposal Button */}
+        {viewMode === "active" && (
+          <Link href="/gerar-proposta">
+            <button className="flex h-9 items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Criar proposta
+            </button>
+          </Link>
+        )}
+
+        {/* Archive Toggle Button */}
+        <button
+          onClick={handleArchiveToggle}
+          className="flex h-9 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="text-gray-600"
+          >
+            <path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.83 1H5.42l.82-1zM5 19V8h14v11H5z" />
+          </svg>
+          <span>{getArchiveButtonText()}</span>
+        </button>
+      </div>
+    </div>
   );
 }

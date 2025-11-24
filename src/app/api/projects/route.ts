@@ -224,12 +224,20 @@ export async function PUT(request: Request) {
       );
     }
 
+    // Prepare update data
+    const updateData: any = {
+      projectStatus: status,
+      updated_at: new Date(),
+    };
+
+    // If status is being set to 'sent', save the sent date
+    if (status === "sent") {
+      updateData.projectSentDate = new Date();
+    }
+
     const updatedProject = await db
       .update(projectsTable)
-      .set({
-        projectStatus: status,
-        updated_at: new Date(),
-      })
+      .set(updateData)
       .where(
         and(eq(projectsTable.id, projectId), eq(projectsTable.personId, userId))
       )
@@ -323,12 +331,20 @@ export async function PATCH(request: Request) {
       );
     }
 
+    // Prepare update data
+    const updateData: any = {
+      projectStatus: status,
+      updated_at: new Date(),
+    };
+
+    // If status is being set to 'sent', save the sent date
+    if (status === "sent") {
+      updateData.projectSentDate = new Date();
+    }
+
     const updatedProjects = await db
       .update(projectsTable)
-      .set({
-        projectStatus: status,
-        updated_at: new Date(),
-      })
+      .set(updateData)
       .where(
         and(
           inArray(projectsTable.id, projectIds),

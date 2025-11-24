@@ -9,13 +9,13 @@ interface DashboardPageHeaderProps {
 export default function DashboardPageHeader({
   title,
   children,
-  disableBorder = false,
+  disableBorder = true,
 }: DashboardPageHeaderProps) {
   return (
     <header
-      className={`w-full p-7 ${disableBorder ? "" : "border-white-neutral-light-300 border-b"}`}
+      className={`flex w-full items-center justify-between p-7 ${disableBorder ? "" : "border-white-neutral-light-300 border-b"}`}
     >
-      <h3 className="text-white-neutral-light-900 mb-4 text-2xl font-medium">
+      <h3 className="text-white-neutral-light-900 text-2xl font-medium">
         {title}
       </h3>
       {children}

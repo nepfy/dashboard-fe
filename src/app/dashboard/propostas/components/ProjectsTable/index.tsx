@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { LoaderCircle } from "lucide-react";
+import Link from "next/link";
 
 import {
   formatVisualizationDate,
@@ -8,7 +9,6 @@ import {
 import CalendarIcon from "#/components/icons/CalendarIcon";
 import AnchorLinkIcon from "#/components/icons/AnchorLinkIcon";
 
-import TableBulkEdit from "./TableBulkEdit";
 import RowEditMenu from "./RowEditMenu";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
@@ -248,7 +248,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   };
 
   const isOperationInProgress = isUpdating || isDuplicating;
-  const showBulkEdit = selectedRows.size > 0;
 
   if (isLoading || isInitialLoading) {
     return (
@@ -262,20 +261,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
 
   return (
     <div className="h-full w-full">
-      {showBulkEdit && (
-        <TableBulkEdit
-          selectedCount={selectedRows.size}
-          selectedProjectIds={Array.from(selectedRows)}
-          onStatusUpdate={handleBulkStatusUpdate}
-          onDuplicateProjects={handleBulkDuplicate}
-          onDeselectAll={handleDeselectAll}
-          isUpdating={isUpdating}
-          isDuplicating={isDuplicating}
-          viewMode={viewMode}
-          onRefresh={onRefresh}
-        />
-      )}
-
       <div className="bg-white-neutral-light-100 rounded-2xs w-full overflow-x-auto">
         <div className="p-4">
           <table className="relative box-border h-full w-full p-3">
@@ -330,10 +315,9 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                 data!.map((row) => (
                   <tr
                     key={row.id}
-                    onClick={() => handleRowSelect(row.id)}
                     onMouseEnter={() => setHoveredRowId(row.id)}
                     onMouseLeave={() => setHoveredRowId(null)}
-                    className={`hover:bg-white-neutral-light-200 cursor-pointer py-4 ${
+                    className={`hover:bg-white-neutral-light-200 py-4 ${
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
@@ -344,14 +328,21 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         type="checkbox"
                         className="border-white-neutral-light-300 mt-0.5 mr-2 h-4 w-4 flex-shrink-0 self-baseline rounded-xl border text-blue-600 focus:ring-blue-500"
                         checked={selectedRows.has(row.id)}
-                        onChange={() => handleRowSelect(row.id)}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          handleRowSelect(row.id);
+                        }}
                         disabled={isOperationInProgress}
                       />
-                      <span
-                        className="flex max-w-[100px] justify-center gap-2 truncate sm:max-w-none md:whitespace-nowrap"
-                        title={row.clientName}
-                      >
-                        {row.clientName}
+                      <span className="flex max-w-[100px] justify-center gap-2 truncate sm:max-w-none md:whitespace-nowrap">
+                        <Link
+                          href={`/dashboard/propostas/${row.id}`}
+                          className="hover:text-indigo-600 hover:underline"
+                          title={row.clientName}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {row.clientName}
+                        </Link>
                         <CopyLinkIcon
                           projectId={row.id}
                           isVisible={

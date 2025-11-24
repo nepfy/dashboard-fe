@@ -109,10 +109,8 @@ export default function DashboardLayout({
       <div className="relative bg-gray-50">
         <div className="relative grid h-screen grid-cols-1 lg:grid-cols-[280px_1fr]">
           <Sidebar />
-
-          <div className="flex h-screen flex-col overflow-scroll">
-            <Navbar />
-            <main className="flex-1">{children}</main>
+          <div className="flex h-screen flex-col overflow-scroll bg-gray-50">
+            <main className="flex-1 bg-gray-50">{children}</main>
           </div>
         </div>
       </div>

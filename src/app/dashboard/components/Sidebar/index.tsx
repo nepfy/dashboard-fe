@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { useUserStore } from "#/store/user.slice";
 
 import Logo from "#/components/icons/Logo";
@@ -15,11 +16,13 @@ import GearIcon from "#/components/icons/GearIcon";
 import SignOutIcon from "#/components/icons/SignOutIcon";
 import TutorialIcon from "#/components/icons/TutorialIcon";
 import { trackDashboardTabClicked } from "#/lib/analytics/track";
+import { MoreVerticalIcon } from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { signOut } = useClerk();
   const logout = useUserStore((state) => state.logout);
+  const { user } = useUser();
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -105,14 +108,14 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col bg-white-neutral-light-200 border-r border-gray-200 h-screen">
+    <aside className="bg-white-neutral-light-200 hidden h-screen flex-col border-r border-gray-200 lg:flex">
       <div className="p-4">
         <Link href="/dashboard" className="flex items-center">
           <Logo fill="#1C1A22" />
         </Link>
       </div>
 
-      <div className="flex flex-col justify-between flex-1 p-4">
+      <div className="flex flex-1 flex-col justify-between p-4">
         <nav className="space-y-1">
           <ul className="space-y-2">
             {mainMenuItems.map((item) => (
@@ -120,11 +123,16 @@ export default function Sidebar() {
                 {item.name === "Contratos" || item.name === "Calculadora" ? (
                   <div
                     className={
-                      "flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-500 font-medium cursor-not-allowed"
+                      "rounded-2xs text-white-neutral-light-500 flex cursor-not-allowed items-center justify-between px-4 py-3 text-sm font-medium"
                     }
                   >
-                    <span className="mr-2 opacity-50">{item.icon}</span>
-                    {item.name}
+                    <div className="flex items-center">
+                      <span className="mr-2 opacity-50">{item.icon}</span>
+                      {item.name}
+                    </div>
+                    <span className="rounded bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
+                      EM BREVE
+                    </span>
                   </div>
                 ) : (
                   <Link
@@ -135,7 +143,7 @@ export default function Sidebar() {
                         trackDashboardTabClicked({ tab_name: "propostas" });
                       }
                     }}
-                    className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
+                    className={`rounded-2xs text-white-neutral-light-900 flex items-center px-4 py-3 text-sm font-medium ${
                       isActive(item.path)
                         ? "bg-white-neutral-light-100 e0 cursor-default"
                         : "hover:bg-gray-100"
@@ -156,7 +164,7 @@ export default function Sidebar() {
                 {item.name === "Contratos" || item.name === "Calculadora" ? (
                   <div
                     className={
-                      "flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-800 font-medium cursor-not-allowed opacity-60"
+                      "rounded-2xs text-white-neutral-light-800 flex cursor-not-allowed items-center px-4 py-3 text-sm font-medium opacity-60"
                     }
                   >
                     <span className="mr-2">{item.icon}</span>
@@ -165,9 +173,9 @@ export default function Sidebar() {
                 ) : (
                   <Link
                     href={item.path}
-                    className={`flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium ${
+                    className={`rounded-2xs text-white-neutral-light-900 flex items-center px-4 py-3 text-sm font-medium ${
                       isActive(item.path)
-                        ? "bg-white-neutral-light-100 font-medium e0 cursor-default"
+                        ? "bg-white-neutral-light-100 e0 cursor-default font-medium"
                         : "hover:bg-gray-100"
                     }`}
                   >
@@ -180,7 +188,7 @@ export default function Sidebar() {
             <li>
               <div
                 onClick={handleSignOut}
-                className="flex items-center px-4 py-3 text-sm rounded-2xs text-white-neutral-light-900 font-medium hover:bg-gray-100 cursor-pointer"
+                className="rounded-2xs text-white-neutral-light-900 flex cursor-pointer items-center px-4 py-3 text-sm font-medium hover:bg-gray-100"
               >
                 <span className="mr-2">
                   <SignOutIcon width="20" height="20" fill="#19171F" />
@@ -189,12 +197,40 @@ export default function Sidebar() {
               </div>
             </li>
             <li>
-              <div className="gradient-border rounded-[var(--radius-m)] h-[144px] w-[236px] p-[3px] bg-white-neutral-light-100">
-                <div className="w-full h-full rounded-[var(--radius-s)] p-5 bg-[var(--color-white-neutral-light-200)] flex flex-col justify-between items-start">
+              <div className="relative ml-1 hidden lg:block">
+                <div className="mb-6 flex items-center justify-between p-1">
+                  <div className="flex items-center gap-2 rounded-full text-sm focus:outline-none">
+                    <div className="h-8 w-8 rounded-full bg-gray-300">
+                      {user?.imageUrl && (
+                        <Image
+                          src={user.imageUrl}
+                          width={32}
+                          height={32}
+                          alt="Foto de perfil do usuário"
+                          className="cursor-pointer rounded-full transition-opacity hover:opacity-80"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      )}
+                    </div>
+                    <span className="text-white-neutral-light-900 text-sm font-medium">
+                      {user?.firstName} {user?.lastName}
+                    </span>
+                  </div>
+                  <button className="flex items-center justify-center">
+                    <MoreVerticalIcon width="20" height="20" fill="#19171F" />
+                  </button>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div className="gradient-border bg-white-neutral-light-100 h-[144px] w-[236px] rounded-[var(--radius-m)] p-[3px]">
+                <div className="flex h-full w-full flex-col items-start justify-between rounded-[var(--radius-s)] bg-[var(--color-white-neutral-light-200)] p-5">
                   <TutorialIcon />
                   <p className="text-white-neutral-light-900 text-sm font-normal">
                     Aprenda a criar propostas
-                    <span className="text-white-neutral-light-400 font-medium underline cursor-pointer">
+                    <span className="text-white-neutral-light-400 cursor-pointer font-medium underline">
                       {" "}
                       Assistir tutorial{" "}
                     </span>
