@@ -22,6 +22,13 @@ export default function AccountRecovery() {
   const { isSignedIn } = useAuth();
   const { isLoaded, signIn, setActive } = useSignIn();
 
+  // Redirect if user is already signed in
+  useEffect(() => {
+    if (isSignedIn) {
+      router.push("/dashboard");
+    }
+  }, [isSignedIn, router]);
+
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

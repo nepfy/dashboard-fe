@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSignUp } from "@clerk/nextjs";
+import { useSignUp, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 
 import Navbar from "#/components/Navbar";
@@ -17,6 +18,15 @@ import { validateEmail } from "#/helpers/validateEmail";
 
 export default function CreateAccount() {
   const { isLoaded, signUp } = useSignUp();
+  const { isSignedIn, isLoaded: isUserLoaded } = useUser();
+  const router = useRouter();
+
+  // Redirect if user is already signed in
+  useEffect(() => {
+    if (isUserLoaded && isSignedIn) {
+      router.push("/dashboard");
+    }
+  }, [isUserLoaded, isSignedIn, router]);
 
   // Form state
   const [emailAddress, setEmailAddress] = useState("");

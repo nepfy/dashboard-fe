@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSignIn } from "@clerk/nextjs";
+import { useSignIn, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 import { validateEmail } from "#/helpers/validateEmail";
@@ -22,9 +22,17 @@ import { useGoogleOAuth } from "#/hooks/useGoogleOAuth";
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, setActive } = useSignIn();
+  const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   const { authenticateWithGoogle, isReady: isGoogleAuthReady } =
     useGoogleOAuth();
+
+  // Redirect if user is already signed in
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.push("/dashboard");
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
