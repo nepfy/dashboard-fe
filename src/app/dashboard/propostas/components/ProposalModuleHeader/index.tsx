@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { BellIcon, SearchIcon, SunIcon } from "lucide-react";
+import { useNotifications } from "#/hooks/useNotifications";
 
 export function ProposalModuleHeader() {
   const [searchQuery, setSearchQuery] = useState("");
-  const unreadCount = 2; // Mock value matching the image
+  const { unreadCount } = useNotifications();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

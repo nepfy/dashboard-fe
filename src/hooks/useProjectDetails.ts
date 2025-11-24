@@ -12,8 +12,8 @@ export interface ProjectDetails {
   mainColor: string | null;
   projectUrl: string | null;
   isPublished: boolean | null;
-  proposalData: any;
-  buttonConfig: any;
+  proposalData: Record<string, unknown>;
+  buttonConfig: Record<string, unknown>;
   created_at: Date;
   updated_at: Date | null;
 }
@@ -26,7 +26,7 @@ export interface ProjectAdjustment {
   status: string;
   clientName: string | null;
   requestedBy: string | null;
-  metadata: any;
+  metadata: Record<string, unknown>;
   resolvedAt: Date | null;
   resolvedBy: string | null;
   created_at: Date;
@@ -97,4 +97,3 @@ export function useProjectDetails(projectId: string): UseProjectDetailsReturn {
     refetch: fetchProjectDetails,
   };
 }
-

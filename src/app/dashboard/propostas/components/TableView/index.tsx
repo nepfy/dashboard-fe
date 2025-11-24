@@ -26,7 +26,7 @@ export default function TableView({
   onCountUpdate,
   onPaginationUpdate,
 }: TableViewProps) {
-  const [selectedItems, setSelectedItems] = useState<string[]>(["1", "2"]); // Mock para visualizar
+  const [selectedItems, setSelectedItems] = useState<string[]>([]); // Mock para visualizar
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("Aprovada"); // Mock
 
@@ -218,19 +218,19 @@ export default function TableView({
       <div className="animate-fadeIn w-full">
         {/* Barra de ações quando há itens selecionados */}
         {selectedItems.length > 0 && (
-          <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+          <div className="flex w-full items-center justify-between gap-3 border-b border-gray-200 px-6 py-4">
             {/* Dropdown Atualizar status - Esquerda */}
-            <div className="relative">
+            <div className="relative flex flex-1">
               <button
                 onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-                className="flex h-10 min-w-[566px] items-center justify-between rounded-lg border border-gray-200 bg-white px-4 text-sm text-gray-700 hover:bg-gray-50"
+                className="flex h-10 w-full items-center justify-between rounded-lg border border-gray-200 bg-white px-4 text-sm text-gray-700 hover:bg-gray-50"
               >
                 <span>Atualizar status</span>
                 <ChevronDown className="h-4 w-4" />
               </button>
 
               {isStatusDropdownOpen && (
-                <div className="absolute top-full left-0 z-10 mt-1 w-[566px] rounded-lg border border-gray-200 bg-white py-3 shadow-lg">
+                <div className="absolute top-full left-0 z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white py-3 shadow-lg">
                   {[
                     "Rascunho",
                     "Enviada",
@@ -249,17 +249,17 @@ export default function TableView({
                     >
                       {/* Radio button */}
                       <div
-                        className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+                        className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${
                           selectedStatus === status
                             ? "border-indigo-600"
                             : "border-gray-300"
                         }`}
                       >
                         {selectedStatus === status && (
-                          <div className="h-2.5 w-2.5 rounded-full bg-indigo-600" />
+                          <div className="h-2 w-2 rounded-full bg-indigo-600" />
                         )}
                       </div>
-                      <span className="text-gray-900">{status}</span>
+                      <span className="text-sm text-gray-900">{status}</span>
                     </button>
                   ))}
                 </div>
@@ -324,6 +324,7 @@ export default function TableView({
           onDelete={handleDelete}
           viewMode={viewMode}
           onRefresh={handleRefresh}
+          onRowSelect={setSelectedItems}
         />
       </div>
 

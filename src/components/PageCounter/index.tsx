@@ -16,7 +16,7 @@ const PageCounter: React.FC<PageCounterProps> = ({
   const displayLabel = totalPages === 1 ? "página" : label;
 
   return (
-    <div className={`flex items-center ${className}`}>
+    <div className={`flex items-center ${className} text-sm`}>
       <span className="text-white-neutral-light-900 border-b-white-neutral-light-400 border-b-2">
         {currentPage}
       </span>

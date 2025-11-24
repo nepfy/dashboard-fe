@@ -14,7 +14,6 @@ import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 import { trackProposalShared } from "#/lib/analytics/track";
-import ProposalModals from "../ProposalModals";
 
 interface EnhancedTableProps extends TableProps {
   isUpdating?: boolean;
@@ -121,7 +120,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   isInitialLoading,
   isUpdating = false,
   isDuplicating = false,
-  onBulkStatusUpdate,
   onStatusUpdate,
   onBulkDuplicate,
   onDelete,
@@ -163,40 +161,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
       onRowSelect?.(allIds);
     }
     setSelectAll(!selectAll);
-  };
-
-  const handleBulkStatusUpdate = async (status: string) => {
-    const selectedIds = Array.from(selectedRows);
-    if (selectedIds.length > 0 && onBulkStatusUpdate) {
-      try {
-        await onBulkStatusUpdate(selectedIds, status);
-        setSelectedRows(new Set());
-        setSelectAll(false);
-        onRowSelect?.([]);
-      } catch (error) {
-        console.error("Failed to update projects:", error);
-      }
-    }
-  };
-
-  const handleBulkDuplicate = async () => {
-    const selectedIds = Array.from(selectedRows);
-    if (selectedIds.length > 0 && onBulkDuplicate) {
-      try {
-        await onBulkDuplicate(selectedIds);
-        setSelectedRows(new Set());
-        setSelectAll(false);
-        onRowSelect?.([]);
-      } catch (error) {
-        console.error("Falha ao duplicar proposta:", error);
-      }
-    }
-  };
-
-  const handleDeselectAll = () => {
-    setSelectedRows(new Set());
-    setSelectAll(false);
-    onRowSelect?.([]);
   };
 
   const handleMenuToggle = (rowId: string, event: React.MouseEvent) => {
@@ -429,21 +393,6 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           triggerElement={menuTriggerElement}
           onRefresh={onRefresh}
         />
-      )}
-
-      {/* Proposal Modals - Show for all projects to handle adjustments and acceptances */}
-      {data && data.length > 0 && (
-        <>
-          {data.map((row) => (
-            <ProposalModals
-              key={row.id}
-              projectId={row.id}
-              projectName={row.projectName}
-              projectStatus={row.projectStatus}
-              templateType={row.templateType}
-            />
-          ))}
-        </>
       )}
     </div>
   );

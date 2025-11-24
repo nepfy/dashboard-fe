@@ -57,7 +57,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center text-2xl disabled:opacity-40 sm:h-12 sm:w-12"
           aria-label="Página anterior"
         >
           <ChevronLeft size={24} />
@@ -66,19 +66,19 @@ const Pagination = ({
 
       {/* Mobile view - only show current page */}
       <button
-        className="sm:hidden w-10 h-10 flex items-center justify-center rounded-2xs text-lg font-medium bg-gray-100 text-white-neutral-light-900"
+        className="rounded-2xs text-white-neutral-light-900 flex h-10 w-10 items-center justify-center bg-gray-100 text-lg font-medium sm:hidden"
         aria-current="page"
         aria-label={`Página ${currentPage}`}
       >
         {currentPage}
       </button>
 
-      <div className="hidden sm:flex items-center gap-2">
+      <div className="hidden items-center gap-2 sm:flex">
         {getPageNumbers().map((number) => (
           <button
             key={number}
             onClick={() => handlePageChange(number)}
-            className={`w-10 h-10 flex items-center justify-center rounded-2xs text-lg font-normal transition-colors text-white-neutral-light-900 cursor-pointer ${
+            className={`rounded-2xs text-white-neutral-light-900 flex h-10 w-10 cursor-pointer items-center justify-center text-lg font-normal transition-colors ${
               currentPage === number
                 ? "bg-gray-100 font-medium"
                 : "hover:bg-gray-50"
@@ -86,7 +86,7 @@ const Pagination = ({
             aria-label={`Página ${number}`}
             aria-current={currentPage === number ? "page" : undefined}
           >
-            {number}
+            <span className="text-sm">{number}</span>
           </button>
         ))}
       </div>
@@ -95,7 +95,7 @@ const Pagination = ({
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center text-2xl disabled:opacity-40 cursor-pointer"
+          className="flex h-8 w-8 cursor-pointer items-center justify-center text-2xl disabled:opacity-40 sm:h-12 sm:w-12"
           aria-label="Próxima página"
         >
           <ChevronRight size={24} />

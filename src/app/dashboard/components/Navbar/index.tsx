@@ -6,30 +6,15 @@ import Link from "next/link";
 import MobileMenu from "../MobileMenu";
 import Notifications from "../Notifications";
 import Logo from "#/components/icons/Logo";
-import MenuIcon from "#/components/icons/MenuIcon";
-import { useNotifications } from "#/hooks/useNotifications";
+
 import { useFeatureFlag } from "#/hooks/useFeatureFlag";
 
 export default function Navbar() {
-  const { unreadCount } = useNotifications();
   const { isEnabled: notificationsEnabled } = useFeatureFlag(
     "notifications_system"
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    // TODO: Implement theme switching logic
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement search functionality
-    console.log("Searching for:", searchQuery);
-  };
 
   return (
     <nav className="border-b border-gray-200 bg-white">

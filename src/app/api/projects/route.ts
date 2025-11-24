@@ -225,7 +225,7 @@ export async function PUT(request: Request) {
     }
 
     // Prepare update data
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       projectStatus: status,
       updated_at: new Date(),
     };
@@ -332,7 +332,7 @@ export async function PATCH(request: Request) {
     }
 
     // Prepare update data
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       projectStatus: status,
       updated_at: new Date(),
     };
