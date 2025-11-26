@@ -21,16 +21,11 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.nextUrl.hostname;
 
-  // Allow template-flash and template-minimal-visualize static files to be served without authentication
+  // Allow static files and template paths FIRST, before any subdomain logic
   if (
     url.pathname.startsWith("/template-flash/") ||
     url.pathname.startsWith("/template-minimal/") ||
-    url.pathname.startsWith("/template-minimal-visualize/")
-  ) {
-    return NextResponse.next();
-  }
-
-  if (
+    url.pathname.startsWith("/template-minimal-visualize/") ||
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
     url.pathname.startsWith("/static/") ||
@@ -38,6 +33,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       /\.(ico|png|svg|jpg|jpeg|gif|webp|js|css|woff|woff2|ttf|html)$/
     )
   ) {
+    console.log('[Middleware] Allowing static/template file:', url.pathname);
     return NextResponse.next();
   }
 
