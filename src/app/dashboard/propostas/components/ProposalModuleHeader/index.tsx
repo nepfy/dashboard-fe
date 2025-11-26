@@ -7,7 +7,8 @@ import Notifications from "#/app/dashboard/components/Notifications";
 
 export function ProposalModuleHeader() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { unreadCount } = useNotifications();
+  const notificationsHook = useNotifications();
+  const { unreadCount } = notificationsHook;
   // const [isDarkMode, setIsDarkMode] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
@@ -79,6 +80,7 @@ export function ProposalModuleHeader() {
       <Notifications
         isNotificationOpen={isNotificationOpen}
         setIsNotificationOpenAction={setIsNotificationOpen}
+        notificationsHook={notificationsHook}
       />
     </>
   );

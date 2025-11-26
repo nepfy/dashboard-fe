@@ -150,6 +150,16 @@ export async function POST(request: NextRequest) {
         break;
 
       case "proposal_feedback":
+        console.log("[proposal-events] Processing feedback event:", {
+          userId,
+          projectId,
+          projectName,
+          client,
+          feedbackText,
+          feedbackType: body.feedbackType,
+          adjustmentType: body.adjustmentType,
+        });
+
         notification = await NotificationHelper.notifyProposalFeedback(
           userId,
           projectId,
@@ -158,13 +168,18 @@ export async function POST(request: NextRequest) {
           feedbackText
         );
 
+        console.log("[proposal-events] Notification created:", {
+          notificationId: notification?.notification?.id,
+          notificationCreated: !!notification,
+        });
+
         // If feedback is an adjustment request, store it
         if (
           body.feedbackType === "adjustment_request" &&
           feedbackText &&
           body.adjustmentType
         ) {
-          await db.insert(proposalAdjustmentsTable).values({
+          const [adjustment] = await db.insert(proposalAdjustmentsTable).values({
             projectId,
             type: body.adjustmentType,
             description: feedbackText,
@@ -175,6 +190,10 @@ export async function POST(request: NextRequest) {
               feedbackType: body.feedbackType,
               timestamp: body.timestamp || new Date().toISOString(),
             },
+          }).returning();
+          
+          console.log("[proposal-events] Adjustment stored:", {
+            adjustmentId: adjustment?.id,
           });
         }
         break;

@@ -31,10 +31,12 @@ const adjustmentTypeLabels: Record<string, string> = {
 const statusLabels: Record<string, string> = {
   draft: "Rascunho",
   sent: "Enviada",
-  active: "Publicada",
+  active: "Enviada",
   negotiation: "Em negociação",
   approved: "Aprovada",
   rejected: "Recusada",
+  expired: "Expirada",
+  archived: "Arquivada",
 };
 
 export default function ProposalDetailPage({ params }: PageProps) {

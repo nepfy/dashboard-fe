@@ -6,7 +6,6 @@
 
 import type { NotificationWithProject } from "./notification-service";
 import { NotificationService } from "./notification-service";
-import { trackNotificationEmailSent } from "#/lib/analytics/track";
 
 interface SendNotificationEmailParams {
   to: string;
@@ -22,7 +21,8 @@ const getEmailTemplate = (
   userName?: string
 ): { subject: string; html: string; text: string } => {
   const greeting = userName ? `Olá, ${userName}!` : "Olá!";
-  const projectName = notification.metadata?.projectName as string || "[NOME DA PROPOSTA]";
+  const projectName =
+    (notification.metadata?.projectName as string) || "[NOME DA PROPOSTA]";
 
   // Base template
   const baseHtml = (content: string) => `
@@ -125,7 +125,7 @@ const getEmailTemplate = (
 
     case "proposal_feedback":
       subject = "O cliente enviou solicitações de ajuste";
-      
+
       content = `
         <h2 style="margin: 0 0 24px 0; font-size: 20px; font-weight: 600; color: #1a1a1a; line-height: 1.4;">
           ${greeting}
@@ -277,20 +277,12 @@ export class EmailService {
         throw new Error(`Resend API error: ${error}`);
       }
 
-      const result = await response.json();
-
       // Mark email as sent in database
       await NotificationService.markEmailSent(notification.id);
 
-      // Track email sent
-      trackNotificationEmailSent({
-        notification_id: notification.id,
-        notification_type: notification.type,
-        user_id: notification.userId,
-        email_address: to,
-      });
-
-      console.log(`Email sent successfully: ${result.id}`);
+      console.log(
+        `Email sent successfully to ${to} (notification: ${notification.id})`
+      );
       return true;
     } catch (error) {
       console.error("Error sending notification email:", error);
@@ -344,4 +336,3 @@ export class EmailService {
     return { successful, failed };
   }
 }
-

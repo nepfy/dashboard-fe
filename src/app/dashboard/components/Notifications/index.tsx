@@ -84,17 +84,20 @@ function formatRelativeTime(date: Date | null): string {
 export default function Notifications({
   isNotificationOpen,
   setIsNotificationOpenAction,
+  notificationsHook,
 }: {
   isNotificationOpen: boolean;
   setIsNotificationOpenAction: (isOpen: boolean) => void;
+  notificationsHook?: ReturnType<typeof useNotifications>;
 }) {
+  const defaultHook = useNotifications();
   const {
     notifications,
     isLoading,
     markAsRead,
     markAllAsRead,
     deleteNotification,
-  } = useNotifications();
+  } = notificationsHook || defaultHook;
 
   const [selectedNotification, setSelectedNotification] =
     useState<NotificationWithProject | null>(null);
@@ -187,15 +190,15 @@ export default function Notifications({
 
   return (
     <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm">
-      <div className="absolute inset-x-0 top-0 z-10 mx-auto flex h-screen max-w-md flex-col bg-white sm:inset-x-auto sm:top-2 sm:right-7 sm:mx-0 sm:mt-2 sm:h-auto sm:max-h-[calc(100vh-32px)] sm:w-[397px] sm:rounded-xs sm:shadow-lg">
+      <div className="absolute inset-x-0 top-0 z-10 mx-auto flex h-screen max-w-md flex-col bg-white sm:inset-x-auto sm:top-2 sm:right-7 sm:mx-0 sm:mt-2 sm:h-auto sm:max-h-[calc(100vh-32px)] sm:w-[397px] sm:rounded-xl sm:shadow-lg">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 p-4">
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <div className="flex items-center gap-2">
             <p className="text-lg font-normal text-gray-900">Notificações</p>
             {notifications.some((n) => !n.isRead) && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-primary-light-400 hover:text-primary-light-500 text-xs font-medium"
+                className="text-primary-light-400 hover:text-primary-light-500 cursor-pointer text-xs font-medium transition-colors"
               >
                 Marcar todas como lidas
               </button>
@@ -229,7 +232,7 @@ export default function Notifications({
                 ].includes(notification.type);
                 const commonProps = {
                   key: notification.id,
-                  className: `flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors cursor-pointer relative group ${
+                  className: `flex items-start gap-3 px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer relative group ${
                     !notification.isRead ? "bg-blue-50" : ""
                   }`,
                   onClick: () => handleNotificationClick(notification),

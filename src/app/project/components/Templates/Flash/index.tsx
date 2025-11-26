@@ -26,6 +26,16 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const needsPassword = data?.pagePassword && data.pagePassword.trim() !== "";
 
+  // Debug logs
+  console.log("[FlashTemplate] Rendering with data:", {
+    hasData: !!data,
+    projectId: data?.id,
+    projectName: data?.projectName,
+    needsPassword,
+    isPasswordCorrect,
+    templateType: data?.templateType,
+  });
+
   useEffect(() => {
     if (!needsPassword) {
       setIsPasswordCorrect(true);

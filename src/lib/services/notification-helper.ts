@@ -227,16 +227,26 @@ export class NotificationHelper {
     clientName: string,
     feedbackText?: string
   ) {
+    console.log("[notifyProposalFeedback] Starting notification creation:", {
+      userId,
+      projectId,
+      projectName,
+      clientName,
+    });
+
     const shouldShow = await NotificationService.shouldShowInApp(
       userId,
       "proposal_feedback"
     );
 
+    console.log("[notifyProposalFeedback] shouldShowInApp result:", shouldShow);
+
     if (!shouldShow) {
+      console.log("[notifyProposalFeedback] Notification skipped due to user preferences");
       return null;
     }
 
-    return await NotificationService.create({
+    const notification = await NotificationService.create({
       userId,
       type: "proposal_feedback",
       title: "Novo feedback recebido",
@@ -250,6 +260,21 @@ export class NotificationHelper {
       },
       actionUrl: `/dashboard/propostas/${projectId}`,
     });
+
+    console.log("[notifyProposalFeedback] Notification created:", notification.id);
+
+    // Send email asynchronously
+    this.sendEmailForNotification(userId, notification);
+
+    return {
+      notification,
+      trackingData: {
+        notification_id: notification.id,
+        notification_type: notification.type,
+        user_id: userId,
+        via_email: true,
+      },
+    };
   }
 
   /**
