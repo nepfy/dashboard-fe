@@ -20,12 +20,19 @@ export default function ProposalAcceptedModal({
 }: ProposalAcceptedModalProps) {
   if (!isOpen) return null;
 
-  const chosenPlan = notification.metadata?.chosenPlan;
-  const chosenPlanValue = notification.metadata?.chosenPlanValue;
-  const acceptedBy = notification.metadata?.acceptedBy || notification.metadata?.clientName;
+  const metadata = notification.metadata as {
+    chosenPlan?: string;
+    chosenPlanValue?: string;
+    acceptedBy?: string;
+    clientName?: string;
+  } | null;
+
+  const chosenPlan = metadata?.chosenPlan;
+  const chosenPlanValue = metadata?.chosenPlanValue;
+  const acceptedBy = metadata?.acceptedBy || metadata?.clientName;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
         {/* Close button */}
         <button
@@ -46,7 +53,8 @@ export default function ProposalAcceptedModal({
               Proposta aceita pelo cliente!
             </h2>
             <p className="mt-1 text-sm text-gray-600">
-              O cliente aceitou a proposta! Agora é hora de seguir com o próximo passo do projeto.
+              O cliente aceitou a proposta! Agora é hora de seguir com o próximo
+              passo do projeto.
             </p>
           </div>
         </div>
@@ -56,32 +64,32 @@ export default function ProposalAcceptedModal({
           <div className="rounded-lg bg-gray-50 p-4">
             <div className="space-y-3">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
                   Plano escolhido
                 </p>
                 <p className="mt-1 text-sm font-medium text-gray-900">
-                  {chosenPlan || "Não especificado"}
+                  {String(chosenPlan || "Não especificado")}
                 </p>
               </div>
 
               {chosenPlanValue && (
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
                     Valor
                   </p>
                   <p className="mt-1 text-sm font-medium text-gray-900">
-                    {chosenPlanValue}
+                    {String(chosenPlanValue)}
                   </p>
                 </div>
               )}
 
               {acceptedBy && (
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
                     Responsável pela aceitação
                   </p>
                   <p className="mt-1 text-sm font-medium text-gray-900">
-                    {acceptedBy}
+                    {String(acceptedBy)}
                   </p>
                 </div>
               )}
@@ -89,8 +97,8 @@ export default function ProposalAcceptedModal({
           </div>
 
           <p className="text-sm text-gray-600">
-            No painel, você encontra o histórico completo da negociação e todas as informações
-            importantes para continuar o processo com segurança.
+            No painel, você encontra o histórico completo da negociação e todas
+            as informações importantes para continuar o processo com segurança.
           </p>
         </div>
 
@@ -107,4 +115,3 @@ export default function ProposalAcceptedModal({
     </div>
   );
 }
-

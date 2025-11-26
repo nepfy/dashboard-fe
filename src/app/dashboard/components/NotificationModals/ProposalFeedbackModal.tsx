@@ -39,26 +39,35 @@ export default function ProposalFeedbackModal({
 }: ProposalFeedbackModalProps) {
   // Use adjustments array if provided, otherwise use metadata
   const [currentAdjustmentIndex, setCurrentAdjustmentIndex] = useState(0);
-  
+
   if (!isOpen) return null;
 
-  const adjustmentType = notification.metadata?.adjustmentType;
-  const adjustmentDescription = notification.metadata?.adjustmentDescription;
-  const projectId = notification.metadata?.projectId;
+  const metadata = notification.metadata as {
+    projectName?: string;
+    projectId?: string;
+    adjustmentType?: string;
+    adjustmentDescription?: string;
+  } | null;
+
+  const adjustmentType = metadata?.adjustmentType;
+  const adjustmentDescription = metadata?.adjustmentDescription;
+  const projectId = metadata?.projectId;
 
   const hasMultipleAdjustments = adjustments && adjustments.length > 1;
   const currentAdjustment = adjustments?.[currentAdjustmentIndex];
 
   const displayType = currentAdjustment
     ? adjustmentTypeLabels[currentAdjustment.type] || currentAdjustment.type
-    : adjustmentTypeLabels[adjustmentType || ""] || adjustmentType;
+    : adjustmentTypeLabels[
+        adjustmentType as keyof typeof adjustmentTypeLabels
+      ] || adjustmentType;
 
   const displayDescription = currentAdjustment
     ? currentAdjustment.description
     : adjustmentDescription;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
         {/* Close button */}
         <button
@@ -75,7 +84,8 @@ export default function ProposalFeedbackModal({
             Ajuste solicitado pelo cliente
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Veja abaixo os ajustes solicitados. Revise cada um e envie uma nova versão da proposta atualizada.
+            Veja abaixo os ajustes solicitados. Revise cada um e envie uma nova
+            versão da proposta atualizada.
           </p>
 
           {/* Pagination for multiple adjustments */}
@@ -103,34 +113,37 @@ export default function ProposalFeedbackModal({
           <div className="rounded-lg bg-gray-50 p-4">
             <div className="space-y-3">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
                   Tipo de ajuste
                 </p>
                 <p className="mt-1 text-sm font-medium text-gray-900">
-                  {displayType || "Não especificado"}
+                  {displayType && typeof displayType === "string"
+                    ? displayType
+                    : "Não especificado"}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
                   Descrição
                 </p>
                 <p className="mt-1 text-sm text-gray-900">
-                  {displayDescription ||
-                    "Seria possível alterar o valor do plano essencial de R$2.000 para R$1.740 por mês?"}
+                  {displayDescription && typeof displayDescription === "string"
+                    ? displayDescription
+                    : "Seria possível alterar o valor do plano essencial de R$2.000 para R$1.740 por mês?"}
                 </p>
               </div>
             </div>
           </div>
 
           <p className="text-sm text-gray-600">
-            Essa é a etapa que costuma definir o fechamento, então vale revisar com cuidado e reenviar
-            a versão atualizada o quanto antes.
+            Essa é a etapa que costuma definir o fechamento, então vale revisar
+            com cuidado e reenviar a versão atualizada o quanto antes.
           </p>
 
           <p className="text-sm text-gray-600">
-            No painel, você encontra todos os detalhes do pedido e pode ajustar tudo em poucos minutos
-            e reenviar a nova versão.
+            No painel, você encontra todos os detalhes do pedido e pode ajustar
+            tudo em poucos minutos e reenviar a nova versão.
           </p>
         </div>
 
@@ -142,7 +155,7 @@ export default function ProposalFeedbackModal({
           >
             Fechar
           </button>
-          {projectId && (
+          {projectId && typeof projectId === "string" ? (
             <Link
               href={`/editar?projectId=${projectId}&templateType=flash`}
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
@@ -150,10 +163,9 @@ export default function ProposalFeedbackModal({
             >
               Editar proposta
             </Link>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
   );
 }
-
