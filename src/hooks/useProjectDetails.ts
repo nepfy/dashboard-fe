@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export interface ProjectDetails {
   id: string;
@@ -47,7 +47,7 @@ export function useProjectDetails(projectId: string): UseProjectDetailsReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchProjectDetails = async () => {
+  const fetchProjectDetails = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -81,13 +81,13 @@ export function useProjectDetails(projectId: string): UseProjectDetailsReturn {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [projectId]);
 
   useEffect(() => {
     if (projectId) {
       fetchProjectDetails();
     }
-  }, [projectId]);
+  }, [projectId, fetchProjectDetails]);
 
   return {
     project,

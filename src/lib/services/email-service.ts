@@ -23,7 +23,6 @@ const getEmailTemplate = (
 ): { subject: string; html: string; text: string } => {
   const greeting = userName ? `Olá, ${userName}!` : "Olá!";
   const projectName = notification.metadata?.projectName as string || "[NOME DA PROPOSTA]";
-  const clientName = notification.metadata?.clientName as string || "Cliente";
 
   // Base template
   const baseHtml = (content: string) => `
@@ -126,14 +125,6 @@ const getEmailTemplate = (
 
     case "proposal_feedback":
       subject = "O cliente enviou solicitações de ajuste";
-      const adjustmentType = notification.metadata?.adjustmentType as string;
-      const adjustmentTypeLabels: Record<string, string> = {
-        change_values_or_plans: "alteração de valores ou planos",
-        change_scope: "alteração de escopo",
-        change_timeline: "alteração de prazo",
-        other: "outro tipo de ajuste",
-      };
-      const adjustmentLabel = adjustmentTypeLabels[adjustmentType] || "ajuste";
       
       content = `
         <h2 style="margin: 0 0 24px 0; font-size: 20px; font-weight: 600; color: #1a1a1a; line-height: 1.4;">
