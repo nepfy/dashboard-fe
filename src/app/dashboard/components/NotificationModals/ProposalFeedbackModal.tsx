@@ -42,15 +42,15 @@ export default function ProposalFeedbackModal({
   notification,
   adjustments,
 }: ProposalFeedbackModalProps) {
+  // Use adjustments array if provided, otherwise use metadata
+  const [currentAdjustmentIndex, setCurrentAdjustmentIndex] = useState(0);
+  
   if (!isOpen) return null;
 
-  const projectName = notification.metadata?.projectName || "Projeto";
   const adjustmentType = notification.metadata?.adjustmentType;
   const adjustmentDescription = notification.metadata?.adjustmentDescription;
   const projectId = notification.metadata?.projectId;
 
-  // Use adjustments array if provided, otherwise use metadata
-  const [currentAdjustmentIndex, setCurrentAdjustmentIndex] = useState(0);
   const hasMultipleAdjustments = adjustments && adjustments.length > 1;
   const currentAdjustment = adjustments?.[currentAdjustmentIndex];
 

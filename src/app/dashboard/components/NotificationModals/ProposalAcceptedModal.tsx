@@ -26,7 +26,6 @@ export default function ProposalAcceptedModal({
 }: ProposalAcceptedModalProps) {
   if (!isOpen) return null;
 
-  const projectName = notification.metadata?.projectName || "Projeto";
   const chosenPlan = notification.metadata?.chosenPlan;
   const chosenPlanValue = notification.metadata?.chosenPlanValue;
   const acceptedBy = notification.metadata?.acceptedBy || notification.metadata?.clientName;
