@@ -159,6 +159,65 @@ export class NotificationHelper {
   }
 
   /**
+   * Create notification when an adjustment is requested
+   */
+  static async notifyAdjustmentRequested(
+    userId: string,
+    projectId: string,
+    projectName: string,
+    clientName: string,
+    adjustmentType: string,
+    description: string
+  ) {
+    const shouldShow = await NotificationService.shouldShowInApp(
+      userId,
+      "proposal_feedback"
+    );
+
+    if (!shouldShow) {
+      return null;
+    }
+
+    const adjustmentTypeLabels: Record<string, string> = {
+      change_values_or_plans: "alteração de valores ou planos",
+      change_scope: "alteração de escopo",
+      change_timeline: "alteração de prazo",
+      other: "outro tipo de ajuste",
+    };
+
+    const adjustmentLabel = adjustmentTypeLabels[adjustmentType] || "ajuste";
+
+    const notification = await NotificationService.create({
+      userId,
+      type: "proposal_feedback",
+      title: "🔧 Ajuste solicitado na proposta",
+      message: `${clientName} solicitou ${adjustmentLabel} na proposta "${projectName}". Verifique os detalhes e responda!`,
+      projectId,
+      metadata: {
+        projectId,
+        projectName,
+        clientName,
+        adjustmentType,
+        description,
+      },
+      actionUrl: `/dashboard/propostas/${projectId}`,
+    });
+
+    // Send email asynchronously
+    this.sendEmailForNotification(userId, notification);
+
+    return {
+      notification,
+      trackingData: {
+        notification_id: notification.id,
+        notification_type: notification.type,
+        user_id: userId,
+        via_email: true,
+      },
+    };
+  }
+
+  /**
    * Create notification when feedback is received on a proposal
    */
   static async notifyProposalFeedback(

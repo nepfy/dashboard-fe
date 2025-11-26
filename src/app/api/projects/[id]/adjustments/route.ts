@@ -5,6 +5,7 @@ import { proposalAdjustmentsTable } from "#/lib/db/schema";
 import { projectsTable } from "#/lib/db/schema";
 import { personUserTable } from "#/lib/db/schema/users";
 import { eq, and, desc, isNull } from "drizzle-orm";
+import { NotificationHelper } from "#/lib/services/notification-helper";
 
 /**
  * GET /api/projects/[id]/adjustments
@@ -173,6 +174,21 @@ export async function POST(
         status: "pending",
       })
       .returning();
+
+    // 🔔 Create notification for the project owner
+    try {
+      await NotificationHelper.notifyAdjustmentRequested(
+        personUser.id,
+        id,
+        project.projectName,
+        clientName || project.clientName || "Cliente",
+        type,
+        description
+      );
+    } catch (notificationError) {
+      console.error("Error creating notification:", notificationError);
+      // Don't fail the request if notification fails
+    }
 
     return NextResponse.json({
       success: true,

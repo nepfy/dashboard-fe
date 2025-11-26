@@ -22,6 +22,8 @@ const getEmailTemplate = (
   userName?: string
 ): { subject: string; html: string; text: string } => {
   const greeting = userName ? `Olá, ${userName}!` : "Olá!";
+  const projectName = notification.metadata?.projectName as string || "[NOME DA PROPOSTA]";
+  const clientName = notification.metadata?.clientName as string || "Cliente";
 
   // Base template
   const baseHtml = (content: string) => `
@@ -32,31 +34,53 @@ const getEmailTemplate = (
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${notification.title}</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f9fafb;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9fafb; padding: 40px 20px;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <!-- Header -->
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
+          <!-- Header with Logo -->
           <tr>
-            <td style="padding: 32px 40px; border-bottom: 1px solid #e5e7eb;">
-              <h1 style="margin: 0; font-size: 24px; font-weight: 600; color: #1f2937;">Nepfy</h1>
+            <td style="padding: 40px 40px 32px 40px; background-color: #ffffff;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <div style="font-size: 28px; font-weight: 700; color: #1a1a1a;">
+                      <span style="color: #6366f1;">.</span>nepfy
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           
           <!-- Content -->
           <tr>
-            <td style="padding: 40px;">
+            <td style="padding: 0 40px 40px 40px;">
               ${content}
             </td>
           </tr>
           
           <!-- Footer -->
           <tr>
-            <td style="padding: 24px 40px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
-              <p style="margin: 0; font-size: 12px; color: #6b7280; text-align: center;">
+            <td style="padding: 32px 40px; background-color: #f9fafb; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0 0 12px 0; font-size: 14px; color: #6b7280; line-height: 1.5;">
+                Conte com a gente. Estamos juntos nessa.
+              </p>
+              <p style="margin: 0; font-size: 14px; font-weight: 600; color: #1a1a1a;">
+                .Nepfy
+              </p>
+            </td>
+          </tr>
+        </table>
+        
+        <!-- Unsubscribe -->
+        <table width="600" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+          <tr>
+            <td style="padding: 0 20px;">
+              <p style="margin: 0; font-size: 12px; color: #9ca3af; text-align: center; line-height: 1.5;">
                 Você está recebendo este email porque está inscrito para receber notificações da Nepfy.<br>
-                <a href="https://nepfy.com/dashboard/configuracoes" style="color: #4f46e5; text-decoration: none;">Gerenciar preferências de notificações</a>
+                <a href="https://nepfy.com/dashboard/configuracoes" style="color: #6366f1; text-decoration: none;">Gerenciar preferências de notificações</a>
               </p>
             </td>
           </tr>
@@ -68,49 +92,137 @@ const getEmailTemplate = (
 </html>
   `;
 
-  const content = `
-    <p style="margin: 0 0 16px 0; font-size: 16px; color: #1f2937;">${greeting}</p>
-    <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 600; color: #1f2937;">${notification.title}</h2>
-    <p style="margin: 0 0 24px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">${notification.message}</p>
-    ${
-      notification.actionUrl
-        ? `
-    <table cellpadding="0" cellspacing="0" style="margin: 0 0 24px 0;">
-      <tr>
-        <td style="border-radius: 6px; background-color: #4f46e5;">
-          <a href="https://nepfy.com${notification.actionUrl}" 
-             style="display: inline-block; padding: 12px 24px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
-            Ver detalhes
-          </a>
-        </td>
-      </tr>
-    </table>
-    `
-        : ""
-    }
-    <p style="margin: 0; font-size: 14px; color: #6b7280;">
-      Acesse o <a href="https://nepfy.com/dashboard" style="color: #4f46e5; text-decoration: none;">painel de controle</a> para ver todas as suas notificações.
-    </p>
-  `;
+  // Custom templates based on notification type
+  let content = "";
+  let subject = "";
+  let textContent = "";
 
-  const textContent = `
-${greeting}
+  switch (notification.type) {
+    case "proposal_viewed":
+      subject = "A proposta acabou de ser aberta pelo cliente";
+      content = `
+        <h2 style="margin: 0 0 24px 0; font-size: 20px; font-weight: 600; color: #1a1a1a; line-height: 1.4;">
+          ${greeting}
+        </h2>
+        <p style="margin: 0 0 24px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          A proposta <strong>${projectName}</strong> acaba de ser aberta pelo cliente. Esse é o melhor momento para acompanhar o interesse e se preparar para o próximo movimento.
+        </p>
+        <p style="margin: 0 0 32px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          No painel, você pode acompanhar todas as interações em tempo real, conferindo visualizações, ajustes solicitados, histórico e status geral. Isso te ajuda a manter o ritmo certo e não perder nenhuma oportunidade.
+        </p>
+        <table cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="border-radius: 8px; background-color: #1a1a1a;">
+              <a href="https://nepfy.com${notification.actionUrl}" 
+                 style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
+                Acessar painel de propostas
+              </a>
+            </td>
+          </tr>
+        </table>
+      `;
+      textContent = `${greeting}\n\nA proposta ${projectName} acaba de ser aberta pelo cliente. Esse é o melhor momento para acompanhar o interesse e se preparar para o próximo movimento.\n\nNo painel, você pode acompanhar todas as interações em tempo real, conferindo visualizações, ajustes solicitados, histórico e status geral. Isso te ajuda a manter o ritmo certo e não perder nenhuma oportunidade.\n\nAcessar painel de propostas: https://nepfy.com${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+      break;
 
-${notification.title}
+    case "proposal_feedback":
+      subject = "O cliente enviou solicitações de ajuste";
+      const adjustmentType = notification.metadata?.adjustmentType as string;
+      const adjustmentTypeLabels: Record<string, string> = {
+        change_values_or_plans: "alteração de valores ou planos",
+        change_scope: "alteração de escopo",
+        change_timeline: "alteração de prazo",
+        other: "outro tipo de ajuste",
+      };
+      const adjustmentLabel = adjustmentTypeLabels[adjustmentType] || "ajuste";
+      
+      content = `
+        <h2 style="margin: 0 0 24px 0; font-size: 20px; font-weight: 600; color: #1a1a1a; line-height: 1.4;">
+          ${greeting}
+        </h2>
+        <p style="margin: 0 0 24px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          O cliente enviou solicitações de ajuste para a proposta <strong>${projectName}</strong>.
+        </p>
+        <p style="margin: 0 0 32px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          Essa é a etapa que costuma definir o fechamento, então vale revisar com cuidado e reenviar a versão atualizada o quanto antes.
+        </p>
+        <p style="margin: 0 0 32px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          No painel, você encontra todos os detalhes do pedido e pode ajustar tudo em poucos minutos e reenviar a nova versão.
+        </p>
+        <table cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="border-radius: 8px; background-color: #1a1a1a;">
+              <a href="https://nepfy.com${notification.actionUrl}" 
+                 style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
+                Revisar ajustes
+              </a>
+            </td>
+          </tr>
+        </table>
+      `;
+      textContent = `${greeting}\n\nO cliente enviou solicitações de ajuste para a proposta ${projectName}.\n\nEssa é a etapa que costuma definir o fechamento, então vale revisar com cuidado e reenviar a versão atualizada o quanto antes.\n\nNo painel, você encontra todos os detalhes do pedido e pode ajustar tudo em poucos minutos e reenviar a nova versão.\n\nRevisar ajustes: https://nepfy.com${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+      break;
 
-${notification.message}
+    case "proposal_accepted":
+      subject = "Temos uma ótima notícia: a proposta foi aprovada pelo cliente";
+      content = `
+        <h2 style="margin: 0 0 24px 0; font-size: 20px; font-weight: 600; color: #1a1a1a; line-height: 1.4;">
+          ${greeting}
+        </h2>
+        <p style="margin: 0 0 24px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          Temos uma ótima notícia: a proposta <strong>${projectName}</strong> foi aprovada pelo cliente. 🎉
+        </p>
+        <p style="margin: 0 0 32px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          A partir daqui, você já pode começar a organizar os próximos passos e seguir com o projeto de maneira mais assertiva.
+        </p>
+        <p style="margin: 0 0 32px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">
+          No painel, você encontra o histórico completo da negociação e todas as informações importantes para continuar o processo com segurança.
+        </p>
+        <table cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="border-radius: 8px; background-color: #1a1a1a;">
+              <a href="https://nepfy.com${notification.actionUrl}" 
+                 style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
+                Abrir painel
+              </a>
+            </td>
+          </tr>
+        </table>
+      `;
+      textContent = `${greeting}\n\nTemos uma ótima notícia: a proposta ${projectName} foi aprovada pelo cliente. 🎉\n\nA partir daqui, você já pode começar a organizar os próximos passos e seguir com o projeto de maneira mais assertiva.\n\nNo painel, você encontra o histórico completo da negociação e todas as informações importantes para continuar o processo com segurança.\n\nAbrir painel: https://nepfy.com${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+      break;
 
-${notification.actionUrl ? `Ver detalhes: https://nepfy.com${notification.actionUrl}` : ""}
-
-Acesse o painel de controle para ver todas as suas notificações: https://nepfy.com/dashboard
-
----
-Você está recebendo este email porque está inscrito para receber notificações da Nepfy.
-Gerenciar preferências: https://nepfy.com/dashboard/configuracoes
-  `;
+    default:
+      // Default template for other notification types
+      subject = `Nepfy: ${notification.title}`;
+      content = `
+        <p style="margin: 0 0 16px 0; font-size: 16px; color: #1a1a1a;">${greeting}</p>
+        <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 600; color: #1a1a1a;">${notification.title}</h2>
+        <p style="margin: 0 0 24px 0; font-size: 16px; color: #4b5563; line-height: 1.6;">${notification.message}</p>
+        ${
+          notification.actionUrl
+            ? `
+        <table cellpadding="0" cellspacing="0" style="margin: 0 0 24px 0;">
+          <tr>
+            <td style="border-radius: 8px; background-color: #1a1a1a;">
+              <a href="https://nepfy.com${notification.actionUrl}" 
+                 style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
+                Ver detalhes
+              </a>
+            </td>
+          </tr>
+        </table>
+        `
+            : ""
+        }
+        <p style="margin: 0; font-size: 14px; color: #6b7280;">
+          Acesse o <a href="https://nepfy.com/dashboard" style="color: #6366f1; text-decoration: none;">painel de controle</a> para ver todas as suas notificações.
+        </p>
+      `;
+      textContent = `${greeting}\n\n${notification.title}\n\n${notification.message}\n\n${notification.actionUrl ? `Ver detalhes: https://nepfy.com${notification.actionUrl}` : ""}\n\nAcesse o painel de controle para ver todas as suas notificações: https://nepfy.com/dashboard\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+  }
 
   return {
-    subject: `Nepfy: ${notification.title}`,
+    subject,
     html: baseHtml(content),
     text: textContent.trim(),
   };

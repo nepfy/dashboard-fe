@@ -27,7 +27,7 @@ export function useNotifications(): UseNotificationsReturn {
 
   // 🚨 MANUAL OVERRIDE: Disable notifications system
   // TODO: Remove when feature flag is active
-  const NOTIFICATIONS_DISABLED = true;
+  const NOTIFICATIONS_DISABLED = false; // ✅ Enabled for adjustments and acceptances
 
   const fetchNotifications = useCallback(async () => {
     if (NOTIFICATIONS_DISABLED) return;

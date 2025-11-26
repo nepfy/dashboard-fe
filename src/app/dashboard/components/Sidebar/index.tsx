@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useUserStore } from "#/store/user.slice";
+import { useState, useRef, useEffect } from "react";
 
 import Logo from "#/components/icons/Logo";
 import GridIcon from "#/components/icons/GridIcon";
@@ -23,6 +24,8 @@ export default function Sidebar() {
   const { signOut } = useClerk();
   const logout = useUserStore((state) => state.logout);
   const { user } = useUser();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -32,6 +35,23 @@ export default function Sidebar() {
     logout(); // Clear user data from store and localStorage
     await signOut({ redirectUrl: "/login" });
   };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    if (isUserMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isUserMenuOpen]);
 
   const date = new Date();
 
@@ -82,28 +102,26 @@ export default function Sidebar() {
     },
   ];
 
-  const bottomMenuItems = [
+  const userMenuItems = [
     {
       name: "Ajuda",
       path: "/dashboard/ajuda",
-      icon: (
-        <HelpIcon
-          width="20"
-          height="20"
-          fill={isActive("/dashboard/ajuda") ? "#6B46F5" : "#19171F"}
-        />
-      ),
+      icon: <HelpIcon width="20" height="20" fill="#19171F" />,
+      onClick: () => setIsUserMenuOpen(false),
     },
     {
       name: "Configurações",
       path: "/dashboard/configuracoes",
-      icon: (
-        <GearIcon
-          width="20"
-          height="20"
-          fill={isActive("/dashboard/configuracoes") ? "#6B46F5" : "#19171F"}
-        />
-      ),
+      icon: <GearIcon width="20" height="20" fill="#19171F" />,
+      onClick: () => setIsUserMenuOpen(false),
+    },
+    {
+      name: "Sair",
+      icon: <SignOutIcon width="20" height="20" fill="#19171F" />,
+      onClick: () => {
+        setIsUserMenuOpen(false);
+        handleSignOut();
+      },
     },
   ];
 
@@ -159,45 +177,8 @@ export default function Sidebar() {
 
         <nav>
           <ul className="space-y-2">
-            {bottomMenuItems.map((item) => (
-              <li key={item.name}>
-                {item.name === "Contratos" || item.name === "Calculadora" ? (
-                  <div
-                    className={
-                      "rounded-2xs text-white-neutral-light-800 flex cursor-not-allowed items-center px-4 py-3 text-sm font-medium opacity-60"
-                    }
-                  >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.name}
-                  </div>
-                ) : (
-                  <Link
-                    href={item.path}
-                    className={`rounded-2xs text-white-neutral-light-900 flex items-center px-4 py-3 text-sm font-medium ${
-                      isActive(item.path)
-                        ? "bg-white-neutral-light-100 e0 cursor-default font-medium"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.name}
-                  </Link>
-                )}
-              </li>
-            ))}
             <li>
-              <div
-                onClick={handleSignOut}
-                className="rounded-2xs text-white-neutral-light-900 flex cursor-pointer items-center px-4 py-3 text-sm font-medium hover:bg-gray-100"
-              >
-                <span className="mr-2">
-                  <SignOutIcon width="20" height="20" fill="#19171F" />
-                </span>
-                Sair
-              </div>
-            </li>
-            <li>
-              <div className="relative ml-1 hidden lg:block">
+              <div ref={menuRef} className="relative ml-1 hidden lg:block">
                 <div className="mb-6 flex items-center justify-between p-1">
                   <div className="flex items-center gap-2 rounded-full text-sm focus:outline-none">
                     <div className="h-8 w-8 rounded-full bg-gray-300">
@@ -218,10 +199,43 @@ export default function Sidebar() {
                       {user?.firstName} {user?.lastName}
                     </span>
                   </div>
-                  <button className="flex items-center justify-center">
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center justify-center rounded p-1 hover:bg-gray-100"
+                  >
                     <MoreVerticalIcon width="20" height="20" fill="#19171F" />
                   </button>
                 </div>
+
+                {/* User Menu Dropdown */}
+                {isUserMenuOpen && (
+                  <div className="absolute bottom-full left-0 mb-2 w-[240px] rounded-lg border border-gray-200 bg-white shadow-lg">
+                    <div className="py-2">
+                      {userMenuItems.map((item) => (
+                        <div key={item.name}>
+                          {item.path ? (
+                            <Link
+                              href={item.path}
+                              onClick={item.onClick}
+                              className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50"
+                            >
+                              {item.icon}
+                              {item.name}
+                            </Link>
+                          ) : (
+                            <button
+                              onClick={item.onClick}
+                              className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50"
+                            >
+                              {item.icon}
+                              {item.name}
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </li>
             <li>

@@ -165,7 +165,7 @@ export default function ProposalDetailPage({ params }: PageProps) {
           </div>
         ) : (
           <Link
-            href={`/dashboard/propostas/${id}/edit`}
+            href={`/editar?projectId=${id}&templateType=${project.templateType || "flash"}`}
             className="flex flex-col items-center justify-between gap-12 rounded-xl border border-gray-200 bg-white px-6 py-8 transition-colors hover:bg-gray-50"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">

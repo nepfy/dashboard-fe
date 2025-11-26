@@ -4,7 +4,7 @@ export default function getDomain() {
 
   const host = process.env.NEXT_PUBLIC_VERCEL_URL
     ? process.env.NEXT_PUBLIC_VERCEL_URL
-    : "localhost:3000";
+    : "nepfy.dev";
 
   return `${protocol}://${host}`;
 }

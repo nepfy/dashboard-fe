@@ -5,6 +5,7 @@ import { proposalAcceptancesTable } from "#/lib/db/schema";
 import { projectsTable } from "#/lib/db/schema";
 import { personUserTable } from "#/lib/db/schema/users";
 import { eq, and, isNull } from "drizzle-orm";
+import { NotificationHelper } from "#/lib/services/notification-helper";
 
 /**
  * GET /api/projects/[id]/acceptance
@@ -167,6 +168,7 @@ export async function POST(
       .limit(1);
 
     let acceptance;
+    let isNewAcceptance = false;
 
     if (existing) {
       // Update existing acceptance
@@ -194,6 +196,23 @@ export async function POST(
           metadata: metadata || undefined,
         })
         .returning();
+      
+      isNewAcceptance = true;
+    }
+
+    // 🔔 Create notification for the project owner (only for new acceptances)
+    if (isNewAcceptance) {
+      try {
+        await NotificationHelper.notifyProposalAccepted(
+          personUser.id,
+          id,
+          project.projectName,
+          clientName || project.clientName || "Cliente"
+        );
+      } catch (notificationError) {
+        console.error("Error creating notification:", notificationError);
+        // Don't fail the request if notification fails
+      }
     }
 
     return NextResponse.json({

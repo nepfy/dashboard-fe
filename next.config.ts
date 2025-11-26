@@ -62,6 +62,24 @@ const nextConfig = {
         ],
       },
       {
+        // Allow iframe embedding for template-flash files
+        source: "/template-minimal/:path*",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN", // Allow same-origin embedding
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
         // Allow iframe embedding for template-minimal-visualize files
         source: "/template-minimal-visualize/:path*",
         headers: [
