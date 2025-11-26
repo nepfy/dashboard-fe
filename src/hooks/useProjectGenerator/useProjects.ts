@@ -13,7 +13,9 @@ interface PaginationInfo {
 interface ProjectStatistics {
   sentProjectsCount: number;
   approvedProjectsCount: number;
-  archivedProjectsCount?: number; // Add archived count to statistics
+  archivedProjectsCount?: number;
+  sentProjectsRevenue?: string;
+  approvedProjectsRevenue?: string;
 }
 
 // Valid project statuses - should match your API

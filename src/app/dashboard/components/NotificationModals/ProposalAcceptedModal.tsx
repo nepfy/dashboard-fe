@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ProposalAcceptance {
@@ -92,7 +92,7 @@ export default function ProposalAcceptedModal({
         {/* Content */}
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-indigo-600"></div>
+            <LoaderCircle className="h-8 w-8 animate-spin rounded-full text-indigo-600" />
           </div>
         ) : (
           <div className="space-y-4">

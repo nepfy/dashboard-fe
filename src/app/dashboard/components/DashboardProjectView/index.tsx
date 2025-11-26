@@ -35,6 +35,8 @@ interface DashboardProjectViewProps {
   statistics: {
     sentProjectsCount: number;
     approvedProjectsCount: number;
+    sentProjectsRevenue?: string;
+    approvedProjectsRevenue?: string;
   } | null;
   onBulkStatusUpdate?: (projectIds: string[], status: string) => Promise<void>;
   onStatusUpdate?: (projectId: string, status: string) => Promise<void>;
@@ -177,7 +179,7 @@ export default function DashboardProjectView({
                 <ProposalCard
                   title="Propostas enviadas"
                   count={statistics?.sentProjectsCount || 0}
-                  value="Não calculado"
+                  value={statistics?.sentProjectsRevenue || "Não calculado"}
                   icon={<ArrowUpRight size={20} />}
                   isLoading={isInitialLoading}
                 />
@@ -187,7 +189,7 @@ export default function DashboardProjectView({
                 <ProposalCard
                   title="Propostas aprovadas"
                   count={statistics?.approvedProjectsCount || 0}
-                  value="Não calculado"
+                  value={statistics?.approvedProjectsRevenue || "Não calculado"}
                   icon={<CircleCheck size={20} />}
                   isLoading={isInitialLoading}
                 />
@@ -199,7 +201,7 @@ export default function DashboardProjectView({
             <ProposalCard
               title="Propostas enviadas"
               count={statistics?.sentProjectsCount || 0}
-              value="Não calculado"
+              value={statistics?.sentProjectsRevenue || "Não calculado"}
               icon={<ArrowUpRight size={20} />}
               isLoading={isInitialLoading}
             />
@@ -207,7 +209,7 @@ export default function DashboardProjectView({
             <ProposalCard
               title="Propostas aprovadas"
               count={statistics?.approvedProjectsCount || 0}
-              value="Não calculado"
+              value={statistics?.approvedProjectsRevenue || "Não calculado"}
               icon={<CircleCheck size={20} />}
               isLoading={isInitialLoading}
             />

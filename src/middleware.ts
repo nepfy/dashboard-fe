@@ -24,7 +24,8 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Allow template-flash and template-minimal-visualize static files to be served without authentication
   if (
     url.pathname.startsWith("/template-flash/") ||
-    url.pathname.startsWith("/template-minimal/")
+    url.pathname.startsWith("/template-minimal/") ||
+    url.pathname.startsWith("/template-minimal-visualize/")
   ) {
     return NextResponse.next();
   }

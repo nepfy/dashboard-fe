@@ -40,6 +40,8 @@ const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
   const [message, setMessage] = useState<string | null>(null);
 
   const handleCopyClick = async (e: React.MouseEvent) => {
+    if (!isVisible) return;
+
     e.stopPropagation();
 
     if (isLoading) return;
@@ -87,7 +89,7 @@ const CopyLinkIcon: React.FC<CopyLinkIconProps> = ({
         className={`inline-flex items-center justify-center rounded-full p-1 transition-all duration-200 ${
           isVisible
             ? "hover:bg-white-neutral-light-300 cursor-pointer opacity-100"
-            : "cursor-default opacity-0"
+            : "pointer-events-none cursor-default opacity-0"
         } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
         title="Copiar link do projeto"
       >
@@ -487,7 +489,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
               <tr>
                 <th
                   scope="col"
-                  className="text-white-neutral-light-900 py-3.5 pr-3 pl-4 text-left text-sm font-semibold"
+                  className="text-white-neutral-light-900 flex items-center gap-2 py-3.5 pr-3 pl-4 text-left text-sm font-semibold"
                 >
                   <input
                     type="checkbox"
@@ -497,7 +499,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                     checked={selectAll}
                     onChange={handleSelectAll}
                   />
-                  Cliente
+                  <span className="-mt-2">Cliente</span>
                 </th>
                 <th
                   scope="col"
@@ -537,29 +539,27 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                     onClick={() => handleRowClick(row.id)}
                     onMouseEnter={() => setHoveredRowId(row.id)}
                     onMouseLeave={() => setHoveredRowId(null)}
-                    className={`hover:bg-white-neutral-light-200 cursor-pointer py-4 ${
+                    className={`hover:bg-white-neutral-light-200 cursor-pointer py-3 ${
                       selectedRows.has(row.id)
                         ? "bg-white-neutral-light-200 rounded-2xs"
                         : undefined
                     }`}
                   >
-                    <td
-                      className="text-white-neutral-light-900 flex py-4 pr-3 pl-4 align-middle text-sm"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <input
-                        type="checkbox"
-                        className="border-white-neutral-light-300 mt-0.5 mr-2 h-4 w-4 flex-shrink-0 self-baseline rounded-xl border text-blue-600 focus:ring-blue-500"
-                        checked={selectedRows.has(row.id)}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          handleRowSelect(row.id);
-                        }}
-                        disabled={isOperationInProgress}
-                      />
+                    <td className="text-white-neutral-light-900 flex items-center justify-start py-4 pr-3 pl-4 align-middle text-sm">
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          className="border-white-neutral-light-300 mt-1 mr-2 h-4 w-4 flex-shrink-0 rounded-xl border text-blue-600 focus:ring-blue-500"
+                          checked={selectedRows.has(row.id)}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            handleRowSelect(row.id);
+                          }}
+                          disabled={isOperationInProgress}
+                        />
+                      </div>
                       <span
-                        className="flex max-w-[100px] justify-center gap-2 truncate sm:max-w-none md:whitespace-nowrap"
+                        className="flex max-w-[100px] items-center gap-2 truncate sm:max-w-none md:whitespace-nowrap"
                         title={row.clientName}
                       >
                         {row.clientName}
@@ -573,7 +573,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                     </td>
                     <td className="text-white-neutral-light-900 px-3 py-4 align-middle text-sm">
                       <span
-                        className="mb-2 block max-w-[120px] truncate sm:max-w-none md:whitespace-nowrap"
+                        className="block max-w-[120px] truncate sm:max-w-none md:whitespace-nowrap"
                         title={row.projectName}
                       >
                         {row.projectName}
@@ -584,11 +584,11 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                       {formatVisualizationDate(row.projectVisualizationDate) ??
                         "Não visualizado"}
                     </td>
-                    <td className="text-white-neutral-light-900 px-3 py-4 align-top text-sm whitespace-nowrap">
+                    <td className="text-white-neutral-light-900 px-3 py-4 align-middle text-sm whitespace-nowrap">
                       <CalendarIcon
                         width="16"
                         height="16"
-                        className="mr-1 mb-1 inline"
+                        className="mr-1 inline"
                       />
                       {formatValidityDate(
                         row.projectValidUntil instanceof Date
@@ -596,10 +596,10 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                           : row.projectValidUntil
                       )}
                     </td>
-                    <td className="text-white-neutral-light-900 px-3 py-4 align-top text-sm whitespace-nowrap">
+                    <td className="text-white-neutral-light-900 px-3 py-4 align-middle text-sm whitespace-nowrap">
                       {getStatusBadge(row.projectStatus)}
                     </td>
-                    <td className="text-white-neutral-light-900 px-3 py-2 align-top text-sm whitespace-nowrap">
+                    <td className="text-white-neutral-light-900 px-3 py-2 align-middle text-sm whitespace-nowrap">
                       <button
                         ref={(el) => {
                           if (el) {

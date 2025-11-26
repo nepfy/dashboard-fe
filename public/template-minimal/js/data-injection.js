@@ -359,6 +359,7 @@
 
   // Hide loading and show content
   function showContent() {
+    console.log("[Minimal Template] Showing content, hiding loading");
     const loadingEl = document.getElementById("minimal-template-loading");
     const contentEl = document.getElementById("minimal-template-content");
 
@@ -1422,8 +1423,15 @@
 
   // Main data injection function
   function injectData(data) {
+    console.log("[Minimal Template] injectData called", {
+      hasData: !!data,
+      hasProposalData: !!data?.proposalData,
+      projectName: data?.projectName
+    });
+    
     if (!data || !data.proposalData) {
       // Still show content even if no data
+      console.warn("[Minimal Template] No data or proposalData, showing content anyway");
       showContent();
       return;
     }
@@ -1630,10 +1638,17 @@
 
   // Listen for postMessage from parent window
   window.addEventListener("message", function (event) {
+    console.log("[Minimal Template] Received postMessage:", {
+      type: event.data?.type,
+      hasData: !!event.data?.data,
+      origin: event.origin
+    });
+    
     // Security: optionally verify origin
     // if (event.origin !== "http://localhost:3000") return;
 
     if (event.data && event.data.type === "MINIMAL_TEMPLATE_DATA") {
+      console.log("[Minimal Template] Processing template data");
       receivedData = event.data.data;
       handleDataInjection(event.data.data);
     }

@@ -219,12 +219,20 @@ export default function MinimalTemplate({ data }: MinimalTemplateProps) {
 
   // Handle iframe onLoad to send data
   const handleIframeLoad = () => {
-    if (!data || !iframeRef.current) return;
+    console.log("Minimal iframe loaded, data available:", !!data);
+    if (!data || !iframeRef.current) {
+      console.warn("Minimal: Missing data or iframe ref on load");
+      return;
+    }
 
     // Wait a bit for scripts to initialize
     setTimeout(() => {
       const iframe = iframeRef.current;
       if (iframe?.contentWindow) {
+        console.log("Minimal: Sending data to iframe", {
+          projectName: data.projectName,
+          hasProposalData: !!data.proposalData
+        });
         iframe.contentWindow.postMessage(
           {
             type: "MINIMAL_TEMPLATE_DATA",
@@ -232,6 +240,8 @@ export default function MinimalTemplate({ data }: MinimalTemplateProps) {
           },
           "*"
         );
+      } else {
+        console.warn("Minimal: No contentWindow available");
       }
     }, 1500);
   };

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import CloseIcon from "#/components/icons/CloseIcon";
 import { useNotifications } from "#/hooks/useNotifications";
 import {
@@ -104,6 +105,7 @@ export default function Notifications({
   const [showAcceptedModal, setShowAcceptedModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [adjustments, setAdjustments] = useState<Adjustment[]>([]);
+  const [isMarkingAllAsRead, setIsMarkingAllAsRead] = useState(false);
 
   useEffect(() => {
     if (isNotificationOpen) {
@@ -166,11 +168,18 @@ export default function Notifications({
   };
 
   const handleMarkAllAsRead = async () => {
-    const unreadCount = notifications.filter((n) => !n.isRead).length;
-    await markAllAsRead();
-    trackNotificationsMarkedAllRead({
-      count: unreadCount,
-    });
+    if (isMarkingAllAsRead) return;
+    
+    setIsMarkingAllAsRead(true);
+    try {
+      const unreadCount = notifications.filter((n) => !n.isRead).length;
+      await markAllAsRead();
+      trackNotificationsMarkedAllRead({
+        count: unreadCount,
+      });
+    } finally {
+      setIsMarkingAllAsRead(false);
+    }
   };
 
   const handleDelete = async (
@@ -198,8 +207,12 @@ export default function Notifications({
             {notifications.some((n) => !n.isRead) && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-primary-light-400 hover:text-primary-light-500 cursor-pointer text-xs font-medium transition-colors"
+                disabled={isMarkingAllAsRead}
+                className="text-primary-light-400 hover:text-primary-light-500 flex cursor-pointer items-center gap-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
+                {isMarkingAllAsRead && (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                )}
                 Marcar todas como lidas
               </button>
             )}

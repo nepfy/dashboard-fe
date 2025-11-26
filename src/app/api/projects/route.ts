@@ -4,6 +4,8 @@ import { db } from "#/lib/db";
 import { eq, desc, count, isNotNull, and, inArray, ne } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
+import { proposalAcceptancesTable } from "#/lib/db/schema/proposal-adjustments";
+import type { ProposalData } from "#/types/proposal-data";
 
 const VALID_STATUSES = [
   "active",
@@ -14,6 +16,83 @@ const VALID_STATUSES = [
   "expired",
   "archived",
 ] as const;
+
+/**
+ * Helper function to extract numeric value from a price string
+ * Examples: "R$ 3.500,00 mensal" -> 3500, "R$ 10.000" -> 10000
+ */
+function extractNumericValue(priceString: string): number {
+  if (!priceString) return 0;
+  
+  // Remove currency symbols, spaces, and text, keep only numbers, dots and commas
+  const cleanString = priceString
+    .replace(/[R$\s]/g, "")
+    .split(/\s/)[0]; // Take only the first part before any text like "mensal"
+  
+  // Handle Brazilian format (1.000,00)
+  const normalized = cleanString
+    .replace(/\./g, "") // Remove thousand separators
+    .replace(/,/g, "."); // Replace decimal comma with dot
+  
+  const value = parseFloat(normalized);
+  return isNaN(value) ? 0 : value;
+}
+
+/**
+ * Calculate total revenue from sent projects
+ * Prioritizes recommended plan, otherwise uses first plan as estimate
+ */
+function calculateSentProjectsRevenue(projects: { proposalData: unknown }[]): number {
+  let total = 0;
+  
+  for (const project of projects) {
+    const proposalData = project.proposalData as ProposalData | null;
+    if (!proposalData?.plans?.plansItems?.length) continue;
+    
+    // Try to find recommended plan first
+    const recommendedPlan = proposalData.plans.plansItems.find(
+      (plan) => plan.recommended
+    );
+    const planToUse = recommendedPlan || proposalData.plans.plansItems[0];
+    
+    if (planToUse?.value) {
+      total += extractNumericValue(planToUse.value);
+    }
+  }
+  
+  return total;
+}
+
+/**
+ * Calculate total revenue from approved projects using accepted plan values
+ */
+function calculateApprovedProjectsRevenue(
+  acceptances: { chosenPlanValue: string | null }[]
+): number {
+  let total = 0;
+  
+  for (const acceptance of acceptances) {
+    if (acceptance.chosenPlanValue) {
+      total += extractNumericValue(acceptance.chosenPlanValue);
+    }
+  }
+  
+  return total;
+}
+
+/**
+ * Format currency value to Brazilian Real format
+ */
+function formatCurrency(value: number): string {
+  if (value === 0) return "Não calculado";
+  
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
 
 export async function GET(request: Request) {
   try {
@@ -100,6 +179,49 @@ export async function GET(request: Request) {
     const archivedProjectsCount = archivedProjectsCountResult[0]?.count || 0;
     const totalPages = Math.ceil(totalCount / limit);
 
+    // Fetch sent projects with proposalData to calculate revenue
+    const sentProjects = await db
+      .select({
+        proposalData: projectsTable.proposalData,
+      })
+      .from(projectsTable)
+      .where(
+        and(
+          eq(projectsTable.personId, userId),
+          isNotNull(projectsTable.projectSentDate),
+          ne(projectsTable.projectStatus, "archived")
+        )
+      );
+
+    // Fetch approved projects acceptances to calculate revenue
+    const approvedAcceptances = await db
+      .select({
+        chosenPlanValue: proposalAcceptancesTable.chosenPlanValue,
+      })
+      .from(proposalAcceptancesTable)
+      .innerJoin(
+        projectsTable,
+        eq(proposalAcceptancesTable.projectId, projectsTable.id)
+      )
+      .where(
+        and(
+          eq(projectsTable.personId, userId),
+          eq(projectsTable.projectStatus, "approved")
+        )
+      );
+
+    // Calculate revenues
+    const sentProjectsRevenue = calculateSentProjectsRevenue(sentProjects);
+    const approvedProjectsRevenue = calculateApprovedProjectsRevenue(
+      approvedAcceptances
+    );
+
+    // Format revenues
+    const sentProjectsRevenueFormatted = formatCurrency(sentProjectsRevenue);
+    const approvedProjectsRevenueFormatted = formatCurrency(
+      approvedProjectsRevenue
+    );
+
     // Fetch projects (excluding archived)
     const projects = await db
       .select()
@@ -129,6 +251,8 @@ export async function GET(request: Request) {
         sentProjectsCount,
         approvedProjectsCount,
         archivedProjectsCount,
+        sentProjectsRevenue: sentProjectsRevenueFormatted,
+        approvedProjectsRevenue: approvedProjectsRevenueFormatted,
       },
     });
   } catch (error) {
