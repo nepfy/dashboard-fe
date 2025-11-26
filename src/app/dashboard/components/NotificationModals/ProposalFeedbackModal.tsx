@@ -67,8 +67,8 @@ export default function ProposalFeedbackModal({
     : adjustmentDescription;
 
   return (
-    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+      <div className="relative w-full max-w-lg rounded-xl bg-white p-4 shadow-xl sm:p-6">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -79,11 +79,11 @@ export default function ProposalFeedbackModal({
         </button>
 
         {/* Header */}
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">
+        <div className="mb-4 sm:mb-6">
+          <h2 className="pr-8 text-lg font-semibold text-gray-900 sm:text-xl">
             Ajuste solicitado pelo cliente
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-xs text-gray-600 sm:text-sm">
             Veja abaixo os ajustes solicitados. Revise cada um e envie uma nova
             versão da proposta atualizada.
           </p>
@@ -148,17 +148,17 @@ export default function ProposalFeedbackModal({
         </div>
 
         {/* Footer */}
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-4 flex flex-col gap-2 sm:mt-6 sm:flex-row sm:justify-end sm:gap-3">
           <button
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="order-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 sm:order-1"
           >
             Fechar
           </button>
           {projectId && typeof projectId === "string" ? (
             <Link
               href={`/editar?projectId=${projectId}&templateType=flash`}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+              className="order-1 rounded-lg bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-indigo-700 sm:order-2"
               onClick={onClose}
             >
               Editar proposta

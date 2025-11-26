@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { BellIcon, MoonIcon, SearchIcon, SunIcon } from "lucide-react";
+import { BellIcon, SearchIcon } from "lucide-react";
 import { useNotifications } from "#/hooks/useNotifications";
 import Notifications from "#/app/dashboard/components/Notifications";
 
 export function ProposalModuleHeader() {
   const [searchQuery, setSearchQuery] = useState("");
   const { unreadCount } = useNotifications();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // const [isDarkMode, setIsDarkMode] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -19,10 +19,12 @@ export function ProposalModuleHeader() {
 
   return (
     <>
-      <div className="mb-4 flex items-center justify-between px-2 py-4">
-        <h1 className="text-2xl font-medium text-gray-900">Propostas</h1>
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-xl font-medium text-gray-900 sm:text-2xl">
+          Propostas
+        </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Search Bar */}
           <div className="hidden">
             <form onSubmit={handleSearch} className="relative">
@@ -45,8 +47,8 @@ export function ProposalModuleHeader() {
           </div>
 
           {/* Theme Toggle */}
-          <button
-            className="hidden h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-[#EDEEF4] text-gray-600 transition-colors hover:bg-gray-200"
+          {/* <button
+            className="hidden h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-[#EDEEF4] text-gray-600 transition-colors hover:bg-gray-200 sm:flex"
             aria-label="Toggle theme"
             onClick={() => setIsDarkMode(!isDarkMode)}
           >
@@ -55,12 +57,12 @@ export function ProposalModuleHeader() {
             ) : (
               <MoonIcon className="h-5 w-5" />
             )}
-          </button>
+          </button> */}
 
           {/* Notifications */}
           <button
             onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-            className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-[#EDEEF4] text-gray-600 transition-colors hover:bg-gray-200"
+            className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg bg-[#EDEEF4] text-gray-600 transition-colors hover:bg-gray-200 sm:h-10 sm:w-10"
             aria-label="Notificações"
           >
             {unreadCount > 0 && (
@@ -68,7 +70,7 @@ export function ProposalModuleHeader() {
                 {unreadCount}
               </span>
             )}
-            <BellIcon className="h-5 w-5" />
+            <BellIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
       </div>

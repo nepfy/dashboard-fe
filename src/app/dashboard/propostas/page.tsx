@@ -43,11 +43,11 @@ export default function Projects() {
 
   return (
     <div className="relative w-full bg-gray-50">
-      <div className="relative px-6 py-6">
+      <div className="p-4 lg:p-7">
         <ProposalModuleHeader />
 
         {/* Card container único para Header + Table */}
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div className="hoverflow-hidden rounded-xl border border-gray-200 bg-white">
           <Header
             tab={tab}
             setTab={setTab}
@@ -69,7 +69,7 @@ export default function Projects() {
 
         {/* Paginação fora do card */}
         {paginationInfo && (
-          <div className="mt-4 flex items-center justify-between px-2">
+          <div className="mt-4 hidden flex-col items-center justify-between gap-4 px-2 sm:flex-row sm:gap-0 lg:flex">
             <Pagination
               totalPages={paginationInfo.totalPages}
               currentPage={paginationInfo.currentPage}

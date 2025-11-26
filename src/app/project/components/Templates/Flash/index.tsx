@@ -57,14 +57,33 @@ export default function FlashTemplate({ data }: FlashTemplateProps) {
         sessionStorage.setItem("viewer_session_id", sessionId);
       }
 
+      // Track analytics
       trackProposalViewedByClient({
         proposal_id: data.id,
         viewer_session_id: sessionId,
         project_url: data.projectUrl || undefined,
       });
+
+      // Send webhook to create notification and update project
+      fetch("/api/webhooks/proposal-events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          event: "proposal_viewed",
+          projectId: data.id,
+          projectName: data.projectName || "Proposta",
+          client: data.clientName || "Cliente",
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch((error) => {
+        console.error("Error sending proposal viewed event:", error);
+      });
+
       hasTrackedView.current = true;
     }
-  }, [isPasswordCorrect, data?.id, data?.projectUrl]);
+  }, [isPasswordCorrect, data?.id, data?.projectUrl, data?.projectName, data?.clientName]);
 
   const handlePasswordCorrect = () => {
     setIsPasswordCorrect(true);

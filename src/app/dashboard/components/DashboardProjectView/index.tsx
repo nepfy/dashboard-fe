@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, CircleCheck } from "lucide-react";
+import { ArrowUpRight, BellIcon, CircleCheck } from "lucide-react";
 import { useState, useEffect } from "react";
 import Slider from "react-slick";
 import type { Settings } from "react-slick";
@@ -12,6 +12,8 @@ import ProjectsView from "./components/ProjectView";
 
 import { useUserAccount } from "#/hooks/useUserAccount";
 import { ProjectsDataProps } from "#/app/dashboard/propostas/components/ProjectsTable/types";
+import Notifications from "../Notifications";
+import { useNotifications } from "#/hooks/useNotifications";
 
 interface PaginationInfo {
   currentPage: number;
@@ -63,7 +65,8 @@ export default function DashboardProjectView({
 }: DashboardProjectViewProps) {
   const { userData } = useUserAccount();
   const [isMobile, setIsMobile] = useState(false);
-
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const { unreadCount } = useNotifications();
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 640);
@@ -130,87 +133,105 @@ export default function DashboardProjectView({
   );
 
   return (
-    <div className="h-full">
-      <h2 className="text-white-neutral-light-800 text-2xl font-medium">
-        Olá, {`${userData?.firstName}`}!
-      </h2>
-      <p className="text-white-neutral-light-500 font-sm">
-        Visão geral do seu pipeline de venda
-      </p>
+    <>
+      <div className="h-full">
+        <div className="flex items-center justify-between">
+          <h2 className="text-white-neutral-light-800 text-2xl font-medium">
+            Olá, {`${userData?.firstName}`}!
+          </h2>
 
-      <div className="rounded-2xs bg-primary-light-300 relative my-4 flex h-[220px] w-full flex-col justify-between gap-4 p-6">
-        <p className="text-white-neutral-light-100 max-w-[390px] text-2xl font-medium">
-          Gere uma proposta <br /> completa e visualmente
-          <br /> impactante
-        </p>
-
-        <div className="flex w-full flex-wrap items-center justify-start gap-2">
-          <Link href="/gerar-proposta" className={BUTTON_CLASS}>
-            <Sparkle width="18" height="18" fill="#1C1A22" />
-            Criar Propostas
-          </Link>
+          <button
+            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+            className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg bg-[#EDEEF4] text-gray-600 transition-colors hover:bg-gray-200 sm:h-10 sm:w-10"
+            aria-label="Notificações"
+          >
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-indigo-600 px-1.5 text-xs font-semibold text-white">
+                {unreadCount}
+              </span>
+            )}
+            <BellIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
         </div>
 
-        <Stars className="absolute top-0 right-0" />
+        <div className="rounded-2xs bg-primary-light-300 relative my-4 flex h-[220px] w-full flex-col justify-between gap-4 p-6">
+          <p className="text-white-neutral-light-100 max-w-[390px] text-2xl font-medium">
+            Gere uma proposta <br /> completa e visualmente
+            <br /> impactante
+          </p>
+
+          <div className="flex w-full flex-wrap items-center justify-start gap-2">
+            <Link href="/gerar-proposta" className={BUTTON_CLASS}>
+              <Sparkle width="18" height="18" fill="#1C1A22" />
+              Criar Propostas
+            </Link>
+          </div>
+
+          <Stars className="absolute top-0 right-0" />
+        </div>
+
+        {isMobile ? (
+          <div className="slider-container relative mt-4 w-full">
+            <Slider {...sliderSettings}>
+              <div className="pr-4">
+                <ProposalCard
+                  title="Propostas enviadas"
+                  count={statistics?.sentProjectsCount || 0}
+                  value="Não calculado"
+                  icon={<ArrowUpRight size={20} />}
+                  isLoading={isInitialLoading}
+                />
+              </div>
+
+              <div className="pr-4">
+                <ProposalCard
+                  title="Propostas aprovadas"
+                  count={statistics?.approvedProjectsCount || 0}
+                  value="Não calculado"
+                  icon={<CircleCheck size={20} />}
+                  isLoading={isInitialLoading}
+                />
+              </div>
+            </Slider>
+          </div>
+        ) : (
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <ProposalCard
+              title="Propostas enviadas"
+              count={statistics?.sentProjectsCount || 0}
+              value="Não calculado"
+              icon={<ArrowUpRight size={20} />}
+              isLoading={isInitialLoading}
+            />
+
+            <ProposalCard
+              title="Propostas aprovadas"
+              count={statistics?.approvedProjectsCount || 0}
+              value="Não calculado"
+              icon={<CircleCheck size={20} />}
+              isLoading={isInitialLoading}
+            />
+          </div>
+        )}
+
+        <ProjectsView
+          projectsData={projectsData}
+          pagination={pagination}
+          onPageChangeAction={onPageChange}
+          error={error}
+          isPaginationLoading={isPaginationLoading}
+          isDuplicating={isDuplicating}
+          onBulkStatusUpdate={onBulkStatusUpdate}
+          onStatusUpdate={onStatusUpdate}
+          onBulkDuplicate={onBulkDuplicate}
+          onDelete={onDelete}
+          onRefresh={onRefresh}
+        />
       </div>
-
-      {isMobile ? (
-        <div className="slider-container relative mt-4 w-full">
-          <Slider {...sliderSettings}>
-            <div className="pr-4">
-              <ProposalCard
-                title="Propostas enviadas"
-                count={statistics?.sentProjectsCount || 0}
-                value="Não calculado"
-                icon={<ArrowUpRight size={20} />}
-                isLoading={isInitialLoading}
-              />
-            </div>
-
-            <div className="pr-4">
-              <ProposalCard
-                title="Propostas aprovadas"
-                count={statistics?.approvedProjectsCount || 0}
-                value="Não calculado"
-                icon={<CircleCheck size={20} />}
-                isLoading={isInitialLoading}
-              />
-            </div>
-          </Slider>
-        </div>
-      ) : (
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <ProposalCard
-            title="Propostas enviadas"
-            count={statistics?.sentProjectsCount || 0}
-            value="Não calculado"
-            icon={<ArrowUpRight size={20} />}
-            isLoading={isInitialLoading}
-          />
-
-          <ProposalCard
-            title="Propostas aprovadas"
-            count={statistics?.approvedProjectsCount || 0}
-            value="Não calculado"
-            icon={<CircleCheck size={20} />}
-            isLoading={isInitialLoading}
-          />
-        </div>
-      )}
-
-      <ProjectsView
-        projectsData={projectsData}
-        pagination={pagination}
-        onPageChangeAction={onPageChange}
-        error={error}
-        isPaginationLoading={isPaginationLoading}
-        isDuplicating={isDuplicating}
-        onBulkStatusUpdate={onBulkStatusUpdate}
-        onStatusUpdate={onStatusUpdate}
-        onBulkDuplicate={onBulkDuplicate}
-        onDelete={onDelete}
-        onRefresh={onRefresh}
+      <Notifications
+        isNotificationOpen={isNotificationOpen}
+        setIsNotificationOpenAction={setIsNotificationOpen}
       />
-    </div>
+    </>
   );
 }

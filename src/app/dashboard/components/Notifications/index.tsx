@@ -28,6 +28,13 @@ type NotificationWithProject = {
   updated_at: Date | null;
 };
 
+interface Adjustment {
+  id: string;
+  type: string;
+  description: string;
+  created_at: Date;
+}
+
 // Helper to get notification icon based on type
 function getNotificationIcon(type: string) {
   const icons: Record<string, string> = {
@@ -93,6 +100,7 @@ export default function Notifications({
     useState<NotificationWithProject | null>(null);
   const [showAcceptedModal, setShowAcceptedModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [adjustments, setAdjustments] = useState<Adjustment[]>([]);
 
   useEffect(() => {
     if (isNotificationOpen) {
@@ -119,6 +127,27 @@ export default function Notifications({
       setShowAcceptedModal(true);
     } else if (notification.type === "proposal_feedback") {
       setSelectedNotification(notification);
+
+      // Fetch all adjustments for this project
+      const metadata = notification.metadata as { projectId?: string } | null;
+      const projectId = metadata?.projectId;
+
+      if (projectId) {
+        try {
+          const response = await fetch(
+            `/api/projects/${projectId}/adjustments`
+          );
+          const data = await response.json();
+
+          if (data.success && data.adjustments) {
+            setAdjustments(data.adjustments);
+          }
+        } catch (error) {
+          console.error("Error fetching adjustments:", error);
+          setAdjustments([]);
+        }
+      }
+
       setShowFeedbackModal(true);
     } else if (notification.actionUrl) {
       // For other types with action URL, navigate directly
@@ -130,6 +159,7 @@ export default function Notifications({
     setShowAcceptedModal(false);
     setShowFeedbackModal(false);
     setSelectedNotification(null);
+    setAdjustments([]);
   };
 
   const handleMarkAllAsRead = async () => {
@@ -156,8 +186,8 @@ export default function Notifications({
   if (!isNotificationOpen) return null;
 
   return (
-    <div className="bg-opacity-20 fixed inset-0 z-40 bg-black">
-      <div className="absolute z-10 flex h-screen flex-col bg-white sm:top-2 sm:right-7 sm:mt-2 sm:h-auto sm:max-h-[calc(100vh-32px)] sm:w-[397px] sm:rounded-xs sm:shadow-lg">
+    <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm">
+      <div className="absolute inset-x-0 top-0 z-10 mx-auto flex h-screen max-w-md flex-col bg-white sm:inset-x-auto sm:top-2 sm:right-7 sm:mx-0 sm:mt-2 sm:h-auto sm:max-h-[calc(100vh-32px)] sm:w-[397px] sm:rounded-xs sm:shadow-lg">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-4">
           <div className="flex items-center gap-2">
@@ -277,6 +307,7 @@ export default function Notifications({
             isOpen={showFeedbackModal}
             onClose={handleCloseModal}
             notification={selectedNotification as NotificationWithProject}
+            adjustments={adjustments}
           />
         </>
       )}

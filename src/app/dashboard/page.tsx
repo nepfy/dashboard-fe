@@ -155,8 +155,8 @@ export default function Dashboard() {
   if (isInitialLoading) {
     return (
       <div className="p-7">
-        <div className="flex items-center justify-center h-64">
-          <LoaderCircle className="animate-spin text-primary-light-400" />
+        <div className="flex h-64 items-center justify-center">
+          <LoaderCircle className="text-primary-light-400 animate-spin" />
         </div>
       </div>
     );

@@ -218,7 +218,7 @@ export default function TableView({
       <div className="animate-fadeIn w-full">
         {/* Barra de ações quando há itens selecionados */}
         {selectedItems.length > 0 && (
-          <div className="flex w-full items-center justify-between gap-3 border-b border-gray-200 px-6 py-4">
+          <div className="flex w-full flex-col gap-3 border-b border-gray-200 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
             {/* Dropdown Atualizar status - Esquerda */}
             <div className="relative flex flex-1">
               <button
@@ -267,14 +267,15 @@ export default function TableView({
             </div>
 
             {/* Botões de ação - Direita */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {/* Salvar alterações */}
-              <button className="flex h-10 items-center gap-2 rounded-lg bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700">
-                Salvar alterações
+              <button className="flex h-10 flex-1 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 sm:flex-initial">
+                <span className="hidden sm:inline">Salvar alterações</span>
+                <span className="inline sm:hidden">Salvar</span>
               </button>
 
               {/* Arquivar */}
-              <button className="flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <button className="flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:flex-initial sm:px-4">
                 <svg
                   width="16"
                   height="16"
@@ -283,11 +284,11 @@ export default function TableView({
                 >
                   <path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.83 1H5.42l.82-1zM5 19V8h14v11H5z" />
                 </svg>
-                Arquivar
+                <span className="hidden sm:inline">Arquivar</span>
               </button>
 
               {/* Excluir */}
-              <button className="flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <button className="flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:flex-initial sm:px-4">
                 <svg
                   width="16"
                   height="16"
@@ -298,13 +299,13 @@ export default function TableView({
                 >
                   <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
                 </svg>
-                Excluir
+                <span className="hidden sm:inline">Excluir</span>
               </button>
 
               {/* Cancelar */}
               <button
                 onClick={() => setSelectedItems([])}
-                className="flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
               >
                 Cancelar
               </button>
@@ -331,23 +332,23 @@ export default function TableView({
       {viewMode === "archived" &&
         currentData.length === 0 &&
         !currentIsLoading && (
-          <div className="py-12 text-center">
-            <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
+          <div className="px-4 py-8 text-center sm:py-12">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 sm:h-24 sm:w-24">
               <svg
-                width="32"
-                height="32"
+                width="24"
+                height="24"
                 fill="currentColor"
-                className="text-gray-400"
+                className="text-gray-400 sm:h-8 sm:w-8"
                 viewBox="0 0 24 24"
               >
                 <path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.83 1H5.42l.82-1zM5 19V8h14v11H5z" />
                 <path d="M9.5 11h5v2h-5z" />
               </svg>
             </div>
-            <h3 className="mb-2 text-lg font-medium text-gray-900">
+            <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg">
               Nenhuma proposta arquivada
             </h3>
-            <p className="text-gray-500">
+            <p className="text-sm text-gray-500 sm:text-base">
               Você ainda não arquivou nenhuma proposta.
             </p>
           </div>

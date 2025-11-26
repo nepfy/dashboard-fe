@@ -32,8 +32,8 @@ export default function ProposalAcceptedModal({
   const acceptedBy = metadata?.acceptedBy || metadata?.clientName;
 
   return (
-    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+      <div className="relative w-full max-w-lg rounded-xl bg-white p-4 shadow-xl sm:p-6">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -44,15 +44,15 @@ export default function ProposalAcceptedModal({
         </button>
 
         {/* Header */}
-        <div className="mb-6 flex items-start gap-4">
-          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-2xl">
+        <div className="mb-4 flex items-start gap-3 pr-8 sm:mb-6 sm:gap-4">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-xl sm:h-12 sm:w-12 sm:text-2xl">
             🎉
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 sm:text-xl">
               Proposta aceita pelo cliente!
             </h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-xs text-gray-600 sm:text-sm">
               O cliente aceitou a proposta! Agora é hora de seguir com o próximo
               passo do projeto.
             </p>
@@ -103,10 +103,10 @@ export default function ProposalAcceptedModal({
         </div>
 
         {/* Footer */}
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-4 flex justify-end gap-3 sm:mt-6">
           <button
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 sm:w-auto"
           >
             Fechar
           </button>

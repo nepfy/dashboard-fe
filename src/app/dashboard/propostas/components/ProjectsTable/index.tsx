@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -133,9 +133,66 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   const [menuTriggerElement, setMenuTriggerElement] =
     useState<HTMLElement | null>(null);
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(["draft"])
+  );
 
   // Store refs for each row's trigger button
   const triggerRefs = useRef<Record<string, HTMLButtonElement>>({});
+
+  // Agrupar propostas por status
+  const groupedProposals = React.useMemo(() => {
+    const groups: Record<
+      string,
+      { label: string; badge: string; items: typeof data }
+    > = {
+      draft: {
+        label: "Rascunho",
+        badge: "bg-gray-100 text-gray-700",
+        items: [],
+      },
+      active: {
+        label: "Enviada",
+        badge: "bg-purple-100 text-purple-700",
+        items: [],
+      },
+      negotiation: {
+        label: "Negociação",
+        badge: "bg-orange-100 text-orange-700",
+        items: [],
+      },
+      approved: {
+        label: "Aprovada",
+        badge: "bg-green-100 text-green-700",
+        items: [],
+      },
+      rejected: {
+        label: "Recusada",
+        badge: "bg-red-100 text-red-700",
+        items: [],
+      },
+    };
+
+    (data ?? []).forEach((item) => {
+      const status = item.projectStatus || "draft";
+      const group = groups[status];
+      if (group?.items) {
+        group.items.push(item);
+      }
+    });
+
+    return groups;
+  }, [data]);
+
+  const toggleSection = (section: string) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(section)) {
+      newExpanded.delete(section);
+    } else {
+      newExpanded.add(section);
+    }
+    setExpandedSections(newExpanded);
+  };
 
   const handleRowSelect = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -230,7 +287,200 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
 
   return (
     <div className="h-full w-full">
-      <div className="bg-white-neutral-light-100 rounded-2xs w-full overflow-x-auto">
+      {/* Mobile Accordion View */}
+      <div className="block overflow-hidden rounded-xl sm:hidden lg:p-3">
+        {/* Mobile Selection Bar */}
+        {selectedRows.size > 0 && (
+          <div className="mb-3 rounded-lg border border-indigo-200 bg-indigo-50 p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-sm font-medium text-indigo-900">
+                {selectedRows.size}{" "}
+                {selectedRows.size === 1
+                  ? "item selecionado"
+                  : "itens selecionados"}
+              </span>
+              <button
+                onClick={() => {
+                  setSelectedRows(new Set());
+                  onRowSelect?.([]);
+                  setSelectAll(false);
+                }}
+                className="text-sm text-indigo-600 hover:text-indigo-700"
+              >
+                Limpar
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button className="flex items-center justify-center gap-1 rounded-md bg-white px-2 py-2 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.83 1H5.42l.82-1zM5 19V8h14v11H5z" />
+                </svg>
+                Arquivar
+              </button>
+              <button className="flex items-center justify-center gap-1 rounded-md bg-white px-2 py-2 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
+                Duplicar
+              </button>
+              <button className="flex items-center justify-center gap-1 rounded-md bg-white px-2 py-2 text-xs font-medium text-red-600 shadow-sm hover:bg-gray-50">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                </svg>
+                Excluir
+              </button>
+            </div>
+          </div>
+        )}
+
+        {(data ?? []).length > 0 ? (
+          <div className="">
+            {Object.entries(groupedProposals).map(([status, group]) => {
+              if (group.items?.length === 0) return null;
+
+              const isExpanded = expandedSections.has(status);
+
+              return (
+                <div
+                  key={status}
+                  className="overflow-hidden border-b border-gray-200 bg-white last:border-b-0"
+                >
+                  {/* Accordion Header */}
+                  <button
+                    onClick={() => toggleSection(status)}
+                    className="flex w-full items-center justify-between px-4 py-5 text-left transition-colors hover:bg-gray-50"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${group.badge}`}
+                      >
+                        {group.label}
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        {group.items?.length}
+                      </span>
+                    </div>
+                    {isExpanded ? (
+                      <ChevronUp className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+
+                  {/* Accordion Content */}
+                  {isExpanded && group.items && (
+                    <div className="space-y-2 border-t border-gray-200 p-3">
+                      {group.items.map((row) => (
+                        <div
+                          key={row.id}
+                          onClick={() => handleRowClick(row.id)}
+                          className={`rounded-lg border border-gray-100 bg-white p-3 transition-colors ${
+                            selectedRows.has(row.id)
+                              ? "bg-gray-50"
+                              : "hover:bg-gray-50"
+                          }`}
+                        >
+                          {/* Checkbox and Menu */}
+                          <div className="mb-2 flex items-start justify-between">
+                            <input
+                              type="checkbox"
+                              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              checked={selectedRows.has(row.id)}
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleRowSelect(row.id);
+                              }}
+                              disabled={isOperationInProgress}
+                            />
+                            <button
+                              ref={(el) => {
+                                if (el) {
+                                  triggerRefs.current[row.id] = el;
+                                }
+                              }}
+                              onClick={(e) => handleMenuToggle(row.id, e)}
+                              className="rounded p-1 hover:bg-gray-100"
+                              disabled={isOperationInProgress}
+                            >
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                className="text-gray-600"
+                              >
+                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                              </svg>
+                            </button>
+                          </div>
+
+                          {/* Cliente and Copy Link */}
+                          <div className="mb-2 flex items-start justify-between gap-2">
+                            <div className="flex min-w-0 flex-1 items-center gap-2">
+                              <span className="truncate font-medium text-gray-900">
+                                {row.clientName}
+                              </span>
+                              <CopyLinkIcon
+                                projectId={row.id}
+                                isVisible={true}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Project Name */}
+                          <div className="mb-2 text-sm text-gray-600">
+                            {row.projectName}
+                          </div>
+
+                          {/* Date Info */}
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <CalendarIcon width="12" height="12" />
+                            <span>
+                              {row.projectVisualizationDate
+                                ? formatVisualizationDate(
+                                    row.projectVisualizationDate
+                                  )
+                                : "Agora mesmo"}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="py-12 text-center text-sm text-gray-500">
+            Nenhum dado disponível
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="bg-white-neutral-light-100 rounded-2xs hidden w-full overflow-x-auto sm:block">
         <div className="p-4">
           <table className="relative box-border h-full w-full p-3">
             <thead className="bg-white-neutral-light-200 rounded-2xs">
@@ -293,7 +543,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         : undefined
                     }`}
                   >
-                    <td 
+                    <td
                       className="text-white-neutral-light-900 flex py-4 pr-3 pl-4 align-middle text-sm"
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -308,7 +558,7 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
                         }}
                         disabled={isOperationInProgress}
                       />
-                      <span 
+                      <span
                         className="flex max-w-[100px] justify-center gap-2 truncate sm:max-w-none md:whitespace-nowrap"
                         title={row.clientName}
                       >
