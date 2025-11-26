@@ -21,11 +21,23 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const url = req.nextUrl;
   const hostname = req.nextUrl.hostname;
 
-  // Allow static files and template paths FIRST, before any subdomain logic
+  // Handle template files with proper headers
   if (
     url.pathname.startsWith("/template-flash/") ||
     url.pathname.startsWith("/template-minimal/") ||
-    url.pathname.startsWith("/template-minimal-visualize/") ||
+    url.pathname.startsWith("/template-minimal-visualize/")
+  ) {
+    console.log('[Middleware] Template file requested:', url.pathname);
+    const response = NextResponse.next();
+    // Allow iframe embedding for templates
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    return response;
+  }
+
+  // Allow other static files
+  if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
     url.pathname.startsWith("/static/") ||
@@ -33,7 +45,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       /\.(ico|png|svg|jpg|jpeg|gif|webp|js|css|woff|woff2|ttf|html)$/
     )
   ) {
-    console.log('[Middleware] Allowing static/template file:', url.pathname);
     return NextResponse.next();
   }
 
@@ -97,6 +108,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|template-flash|template-minimal|template-minimal-visualize|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf|html)$).*)",
+    // Process all routes except Next.js internals
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
