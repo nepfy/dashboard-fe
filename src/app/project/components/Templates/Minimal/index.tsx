@@ -20,11 +20,21 @@ interface MinimalTemplateProps {
 export default function MinimalTemplate({ data }: MinimalTemplateProps) {
   const lenis = useLenis();
   const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+  const [iframeSrc, setIframeSrc] = useState("/template-minimal/index.html");
   const hasTrackedView = useRef(false);
 
   const lenisRef = useRef<LenisRef>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const needsPassword = data?.pagePassword && data.pagePassword.trim() !== "";
+
+  // Set absolute URL for iframe on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const absoluteUrl = `${window.location.origin}/template-minimal/index.html`;
+      console.log('[Minimal] Setting iframe source to:', absoluteUrl);
+      setIframeSrc(absoluteUrl);
+    }
+  }, []);
 
   useEffect(() => {
     if (!needsPassword) {
@@ -251,7 +261,7 @@ export default function MinimalTemplate({ data }: MinimalTemplateProps) {
       <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
         <iframe
           ref={iframeRef}
-          src="/template-minimal/index.html"
+          src={iframeSrc}
           style={{ width: "100%", height: "100vh", border: "none" }}
           title="Minimal Template"
           onLoad={handleIframeLoad}
