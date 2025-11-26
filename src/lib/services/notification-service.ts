@@ -83,6 +83,35 @@ export class NotificationService {
   }
 
   /**
+   * Get recent notification of a specific type for a project
+   * Used to prevent duplicate notifications within a time window
+   */
+  static async getRecentNotification(
+    userId: string,
+    projectId: string,
+    type: NotificationType,
+    withinMinutes: number
+  ): Promise<NotificationWithProject | null> {
+    const timeThreshold = new Date(Date.now() - withinMinutes * 60 * 1000);
+
+    const [notification] = await db
+      .select()
+      .from(notificationsTable)
+      .where(
+        and(
+          eq(notificationsTable.userId, userId),
+          eq(notificationsTable.projectId, projectId),
+          eq(notificationsTable.type, type),
+          sql`${notificationsTable.created_at} >= ${timeThreshold}`
+        )
+      )
+      .orderBy(desc(notificationsTable.created_at))
+      .limit(1);
+
+    return (notification as NotificationWithProject) || null;
+  }
+
+  /**
    * Get unread notifications count for a user
    */
   static async getUnreadCount(userId: string): Promise<number> {

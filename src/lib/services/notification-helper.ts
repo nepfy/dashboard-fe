@@ -60,6 +60,19 @@ export class NotificationHelper {
       return null;
     }
 
+    // Check if there's already a recent notification (within 5 minutes) to avoid spam
+    const recentNotification = await NotificationService.getRecentNotification(
+      userId,
+      projectId,
+      "proposal_viewed",
+      5 // minutes
+    );
+
+    if (recentNotification) {
+      console.log(`[NotificationHelper] Skipping duplicate notification for project ${projectId} (already notified ${Math.round((Date.now() - recentNotification.created_at.getTime()) / 1000 / 60)} minutes ago)`);
+      return null;
+    }
+
     const notification = await NotificationService.create({
       userId,
       type: "proposal_viewed",
