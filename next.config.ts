@@ -113,6 +113,27 @@ const nextConfig = {
         ],
       },
       {
+        // Allow iframe embedding for subdomain project pages (no X-Frame-Options)
+        // This handles username.staging-app.nepfy.com or username.app.nepfy.com
+        source: "/:projectUrl*",
+        has: [
+          {
+            type: "host",
+            value: "(?<username>[^.]+)\\.(staging-)?app\\.nepfy\\.com",
+          },
+        ],
+        headers: [
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
         // Keep security headers for all other routes (excluding template paths and project pages)
         source:
           "/((?!template-flash|template-minimal-visualize|template-minimal|project).*)",
