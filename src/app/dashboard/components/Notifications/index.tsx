@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import CloseIcon from "#/components/icons/CloseIcon";
 import { useNotifications } from "#/hooks/useNotifications";
@@ -10,6 +10,23 @@ import {
   trackNotificationsMarkedAllRead,
   trackNotificationDeleted,
 } from "#/lib/analytics/track";
+import ProposalAcceptedModal from "../NotificationModals/ProposalAcceptedModal";
+import ProposalFeedbackModal from "../NotificationModals/ProposalFeedbackModal";
+
+type NotificationWithProject = {
+  id: string;
+  userId: string;
+  type: string;
+  title: string;
+  message: string;
+  actionUrl: string | null;
+  metadata: Record<string, unknown> | null;
+  isRead: boolean;
+  emailSent: boolean;
+  emailSentAt: Date | null;
+  created_at: Date | null;
+  updated_at: Date | null;
+};
 
 // Helper to get notification icon based on type
 function getNotificationIcon(type: string) {
@@ -72,6 +89,10 @@ export default function Notifications({
     deleteNotification,
   } = useNotifications();
 
+  const [selectedNotification, setSelectedNotification] = useState<NotificationWithProject | null>(null);
+  const [showAcceptedModal, setShowAcceptedModal] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+
   useEffect(() => {
     if (isNotificationOpen) {
       trackNotificationCenterOpened({
@@ -81,22 +102,33 @@ export default function Notifications({
   }, [isNotificationOpen, notifications]);
 
   const handleNotificationClick = async (
-    notificationId: string,
-    actionUrl: string | null,
-    isRead: boolean,
-    notificationType: string
+    notification: NotificationWithProject
   ) => {
-    if (!isRead) {
-      await markAsRead(notificationId);
+    if (!notification.isRead) {
+      await markAsRead(notification.id);
       trackNotificationClicked({
-        notification_id: notificationId,
-        notification_type: notificationType,
+        notification_id: notification.id,
+        notification_type: notification.type,
       });
     }
 
-    if (actionUrl) {
+    // Open specific modal based on notification type
+    if (notification.type === "proposal_accepted") {
+      setSelectedNotification(notification);
+      setShowAcceptedModal(true);
+    } else if (notification.type === "proposal_feedback") {
+      setSelectedNotification(notification);
+      setShowFeedbackModal(true);
+    } else if (notification.actionUrl) {
+      // For other types with action URL, navigate directly
       setIsNotificationOpenAction(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowAcceptedModal(false);
+    setShowFeedbackModal(false);
+    setSelectedNotification(null);
   };
 
   const handleMarkAllAsRead = async () => {
@@ -123,8 +155,8 @@ export default function Notifications({
   if (!isNotificationOpen) return null;
 
   return (
-    <div className="bg-filter absolute top-0 left-0 z-40 h-full w-full">
-      <div className="absolute z-10 flex h-full max-h-[600px] flex-col bg-white sm:top-2 sm:right-7 sm:mt-2 sm:h-auto sm:w-[397px] sm:rounded-xs sm:shadow-lg">
+    <div className="fixed inset-0 z-40 bg-black bg-opacity-20">
+      <div className="absolute z-10 flex h-screen flex-col bg-white sm:top-2 sm:right-7 sm:mt-2 sm:h-auto sm:max-h-[calc(100vh-32px)] sm:w-[397px] sm:rounded-xs sm:shadow-lg">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-4">
           <div className="flex items-center gap-2">
@@ -160,18 +192,13 @@ export default function Notifications({
           ) : (
             <div className="divide-y divide-gray-200">
               {notifications.map((notification) => {
+                const hasModal = ["proposal_accepted", "proposal_feedback"].includes(notification.type);
                 const commonProps = {
                   key: notification.id,
                   className: `flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors cursor-pointer relative group ${
                     !notification.isRead ? "bg-blue-50" : ""
                   }`,
-                  onClick: () =>
-                    handleNotificationClick(
-                      notification.id,
-                      notification.actionUrl,
-                      notification.isRead,
-                      notification.type
-                    ),
+                  onClick: () => handleNotificationClick(notification),
                 };
 
                 const content = (
@@ -220,18 +247,35 @@ export default function Notifications({
                   </>
                 );
 
-                return notification.actionUrl ? (
+                // If notification has a modal, use a div. If it has an actionUrl and no modal, use Link
+                return hasModal || !notification.actionUrl ? (
+                  <div {...commonProps}>{content}</div>
+                ) : (
                   <Link {...commonProps} href={notification.actionUrl}>
                     {content}
                   </Link>
-                ) : (
-                  <div {...commonProps}>{content}</div>
                 );
               })}
             </div>
           )}
         </div>
       </div>
+
+      {/* Notification Modals */}
+      {selectedNotification && (
+        <>
+          <ProposalAcceptedModal
+            isOpen={showAcceptedModal}
+            onClose={handleCloseModal}
+            notification={selectedNotification}
+          />
+          <ProposalFeedbackModal
+            isOpen={showFeedbackModal}
+            onClose={handleCloseModal}
+            notification={selectedNotification}
+          />
+        </>
+      )}
     </div>
   );
 }

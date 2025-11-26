@@ -98,8 +98,24 @@ const nextConfig = {
         ],
       },
       {
-        // Keep security headers for all other routes (excluding template-flash and template-minimal-visualize)
-        source: "/((?!template-flash|template-minimal-visualize).*)",
+        // Allow iframe embedding for project pages (client proposals)
+        // No X-Frame-Options header = allows embedding from any domain
+        source: "/project/:path*",
+        headers: [
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
+        // Keep security headers for all other routes (excluding template paths and project pages)
+        source:
+          "/((?!template-flash|template-minimal-visualize|template-minimal|project).*)",
         headers: [
           {
             key: "X-Frame-Options",

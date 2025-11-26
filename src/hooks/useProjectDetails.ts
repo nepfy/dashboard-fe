@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import type { ProposalData } from "#/types/proposal-data";
 
 export interface ProjectDetails {
   id: string;
@@ -12,8 +13,12 @@ export interface ProjectDetails {
   mainColor: string | null;
   projectUrl: string | null;
   isPublished: boolean | null;
-  proposalData: Record<string, unknown>;
-  buttonConfig: Record<string, unknown>;
+  proposalData: ProposalData;
+  buttonConfig: {
+    borderRadius?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
+  };
   created_at: Date;
   updated_at: Date | null;
 }
@@ -26,7 +31,11 @@ export interface ProjectAdjustment {
   status: string;
   clientName: string | null;
   requestedBy: string | null;
-  metadata: Record<string, unknown>;
+  metadata: {
+    adjustmentType?: string;
+    projectName?: string;
+    [key: string]: unknown;
+  };
   resolvedAt: Date | null;
   resolvedBy: string | null;
   created_at: Date;

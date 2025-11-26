@@ -2,6 +2,29 @@
 
 A modern proposal management system built with Next.js, featuring AI-powered proposal generation and multiple template support.
 
+## ⚡ Quick Start (Testes Locais)
+
+**Quer testar tudo em localhost?** Use o setup rápido:
+
+```bash
+# 1. Configure o ambiente
+./scripts/setup-local-env.sh
+
+# 2. Edite .env.local com suas chaves
+# 3. Inicie o servidor
+npm run dev
+
+# 4. Acesse: http://localhost:3000
+```
+
+**Visualizar propostas localmente:**
+- URLs de proposta usam `localtest.me` (ex: `http://usuario.localtest.me:3000/proposta`)
+- Funciona automaticamente - não precisa configurar DNS!
+
+📖 **Guia completo:** [docs/QUICK_START_LOCAL.md](./docs/QUICK_START_LOCAL.md)
+
+---
+
 ## Overview
 
 This application provides a comprehensive proposal management platform with:
@@ -12,6 +35,7 @@ This application provides a comprehensive proposal management platform with:
 - **💾 Database**: PostgreSQL with Drizzle ORM and template-specific schemas
 - **💳 Payments**: Stripe integration for subscription management
 - **📊 Analytics**: Project tracking and status management
+- **🔔 Notifications**: Real-time in-app and email notifications via Resend
 
 ## Tech Stack
 

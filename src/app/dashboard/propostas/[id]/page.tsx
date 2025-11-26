@@ -31,7 +31,8 @@ const adjustmentTypeLabels: Record<string, string> = {
 const statusLabels: Record<string, string> = {
   draft: "Rascunho",
   sent: "Enviada",
-  negotiation: "Negociação",
+  active: "Publicada",
+  negotiation: "Em negociação",
   approved: "Aprovada",
   rejected: "Recusada",
 };
