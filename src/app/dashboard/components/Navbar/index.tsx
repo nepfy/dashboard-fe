@@ -32,7 +32,7 @@ export default function Navbar() {
           {notificationsEnabled && (
             <button
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-              className="relative ml-auto rounded-full p-2 transition-colors hover:bg-gray-100"
+              className="relative ml-auto cursor-pointer rounded-full p-2 transition-colors hover:bg-gray-100"
               aria-label="Notificações"
             >
               <Bell className="h-6 w-6 text-gray-700" />

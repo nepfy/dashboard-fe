@@ -276,7 +276,7 @@ export default function Notifications({
                       onClick={(e) =>
                         handleDelete(e, notification.id, notification.type)
                       }
-                      className="rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200"
+                      className="cursor-pointer rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200"
                       aria-label="Excluir notificação"
                     >
                       <CloseIcon width="12" height="12" />

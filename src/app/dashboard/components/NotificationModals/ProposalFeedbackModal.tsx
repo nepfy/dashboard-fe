@@ -67,38 +67,38 @@ export default function ProposalFeedbackModal({
     : adjustmentDescription;
 
   return (
-    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-      <div className="relative w-full max-w-lg rounded-xl bg-white p-4 shadow-xl sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4 backdrop-blur-md">
+      <div className="relative w-full max-w-md rounded-2xl bg-white px-6 py-8 shadow-xl">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 rounded-full p-1 transition-colors hover:bg-gray-100"
+          className="absolute top-4 right-4 cursor-pointer rounded-full p-1 transition-colors hover:bg-gray-100"
           aria-label="Fechar"
         >
-          <X className="h-5 w-5 text-gray-500" />
+          <X className="h-5 w-5 text-gray-400" />
         </button>
 
         {/* Header */}
-        <div className="mb-4 sm:mb-6">
-          <h2 className="pr-8 text-lg font-semibold text-gray-900 sm:text-xl">
+        <div className="mb-6">
+          <h2 className="pr-8 text-xl font-semibold text-gray-900">
             Ajuste solicitado pelo cliente
           </h2>
-          <p className="mt-2 text-xs text-gray-600 sm:text-sm">
+          <p className="mt-2 text-sm leading-relaxed text-gray-600">
             Veja abaixo os ajustes solicitados. Revise cada um e envie uma nova
             versão da proposta atualizada.
           </p>
 
           {/* Pagination for multiple adjustments */}
           {hasMultipleAdjustments && (
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-5 flex items-center gap-2">
               {adjustments?.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentAdjustmentIndex(index)}
-                  className={`flex h-8 w-8 items-center justify-center rounded-full border text-sm font-medium transition-colors ${
+                  className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 text-sm font-medium transition-colors ${
                     index === currentAdjustmentIndex
                       ? "border-indigo-600 bg-indigo-50 text-indigo-600"
-                      : "border-gray-300 text-gray-600 hover:border-gray-400"
+                      : "border-gray-300 text-gray-500 hover:border-gray-400"
                   }`}
                 >
                   {index + 1}
@@ -108,57 +108,55 @@ export default function ProposalFeedbackModal({
           )}
         </div>
 
+        {/* Separator */}
+        <div className="my-6 border-t border-gray-200"></div>
+
         {/* Content */}
         <div className="space-y-4">
-          <div className="rounded-lg bg-gray-50 p-4">
-            <div className="space-y-3">
-              <div>
-                <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-                  Tipo de ajuste
-                </p>
-                <p className="mt-1 text-sm font-medium text-gray-900">
-                  {displayType && typeof displayType === "string"
-                    ? displayType
-                    : "Não especificado"}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-                  Descrição
-                </p>
-                <p className="mt-1 text-sm text-gray-900">
-                  {displayDescription && typeof displayDescription === "string"
-                    ? displayDescription
-                    : "Seria possível alterar o valor do plano essencial de R$2.000 para R$1.740 por mês?"}
-                </p>
-              </div>
+          <div>
+            <div className="rounded-lg bg-indigo-50 px-5 py-3.5">
+              <p className="text-sm font-medium text-gray-900">
+                Tipo de ajuste
+              </p>
+            </div>
+            <div className="mt-2 rounded-lg border border-gray-200 bg-white px-5 py-3.5">
+              <p className="text-sm text-gray-900">
+                {displayType && typeof displayType === "string"
+                  ? displayType
+                  : "Não especificado"}
+              </p>
             </div>
           </div>
 
-          <p className="text-sm text-gray-600">
-            Essa é a etapa que costuma definir o fechamento, então vale revisar
-            com cuidado e reenviar a versão atualizada o quanto antes.
-          </p>
-
-          <p className="text-sm text-gray-600">
-            No painel, você encontra todos os detalhes do pedido e pode ajustar
-            tudo em poucos minutos e reenviar a nova versão.
-          </p>
+          <div>
+            <div className="rounded-lg bg-indigo-50 px-5 py-3.5">
+              <p className="text-sm font-medium text-gray-900">Descrição</p>
+            </div>
+            <div className="mt-2 rounded-lg border border-gray-200 bg-white px-5 py-3.5">
+              <p className="text-sm leading-relaxed text-gray-900">
+                {displayDescription && typeof displayDescription === "string"
+                  ? displayDescription
+                  : "Seria possível alterar o valor do plano essencial de R$2.000 para R$1.740 por mês?"}
+              </p>
+            </div>
+          </div>
         </div>
 
+        {/* Separator */}
+        <div className="my-6 border-t border-gray-200"></div>
+
         {/* Footer */}
-        <div className="mt-4 flex flex-col gap-2 sm:mt-6 sm:flex-row sm:justify-end sm:gap-3">
+        <div className="flex flex-row gap-2">
           <button
             onClick={onClose}
-            className="order-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 sm:order-1"
+            className="cursor-pointer rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
           >
             Fechar
           </button>
           {projectId && typeof projectId === "string" ? (
             <Link
               href={`/editar?projectId=${projectId}&templateType=flash`}
-              className="order-1 rounded-lg bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-indigo-700 sm:order-2"
+              className="cursor-pointer rounded-lg bg-indigo-600 px-5 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-indigo-700"
               onClick={onClose}
             >
               Editar proposta
