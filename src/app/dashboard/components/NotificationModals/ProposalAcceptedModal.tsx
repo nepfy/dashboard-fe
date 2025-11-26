@@ -9,13 +9,7 @@ interface ProposalAcceptedModalProps {
     id: string;
     title: string;
     message: string;
-    metadata?: {
-      projectName?: string;
-      clientName?: string;
-      chosenPlan?: string;
-      chosenPlanValue?: string;
-      acceptedBy?: string;
-    };
+    metadata: Record<string, unknown> | null;
   };
 }
 

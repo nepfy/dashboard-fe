@@ -89,7 +89,8 @@ export default function Notifications({
     deleteNotification,
   } = useNotifications();
 
-  const [selectedNotification, setSelectedNotification] = useState<NotificationWithProject | null>(null);
+  const [selectedNotification, setSelectedNotification] =
+    useState<NotificationWithProject | null>(null);
   const [showAcceptedModal, setShowAcceptedModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
@@ -155,7 +156,7 @@ export default function Notifications({
   if (!isNotificationOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-40 bg-black bg-opacity-20">
+    <div className="bg-opacity-20 fixed inset-0 z-40 bg-black">
       <div className="absolute z-10 flex h-screen flex-col bg-white sm:top-2 sm:right-7 sm:mt-2 sm:h-auto sm:max-h-[calc(100vh-32px)] sm:w-[397px] sm:rounded-xs sm:shadow-lg">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-4">
@@ -192,7 +193,10 @@ export default function Notifications({
           ) : (
             <div className="divide-y divide-gray-200">
               {notifications.map((notification) => {
-                const hasModal = ["proposal_accepted", "proposal_feedback"].includes(notification.type);
+                const hasModal = [
+                  "proposal_accepted",
+                  "proposal_feedback",
+                ].includes(notification.type);
                 const commonProps = {
                   key: notification.id,
                   className: `flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors cursor-pointer relative group ${
@@ -267,12 +271,12 @@ export default function Notifications({
           <ProposalAcceptedModal
             isOpen={showAcceptedModal}
             onClose={handleCloseModal}
-            notification={selectedNotification}
+            notification={selectedNotification as NotificationWithProject}
           />
           <ProposalFeedbackModal
             isOpen={showFeedbackModal}
             onClose={handleCloseModal}
-            notification={selectedNotification}
+            notification={selectedNotification as NotificationWithProject}
           />
         </>
       )}

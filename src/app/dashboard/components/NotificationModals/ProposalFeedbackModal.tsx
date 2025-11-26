@@ -19,12 +19,7 @@ interface ProposalFeedbackModalProps {
     title: string;
     message: string;
     actionUrl?: string | null;
-    metadata?: {
-      projectName?: string;
-      projectId?: string;
-      adjustmentType?: string;
-      adjustmentDescription?: string;
-    };
+    metadata: Record<string, unknown> | null;
   };
   adjustments?: Adjustment[];
 }
