@@ -19,6 +19,12 @@ export default function ProposalActions({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
+  console.log("ProposalActions DEBUG:", {
+    isEditing,
+    hasScrolled,
+    projectStatus: projectData.projectStatus,
+  });
+
   // Don't show actions if proposal is already accepted or rejected
   const shouldShowActions = !["approved", "rejected"].includes(
     projectData.projectStatus || ""
