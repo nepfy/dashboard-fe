@@ -33,17 +33,31 @@ export default function ProposalActions({
   // Detect scroll to show the action bar
   useEffect(() => {
     const handleScroll = () => {
-      const scrolled = window.scrollY > 100;
+      const scrolled = window.scrollY > 100 || window.pageYOffset > 100;
+      console.log("Scroll detected:", {
+        scrollY: window.scrollY,
+        pageYOffset: window.pageYOffset,
+        scrolled,
+      });
       setHasScrolled(scrolled);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    // Listen to both window scroll and document scroll
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Check initial scroll position
-    handleScroll();
+    // Use requestAnimationFrame to check scroll position periodically
+    let frameId: number;
+    const checkScroll = () => {
+      handleScroll();
+      frameId = requestAnimationFrame(checkScroll);
+    };
+    frameId = requestAnimationFrame(checkScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(frameId);
     };
   }, []);
 
