@@ -2091,32 +2091,47 @@ a,
     </div>
     <script>
       // Force enable all buttons immediately on page load
+      // VERSION: 2024-11-28-v3
       (function() {
+        console.log("🚀 BUTTON ENABLER LOADED - Version 2024-11-28-v3");
+        
         function enableButtons() {
-          console.log("🔧 Force enabling buttons...");
-          document.querySelectorAll('.btn-magnetic').forEach(function(wrapper) {
+          console.log("🔧 Force enabling buttons... [" + new Date().toISOString() + "]");
+          var buttons = document.querySelectorAll('.btn-magnetic');
+          console.log("Found", buttons.length, "button wrappers");
+          
+          buttons.forEach(function(wrapper) {
+            var hadDisabled = wrapper.classList.contains('is-disabled');
             wrapper.classList.remove('is-disabled');
+            
             var link = wrapper.querySelector('.btn-magnetic__click, a');
             if (link) {
+              var hadAriaDisabled = link.hasAttribute('aria-disabled');
               link.removeAttribute('aria-disabled');
               link.removeAttribute('tabindex');
               link.style.pointerEvents = '';
               link.style.cursor = '';
+              
+              if (hadDisabled || hadAriaDisabled) {
+                console.log("✅ Enabled button:", wrapper);
+              }
             }
           });
-          console.log("✅ Buttons enabled");
+          console.log("✅ All buttons processed");
         }
         
         // Run immediately
+        enableButtons();
+        
+        // Run on DOM ready
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', enableButtons);
-        } else {
-          enableButtons();
         }
         
-        // Run again after a short delay to catch any late changes
+        // Run again after delays to catch any late changes
         setTimeout(enableButtons, 100);
         setTimeout(enableButtons, 500);
+        setTimeout(enableButtons, 1000);
       })();
     </script>
     <script
