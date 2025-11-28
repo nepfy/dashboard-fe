@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AcceptProposalModal from "./AcceptProposalModal";
 import RequestAdjustmentModal from "./RequestAdjustmentModal";
 import type { TemplateData } from "#/types/template-data";
@@ -17,11 +17,29 @@ export default function ProposalActions({
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   // Don't show actions if proposal is already accepted or rejected
   const shouldShowActions = !["approved", "rejected"].includes(
     projectData.projectStatus || ""
   );
+
+  // Detect scroll to show the action bar
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 100;
+      setHasScrolled(scrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Check initial scroll position
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   if (!shouldShowActions) {
     return null;
@@ -31,7 +49,9 @@ export default function ProposalActions({
     <>
       {/* Fixed Action Bar */}
       <div
-        className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white shadow-lg"
+        className={`fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
+          hasScrolled ? "translate-y-0" : "translate-y-full"
+        }`}
         style={{
           backgroundColor: "white",
           borderTopColor: "#e5e7eb",
@@ -39,16 +59,6 @@ export default function ProposalActions({
       >
         <div className="mx-auto w-full max-w-[1440px] py-4">
           <div className="flex items-center justify-between gap-4">
-            {/* Info text */}
-            <div className="hidden sm:block">
-              <p className="text-sm font-medium text-gray-900">
-                Gostou da proposta?
-              </p>
-              <p className="text-xs text-gray-500">
-                Aceite para iniciar o projeto ou solicite ajustes
-              </p>
-            </div>
-
             {/* Action Buttons */}
             <div className="flex w-full items-center gap-3 sm:w-auto">
               <button
