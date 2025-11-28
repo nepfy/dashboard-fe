@@ -24,15 +24,24 @@ export default function ProposalActions({
     projectData.projectStatus || ""
   );
 
-  // Show bar after 1 second (simple and reliable approach)
+  // Listen for scroll messages from iframe
   useEffect(() => {
-    const timer = setTimeout(() => {
-      console.log("Showing bar after 1 second");
-      setHasScrolled(true);
-    }, 1000);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === "TEMPLATE_SCROLL_EVENT") {
+        const scrollY = event.data.scrollY || 0;
+        console.log("Received scroll from iframe:", scrollY);
+
+        if (scrollY > 100) {
+          console.log("✅ Scroll > 100px - showing bar");
+          setHasScrolled(true);
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
 
     return () => {
-      clearTimeout(timer);
+      window.removeEventListener("message", handleMessage);
     };
   }, []);
 
@@ -54,30 +63,29 @@ export default function ProposalActions({
       >
         <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-6 py-4">
           {/* Action Buttons */}
-          <div className="flex w-full items-center gap-3 sm:w-auto">
-            <button
-              onClick={() => !isEditing && setShowAdjustmentModal(true)}
-              disabled={isSubmitting}
-              className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
-              style={{
-                borderColor: "#d1d5db",
-                color: "#374151",
-              }}
-            >
-              Solicitar ajuste
-            </button>
 
-            <button
-              onClick={() => !isEditing && setShowAcceptModal(true)}
-              disabled={isSubmitting}
-              className="flex-1 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
-              style={{
-                backgroundColor: projectData.mainColor || "#6366f1",
-              }}
-            >
-              Aceitar proposta
-            </button>
-          </div>
+          <button
+            onClick={() => !isEditing && setShowAdjustmentModal(true)}
+            disabled={isSubmitting}
+            className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+            style={{
+              borderColor: "#d1d5db",
+              color: "#374151",
+            }}
+          >
+            Solicitar ajuste
+          </button>
+
+          <button
+            onClick={() => !isEditing && setShowAcceptModal(true)}
+            disabled={isSubmitting}
+            className="flex-1 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+            style={{
+              backgroundColor: projectData.mainColor || "#6366f1",
+            }}
+          >
+            Aceitar proposta
+          </button>
         </div>
       </div>
 
