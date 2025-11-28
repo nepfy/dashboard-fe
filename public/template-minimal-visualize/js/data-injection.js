@@ -1388,6 +1388,9 @@
     const isViewingMode = window.parent && window.parent !== window;
     const buttonLinks = document.querySelectorAll(".btn-animate-chars");
     
+    console.log("updateButtons called, isViewingMode:", isViewingMode);
+    console.log("Found buttons:", buttonLinks.length);
+    
     buttonLinks.forEach((link) => {
       // Skip if this is a pricing button (will be handled separately)
       if (link.classList.contains("is-invest")) {
@@ -1403,10 +1406,14 @@
         anchor.removeAttribute("target");
         anchor.removeAttribute("rel");
         
+        console.log("Adding scroll handler to button:", anchor);
+        
         // Add click handler to scroll smoothly
         anchor.addEventListener("click", (e) => {
           e.preventDefault();
+          console.log("Scroll button clicked!");
           const investSection = document.querySelector(".section_invest");
+          console.log("Found invest section:", investSection);
           if (investSection) {
             investSection.scrollIntoView({ behavior: "smooth", block: "start" });
           }

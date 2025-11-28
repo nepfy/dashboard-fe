@@ -1296,6 +1296,9 @@
       document.querySelectorAll(".btn-magnetic")
     ).filter((wrapper) => wrapper.querySelector("#buttonconfig-buttontitle"));
 
+    console.log("updateButtons called, isViewingMode:", isViewingMode);
+    console.log("Found button wrappers:", buttonWrappers.length);
+
     buttonWrappers.forEach((wrapper) => {
       const link = wrapper.querySelector(".btn-magnetic__click");
       if (!link) return;
@@ -1306,10 +1309,14 @@
         link.removeAttribute("target");
         link.removeAttribute("rel");
         
+        console.log("Adding scroll handler to button:", link);
+        
         // Add click handler to scroll smoothly
         link.addEventListener("click", (e) => {
           e.preventDefault();
+          console.log("Scroll button clicked!");
           const pricingSection = document.querySelector(".section_pricing");
+          console.log("Found pricing section:", pricingSection);
           if (pricingSection) {
             pricingSection.scrollIntoView({ behavior: "smooth", block: "start" });
           }
