@@ -19,6 +19,8 @@ export default function ProposalActions({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string>("");
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrollingUp, setIsScrollingUp] = useState(false);
 
   // Don't show actions if proposal is already accepted or rejected
   const shouldShowActions = !["approved", "rejected"].includes(
@@ -30,12 +32,28 @@ export default function ProposalActions({
     const handleMessage = (event: MessageEvent) => {
       if (event.data && event.data.type === "TEMPLATE_SCROLL_EVENT") {
         const scrollY = event.data.scrollY || 0;
-        console.log("Received scroll from iframe:", scrollY);
 
-        if (scrollY > 100) {
-          console.log("✅ Scroll > 100px - showing bar");
+        // Detectar direção do scroll
+        const scrollDifference = scrollY - lastScrollY;
+        const isScrollingUpNow = scrollDifference < 0;
+        const scrollDistance = Math.abs(scrollDifference);
+
+        // Mostrar barra quando scroll > 100px e não está scrollando para cima
+        if (scrollY > 100 && !isScrollingUpNow) {
           setHasScrolled(true);
+          setIsScrollingUp(false);
         }
+
+        // Esconder barra quando scrollar para cima uma distância considerável (mais de 150px)
+        if (isScrollingUpNow && scrollDistance > 150) {
+          setIsScrollingUp(true);
+          // Esconder completamente se scrollar muito para cima
+          if (scrollY < 200) {
+            setHasScrolled(false);
+          }
+        }
+
+        setLastScrollY(scrollY);
       }
 
       // Listen for plan selection from iframe
@@ -52,7 +70,7 @@ export default function ProposalActions({
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [lastScrollY]);
 
   if (!shouldShowActions) {
     return null;
@@ -63,7 +81,7 @@ export default function ProposalActions({
       {/* Fixed Action Bar */}
       <div
         className={`fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
-          hasScrolled ? "translate-y-0" : "translate-y-full"
+          hasScrolled && !isScrollingUp ? "translate-y-0" : "translate-y-full"
         }`}
         style={{
           backgroundColor: "white",
