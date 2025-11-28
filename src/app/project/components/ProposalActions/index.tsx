@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLenis } from "lenis/react";
 import AcceptProposalModal from "./AcceptProposalModal";
 import RequestAdjustmentModal from "./RequestAdjustmentModal";
 import type { TemplateData } from "#/types/template-data";
@@ -18,11 +19,13 @@ export default function ProposalActions({
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const lenis = useLenis();
 
   console.log("ProposalActions DEBUG:", {
     isEditing,
     hasScrolled,
     projectStatus: projectData.projectStatus,
+    lenisAvailable: !!lenis,
   });
 
   // Don't show actions if proposal is already accepted or rejected
@@ -30,38 +33,30 @@ export default function ProposalActions({
     projectData.projectStatus || ""
   );
 
-  // Detect scroll to show the action bar
+  // Detect scroll to show the action bar using Lenis
   useEffect(() => {
-    // Show bar after user scrolls OR after 2 seconds
-    const timer = setTimeout(() => {
-      console.log("Auto-showing bar after 2s");
-      setHasScrolled(true);
-    }, 2000);
+    if (!lenis) return;
 
-    const handleScroll = () => {
-      const scrolled = window.scrollY > 100 || window.pageYOffset > 100;
-      if (scrolled) {
+    const handleScroll = (lenisData: { scroll: number }) => {
+      console.log("Lenis scroll event:", lenisData.scroll);
+      if (lenisData.scroll > 100) {
         console.log("Scroll detected - showing bar");
         setHasScrolled(true);
-        clearTimeout(timer);
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    document.addEventListener("scroll", handleScroll, { passive: true });
+    lenis.on("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("scroll", handleScroll);
-      clearTimeout(timer);
+      lenis.off("scroll", handleScroll);
     };
-  }, []);
+  }, [lenis]);
 
   if (!shouldShowActions) {
     return null;
   }
 
-  return !isEditing ? (
+  return false ? (
     <>
       {/* Fixed Action Bar */}
       <div
@@ -73,7 +68,7 @@ export default function ProposalActions({
           borderTopColor: "#e5e7eb",
         }}
       >
-        <div className="mx-auto w-full max-w-[1440px] py-4">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Action Buttons */}
             <div className="flex w-full items-center gap-3 sm:w-auto">
