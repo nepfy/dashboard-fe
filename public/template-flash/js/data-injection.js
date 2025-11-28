@@ -1266,11 +1266,8 @@
   function updateButtons(buttonConfig) {
     if (!buttonConfig) return;
 
-    const normalizedWhereToOpen =
-      typeof buttonConfig.buttonWhereToOpen === "string"
-        ? buttonConfig.buttonWhereToOpen.trim()
-        : "";
-    const shouldDisableButtons = normalizedWhereToOpen === "";
+    // Check if we're in viewing mode (has parent window)
+    const isViewingMode = window.parent && window.parent !== window;
 
     // Update all buttons with id="buttonconfig-buttontitle"
     const buttons = document.querySelectorAll("#buttonconfig-buttontitle");
@@ -1295,9 +1292,6 @@
     buttonWrappers.forEach((wrapper) => {
       const link = wrapper.querySelector(".btn-magnetic__click");
       if (!link) return;
-
-      // Check if we're in viewing mode (has parent window)
-      const isViewingMode = window.parent && window.parent !== window;
 
       if (isViewingMode) {
         // In viewing mode, scroll to pricing section
@@ -1329,18 +1323,12 @@
         link.rel = "noopener noreferrer";
       }
 
-      if (shouldDisableButtons) {
-        link.removeAttribute("href");
-        link.removeAttribute("target");
-        link.removeAttribute("rel");
-        link.setAttribute("aria-disabled", "true");
-        link.setAttribute("tabindex", "-1");
-      } else {
+      // In viewing mode, never disable buttons
+      if (isViewingMode) {
         link.removeAttribute("aria-disabled");
         link.removeAttribute("tabindex");
+        wrapper.classList.remove("is-disabled");
       }
-
-      wrapper.classList.toggle("is-disabled", shouldDisableButtons);
     });
   }
 
