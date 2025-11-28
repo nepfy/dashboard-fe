@@ -2089,6 +2089,36 @@ a,
         </footer>
       </main>
     </div>
+    <script>
+      // Force enable all buttons immediately on page load
+      (function() {
+        function enableButtons() {
+          console.log("🔧 Force enabling buttons...");
+          document.querySelectorAll('.btn-magnetic').forEach(function(wrapper) {
+            wrapper.classList.remove('is-disabled');
+            var link = wrapper.querySelector('.btn-magnetic__click, a');
+            if (link) {
+              link.removeAttribute('aria-disabled');
+              link.removeAttribute('tabindex');
+              link.style.pointerEvents = '';
+              link.style.cursor = '';
+            }
+          });
+          console.log("✅ Buttons enabled");
+        }
+        
+        // Run immediately
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', enableButtons);
+        } else {
+          enableButtons();
+        }
+        
+        // Run again after a short delay to catch any late changes
+        setTimeout(enableButtons, 100);
+        setTimeout(enableButtons, 500);
+      })();
+    </script>
     <script
       src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=68c57ed53812e1afbff47055"
       type="text/javascript"
