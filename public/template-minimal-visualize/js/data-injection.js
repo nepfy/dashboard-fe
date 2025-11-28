@@ -1390,6 +1390,8 @@
     
     console.log("updateButtons called, isViewingMode:", isViewingMode);
     console.log("Found buttons:", buttonLinks.length);
+    console.log("window.parent:", window.parent);
+    console.log("window:", window);
     
     buttonLinks.forEach((link) => {
       // Skip if this is a pricing button (will be handled separately)

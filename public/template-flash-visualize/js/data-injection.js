@@ -1269,13 +1269,6 @@
     // Check if we're in viewing mode (has parent window)
     const isViewingMode = window.parent && window.parent !== window;
 
-    const normalizedWhereToOpen =
-      typeof buttonConfig.buttonWhereToOpen === "string"
-        ? buttonConfig.buttonWhereToOpen.trim()
-        : "";
-    // In viewing mode, never disable buttons (they scroll or open modals)
-    const shouldDisableButtons = !isViewingMode && normalizedWhereToOpen === "";
-
     // Update all buttons with id="buttonconfig-buttontitle"
     const buttons = document.querySelectorAll("#buttonconfig-buttontitle");
     buttons.forEach((button) => {
@@ -1337,18 +1330,10 @@
         link.rel = "noopener noreferrer";
       }
 
-      if (shouldDisableButtons) {
-        link.removeAttribute("href");
-        link.removeAttribute("target");
-        link.removeAttribute("rel");
-        link.setAttribute("aria-disabled", "true");
-        link.setAttribute("tabindex", "-1");
-      } else {
-        link.removeAttribute("aria-disabled");
-        link.removeAttribute("tabindex");
-      }
-
-      wrapper.classList.toggle("is-disabled", shouldDisableButtons);
+      // Always enable buttons in visualize mode
+      link.removeAttribute("aria-disabled");
+      link.removeAttribute("tabindex");
+      wrapper.classList.remove("is-disabled");
     });
   }
 
