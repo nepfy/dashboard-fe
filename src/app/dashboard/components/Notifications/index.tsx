@@ -106,6 +106,7 @@ export default function Notifications({
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [adjustments, setAdjustments] = useState<Adjustment[]>([]);
   const [isMarkingAllAsRead, setIsMarkingAllAsRead] = useState(false);
+  const [hideReadNotifications, setHideReadNotifications] = useState(false);
 
   useEffect(() => {
     if (isNotificationOpen) {
@@ -132,8 +133,10 @@ export default function Notifications({
       setShowAcceptedModal(true);
     } else if (notification.type === "proposal_feedback") {
       setSelectedNotification(notification);
+      // Open modal immediately with empty adjustments
+      setShowFeedbackModal(true);
 
-      // Fetch all adjustments for this project
+      // Fetch adjustments in parallel (non-blocking)
       const metadata = notification.metadata as { projectId?: string } | null;
       const projectId = metadata?.projectId;
 
@@ -152,8 +155,6 @@ export default function Notifications({
           setAdjustments([]);
         }
       }
-
-      setShowFeedbackModal(true);
     } else if (notification.actionUrl) {
       // For other types with action URL, navigate directly
       setIsNotificationOpenAction(false);
@@ -172,11 +173,13 @@ export default function Notifications({
     
     setIsMarkingAllAsRead(true);
     try {
-      const unreadCount = notifications.filter((n) => !n.isRead).length;
-      await markAllAsRead();
-      trackNotificationsMarkedAllRead({
-        count: unreadCount,
-      });
+    const unreadCount = notifications.filter((n) => !n.isRead).length;
+    await markAllAsRead();
+    trackNotificationsMarkedAllRead({
+      count: unreadCount,
+    });
+    // Hide read notifications to show space for new ones
+    setHideReadNotifications(true);
     } finally {
       setIsMarkingAllAsRead(false);
     }
@@ -231,14 +234,16 @@ export default function Notifications({
             <div className="flex items-center justify-center p-8">
               <div className="border-primary-light-400 h-8 w-8 animate-spin rounded-full border-b-2"></div>
             </div>
-          ) : notifications.length === 0 ? (
+          ) : notifications.filter((n) => !hideReadNotifications || !n.isRead).length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <div className="mb-2 text-4xl">🔔</div>
               <p className="text-sm text-gray-500">Você não tem notificações</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {notifications.map((notification) => {
+              {notifications
+                .filter((n) => !hideReadNotifications || !n.isRead)
+                .map((notification) => {
                 const hasModal = [
                   "proposal_accepted",
                   "proposal_feedback",

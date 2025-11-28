@@ -62,12 +62,20 @@ export function useNotifications(): UseNotificationsReturn {
       const data = await response.json();
 
       if (data.success) {
-        setUnreadCount(data.count);
+        const newCount = data.count;
+        const hasNewNotifications = newCount > unreadCount;
+        
+        setUnreadCount(newCount);
+        
+        // If there are new notifications, fetch the full list
+        if (hasNewNotifications) {
+          await fetchNotifications();
+        }
       }
     } catch (err) {
       console.error("Error fetching unread count:", err);
     }
-  }, [NOTIFICATIONS_DISABLED]);
+  }, [NOTIFICATIONS_DISABLED, unreadCount, fetchNotifications]);
 
   const markAsRead = useCallback(
     async (id: string) => {
