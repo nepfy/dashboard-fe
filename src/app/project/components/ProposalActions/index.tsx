@@ -32,32 +32,28 @@ export default function ProposalActions({
 
   // Detect scroll to show the action bar
   useEffect(() => {
+    // Show bar after user scrolls OR after 2 seconds
+    const timer = setTimeout(() => {
+      console.log("Auto-showing bar after 2s");
+      setHasScrolled(true);
+    }, 2000);
+
     const handleScroll = () => {
       const scrolled = window.scrollY > 100 || window.pageYOffset > 100;
-      console.log("Scroll detected:", {
-        scrollY: window.scrollY,
-        pageYOffset: window.pageYOffset,
-        scrolled,
-      });
-      setHasScrolled(scrolled);
+      if (scrolled) {
+        console.log("Scroll detected - showing bar");
+        setHasScrolled(true);
+        clearTimeout(timer);
+      }
     };
 
-    // Listen to both window scroll and document scroll
     window.addEventListener("scroll", handleScroll, { passive: true });
     document.addEventListener("scroll", handleScroll, { passive: true });
-
-    // Use requestAnimationFrame to check scroll position periodically
-    let frameId: number;
-    const checkScroll = () => {
-      handleScroll();
-      frameId = requestAnimationFrame(checkScroll);
-    };
-    frameId = requestAnimationFrame(checkScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(frameId);
+      clearTimeout(timer);
     };
   }, []);
 
