@@ -27,7 +27,7 @@ export default function ProposalActions({
     return null;
   }
 
-  return (
+  return !isEditing ? (
     <>
       {/* Fixed Action Bar */}
       <div
@@ -95,5 +95,5 @@ export default function ProposalActions({
         setIsSubmitting={setIsSubmitting}
       />
     </>
-  );
+  ) : null;
 }
