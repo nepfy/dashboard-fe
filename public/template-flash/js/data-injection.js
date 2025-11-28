@@ -114,11 +114,22 @@
   function formatCurrency(value) {
     if (!value) return "";
 
+    // If value is already formatted as currency, return it as is
+    if (typeof value === "string" && value.includes("R$")) {
+      return value;
+    }
+
     // Convert to number, handling strings that might have formatting
-    const numValue =
-      typeof value === "string"
-        ? parseFloat(value.replace(/[^\d,.-]/g, "").replace(",", "."))
-        : parseFloat(value);
+    let numValue;
+    if (typeof value === "string") {
+      // Remove all non-numeric characters except comma and dot
+      const cleaned = value.replace(/[^\d,.-]/g, "");
+      // Replace comma with dot for decimal separator
+      const normalized = cleaned.replace(",", ".");
+      numValue = parseFloat(normalized);
+    } else {
+      numValue = parseFloat(value);
+    }
 
     if (isNaN(numValue)) return "";
 
@@ -1213,17 +1224,38 @@
         ".pricing_button .btn-magnetic__click"
       );
       if (buttonLink) {
-        if (plan.buttonWhereToOpen === "whatsapp" && plan.buttonPhone) {
+        const isViewingMode = window.parent && window.parent !== window;
+        
+        if (isViewingMode) {
+          // In viewing mode, send message to parent to open modal
+          buttonLink.href = "#";
+          buttonLink.removeAttribute("target");
+          buttonLink.removeAttribute("rel");
+          
+          buttonLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            // Send message to parent window with selected plan
+            window.parent.postMessage(
+              {
+                type: "PLAN_SELECTED",
+                planId: plan.id || plan.title,
+              },
+              "*"
+            );
+          });
+        } else if (plan.buttonWhereToOpen === "whatsapp" && plan.buttonPhone) {
           buttonLink.href = `https://wa.me/${plan.buttonPhone.replace(
             /\D/g,
             ""
           )}`;
+          buttonLink.target = "_blank";
+          buttonLink.rel = "noopener noreferrer";
         } else if (plan.buttonHref) {
           buttonLink.href = plan.buttonHref;
+          buttonLink.target = "_blank";
+          buttonLink.rel = "noopener noreferrer";
         }
-        // Always open in a new tab
-        buttonLink.target = "_blank";
-        buttonLink.rel = "noopener noreferrer";
       }
 
       container.appendChild(clone);
@@ -1264,7 +1296,24 @@
       const link = wrapper.querySelector(".btn-magnetic__click");
       if (!link) return;
 
-      if (
+      // Check if we're in viewing mode (has parent window)
+      const isViewingMode = window.parent && window.parent !== window;
+
+      if (isViewingMode) {
+        // In viewing mode, scroll to pricing section
+        link.href = "#pricing-section";
+        link.removeAttribute("target");
+        link.removeAttribute("rel");
+        
+        // Add click handler to scroll smoothly
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const pricingSection = document.querySelector(".section_pricing");
+          if (pricingSection) {
+            pricingSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      } else if (
         buttonConfig.buttonWhereToOpen === "whatsapp" &&
         buttonConfig.buttonPhone
       ) {
@@ -1272,12 +1321,13 @@
           /\D/g,
           ""
         )}`;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
       } else if (buttonConfig.buttonHref) {
         link.href = buttonConfig.buttonHref;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
       }
-      // Always open in a new tab
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
 
       if (shouldDisableButtons) {
         link.removeAttribute("href");

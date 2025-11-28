@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { TemplateData } from "#/types/template-data";
 import { trackNotificationSent } from "#/lib/analytics/track";
 
@@ -10,6 +10,7 @@ interface AcceptProposalModalProps {
   projectData: TemplateData;
   isSubmitting: boolean;
   setIsSubmitting: (value: boolean) => void;
+  preSelectedPlanId?: string;
 }
 
 export default function AcceptProposalModal({
@@ -18,11 +19,19 @@ export default function AcceptProposalModal({
   projectData,
   isSubmitting,
   setIsSubmitting,
+  preSelectedPlanId,
 }: AcceptProposalModalProps) {
   const [selectedPlan, setSelectedPlan] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  // Set pre-selected plan when modal opens
+  useEffect(() => {
+    if (preSelectedPlanId && isOpen) {
+      setSelectedPlan(preSelectedPlanId);
+    }
+  }, [preSelectedPlanId, isOpen]);
 
   if (!isOpen) return null;
 

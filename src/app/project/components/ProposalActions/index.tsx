@@ -18,13 +18,14 @@ export default function ProposalActions({
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState<string>("");
 
   // Don't show actions if proposal is already accepted or rejected
   const shouldShowActions = !["approved", "rejected"].includes(
     projectData.projectStatus || ""
   );
 
-  // Listen for scroll messages from iframe
+  // Listen for scroll messages and plan selection from iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data && event.data.type === "TEMPLATE_SCROLL_EVENT") {
@@ -35,6 +36,14 @@ export default function ProposalActions({
           console.log("✅ Scroll > 100px - showing bar");
           setHasScrolled(true);
         }
+      }
+
+      // Listen for plan selection from iframe
+      if (event.data && event.data.type === "PLAN_SELECTED") {
+        const planId = event.data.planId;
+        console.log("Plan selected from iframe:", planId);
+        setSelectedPlanId(planId);
+        setShowAcceptModal(true);
       }
     };
 
@@ -92,10 +101,14 @@ export default function ProposalActions({
       {/* Modals */}
       <AcceptProposalModal
         isOpen={showAcceptModal}
-        onClose={() => setShowAcceptModal(false)}
+        onClose={() => {
+          setShowAcceptModal(false);
+          setSelectedPlanId("");
+        }}
         projectData={projectData}
         isSubmitting={isSubmitting}
         setIsSubmitting={setIsSubmitting}
+        preSelectedPlanId={selectedPlanId}
       />
 
       <RequestAdjustmentModal

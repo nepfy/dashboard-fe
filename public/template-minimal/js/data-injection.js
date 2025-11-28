@@ -62,11 +62,22 @@
   function formatCurrency(value) {
     if (!value) return "";
 
+    // If value is already formatted as currency, return it as is
+    if (typeof value === "string" && value.includes("R$")) {
+      return value;
+    }
+
     // Convert to number, handling strings that might have formatting
-    const numValue =
-      typeof value === "string"
-        ? parseFloat(value.replace(/[^\d,.-]/g, "").replace(",", "."))
-        : parseFloat(value);
+    let numValue;
+    if (typeof value === "string") {
+      // Remove all non-numeric characters except comma and dot
+      const cleaned = value.replace(/[^\d,.-]/g, "");
+      // Replace comma with dot for decimal separator
+      const normalized = cleaned.replace(",", ".");
+      numValue = parseFloat(normalized);
+    } else {
+      numValue = parseFloat(value);
+    }
 
     if (isNaN(numValue)) return "";
 
@@ -1305,19 +1316,41 @@
 
       // Update button href
       const buttonLink = clone.querySelector(
-        ".pricing_button .btn-magnetic__click"
+        ".btn-animate-chars.is-invest"
       );
       if (buttonLink) {
-        if (plan.buttonWhereToOpen === "whatsapp" && plan.buttonPhone) {
+        const isViewingMode = window.parent && window.parent !== window;
+        
+        if (isViewingMode) {
+          // In viewing mode, send message to parent to open modal
+          buttonLink.href = "#";
+          buttonLink.removeAttribute("target");
+          buttonLink.removeAttribute("rel");
+          
+          buttonLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            // Send message to parent window with selected plan
+            window.parent.postMessage(
+              {
+                type: "PLAN_SELECTED",
+                planId: plan.id || plan.title,
+              },
+              "*"
+            );
+          });
+        } else if (plan.buttonWhereToOpen === "whatsapp" && plan.buttonPhone) {
           buttonLink.href = `https://wa.me/${plan.buttonPhone.replace(
             /\D/g,
             ""
           )}`;
+          buttonLink.target = "_blank";
+          buttonLink.rel = "noopener noreferrer";
         } else if (plan.buttonHref) {
           buttonLink.href = plan.buttonHref;
+          buttonLink.target = "_blank";
+          buttonLink.rel = "noopener noreferrer";
         }
-        buttonLink.target = "_blank";
-        buttonLink.rel = "noopener noreferrer";
       }
 
       container.appendChild(clone);
@@ -1343,21 +1376,47 @@
     });
 
     // Update button links
-    const buttonLinks = document.querySelectorAll(".btn-magnetic__click");
+    const isViewingMode = window.parent && window.parent !== window;
+    const buttonLinks = document.querySelectorAll(".btn-animate-chars");
+    
     buttonLinks.forEach((link) => {
-      if (
+      // Skip if this is a pricing button (will be handled separately)
+      if (link.classList.contains("is-invest")) {
+        return;
+      }
+
+      const anchor = link.tagName === "A" ? link : link.querySelector("a");
+      if (!anchor) return;
+
+      if (isViewingMode) {
+        // In viewing mode, scroll to pricing section
+        anchor.href = "#invest-section";
+        anchor.removeAttribute("target");
+        anchor.removeAttribute("rel");
+        
+        // Add click handler to scroll smoothly
+        anchor.addEventListener("click", (e) => {
+          e.preventDefault();
+          const investSection = document.querySelector(".section_invest");
+          if (investSection) {
+            investSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      } else if (
         buttonConfig.buttonWhereToOpen === "whatsapp" &&
         buttonConfig.buttonPhone
       ) {
-        link.href = `https://wa.me/${buttonConfig.buttonPhone.replace(
+        anchor.href = `https://wa.me/${buttonConfig.buttonPhone.replace(
           /\D/g,
           ""
         )}`;
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
       } else if (buttonConfig.buttonHref) {
-        link.href = buttonConfig.buttonHref;
+        anchor.href = buttonConfig.buttonHref;
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
       }
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
     });
   }
 

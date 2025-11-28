@@ -62,11 +62,22 @@
   function formatCurrency(value) {
     if (!value) return "";
 
+    // If value is already formatted as currency, return it as is
+    if (typeof value === "string" && value.includes("R$")) {
+      return value;
+    }
+
     // Convert to number, handling strings that might have formatting
-    const numValue =
-      typeof value === "string"
-        ? parseFloat(value.replace(/[^\d,.-]/g, "").replace(",", "."))
-        : parseFloat(value);
+    let numValue;
+    if (typeof value === "string") {
+      // Remove all non-numeric characters except comma and dot
+      const cleaned = value.replace(/[^\d,.-]/g, "");
+      // Replace comma with dot for decimal separator
+      const normalized = cleaned.replace(",", ".");
+      numValue = parseFloat(normalized);
+    } else {
+      numValue = parseFloat(value);
+    }
 
     if (isNaN(numValue)) return "";
 
