@@ -1330,10 +1330,9 @@
         link.rel = "noopener noreferrer";
       }
 
-      // Always enable buttons in visualize mode
+      // Never disable buttons in visualize mode
       link.removeAttribute("aria-disabled");
       link.removeAttribute("tabindex");
-      wrapper.classList.remove("is-disabled");
     });
   }
 
@@ -1372,6 +1371,7 @@
       );
     }
   }
+
 
   // Main data injection function
   function injectData(data) {
