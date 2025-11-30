@@ -3,7 +3,7 @@
  */
 import { cache } from "react";
 import { db } from "#/lib/db";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, sql } from "drizzle-orm";
 import { projectsTable } from "#/lib/db/schema/projects";
 import { personUserTable } from "#/lib/db/schema/users";
 import type { TemplateData } from "#/types/template-data";
@@ -20,6 +20,7 @@ export const getProjectData = cache(
       });
 
       // Fetch project with user and proposal data
+      // Use case-insensitive comparison for userName to handle subdomain case variations
       const result = await db
         .select({
           clientName: projectsTable.clientName,
@@ -51,7 +52,7 @@ export const getProjectData = cache(
         )
         .where(
           and(
-            eq(personUserTable.userName, userName),
+            sql`LOWER(${personUserTable.userName}) = LOWER(${userName})`,
             eq(projectsTable.projectUrl, projectUrl),
             isNull(projectsTable.deleted_at)
           )
