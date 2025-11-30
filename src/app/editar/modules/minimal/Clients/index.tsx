@@ -1,9 +1,9 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import EditableText from "#/app/editar/components/EditableText";
 import { useEditor } from "../../../contexts/EditorContext";
-import type { ClientsSection } from "#/types/template-data";
+import type { ClientsSection, Client } from "#/types/template-data";
+import ClientsGrid from "./clientsGrid";
 
 interface MinimalClientsProps extends ClientsSection {
   canEdit?: boolean;
@@ -48,6 +48,10 @@ export default function MinimalClients({
         : logo
     );
     updateClients({ items: updated });
+  };
+
+  const reorderClients = (clients: Client[]) => {
+    updateClients({ items: clients });
   };
 
   const logos = items && items.length > 0 ? items : [];
@@ -216,39 +220,12 @@ export default function MinimalClients({
                   />
                 </div>
               </div>
-              <div className="w-layout-grid partners-grid">
-                {logoDefaults.length > 0
-                  ? logoDefaults
-                      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-                      .map((logo) => (
-                        <div
-                          className="partners-logo"
-                          key={logo.id || logo.name}
-                        >
-                          <span className="logo-embed w-embed flex max-h-[50px] max-w-[100px] items-center justify-center overflow-hidden">
-                            <img
-                              src="/images/templates/flash/placeholder.png"
-                              alt=""
-                              className="logo-img hidden"
-                            />
-                            <EditableText
-                              value={logo.name}
-                              onChange={(value) =>
-                                handleLogoNameChange(
-                                  logo.id,
-                                  value,
-                                  logo.sortOrder
-                                )
-                              }
-                              editingId={`clients-logo-${logo.id}`}
-                              className="logo-text text-center text-[0.75rem] leading-tight font-medium tracking-wide uppercase"
-                              canEdit={canEdit}
-                            />
-                          </span>
-                        </div>
-                      ))
-                  : null}
-              </div>
+              <ClientsGrid
+                items={logoDefaults}
+                onLogoNameChange={handleLogoNameChange}
+                onReorderClients={reorderClients}
+                canEdit={canEdit}
+              />
             </div>
           </div>
         </div>

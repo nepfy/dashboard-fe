@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { InvestmentSection, PlansSection } from "#/types/template-data";
-import EditableImage from "#/app/editar/components/EditableImage";
+import EditablePlan from "#/app/editar/components/EditablePlan";
 import EditableText from "#/app/editar/components/EditableText";
 import { useEditor } from "../../../contexts/EditorContext";
 import { formatCurrencyDisplay } from "#/helpers/formatCurrency";
@@ -22,17 +22,6 @@ export default function MinimalPlans({
   const [openModalId, setOpenModalId] = useState<string | null>(null);
 
   const canEdit = activeEditingId === null;
-
-  // Placeholder functions for plan editing
-  const updatePlanItem = (planId: string, data: never) => {
-    console.log("Update plan:", planId, data);
-    // Will be implemented later
-  };
-
-  const reorderPlanItems = (items: never[]) => {
-    console.log("Reorder plans:", items);
-    // Will be implemented later
-  };
 
   if (hideSection || !plansItems || plansItems.length === 0) return null;
 
@@ -95,7 +84,8 @@ export default function MinimalPlans({
         /* 3 planos: grid de 3 colunas */
         .invest-grid[data-plans="3"] {
           grid-template-columns: repeat(3, 1fr);
-          max-width: 100%;
+          max-width: 1200px;
+          justify-items: center;
         }
 
         /* 2 planos: grid de 2 colunas */
@@ -103,17 +93,38 @@ export default function MinimalPlans({
           grid-template-columns: repeat(2, 1fr);
           max-width: 900px;
           margin: 0 auto;
+          justify-items: center;
         }
 
         /* 1 plano: centralizado e menor */
         .invest-grid[data-plans="1"] {
           grid-template-columns: 1fr;
-          max-width: 420px;
+          max-width: 773px;
           margin: 0 auto;
+          justify-items: start;
+        }
+
+        /* Max-width para cards baseado no número de planos */
+        .invest-grid[data-plans="1"] .invest-card {
+          max-width: 773px;
+          width: 100%;
+          background-color: transparent;
+          border: 1px solid #006dc5;
+        }
+
+        .invest-grid[data-plans="2"] .invest-card {
+          max-width: 511px;
+          width: 100%;
+          background-color: transparent;
+        }
+
+        .invest-grid[data-plans="3"] .invest-card {
+          width: 100%;
+          background-color: transparent;
         }
 
         .invest-card {
-          background-color: #0a0a0a;
+          background-color: transparent;
           border: 1px solid rgba(255, 255, 255, 0.08);
           border-radius: 0.5rem;
           padding: 2rem 1.75rem;
@@ -153,7 +164,7 @@ export default function MinimalPlans({
 
         .plan-price {
           font-size: 2.5rem;
-          font-weight: 600;
+          font-weight: 500;
           color: #fbfbfb;
           line-height: 1;
           margin-bottom: 1rem;
@@ -264,13 +275,12 @@ export default function MinimalPlans({
           flex-direction: column;
           gap: 1rem;
           padding-top: 1.5rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .text-style-allcaps {
           text-transform: uppercase;
           letter-spacing: 0.08em;
-          color: rgba(255, 255, 255, 0.5);
+          color: #fbfbfb;
           font-size: 0.75rem;
           font-weight: 500;
           margin-bottom: 0.5rem;
@@ -282,6 +292,13 @@ export default function MinimalPlans({
           gap: 0.875rem;
         }
 
+        /* Quando há apenas 1 plano, os itens devem ter duas colunas */
+        .invest-grid[data-plans="1"] .invest-feature {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.875rem;
+        }
+
         .invest-list {
           display: flex;
           align-items: flex-start;
@@ -289,7 +306,7 @@ export default function MinimalPlans({
           font-weight: 300;
           font-size: 0.9375rem;
           line-height: 1.5;
-          color: rgba(255, 255, 255, 0.85);
+          color: #fbfbfb;
         }
 
         .invest-icon {
@@ -332,17 +349,17 @@ export default function MinimalPlans({
           .section_plans {
             padding: 5rem 0 6rem;
           }
-          
+
           .invest-heading {
             grid-template-columns: 1fr;
             gap: 2rem;
           }
-          
+
           .invest-title {
             font-size: 2rem;
             line-height: 1.3;
           }
-          
+
           .invest-grid[data-plans="3"],
           .invest-grid[data-plans="2"],
           .invest-grid[data-plans="1"] {
@@ -368,15 +385,17 @@ export default function MinimalPlans({
         <div className="padding-global">
           <div className="container-large">
             <div className="invest-component">
-              <div className="invest-heading">
-                <div className="invest-label">
+              <div className="flex w-full max-w-[1200px] items-start justify-between gap-4">
+                <div className="invest-label max-w-[250px]">
                   <div className="label">Investimento</div>
                   <EditableText
                     value={
                       investment?.projectScope ||
                       "Invista no que realmente importa e potencialize seus resultados."
                     }
-                    onChange={(value) => updateInvestment({ projectScope: value })}
+                    onChange={(value) =>
+                      updateInvestment({ projectScope: value })
+                    }
                     editingId="investment-projectScope"
                     className="invest-label-description"
                     canEdit={canEdit}
@@ -389,112 +408,120 @@ export default function MinimalPlans({
                   }
                   onChange={(value) => updateInvestment({ title: value })}
                   editingId="investment-title"
-                  className="invest-title"
+                  className="invest-title max-w-[650px]"
                   canEdit={canEdit}
                 />
               </div>
               <div className="invest-grid" data-plans={plansItems.length}>
-              {plansItems.map((plan) => (
-                <div
-                  key={plan.id}
-                  className={`invest-card ${plan.recommended ? "is-best" : ""} ${
-                    openModalId === plan.id
-                      ? "border-[#0170D6]"
-                      : canEdit
-                        ? "cursor-pointer"
-                        : "cursor-not-allowed"
-                  }`}
-                  onClick={() => {
-                    if (canEdit || openModalId === plan.id) {
-                      setOpenModalId(plan?.id ?? null);
-                    }
-                  }}
-                >
-                  {plan.recommended && (
-                    <div className="invest-best_wrap">
-                      <div className="plan-name">{plan.title}</div>
-                      <div className="invest-best-tag">
-                        <Image
-                          src="/template-minimal/images/star.svg"
-                          alt=""
-                          width={14}
-                          height={14}
-                          className="invest-best-icon"
-                        />
-                        <span>MELHOR OFERTA!</span>
+                {plansItems.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className={`invest-card ${plan.recommended ? "is-best" : ""} ${
+                      openModalId === plan.id
+                        ? "border-[#0170D6]"
+                        : canEdit
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                    } ${plansItems.length === 1 ? "border-[#0c8ae5]" : ""}`}
+                    onClick={() => {
+                      if (canEdit || openModalId === plan.id) {
+                        setOpenModalId(plan?.id ?? null);
+                      }
+                    }}
+                  >
+                    {plan.recommended && (
+                      <div className="invest-best_wrap">
+                        <div className="plan-name mb-4">{plan.title}</div>
+                        <div className="invest-best-tag">
+                          <Image
+                            src="/template-minimal/images/star.svg"
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="invest-best-icon"
+                          />
+                          <span>MELHOR OFERTA!</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {!plan.recommended && (
+                      <div className="plan-name mb-4">{plan.title}</div>
+                    )}
+
+                    <div className="invest-top mb-10">
+                      <div className="plan-price">
+                        {formatCurrencyDisplay(plan.value)}
+                        {plan.planPeriod && (
+                          <span className="period">/ {plan.planPeriod}</span>
+                        )}
                       </div>
                     </div>
-                  )}
-                  
-                  {!plan.recommended && (
-                    <div className="plan-name">{plan.title}</div>
-                  )}
 
-                  <div className="invest-top">
-                    <div className="plan-price">
-                      {formatCurrencyDisplay(plan.value)}
-                      {plan.planPeriod && (
-                        <span className="period">
-                          /{plan.planPeriod}
-                        </span>
+                    {plansItems.length > 1 && (
+                      <div className="invest-button-wrap">
+                        <div className="plan-description">
+                          {plan.description}
+                        </div>
+                        <button
+                          className={`btn-animate-chars ${plan.recommended ? "is-best" : ""}`}
+                        >
+                          <span className="btn-animate-chars__text">
+                            {plan.buttonTitle || "Fechar pacote"}
+                          </span>
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="invest-divider"></div>
+
+                    <div className="flex items-end gap-4 border-t border-[rgba(255,255,255,0.08)] pt-10">
+                      <div className="invest-incluse flex flex-1 gap-4">
+                        <div className="text-style-allcaps text-[0.875rem]">
+                          O que está incluso:
+                        </div>
+                        <div className="invest-feature">
+                          {plan.includedItems?.map((item) => (
+                            <div key={item.id} className="invest-list">
+                              <svg
+                                className="invest-icon"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <div className="text-size-regular text-[1rem]">
+                                {item.description}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      {plansItems.length === 1 && (
+                        <button
+                          className={`h-[40px] w-[190px] rounded-[4px] border border-[#0c8ae5] bg-[#0c8ae5] ${plan.recommended ? "is-best border border-[#0c8ae5] bg-[#0c8ae5]" : ""}`}
+                        >
+                          <span className="btn-animate-chars__text">
+                            {plan.buttonTitle || "Fechar pacote"}
+                          </span>
+                        </button>
                       )}
                     </div>
+
+                    <EditablePlan
+                      plan={plan}
+                      isModalOpen={openModalId === plan.id}
+                      setIsModalOpen={(isOpen) =>
+                        setOpenModalId(isOpen ? (plan?.id ?? null) : null)
+                      }
+                      editingId={`plans-${plan.id}`}
+                    />
                   </div>
-
-                  <div className="invest-button-wrap">
-                    <div className="plan-description">{plan.description}</div>
-                    <button className={`btn-animate-chars ${plan.recommended ? "is-best" : ""}`}>
-                      <span className="btn-animate-chars__text">
-                        {plan.buttonTitle || "Fechar pacote"}
-                      </span>
-                    </button>
-                  </div>
-
-                  <div className="invest-divider"></div>
-
-                  <div className="invest-incluse">
-                    <div className="text-style-allcaps text-[0.875rem]">
-                      O que está incluso:
-                    </div>
-                    <div className="invest-feature">
-                      {plan.includedItems?.map((item) => (
-                        <div key={item.id} className="invest-list">
-                          <svg
-                            className="invest-icon"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          <div className="text-size-regular text-[1rem]">
-                            {item.description}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <EditableImage
-                    isModalOpen={openModalId === plan.id}
-                    setIsModalOpen={(isOpen) =>
-                      setOpenModalId(isOpen ? (plan?.id ?? null) : null)
-                    }
-                    editingId={`plans-${plan.id}`}
-                    // @ts-expect-error - Type mismatch for plans
-                    itemType="plans"
-                    items={plansItems || []}
-                    currentItemId={plan?.id ?? null}
-                    // @ts-expect-error - Type mismatch
-                    onUpdateItem={updatePlanItem}
-                    // @ts-expect-error - Type mismatch
-                    onReorderItems={reorderPlanItems}
-                  />
-                </div>
-              ))}
+                ))}
               </div>
             </div>
           </div>
