@@ -39,9 +39,23 @@ export interface MinimalIntroductionSection {
 }
 
 // About Us Section
+export interface MinimalAboutUsItem {
+  id: string;
+  image?: string;
+  caption?: string;
+  hideImage?: boolean;
+  hideCaption?: boolean;
+  sortOrder?: number;
+}
+
 export interface MinimalAboutUsSection {
   hideSection?: boolean;
   title: string;
+  subtitle?: string;
+  hideSubtitle?: boolean;
+  marqueeText?: string;
+  hideMarquee?: boolean;
+  items?: MinimalAboutUsItem[];
 }
 
 // Team Section

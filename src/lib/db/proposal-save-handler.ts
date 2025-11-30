@@ -501,8 +501,8 @@ function convertMinimalToProposalData(
       hideTitle: false,
       supportText: "",
       hideSupportText: true,
-      subtitle: "",
-      hideSubtitle: true,
+      subtitle: proposal.aboutUs.subtitle || "",
+      hideSubtitle: proposal.aboutUs.hideSubtitle || false,
     },
     team: {
       hideSection: proposal.team.hideSection || false,

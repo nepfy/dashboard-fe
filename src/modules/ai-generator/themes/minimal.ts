@@ -22,6 +22,128 @@ export interface MinimalThemeData extends BaseThemeData {
 
 type MinimalSectionKey = keyof TemplateConfig["sections"];
 
+// Helper function to generate realistic client names based on project context
+function generateDefaultClientNames(projectDescription: string, companyInfo?: string): Array<{
+  id: string;
+  name: string;
+  logo: null;
+  sortOrder: number;
+}> {
+  // Default generic names as fallback
+  const genericNames = [
+    "TECH INNOVATIONS",
+    "DIGITAL SOLUTIONS",
+    "CREATIVE STUDIO",
+    "BRAND MAKERS",
+    "GROWTH PARTNERS",
+    "SMART AGENCY",
+    "NEXUS GROUP",
+    "VELOCITY BRANDS",
+    "PRIME VENTURES",
+    "FUSION LABS",
+    "APEX DIGITAL",
+    "QUANTUM CO"
+  ];
+
+  // Context-aware name patterns
+  const contextPatterns: Record<string, string[]> = {
+    tech: [
+      "TECH SYSTEMS",
+      "DIGITAL CORE",
+      "CODE FACTORY",
+      "CLOUD VENTURES",
+      "DATA SOLUTIONS",
+      "AI INNOVATIONS",
+      "SMART TECH",
+      "BYTE WORKS",
+      "LOGIC GROUP",
+      "PIXEL LABS",
+      "CYBER BRANDS",
+      "TECH VISION"
+    ],
+    marketing: [
+      "BRAND STUDIO",
+      "MEDIA MAKERS",
+      "CREATIVE HUB",
+      "GROWTH AGENCY",
+      "CONTENT PLUS",
+      "SOCIAL BRANDS",
+      "VIRAL LABS",
+      "AD GENIUS",
+      "MARKET PULSE",
+      "ENGAGE CO",
+      "BUZZ CREATORS",
+      "REACH DIGITAL"
+    ],
+    design: [
+      "DESIGN STUDIO",
+      "CREATIVE MINDS",
+      "PIXEL PERFECT",
+      "ARTISAN CO",
+      "VISION LABS",
+      "AESTHETIC BRANDS",
+      "FORMA DESIGN",
+      "STUDIO NOVA",
+      "COLOR WORKS",
+      "SHAPE MAKERS",
+      "CONCEPT ART",
+      "DESIGN FORGE"
+    ],
+    consultoria: [
+      "STRATEGY GROUP",
+      "CONSULTING PLUS",
+      "ADVISORY LABS",
+      "EXPERT MINDS",
+      "INSIGHT CO",
+      "WISDOM PARTNERS",
+      "PRIME CONSULT",
+      "GUIDANCE PRO",
+      "CATALYST GROUP",
+      "NEXUS ADVISORS",
+      "VISION CONSULT",
+      "GROWTH EXPERTS"
+    ],
+    saude: [
+      "HEALTH SYSTEMS",
+      "CARE SOLUTIONS",
+      "WELLNESS GROUP",
+      "MEDICAL PLUS",
+      "VITAL CARE",
+      "CLINIC BRANDS",
+      "HEALTH LABS",
+      "CARE VISION",
+      "MEDICAL TECH",
+      "WELLNESS PRO",
+      "LIFE CARE",
+      "HEALTH PARTNERS"
+    ]
+  };
+
+  // Try to detect context from project description and company info
+  const combinedText = `${projectDescription} ${companyInfo || ""}`.toLowerCase();
+  
+  let selectedNames = genericNames;
+  
+  if (combinedText.includes("tech") || combinedText.includes("software") || combinedText.includes("app") || combinedText.includes("desenvolvimento")) {
+    selectedNames = contextPatterns.tech;
+  } else if (combinedText.includes("marketing") || combinedText.includes("mídia") || combinedText.includes("social") || combinedText.includes("conteúdo")) {
+    selectedNames = contextPatterns.marketing;
+  } else if (combinedText.includes("design") || combinedText.includes("criativ") || combinedText.includes("visual") || combinedText.includes("gráfico")) {
+    selectedNames = contextPatterns.design;
+  } else if (combinedText.includes("consult") || combinedText.includes("estratégia") || combinedText.includes("assessoria")) {
+    selectedNames = contextPatterns.consultoria;
+  } else if (combinedText.includes("saúde") || combinedText.includes("médico") || combinedText.includes("clínica") || combinedText.includes("hospital")) {
+    selectedNames = contextPatterns.saude;
+  }
+
+  return selectedNames.map((name, index) => ({
+    id: crypto.randomUUID(),
+    name,
+    logo: null,
+    sortOrder: index,
+  }));
+}
+
 export class MinimalTheme {
   private moaService: MOAService;
   private templateConfig: TemplateConfig;
@@ -872,12 +994,10 @@ REGRAS OBRIGATÓRIAS:
     }>(clientsPrompt, clientsSystemPrompt);
 
     // Generate default client items if not enough were generated
-    const defaultClientItems = Array.from({ length: 12 }, (_, i) => ({
-      id: crypto.randomUUID(),
-      name: `CLIENTE ${i + 1}`,
-      logo: null,
-      sortOrder: i,
-    }));
+    const defaultClientItems = generateDefaultClientNames(
+      data.projectDescription || "",
+      data.companyInfo
+    );
 
     // Log AI result for debugging
     console.log("🔍 DEBUG - Clients AI Result:", JSON.stringify({

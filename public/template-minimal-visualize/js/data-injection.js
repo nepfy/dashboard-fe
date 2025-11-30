@@ -1459,12 +1459,8 @@
         "introduction-validity",
         formatDate(data.projectValidUntil)
       );
-      updateTextField("introduction-subtitle", intro.subtitle);
 
-      // Hide subtitle if needed
-      if (intro.hideSubtitle) {
-        toggleElementVisibility("introduction-subtitle", true);
-      }
+      // Note: introduction-subtitle element is in the about section, populated there
 
       // Render services list
       renderIntroductionServices("introduction-services", intro.services);
@@ -1473,6 +1469,17 @@
     // About Us
     if (pd.aboutUs) {
       updateTitleWithWordSpans("aboutus-title", pd.aboutUs.title);
+      
+      // Update subtitle within about section
+      if (pd.aboutUs.subtitle) {
+        updateTextField("introduction-subtitle", pd.aboutUs.subtitle);
+      }
+      
+      // Hide subtitle if needed
+      if (pd.aboutUs.hideSubtitle) {
+        toggleElementVisibility("introduction-subtitle", true);
+      }
+      
       toggleSectionVisibility(
         ".section_about",
         pd.aboutUs.hideSection === true
