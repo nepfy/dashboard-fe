@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
-import CloseIcon from "#/components/icons/CloseIcon";
+import Image from "next/image";
+import { Loader2, Trash2, X } from "lucide-react";
 import { useNotifications } from "#/hooks/useNotifications";
 import {
   trackNotificationCenterOpened,
@@ -36,21 +36,24 @@ interface Adjustment {
   created_at: Date;
 }
 
-// Helper to get notification icon based on type
-function getNotificationIcon(type: string) {
-  const icons: Record<string, string> = {
-    proposal_viewed: "👁️",
-    proposal_accepted: "✅",
-    proposal_rejected: "❌",
-    proposal_feedback: "💬",
-    proposal_expired: "⏰",
-    proposal_expiring_soon: "⏳",
-    project_status_changed: "📝",
-    payment_received: "💰",
-    subscription_updated: "📦",
-    system_announcement: "📢",
+// Helper to get notification icon path based on type
+function getNotificationIconPath(type: string): string {
+  const iconMap: Record<string, string> = {
+    proposal_viewed: "/images/notification-icons/visualized.png",
+    proposal_accepted: "/images/notification-icons/accepted.png",
+    proposal_rejected: "/images/notification-icons/adjustment-required.png",
+    proposal_feedback: "/images/notification-icons/adjustment-required.png",
+    proposal_expired: "/images/notification-icons/adjustment-required.png",
+    proposal_expiring_soon:
+      "/images/notification-icons/adjustment-required.png",
+    project_status_changed:
+      "/images/notification-icons/adjustment-required.png",
+    payment_received: "/images/notification-icons/accepted.png",
+    subscription_updated: "/images/notification-icons/accepted.png",
+    system_announcement: "/images/notification-icons/visualized.png",
+    metrics_dropping: "/images/notification-icons/adjustment-required.png",
   };
-  return icons[type] || "🔔";
+  return iconMap[type] || "/images/notification-icons/visualized.png";
 }
 
 // Format date to relative time
@@ -58,27 +61,61 @@ function formatRelativeTime(date: Date | null): string {
   if (!date) return "";
 
   const now = new Date();
+  const notificationDate = new Date(date);
   const diffInSeconds = Math.floor(
-    (now.getTime() - new Date(date).getTime()) / 1000
+    (now.getTime() - notificationDate.getTime()) / 1000
   );
 
   if (diffInSeconds < 60) return "Agora mesmo";
   if (diffInSeconds < 3600) {
     const minutes = Math.floor(diffInSeconds / 60);
-    return `${minutes} min atrás`;
+    return `há ${minutes} min`;
   }
   if (diffInSeconds < 86400) {
     const hours = Math.floor(diffInSeconds / 3600);
-    return `${hours}h atrás`;
-  }
-  if (diffInSeconds < 604800) {
-    const days = Math.floor(diffInSeconds / 86400);
-    return `${days}d atrás`;
+    return `há ${hours} hora${hours > 1 ? "s" : ""}`;
   }
 
-  return new Date(date).toLocaleDateString("pt-BR", {
+  // Check if it's yesterday
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (
+    notificationDate.getDate() === yesterday.getDate() &&
+    notificationDate.getMonth() === yesterday.getMonth() &&
+    notificationDate.getFullYear() === yesterday.getFullYear()
+  ) {
+    return `Ontem, ${notificationDate.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+  }
+
+  if (diffInSeconds < 604800) {
+    const days = Math.floor(diffInSeconds / 86400);
+    return `há ${days} dia${days > 1 ? "s" : ""}`;
+  }
+
+  return notificationDate.toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
+  });
+}
+
+// Sort notifications: unread first (newest to oldest), then read (newest to oldest)
+function sortNotifications(
+  notifications: NotificationWithProject[]
+): NotificationWithProject[] {
+  return [...notifications].sort((a, b) => {
+    // First, separate by read status
+    if (a.isRead !== b.isRead) {
+      return a.isRead ? 1 : -1; // Unread first
+    }
+
+    // Then sort by date (newest first) within each group
+    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return dateB - dateA;
   });
 }
 
@@ -106,7 +143,10 @@ export default function Notifications({
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [adjustments, setAdjustments] = useState<Adjustment[]>([]);
   const [isMarkingAllAsRead, setIsMarkingAllAsRead] = useState(false);
-  const [hideReadNotifications, setHideReadNotifications] = useState(false);
+  const [isClearingAll, setIsClearingAll] = useState(false);
+
+  // Sort notifications
+  const sortedNotifications = sortNotifications(notifications);
 
   useEffect(() => {
     if (isNotificationOpen) {
@@ -170,18 +210,28 @@ export default function Notifications({
 
   const handleMarkAllAsRead = async () => {
     if (isMarkingAllAsRead) return;
-    
+
     setIsMarkingAllAsRead(true);
     try {
-    const unreadCount = notifications.filter((n) => !n.isRead).length;
-    await markAllAsRead();
-    trackNotificationsMarkedAllRead({
-      count: unreadCount,
-    });
-    // Hide read notifications to show space for new ones
-    setHideReadNotifications(true);
+      const unreadCount = notifications.filter((n) => !n.isRead).length;
+      await markAllAsRead();
+      trackNotificationsMarkedAllRead({
+        count: unreadCount,
+      });
     } finally {
       setIsMarkingAllAsRead(false);
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (isClearingAll) return;
+
+    setIsClearingAll(true);
+    try {
+      // Delete all notifications
+      await Promise.all(notifications.map((n) => deleteNotification(n.id)));
+    } finally {
+      setIsClearingAll(false);
     }
   };
 
@@ -204,100 +254,120 @@ export default function Notifications({
     <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm">
       <div className="absolute inset-x-0 top-0 z-10 mx-auto flex h-screen max-w-md flex-col bg-white sm:inset-x-auto sm:top-2 sm:right-7 sm:mx-0 sm:mt-2 sm:h-auto sm:max-h-[calc(100vh-32px)] sm:w-[397px] sm:rounded-xl sm:shadow-lg">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center gap-2">
-            <p className="text-lg font-normal text-gray-900">Notificações</p>
-            {notifications.some((n) => !n.isRead) && (
+        <div className="border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-normal text-gray-900">Notificações</h2>
+            <button
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-gray-200 transition-colors hover:bg-gray-100"
+              onClick={() => setIsNotificationOpenAction(false)}
+              aria-label="Fechar"
+            >
+              <X className="h-4 w-4 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Action Bar */}
+          {notifications.length > 0 && (
+            <div className="mt-4 flex items-center justify-between text-sm">
               <button
                 onClick={handleMarkAllAsRead}
-                disabled={isMarkingAllAsRead}
-                className="text-primary-light-400 hover:text-primary-light-500 flex cursor-pointer items-center gap-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={
+                  isMarkingAllAsRead || !notifications.some((n) => !n.isRead)
+                }
+                className="cursor-pointer text-gray-900 transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {isMarkingAllAsRead && (
-                  <Loader2 className="h-3 w-3 animate-spin" />
+                {isMarkingAllAsRead ? (
+                  <span className="flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Marcando...
+                  </span>
+                ) : (
+                  "Marcar todas como lidas"
                 )}
-                Marcar todas como lidas
               </button>
-            )}
-          </div>
-          <div
-            className="button-inner border-white-neutral-light-300 hover:bg-white-neutral-light-200 flex h-[44px] w-[44px] cursor-pointer items-center justify-center rounded-xs border p-4"
-            onClick={() => setIsNotificationOpenAction(false)}
-          >
-            <CloseIcon width="16" height="16" />
-          </div>
+
+              <button
+                onClick={handleClearAll}
+                disabled={isClearingAll}
+                className="cursor-pointer text-gray-900 transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {isClearingAll ? (
+                  <span className="flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Limpando...
+                  </span>
+                ) : (
+                  "Limpar tudo"
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
             <div className="flex items-center justify-center p-8">
-              <div className="border-primary-light-400 h-8 w-8 animate-spin rounded-full border-b-2"></div>
+              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
             </div>
-          ) : notifications.filter((n) => !hideReadNotifications || !n.isRead).length === 0 ? (
+          ) : sortedNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <div className="mb-2 text-4xl">🔔</div>
               <p className="text-sm text-gray-500">Você não tem notificações</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
-              {notifications
-                .filter((n) => !hideReadNotifications || !n.isRead)
-                .map((notification) => {
+            <div>
+              {sortedNotifications.map((notification) => {
                 const hasModal = [
                   "proposal_accepted",
                   "proposal_feedback",
                 ].includes(notification.type);
+
+                const iconPath = getNotificationIconPath(notification.type);
+
                 const commonProps = {
                   key: notification.id,
-                  className: `flex items-start gap-3 px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer relative group ${
-                    !notification.isRead ? "bg-blue-50" : ""
-                  }`,
+                  className: `flex items-start gap-3 px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer relative group border-b border-gray-100 last:border-b-0`,
                   onClick: () => handleNotificationClick(notification),
                 };
 
                 const content = (
                   <>
                     {/* Icon */}
-                    <div className="bg-primary-light-100 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-xl">
-                      {getNotificationIcon(notification.type)}
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center">
+                      <Image
+                        src={iconPath}
+                        alt={notification.type}
+                        width={48}
+                        height={48}
+                        className="rounded-xl"
+                      />
                     </div>
 
                     {/* Content */}
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-start justify-between gap-2">
-                        <p
-                          className={`text-sm font-medium ${
-                            notification.isRead
-                              ? "text-gray-700"
-                              : "text-gray-900"
-                          }`}
-                        >
+                        <p className="text-base font-medium text-gray-900">
                           {notification.title}
                         </p>
-                        <p className="text-xs whitespace-nowrap text-gray-500">
+                        <p className="text-xs whitespace-nowrap text-gray-400">
                           {formatRelativeTime(notification.created_at)}
                         </p>
                       </div>
-                      <p className="line-clamp-2 text-sm text-gray-600">
+                      <p className="text-sm leading-relaxed text-gray-500">
                         {notification.message}
                       </p>
-
-                      {/* Unread indicator */}
-                      {!notification.isRead && (
-                        <div className="absolute top-1/2 left-2 h-2 w-2 -translate-y-1/2 rounded-full bg-blue-500"></div>
-                      )}
                     </div>
 
-                    {/* Delete button */}
+                    {/* Delete button - only visible on hover */}
                     <button
                       onClick={(e) =>
                         handleDelete(e, notification.id, notification.type)
                       }
-                      className="cursor-pointer rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200"
+                      className="flex h-10 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg bg-gray-100 opacity-0 transition-all group-hover:opacity-100 hover:bg-gray-200"
                       aria-label="Excluir notificação"
                     >
-                      <CloseIcon width="12" height="12" />
+                      <Trash2 className="h-4 w-4 text-gray-600" />
                     </button>
                   </>
                 );
