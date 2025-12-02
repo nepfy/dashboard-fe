@@ -29,9 +29,15 @@ export default function ProposalActions({
 
   // Listen for scroll messages and plan selection from iframe
   useEffect(() => {
+    console.log("👂 [ProposalActions] Setting up message listener");
+    
     const handleMessage = (event: MessageEvent) => {
+      console.log("📨 [ProposalActions] Message received:", event.data);
+      
       if (event.data && event.data.type === "TEMPLATE_SCROLL_EVENT") {
         const scrollY = event.data.scrollY || 0;
+        
+        console.log("📜 Scroll event received:", { scrollY, lastScrollY, isVisible });
 
         // Detectar direção do scroll
         const isScrollingDown = scrollY > lastScrollY;
@@ -81,8 +87,10 @@ export default function ProposalActions({
     };
 
     window.addEventListener("message", handleMessage);
+    console.log("✅ [ProposalActions] Message listener registered");
 
     return () => {
+      console.log("🧹 [ProposalActions] Cleaning up message listener");
       window.removeEventListener("message", handleMessage);
     };
   }, [lastScrollY, scrollUpStartY]);
