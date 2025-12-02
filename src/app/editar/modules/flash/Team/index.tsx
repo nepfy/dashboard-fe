@@ -61,15 +61,17 @@ export default function FlashTeam({
                 {members?.map((member) => (
                   <div
                     key={member.id}
-                    className={`relative mb-6 flex w-full flex-col items-start rounded-[4px] border border-transparent text-sm font-bold text-[#E6E6E6] lg:mb-0 ${openModalId === member.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
-                    onClick={() => {
-                      if (canEdit || openModalId === member.id) {
-                        setOpenModalId(member?.id ?? null);
-                      }
-                    }}
+                    className={`relative mb-6 flex w-full flex-col items-start rounded-[4px] text-sm font-bold text-[#E6E6E6] lg:mb-0`}
                   >
                     {!member.hidePhoto && member?.image && (
-                      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[4px]">
+                      <div 
+                        className={`relative aspect-[4/3] w-full overflow-hidden rounded-[4px] border border-transparent ${openModalId === member.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
+                        onClick={() => {
+                          if (canEdit || openModalId === member.id) {
+                            setOpenModalId(member?.id ?? null);
+                          }
+                        }}
+                      >
                         <Image
                           src={member.image || ""}
                           alt={member.name || ""}
@@ -80,12 +82,22 @@ export default function FlashTeam({
                         />
                       </div>
                     )}
-                    <p className="mt-3 p-0 text-[16px] font-light text-[#FFFFFF] lg:text-[20px]">
-                      {member.name}
-                    </p>
-                    <p className="text-[16px] font-light text-[#FFFFFF]/40">
-                      {member.role}
-                    </p>
+                    <EditableText
+                      value={member.name || ""}
+                      onChange={(newName: string) =>
+                        updateTeamMember(member.id ?? "", { name: newName })
+                      }
+                      className="mt-3 p-0 text-[16px] font-light text-[#FFFFFF] lg:text-[20px]"
+                      editingId={`team-${member.id}-name`}
+                    />
+                    <EditableText
+                      value={member.role || ""}
+                      onChange={(newRole: string) =>
+                        updateTeamMember(member.id ?? "", { role: newRole })
+                      }
+                      className="text-[16px] font-light text-[#FFFFFF]/40"
+                      editingId={`team-${member.id}-role`}
+                    />
                     <EditableImage
                       isModalOpen={openModalId === member.id}
                       setIsModalOpen={(isOpen) =>
@@ -101,9 +113,6 @@ export default function FlashTeam({
                           items: TeamMember[] | Result[]
                         ) => void
                       }
-                    />
-                    <div
-                      className={`absolute top-0 left-0 z-9 h-full w-full rounded-[4px] hover:bg-[#0170D666] ${openModalId === member.id ? "bg-[#0170D666]" : "bg-transparent"}`}
                     />
                   </div>
                 ))}

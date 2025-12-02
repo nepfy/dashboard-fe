@@ -164,20 +164,22 @@ export default function MinimalTeam({
               {members.map((member) => (
                 <div
                   key={member.id}
-                  className={`team-card relative border border-transparent ${
-                    openModalId === member.id
-                      ? "cursor-default border-[#0170D6] bg-[#0170D666]"
-                      : canEdit
-                        ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]"
-                        : "cursor-not-allowed"
-                  }`}
-                  onClick={() => {
-                    if (canEdit || openModalId === member.id) {
-                      setOpenModalId(member?.id ?? null);
-                    }
-                  }}
+                  className="team-card relative"
                 >
-                  <div className="team-image">
+                  <div 
+                    className={`team-image border border-transparent ${
+                      openModalId === member.id
+                        ? "cursor-default border-[#0170D6] bg-[#0170D666]"
+                        : canEdit
+                          ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]"
+                          : "cursor-not-allowed"
+                    }`}
+                    onClick={() => {
+                      if (canEdit || openModalId === member.id) {
+                        setOpenModalId(member?.id ?? null);
+                      }
+                    }}
+                  >
                     {!member.hidePhoto && member.image && (
                       <Image
                         src={member.image}
@@ -188,12 +190,22 @@ export default function MinimalTeam({
                       />
                     )}
                   </div>
-                  <div className="text-size-medium text-weight-medium">
-                    {member.name}
-                  </div>
-                  {member.role && (
-                    <div className="text-size-regular">{member.role}</div>
-                  )}
+                  <EditableText
+                    value={member.name || ""}
+                    onChange={(newName: string) =>
+                      updateTeamMember(member.id ?? "", { name: newName })
+                    }
+                    className="text-size-medium text-weight-medium"
+                    editingId={`team-${member.id}-name`}
+                  />
+                  <EditableText
+                    value={member.role || ""}
+                    onChange={(newRole: string) =>
+                      updateTeamMember(member.id ?? "", { role: newRole })
+                    }
+                    className="text-size-regular"
+                    editingId={`team-${member.id}-role`}
+                  />
                   <EditableImage
                     isModalOpen={openModalId === member.id}
                     setIsModalOpen={(isOpen) =>
