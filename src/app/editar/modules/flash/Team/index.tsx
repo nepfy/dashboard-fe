@@ -12,11 +12,9 @@ export default function FlashTeam({
   title,
   members,
 }: TeamSection) {
-  const { updateTeam, updateTeamMember, reorderTeamMembers, activeEditingId } =
+  const { updateTeam, updateTeamMember, reorderTeamMembers } =
     useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-
-  const canEdit = activeEditingId === null;
 
   // Generate gradient colors for the background
   const defaultColor = mainColor || "#4F21A1";
@@ -65,12 +63,8 @@ export default function FlashTeam({
                   >
                     {!member.hidePhoto && member?.image && (
                       <div 
-                        className={`relative aspect-[4/3] w-full overflow-hidden rounded-[4px] border border-transparent ${openModalId === member.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"}`}
-                        onClick={() => {
-                          if (canEdit || openModalId === member.id) {
-                            setOpenModalId(member?.id ?? null);
-                          }
-                        }}
+                        className={`relative aspect-[4/3] w-full overflow-hidden rounded-[4px] border border-transparent cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === member.id ? "border-[#0170D6] bg-[#0170D666]" : ""}`}
+                        onClick={() => setOpenModalId(member?.id ?? null)}
                       >
                         <Image
                           src={member.image || ""}
@@ -82,22 +76,12 @@ export default function FlashTeam({
                         />
                       </div>
                     )}
-                    <EditableText
-                      value={member.name || ""}
-                      onChange={(newName: string) =>
-                        updateTeamMember(member.id ?? "", { name: newName })
-                      }
-                      className="mt-3 p-0 text-[16px] font-light text-[#FFFFFF] lg:text-[20px]"
-                      editingId={`team-${member.id}-name`}
-                    />
-                    <EditableText
-                      value={member.role || ""}
-                      onChange={(newRole: string) =>
-                        updateTeamMember(member.id ?? "", { role: newRole })
-                      }
-                      className="text-[16px] font-light text-[#FFFFFF]/40"
-                      editingId={`team-${member.id}-role`}
-                    />
+                    <p className="mt-3 p-0 text-[16px] font-light text-[#FFFFFF] lg:text-[20px]">
+                      {member.name}
+                    </p>
+                    <p className="text-[16px] font-light text-[#FFFFFF]/40">
+                      {member.role}
+                    </p>
                     <EditableImage
                       isModalOpen={openModalId === member.id}
                       setIsModalOpen={(isOpen) =>

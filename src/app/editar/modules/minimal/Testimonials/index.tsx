@@ -18,11 +18,8 @@ export default function MinimalTestimonials({
   const {
     updateTestimonialItem,
     reorderTestimonialItems,
-    activeEditingId,
   } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-
-  const canEdit = activeEditingId === null;
 
   if (hideSection || !items || items.length === 0) return null;
 
@@ -177,18 +174,12 @@ export default function MinimalTestimonials({
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className={`testimonial-card relative ${
+                  className={`testimonial-card relative cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] ${
                     openModalId === item.id
-                      ? "cursor-default border-[#0170D6] bg-[#0170D666]"
-                      : canEdit
-                        ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]"
-                        : "cursor-not-allowed"
+                      ? "border-[#0170D6] bg-[#0170D666]"
+                      : ""
                   }`}
-                  onClick={() => {
-                    if (canEdit || openModalId === item.id) {
-                      setOpenModalId(item?.id ?? null);
-                    }
-                  }}
+                  onClick={() => setOpenModalId(item?.id ?? null)}
                 >
                   <div className="testimonial-text">&quot;{item.testimonial}&quot;</div>
                   <div className="testimonial-author">

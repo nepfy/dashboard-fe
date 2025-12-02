@@ -16,10 +16,8 @@ export default function MinimalAboutUs({
   hideMarquee,
   items,
 }: AboutUsSection) {
-  const { updateAboutUs, projectData, activeEditingId } = useEditor();
+  const { updateAboutUs, projectData } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
-
-  const canEdit = activeEditingId === null;
 
   if (hideSection) return null;
 
@@ -134,12 +132,10 @@ export default function MinimalAboutUs({
                     className={`relative m-0 h-auto w-fit border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                   >
                     <div
-                      className={`text-size-regular text-weight-light ${canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
+                      className="text-size-regular text-weight-light cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (canEdit) {
-                          setIsDateModalOpen(true);
-                        }
+                        setIsDateModalOpen(true);
                       }}
                     >
                       Proposta —{" "}

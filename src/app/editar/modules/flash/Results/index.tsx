@@ -16,13 +16,10 @@ export default function FlashResults({
     updateResults,
     updateResultItem,
     reorderResultItems,
-    activeEditingId,
   } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
 
   const setColor = mainColor === "#212121" ? "#ffffff" : mainColor;
-
-  const canEdit = activeEditingId === null;
   return (
     <div className="bg-black">
       {!hideSection && (
@@ -50,19 +47,13 @@ export default function FlashResults({
             >
               {items?.map((item) => (
                 <div
-                  className={`relative mb-20 w-full rounded-[4px] border border-transparent ${openModalId === item.id ? "cursor-default border-[#0170D6] bg-[#0170D666]" : canEdit ? "cursor-pointer border-transparent bg-transparent hover:border-[#0170D6] hover:bg-[#0170D666]" : "cursor-not-allowed border-transparent bg-transparent"} `}
+                  className={`relative mb-20 w-full rounded-[4px] border border-transparent cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === item.id ? "border-[#0170D6] bg-[#0170D666]" : ""}`}
                   key={item.id}
                 >
                   <div
                     key={item.id}
-                    className={`relative flex flex-col items-start ${openModalId === item.id ? "cursor-default" : canEdit ? "cursor-pointer" : "cursor-not-allowed"}`}
-                    onClick={() => {
-                      if (canEdit || openModalId === item.id) {
-                        setOpenModalId(
-                          openModalId === item.id ? null : (item?.id ?? null)
-                        );
-                      }
-                    }}
+                    className="relative flex flex-col items-start cursor-pointer"
+                    onClick={() => setOpenModalId(openModalId === item.id ? null : (item?.id ?? null))}
                   >
                     {!item.hidePhoto && item?.photo && (
                       <div className="relative h-[26rem] w-full overflow-hidden rounded-[4px]">

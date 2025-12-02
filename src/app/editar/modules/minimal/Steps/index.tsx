@@ -16,11 +16,9 @@ export default function MinimalSteps({
   topics,
   mainColor = "#000000",
 }: MinimalStepsProps) {
-  const { updateSteps, updateStepTopic, reorderStepTopics, activeEditingId } =
+  const { updateSteps, updateStepTopic, reorderStepTopics } =
     useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-
-  const canEdit = activeEditingId === null;
   const items = topics || [];
 
   if (hideSection || !items || items.length === 0) return null;
@@ -170,18 +168,12 @@ export default function MinimalSteps({
               {items.map((step, index) => (
                 <div
                   key={step.id}
-                  className={`step-item relative ${
+                  className={`step-item relative cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] ${
                     openModalId === step.id
-                      ? "cursor-default border-[#0170D6] bg-[#0170D666]"
-                      : canEdit
-                        ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]"
-                        : "cursor-not-allowed"
+                      ? "border-[#0170D6] bg-[#0170D666]"
+                      : ""
                   }`}
-                  onClick={() => {
-                    if (canEdit || openModalId === step.id) {
-                      setOpenModalId(step?.id ?? null);
-                    }
-                  }}
+                  onClick={() => setOpenModalId(step?.id ?? null)}
                 >
                   <div className="step-number">
                     {String(index + 1).padStart(2, '0')}
