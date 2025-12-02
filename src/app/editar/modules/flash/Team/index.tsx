@@ -63,7 +63,7 @@ export default function FlashTeam({
                   >
                     {!member.hidePhoto && member?.image && (
                       <div 
-                        className={`relative aspect-[4/3] w-full overflow-hidden rounded-[4px] border border-transparent cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === member.id ? "border-[#0170D6] bg-[#0170D666]" : ""}`}
+                        className="relative aspect-[4/3] w-full overflow-hidden rounded-[4px] cursor-pointer"
                         onClick={() => setOpenModalId(member?.id ?? null)}
                       >
                         <Image
@@ -73,6 +73,9 @@ export default function FlashTeam({
                           className="object-cover"
                           quality={95}
                           priority={(member?.sortOrder ?? 0) < 3}
+                        />
+                        <div 
+                          className={`absolute inset-0 z-10 rounded-[4px] border border-transparent transition-all hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === member.id ? "border-[#0170D6] bg-[#0170D666]" : ""}`}
                         />
                       </div>
                     )}

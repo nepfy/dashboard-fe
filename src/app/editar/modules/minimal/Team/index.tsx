@@ -165,11 +165,7 @@ export default function MinimalTeam({
                   className="team-card relative"
                 >
                   <div 
-                    className={`team-image border border-transparent cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666] ${
-                      openModalId === member.id
-                        ? "border-[#0170D6] bg-[#0170D666]"
-                        : ""
-                    }`}
+                    className="team-image cursor-pointer"
                     onClick={() => setOpenModalId(member?.id ?? null)}
                   >
                     {!member.hidePhoto && member.image && (
@@ -181,6 +177,13 @@ export default function MinimalTeam({
                         priority={(member?.sortOrder ?? 0) < 3}
                       />
                     )}
+                    <div 
+                      className={`absolute inset-0 z-10 rounded-[1rem] border border-transparent transition-all hover:border-[#0170D6] hover:bg-[#0170D666] ${
+                        openModalId === member.id
+                          ? "border-[#0170D6] bg-[#0170D666]"
+                          : ""
+                      }`}
+                    />
                   </div>
                   <p className="text-size-medium text-weight-medium">
                     {member.name}
