@@ -29,15 +29,9 @@ export default function ProposalActions({
 
   // Listen for scroll messages and plan selection from iframe
   useEffect(() => {
-    console.log("👂 [ProposalActions] Setting up message listener");
-    
     const handleMessage = (event: MessageEvent) => {
-      console.log("📨 [ProposalActions] Message received:", event.data);
-      
       if (event.data && event.data.type === "TEMPLATE_SCROLL_EVENT") {
         const scrollY = event.data.scrollY || 0;
-        
-        console.log("📜 Scroll event received:", { scrollY, lastScrollY, isVisible });
 
         // Detectar direção do scroll
         const isScrollingDown = scrollY > lastScrollY;
@@ -80,30 +74,19 @@ export default function ProposalActions({
       // Listen for plan selection from iframe
       if (event.data && event.data.type === "PLAN_SELECTED") {
         const planId = event.data.planId;
-        console.log("Plan selected from iframe:", planId);
         setSelectedPlanId(planId);
         setShowAcceptModal(true);
       }
     };
 
     window.addEventListener("message", handleMessage);
-    console.log("✅ [ProposalActions] Message listener registered");
 
     return () => {
-      console.log("🧹 [ProposalActions] Cleaning up message listener");
       window.removeEventListener("message", handleMessage);
     };
   }, [lastScrollY, scrollUpStartY]);
 
-  console.log("🎯 [ProposalActions] Render check:", { 
-    shouldShowActions, 
-    isEditing, 
-    isVisible,
-    willRender: shouldShowActions && !isEditing 
-  });
-
   if (!shouldShowActions) {
-    console.log("❌ [ProposalActions] Not showing - proposal status:", projectData.projectStatus);
     return null;
   }
 
@@ -111,19 +94,14 @@ export default function ProposalActions({
     <>
       {/* Fixed Action Bar */}
       <div
-        className={`fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
+        className={`fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "translate-y-full"
         }`}
         style={{
-          backgroundColor: isVisible ? "#ff0000" : "white", // Red when visible for debugging
+          backgroundColor: "white",
           borderTopColor: "#e5e7eb",
-          zIndex: 9999, // Very high z-index for debugging
         }}
       >
-        {/* Debug indicator */}
-        <div className="absolute -top-10 left-0 bg-blue-500 text-white text-xs px-2 py-1 z-[10000]">
-          🔴 BAR STATE: {isVisible ? "VISIBLE" : "HIDDEN"} | ScrollY: {lastScrollY}
-        </div>
         <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-6 py-4">
           {/* Action Buttons */}
 
