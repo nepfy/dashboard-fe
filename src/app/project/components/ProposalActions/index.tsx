@@ -17,10 +17,10 @@ export default function ProposalActions({
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string>("");
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [isScrollingUp, setIsScrollingUp] = useState(false);
+  const [scrollUpStartY, setScrollUpStartY] = useState<number | null>(null);
 
   // Don't show actions if proposal is already accepted or rejected
   const shouldShowActions = !["approved", "rejected"].includes(
@@ -34,23 +34,38 @@ export default function ProposalActions({
         const scrollY = event.data.scrollY || 0;
 
         // Detectar direção do scroll
-        const scrollDifference = scrollY - lastScrollY;
-        const isScrollingUpNow = scrollDifference < 0;
-        const scrollDistance = Math.abs(scrollDifference);
+        const isScrollingDown = scrollY > lastScrollY;
+        const isScrollingUp = scrollY < lastScrollY;
 
-        // Mostrar barra quando scroll > 100px e não está scrollando para cima
-        if (scrollY > 100 && !isScrollingUpNow) {
-          setHasScrolled(true);
-          setIsScrollingUp(false);
+        // Caso 1: Rolando para baixo e passou de 100px - MOSTRAR
+        if (isScrollingDown && scrollY > 100) {
+          setIsVisible(true);
+          setScrollUpStartY(null); // Reset scroll up tracking
         }
 
-        // Esconder barra quando scrollar para cima uma distância considerável (mais de 150px)
-        if (isScrollingUpNow && scrollDistance > 150) {
-          setIsScrollingUp(true);
-          // Esconder completamente se scrollar muito para cima
-          if (scrollY < 200) {
-            setHasScrolled(false);
+        // Caso 2: Começou a rolar para cima - marcar ponto inicial
+        if (isScrollingUp && scrollUpStartY === null) {
+          setScrollUpStartY(lastScrollY);
+        }
+
+        // Caso 3: Rolando para cima - verificar se percorreu 150px ou mais
+        if (isScrollingUp && scrollUpStartY !== null) {
+          const scrollUpDistance = scrollUpStartY - scrollY;
+          
+          if (scrollUpDistance >= 150) {
+            setIsVisible(true);
           }
+        }
+
+        // Caso 4: Voltou para o topo (menos de 100px) - ESCONDER
+        if (scrollY < 100) {
+          setIsVisible(false);
+          setScrollUpStartY(null);
+        }
+
+        // Caso 5: Começou a rolar para baixo novamente - reset scroll up tracking
+        if (isScrollingDown && scrollUpStartY !== null) {
+          setScrollUpStartY(null);
         }
 
         setLastScrollY(scrollY);
@@ -70,7 +85,7 @@ export default function ProposalActions({
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, [lastScrollY]);
+  }, [lastScrollY, scrollUpStartY]);
 
   if (!shouldShowActions) {
     return null;
@@ -81,7 +96,7 @@ export default function ProposalActions({
       {/* Fixed Action Bar */}
       <div
         className={`fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
-          hasScrolled && !isScrollingUp ? "translate-y-0" : "translate-y-full"
+          isVisible ? "translate-y-0" : "translate-y-full"
         }`}
         style={{
           backgroundColor: "white",
