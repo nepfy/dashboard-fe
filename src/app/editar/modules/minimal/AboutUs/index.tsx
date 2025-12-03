@@ -32,10 +32,11 @@ export default function MinimalAboutUs({
     hideSection,
     openModalId,
     activeEditingId,
+    items: items,
     firstItem: items?.[0],
   });
 
-  if (hideSection) return null;
+  if (hideSection || !items || items.length === 0) return null;
 
   return (
     <>
@@ -84,10 +85,7 @@ export default function MinimalAboutUs({
           position: relative;
           z-index: 1;
           transition: all 0.2s ease;
-        }
-
-        .about-item:hover {
-          transform: scale(1.01);
+          border-radius: 1rem;
         }
 
         .about-video {
@@ -97,7 +95,6 @@ export default function MinimalAboutUs({
           overflow: hidden;
           background: rgba(255, 255, 255, 0.05);
           position: relative;
-          pointer-events: auto;
         }
 
         .about-video img,
@@ -118,6 +115,7 @@ export default function MinimalAboutUs({
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           overflow: hidden;
           max-height: 390px;
+          transition: all 0.2s ease;
         }
 
         .about-marquee_text {
@@ -202,15 +200,17 @@ export default function MinimalAboutUs({
               </div>
 
               <div className="about-content">
-                {items && items.length > 0 ? (
-                  items.map((item, index) => (
+                {items?.map((item, index) => (
+                  <div
+                    key={item.id || index}
+                    className={`about-item about-item-${index + 1} relative cursor-pointer border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
+                      openModalId === item.id
+                        ? "border-[#0170D6] bg-[#0170D666]"
+                        : ""
+                    }`}
+                  >
                     <div
-                      key={item.id || index}
-                      className={`about-item about-item-${index + 1} relative cursor-pointer ${
-                        openModalId === item.id
-                          ? "ring-2 ring-[#0170D6]"
-                          : "hover:ring-2 hover:ring-[#0170D6]"
-                      }`}
+                      className="relative cursor-pointer"
                       onClick={(e) => {
                         console.log("🐛 AboutUs item clicked:", {
                           itemId: item.id,
@@ -218,7 +218,9 @@ export default function MinimalAboutUs({
                           currentOpenId: openModalId,
                           target: e.target,
                         });
-                        setOpenModalId(item?.id ?? null);
+                        setOpenModalId(
+                          openModalId === item.id ? null : (item?.id ?? null)
+                        );
                       }}
                     >
                       <div className="about-video">
@@ -261,45 +263,29 @@ export default function MinimalAboutUs({
                           reorderAboutUsItems(reorderedItems as AboutUsItem[])
                         }
                       />
+                      <div
+                        className={`absolute top-0 left-0 z-10 h-full w-full rounded-[1rem] hover:bg-[#0170D666] ${
+                          openModalId === item.id
+                            ? "bg-[#0170D666]"
+                            : "bg-transparent"
+                        }`}
+                      />
                     </div>
-                  ))
-                ) : (
-                  <>
-                    <div className="about-item about-item-1">
-                      <div className="about-video">
-                        <Image
-                          src="/images/templates/flash/placeholder.png"
-                          alt=""
-                          fill
-                          style={{ objectFit: "cover" }}
-                        />
-                      </div>
-                      <div className="about-paragraph">
-                        <p>Descrição da primeira imagem</p>
-                      </div>
-                    </div>
-                    <div className="about-item about-item-2">
-                      <div className="about-video">
-                        <Image
-                          src="/images/templates/flash/placeholder.png"
-                          alt=""
-                          fill
-                          style={{ objectFit: "cover" }}
-                        />
-                      </div>
-                      <div className="about-paragraph">
-                        <p>Descrição da segunda imagem</p>
-                      </div>
-                    </div>
-                  </>
-                )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
 
         {!hideMarquee && (
-          <div className="about-marquee">
+          <div
+            className={`about-marquee relative cursor-pointer border-r border-l border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
+              activeEditingId === "aboutUs-marquee"
+                ? "border-[#0170D6] bg-[#0170D666]"
+                : ""
+            }`}
+          >
             <div className="marquee_content">
               <div className="about-marquee_text">
                 <EditableText
