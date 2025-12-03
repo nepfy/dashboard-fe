@@ -881,21 +881,17 @@ FORMATO:
   ]
 }
 
-INSTRUÇÕES CRÍTICAS DE CONTAGEM:
-⚠️ ANTES de gerar cada texto, CONTE os caracteres mentalmente!
-⚠️ Se ultrapassar o limite, REESCREVA o texto mais curto!
-⚠️ Nunca envie texto que ultrapasse os limites abaixo:
-
-REGRAS:
-- title: MÁXIMO 100 caracteres (conte letra por letra incluindo espaços!)
-- subtitle: MÁXIMO 250 caracteres (conte!) - OBRIGATÓRIO incluir {clientName}
-- marqueeText: MÁXIMO 200 caracteres (conte!) - 4-6 serviços separados por " → "
-- items: SEMPRE 2 itens (NÃO MAIS, NÃO MENOS!)
-- caption: MÁXIMO 100 caracteres cada (conte!)
+REGRAS RÍGIDAS
+- title: ATÉ 100 caracteres - proposta de valor clara e específica
+- subtitle: ATÉ 250 caracteres - DEVE mencionar naturalmente {clientName}
+- marqueeText: ATÉ 200 caracteres - 4-6 serviços separados por →
+- items: EXATAMENTE 2 itens (1º expertise, 2º metodologia)
+- caption: ATÉ 100 caracteres cada
 - image: sempre null (usuário adiciona depois)
-- Linguagem direta e autêntica
-- Foco na proposta de valor personalizada
-- Evite clichês e jargões`,
+- Planeje a contagem ANTES de escrever; não gere acima dos limites
+- Linguagem direta, autêntica e minimalista
+- Evite clichês e jargões
+- Responda apenas com o JSON final`,
         expectedFormat: `{
   "hideSection": false,
   "title": "string (max 100 chars)",
@@ -1403,39 +1399,46 @@ OUTRAS REGRAS:
         prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
 NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
 
-Gere seção de FAQ minimalista.
+Gere APENAS um JSON válido para perguntas frequentes, respeitando rigorosamente os limites.
 
-DADOS DO PROJETO:
-- Cliente: {clientName}
-- Projeto: {projectName}
-- Descrição: {projectDescription}
-- Empresa: {companyInfo}
+PROJETO: {projectName} - {projectDescription}
+CLIENTE: {clientName}
+EMPRESA: {companyInfo}
 
-FORMATO:
+FORMATO OBRIGATÓRIO
 {
   "hideSection": false,
   "items": [
     {
       "id": "1",
-      "question": "Pergunta direta com até 150 caracteres",
-      "answer": "Resposta clara e objetiva com até 500 caracteres",
+      "question": "Pergunta objetiva com ATÉ 100 caracteres",
+      "answer": "Resposta completa com ATÉ 300 caracteres",
       "sortOrder": 1
     }
   ]
 }
 
-REGRAS:
-- 4-6 perguntas essenciais
-- Respostas diretas e práticas
-- Evite jargões técnicos desnecessários`,
+REGRAS RÍGIDAS
+- CONTEÚDO ÚNICO: Crie perguntas ESPECÍFICAS para o tipo de projeto. Evite FAQs genéricas.
+- Demonstre EXPERTISE do setor nas respostas (ex: para web design, fale de UX e responsividade; para arquitetura, mencione plantas e moodboards)
+- Gere EXATAMENTE 5 pares pergunta e resposta RELEVANTES ao contexto.
+- Cada question deve ser frase direta, sem ponto de interrogação duplicado.
+- Cada answer deve ser frase(s) corridas em parágrafo único (sem bullets), trazendo benefício concreto ou reforço do processo.
+- Planeje a contagem ANTES de escrever; não gere acima dos limites.
+- question: ATÉ 100 caracteres (conte cada letra, espaço, pontuação)
+- answer: ATÉ 300 caracteres (conte cada letra, espaço, pontuação)
+- Responda apenas com o JSON final.
+
+EXEMPLO DE RESPOSTA BOA (answer com 265 chars):
+"O prazo varia conforme a complexidade. Projetos simples levam de 2 a 4 semanas, enquanto projetos complexos podem levar de 6 a 10 semanas. Após entendermos suas necessidades, fornecemos um cronograma detalhado com todas as etapas e prazos específicos."`,
         expectedFormat: `{
   "hideSection": false,
-  "items": [{"id": "string", "question": "string (max 150 chars)", "answer": "string (max 500 chars)", "sortOrder": number}]
+  "items": [{"id": "string", "question": "string (max 100 chars)", "answer": "string (max 300 chars)", "sortOrder": number}]
 }`,
         rules: [
           "4-6 perguntas",
-          "Perguntas diretas (até 150 caracteres)",
-          "Respostas práticas (até 500 caracteres)",
+          "Perguntas diretas (até 100 caracteres)",
+          "Respostas práticas (até 300 caracteres)",
         ],
         exactQuestions: 5,
       },

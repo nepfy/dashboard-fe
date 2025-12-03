@@ -258,6 +258,38 @@ export class MinimalTheme {
     );
   }
 
+  /**
+   * Intelligently trim text to fit within character limit
+   * Tries to preserve whole words and sentences when possible
+   */
+  private intelligentTrim(text: string, maxLength: number): string {
+    if (text.length <= maxLength) {
+      return text;
+    }
+
+    // Try to cut at sentence boundary
+    const trimmed = text.substring(0, maxLength);
+    const lastPeriod = trimmed.lastIndexOf('.');
+    const lastExclamation = trimmed.lastIndexOf('!');
+    const lastQuestion = trimmed.lastIndexOf('?');
+    const lastSentenceEnd = Math.max(lastPeriod, lastExclamation, lastQuestion);
+
+    if (lastSentenceEnd > maxLength * 0.7) {
+      // If we can preserve at least 70% of content and end at sentence boundary
+      return text.substring(0, lastSentenceEnd + 1).trim();
+    }
+
+    // Otherwise, cut at last complete word
+    const lastSpace = trimmed.lastIndexOf(' ');
+    if (lastSpace > maxLength * 0.8) {
+      // If we can preserve at least 80% of content with complete words
+      return text.substring(0, lastSpace).trim() + '...';
+    }
+
+    // Last resort: hard cut with ellipsis
+    return text.substring(0, maxLength - 3).trim() + '...';
+  }
+
   private validateIntroductionSection(
     section: MinimalProposal["introduction"]
   ): void {
@@ -1138,6 +1170,28 @@ REGRAS OBRIGATÓRIAS:
       faqPrompt,
       faqSystemPrompt
     );
+    
+    // Trim FAQ items if they exceed limits
+    if (faqResult.items) {
+      faqResult.items = faqResult.items.map((item, index) => {
+        const trimmedItem = { ...item };
+        
+        // Trim question if over 100 chars
+        if (trimmedItem.question.length > 100) {
+          console.warn(`FAQ question [${index}] exceeded 100 chars (${trimmedItem.question.length}), trimming...`);
+          trimmedItem.question = this.intelligentTrim(trimmedItem.question, 95);
+        }
+        
+        // Trim answer if over 300 chars
+        if (trimmedItem.answer.length > 300) {
+          console.warn(`FAQ answer [${index}] exceeded 300 chars (${trimmedItem.answer.length}), trimming...`);
+          trimmedItem.answer = this.intelligentTrim(trimmedItem.answer, 280);
+        }
+        
+        return trimmedItem;
+      });
+    }
+    
     sections.faq = faqResult;
 
     // Generate Footer

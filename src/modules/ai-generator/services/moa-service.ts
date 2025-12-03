@@ -179,13 +179,44 @@ export class MOAService {
 NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
 Se qualquer resposta de referência estiver em outro idioma, traduza e adapte para pt-BR.
 
+🚨🚨🚨 VALIDAÇÃO DE LIMITES DE CARACTERES - PRIORIDADE MÁXIMA 🚨🚨🚨
+
+⚠️ ATENÇÃO CRÍTICA: O formato esperado contém limites RÍGIDOS de caracteres que NÃO PODEM ser ultrapassados!
+⚠️ Se você ultrapassar qualquer limite, a resposta será REJEITADA pelo sistema de validação!
+⚠️ É MELHOR ter conteúdo ligeiramente mais curto do que ultrapassar um limite por 1 caractere!
+
+📏 PROCESSO OBRIGATÓRIO DE CONTAGEM:
+1. Para CADA campo que você gerar, CONTE os caracteres manualmente
+2. Caracteres incluem: letras, espaços, pontuação, TUDO
+3. Se um campo especifica "max 300 chars", você DEVE ficar em 300 ou menos
+4. Use margem de segurança: para limite de 300, fique em 270-280
+5. PRIORIZE ficar ABAIXO do limite sobre adicionar mais conteúdo
+6. Se um texto de referência ultrapassar o limite, CORTE-O inteligentemente
+
+🎯 ESTRATÉGIA DE AGREGAÇÃO COM LIMITES:
+1. Analise todas as respostas de referência
+2. Identifique os melhores elementos de cada uma
+3. Ao combinar, SEMPRE verifique o limite de caracteres
+4. Se o texto combinado ultrapassar o limite, simplifique:
+   - Remova adjetivos desnecessários
+   - Combine frases similares
+   - Use palavras mais curtas quando possível
+   - Mantenha apenas o essencial
+5. Valide a contagem ANTES de finalizar
+6. Nunca envie texto que ultrapasse qualquer limite especificado
+
+✅ EXEMPLO CORRETO (limite 300 chars):
+Original: "Esta é uma resposta extremamente detalhada e completa que fornece todas as informações necessárias..." (320 chars) ✗
+Ajustado: "Esta é uma resposta detalhada que fornece as informações necessárias..." (280 chars) ✓
+
 REQUISITOS CRÍTICOS:
 1. Analise todas as respostas fornecidas de forma crítica
 2. Identifique os melhores elementos de cada resposta
 3. Combine-os em uma resposta superior e coerente
 4. Siga o formato EXATO especificado abaixo
-5. Garanta que a resposta seja precisa, profissional e completa
-6. TODO o conteúdo DEVE estar em português brasileiro (pt-BR)
+5. RESPEITE RIGOROSAMENTE todos os limites de caracteres
+6. Garanta que a resposta seja precisa, profissional e completa
+7. TODO o conteúdo DEVE estar em português brasileiro (pt-BR)
 
 FORMATO ESPERADO:
 ${expectedFormat}
@@ -197,16 +228,18 @@ REGRAS DE AGREGAÇÃO:
 - Mantenha a estrutura especificada exatamente
 - Remova quaisquer contradições ou inconsistências
 - Melhore clareza e profissionalismo
-- SEMPRE use português brasileiro (pt-BR)`;
+- SEMPRE use português brasileiro (pt-BR)
+- NUNCA ultrapasse limites de caracteres especificados
+- Use margem de segurança de 10% nos limites (ex: 270 para limite de 300)`;
 
     if (agentSystemPrompt) {
       basePrompt += `\n\nREQUISITOS ESPECÍFICOS DO AGENTE:
 ${agentSystemPrompt}
 
-Aplique esses requisitos específicos do agente ao refinar a resposta agregada.`;
+Aplique esses requisitos específicos do agente ao refinar a resposta agregada, mas SEMPRE respeitando os limites de caracteres.`;
     }
 
-    basePrompt += `\n\nRetorne APENAS a resposta refinada final no formato exato especificado acima, EXCLUSIVAMENTE em português brasileiro (pt-BR).`;
+    basePrompt += `\n\nRetorne APENAS a resposta refinada final no formato exato especificado acima, EXCLUSIVAMENTE em português brasileiro (pt-BR), com TODOS os campos respeitando seus limites de caracteres.`;
 
     return basePrompt;
   }

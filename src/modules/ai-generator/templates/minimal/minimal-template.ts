@@ -322,14 +322,14 @@ export const minimalCharacterLimits = {
     projectScope: 200,
   },
   plans: {
-    planTitle: 50,
-    planDescription: 150,
-    itemDescription: 100,
+    planTitle: 30,
+    planDescription: 120,
+    itemDescription: 60,
     buttonTitle: 30,
   },
   faq: {
-    question: 150,
-    answer: 500,
+    question: 100,
+    answer: 300,
   },
   footer: {
     callToAction: 100,
