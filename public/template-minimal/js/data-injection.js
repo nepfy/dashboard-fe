@@ -230,6 +230,46 @@
     }
   }
 
+  function renderAboutUsItems(items) {
+    const container = document.getElementById("aboutus-items-container");
+    if (!container || !items || items.length === 0) {
+      return;
+    }
+
+    // Clear container
+    container.innerHTML = "";
+
+    // Render each item
+    items.forEach((item, index) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = `about-item about-item-${index + 1}`;
+
+      const videoDiv = document.createElement("div");
+      videoDiv.className = index === 1 ? "about-video is-figma" : "about-video";
+
+      if (item.image) {
+        const img = document.createElement("img");
+        img.src = item.image;
+        img.alt = item.caption || "";
+        img.className = "image";
+        videoDiv.appendChild(img);
+      }
+
+      const paragraphDiv = document.createElement("div");
+      paragraphDiv.className = "about-paragraph";
+
+      if (item.caption) {
+        const p = document.createElement("p");
+        p.textContent = item.caption;
+        paragraphDiv.appendChild(p);
+      }
+
+      itemDiv.appendChild(videoDiv);
+      itemDiv.appendChild(paragraphDiv);
+      container.appendChild(itemDiv);
+    });
+  }
+
   function renderClientsSection(clients) {
     const sectionSelector = ".section_partners--dynamic";
     if (!clients) {
@@ -1483,6 +1523,7 @@
     // About Us
     if (pd.aboutUs) {
       updateTitleWithWordSpans("aboutus-title", pd.aboutUs.title);
+      renderAboutUsItems(pd.aboutUs.items);
       toggleSectionVisibility(
         ".section_about",
         pd.aboutUs.hideSection === true

@@ -1394,20 +1394,14 @@ figcaption {
   display: flex;
 }
 
-.about-dev {
+.about-dev,
+.about-design,
+.about-item {
   grid-column-gap: 1.5rem;
   grid-row-gap: 1.5rem;
   flex-flow: column;
   justify-content: flex-start;
   align-items: flex-start;
-  width: 100%;
-  display: flex;
-}
-
-.about-design {
-  grid-column-gap: 1.5rem;
-  grid-row-gap: 1.5rem;
-  flex-flow: column;
   width: 100%;
   display: flex;
 }
