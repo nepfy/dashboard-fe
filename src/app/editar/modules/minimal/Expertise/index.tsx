@@ -65,11 +65,9 @@ export default function MinimalExpertise({
     updateExpertise,
     updateExpertiseTopic,
     reorderExpertiseTopics,
-    activeEditingId,
   } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
 
-  const canEdit = activeEditingId === null;
   const renderIcon = (iconName: string) => {
     return iconMap[iconName as keyof typeof iconMap];
   };
@@ -309,18 +307,12 @@ export default function MinimalExpertise({
                 {topics.map((topic) => (
                   <div
                     key={topic.id}
-                    className={`expertise-card relative ${
+                    className={`expertise-card relative cursor-pointer ${
                       openModalId === topic.id
-                        ? "cursor-default border-[#0170D6] bg-[#0170D666]"
-                        : canEdit
-                          ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]"
-                          : "cursor-not-allowed"
+                        ? "border-[#0170D6] bg-[#0170D666]"
+                        : "hover:border-[#0170D6] hover:bg-[#0170D666]"
                     }`}
-                    onClick={() => {
-                      if (canEdit || openModalId === topic.id) {
-                        setOpenModalId(topic?.id ?? null);
-                      }
-                    }}
+                    onClick={() => setOpenModalId(topic?.id ?? null)}
                   >
                     <div className="expertise-icon_wrapper">
                       {renderIcon(topic.icon || "")}
