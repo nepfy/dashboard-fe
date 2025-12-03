@@ -183,18 +183,12 @@ export default function MinimalAboutUs({
                   items.map((item, index) => (
                     <div
                       key={item.id || index}
-                      className={`about-item about-item-${index + 1} relative ${
+                      className={`about-item about-item-${index + 1} relative cursor-pointer ${
                         openModalId === item.id
-                          ? "cursor-default ring-2 ring-[#0170D6]"
-                          : canEdit
-                            ? "cursor-pointer hover:ring-2 hover:ring-[#0170D6]"
-                            : "cursor-not-allowed"
+                          ? "ring-2 ring-[#0170D6]"
+                          : "hover:ring-2 hover:ring-[#0170D6]"
                       }`}
-                      onClick={() => {
-                        if (canEdit || openModalId === item.id) {
-                          setOpenModalId(item?.id ?? null);
-                        }
-                      }}
+                      onClick={() => setOpenModalId(item?.id ?? null)}
                     >
                       <div className="about-video">
                         <img

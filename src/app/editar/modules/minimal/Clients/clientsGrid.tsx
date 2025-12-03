@@ -249,12 +249,8 @@ export default function ClientsGrid({
                 {row.map((client) => (
                   <div
                     key={client.id || client.name}
-                    className={`client-box relative border border-transparent ${openModalId === client.id ? "editing" : ""} ${canEdit ? "" : "cursor-not-allowed"}`}
-                    onClick={() => {
-                      if (canEdit || openModalId === client.id) {
-                        setOpenModalId(client.id || null);
-                      }
-                    }}
+                    className={`client-box relative border border-transparent cursor-pointer ${openModalId === client.id ? "editing" : ""}`}
+                    onClick={() => setOpenModalId(client.id || null)}
                   >
                     {client.logo ? (
                       <div className="client-logo-container">
@@ -305,12 +301,8 @@ export default function ClientsGrid({
           {items.map((client) => (
             <div
               key={client.id || client.name}
-              className={`client-box relative border border-transparent ${openModalId === client.id ? "editing" : ""} ${canEdit ? "" : "cursor-not-allowed"}`}
-              onClick={() => {
-                if (canEdit || openModalId === client.id) {
-                  setOpenModalId(client.id || null);
-                }
-              }}
+              className={`client-box relative border border-transparent cursor-pointer ${openModalId === client.id ? "editing" : ""}`}
+              onClick={() => setOpenModalId(client.id || null)}
             >
               {client.logo ? (
                 <div className="client-logo-container">
