@@ -1465,7 +1465,8 @@
     if (pd.introduction) {
       const intro = pd.introduction;
       updateTextField("introduction-username", intro.userName);
-      updateTextField("introduction-email", intro.email);
+      // introduction-email ID doesn't exist in HTML, skip it
+      // updateTextField("introduction-email", intro.email);
       updateTitleWithWordSpans("introduction-title", intro.title);
       updateTextField(
         "introduction-validity",
@@ -1500,7 +1501,8 @@
 
     // Team
     if (pd.team) {
-      updateTitleWithWordSpans("team-title", pd.team.title);
+      // team-title ID doesn't exist in HTML, skip it
+      // updateTitleWithWordSpans("team-title", pd.team.title);
       renderTeamMembers("team-members-list", pd.team.members);
       toggleSectionVisibility(".section_team", pd.team.hideSection === true);
     }
@@ -1529,7 +1531,8 @@
 
     // Results
     if (pd.results) {
-      updateTitleWithWordSpans("results-title", pd.results.title);
+      // results-title ID doesn't exist in HTML, skip it
+      // updateTitleWithWordSpans("results-title", pd.results.title);
       renderResults("results-list", pd.results.items);
       toggleSectionVisibility(
         ".section_proof",
@@ -1559,7 +1562,8 @@
     // Steps
     if (pd.steps) {
       renderSteps("steps-list", pd.steps.topics);
-      updateTextField("steps-number", pd.steps.topics.length);
+      // steps-number ID doesn't exist in HTML, skip it
+      // updateTextField("steps-number", pd.steps.topics.length);
       toggleSectionVisibility(
         ".section_process",
         pd.steps.hideSection === true
