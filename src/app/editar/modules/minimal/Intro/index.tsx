@@ -156,6 +156,10 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
           margin-top: 4rem;
         }
 
+        .marquee_component:hover .marquee_content {
+          animation-play-state: paused;
+        }
+
         .marquee_content {
           display: flex;
           gap: 1rem;
@@ -177,6 +181,14 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
           overflow: hidden;
           background: rgba(255, 255, 255, 0.05);
           flex-shrink: 0;
+          position: relative;
+          z-index: 10;
+          pointer-events: auto;
+          transition: transform 0.2s ease;
+        }
+
+        .marquee-img:hover {
+          transform: scale(1.02);
         }
 
         .marquee-img img,
@@ -394,11 +406,21 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
                         ? "ring-2 ring-[#0170D6]"
                         : "hover:ring-2 hover:ring-[#0170D6]"
                     }`}
-                    onClick={() => setOpenServiceModalId(service.id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('🐛 Marquee item clicked:', {
+                        serviceId: service.id,
+                        currentOpenId: openServiceModalId,
+                        target: e.target,
+                      });
+                      setOpenServiceModalId(service.id);
+                    }}
                   >
                     <img
                       src={service.image || "/images/templates/flash/placeholder.png"}
                       alt={service.serviceName || ""}
+                      style={{ pointerEvents: 'none', userSelect: 'none' }}
                     />
                     <EditableImage
                       isModalOpen={openServiceModalId === service.id}
