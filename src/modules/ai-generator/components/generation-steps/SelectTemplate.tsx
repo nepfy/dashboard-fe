@@ -26,14 +26,14 @@ const templates: TemplateModel[] = [
     ],
     preview: "flash",
   },
-  // {
-  //   id: "minimal",
-  //   title: "Minimal",
-  //   description:
-  //     "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
-  //   colorsList: ["#000000"],
-  //   preview: "minimal",
-  // },
+  {
+    id: "minimal",
+    title: "Minimal",
+    description:
+      "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
+    colorsList: ["#000000"],
+    preview: "minimal",
+  },
   // {
   //   id: "prime",
   //   title: "Prime",
