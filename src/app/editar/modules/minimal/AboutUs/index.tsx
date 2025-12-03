@@ -17,11 +17,9 @@ export default function MinimalAboutUs({
   hideMarquee,
   items,
 }: AboutUsSection) {
-  const { updateAboutUs, updateAboutUsItem, reorderAboutUsItems, projectData, activeEditingId } = useEditor();
+  const { updateAboutUs, updateAboutUsItem, reorderAboutUsItems, projectData } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
-
-  const canEdit = activeEditingId === null;
 
   if (hideSection) return null;
 
