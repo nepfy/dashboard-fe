@@ -209,6 +209,7 @@ export default function MinimalIntro({
           display: flex;
           gap: 1rem;
           animation: marquee 30s linear infinite;
+          height: 560px;
           max-height: 560px;
         }
 
@@ -216,12 +217,13 @@ export default function MinimalIntro({
           display: flex;
           gap: 1rem;
           flex-shrink: 0;
+          height: 560px;
           max-height: 560px;
         }
 
         .marquee-img {
           width: 72.5rem;
-          height: 100%;
+          height: 560px;
           border-radius: 1rem;
           overflow: hidden;
           background: rgba(255, 255, 255, 0.05);
@@ -262,6 +264,12 @@ export default function MinimalIntro({
             padding-top: 5rem;
             padding-bottom: 5rem;
           }
+          .marquee_content {
+            height: 31.25rem;
+          }
+          .marquee_item {
+            height: 31.25rem;
+          }
           .marquee-img {
             width: 50rem;
             height: 31.25rem;
@@ -284,8 +292,14 @@ export default function MinimalIntro({
             padding-left: 1.5rem;
             padding-right: 1.5rem;
           }
+          .marquee_content {
+            height: auto;
+          }
+          .marquee_item {
+            height: auto;
+          }
           .marquee-img {
-            width: 100vw;
+            width: 85vw;
             height: auto;
             aspect-ratio: 16/10;
           }
