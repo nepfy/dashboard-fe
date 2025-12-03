@@ -36,7 +36,7 @@ export default function MinimalAboutUs({
     firstItem: items?.[0],
   });
 
-  if (hideSection || !items || items.length === 0) return null;
+  if (hideSection) return null;
 
   return (
     <>
@@ -279,13 +279,7 @@ export default function MinimalAboutUs({
         </div>
 
         {!hideMarquee && (
-          <div
-            className={`about-marquee relative cursor-pointer border-r border-l border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
-              activeEditingId === "aboutUs-marquee"
-                ? "border-[#0170D6] bg-[#0170D666]"
-                : ""
-            }`}
-          >
+          <div className="about-marquee">
             <div className="marquee_content">
               <div className="about-marquee_text">
                 <EditableText
