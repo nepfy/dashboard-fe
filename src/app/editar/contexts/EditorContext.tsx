@@ -105,6 +105,10 @@ interface EditorContextType {
   deleteExpertiseTopic: (topicId: string) => void;
   reorderExpertiseTopics: (topics: ExpertiseTopic[]) => void;
 
+  // AboutUs item CRUD operations
+  updateAboutUsItem: (itemId: string, data: Partial<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => void;
+  reorderAboutUsItems: (items: Array<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => void;
+
   // Testimonial CRUD operations
   updateTestimonialItem: (itemId: string, data: Partial<Testimonial>) => void;
   addTestimonialItem: () => void;
@@ -714,6 +718,32 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [updateSection]
   );
 
+  // AboutUs item CRUD operations
+  const updateAboutUsItem = useCallback(
+    (itemId: string, data: Partial<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => {
+      if (!projectData?.proposalData?.aboutUs?.items) return;
+
+      const updatedItems = projectData.proposalData.aboutUs.items.map(
+        (item) => (item.id === itemId ? { ...item, ...data } : item)
+      );
+
+      updateSection("aboutUs", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderAboutUsItems = useCallback(
+    (items: Array<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => {
+      const reorderedItems = items.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
+
+      updateSection("aboutUs", { items: reorderedItems });
+    },
+    [updateSection]
+  );
+
   // Testimonial CRUD operations
   const updateTestimonialItem = useCallback(
     (itemId: string, data: Partial<Testimonial>) => {
@@ -1039,6 +1069,8 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     addExpertiseTopic,
     deleteExpertiseTopic,
     reorderExpertiseTopics,
+    updateAboutUsItem,
+    reorderAboutUsItems,
     updateTestimonialItem,
     addTestimonialItem,
     deleteTestimonialItem,

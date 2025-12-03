@@ -4,6 +4,7 @@
 import { AboutUsSection } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
+import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "../../../contexts/EditorContext";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import { useState } from "react";
@@ -16,8 +17,11 @@ export default function MinimalAboutUs({
   hideMarquee,
   items,
 }: AboutUsSection) {
-  const { updateAboutUs, projectData } = useEditor();
+  const { updateAboutUs, updateAboutUsItem, reorderAboutUsItems, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
+  const [openModalId, setOpenModalId] = useState<string | null>(null);
+
+  const canEdit = activeEditingId === null;
 
   if (hideSection) return null;
 
@@ -179,7 +183,18 @@ export default function MinimalAboutUs({
                   items.map((item, index) => (
                     <div
                       key={item.id || index}
-                      className={`about-item about-item-${index + 1}`}
+                      className={`about-item about-item-${index + 1} relative ${
+                        openModalId === item.id
+                          ? "cursor-default ring-2 ring-[#0170D6]"
+                          : canEdit
+                            ? "cursor-pointer hover:ring-2 hover:ring-[#0170D6]"
+                            : "cursor-not-allowed"
+                      }`}
+                      onClick={() => {
+                        if (canEdit || openModalId === item.id) {
+                          setOpenModalId(item?.id ?? null);
+                        }
+                      }}
                     >
                       <div className="about-video">
                         <img
@@ -205,6 +220,18 @@ export default function MinimalAboutUs({
                           editingId={`aboutUs-item-${index}-caption`}
                         />
                       </div>
+                      <EditableImage
+                        isModalOpen={openModalId === item.id}
+                        setIsModalOpen={(isOpen) =>
+                          setOpenModalId(isOpen ? (item?.id ?? null) : null)
+                        }
+                        editingId={`aboutUs-${item.id}`}
+                        itemType="aboutUs"
+                        items={items || []}
+                        currentItemId={item?.id ?? null}
+                        onUpdateItem={updateAboutUsItem}
+                        onReorderItems={reorderAboutUsItems}
+                      />
                     </div>
                   ))
                 ) : (
