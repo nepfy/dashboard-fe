@@ -17,9 +17,17 @@ export default function MinimalAboutUs({
   hideMarquee,
   items,
 }: AboutUsSection) {
-  const { updateAboutUs, updateAboutUsItem, reorderAboutUsItems, projectData } = useEditor();
+  const { updateAboutUs, updateAboutUsItem, reorderAboutUsItems, projectData, activeEditingId } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+
+  console.log('🐛 AboutUs Debug:', {
+    itemsLength: items?.length || 0,
+    hideSection,
+    openModalId,
+    activeEditingId,
+    firstItem: items?.[0],
+  });
 
   if (hideSection) return null;
 

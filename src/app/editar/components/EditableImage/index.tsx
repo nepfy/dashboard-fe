@@ -71,8 +71,14 @@ export default function EditableImage({
     if (isModalOpen) {
       // Try to start editing when modal opens
       const canStartEditing = startEditing(editingId);
+      console.log('🐛 EditableImage startEditing:', {
+        editingId,
+        canStartEditing,
+        itemType,
+      });
       if (!canStartEditing) {
         // If another field/modal is already active, close this modal
+        console.warn('⚠️ Cannot start editing, another field is active');
         setIsModalOpen(false);
         return;
       }
@@ -80,7 +86,7 @@ export default function EditableImage({
       // Stop editing when modal closes
       stopEditing(editingId);
     }
-  }, [isModalOpen, editingId, startEditing, stopEditing, setIsModalOpen]);
+  }, [isModalOpen, editingId, startEditing, stopEditing, setIsModalOpen, itemType]);
 
   const handleClose = () => {
     setIsModalOpen(false);
