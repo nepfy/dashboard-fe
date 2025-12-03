@@ -865,6 +865,8 @@ export class MinimalTheme {
 
     sections.expertise = {
       hideSection: expertiseResult.hideSection ?? false,
+      subtitle: expertiseResult.subtitle,
+      hideSubtitle: expertiseResult.hideSubtitle,
       title: expertiseResult.title || "Áreas de atuação",
       topics: (expertiseResult.topics && expertiseResult.topics.length > 0
         ? expertiseResult.topics

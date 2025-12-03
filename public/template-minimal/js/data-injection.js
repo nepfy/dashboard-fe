@@ -239,12 +239,31 @@
 
     toggleSectionVisibility(sectionSelector, clients.hideSection === true);
 
+    // Inject subtitle if exists
+    if (clients.subtitle) {
+      updateTextField("clients-subtitle", clients.subtitle);
+      if (clients.hideSubtitle) {
+        toggleElementVisibility("clients-subtitle", true);
+      }
+    }
+
+    // Inject title
     if (clients.title) {
       updateTextField("clients-title", clients.title);
+      if (clients.hideTitle) {
+        toggleElementVisibility("clients-title", true);
+      }
     }
+
+    // Inject description
     if (clients.description) {
       updateTextField("clients-description", clients.description);
+      if (clients.hideDescription) {
+        toggleElementVisibility("clients-description", true);
+      }
     }
+
+    // Inject paragraphs
     const paragraphs = clients.paragraphs || [];
     if (paragraphs[0]) {
       updateTextField("clients-paragraph-1", paragraphs[0]);
@@ -1478,6 +1497,14 @@
 
     // Expertise
     if (pd.expertise) {
+      // Inject subtitle if exists
+      if (pd.expertise.subtitle) {
+        updateTextField("expertise-subtitle", pd.expertise.subtitle);
+        if (pd.expertise.hideSubtitle) {
+          toggleElementVisibility("expertise-subtitle", true);
+        }
+      }
+      
       updateTitleWithWordSpans("expertise-title", pd.expertise.title);
       renderExpertiseTopics(
         "expertise-topics-list",

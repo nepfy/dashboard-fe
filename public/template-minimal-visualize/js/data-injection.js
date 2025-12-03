@@ -245,18 +245,30 @@
       section.style.display = clients.hideSection === true ? "none" : "";
     }
 
+    // Inject subtitle if exists
+    const subtitleEl = document.getElementById("clients-subtitle-visualize");
+    if (subtitleEl && clients.subtitle) {
+      subtitleEl.textContent = clients.subtitle;
+      subtitleEl.style.display = clients.hideSubtitle ? "none" : "";
+    }
+
+    // Inject title
     const titleEl = document.getElementById("clients-title-visualize");
     if (titleEl && clients.title) {
       titleEl.textContent = clients.title;
+      titleEl.style.display = clients.hideTitle ? "none" : "";
     }
 
+    // Inject description
     const descriptionEl = document.getElementById(
       "clients-description-visualize"
     );
     if (descriptionEl && clients.description) {
       descriptionEl.textContent = clients.description;
+      descriptionEl.style.display = clients.hideDescription ? "none" : "";
     }
 
+    // Inject paragraphs
     const paragraphs = clients.paragraphs || [];
     const paragraphOne = document.getElementById("clients-paragraph-1-visualize");
     if (paragraphOne && paragraphs[0]) {
@@ -1495,6 +1507,14 @@
 
     // Expertise
     if (pd.expertise) {
+      // Inject subtitle if exists
+      if (pd.expertise.subtitle) {
+        updateTextField("expertise-subtitle", pd.expertise.subtitle);
+        if (pd.expertise.hideSubtitle) {
+          toggleElementVisibility("expertise-subtitle", true);
+        }
+      }
+      
       updateTitleWithWordSpans("expertise-title", pd.expertise.title);
       renderExpertiseTopics(
         "expertise-topics-list",
