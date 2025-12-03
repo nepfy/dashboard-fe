@@ -11,6 +11,10 @@ interface MinimalClientsProps extends ClientsSection {
 
 export default function MinimalClients({
   hideSection,
+  subtitle,
+  hideSubtitle,
+  title,
+  hideTitle,
   description,
   hideDescription,
   paragraphs,
@@ -181,6 +185,30 @@ export default function MinimalClients({
           <div className="container-large">
             <div className="partners-component">
               <div className="partners-heading">
+                {!hideSubtitle && (
+                  <EditableText
+                    value={subtitle || "PARCEIROS QUE CONFIAM"}
+                    onChange={(newSubtitle) =>
+                      updateClients({ subtitle: newSubtitle })
+                    }
+                    editingId="clients-subtitle"
+                    className="partners-subtitle"
+                    canEdit={canEdit}
+                  />
+                )}
+                {!hideTitle && (
+                  <EditableText
+                    value={
+                      title || "Marcas que já confiaram no nosso trabalho"
+                    }
+                    onChange={(newTitle) =>
+                      updateClients({ title: newTitle })
+                    }
+                    editingId="clients-title"
+                    className="text-6xl font-light text-black"
+                    canEdit={canEdit}
+                  />
+                )}
                 {!hideDescription && (
                   <EditableText
                     value={
