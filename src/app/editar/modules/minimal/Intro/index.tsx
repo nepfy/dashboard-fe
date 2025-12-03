@@ -38,6 +38,37 @@ export default function MinimalIntro({
 
   const canEdit = activeEditingId === null;
 
+  // Create temporary items when array is empty so marquee always shows
+  const workingServices =
+    services && services.length > 0
+      ? services
+      : [
+          {
+            id: "intro-service-temp-1",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 1",
+            sortOrder: 0,
+          } as IntroductionService,
+          {
+            id: "intro-service-temp-2",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 2",
+            sortOrder: 1,
+          } as IntroductionService,
+          {
+            id: "intro-service-temp-3",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 3",
+            sortOrder: 2,
+          } as IntroductionService,
+          {
+            id: "intro-service-temp-4",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 4",
+            sortOrder: 3,
+          } as IntroductionService,
+        ];
+
   return (
     <>
       <style jsx global>{`
@@ -410,140 +441,106 @@ export default function MinimalIntro({
           <div className="marquee_content">
             {/* First set of images */}
             <div className="marquee_item">
-              {services && services.length > 0
-                ? services.map((service) => (
-                    <div
-                      key={service.id}
-                      className={`marquee-img relative cursor-pointer ${
-                        openServiceModalId === service.id
-                          ? "ring-2 ring-[#0170D6]"
-                          : "hover:ring-2 hover:ring-[#0170D6]"
-                      }`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log("🐛 Marquee item clicked:", {
-                          serviceId: service.id,
-                          currentOpenId: openServiceModalId,
-                          target: e.target,
-                        });
-                        setOpenServiceModalId(
-                          openServiceModalId === service.id ? null : service.id
-                        );
-                      }}
-                    >
-                      <Image
-                        src={
-                          service.image ||
-                          "/images/templates/flash/placeholder.png"
-                        }
-                        alt={service.serviceName || ""}
-                        fill
-                        style={{
-                          objectFit: "cover",
-                          pointerEvents: "none",
-                          userSelect: "none",
-                        }}
-                        priority
-                      />
-                    </div>
-                  ))
-                : // Default 4 placeholder images
-                  Array.from({ length: 4 }).map((_, i) => (
-                    <div
-                      key={`placeholder-${i}`}
-                      className="marquee-img relative"
-                    >
-                      <Image
-                        src="/images/templates/flash/placeholder.png"
-                        alt=""
-                        fill
-                        style={{ objectFit: "cover" }}
-                        priority
-                      />
-                    </div>
-                  ))}
+              {workingServices.map((service) => (
+                <div
+                  key={service.id}
+                  className={`marquee-img relative cursor-pointer ${
+                    openServiceModalId === service.id
+                      ? "ring-2 ring-[#0170D6]"
+                      : "hover:ring-2 hover:ring-[#0170D6]"
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("🐛 Marquee item clicked:", {
+                      serviceId: service.id,
+                      currentOpenId: openServiceModalId,
+                      target: e.target,
+                    });
+                    setOpenServiceModalId(
+                      openServiceModalId === service.id ? null : service.id
+                    );
+                  }}
+                >
+                  <Image
+                    src={
+                      service.image || "/images/templates/flash/placeholder.png"
+                    }
+                    alt={service.serviceName || ""}
+                    fill
+                    style={{
+                      objectFit: "cover",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
+                    priority
+                  />
+                </div>
+              ))}
             </div>
             {/* Second set (duplicate for infinite scroll) */}
             <div className="marquee_item">
-              {services && services.length > 0
-                ? services.map((service) => (
-                    <div
-                      key={`${service.id}-clone`}
-                      className={`marquee-img relative cursor-pointer ${
-                        openServiceModalId === service.id
-                          ? "ring-2 ring-[#0170D6]"
-                          : "hover:ring-2 hover:ring-[#0170D6]"
-                      }`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setOpenServiceModalId(
-                          openServiceModalId === service.id ? null : service.id
-                        );
-                      }}
-                    >
-                      <Image
-                        src={
-                          service.image ||
-                          "/images/templates/flash/placeholder.png"
-                        }
-                        alt={service.serviceName || ""}
-                        fill
-                        style={{
-                          objectFit: "cover",
-                          pointerEvents: "none",
-                          userSelect: "none",
-                        }}
-                      />
-                    </div>
-                  ))
-                : Array.from({ length: 4 }).map((_, i) => (
-                    <div
-                      key={`placeholder-clone-${i}`}
-                      className="marquee-img relative"
-                    >
-                      <Image
-                        src="/images/templates/flash/placeholder.png"
-                        alt=""
-                        fill
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                  ))}
+              {workingServices.map((service) => (
+                <div
+                  key={`${service.id}-clone`}
+                  className={`marquee-img relative cursor-pointer ${
+                    openServiceModalId === service.id
+                      ? "ring-2 ring-[#0170D6]"
+                      : "hover:ring-2 hover:ring-[#0170D6]"
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpenServiceModalId(
+                      openServiceModalId === service.id ? null : service.id
+                    );
+                  }}
+                >
+                  <Image
+                    src={
+                      service.image || "/images/templates/flash/placeholder.png"
+                    }
+                    alt={service.serviceName || ""}
+                    fill
+                    style={{
+                      objectFit: "cover",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* EditableImage modals rendered outside overflow container */}
-        {services &&
-          services.length > 0 &&
-          services.map((service) => (
-            <EditableImage
-              key={`modal-${service.id}`}
-              isModalOpen={openServiceModalId === service.id}
-              setIsModalOpen={(isOpen) => {
-                console.log("🐛 Marquee setIsModalOpen:", {
-                  isOpen,
-                  serviceId: service.id,
-                });
-                setOpenServiceModalId(isOpen ? service.id : null);
-              }}
-              editingId={`intro-service-${service.id}`}
-              itemType="introServices"
-              items={services}
-              currentItemId={service.id}
-              onUpdateItem={(id, data) =>
-                updateIntroductionService(
-                  id as string,
-                  data as Partial<IntroductionService>
-                )
-              }
-              onReorderItems={(items) =>
-                reorderIntroductionServices(items as IntroductionService[])
-              }
-            />
-          ))}
+        {workingServices.map((service) => (
+          <EditableImage
+            key={`modal-${service.id}`}
+            isModalOpen={openServiceModalId === service.id}
+            setIsModalOpen={(isOpen) => {
+              console.log("🐛 Marquee setIsModalOpen:", {
+                isOpen,
+                serviceId: service.id,
+              });
+              setOpenServiceModalId(isOpen ? service.id : null);
+            }}
+            editingId={`intro-service-${service.id}`}
+            itemType="introServices"
+            items={workingServices}
+            currentItemId={service.id}
+            onUpdateItem={(id, data) =>
+              updateIntroductionService(
+                id as string,
+                data as Partial<IntroductionService>
+              )
+            }
+            onReorderItems={(items) =>
+              reorderIntroductionServices(items as IntroductionService[])
+            }
+          />
+        ))}
       </section>
     </>
   );
