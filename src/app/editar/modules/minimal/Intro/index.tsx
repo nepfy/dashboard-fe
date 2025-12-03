@@ -12,7 +12,7 @@ import EditableDate from "#/app/editar/components/EditableDate";
 import EditableButton from "#/app/editar/components/EditableButton";
 import EditableLogo from "#/app/editar/components/EditableLogo";
 import EditableAvatar from "#/app/editar/components/EditableAvatar";
-import EditableImage from "#/app/editar/components/EditableImage";
+import EditableMarqueeImage from "#/app/editar/components/EditableMarqueeImage";
 import { useEditor } from "../../../contexts/EditorContext";
 
 export default function MinimalIntro({
@@ -26,15 +26,11 @@ export default function MinimalIntro({
   const {
     updateIntroduction,
     updateIntroductionService,
-    reorderIntroductionServices,
     projectData,
     activeEditingId,
   } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
-  const [openServiceModalId, setOpenServiceModalId] = useState<string | null>(
-    null
-  );
 
   const canEdit = activeEditingId === null;
 
@@ -210,10 +206,6 @@ export default function MinimalIntro({
           animation-play-state: paused;
         }
 
-        .marquee_component.paused .marquee_content {
-          animation-play-state: paused;
-        }
-
         .marquee_content {
           display: flex;
           gap: 0;
@@ -235,36 +227,7 @@ export default function MinimalIntro({
         .marquee-img {
           width: 72.5rem;
           height: 560px;
-          border-radius: 1rem;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.05);
           flex-shrink: 0;
-          position: relative;
-          z-index: 10;
-          pointer-events: auto;
-          transition: all 0.2s ease;
-        }
-
-        .marquee-img::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(1, 112, 214, 0.4);
-          opacity: 0;
-          transition: opacity 0.2s ease;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        .marquee-img:hover::after {
-          opacity: 1;
-        }
-
-        .marquee-img.active::after {
-          opacity: 1;
         }
 
         .marquee-img video {
@@ -480,47 +443,23 @@ export default function MinimalIntro({
         </div>
 
         {/* Marquee */}
-        <div
-          className={`marquee_component ${openServiceModalId ? "paused" : ""}`}
-        >
+        <div className="marquee_component">
           <div className="marquee_content">
             {/* First set of images */}
             <div className="marquee_item">
               {workingServices.map((service) => (
-                <div
+                <EditableMarqueeImage
                   key={service.id}
-                  className={`marquee-img relative cursor-pointer ${
-                    openServiceModalId === service.id
-                      ? "active ring-4 ring-[#0170D6] ring-offset-2 ring-offset-black"
-                      : "hover:ring-2 hover:ring-[#0170D6] hover:ring-offset-2 hover:ring-offset-black"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("🐛 Marquee item clicked:", {
-                      serviceId: service.id,
-                      currentOpenId: openServiceModalId,
-                      target: e.target,
+                  imageUrl={service.image}
+                  onImageChange={(url) => {
+                    updateIntroductionService(service.id, {
+                      image: url || undefined,
                     });
-                    setOpenServiceModalId(
-                      openServiceModalId === service.id ? null : service.id
-                    );
                   }}
-                >
-                  <Image
-                    src={
-                      service.image || "/images/templates/flash/placeholder.png"
-                    }
-                    alt={service.serviceName || ""}
-                    fill
-                    style={{
-                      objectFit: "cover",
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    }}
-                    priority
-                  />
-                </div>
+                  editingId={`intro-service-${service.id}`}
+                  alt={service.serviceName || ""}
+                  className="marquee-img"
+                />
               ))}
             </div>
             {/* Second set (duplicate for infinite scroll) */}
@@ -528,18 +467,7 @@ export default function MinimalIntro({
               {workingServices.map((service) => (
                 <div
                   key={`${service.id}-clone`}
-                  className={`marquee-img relative cursor-pointer ${
-                    openServiceModalId === service.id
-                      ? "active ring-4 ring-[#0170D6] ring-offset-2 ring-offset-black"
-                      : "hover:ring-2 hover:ring-[#0170D6] hover:ring-offset-2 hover:ring-offset-black"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setOpenServiceModalId(
-                      openServiceModalId === service.id ? null : service.id
-                    );
-                  }}
+                  className="marquee-img relative"
                 >
                   <Image
                     src={
@@ -547,45 +475,13 @@ export default function MinimalIntro({
                     }
                     alt={service.serviceName || ""}
                     fill
-                    style={{
-                      objectFit: "cover",
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    }}
+                    style={{ objectFit: "cover" }}
                   />
                 </div>
               ))}
             </div>
           </div>
         </div>
-
-        {/* EditableImage modals rendered outside overflow container */}
-        {workingServices.map((service) => (
-          <EditableImage
-            key={`modal-${service.id}`}
-            isModalOpen={openServiceModalId === service.id}
-            setIsModalOpen={(isOpen) => {
-              console.log("🐛 Marquee setIsModalOpen:", {
-                isOpen,
-                serviceId: service.id,
-              });
-              setOpenServiceModalId(isOpen ? service.id : null);
-            }}
-            editingId={`intro-service-${service.id}`}
-            itemType="introServices"
-            items={workingServices}
-            currentItemId={service.id}
-            onUpdateItem={(id, data) =>
-              updateIntroductionService(
-                id as string,
-                data as Partial<IntroductionService>
-              )
-            }
-            onReorderItems={(items) =>
-              reorderIntroductionServices(items as IntroductionService[])
-            }
-          />
-        ))}
       </section>
     </>
   );
