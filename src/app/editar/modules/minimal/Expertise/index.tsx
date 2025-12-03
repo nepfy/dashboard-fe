@@ -124,20 +124,26 @@ export default function MinimalExpertise({
         .text-style-allcaps {
           text-transform: uppercase;
           letter-spacing: 0.1em;
-          color: #000000;
+          color: rgba(0, 0, 0, 0.5);
+          font-size: 0.75rem;
+          font-weight: 400;
         }
 
         .text-size-small {
-          font-size: 0.875rem;
+          font-size: 0.75rem;
         }
 
         .heading-style-h2 {
           color: #040404;
           margin: 0.75rem 0 0;
-          font-size: 2.5rem;
-          font-weight: 400;
-          line-height: 1.25;
+          font-size: 3rem;
+          font-weight: 300;
+          line-height: 1.2;
           max-width: 48ch;
+        }
+        
+        .text-weight-normal {
+          font-weight: 300;
         }
 
         .expertise-grid {

@@ -96,7 +96,7 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
           grid-column-gap: 4rem;
           grid-row-gap: 4rem;
           justify-content: space-between;
-          align-items: flex-end;
+          align-items: flex-start;
           display: flex;
         }
 
@@ -424,11 +424,15 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
                     />
                     <EditableImage
                       isModalOpen={openServiceModalId === service.id}
-                      setIsModalOpen={(isOpen) =>
-                        setOpenServiceModalId(isOpen ? service.id : null)
-                      }
+                      setIsModalOpen={(isOpen) => {
+                        console.log('🐛 Marquee setIsModalOpen:', {
+                          isOpen,
+                          serviceId: service.id,
+                        });
+                        setOpenServiceModalId(isOpen ? service.id : null);
+                      }}
                       editingId={`intro-service-${service.id}`}
-                      itemType="expertise"
+                      itemType="introServices"
                       items={services}
                       currentItemId={service.id}
                       onUpdateItem={(id, data) => updateIntroductionService(id as string, data as Partial<IntroductionService>)}

@@ -46,10 +46,10 @@ export default function MinimalAboutUs({
         }
 
         .about-heading {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 4rem;
+          display: flex;
+          justify-content: space-between;
           align-items: flex-start;
+          gap: 4rem;
         }
 
         .about-heading_left {
@@ -61,6 +61,8 @@ export default function MinimalAboutUs({
         .about-heading_title {
           display: flex;
           align-items: flex-start;
+          flex: 1;
+          max-width: 60%;
         }
 
         .about-content {
