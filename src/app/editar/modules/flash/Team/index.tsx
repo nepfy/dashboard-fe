@@ -59,12 +59,12 @@ export default function FlashTeam({
                 {members?.map((member) => (
                   <div
                     key={member.id}
-                    className={`relative mb-6 flex w-full flex-col items-start rounded-[4px] text-sm font-bold text-[#E6E6E6] lg:mb-0`}
+                    className="relative mb-6 flex w-full flex-col items-start rounded-[4px] text-sm font-bold text-[#E6E6E6] cursor-pointer lg:mb-0"
+                    onClick={() => setOpenModalId(member?.id ?? null)}
                   >
                     {!member.hidePhoto && member?.image && (
                       <div 
-                        className="relative aspect-[4/3] w-full overflow-hidden rounded-[4px] cursor-pointer"
-                        onClick={() => setOpenModalId(member?.id ?? null)}
+                        className="relative aspect-[4/3] w-full overflow-hidden rounded-[4px]"
                       >
                         <Image
                           src={member.image || ""}
@@ -74,17 +74,17 @@ export default function FlashTeam({
                           quality={95}
                           priority={(member?.sortOrder ?? 0) < 3}
                         />
-                        <div 
-                          className={`absolute inset-0 z-10 rounded-[4px] border border-transparent transition-all hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === member.id ? "border-[#0170D6] bg-[#0170D666]" : ""}`}
-                        />
                       </div>
                     )}
-                    <p className="mt-3 p-0 text-[16px] font-light text-[#FFFFFF] lg:text-[20px]">
+                    <p className="relative z-20 mt-3 p-0 text-[16px] font-light text-[#FFFFFF] lg:text-[20px]">
                       {member.name}
                     </p>
-                    <p className="text-[16px] font-light text-[#FFFFFF]/40">
+                    <p className="relative z-20 text-[16px] font-light text-[#FFFFFF]/40">
                       {member.role}
                     </p>
+                    <div 
+                      className={`absolute inset-0 z-10 rounded-[4px] border border-transparent transition-all hover:border-[#0170D6] hover:bg-[#0170D666] ${openModalId === member.id ? "border-[#0170D6] bg-[#0170D666]" : ""}`}
+                    />
                     <EditableImage
                       isModalOpen={openModalId === member.id}
                       setIsModalOpen={(isOpen) =>

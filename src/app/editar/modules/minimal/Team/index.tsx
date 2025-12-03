@@ -162,11 +162,11 @@ export default function MinimalTeam({
               {members.map((member) => (
                 <div
                   key={member.id}
-                  className="team-card relative"
+                  className="team-card relative cursor-pointer"
+                  onClick={() => setOpenModalId(member?.id ?? null)}
                 >
                   <div 
-                    className="team-image cursor-pointer"
-                    onClick={() => setOpenModalId(member?.id ?? null)}
+                    className="team-image"
                   >
                     {!member.hidePhoto && member.image && (
                       <Image
@@ -177,20 +177,20 @@ export default function MinimalTeam({
                         priority={(member?.sortOrder ?? 0) < 3}
                       />
                     )}
-                    <div 
-                      className={`absolute inset-0 z-10 rounded-[1rem] border border-transparent transition-all hover:border-[#0170D6] hover:bg-[#0170D666] ${
-                        openModalId === member.id
-                          ? "border-[#0170D6] bg-[#0170D666]"
-                          : ""
-                      }`}
-                    />
                   </div>
-                  <p className="text-size-medium text-weight-medium">
+                  <p className="relative z-20 text-size-medium text-weight-medium">
                     {member.name}
                   </p>
-                  <p className="text-size-regular">
+                  <p className="relative z-20 text-size-regular">
                     {member.role}
                   </p>
+                  <div 
+                    className={`absolute inset-0 z-10 rounded-[1rem] border border-transparent transition-all hover:border-[#0170D6] hover:bg-[#0170D666] ${
+                      openModalId === member.id
+                        ? "border-[#0170D6] bg-[#0170D666]"
+                        : ""
+                    }`}
+                  />
                   <EditableImage
                     isModalOpen={openModalId === member.id}
                     setIsModalOpen={(isOpen) =>
