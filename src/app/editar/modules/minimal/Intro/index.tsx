@@ -203,6 +203,7 @@ export default function MinimalIntro({
           position: relative;
           overflow: hidden;
           margin-top: 4rem;
+          padding-bottom: 8px;
         }
 
         .marquee_component:hover .marquee_content {
@@ -217,8 +218,8 @@ export default function MinimalIntro({
           display: flex;
           gap: 0;
           animation: marquee 30s linear infinite;
-          height: 560px;
-          max-height: 560px;
+          height: 568px;
+          max-height: 568px;
           padding: 4px;
         }
 
@@ -226,8 +227,8 @@ export default function MinimalIntro({
           display: flex;
           gap: 1.5rem;
           flex-shrink: 0;
-          height: 560px;
-          max-height: 560px;
+          height: 568px;
+          max-height: 568px;
           padding: 4px;
         }
 
