@@ -200,83 +200,203 @@ export default function MinimalAboutUs({
               </div>
 
               <div className="about-content">
-                {items?.map((item, index) => (
-                  <div
-                    key={item.id || index}
-                    className={`about-item about-item-${index + 1} relative cursor-pointer border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
-                      openModalId === item.id
-                        ? "border-[#0170D6] bg-[#0170D666]"
-                        : ""
-                    }`}
-                  >
+                {items && items.length > 0 ? (
+                  items.map((item, index) => (
                     <div
-                      className="relative cursor-pointer"
-                      onClick={(e) => {
-                        console.log("🐛 AboutUs item clicked:", {
-                          itemId: item.id,
-                          index,
-                          currentOpenId: openModalId,
-                          target: e.target,
-                        });
-                        setOpenModalId(
-                          openModalId === item.id ? null : (item?.id ?? null)
-                        );
-                      }}
+                      key={item.id || index}
+                      className={`about-item about-item-${index + 1} relative cursor-pointer border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
+                        openModalId === item.id
+                          ? "border-[#0170D6] bg-[#0170D666]"
+                          : ""
+                      }`}
                     >
-                      <div className="about-video">
-                        {item.image && (
-                          <Image
-                            src={item.image}
-                            alt={item.caption || ""}
-                            fill
-                            style={{ objectFit: "cover" }}
-                            priority={index < 2}
+                      <div
+                        className="relative cursor-pointer"
+                        onClick={(e) => {
+                          console.log("🐛 AboutUs item clicked:", {
+                            itemId: item.id,
+                            index,
+                            currentOpenId: openModalId,
+                            target: e.target,
+                          });
+                          setOpenModalId(
+                            openModalId === item.id ? null : (item?.id ?? null)
+                          );
+                        }}
+                      >
+                        <div className="about-video">
+                          {item.image && (
+                            <Image
+                              src={item.image}
+                              alt={item.caption || ""}
+                              fill
+                              style={{ objectFit: "cover" }}
+                              priority={index < 2}
+                            />
+                          )}
+                        </div>
+                        <div className="about-paragraph">
+                          <EditableText
+                            value={item.caption || "Descrição da imagem"}
+                            onChange={(newCaption: string) => {
+                              const updatedItems = [...(items || [])];
+                              updatedItems[index] = {
+                                ...item,
+                                caption: newCaption,
+                              };
+                              updateAboutUs({ items: updatedItems });
+                            }}
+                            className="text-size-regular text-color-grey"
+                            editingId={`aboutUs-item-${index}-caption`}
                           />
-                        )}
-                      </div>
-                      <div className="about-paragraph">
-                        <EditableText
-                          value={item.caption || "Descrição da imagem"}
-                          onChange={(newCaption: string) => {
-                            const updatedItems = [...(items || [])];
-                            updatedItems[index] = {
-                              ...item,
-                              caption: newCaption,
-                            };
-                            updateAboutUs({ items: updatedItems });
-                          }}
-                          className="text-size-regular text-color-grey"
-                          editingId={`aboutUs-item-${index}-caption`}
+                        </div>
+                        <EditableImage
+                          isModalOpen={openModalId === item.id}
+                          setIsModalOpen={(isOpen) =>
+                            setOpenModalId(isOpen ? (item?.id ?? null) : null)
+                          }
+                          editingId={`aboutUs-${item.id}`}
+                          itemType="aboutUs"
+                          items={items || []}
+                          currentItemId={item?.id ?? null}
+                          onUpdateItem={updateAboutUsItem}
+                          onReorderItems={(reorderedItems) =>
+                            reorderAboutUsItems(reorderedItems as AboutUsItem[])
+                          }
+                        />
+                        <div
+                          className={`absolute top-0 left-0 z-10 h-full w-full rounded-[1rem] hover:bg-[#0170D666] ${
+                            openModalId === item.id
+                              ? "bg-[#0170D666]"
+                              : "bg-transparent"
+                          }`}
                         />
                       </div>
-                      <EditableImage
-                        isModalOpen={openModalId === item.id}
-                        setIsModalOpen={(isOpen) =>
-                          setOpenModalId(isOpen ? (item?.id ?? null) : null)
-                        }
-                        editingId={`aboutUs-${item.id}`}
-                        itemType="aboutUs"
-                        items={items || []}
-                        currentItemId={item?.id ?? null}
-                        onUpdateItem={updateAboutUsItem}
-                        onReorderItems={(reorderedItems) =>
-                          reorderAboutUsItems(reorderedItems as AboutUsItem[])
-                        }
-                      />
-                      <div
-                        className={`absolute top-0 left-0 z-10 h-full w-full rounded-[1rem] hover:bg-[#0170D666] ${
-                          openModalId === item.id
-                            ? "bg-[#0170D666]"
-                            : "bg-transparent"
-                        }`}
-                      />
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <>
+                    {/* Always show 2 editable placeholders when no items */}
+                    <div
+                      className={`about-item about-item-1 relative cursor-pointer border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
+                        openModalId === "aboutUs-placeholder-1"
+                          ? "border-[#0170D6] bg-[#0170D666]"
+                          : ""
+                      }`}
+                    >
+                      <div
+                        className="relative cursor-pointer"
+                        onClick={() => {
+                          setOpenModalId(
+                            openModalId === "aboutUs-placeholder-1"
+                              ? null
+                              : "aboutUs-placeholder-1"
+                          );
+                        }}
+                      >
+                        <div className="about-video relative">
+                          <Image
+                            src="/images/templates/flash/placeholder.png"
+                            alt=""
+                            fill
+                            style={{ objectFit: "cover" }}
+                            priority
+                          />
+                        </div>
+                        <div className="about-paragraph">
+                          <p className="text-size-regular text-color-grey">
+                            Clique para adicionar imagem e descrição
+                          </p>
+                        </div>
+                        <div
+                          className={`absolute top-0 left-0 z-10 h-full w-full rounded-[1rem] hover:bg-[#0170D666] ${
+                            openModalId === "aboutUs-placeholder-1"
+                              ? "bg-[#0170D666]"
+                              : "bg-transparent"
+                          }`}
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className={`about-item about-item-2 relative cursor-pointer border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
+                        openModalId === "aboutUs-placeholder-2"
+                          ? "border-[#0170D6] bg-[#0170D666]"
+                          : ""
+                      }`}
+                    >
+                      <div
+                        className="relative cursor-pointer"
+                        onClick={() => {
+                          setOpenModalId(
+                            openModalId === "aboutUs-placeholder-2"
+                              ? null
+                              : "aboutUs-placeholder-2"
+                          );
+                        }}
+                      >
+                        <div className="about-video relative">
+                          <Image
+                            src="/images/templates/flash/placeholder.png"
+                            alt=""
+                            fill
+                            style={{ objectFit: "cover" }}
+                            priority
+                          />
+                        </div>
+                        <div className="about-paragraph">
+                          <p className="text-size-regular text-color-grey">
+                            Clique para adicionar imagem e descrição
+                          </p>
+                        </div>
+                        <div
+                          className={`absolute top-0 left-0 z-10 h-full w-full rounded-[1rem] hover:bg-[#0170D666] ${
+                            openModalId === "aboutUs-placeholder-2"
+                              ? "bg-[#0170D666]"
+                              : "bg-transparent"
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
+
+        {/* EditableImage modals rendered outside for placeholders */}
+        {(!items || items.length === 0) && (
+          <>
+            <EditableImage
+              isModalOpen={openModalId === "aboutUs-placeholder-1"}
+              setIsModalOpen={(isOpen) =>
+                setOpenModalId(isOpen ? "aboutUs-placeholder-1" : null)
+              }
+              editingId="aboutUs-placeholder-1"
+              itemType="aboutUs"
+              items={items || []}
+              currentItemId="aboutUs-placeholder-1"
+              onUpdateItem={updateAboutUsItem}
+              onReorderItems={(reorderedItems) =>
+                reorderAboutUsItems(reorderedItems as AboutUsItem[])
+              }
+            />
+            <EditableImage
+              isModalOpen={openModalId === "aboutUs-placeholder-2"}
+              setIsModalOpen={(isOpen) =>
+                setOpenModalId(isOpen ? "aboutUs-placeholder-2" : null)
+              }
+              editingId="aboutUs-placeholder-2"
+              itemType="aboutUs"
+              items={items || []}
+              currentItemId="aboutUs-placeholder-2"
+              onUpdateItem={updateAboutUsItem}
+              onReorderItems={(reorderedItems) =>
+                reorderAboutUsItems(reorderedItems as AboutUsItem[])
+              }
+            />
+          </>
+        )}
 
         {!hideMarquee && (
           <div className="about-marquee">
