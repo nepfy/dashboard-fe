@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { AboutUsSection } from "#/types/template-data";
+import { AboutUsSection, AboutUsItem } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import EditableImage from "#/app/editar/components/EditableImage";
@@ -225,13 +225,13 @@ export default function MinimalAboutUs({
                         setIsModalOpen={(isOpen) =>
                           setOpenModalId(isOpen ? (item?.id ?? null) : null)
                         }
-                        editingId={`aboutUs-${item.id}`}
-                        itemType="aboutUs"
-                        items={items || []}
-                        currentItemId={item?.id ?? null}
-                        onUpdateItem={updateAboutUsItem}
-                        onReorderItems={reorderAboutUsItems}
-                      />
+                      editingId={`aboutUs-${item.id}`}
+                      itemType="aboutUs"
+                      items={items || []}
+                      currentItemId={item?.id ?? null}
+                      onUpdateItem={updateAboutUsItem}
+                      onReorderItems={(reorderedItems) => reorderAboutUsItems(reorderedItems as AboutUsItem[])}
+                    />
                     </div>
                   ))
                 ) : (

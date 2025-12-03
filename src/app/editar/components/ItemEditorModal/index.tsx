@@ -17,12 +17,13 @@ import {
   Testimonial,
   StepTopic,
   FAQItem,
+  AboutUsItem,
 } from "#/types/template-data";
 
 interface ItemEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs";
   items: (
     | TeamMember
     | Result
@@ -30,6 +31,7 @@ interface ItemEditorModalProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
   )[];
   currentItemId: string | null;
   onUpdateItem: (
@@ -41,6 +43,7 @@ interface ItemEditorModalProps {
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
   ) => void;
   onReorderItems: (
     items:
@@ -50,6 +53,7 @@ interface ItemEditorModalProps {
       | Testimonial[]
       | StepTopic[]
       | FAQItem[]
+      | AboutUsItem[]
   ) => void;
   onUpdateSection?: (data: { hideIcon?: boolean }) => void;
   hideIcon?: boolean;
@@ -87,6 +91,7 @@ export default function ItemEditorModal({
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
     >;
     reorderedItems?: (
       | TeamMember
@@ -95,6 +100,7 @@ export default function ItemEditorModal({
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
     )[];
     deletedItems: string[];
     newItems: (
@@ -104,6 +110,7 @@ export default function ItemEditorModal({
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
     )[];
     sectionUpdates?: { hideIcon?: boolean };
   }>({
