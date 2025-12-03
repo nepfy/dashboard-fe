@@ -141,8 +141,12 @@ export interface MinimalClientLogo {
 
 export interface MinimalClientsSection {
   hideSection?: boolean;
+  subtitle?: string;
+  hideSubtitle?: boolean;
   title?: string;
+  hideTitle?: boolean;
   description?: string;
+  hideDescription?: boolean;
   paragraphs?: string[];
   items?: MinimalClientLogo[];
 }

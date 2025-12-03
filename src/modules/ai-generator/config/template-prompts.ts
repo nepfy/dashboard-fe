@@ -982,8 +982,6 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
-  "subtitle": "Subtítulo curto em MAIÚSCULAS com até 50 caracteres (ex: PARCEIROS QUE CONFIAM)",
-  "hideSubtitle": false,
   "title": "Título principal sobre confiança/parceria com até 100 caracteres",
   "hideTitle": false,
   "description": "Descrição sobre a relação com clientes com até 180 caracteres",
@@ -997,8 +995,7 @@ FORMATO:
       "id": "1",
       "name": "NOME MARCA",
       "logo": null,
-      "sortOrder": 0,
-      "hideClient": false
+      "sortOrder": 0
     }
   ]
 }
@@ -1009,7 +1006,6 @@ INSTRUÇÕES CRÍTICAS DE CONTAGEM:
 ⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
 
 LIMITES OBRIGATÓRIOS:
-- subtitle: ATÉ 50 caracteres (conte letra por letra!)
 - title: ATÉ 100 caracteres (conte letra por letra!)
 - description: ATÉ 180 caracteres (conte letra por letra!)
 - paragraphs: 2 parágrafos, ATÉ 200 caracteres CADA (conte!)
@@ -1018,33 +1014,34 @@ LIMITES OBRIGATÓRIOS:
 
 EXEMPLOS CORRETOS:
 
-✅ subtitle (50 chars ou menos):
-"PARCEIROS QUE CONFIAM" = 21 chars ✓
-"CLIENTES DE SUCESSO" = 19 chars ✓
-
 ✅ paragraphs (200 chars ou menos):
 "Trabalhamos lado a lado com nossos clientes, entendendo suas necessidades únicas e desenvolvendo soluções personalizadas que geram resultados concretos e duradouros" = 168 chars ✓
 
 ❌ ERRADO:
 "Trabalhamos de forma colaborativa lado a lado com todos os nossos clientes, entendendo profundamente suas necessidades específicas e únicas e desenvolvendo soluções completamente personalizadas" = 198 chars... ✗ MUITO LONGO!
 
-REGRAS:
+⚠️⚠️⚠️ REGRAS ABSOLUTAS - LEIA COM ATENÇÃO ⚠️⚠️⚠️
+
+1. SEMPRE use "hideSection": false quando gerar clientes
+2. NÃO gere subtitle - este campo não é usado
+3. SEMPRE gere EXATAMENTE 12 clientes
+4. Esta seção DEVE estar visível se há conteúdo
+5. Nomes de clientes devem ser plausíveis para o setor
+
+REGRAS GERAIS:
 - logo sempre null (usuário adiciona depois)
 - Nomes devem ser plausíveis para o setor do projeto
 - Usar linguagem direta, profissional e confiável`,
         expectedFormat: `{
   "hideSection": false,
-  "subtitle": "string (max 50 chars, UPPERCASE)",
-  "hideSubtitle": false,
   "title": "string (max 100 chars)",
   "hideTitle": false,
   "description": "string (max 180 chars)",
   "hideDescription": false,
   "paragraphs": ["string (max 200 chars)", "string (max 200 chars)"],
-  "items": [{"id": "string", "name": "string (UPPERCASE)", "logo": null, "sortOrder": number, "hideClient": false}]
+  "items": [{"id": "string", "name": "string (UPPERCASE)", "logo": null, "sortOrder": number}]
 }`,
         rules: [
-          "subtitle: até 50 caracteres, EM MAIÚSCULAS",
           "title: até 100 caracteres",
           "description: até 180 caracteres",
           "paragraphs: 2 parágrafos, até 200 caracteres cada",

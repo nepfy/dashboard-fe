@@ -1042,20 +1042,37 @@ REGRAS OBRIGATÓRIAS:
       paragraphsCount: clientsResult.paragraphs?.length || 0,
     }));
 
+    // Calculate client items first
+    const clientItems = (clientsResult.items && clientsResult.items.length >= 6
+      ? clientsResult.items
+      : defaultClientItems
+    ).map((item, index) => ({
+      id: item.id || crypto.randomUUID(),
+      name: item.name || `CLIENTE ${index + 1}`,
+      logo: item.logo || undefined,
+      sortOrder: item.sortOrder ?? index,
+    }));
+
     sections.clients = {
-      hideSection: clientsResult.hideSection ?? false,
-      title: clientsResult.title || "Parceiros de sucesso",
-      description: clientsResult.description || "Empresas que confiaram em nosso trabalho",
-      paragraphs: clientsResult.paragraphs || [],
-      items: (clientsResult.items && clientsResult.items.length >= 6
-        ? clientsResult.items
-        : defaultClientItems
-      ).map((item, index) => ({
-        id: item.id || crypto.randomUUID(),
-        name: item.name || `CLIENTE ${index + 1}`,
-        logo: item.logo || undefined,
-        sortOrder: item.sortOrder ?? index,
-      })),
+      // FORCE hideSection to false when we have 6+ clients
+      hideSection: clientItems.length < 6,
+      
+      // FORCE hideSubtitle to true - user confirmed subtitle is unnecessary
+      subtitle: clientsResult.subtitle,
+      hideSubtitle: true,
+      
+      title: clientsResult.title || "Marcas que já confiaram no nosso trabalho",
+      hideTitle: clientsResult.hideTitle ?? false,
+      
+      description: clientsResult.description || "Construímos parcerias de longo prazo com empresas que valorizam estratégia, clareza e performance.",
+      hideDescription: clientsResult.hideDescription ?? false,
+      
+      paragraphs: clientsResult.paragraphs || [
+        "Na União Co., cuidamos dos bastidores da sua presença online com o mesmo cuidado que você dedica aos seus clientes.",
+        "Unimos estratégia, design e performance para transformar sua comunicação em uma ferramenta poderosa de atração e relacionamento."
+      ],
+      
+      items: clientItems,
     };
     
     console.log("✅ DEBUG - Clients Section Generated:", {

@@ -60,6 +60,15 @@ export default function MinimalClients({
 
   const logos = items && items.length > 0 ? items : [];
 
+  // DEBUG: Log to understand why only 4 clients show
+  console.log('🐛 MinimalClients Debug:', {
+    itemsProp: items?.length || 0,
+    logosLength: logos.length,
+    hideSection,
+    hideSubtitle,
+    firstItemName: items?.[0]?.name,
+  });
+
   const logoDefaults =
     logos.length === 0
       ? [
@@ -205,7 +214,7 @@ export default function MinimalClients({
                       updateClients({ title: newTitle })
                     }
                     editingId="clients-title"
-                    className="text-6xl font-light text-black"
+                    className="heading-style-h2 text-weight-normal"
                     canEdit={canEdit}
                   />
                 )}
