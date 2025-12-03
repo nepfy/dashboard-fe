@@ -774,15 +774,26 @@ export class MinimalTheme {
       servicesCount: introResult.services?.length || 0,
     }));
 
+    // Default services for marquee if AI doesn't generate any
+    const defaultServices = [
+      { id: crypto.randomUUID(), serviceName: "Imagem 1", sortOrder: 0 },
+      { id: crypto.randomUUID(), serviceName: "Imagem 2", sortOrder: 1 },
+      { id: crypto.randomUUID(), serviceName: "Imagem 3", sortOrder: 2 },
+      { id: crypto.randomUUID(), serviceName: "Imagem 4", sortOrder: 3 },
+    ];
+
     sections.introduction = {
       userName: introResult.userName || data.userName || "",
       email: introResult.email || data.userEmail || "",
       title: introResult.title || "Título da proposta",
       subtitle: introResult.subtitle || "Subtítulo explicativo sobre o projeto",
       hideSubtitle: introResult.hideSubtitle ?? false,
-      services: (introResult.services || []).map((service, index) => ({
+      services: (introResult.services && introResult.services.length > 0
+        ? introResult.services
+        : defaultServices
+      ).map((service, index) => ({
         id: service.id || crypto.randomUUID(),
-        serviceName: service.serviceName || `Serviço ${index + 1}`,
+        serviceName: service.serviceName || `Imagem ${index + 1}`,
         sortOrder: service.sortOrder ?? index,
       })),
     };

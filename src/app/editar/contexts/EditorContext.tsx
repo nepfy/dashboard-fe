@@ -13,6 +13,7 @@ import {
   TemplateData,
   ProposalData,
   IntroductionSection,
+  IntroductionService,
   AboutUsSection,
   TeamSection,
   PlansSection,
@@ -108,6 +109,12 @@ interface EditorContextType {
   // AboutUs item CRUD operations
   updateAboutUsItem: (itemId: string, data: Partial<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => void;
   reorderAboutUsItems: (items: Array<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => void;
+
+  // Introduction Services CRUD operations
+  updateIntroductionService: (serviceId: string, data: Partial<IntroductionService>) => void;
+  addIntroductionService: () => void;
+  deleteIntroductionService: (serviceId: string) => void;
+  reorderIntroductionServices: (services: IntroductionService[]) => void;
 
   // Testimonial CRUD operations
   updateTestimonialItem: (itemId: string, data: Partial<Testimonial>) => void;
@@ -744,6 +751,62 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     [updateSection]
   );
 
+  // Introduction Services CRUD operations
+  const updateIntroductionService = useCallback(
+    (serviceId: string, data: Partial<IntroductionService>) => {
+      if (!projectData?.proposalData?.introduction?.services) return;
+
+      const updatedServices = projectData.proposalData.introduction.services.map(
+        (service) => (service.id === serviceId ? { ...service, ...data } : service)
+      );
+
+      updateSection("introduction", { services: updatedServices });
+    },
+    [projectData, updateSection]
+  );
+
+  const addIntroductionService = useCallback(() => {
+    const currentServices = projectData?.proposalData?.introduction?.services || [];
+    
+    const newService: IntroductionService = {
+      id: crypto.randomUUID(),
+      serviceName: `Imagem ${currentServices.length + 1}`,
+      image: undefined,
+      sortOrder: currentServices.length,
+      hideItem: false,
+    };
+
+    updateSection("introduction", { services: [...currentServices, newService] });
+  }, [projectData, updateSection]);
+
+  const deleteIntroductionService = useCallback(
+    (serviceId: string) => {
+      if (!projectData?.proposalData?.introduction?.services) return;
+
+      const updatedServices = projectData.proposalData.introduction.services
+        .filter((service) => service.id !== serviceId)
+        .map((service, index) => ({
+          ...service,
+          sortOrder: index,
+        }));
+
+      updateSection("introduction", { services: updatedServices });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderIntroductionServices = useCallback(
+    (services: IntroductionService[]) => {
+      const reorderedServices = services.map((service, index) => ({
+        ...service,
+        sortOrder: index,
+      }));
+
+      updateSection("introduction", { services: reorderedServices });
+    },
+    [updateSection]
+  );
+
   // Testimonial CRUD operations
   const updateTestimonialItem = useCallback(
     (itemId: string, data: Partial<Testimonial>) => {
@@ -1071,6 +1134,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     reorderExpertiseTopics,
     updateAboutUsItem,
     reorderAboutUsItems,
+    updateIntroductionService,
+    addIntroductionService,
+    deleteIntroductionService,
+    reorderIntroductionServices,
     updateTestimonialItem,
     addTestimonialItem,
     deleteTestimonialItem,

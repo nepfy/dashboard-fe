@@ -10,6 +10,7 @@ import {
   StepTopic,
   FAQItem,
   AboutUsItem,
+  IntroductionService,
 } from "#/types/template-data";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 
@@ -17,7 +18,7 @@ interface EditableImageProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
   editingId: string;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs";
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
   items: (
     | TeamMember
     | Result
@@ -26,6 +27,7 @@ interface EditableImageProps {
     | StepTopic
     | FAQItem
     | AboutUsItem
+    | IntroductionService
   )[];
   currentItemId: string | null;
   onUpdateItem: (
@@ -38,6 +40,7 @@ interface EditableImageProps {
       | Partial<StepTopic>
       | Partial<FAQItem>
       | Partial<AboutUsItem>
+      | Partial<IntroductionService>
   ) => void;
   onReorderItems: (
     items:
@@ -48,6 +51,7 @@ interface EditableImageProps {
       | StepTopic[]
       | FAQItem[]
       | AboutUsItem[]
+      | IntroductionService[]
   ) => void;
   onUpdateSection?: (data: { hideIcon?: boolean }) => void;
   hideIcon?: boolean;

@@ -228,6 +228,7 @@ export interface DeliverablesSection extends BaseSection {
 export interface IntroductionService extends HideableItem, SortableItem {
   id: string;
   serviceName: string;
+  image?: string;
 }
 
 export interface IntroductionSection {
