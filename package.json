@@ -41,7 +41,7 @@
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.482.0",
     "nanoid": "^4.0.2",
-    "next": "^15.2.4",
+    "next": "^15.5.7",
     "posthog-js": "^1.281.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
