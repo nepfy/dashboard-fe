@@ -205,20 +205,30 @@ export default function MinimalIntro({
           margin-top: 4rem;
         }
 
+        .marquee_component:hover .marquee_content {
+          animation-play-state: paused;
+        }
+
+        .marquee_component.paused .marquee_content {
+          animation-play-state: paused;
+        }
+
         .marquee_content {
           display: flex;
-          gap: 1rem;
+          gap: 0;
           animation: marquee 30s linear infinite;
           height: 560px;
           max-height: 560px;
+          padding: 4px;
         }
 
         .marquee_item {
           display: flex;
-          gap: 1rem;
+          gap: 1.5rem;
           flex-shrink: 0;
           height: 560px;
           max-height: 560px;
+          padding: 4px;
         }
 
         .marquee-img {
@@ -231,11 +241,29 @@ export default function MinimalIntro({
           position: relative;
           z-index: 10;
           pointer-events: auto;
-          transition: transform 0.2s ease;
+          transition: all 0.2s ease;
         }
 
-        .marquee-img:hover {
-          transform: scale(1.02);
+        .marquee-img::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(1, 112, 214, 0.4);
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .marquee-img:hover::after {
+          opacity: 1;
+        }
+
+        .marquee-img.active::after {
+          opacity: 1;
         }
 
         .marquee-img video {
@@ -451,7 +479,9 @@ export default function MinimalIntro({
         </div>
 
         {/* Marquee */}
-        <div className="marquee_component">
+        <div
+          className={`marquee_component ${openServiceModalId ? "paused" : ""}`}
+        >
           <div className="marquee_content">
             {/* First set of images */}
             <div className="marquee_item">
@@ -460,8 +490,8 @@ export default function MinimalIntro({
                   key={service.id}
                   className={`marquee-img relative cursor-pointer ${
                     openServiceModalId === service.id
-                      ? "ring-2 ring-[#0170D6]"
-                      : "hover:ring-2 hover:ring-[#0170D6]"
+                      ? "active ring-4 ring-[#0170D6] ring-offset-2 ring-offset-black"
+                      : "hover:ring-2 hover:ring-[#0170D6] hover:ring-offset-2 hover:ring-offset-black"
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
@@ -499,8 +529,8 @@ export default function MinimalIntro({
                   key={`${service.id}-clone`}
                   className={`marquee-img relative cursor-pointer ${
                     openServiceModalId === service.id
-                      ? "ring-2 ring-[#0170D6]"
-                      : "hover:ring-2 hover:ring-[#0170D6]"
+                      ? "active ring-4 ring-[#0170D6] ring-offset-2 ring-offset-black"
+                      : "hover:ring-2 hover:ring-[#0170D6] hover:ring-offset-2 hover:ring-offset-black"
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
