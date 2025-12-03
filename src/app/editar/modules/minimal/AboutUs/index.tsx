@@ -1,13 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import { AboutUsSection, AboutUsItem } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "../../../contexts/EditorContext";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
-import { useState } from "react";
 
 export default function MinimalAboutUs({
   title,
@@ -17,11 +17,17 @@ export default function MinimalAboutUs({
   hideMarquee,
   items,
 }: AboutUsSection) {
-  const { updateAboutUs, updateAboutUsItem, reorderAboutUsItems, projectData, activeEditingId } = useEditor();
+  const {
+    updateAboutUs,
+    updateAboutUsItem,
+    reorderAboutUsItems,
+    projectData,
+    activeEditingId,
+  } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
 
-  console.log('🐛 AboutUs Debug:', {
+  console.log("🐛 AboutUs Debug:", {
     itemsLength: items?.length || 0,
     hideSection,
     openModalId,
@@ -206,7 +212,7 @@ export default function MinimalAboutUs({
                           : "hover:ring-2 hover:ring-[#0170D6]"
                       }`}
                       onClick={(e) => {
-                        console.log('🐛 AboutUs item clicked:', {
+                        console.log("🐛 AboutUs item clicked:", {
                           itemId: item.id,
                           index,
                           currentOpenId: openModalId,
@@ -216,13 +222,15 @@ export default function MinimalAboutUs({
                       }}
                     >
                       <div className="about-video">
-                        <img
-                          src={
-                            item.image ||
-                            "/images/templates/flash/placeholder.png"
-                          }
-                          alt={item.caption || ""}
-                        />
+                        {item.image && (
+                          <Image
+                            src={item.image}
+                            alt={item.caption || ""}
+                            fill
+                            style={{ objectFit: "cover" }}
+                            priority={index < 2}
+                          />
+                        )}
                       </div>
                       <div className="about-paragraph">
                         <EditableText
@@ -244,22 +252,26 @@ export default function MinimalAboutUs({
                         setIsModalOpen={(isOpen) =>
                           setOpenModalId(isOpen ? (item?.id ?? null) : null)
                         }
-                      editingId={`aboutUs-${item.id}`}
-                      itemType="aboutUs"
-                      items={items || []}
-                      currentItemId={item?.id ?? null}
-                      onUpdateItem={updateAboutUsItem}
-                      onReorderItems={(reorderedItems) => reorderAboutUsItems(reorderedItems as AboutUsItem[])}
-                    />
+                        editingId={`aboutUs-${item.id}`}
+                        itemType="aboutUs"
+                        items={items || []}
+                        currentItemId={item?.id ?? null}
+                        onUpdateItem={updateAboutUsItem}
+                        onReorderItems={(reorderedItems) =>
+                          reorderAboutUsItems(reorderedItems as AboutUsItem[])
+                        }
+                      />
                     </div>
                   ))
                 ) : (
                   <>
                     <div className="about-item about-item-1">
                       <div className="about-video">
-                        <img
+                        <Image
                           src="/images/templates/flash/placeholder.png"
                           alt=""
+                          fill
+                          style={{ objectFit: "cover" }}
                         />
                       </div>
                       <div className="about-paragraph">
@@ -268,9 +280,11 @@ export default function MinimalAboutUs({
                     </div>
                     <div className="about-item about-item-2">
                       <div className="about-video">
-                        <img
+                        <Image
                           src="/images/templates/flash/placeholder.png"
                           alt=""
+                          fill
+                          style={{ objectFit: "cover" }}
                         />
                       </div>
                       <div className="about-paragraph">
