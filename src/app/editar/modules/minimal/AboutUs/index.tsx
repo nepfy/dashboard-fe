@@ -73,6 +73,13 @@ export default function MinimalAboutUs({
           display: flex;
           flex-direction: column;
           gap: 1rem;
+          position: relative;
+          z-index: 1;
+          transition: all 0.2s ease;
+        }
+
+        .about-item:hover {
+          transform: scale(1.01);
         }
 
         .about-video {
@@ -81,6 +88,8 @@ export default function MinimalAboutUs({
           border-radius: 1rem;
           overflow: hidden;
           background: rgba(255, 255, 255, 0.05);
+          position: relative;
+          pointer-events: auto;
         }
 
         .about-video img,
@@ -194,7 +203,15 @@ export default function MinimalAboutUs({
                           ? "ring-2 ring-[#0170D6]"
                           : "hover:ring-2 hover:ring-[#0170D6]"
                       }`}
-                      onClick={() => setOpenModalId(item?.id ?? null)}
+                      onClick={(e) => {
+                        console.log('🐛 AboutUs item clicked:', {
+                          itemId: item.id,
+                          index,
+                          currentOpenId: openModalId,
+                          target: e.target,
+                        });
+                        setOpenModalId(item?.id ?? null);
+                      }}
                     >
                       <div className="about-video">
                         <img
