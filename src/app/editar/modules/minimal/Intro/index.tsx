@@ -1,8 +1,11 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
-import { IntroductionSection, IntroductionService } from "#/types/template-data";
+import Image from "next/image";
+import {
+  IntroductionSection,
+  IntroductionService,
+} from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
@@ -12,11 +15,26 @@ import EditableAvatar from "#/app/editar/components/EditableAvatar";
 import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "../../../contexts/EditorContext";
 
-export default function MinimalIntro({ userName, title, subtitle, logo, clientPhoto, services }: IntroductionSection) {
-  const { updateIntroduction, updateIntroductionService, reorderIntroductionServices, projectData, activeEditingId } = useEditor();
+export default function MinimalIntro({
+  userName,
+  title,
+  subtitle,
+  logo,
+  clientPhoto,
+  services,
+}: IntroductionSection) {
+  const {
+    updateIntroduction,
+    updateIntroductionService,
+    reorderIntroductionServices,
+    projectData,
+    activeEditingId,
+  } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
-  const [openServiceModalId, setOpenServiceModalId] = useState<string | null>(null);
+  const [openServiceModalId, setOpenServiceModalId] = useState<string | null>(
+    null
+  );
 
   const canEdit = activeEditingId === null;
 
@@ -156,10 +174,6 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
           margin-top: 4rem;
         }
 
-        .marquee_component:hover .marquee_content {
-          animation-play-state: paused;
-        }
-
         .marquee_content {
           display: flex;
           gap: 1rem;
@@ -191,7 +205,6 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
           transform: scale(1.02);
         }
 
-        .marquee-img img,
         .marquee-img video {
           width: 100%;
           height: 100%;
@@ -338,7 +351,7 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
               </div>
               <div className="hero_right">
                 {projectData?.projectValidUntil && (
-                  <div className="flex flex-col gap-3 items-end">
+                  <div className="flex flex-col items-end gap-3">
                     <div
                       className={`relative m-0 h-auto w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                     >
@@ -397,79 +410,140 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
           <div className="marquee_content">
             {/* First set of images */}
             <div className="marquee_item">
-              {services && services.length > 0 ? (
-                services.map((service) => (
-                  <div
-                    key={service.id}
-                    className={`marquee-img relative cursor-pointer ${
-                      openServiceModalId === service.id
-                        ? "ring-2 ring-[#0170D6]"
-                        : "hover:ring-2 hover:ring-[#0170D6]"
-                    }`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log('🐛 Marquee item clicked:', {
-                        serviceId: service.id,
-                        currentOpenId: openServiceModalId,
-                        target: e.target,
-                      });
-                      setOpenServiceModalId(service.id);
-                    }}
-                  >
-                    <img
-                      src={service.image || "/images/templates/flash/placeholder.png"}
-                      alt={service.serviceName || ""}
-                      style={{ pointerEvents: 'none', userSelect: 'none' }}
-                    />
-                    <EditableImage
-                      isModalOpen={openServiceModalId === service.id}
-                      setIsModalOpen={(isOpen) => {
-                        console.log('🐛 Marquee setIsModalOpen:', {
-                          isOpen,
+              {services && services.length > 0
+                ? services.map((service) => (
+                    <div
+                      key={service.id}
+                      className={`marquee-img relative cursor-pointer ${
+                        openServiceModalId === service.id
+                          ? "ring-2 ring-[#0170D6]"
+                          : "hover:ring-2 hover:ring-[#0170D6]"
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log("🐛 Marquee item clicked:", {
                           serviceId: service.id,
+                          currentOpenId: openServiceModalId,
+                          target: e.target,
                         });
-                        setOpenServiceModalId(isOpen ? service.id : null);
+                        setOpenServiceModalId(
+                          openServiceModalId === service.id ? null : service.id
+                        );
                       }}
-                      editingId={`intro-service-${service.id}`}
-                      itemType="introServices"
-                      items={services}
-                      currentItemId={service.id}
-                      onUpdateItem={(id, data) => updateIntroductionService(id as string, data as Partial<IntroductionService>)}
-                      onReorderItems={(items) => reorderIntroductionServices(items as IntroductionService[])}
-                    />
-                  </div>
-                ))
-              ) : (
-                // Default 4 placeholder images
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={`placeholder-${i}`} className="marquee-img">
-                    <img src="/images/templates/flash/placeholder.png" alt="" />
-                  </div>
-                ))
-              )}
+                    >
+                      <Image
+                        src={
+                          service.image ||
+                          "/images/templates/flash/placeholder.png"
+                        }
+                        alt={service.serviceName || ""}
+                        fill
+                        style={{
+                          objectFit: "cover",
+                          pointerEvents: "none",
+                          userSelect: "none",
+                        }}
+                        priority
+                      />
+                    </div>
+                  ))
+                : // Default 4 placeholder images
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={`placeholder-${i}`}
+                      className="marquee-img relative"
+                    >
+                      <Image
+                        src="/images/templates/flash/placeholder.png"
+                        alt=""
+                        fill
+                        style={{ objectFit: "cover" }}
+                        priority
+                      />
+                    </div>
+                  ))}
             </div>
             {/* Second set (duplicate for infinite scroll) */}
             <div className="marquee_item">
-              {services && services.length > 0 ? (
-                services.map((service) => (
-                  <div key={`${service.id}-clone`} className="marquee-img">
-                    <img
-                      src={service.image || "/images/templates/flash/placeholder.png"}
-                      alt={service.serviceName || ""}
-                    />
-                  </div>
-                ))
-              ) : (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={`placeholder-clone-${i}`} className="marquee-img">
-                    <img src="/images/templates/flash/placeholder.png" alt="" />
-                  </div>
-                ))
-              )}
+              {services && services.length > 0
+                ? services.map((service) => (
+                    <div
+                      key={`${service.id}-clone`}
+                      className={`marquee-img relative cursor-pointer ${
+                        openServiceModalId === service.id
+                          ? "ring-2 ring-[#0170D6]"
+                          : "hover:ring-2 hover:ring-[#0170D6]"
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setOpenServiceModalId(
+                          openServiceModalId === service.id ? null : service.id
+                        );
+                      }}
+                    >
+                      <Image
+                        src={
+                          service.image ||
+                          "/images/templates/flash/placeholder.png"
+                        }
+                        alt={service.serviceName || ""}
+                        fill
+                        style={{
+                          objectFit: "cover",
+                          pointerEvents: "none",
+                          userSelect: "none",
+                        }}
+                      />
+                    </div>
+                  ))
+                : Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={`placeholder-clone-${i}`}
+                      className="marquee-img relative"
+                    >
+                      <Image
+                        src="/images/templates/flash/placeholder.png"
+                        alt=""
+                        fill
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                  ))}
             </div>
           </div>
         </div>
+
+        {/* EditableImage modals rendered outside overflow container */}
+        {services &&
+          services.length > 0 &&
+          services.map((service) => (
+            <EditableImage
+              key={`modal-${service.id}`}
+              isModalOpen={openServiceModalId === service.id}
+              setIsModalOpen={(isOpen) => {
+                console.log("🐛 Marquee setIsModalOpen:", {
+                  isOpen,
+                  serviceId: service.id,
+                });
+                setOpenServiceModalId(isOpen ? service.id : null);
+              }}
+              editingId={`intro-service-${service.id}`}
+              itemType="introServices"
+              items={services}
+              currentItemId={service.id}
+              onUpdateItem={(id, data) =>
+                updateIntroductionService(
+                  id as string,
+                  data as Partial<IntroductionService>
+                )
+              }
+              onReorderItems={(items) =>
+                reorderIntroductionServices(items as IntroductionService[])
+              }
+            />
+          ))}
       </section>
     </>
   );
