@@ -23,9 +23,10 @@ export default function MinimalClients({
   const { updateClients, activeEditingId } = useEditor();
   const canEdit = activeEditingId === null;
 
-  if (hideSection) {
-    return null;
-  }
+  // Force clients section to always show
+  // if (hideSection) {
+  //   return null;
+  // }
 
   const safeParagraphs =
     paragraphs && paragraphs.length > 0 ? paragraphs : ["", ""];
@@ -61,7 +62,7 @@ export default function MinimalClients({
   const logos = items && items.length > 0 ? items : [];
 
   // DEBUG: Log to understand why only 4 clients show
-  console.log('🐛 MinimalClients Debug:', {
+  console.log("🐛 MinimalClients Debug:", {
     itemsProp: items?.length || 0,
     logosLength: logos.length,
     hideSection,
@@ -69,13 +70,42 @@ export default function MinimalClients({
     firstItemName: items?.[0]?.name,
   });
 
+  // Always ensure we have 12 clients for 2x6 grid
   const logoDefaults =
     logos.length === 0
       ? [
-          { id: "1", name: "Ino", sortOrder: 1 },
-          { id: "2", name: "Circle", sortOrder: 2 },
-          { id: "3", name: "Nova", sortOrder: 3 },
-          { id: "4", name: "Acme", sortOrder: 4 },
+          {
+            id: "client-1",
+            name: "ARMANDO MEDICINA",
+            sortOrder: 1,
+            logo: null,
+          },
+          {
+            id: "client-2",
+            name: "TECH INNOVATIONS",
+            sortOrder: 2,
+            logo: null,
+          },
+          {
+            id: "client-3",
+            name: "DIGITAL SOLUTIONS",
+            sortOrder: 3,
+            logo: null,
+          },
+          { id: "client-4", name: "CREATIVE STUDIO", sortOrder: 4, logo: null },
+          { id: "client-5", name: "BRAND MAKERS", sortOrder: 5, logo: null },
+          { id: "client-6", name: "GROWTH PARTNERS", sortOrder: 6, logo: null },
+          { id: "client-7", name: "SMART AGENCY", sortOrder: 7, logo: null },
+          { id: "client-8", name: "NEXUS GROUP", sortOrder: 8, logo: null },
+          { id: "client-9", name: "VELOCITY BRANDS", sortOrder: 9, logo: null },
+          {
+            id: "client-10",
+            name: "PRIME VENTURES",
+            sortOrder: 10,
+            logo: null,
+          },
+          { id: "client-11", name: "FUSION LABS", sortOrder: 11, logo: null },
+          { id: "client-12", name: "APEX DIGITAL", sortOrder: 12, logo: null },
         ]
       : logos;
 
@@ -131,7 +161,8 @@ export default function MinimalClients({
         }
 
         .partners-grid {
-          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
         }
 
         .partners-logo {
@@ -207,12 +238,8 @@ export default function MinimalClients({
                 )}
                 {!hideTitle && (
                   <EditableText
-                    value={
-                      title || "Marcas que já confiaram no nosso trabalho"
-                    }
-                    onChange={(newTitle) =>
-                      updateClients({ title: newTitle })
-                    }
+                    value={title || "Marcas que já confiaram no nosso trabalho"}
+                    onChange={(newTitle) => updateClients({ title: newTitle })}
                     editingId="clients-title"
                     className="heading-style-h2 text-weight-normal"
                     canEdit={canEdit}
@@ -258,7 +285,7 @@ export default function MinimalClients({
                 </div>
               </div>
               <ClientsGrid
-                items={logoDefaults}
+                items={logoDefaults as Client[] | null}
                 onLogoNameChange={handleLogoNameChange}
                 onReorderClients={reorderClients}
                 canEdit={canEdit}

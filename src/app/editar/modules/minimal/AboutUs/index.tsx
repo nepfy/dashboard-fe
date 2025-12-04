@@ -89,8 +89,6 @@ export default function MinimalAboutUs({
         .about-heading_title {
           display: flex;
           align-items: flex-start;
-          flex: 1;
-          max-width: 60%;
         }
 
         .about-content {

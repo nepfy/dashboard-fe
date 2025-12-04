@@ -9,7 +9,7 @@ interface EditableClientsProps {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
   editingId: string;
-  items: Client[];
+  items: Client[] | null;
   currentItemId: string | null;
   onReorderItems: (items: Client[]) => void;
   onClose: () => void;
@@ -19,7 +19,7 @@ export default function EditableClients({
   isModalOpen,
   setIsModalOpen,
   editingId,
-  items,
+  items = [],
   currentItemId,
   onReorderItems,
   onClose,
@@ -50,7 +50,7 @@ export default function EditableClients({
     <ClientEditorModal
       isOpen={isModalOpen}
       onClose={handleClose}
-      items={items}
+      items={items as Client[]}
       currentItemId={currentItemId}
       onReorderItems={onReorderItems}
     />

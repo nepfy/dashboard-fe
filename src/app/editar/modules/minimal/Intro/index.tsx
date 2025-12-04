@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import {
   IntroductionSection,
   IntroductionService,
@@ -146,7 +145,8 @@ export default function MinimalIntro({
         }
 
         .hero_left {
-          flex: 1;
+          flex: 0 1 auto;
+          max-width: 60%;
         }
 
         .heading-wrap {
@@ -197,9 +197,7 @@ export default function MinimalIntro({
 
         .marquee_component {
           position: relative;
-          overflow: hidden;
           margin-top: 4rem;
-          padding-bottom: 8px;
         }
 
         .marquee_component:hover .marquee_content {
@@ -208,26 +206,23 @@ export default function MinimalIntro({
 
         .marquee_content {
           display: flex;
-          gap: 0;
+          align-items: center;
+          gap: 1.5rem;
           animation: marquee 30s linear infinite;
-          height: 568px;
-          max-height: 568px;
-          padding: 4px;
         }
 
         .marquee_item {
           display: flex;
+          align-items: center;
           gap: 1.5rem;
           flex-shrink: 0;
-          height: 568px;
-          max-height: 568px;
-          padding: 4px;
         }
 
         .marquee-img {
           width: 72.5rem;
           height: 560px;
           flex-shrink: 0;
+          display: block;
         }
 
         .marquee-img video {
@@ -256,12 +251,6 @@ export default function MinimalIntro({
             padding-top: 5rem;
             padding-bottom: 5rem;
           }
-          .marquee_content {
-            height: 31.25rem;
-          }
-          .marquee_item {
-            height: 31.25rem;
-          }
           .marquee-img {
             width: 50rem;
             height: 31.25rem;
@@ -283,12 +272,6 @@ export default function MinimalIntro({
           .padding-global {
             padding-left: 1.5rem;
             padding-right: 1.5rem;
-          }
-          .marquee_content {
-            height: auto;
-          }
-          .marquee_item {
-            height: auto;
           }
           .marquee-img {
             width: 85vw;

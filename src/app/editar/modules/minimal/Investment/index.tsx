@@ -43,16 +43,16 @@ export default function MinimalInvestment({
         }
         
         .invest-component {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4rem;
-          align-items: center;
+          display: flex !important;
+          justify-content: space-between !important;
+          gap: 4rem !important;
+          align-items: flex-start !important;
         }
         
         .invest-heading {
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 2rem !important;
         }
         
         .text-style-allcaps {
@@ -138,7 +138,7 @@ export default function MinimalInvestment({
         
         @media screen and (max-width: 991px) {
           .invest-component {
-            grid-template-columns: 1fr;
+            flex-direction: column;
             gap: 3rem;
           }
         }

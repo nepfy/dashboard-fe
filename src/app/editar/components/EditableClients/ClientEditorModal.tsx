@@ -55,7 +55,7 @@ export default function ClientEditorModal({
   }, [currentItemId]);
 
   const currentItem =
-    items.find((item) => item.id === selectedItemId) ||
+    items?.find((item) => item.id === selectedItemId) ||
     pendingChanges.newItems.find((item) => item.id === selectedItemId) ||
     null;
 
@@ -70,7 +70,7 @@ export default function ClientEditorModal({
   };
 
   const handleAddItem = () => {
-    const totalItems = items.length + pendingChanges.newItems.length;
+    const totalItems = (items?.length || 0) + pendingChanges.newItems.length;
     const maxItems = 12;
 
     if (totalItems < maxItems) {
@@ -194,7 +194,9 @@ export default function ClientEditorModal({
   };
 
   const sortedItems = [
-    ...items.filter((item) => !pendingChanges.deletedItems.includes(item.id!)),
+    ...(items?.filter(
+      (item) => !pendingChanges.deletedItems.includes(item.id!)
+    ) || []),
     ...pendingChanges.newItems,
   ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 

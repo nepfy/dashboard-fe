@@ -121,29 +121,26 @@ export default function MinimalExpertise({
           max-width: 100ch;
         }
 
-        .text-style-allcaps {
+        .expertise-heading :global(.text-style-allcaps) {
           text-transform: uppercase;
           letter-spacing: 0.1em;
-          color: rgba(0, 0, 0, 0.5);
-          font-size: 0.75rem;
-          font-weight: 400;
+          color: #040404 !important;
+          font-size: 0.875rem !important;
+          font-weight: 500 !important;
+          opacity: 0.6 !important;
         }
 
-        .text-size-small {
-          font-size: 0.75rem;
+        .expertise-heading :global(.text-size-small) {
+          font-size: 0.875rem !important;
         }
 
-        .heading-style-h2 {
-          color: #040404;
-          margin: 0.75rem 0 0;
-          font-size: 3rem;
-          font-weight: 300;
-          line-height: 1.2;
+        .expertise-heading :global(.heading-style-h2) {
+          color: #040404 !important;
+          margin: 1.5rem 0 0 !important;
+          font-size: 3.5rem !important;
+          font-weight: 400 !important;
+          line-height: 1.3 !important;
           max-width: 48ch;
-        }
-        
-        .text-weight-normal {
-          font-weight: 300;
         }
 
         .expertise-grid {
@@ -192,27 +189,27 @@ export default function MinimalExpertise({
           height: 1.5rem;
         }
 
-        .text-weight-medium {
+        .expertise-card :global(.text-weight-medium) {
           font-weight: 500;
         }
 
-        .text-size-medium {
-          font-size: 1.125rem;
-          line-height: 1.35;
-          margin-bottom: 0.625rem;
-          font-weight: 500;
-          color: #040404;
+        .expertise-card :global(.text-size-medium) {
+          font-size: 1.25rem !important;
+          line-height: 1.4 !important;
+          margin-bottom: 0.75rem !important;
+          font-weight: 500 !important;
+          color: #040404 !important;
         }
 
-        .expertise-paragraph {
-          opacity: 0.7;
+        .expertise-card .expertise-paragraph {
+          opacity: 0.65 !important;
           max-width: 100%;
         }
 
-        .text-size-regular {
-          font-size: 0.9375rem;
-          line-height: 1.5;
-          color: #040404;
+        .expertise-card .expertise-paragraph :global(.text-size-regular) {
+          font-size: 1rem !important;
+          line-height: 1.6 !important;
+          color: #040404 !important;
         }
 
         .edit-button {

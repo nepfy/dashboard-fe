@@ -259,7 +259,71 @@ export class MinimalTheme {
   }
 
   /**
-   * Intelligently trim text to fit within character limit
+   * Use AI to rephrase text to fit within character limit while maintaining meaning
+   */
+  private async rephraseToFit(text: string, maxLength: number, context: string = ""): Promise<string> {
+    if (text.length <= maxLength) {
+      return text;
+    }
+
+    console.log(`🔄 Rephrasing ${context} (${text.length} -> ${maxLength} chars)`);
+
+    try {
+      const prompt = `Reescreva o seguinte texto mantendo EXATAMENTE o mesmo significado, mas com no máximo ${maxLength} caracteres.
+
+TEXTO ORIGINAL (${text.length} caracteres):
+"${text}"
+
+REGRAS IMPORTANTES:
+- Máximo de ${maxLength} caracteres (incluindo espaços e pontuação)
+- Manter o mesmo tom e significado
+- Ser conciso mas completo
+- Não usar reticências (...)
+- Responder APENAS com o texto reformulado, sem aspas ou explicações
+
+TEXTO REFORMULADO:`;
+
+      const stream = await this.together.chat.completions.create({
+        model: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        messages: [
+          {
+            role: "system",
+            content: "Você é um especialista em copywriting que reescreve textos mantendo o significado original mas de forma mais concisa."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: maxLength * 2,
+        stream: true,
+      });
+
+      let rephrased = "";
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        rephrased += content;
+      }
+
+      rephrased = rephrased.trim().replace(/^["']|["']$/g, "");
+
+      // Se ainda exceder, usar trim como fallback
+      if (rephrased.length > maxLength) {
+        console.warn(`⚠️  Rephrase ainda excedeu limite, usando trim como fallback`);
+        return this.intelligentTrim(rephrased, maxLength);
+      }
+
+      console.log(`✅ Rephrased successfully: ${rephrased.length} chars`);
+      return rephrased;
+    } catch (error) {
+      console.error(`❌ Error rephrasing, falling back to trim:`, error);
+      return this.intelligentTrim(text, maxLength);
+    }
+  }
+
+  /**
+   * Intelligently trim text to fit within character limit (fallback method)
    * Tries to preserve whole words and sentences when possible
    */
   private intelligentTrim(text: string, maxLength: number): string {
@@ -283,54 +347,111 @@ export class MinimalTheme {
     const lastSpace = trimmed.lastIndexOf(' ');
     if (lastSpace > maxLength * 0.8) {
       // If we can preserve at least 80% of content with complete words
-      return text.substring(0, lastSpace).trim() + '...';
+      return text.substring(0, lastSpace).trim();
     }
 
-    // Last resort: hard cut with ellipsis
-    return text.substring(0, maxLength - 3).trim() + '...';
+    // Last resort: hard cut
+    return text.substring(0, maxLength).trim();
   }
 
-  private validateIntroductionSection(
+  private async validateIntroductionSection(
     section: MinimalProposal["introduction"]
-  ): void {
+  ): Promise<void> {
+    // Auto-correct title if exceeds limit
+    if (section.title.length > 120) {
+      console.warn(`⚠️  Auto-correcting introduction.title (${section.title.length} -> 120 chars)`);
+      section.title = await this.rephraseToFit(section.title, 120, "introduction.title");
+    }
     this.ensureMaxLength(section.title, 120, "introduction.title");
+    
+    // Auto-correct subtitle if exceeds limit
     if (section.subtitle) {
+      if (section.subtitle.length > 180) {
+        console.warn(`⚠️  Auto-correcting introduction.subtitle (${section.subtitle.length} -> 180 chars)`);
+        section.subtitle = await this.rephraseToFit(section.subtitle, 180, "introduction.subtitle");
+      }
       this.ensureMaxLength(section.subtitle, 180, "introduction.subtitle");
     }
+    
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
-      section.services.forEach((service, index) => {
+      for (let index = 0; index < section.services.length; index++) {
+        const service = section.services[index];
+        // Auto-correct service name if exceeds limit
+        if (service.serviceName.length > 50) {
+          console.warn(`⚠️  Auto-correcting introduction.services[${index}].serviceName (${service.serviceName.length} -> 50 chars)`);
+          service.serviceName = await this.rephraseToFit(service.serviceName, 50, `introduction.services[${index}].serviceName`);
+        }
         this.ensureMaxLength(
           service.serviceName,
           50,
           `introduction.services[${index}].serviceName`
         );
-      });
+      }
     }
   }
 
-  private validateAboutUsSection(section: MinimalProposal["aboutUs"]): void {
+  private async validateAboutUsSection(section: MinimalProposal["aboutUs"]): Promise<void> {
+    // Auto-correct title if exceeds limit
+    if (section.title.length > 200) {
+      console.warn(`⚠️  Auto-correcting aboutUs.title (${section.title.length} -> 200 chars)`);
+      section.title = await this.rephraseToFit(section.title, 200, "aboutUs.title");
+    }
     this.ensureMaxLength(section.title, 200, "aboutUs.title");
   }
 
-  private validateTeamSection(section: MinimalProposal["team"]): void {
+  private async validateTeamSection(section: MinimalProposal["team"]): Promise<void> {
+    // Auto-correct title if exceeds limit
+    if (section.title.length > 100) {
+      console.warn(`⚠️  Auto-correcting team.title (${section.title.length} -> 100 chars)`);
+      section.title = await this.rephraseToFit(section.title, 100, "team.title");
+    }
     this.ensureMaxLength(section.title, 100, "team.title");
+    
     if (section.members) {
       this.ensureArrayRange(section.members, 1, 6, "team.members");
-      section.members.forEach((member, index) => {
+      for (let index = 0; index < section.members.length; index++) {
+        const member = section.members[index];
+        // Auto-correct member name if exceeds limit
+        if (member.name.length > 50) {
+          console.warn(`⚠️  Auto-correcting team.members[${index}].name (${member.name.length} -> 50 chars)`);
+          member.name = await this.rephraseToFit(member.name, 50, `team.members[${index}].name`);
+        }
+        // Auto-correct member role if exceeds limit
+        if (member.role.length > 50) {
+          console.warn(`⚠️  Auto-correcting team.members[${index}].role (${member.role.length} -> 50 chars)`);
+          member.role = await this.rephraseToFit(member.role, 50, `team.members[${index}].role`);
+        }
         this.ensureMaxLength(member.name, 50, `team.members[${index}].name`);
         this.ensureMaxLength(member.role, 50, `team.members[${index}].role`);
-      });
+      }
     }
   }
 
-  private validateExpertiseSection(
+  private async validateExpertiseSection(
     section: MinimalProposal["expertise"]
-  ): void {
+  ): Promise<void> {
+    // Auto-correct title if exceeds limit
+    if (section.title.length > 100) {
+      console.warn(`⚠️  Auto-correcting expertise.title (${section.title.length} -> 100 chars)`);
+      section.title = await this.rephraseToFit(section.title, 100, "expertise.title");
+    }
     this.ensureMaxLength(section.title, 100, "expertise.title");
+    
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 9, "expertise.topics");
-      section.topics.forEach((topic, index) => {
+      for (let index = 0; index < section.topics.length; index++) {
+        const topic = section.topics[index];
+        // Auto-correct topic title if exceeds limit
+        if (topic.title.length > 30) {
+          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].title (${topic.title.length} -> 30 chars)`);
+          topic.title = await this.rephraseToFit(topic.title, 30, `expertise.topics[${index}].title`);
+        }
+        // Auto-correct topic description if exceeds limit
+        if (topic.description.length > 120) {
+          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].description (${topic.description.length} -> 120 chars)`);
+          topic.description = await this.rephraseToFit(topic.description, 120, `expertise.topics[${index}].description`);
+        }
         this.ensureMaxLength(
           topic.title,
           30,
@@ -341,7 +462,7 @@ export class MinimalTheme {
           120,
           `expertise.topics[${index}].description`
         );
-      });
+      }
     }
   }
 
@@ -603,14 +724,14 @@ export class MinimalTheme {
     }
   }
 
-  private validateProposal(
+  private async validateProposal(
     proposal: MinimalProposal,
     expectedPlans: number
-  ): void {
-    this.validateIntroductionSection(proposal.introduction);
-    this.validateAboutUsSection(proposal.aboutUs);
-    this.validateTeamSection(proposal.team);
-    this.validateExpertiseSection(proposal.expertise);
+  ): Promise<void> {
+    await this.validateIntroductionSection(proposal.introduction);
+    await this.validateAboutUsSection(proposal.aboutUs);
+    await this.validateTeamSection(proposal.team);
+    await this.validateExpertiseSection(proposal.expertise);
     this.validateResultsSection(proposal.results);
     this.validateTestimonialsSection(proposal.testimonials);
     this.validateClientsSection(proposal.clients);
@@ -733,7 +854,7 @@ export class MinimalTheme {
     // Validate the complete proposal
     const expectedPlans =
       typeof data.selectedPlans === "number" ? data.selectedPlans : 1;
-    this.validateProposal(proposal, expectedPlans);
+    await this.validateProposal(proposal, expectedPlans);
 
     return proposal;
   }
@@ -1065,8 +1186,8 @@ REGRAS OBRIGATÓRIAS:
     }));
 
     sections.clients = {
-      // FORCE hideSection to false when we have 6+ clients
-      hideSection: clientItems.length < 6,
+      // ALWAYS show clients section - even with 0 items (will show placeholders)
+      hideSection: false,
       
       // FORCE hideSubtitle to true - user confirmed subtitle is unnecessary
       subtitle: clientsResult.subtitle,
