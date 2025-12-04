@@ -1,13 +1,13 @@
 "use client";
 
-import { TeamMember, Result, StepTopic } from "#/types/template-data";
+import { TeamMember, Result, StepTopic, AboutUsItem, IntroductionService } from "#/types/template-data";
 
 interface ItemSelectorProps {
-  items: (TeamMember | Result | StepTopic)[];
+  items: (TeamMember | Result | StepTopic | AboutUsItem | IntroductionService)[];
   selectedItemId: string | null;
   onItemSelect: (itemId: string) => void;
   onAddItem: () => void;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
 }
 
 export default function ItemSelector({

@@ -11,13 +11,15 @@ import {
   Testimonial,
   StepTopic,
   FAQItem,
+  AboutUsItem,
+  IntroductionService,
 } from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
 
 interface TabContentProps {
   activeTab: TabType;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
   currentItem:
     | TeamMember
     | Result
@@ -25,6 +27,8 @@ interface TabContentProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
     | null;
   sortedItems: (
     | TeamMember
@@ -33,6 +37,8 @@ interface TabContentProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
   )[];
   onUpdate: (
     data:
@@ -42,6 +48,8 @@ interface TabContentProps {
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
+      | Partial<IntroductionService>
       | {
           reorderedItems: (
             | TeamMember
@@ -50,6 +58,8 @@ interface TabContentProps {
             | Testimonial
             | StepTopic
             | FAQItem
+            | AboutUsItem
+            | IntroductionService
           )[];
         }
   ) => void;
@@ -150,11 +160,11 @@ export default function TabContent({
 
       {activeTab === "imagem" && itemType !== "expertise" && (
         <ImageTab
-          itemType={itemType as "team" | "results" | "testimonials"}
-          currentItem={currentItem as TeamMember | Result | Testimonial}
+          itemType={itemType as "team" | "results" | "testimonials" | "aboutUs" | "introServices"}
+          currentItem={currentItem as TeamMember | Result | Testimonial | AboutUsItem | IntroductionService}
           onUpdate={
             onUpdate as (
-              data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial>
+              data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial> | Partial<AboutUsItem> | Partial<IntroductionService>
             ) => void
           }
           setShowExploreGalleryInfo={setShowExploreGalleryInfo}

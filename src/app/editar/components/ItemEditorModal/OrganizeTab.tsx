@@ -25,11 +25,13 @@ import {
   Testimonial,
   StepTopic,
   FAQItem,
+  AboutUsItem,
+  IntroductionService,
 } from "#/types/template-data";
 import GrabIcon from "#/components/icons/GrabIcon";
 
 interface OrganizeTabProps {
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
   items: (
     | TeamMember
     | Result
@@ -37,6 +39,8 @@ interface OrganizeTabProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
   )[];
   onUpdate: (data: {
     reorderedItems: (
@@ -46,10 +50,12 @@ interface OrganizeTabProps {
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
+      | IntroductionService
     )[];
   }) => void;
   setShowConfirmExclusion: (show: boolean) => void;
-  onDeleteItem: (itemId: string) => void; // Add this prop
+  onDeleteItem: (itemId: string) => void;
 }
 
 interface SortableItemProps {
@@ -59,9 +65,11 @@ interface SortableItemProps {
     | ExpertiseTopic
     | Testimonial
     | StepTopic
-    | FAQItem;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
-  onDeleteItem: (itemId: string) => void; // Add this prop
+    | FAQItem
+    | AboutUsItem
+    | IntroductionService;
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
+  onDeleteItem: (itemId: string) => void;
 }
 
 function SortableItem({
@@ -111,7 +119,11 @@ function SortableItem({
                 ? (item as StepTopic).title
                 : itemType === "faq"
                   ? (item as FAQItem).question
-                  : (item as Testimonial).name}
+                  : itemType === "aboutUs"
+                    ? (item as AboutUsItem).caption || "Sem descrição"
+                    : itemType === "introServices"
+                      ? (item as IntroductionService).serviceName || "Sem nome"
+                      : (item as Testimonial).name}
       </div>
 
       {/* Delete Button */}

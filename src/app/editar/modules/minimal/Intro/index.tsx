@@ -465,19 +465,18 @@ export default function MinimalIntro({
             {/* Second set (duplicate for infinite scroll) */}
             <div className="marquee_item">
               {workingServices.map((service) => (
-                <div
+                <EditableMarqueeImage
                   key={`${service.id}-clone`}
-                  className="marquee-img relative"
-                >
-                  <Image
-                    src={
-                      service.image || "/images/templates/flash/placeholder.png"
-                    }
-                    alt={service.serviceName || ""}
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
+                  imageUrl={service.image}
+                  onImageChange={(url) => {
+                    updateIntroductionService(service.id, {
+                      image: url || undefined,
+                    });
+                  }}
+                  editingId={`intro-service-${service.id}-clone`}
+                  alt={service.serviceName || ""}
+                  className="marquee-img"
+                />
               ))}
             </div>
           </div>

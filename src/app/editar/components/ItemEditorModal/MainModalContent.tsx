@@ -12,6 +12,8 @@ import {
   Testimonial,
   StepTopic,
   FAQItem,
+  AboutUsItem,
+  IntroductionService,
 } from "#/types/template-data";
 
 type TabType = "conteudo" | "imagem" | "organizar";
@@ -25,6 +27,8 @@ interface MainModalContentProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
   )[];
   selectedItemId: string | null;
   currentItem:
@@ -34,6 +38,8 @@ interface MainModalContentProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
     | null;
   activeTab: TabType;
   pendingChanges: {
@@ -45,6 +51,8 @@ interface MainModalContentProps {
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
+      | Partial<IntroductionService>
     >;
     reorderedItems?: (
       | TeamMember
@@ -53,6 +61,8 @@ interface MainModalContentProps {
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
+      | IntroductionService
     )[];
     deletedItems: string[];
     newItems: (
@@ -62,6 +72,8 @@ interface MainModalContentProps {
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
+      | IntroductionService
     )[];
     sectionUpdates?: { hideIcon?: boolean };
   };
@@ -77,6 +89,8 @@ interface MainModalContentProps {
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
+      | Partial<IntroductionService>
       | {
           reorderedItems: (
             | TeamMember
@@ -85,6 +99,8 @@ interface MainModalContentProps {
             | Testimonial
             | StepTopic
             | FAQItem
+            | AboutUsItem
+            | IntroductionService
           )[];
         }
   ) => void;
@@ -159,11 +175,23 @@ export default function MainModalContent({
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
+      | IntroductionService
     )[]
-  ): "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" => {
+  ): "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices" => {
     if (items.length === 0) return "expertise";
 
     const firstItem = items[0];
+
+    // Check for aboutUs items (have image and caption)
+    if ("caption" in firstItem && "image" in firstItem) {
+      return "aboutUs";
+    }
+
+    // Check for introServices (have serviceName and image)
+    if ("serviceName" in firstItem && "image" in firstItem) {
+      return "introServices";
+    }
 
     // Check for team members (have name, role, but no testimonial)
     if (

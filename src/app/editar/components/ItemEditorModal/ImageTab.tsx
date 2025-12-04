@@ -4,15 +4,15 @@ import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import InfoIcon from "#/components/icons/InfoIcon";
-import { TeamMember, Result, Testimonial } from "#/types/template-data";
+import { TeamMember, Result, Testimonial, AboutUsItem, IntroductionService } from "#/types/template-data";
 import { useImageUpload } from "#/hooks/useImageUpload";
 import UploadFileIcon from "#/components/icons/UploadFileIcon";
 
 interface ImageTabProps {
-  itemType: "team" | "results" | "testimonials";
-  currentItem: TeamMember | Result | Testimonial | null;
+  itemType: "team" | "results" | "testimonials" | "aboutUs" | "introServices";
+  currentItem: TeamMember | Result | Testimonial | AboutUsItem | IntroductionService | null;
   onUpdate: (
-    data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial>
+    data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial> | Partial<AboutUsItem> | Partial<IntroductionService>
   ) => void;
   setShowExploreGalleryInfo: (show: boolean) => void;
   setShowPexelsGallery: (show: boolean) => void;
@@ -77,7 +77,7 @@ export default function ImageTab({
     try {
       const result = await uploadImage(file);
       if (result.success && result.data) {
-        if (itemType === "team") {
+        if (itemType === "team" || itemType === "aboutUs" || itemType === "introServices") {
           onUpdate({ image: result.data.url });
         } else if (itemType === "results" || itemType === "testimonials") {
           onUpdate({ photo: result.data.url });

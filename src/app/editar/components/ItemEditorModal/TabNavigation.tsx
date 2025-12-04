@@ -11,7 +11,9 @@ interface TabNavigationProps {
     | "expertise"
     | "testimonials"
     | "steps"
-    | "faq";
+    | "faq"
+    | "aboutUs"
+    | "introServices";
 }
 
 export default function TabNavigation({

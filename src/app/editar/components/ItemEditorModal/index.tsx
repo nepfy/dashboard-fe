@@ -171,7 +171,7 @@ export default function ItemEditorModal({
         ? 10
         : itemType === "expertise"
           ? 9
-          : 6; // team, results, testimonials
+          : 6; // team, results, testimonials, aboutUs, introServices
 
     if (totalItems < maxItems) {
       const newItem:
@@ -180,7 +180,9 @@ export default function ItemEditorModal({
         | ExpertiseTopic
         | Testimonial
         | StepTopic
-        | FAQItem =
+        | FAQItem
+        | AboutUsItem
+        | IntroductionService =
         itemType === "team"
           ? {
               id: `temp-${Date.now()}`,
@@ -229,15 +231,29 @@ export default function ItemEditorModal({
                       hideQuestion: false,
                       hideAnswer: false,
                     }
-                  : {
-                      id: `temp-${Date.now()}`,
-                      name: "",
-                      role: "",
-                      testimonial: "",
-                      photo: "",
-                      sortOrder: totalItems,
-                      hidePhoto: false,
-                    };
+                  : itemType === "aboutUs"
+                    ? {
+                        id: `temp-${Date.now()}`,
+                        image: "",
+                        caption: "",
+                        sortOrder: totalItems,
+                      }
+                    : itemType === "introServices"
+                      ? {
+                          id: `temp-${Date.now()}`,
+                          image: "",
+                          serviceName: "",
+                          sortOrder: totalItems,
+                        }
+                      : {
+                          id: `temp-${Date.now()}`,
+                          name: "",
+                          role: "",
+                          testimonial: "",
+                          photo: "",
+                          sortOrder: totalItems,
+                          hidePhoto: false,
+                        };
 
       setPendingChanges((prev) => ({
         ...prev,
@@ -462,6 +478,10 @@ export default function ItemEditorModal({
         return "Etapas do processo";
       case "faq":
         return "Perguntas Frequentes";
+      case "aboutUs":
+        return "Sobre Nós";
+      case "introServices":
+        return "Serviços";
       default:
         return "Passos";
     }
@@ -561,7 +581,9 @@ export default function ItemEditorModal({
             onClose={() => setShowPexelsGallery(false)}
             onSelectImage={(imageUrl) => {
               handleUpdateItem(
-                itemType === "team" ? { image: imageUrl } : { photo: imageUrl }
+                itemType === "team" || itemType === "aboutUs" || itemType === "introServices"
+                  ? { image: imageUrl }
+                  : { photo: imageUrl }
               );
               setShowPexelsGallery(false);
             }}

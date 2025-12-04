@@ -8,11 +8,13 @@ import {
   Testimonial,
   StepTopic,
   FAQItem,
+  AboutUsItem,
+  IntroductionService,
 } from "#/types/template-data";
 import { CurrencyInput } from "#/components/Inputs";
 
 interface ContentTabProps {
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
   currentItem:
     | TeamMember
     | Result
@@ -20,6 +22,8 @@ interface ContentTabProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
     | null;
   onUpdate: (
     data:
@@ -29,6 +33,8 @@ interface ContentTabProps {
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
+      | Partial<IntroductionService>
   ) => void;
   onDeleteItem: (itemId: string) => void; // Change this to accept itemId
 }
@@ -95,6 +101,12 @@ export default function ContentTab({
       if (field === "name") return testimonial.name || "";
       if (field === "role") return testimonial.role || "";
       if (field === "testimonial") return testimonial.testimonial || "";
+    } else if (itemType === "aboutUs") {
+      const aboutUs = currentItem as AboutUsItem;
+      if (field === "caption") return aboutUs.caption || "";
+    } else if (itemType === "introServices") {
+      const introService = currentItem as IntroductionService;
+      if (field === "serviceName") return introService.serviceName || "";
     }
 
     return "";
@@ -143,14 +155,21 @@ export default function ContentTab({
       } else if (field === "answer") {
         onUpdate({ answer: value });
       }
-    } else {
-      // testimonials
+    } else if (itemType === "testimonials") {
       if (field === "name") {
         onUpdate({ name: value });
       } else if (field === "role") {
         onUpdate({ role: value });
       } else if (field === "testimonial") {
         onUpdate({ testimonial: value });
+      }
+    } else if (itemType === "aboutUs") {
+      if (field === "caption") {
+        onUpdate({ caption: value });
+      }
+    } else if (itemType === "introServices") {
+      if (field === "serviceName") {
+        onUpdate({ serviceName: value });
       }
     }
   };
@@ -386,6 +405,38 @@ export default function ContentTab({
             />
           </div>
         </>
+      )}
+
+      {/* AboutUs-specific fields */}
+      {itemType === "aboutUs" && (
+        <div className="flex items-center justify-between gap-2">
+          <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+            Descrição
+          </label>
+          <textarea
+            value={getFormValue("caption")}
+            onChange={(e) => handleInputChange("caption", e.target.value)}
+            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+            placeholder="Digite a descrição"
+            rows={5}
+          />
+        </div>
+      )}
+
+      {/* IntroServices-specific fields */}
+      {itemType === "introServices" && (
+        <div className="flex items-center justify-between gap-2">
+          <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
+            Nome do serviço
+          </label>
+          <input
+            type="text"
+            value={getFormValue("serviceName")}
+            onChange={(e) => handleInputChange("serviceName", e.target.value)}
+            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
+            placeholder="Digite o nome do serviço"
+          />
+        </div>
       )}
 
       {/* Action buttons */}
