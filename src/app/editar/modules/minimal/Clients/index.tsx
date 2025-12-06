@@ -11,12 +11,6 @@ interface MinimalClientsProps extends ClientsSection {
 
 export default function MinimalClients({
   hideSection,
-  subtitle,
-  hideSubtitle,
-  title,
-  hideTitle,
-  description,
-  hideDescription,
   paragraphs,
   items,
 }: MinimalClientsProps) {
@@ -135,34 +129,25 @@ export default function MinimalClients({
 
         .partners-heading {
           max-width: 980px;
-          padding-bottom: 2rem;
-        }
-
-        .partners-subtitle {
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          font-size: 1em;
-          font-weight: 500;
-          color: #000;
-          opacity: 0.6;
-          margin-bottom: 1rem;
+          padding-bottom: 4rem;
         }
 
         .partners-paragraph {
           display: flex;
           flex-direction: column;
-          align-items: flex-end;
-          justify-content: flex-end;
-          gap: 1rem;
-          max-width: 100%;
-          font-size: 1.25rem;
-          line-height: 1.5;
+          align-items: flex-start;
+          justify-content: flex-start;
+          gap: 2rem;
+          max-width: 650px;
+          font-size: 1.125rem;
+          line-height: 1.6;
           color: #000;
+          margin-bottom: 6rem;
         }
 
         .partners-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 1.5rem;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 2rem;
         }
 
         .partners-logo {
@@ -170,10 +155,11 @@ export default function MinimalClients({
           display: flex;
           align-items: center;
           justify-content: center;
-          background: whitesmoke;
+          background: #f5f5f5;
           transition: all 0.2s ease;
-          max-width: 228px;
-          max-height: 228px;
+          width: 100%;
+          max-width: 180px;
+          max-height: 180px;
         }
 
         .partners-logo:hover {
@@ -202,6 +188,14 @@ export default function MinimalClients({
           .section_partners {
             padding: 6rem 0;
           }
+          .partners-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+          }
+          .partners-logo {
+            max-width: 150px;
+            max-height: 150px;
+          }
         }
 
         @media screen and (max-width: 767px) {
@@ -210,13 +204,11 @@ export default function MinimalClients({
           }
           .partners-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
+            gap: 1rem;
           }
-        }
-
-        @media screen and (min-width: 768px) and (max-width: 991px) {
-          .partners-grid {
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          .partners-logo {
+            max-width: 120px;
+            max-height: 120px;
           }
         }
       `}</style>
@@ -224,44 +216,8 @@ export default function MinimalClients({
         <div className="padding-global">
           <div className="container-large">
             <div className="partners-component">
-              <div className="partners-heading">
-                {!hideSubtitle && (
-                  <EditableText
-                    value={subtitle || "PARCEIROS QUE CONFIAM"}
-                    onChange={(newSubtitle) =>
-                      updateClients({ subtitle: newSubtitle })
-                    }
-                    editingId="clients-subtitle"
-                    className="partners-subtitle"
-                    canEdit={canEdit}
-                  />
-                )}
-                {!hideTitle && (
-                  <EditableText
-                    value={title || "Marcas que já confiaram no nosso trabalho"}
-                    onChange={(newTitle) => updateClients({ title: newTitle })}
-                    editingId="clients-title"
-                    className="heading-style-h2 text-weight-normal"
-                    canEdit={canEdit}
-                  />
-                )}
-                {!hideDescription && (
-                  <EditableText
-                    value={
-                      description ||
-                      "Construímos parcerias de longo prazo com empresas que valorizam estratégia, clareza e performance."
-                    }
-                    onChange={(newDescription) =>
-                      updateClients({ description: newDescription })
-                    }
-                    editingId="clients-description"
-                    className="mt-4 block max-w-[42rem] text-4xl text-black opacity-80"
-                    canEdit={canEdit}
-                  />
-                )}
-              </div>
               <div className="partners-paragraph">
-                <div className="flex max-w-[45rem] flex-col items-end justify-end gap-6">
+                <div className="flex max-w-[45rem] flex-col items-start justify-start gap-6">
                   <EditableText
                     value={
                       safeParagraphs[0] ||

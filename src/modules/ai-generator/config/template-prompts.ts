@@ -982,24 +982,39 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
-FORMATO:
+⚠️⚠️⚠️ REGRA ABSOLUTA #1 ⚠️⚠️⚠️
+SEMPRE retorne "hideSection": false
+Esta seção DEVE estar SEMPRE visível quando há projeto
+NUNCA defina hideSection como true
+
+⚠️⚠️⚠️ REGRA ABSOLUTA #2 ⚠️⚠️⚠️
+items DEVE conter EXATAMENTE 12 clientes
+NÃO envie lista vazia []
+NÃO envie menos de 12
+NÃO envie mais de 12
+
+FORMATO OBRIGATÓRIO:
 {
   "hideSection": false,
   "title": "Título principal sobre confiança/parceria com até 100 caracteres",
   "hideTitle": false,
-  "description": "Descrição sobre a relação com clientes com até 180 caracteres",
-  "hideDescription": false,
   "paragraphs": [
     "Parágrafo 1 sobre abordagem de trabalho com até 200 caracteres",
     "Parágrafo 2 sobre proposta de valor com até 200 caracteres"
   ],
   "items": [
-    {
-      "id": "1",
-      "name": "NOME MARCA",
-      "logo": null,
-      "sortOrder": 0
-    }
+    {"id": "1", "name": "NOME MARCA 1", "logo": null, "sortOrder": 0},
+    {"id": "2", "name": "NOME MARCA 2", "logo": null, "sortOrder": 1},
+    {"id": "3", "name": "NOME MARCA 3", "logo": null, "sortOrder": 2},
+    {"id": "4", "name": "NOME MARCA 4", "logo": null, "sortOrder": 3},
+    {"id": "5", "name": "NOME MARCA 5", "logo": null, "sortOrder": 4},
+    {"id": "6", "name": "NOME MARCA 6", "logo": null, "sortOrder": 5},
+    {"id": "7", "name": "NOME MARCA 7", "logo": null, "sortOrder": 6},
+    {"id": "8", "name": "NOME MARCA 8", "logo": null, "sortOrder": 7},
+    {"id": "9", "name": "NOME MARCA 9", "logo": null, "sortOrder": 8},
+    {"id": "10", "name": "NOME MARCA 10", "logo": null, "sortOrder": 9},
+    {"id": "11", "name": "NOME MARCA 11", "logo": null, "sortOrder": 10},
+    {"id": "12", "name": "NOME MARCA 12", "logo": null, "sortOrder": 11}
   ]
 }
 
@@ -1010,46 +1025,89 @@ INSTRUÇÕES CRÍTICAS DE CONTAGEM:
 
 LIMITES OBRIGATÓRIOS:
 - title: ATÉ 100 caracteres (conte letra por letra!)
-- description: ATÉ 180 caracteres (conte letra por letra!)
 - paragraphs: 2 parágrafos, ATÉ 200 caracteres CADA (conte!)
-- items: EXATAMENTE 12 nomes (NÃO MAIS, NÃO MENOS!)
+- items: EXATAMENTE 12 clientes (veja exemplo acima!)
 - item.name: ATÉ 50 caracteres, MAIÚSCULAS (conte!)
+- item.id: string numérico de "1" a "12"
+- item.sortOrder: número de 0 a 11
 
 EXEMPLOS CORRETOS:
 
+✅ title (100 chars ou menos):
+"Marcas que já confiaram no nosso trabalho" = 42 chars ✓
+"Empresas que transformaram seus resultados conosco" = 51 chars ✓
+
 ✅ paragraphs (200 chars ou menos):
 "Trabalhamos lado a lado com nossos clientes, entendendo suas necessidades únicas e desenvolvendo soluções personalizadas que geram resultados concretos e duradouros" = 168 chars ✓
+"Cada parceria é construída com base em confiança, transparência e comprometimento com a excelência em cada detalhe do projeto" = 127 chars ✓
+
+✅ item.name (50 chars ou menos, MAIÚSCULAS):
+"TECH SOLUTIONS" = 14 chars ✓
+"DIGITAL INNOVATIONS" = 19 chars ✓
+"CREATIVE STUDIO PRO" = 19 chars ✓
 
 ❌ ERRADO:
 "Trabalhamos de forma colaborativa lado a lado com todos os nossos clientes, entendendo profundamente suas necessidades específicas e únicas e desenvolvendo soluções completamente personalizadas" = 198 chars... ✗ MUITO LONGO!
 
-⚠️⚠️⚠️ REGRAS ABSOLUTAS - LEIA COM ATENÇÃO ⚠️⚠️⚠️
+EXEMPLO COMPLETO DE RESPOSTA:
+{
+  "hideSection": false,
+  "title": "Marcas que já confiaram no nosso trabalho",
+  "hideTitle": false,
+  "paragraphs": [
+    "Trabalhamos com empresas que valorizam qualidade, estratégia e resultados concretos em cada projeto.",
+    "Cada parceria é única e construída com base em confiança, transparência e excelência."
+  ],
+  "items": [
+    {"id": "1", "name": "TECH SOLUTIONS", "logo": null, "sortOrder": 0},
+    {"id": "2", "name": "DIGITAL INNOVATIONS", "logo": null, "sortOrder": 1},
+    {"id": "3", "name": "CREATIVE STUDIO", "logo": null, "sortOrder": 2},
+    {"id": "4", "name": "BRAND MAKERS", "logo": null, "sortOrder": 3},
+    {"id": "5", "name": "GROWTH PARTNERS", "logo": null, "sortOrder": 4},
+    {"id": "6", "name": "SMART AGENCY", "logo": null, "sortOrder": 5},
+    {"id": "7", "name": "NEXUS GROUP", "logo": null, "sortOrder": 6},
+    {"id": "8", "name": "VELOCITY BRANDS", "logo": null, "sortOrder": 7},
+    {"id": "9", "name": "PRIME VENTURES", "logo": null, "sortOrder": 8},
+    {"id": "10", "name": "FUSION LABS", "logo": null, "sortOrder": 9},
+    {"id": "11", "name": "APEX DIGITAL", "logo": null, "sortOrder": 10},
+    {"id": "12", "name": "QUANTUM CO", "logo": null, "sortOrder": 11}
+  ]
+}
 
-1. SEMPRE use "hideSection": false quando gerar clientes
-2. NÃO gere subtitle - este campo não é usado
-3. SEMPRE gere EXATAMENTE 12 clientes
-4. Esta seção DEVE estar visível se há conteúdo
-5. Nomes de clientes devem ser plausíveis para o setor
-
-REGRAS GERAIS:
+REGRAS ADICIONAIS:
+- NÃO gere campos subtitle, description, hideSubtitle, hideDescription
 - logo sempre null (usuário adiciona depois)
 - Nomes devem ser plausíveis para o setor do projeto
-- Usar linguagem direta, profissional e confiável`,
+- Usar linguagem direta, profissional e confiável
+- hideSection SEMPRE false
+- items SEMPRE com 12 clientes`,
         expectedFormat: `{
   "hideSection": false,
   "title": "string (max 100 chars)",
   "hideTitle": false,
-  "description": "string (max 180 chars)",
-  "hideDescription": false,
   "paragraphs": ["string (max 200 chars)", "string (max 200 chars)"],
-  "items": [{"id": "string", "name": "string (UPPERCASE)", "logo": null, "sortOrder": number}]
+  "items": [
+    {"id": "1", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 0},
+    {"id": "2", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 1},
+    {"id": "3", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 2},
+    {"id": "4", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 3},
+    {"id": "5", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 4},
+    {"id": "6", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 5},
+    {"id": "7", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 6},
+    {"id": "8", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 7},
+    {"id": "9", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 8},
+    {"id": "10", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 9},
+    {"id": "11", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 10},
+    {"id": "12", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 11}
+  ]
 }`,
         rules: [
           "title: até 100 caracteres",
-          "description: até 180 caracteres",
           "paragraphs: 2 parágrafos, até 200 caracteres cada",
-          "EXATAMENTE 12 marcas/clientes",
-          "Nomes em MAIÚSCULAS, curtos e plausíveis",
+          "EXATAMENTE 12 marcas/clientes (obrigatório)",
+          "Nomes em MAIÚSCULAS, até 50 caracteres, plausíveis",
+          "hideSection SEMPRE false",
+          "NÃO gerar subtitle ou description",
           "Linguagem profissional e confiável",
         ],
       },

@@ -1142,21 +1142,21 @@ REGRAS OBRIGATÓRIAS:
     };
 
     // Generate clients/brands section
+    console.log("🚀 Starting clients section generation...");
     const clientsPrompt = this.getSectionPrompt("clients", data);
     const clientsSystemPrompt = this.buildSystemPrompt(agent, "clients");
+    
+    console.log("📝 Clients Prompt Preview:", clientsPrompt.substring(0, 200) + "...");
+    
     const clientsResult = await this.runLLMWithJSONRetry<{
       hideSection?: boolean;
-      subtitle?: string;
-      hideSubtitle?: boolean;
       title?: string;
       hideTitle?: boolean;
-      description?: string;
-      hideDescription?: boolean;
       paragraphs?: string[];
       items?: Array<{
         id?: string;
         name: string;
-        logo?: string;
+        logo?: string | null;
         sortOrder?: number;
       }>;
     }>(clientsPrompt, clientsSystemPrompt);
@@ -1168,42 +1168,40 @@ REGRAS OBRIGATÓRIAS:
     );
 
     // Log AI result for debugging
-    console.log("🔍 DEBUG - Clients AI Result:", JSON.stringify({
+    console.log("🔍 DEBUG - Clients AI Result:", {
+      hideSection: clientsResult.hideSection,
       itemsCount: clientsResult.items?.length || 0,
-      hasSubtitle: !!clientsResult.subtitle,
       hasTitle: !!clientsResult.title,
-      hasDescription: !!clientsResult.description,
       paragraphsCount: clientsResult.paragraphs?.length || 0,
-    }));
+      firstItemName: clientsResult.items?.[0]?.name,
+      title: clientsResult.title,
+      willUseFallback: !clientsResult.items || clientsResult.items.length !== 12,
+    });
 
-    // Calculate client items first
-    const clientItems = (clientsResult.items && clientsResult.items.length >= 6
-      ? clientsResult.items
-      : defaultClientItems
+    // Validate that we have exactly 12 items, otherwise use defaults
+    const clientItems = (
+      clientsResult.items && clientsResult.items.length === 12
+        ? clientsResult.items
+        : defaultClientItems
     ).map((item, index) => ({
       id: item.id || crypto.randomUUID(),
       name: item.name || `CLIENTE ${index + 1}`,
       logo: item.logo || undefined,
       sortOrder: item.sortOrder ?? index,
     }));
+    
+    console.log("✅ Clients Items Final Count:", clientItems.length);
 
     sections.clients = {
-      // ALWAYS show clients section - even with 0 items (will show placeholders)
+      // ALWAYS show clients section - NEVER hide
       hideSection: false,
-      
-      // FORCE hideSubtitle to true - user confirmed subtitle is unnecessary
-      subtitle: clientsResult.subtitle,
-      hideSubtitle: true,
       
       title: clientsResult.title || "Marcas que já confiaram no nosso trabalho",
       hideTitle: clientsResult.hideTitle ?? false,
       
-      description: clientsResult.description || "Construímos parcerias de longo prazo com empresas que valorizam estratégia, clareza e performance.",
-      hideDescription: clientsResult.hideDescription ?? false,
-      
       paragraphs: clientsResult.paragraphs || [
-        "Na União Co., cuidamos dos bastidores da sua presença online com o mesmo cuidado que você dedica aos seus clientes.",
-        "Unimos estratégia, design e performance para transformar sua comunicação em uma ferramenta poderosa de atração e relacionamento."
+        "Trabalhamos com empresas que valorizam qualidade, estratégia e resultados concretos.",
+        "Cada parceria é única e construída com base em confiança, transparência e excelência."
       ],
       
       items: clientItems,
@@ -1213,6 +1211,7 @@ REGRAS OBRIGATÓRIAS:
       itemsCount: sections.clients.items?.length || 0,
       firstItem: sections.clients.items?.[0]?.name,
       title: sections.clients.title,
+      paragraphsCount: sections.clients.paragraphs?.length || 0,
     });
 
     // Generate steps
