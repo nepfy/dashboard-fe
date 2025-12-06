@@ -1196,13 +1196,10 @@ REGRAS OBRIGATÓRIAS:
       // ALWAYS show clients section - NEVER hide
       hideSection: false,
       
-      title: clientsResult.title || "Marcas que já confiaram no nosso trabalho",
+      title: clientsResult.title || "",
       hideTitle: clientsResult.hideTitle ?? false,
       
-      paragraphs: clientsResult.paragraphs || [
-        "Trabalhamos com empresas que valorizam qualidade, estratégia e resultados concretos.",
-        "Cada parceria é única e construída com base em confiança, transparência e excelência."
-      ],
+      paragraphs: clientsResult.paragraphs || ["", ""],
       
       items: clientItems,
     };
@@ -1212,6 +1209,7 @@ REGRAS OBRIGATÓRIAS:
       firstItem: sections.clients.items?.[0]?.name,
       title: sections.clients.title,
       paragraphsCount: sections.clients.paragraphs?.length || 0,
+      hasGeneratedContent: !!clientsResult.title && clientsResult.paragraphs && clientsResult.paragraphs.length > 0,
     });
 
     // Generate steps

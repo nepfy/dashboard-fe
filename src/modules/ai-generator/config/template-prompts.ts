@@ -974,7 +974,7 @@ REGRAS:
         prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
 NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
 
-Gere seção de clientes/parceiros com estilo minimalista e profissional.
+Gere seção de clientes/parceiros PERSONALIZADA para o projeto específico.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -993,14 +993,23 @@ NÃO envie lista vazia []
 NÃO envie menos de 12
 NÃO envie mais de 12
 
+⚠️⚠️⚠️ REGRA ABSOLUTA #3 ⚠️⚠️⚠️
+O CONTEÚDO DEVE SER PERSONALIZADO PARA O PROJETO!
+- title: Deve refletir a PROPOSTA DE VALOR da empresa que está fazendo a proposta
+- paragraph 1: Deve explicar como a empresa ajuda seus clientes, conectando com o contexto do projeto
+- paragraph 2: Deve destacar a filosofia/metodologia de trabalho da empresa
+
+NÃO use textos genéricos!
+Use as informações de {projectDescription} e {companyInfo} para criar conteúdo relevante!
+
 FORMATO OBRIGATÓRIO:
 {
   "hideSection": false,
-  "title": "Título principal sobre confiança/parceria com até 100 caracteres",
+  "title": "Título sobre a proposta de valor da EMPRESA (não do cliente) - máx 200 caracteres",
   "hideTitle": false,
   "paragraphs": [
-    "Parágrafo 1 sobre abordagem de trabalho com até 200 caracteres",
-    "Parágrafo 2 sobre proposta de valor com até 200 caracteres"
+    "Parágrafo 1: Como a empresa ajuda seus clientes, conectado ao contexto do projeto - máx 250 caracteres",
+    "Parágrafo 2: Filosofia/metodologia de trabalho da empresa - máx 200 caracteres"
   ],
   "items": [
     {"id": "1", "name": "NOME MARCA 1", "logo": null, "sortOrder": 0},
@@ -1018,61 +1027,42 @@ FORMATO OBRIGATÓRIO:
   ]
 }
 
-INSTRUÇÕES CRÍTICAS DE CONTAGEM:
-⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO que NÃO PODE ser ultrapassado!
-⚠️ Escreva, CONTE manualmente, e se ultrapassar, REESCREVA mais curto!
-⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
-
 LIMITES OBRIGATÓRIOS:
-- title: ATÉ 100 caracteres (conte letra por letra!)
-- paragraphs: 2 parágrafos, ATÉ 200 caracteres CADA (conte!)
+- title: ATÉ 200 caracteres (conte letra por letra!)
+- paragraph 1: ATÉ 250 caracteres (conte!)
+- paragraph 2: ATÉ 200 caracteres (conte!)
 - items: EXATAMENTE 12 clientes (veja exemplo acima!)
 - item.name: ATÉ 50 caracteres, MAIÚSCULAS (conte!)
-- item.id: string numérico de "1" a "12"
-- item.sortOrder: número de 0 a 11
 
-EXEMPLOS CORRETOS:
+EXEMPLOS DE CONTEÚDO PERSONALIZADO:
 
-✅ title (100 chars ou menos):
-"Marcas que já confiaram no nosso trabalho" = 42 chars ✓
-"Empresas que transformaram seus resultados conosco" = 51 chars ✓
+📌 PROJETO: Vitrine Digital para Velas Artesanais
+✅ title (personalizado):
+"Identificamos uma lacuna no mercado criativo—pequenos negócios artesanais frequentemente lutam para encontrar soluções de design de alta qualidade e acessíveis. Por isso existimos."
 
-✅ paragraphs (200 chars ou menos):
-"Trabalhamos lado a lado com nossos clientes, entendendo suas necessidades únicas e desenvolvendo soluções personalizadas que geram resultados concretos e duradouros" = 168 chars ✓
-"Cada parceria é construída com base em confiança, transparência e comprometimento com a excelência em cada detalhe do projeto" = 127 chars ✓
+✅ paragraph 1 (conectado ao projeto):
+"Sua vitrine online é provavelmente o primeiro ponto de contato que alguém terá com sua marca de velas artesanais. Destacamos você da multidão criando uma presença digital que mostra quem você é de forma inesquecível."
 
-✅ item.name (50 chars ou menos, MAIÚSCULAS):
-"TECH SOLUTIONS" = 14 chars ✓
-"DIGITAL INNOVATIONS" = 19 chars ✓
-"CREATIVE STUDIO PRO" = 19 chars ✓
+✅ paragraph 2 (filosofia):
+"Design é sobre criar experiências que tornam a vida das pessoas mais fácil, ou até divertida. Com isso em mente, fornecemos serviços para ser seu parceiro neste projeto."
 
-❌ ERRADO:
-"Trabalhamos de forma colaborativa lado a lado com todos os nossos clientes, entendendo profundamente suas necessidades específicas e únicas e desenvolvendo soluções completamente personalizadas" = 198 chars... ✗ MUITO LONGO!
+📌 PROJETO: Arquitetura Residencial
+✅ title:
+"Reconhecemos um desafio no setor residencial—famílias buscam projetos arquitetônicos personalizados mas acessíveis. Nossa expertise preenche essa lacuna."
 
-EXEMPLO COMPLETO DE RESPOSTA:
-{
-  "hideSection": false,
-  "title": "Marcas que já confiaram no nosso trabalho",
-  "hideTitle": false,
-  "paragraphs": [
-    "Trabalhamos com empresas que valorizam qualidade, estratégia e resultados concretos em cada projeto.",
-    "Cada parceria é única e construída com base em confiança, transparência e excelência."
-  ],
-  "items": [
-    {"id": "1", "name": "TECH SOLUTIONS", "logo": null, "sortOrder": 0},
-    {"id": "2", "name": "DIGITAL INNOVATIONS", "logo": null, "sortOrder": 1},
-    {"id": "3", "name": "CREATIVE STUDIO", "logo": null, "sortOrder": 2},
-    {"id": "4", "name": "BRAND MAKERS", "logo": null, "sortOrder": 3},
-    {"id": "5", "name": "GROWTH PARTNERS", "logo": null, "sortOrder": 4},
-    {"id": "6", "name": "SMART AGENCY", "logo": null, "sortOrder": 5},
-    {"id": "7", "name": "NEXUS GROUP", "logo": null, "sortOrder": 6},
-    {"id": "8", "name": "VELOCITY BRANDS", "logo": null, "sortOrder": 7},
-    {"id": "9", "name": "PRIME VENTURES", "logo": null, "sortOrder": 8},
-    {"id": "10", "name": "FUSION LABS", "logo": null, "sortOrder": 9},
-    {"id": "11", "name": "APEX DIGITAL", "logo": null, "sortOrder": 10},
-    {"id": "12", "name": "QUANTUM CO", "logo": null, "sortOrder": 11}
-  ]
-}
+✅ paragraph 1:
+"Seu projeto arquitetônico é o primeiro passo para transformar seu lar dos sonhos em realidade. Criamos ambientes que refletem seu estilo de vida de forma única e funcional."
+
+✅ paragraph 2:
+"Arquitetura é sobre criar espaços que melhoram a qualidade de vida. Combinamos técnica e sensibilidade para entregar projetos que superam expectativas."
+
+INSTRUÇÕES FINAIS:
+- NÃO copie os exemplos acima literalmente!
+- USE os dados do projeto para criar conteúdo ÚNICO
+- O title deve falar sobre a PROPOSTA DE VALOR da empresa que faz a proposta
+- Os paragraphs devem conectar essa proposta ao contexto específico do projeto
+- Mantenha tom profissional, autêntico e direto
+- Conte os caracteres antes de enviar!
 
 REGRAS ADICIONAIS:
 - NÃO gere campos subtitle, description, hideSubtitle, hideDescription
@@ -1083,9 +1073,12 @@ REGRAS ADICIONAIS:
 - items SEMPRE com 12 clientes`,
         expectedFormat: `{
   "hideSection": false,
-  "title": "string (max 100 chars)",
+  "title": "string (max 200 chars, value proposition)",
   "hideTitle": false,
-  "paragraphs": ["string (max 200 chars)", "string (max 200 chars)"],
+  "paragraphs": [
+    "string (max 250 chars, how you help clients in this context)",
+    "string (max 200 chars, work philosophy/methodology)"
+  ],
   "items": [
     {"id": "1", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 0},
     {"id": "2", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 1},
@@ -1102,13 +1095,14 @@ REGRAS ADICIONAIS:
   ]
 }`,
         rules: [
-          "title: até 100 caracteres",
-          "paragraphs: 2 parágrafos, até 200 caracteres cada",
+          "title: até 200 caracteres, proposta de valor da empresa",
+          "paragraph 1: até 250 caracteres, como ajuda clientes neste contexto",
+          "paragraph 2: até 200 caracteres, filosofia de trabalho",
           "EXATAMENTE 12 marcas/clientes (obrigatório)",
           "Nomes em MAIÚSCULAS, até 50 caracteres, plausíveis",
           "hideSection SEMPRE false",
+          "Conteúdo PERSONALIZADO baseado no projeto",
           "NÃO gerar subtitle ou description",
-          "Linguagem profissional e confiável",
         ],
       },
 

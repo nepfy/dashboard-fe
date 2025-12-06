@@ -11,6 +11,8 @@ interface MinimalClientsProps extends ClientsSection {
 
 export default function MinimalClients({
   hideSection,
+  title,
+  hideTitle,
   paragraphs,
   items,
 }: MinimalClientsProps) {
@@ -55,12 +57,18 @@ export default function MinimalClients({
 
   const logos = items && items.length > 0 ? items : [];
 
-  // DEBUG: Log to understand why only 4 clients show
-  console.log("🐛 MinimalClients Debug:", {
-    itemsProp: items?.length || 0,
-    logosLength: logos.length,
+  // DEBUG: Log incoming data from AI
+  console.log("🔍 MinimalClients - Incoming Props:", {
+    hasTitle: !!title,
+    titleLength: title?.length || 0,
+    titlePreview: title?.substring(0, 50),
+    hasParagraphs: !!paragraphs,
+    paragraphsCount: paragraphs?.length || 0,
+    paragraph1Preview: paragraphs?.[0]?.substring(0, 50),
+    paragraph2Preview: paragraphs?.[1]?.substring(0, 50),
+    itemsCount: items?.length || 0,
     hideSection,
-    firstItemName: items?.[0]?.name,
+    hideTitle,
   });
 
   // Always ensure we have 12 clients for 2x6 grid
@@ -111,40 +119,56 @@ export default function MinimalClients({
           padding: 8rem 0;
         }
 
-        .w-layout-grid {
-          grid-row-gap: 16px;
-          grid-column-gap: 16px;
-          grid-template-rows: auto auto;
-          grid-template-columns: 1fr 1fr;
-          grid-auto-columns: 1fr;
-          display: grid;
-        }
-
         .partners-component {
           display: flex;
           flex-direction: column;
           gap: 6rem;
         }
 
-        .partners-heading {
-          max-width: 980px;
-          padding-bottom: 4rem;
-        }
-
-        .partners-paragraph {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          justify-content: flex-start;
-          gap: 2rem;
-          max-width: 650px;
-          font-size: 1.125rem;
-          line-height: 1.6;
-          color: #000;
+        .partners-header-grid {
+          display: grid;
+          grid-template-columns: 1.6fr 1fr;
+          grid-template-rows: auto auto;
+          gap: 4rem 6rem;
           margin-bottom: 6rem;
         }
 
+        .partners-heading {
+          grid-column: 1;
+          grid-row: 1;
+          align-self: start;
+          max-width: 100%;
+          padding-right: 2rem;
+        }
+
+        .partners-heading .heading-style-h2 {
+          font-size: 3rem;
+          line-height: 1.15;
+          font-weight: 400;
+          color: #000;
+          margin: 0;
+          letter-spacing: -0.02em;
+        }
+
+        .partners-paragraph {
+          grid-column: 2;
+          grid-row: 2;
+          align-self: end;
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          max-width: 100%;
+        }
+
+        .partners-paragraph .text-size-medium {
+          font-size: 1rem;
+          line-height: 1.65;
+          color: rgba(0, 0, 0, 0.65);
+          margin: 0;
+        }
+
         .partners-grid {
+          display: grid;
           grid-template-columns: repeat(6, 1fr);
           gap: 2rem;
         }
@@ -187,6 +211,25 @@ export default function MinimalClients({
           .section_partners {
             padding: 6rem 0;
           }
+          .partners-header-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto;
+            gap: 3rem;
+            margin-bottom: 4rem;
+          }
+          .partners-heading {
+            grid-column: 1;
+            grid-row: 1;
+            padding-right: 0;
+          }
+          .partners-heading .heading-style-h2 {
+            font-size: 2.25rem;
+          }
+          .partners-paragraph {
+            grid-column: 1;
+            grid-row: 2;
+            align-self: start;
+          }
           .partners-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
@@ -200,6 +243,20 @@ export default function MinimalClients({
         @media screen and (max-width: 767px) {
           .section_partners {
             padding: 5rem 0;
+          }
+          .partners-header-grid {
+            gap: 2rem;
+            margin-bottom: 3rem;
+          }
+          .partners-heading .heading-style-h2 {
+            font-size: 1.75rem;
+          }
+          .partners-paragraph {
+            gap: 1.5rem;
+          }
+          .partners-paragraph .text-size-medium {
+            font-size: 0.9375rem;
+            line-height: 1.6;
           }
           .partners-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -215,30 +272,43 @@ export default function MinimalClients({
         <div className="padding-global">
           <div className="container-large">
             <div className="partners-component">
-              <div className="partners-paragraph">
-                <div className="flex max-w-[45rem] flex-col items-start justify-start gap-6">
+              {/* Two-column header layout */}
+              <div className="partners-header-grid">
+                {/* Left column - Title */}
+                <div className="partners-heading">
+                  {!hideTitle && (
+                    <EditableText
+                      value={title || ""}
+                      onChange={(newTitle) =>
+                        updateClients({ title: newTitle })
+                      }
+                      editingId="clients-title"
+                      className="heading-style-h2"
+                      canEdit={canEdit}
+                    />
+                  )}
+                </div>
+
+                {/* Right column - Paragraphs */}
+                <div className="partners-paragraph">
                   <EditableText
-                    value={
-                      safeParagraphs[0] ||
-                      "Na União Co., cuidamos dos bastidores da sua presença online com o mesmo cuidado que você dedica aos seus clientes."
-                    }
+                    value={safeParagraphs[0] || ""}
                     onChange={(value) => handleParagraphChange(0, value)}
                     editingId="clients-paragraph-1"
-                    className="text-size-medium text-start text-black opacity-70"
+                    className="text-size-medium"
                     canEdit={canEdit}
                   />
                   <EditableText
-                    value={
-                      safeParagraphs[1] ||
-                      "Unimos estratégia, design e performance para transformar sua comunicação em uma ferramenta poderosa de atração e relacionamento."
-                    }
+                    value={safeParagraphs[1] || ""}
                     onChange={(value) => handleParagraphChange(1, value)}
                     editingId="clients-paragraph-2"
-                    className="text-size-medium text-start text-black opacity-70"
+                    className="text-size-medium"
                     canEdit={canEdit}
                   />
                 </div>
               </div>
+
+              {/* Clients grid */}
               <ClientsGrid
                 items={logoDefaults as Client[] | null}
                 onLogoNameChange={handleLogoNameChange}
