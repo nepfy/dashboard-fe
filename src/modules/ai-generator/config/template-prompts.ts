@@ -1156,15 +1156,16 @@ CrownIcon (para liderança/premium), HexagonalIcon (para estrutura/solidez), Bel
 
 INSTRUÇÕES CRÍTICAS DE CONTAGEM:
 ⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO que NÃO PODE ser ultrapassado!
-⚠️ Escreva, CONTE manualmente, e se ultrapassar, REESCREVA mais curto!
-⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
+⚠️ A DESCRIPTION É O ELEMENTO MAIS IMPORTANTE - deve ter MÍNIMO 120 caracteres!
+⚠️ Escreva, CONTE manualmente, e se tiver menos de 120 chars, REESCREVA mais longo!
+⚠️ NÃO envie descriptions curtas - serão REJEITADAS!
 
 LIMITES OBRIGATÓRIOS:
 - subtitle: ATÉ 60 caracteres (conte letra por letra!)
 - title: ATÉ 150 caracteres (conte letra por letra!)
 - topics: EXATAMENTE 9 áreas (grid 3x3) - NÃO MAIS, NÃO MENOS!
 - topic.title: ATÉ 40 caracteres CADA (conte!)
-- topic.description: ATÉ 180 caracteres CADA (conte e seja PROFISSIONAL!)
+- topic.description: MÍNIMO 120 caracteres, MÁXIMO 180 caracteres CADA (CONTE e seja PROFISSIONAL!)
 
 EXEMPLOS CORRETOS:
 
@@ -1173,9 +1174,16 @@ EXEMPLOS CORRETOS:
 "Marketing de Conteúdo" = 21 chars ✓
 "Design de Experiência do Usuário" = 33 chars ✓
 
-✅ topic.description (180 chars ou menos):
+✅ topic.description (120-180 chars - OBSERVE O TAMANHO!):
 "Desenvolvemos estratégias de marca completas que elevam seu posicionamento no mercado, criam conexões autênticas com seu público e estabelecem uma identidade visual memorável." = 177 chars ✓
-"Gestão completa das suas redes sociais com conteúdo estratégico, design profissional e engajamento real que transforma seguidores em clientes fiéis." = 151 chars ✓
+
+"Gestão completa das suas redes sociais com conteúdo estratégico, design profissional e engajamento real que transforma seguidores em clientes fiéis e fortalece sua presença online." = 180 chars ✓
+
+"Criamos experiências de usuário intuitivas e envolventes que facilitam a navegação, aumentam a satisfação e convertem visitantes em clientes através de design centrado no usuário." = 178 chars ✓
+
+❌ EXEMPLO ERRADO - MUITO CURTO (95 chars):
+"Desenvolvemos identidades visuais fortes e coerentes que destacam sua marca no mercado digital."
+^ REJEITADO! Menos de 120 caracteres!
 
 ❌ ERRADO:
 "Desenvolvemos estratégias completas e integradas de marca que elevam significativamente seu posicionamento no mercado e criam conexões profundas e duradouras com seu público-alvo através de experiências memoráveis" = 215 chars ✗ REJEITADO!
@@ -1184,6 +1192,7 @@ INSTRUÇÕES FINAIS:
 - Selecionar ícones que representem visualmente cada área de atuação
 - Usar linguagem PROFISSIONAL, COMPLETA e orientada a VALOR e RESULTADOS
 - Cada descrição deve explicar CLARAMENTE o que é feito e qual o BENEFÍCIO
+- Descriptions devem ter MÍNIMO 120 caracteres - conte antes de enviar!
 - NÃO usar adjetivos vagos como "incrível", "fantástico" - ser ESPECÍFICO
 - Textos devem transmitir EXPERTISE e CONFIANÇA
 - Adaptar expertise ao contexto e setor do projeto`,
@@ -1193,14 +1202,14 @@ INSTRUÇÕES FINAIS:
   "hideSubtitle": false,
   "title": "string (max 150 chars)",
   "hideIcon": false,
-  "topics": [{"id": "string", "icon": "string", "title": "string (max 40 chars)", "description": "string (max 180 chars)", "sortOrder": number}]
+  "topics": [{"id": "string", "icon": "string", "title": "string (max 40 chars)", "description": "string (MIN 120 chars, MAX 180 chars)", "sortOrder": number}]
 }`,
         rules: [
           "subtitle: até 60 caracteres, EM MAIÚSCULAS",
           "title: até 150 caracteres",
           "EXATAMENTE 9 topics (grid 3x3)",
           "topic.title: até 40 caracteres",
-          "topic.description: até 180 caracteres, PROFISSIONAL e COMPLETO",
+          "topic.description: MÍNIMO 120, MÁXIMO 180 caracteres - COMPLETO e PROFISSIONAL",
           "Ícones apropriados para cada área",
           "Linguagem profissional, completa e orientada a valor",
         ],

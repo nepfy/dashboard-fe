@@ -436,8 +436,23 @@ TEXTO REFORMULADO:`;
         // Auto-correct topic description if exceeds limit
         if (topic.description.length > 180) {
           console.warn(`⚠️  Auto-correcting expertise.topics[${index}].description (${topic.description.length} -> 180 chars)`);
-          topic.description = await this.rephraseToFit(topic.description, 180, `expertise.topics[${index}].description`);
+          const rephrased = await this.rephraseToFit(topic.description, 180, `expertise.topics[${index}].description`);
+          
+          // If rephrased is too short (< 120), use a truncated version instead
+          if (rephrased.length < 120) {
+            console.warn(`⚠️  Rephrased description too short (${rephrased.length} chars), using smart truncate to 150-180 range`);
+            topic.description = topic.description.substring(0, 177) + '...';
+          } else {
+            topic.description = rephrased;
+          }
         }
+        
+        // Ensure minimum length for descriptions
+        if (topic.description.length < 120) {
+          console.warn(`⚠️  Description too short (${topic.description.length} chars), padding to minimum`);
+          topic.description = topic.description + " Entregamos soluções completas e personalizadas que agregam valor real ao seu negócio.";
+        }
+        
         topic.title = this.ensureMaxLength(
           topic.title,
           40,
