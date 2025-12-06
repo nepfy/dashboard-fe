@@ -262,16 +262,16 @@ export default function MinimalAboutUs({
                         );
                       }}
                     >
-                      {item.image && (
-                        <Image
-                          src={item.image}
-                          alt={item.caption || ""}
-                          fill
-                          style={{ objectFit: "cover" }}
-                          priority={index < 2}
-                        />
-                      )}
-                    </div>
+                        {item.image && (
+                          <Image
+                            src={item.image}
+                            alt={item.caption || ""}
+                            fill
+                            style={{ objectFit: "cover" }}
+                            priority={index < 2}
+                          />
+                        )}
+                      </div>
                     {item.caption && (
                       <p className="about-caption">{item.caption}</p>
                     )}

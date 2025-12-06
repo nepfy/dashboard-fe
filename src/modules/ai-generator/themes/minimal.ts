@@ -222,17 +222,12 @@ export class MinimalTheme {
     }, prompt);
   }
 
-  private ensureMaxLength(value: string, max: number, label: string) {
-    if (value.length > max) {
-      console.error(`❌ VALIDATION FAILED: ${label}`);
-      console.error(`   Expected: max ${max} chars`);
-      console.error(`   Received: ${value.length} chars (${value.length - max} chars over limit)`);
-      console.error(`   Content: "${value}"`);
-    }
+  private ensureMaxLength(value: string, max: number, label: string): string {
     ensureCondition(
       value.length <= max,
-      `${label} must contain at most ${max} characters (received ${value.length} characters: "${value.substring(0, 100)}...")`
+      `${label} must contain at most ${max} characters (received ${value.length} characters)`
     );
+    return value;
   }
 
   private ensureArrayLength<T>(
@@ -362,7 +357,7 @@ TEXTO REFORMULADO:`;
       console.warn(`⚠️  Auto-correcting introduction.title (${section.title.length} -> 120 chars)`);
       section.title = await this.rephraseToFit(section.title, 120, "introduction.title");
     }
-    this.ensureMaxLength(section.title, 120, "introduction.title");
+    section.title = this.ensureMaxLength(section.title, 120, "introduction.title");
     
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
@@ -373,7 +368,7 @@ TEXTO REFORMULADO:`;
           console.warn(`⚠️  Auto-correcting introduction.services[${index}].serviceName (${service.serviceName.length} -> 50 chars)`);
           service.serviceName = await this.rephraseToFit(service.serviceName, 50, `introduction.services[${index}].serviceName`);
         }
-        this.ensureMaxLength(
+        service.serviceName = this.ensureMaxLength(
           service.serviceName,
           50,
           `introduction.services[${index}].serviceName`
@@ -388,7 +383,7 @@ TEXTO REFORMULADO:`;
       console.warn(`⚠️  Auto-correcting aboutUs.title (${section.title.length} -> 200 chars)`);
       section.title = await this.rephraseToFit(section.title, 200, "aboutUs.title");
     }
-    this.ensureMaxLength(section.title, 200, "aboutUs.title");
+    section.title = this.ensureMaxLength(section.title, 200, "aboutUs.title");
   }
 
   private async validateTeamSection(section: MinimalProposal["team"]): Promise<void> {
@@ -397,7 +392,7 @@ TEXTO REFORMULADO:`;
       console.warn(`⚠️  Auto-correcting team.title (${section.title.length} -> 100 chars)`);
       section.title = await this.rephraseToFit(section.title, 100, "team.title");
     }
-    this.ensureMaxLength(section.title, 100, "team.title");
+    section.title = this.ensureMaxLength(section.title, 100, "team.title");
     
     if (section.members) {
       this.ensureArrayRange(section.members, 1, 6, "team.members");
@@ -413,8 +408,8 @@ TEXTO REFORMULADO:`;
           console.warn(`⚠️  Auto-correcting team.members[${index}].role (${member.role.length} -> 50 chars)`);
           member.role = await this.rephraseToFit(member.role, 50, `team.members[${index}].role`);
         }
-        this.ensureMaxLength(member.name, 50, `team.members[${index}].name`);
-        this.ensureMaxLength(member.role, 50, `team.members[${index}].role`);
+        member.name = this.ensureMaxLength(member.name, 50, `team.members[${index}].name`);
+        member.role = this.ensureMaxLength(member.role, 50, `team.members[${index}].role`);
       }
     }
   }
@@ -423,34 +418,34 @@ TEXTO REFORMULADO:`;
     section: MinimalProposal["expertise"]
   ): Promise<void> {
     // Auto-correct title if exceeds limit
-    if (section.title.length > 100) {
-      console.warn(`⚠️  Auto-correcting expertise.title (${section.title.length} -> 100 chars)`);
-      section.title = await this.rephraseToFit(section.title, 100, "expertise.title");
+    if (section.title.length > 150) {
+      console.warn(`⚠️  Auto-correcting expertise.title (${section.title.length} -> 150 chars)`);
+      section.title = await this.rephraseToFit(section.title, 150, "expertise.title");
     }
-    this.ensureMaxLength(section.title, 100, "expertise.title");
+    section.title = this.ensureMaxLength(section.title, 150, "expertise.title");
     
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 9, "expertise.topics");
       for (let index = 0; index < section.topics.length; index++) {
         const topic = section.topics[index];
         // Auto-correct topic title if exceeds limit
-        if (topic.title.length > 30) {
-          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].title (${topic.title.length} -> 30 chars)`);
-          topic.title = await this.rephraseToFit(topic.title, 30, `expertise.topics[${index}].title`);
+        if (topic.title.length > 40) {
+          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].title (${topic.title.length} -> 40 chars)`);
+          topic.title = await this.rephraseToFit(topic.title, 40, `expertise.topics[${index}].title`);
         }
         // Auto-correct topic description if exceeds limit
-        if (topic.description.length > 120) {
-          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].description (${topic.description.length} -> 120 chars)`);
-          topic.description = await this.rephraseToFit(topic.description, 120, `expertise.topics[${index}].description`);
+        if (topic.description.length > 180) {
+          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].description (${topic.description.length} -> 180 chars)`);
+          topic.description = await this.rephraseToFit(topic.description, 180, `expertise.topics[${index}].description`);
         }
-        this.ensureMaxLength(
+        topic.title = this.ensureMaxLength(
           topic.title,
-          30,
+          40,
           `expertise.topics[${index}].title`
         );
-        this.ensureMaxLength(
+        topic.description = this.ensureMaxLength(
           topic.description,
-          120,
+          180,
           `expertise.topics[${index}].description`
         );
       }
@@ -458,13 +453,13 @@ TEXTO REFORMULADO:`;
   }
 
   private validateResultsSection(section: MinimalProposal["results"]): void {
-    this.ensureMaxLength(section.title, 100, "results.title");
+    section.title = this.ensureMaxLength(section.title, 100, "results.title");
     if (section.items) {
       this.ensureArrayRange(section.items, 1, 4, "results.items");
       section.items.forEach((item, index) => {
-        this.ensureMaxLength(item.client, 50, `results.items[${index}].client`);
+        item.client = this.ensureMaxLength(item.client, 50, `results.items[${index}].client`);
         if (item.instagram) {
-          this.ensureMaxLength(
+          item.instagram = this.ensureMaxLength(
             item.instagram,
             50,
             `results.items[${index}].instagram`
@@ -480,17 +475,17 @@ TEXTO REFORMULADO:`;
     if (section.items) {
       this.ensureArrayRange(section.items, 2, 4, "testimonials.items");
       section.items.forEach((item, index) => {
-        this.ensureMaxLength(
+        item.name = this.ensureMaxLength(
           item.name,
           50,
           `testimonials.items[${index}].name`
         );
-        this.ensureMaxLength(
+        item.role = this.ensureMaxLength(
           item.role,
           50,
           `testimonials.items[${index}].role`
         );
-        this.ensureMaxLength(
+        item.testimonial = this.ensureMaxLength(
           item.testimonial,
           400,
           `testimonials.items[${index}].testimonial`
@@ -499,23 +494,52 @@ TEXTO REFORMULADO:`;
     }
   }
 
-  private validateClientsSection(section: MinimalProposal["clients"]): void {
+  private async validateClientsSection(section: MinimalProposal["clients"]): Promise<void> {
+    // Auto-correct title if exceeds limit
+    if (section.title && section.title.length > 300) {
+      console.warn(`⚠️  Auto-correcting clients.title (${section.title.length} -> 300 chars)`);
+      section.title = await this.rephraseToFit(section.title, 300, "clients.title");
+    }
     if (section.title) {
-      this.ensureMaxLength(section.title, 100, "clients.title");
+      section.title = this.ensureMaxLength(section.title, 300, "clients.title");
+    }
+    
+    // Auto-correct description if exceeds limit
+    if (section.description && section.description.length > 180) {
+      console.warn(`⚠️  Auto-correcting clients.description (${section.description.length} -> 180 chars)`);
+      section.description = await this.rephraseToFit(section.description, 180, "clients.description");
     }
     if (section.description) {
-      this.ensureMaxLength(section.description, 180, "clients.description");
+      section.description = this.ensureMaxLength(section.description, 180, "clients.description");
     }
+    
+    // Auto-correct paragraphs if exceed limit
     if (section.paragraphs) {
-      section.paragraphs.forEach((paragraph, index) => {
-        this.ensureMaxLength(paragraph, 200, `clients.paragraphs[${index}]`);
+      for (let index = 0; index < section.paragraphs.length; index++) {
+        const paragraph = section.paragraphs[index];
+        const maxLength = index === 0 ? 400 : 350; // paragraph 1: 400, paragraph 2: 350
+        if (paragraph.length > maxLength) {
+          console.warn(`⚠️  Auto-correcting clients.paragraphs[${index}] (${paragraph.length} -> ${maxLength} chars)`);
+          section.paragraphs[index] = await this.rephraseToFit(paragraph, maxLength, `clients.paragraphs[${index}]`);
+        }
+      }
+      section.paragraphs = section.paragraphs.map((paragraph, index) => {
+        const maxLength = index === 0 ? 400 : 350;
+        return this.ensureMaxLength(paragraph, maxLength, `clients.paragraphs[${index}]`);
       });
     }
+    
+    // Validate items
     if (section.items) {
       this.ensureArrayRange(section.items, 6, 12, "clients.items");
-      section.items.forEach((client, index) => {
-        this.ensureMaxLength(client.name, 50, `clients.items[${index}].name`);
-      });
+      for (let index = 0; index < section.items.length; index++) {
+        const client = section.items[index];
+        if (client.name.length > 50) {
+          console.warn(`⚠️  Auto-correcting clients.items[${index}].name (${client.name.length} -> 50 chars)`);
+          client.name = await this.rephraseToFit(client.name, 50, `clients.items[${index}].name`);
+        }
+        client.name = this.ensureMaxLength(client.name, 50, `clients.items[${index}].name`);
+      }
     }
   }
 
@@ -523,8 +547,8 @@ TEXTO REFORMULADO:`;
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 6, "steps.topics");
       section.topics.forEach((topic, index) => {
-        this.ensureMaxLength(topic.title, 50, `steps.topics[${index}].title`);
-        this.ensureMaxLength(
+        topic.title = this.ensureMaxLength(topic.title, 50, `steps.topics[${index}].title`);
+        topic.description = this.ensureMaxLength(
           topic.description,
           400,
           `steps.topics[${index}].description`
@@ -565,9 +589,9 @@ TEXTO REFORMULADO:`;
   private validateInvestmentSection(
     section: MinimalProposal["investment"]
   ): void {
-    this.ensureMaxLength(section.title, 150, "investment.title");
+    section.title = this.ensureMaxLength(section.title, 150, "investment.title");
     if (section.projectScope) {
-      this.ensureMaxLength(
+      section.projectScope = this.ensureMaxLength(
         section.projectScope,
         200,
         "investment.projectScope"
@@ -648,8 +672,8 @@ TEXTO REFORMULADO:`;
     }
 
     section.plansItems?.forEach((plan, index) => {
-      this.ensureMaxLength(plan.title, 30, `plans.plansItems[${index}].title`);
-      this.ensureMaxLength(
+      plan.title = this.ensureMaxLength(plan.title, 30, `plans.plansItems[${index}].title`);
+      plan.description = this.ensureMaxLength(
         plan.description,
         120,
         `plans.plansItems[${index}].description`
@@ -663,7 +687,7 @@ TEXTO REFORMULADO:`;
           `plans.plansItems[${index}].includedItems`
         );
         plan.includedItems.forEach((item, itemIndex) => {
-          this.ensureMaxLength(
+          item.description = this.ensureMaxLength(
             item.description,
             60,
             `plans.plansItems[${index}].includedItems[${itemIndex}].description`
@@ -677,22 +701,22 @@ TEXTO REFORMULADO:`;
     if (section.items) {
       this.ensureArrayRange(section.items, 5, 10, "faq.items");
       section.items.forEach((item, index) => {
-        this.ensureMaxLength(
+        item.question = this.ensureMaxLength(
           item.question,
           100,
           `faq.items[${index}].question`
         );
-        this.ensureMaxLength(item.answer, 300, `faq.items[${index}].answer`);
+        item.answer = this.ensureMaxLength(item.answer, 300, `faq.items[${index}].answer`);
       });
     }
   }
 
   private validateFooterSection(section: MinimalProposal["footer"]): void {
     if (section.callToAction) {
-      this.ensureMaxLength(section.callToAction, 100, "footer.callToAction");
+      section.callToAction = this.ensureMaxLength(section.callToAction, 100, "footer.callToAction");
     }
     if (section.disclaimer) {
-      this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
+      section.disclaimer = this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
     }
     if (section.email) {
       // Basic email validation
@@ -725,7 +749,7 @@ TEXTO REFORMULADO:`;
     await this.validateExpertiseSection(proposal.expertise);
     this.validateResultsSection(proposal.results);
     this.validateTestimonialsSection(proposal.testimonials);
-    this.validateClientsSection(proposal.clients);
+    await this.validateClientsSection(proposal.clients);
     this.validateStepsSection(proposal.steps);
     this.validateInvestmentSection(proposal.investment);
     this.validatePlansSection(proposal.plans, expectedPlans);
@@ -1192,14 +1216,34 @@ REGRAS OBRIGATÓRIAS:
     
     console.log("✅ Clients Items Final Count:", clientItems.length);
 
+    console.log("🔍 DEBUG - Clients Result from AI:", {
+      hasTitle: !!clientsResult.title,
+      title: clientsResult.title,
+      hasParagraphs: !!clientsResult.paragraphs,
+      paragraphsIsArray: Array.isArray(clientsResult.paragraphs),
+      paragraphsLength: clientsResult.paragraphs?.length || 0,
+      paragraph1: clientsResult.paragraphs?.[0],
+      paragraph2: clientsResult.paragraphs?.[1],
+    });
+
+    // Ensure we have valid paragraphs, otherwise generate fallback
+    let finalParagraphs = clientsResult.paragraphs;
+    if (!finalParagraphs || finalParagraphs.length < 2 || !finalParagraphs[0] || !finalParagraphs[1]) {
+      console.warn("⚠️ Paragraphs not properly generated by AI, using professional fallback");
+      finalParagraphs = [
+        "Reconhecemos uma lacuna na indústria criativa—pequenos negócios frequentemente lutam para encontrar soluções de alta qualidade, porém acessíveis. Trabalhamos com empresas que valorizam estratégia, qualidade e resultados concretos, estabelecendo parcerias verdadeiras que geram impacto mensurável em seus objetivos de negócio.",
+        "Nossa filosofia é simples: design e estratégia devem trabalhar juntos para criar experiências que facilitam a vida das pessoas e fortalecem marcas. Com essa visão, fornecemos serviços completos para ser seu parceiro estratégico em cada etapa do projeto, combinando expertise técnica com sensibilidade criativa."
+      ];
+    }
+
     sections.clients = {
       // ALWAYS show clients section - NEVER hide
       hideSection: false,
       
-      title: clientsResult.title || "",
+      title: clientsResult.title || "Reconhecemos uma lacuna na indústria criativa—pequenos negócios frequentemente lutam para encontrar soluções de design de alta qualidade, porém acessíveis. É por isso que existimos.",
       hideTitle: clientsResult.hideTitle ?? false,
       
-      paragraphs: clientsResult.paragraphs || ["", ""],
+      paragraphs: finalParagraphs,
       
       items: clientItems,
     };
@@ -1209,6 +1253,10 @@ REGRAS OBRIGATÓRIAS:
       firstItem: sections.clients.items?.[0]?.name,
       title: sections.clients.title,
       paragraphsCount: sections.clients.paragraphs?.length || 0,
+      paragraph1Length: sections.clients.paragraphs?.[0]?.length || 0,
+      paragraph2Length: sections.clients.paragraphs?.[1]?.length || 0,
+      paragraph1Preview: sections.clients.paragraphs?.[0]?.substring(0, 50),
+      paragraph2Preview: sections.clients.paragraphs?.[1]?.substring(0, 50),
       hasGeneratedContent: !!clientsResult.title && clientsResult.paragraphs && clientsResult.paragraphs.length > 0,
     });
 

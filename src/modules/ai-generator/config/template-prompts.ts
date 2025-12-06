@@ -982,6 +982,15 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
+⚠️⚠️⚠️ REGRA CRÍTICA SOBRE O TITLE ⚠️⚠️⚠️
+O TITLE É O ELEMENTO MAIS IMPORTANTE DESTA SEÇÃO!
+- DEVE ter MÍNIMO 150 caracteres (idealmente 180-250 caracteres)
+- DEVE seguir o padrão: "Reconhecemos/Identificamos [problema no setor]—[contexto detalhado]. [Por que existimos/nossa solução]."
+- DEVE usar travessão (—) para separar ideias
+- DEVE ser uma DECLARAÇÃO DE MISSÃO completa e impactante
+- NÃO seja genérico - mencione o SETOR específico do projeto
+- CONTE os caracteres - se tiver menos de 150, REESCREVA mais longo!
+
 ⚠️⚠️⚠️ REGRA ABSOLUTA #1 ⚠️⚠️⚠️
 SEMPRE retorne "hideSection": false
 Esta seção DEVE estar SEMPRE visível quando há projeto
@@ -993,23 +1002,14 @@ NÃO envie lista vazia []
 NÃO envie menos de 12
 NÃO envie mais de 12
 
-⚠️⚠️⚠️ REGRA ABSOLUTA #3 ⚠️⚠️⚠️
-O CONTEÚDO DEVE SER PERSONALIZADO PARA O PROJETO!
-- title: Deve refletir a PROPOSTA DE VALOR da empresa que está fazendo a proposta
-- paragraph 1: Deve explicar como a empresa ajuda seus clientes, conectando com o contexto do projeto
-- paragraph 2: Deve destacar a filosofia/metodologia de trabalho da empresa
-
-NÃO use textos genéricos!
-Use as informações de {projectDescription} e {companyInfo} para criar conteúdo relevante!
-
 FORMATO OBRIGATÓRIO:
 {
   "hideSection": false,
-  "title": "Título sobre a proposta de valor da EMPRESA (não do cliente) - máx 200 caracteres",
+  "title": "DECLARAÇÃO DE MISSÃO LONGA E IMPACTANTE - MÍNIMO 150 CARACTERES, máximo 300",
   "hideTitle": false,
   "paragraphs": [
-    "Parágrafo 1: Como a empresa ajuda seus clientes, conectado ao contexto do projeto - máx 250 caracteres",
-    "Parágrafo 2: Filosofia/metodologia de trabalho da empresa - máx 200 caracteres"
+    "Parágrafo 1: Explicação completa de como a empresa ajuda clientes no contexto do projeto - máx 400 caracteres",
+    "Parágrafo 2: Filosofia, metodologia e abordagem de trabalho da empresa de forma detalhada - máx 350 caracteres"
   ],
   "items": [
     {"id": "1", "name": "NOME MARCA 1", "logo": null, "sortOrder": 0},
@@ -1028,56 +1028,66 @@ FORMATO OBRIGATÓRIO:
 }
 
 LIMITES OBRIGATÓRIOS:
-- title: ATÉ 200 caracteres (conte letra por letra!)
-- paragraph 1: ATÉ 250 caracteres (conte!)
-- paragraph 2: ATÉ 200 caracteres (conte!)
-- items: EXATAMENTE 12 clientes (veja exemplo acima!)
-- item.name: ATÉ 50 caracteres, MAIÚSCULAS (conte!)
+- title: MÍNIMO 150 caracteres, MÁXIMO 300 caracteres (CONTE!)
+- paragraph 1: ATÉ 400 caracteres (explicação completa)
+- paragraph 2: ATÉ 350 caracteres (filosofia e metodologia)
+- items: EXATAMENTE 12 clientes
+- item.name: ATÉ 50 caracteres, MAIÚSCULAS
 
-EXEMPLOS DE CONTEÚDO PERSONALIZADO:
+EXEMPLOS DE TITLE CORRETO (OBSERVE O TAMANHO!):
 
-📌 PROJETO: Vitrine Digital para Velas Artesanais
-✅ title (personalizado):
-"Identificamos uma lacuna no mercado criativo—pequenos negócios artesanais frequentemente lutam para encontrar soluções de design de alta qualidade e acessíveis. Por isso existimos."
+📌 Agência de Design Digital (177 caracteres) ✅
+"Reconhecemos uma lacuna na indústria criativa—pequenos negócios frequentemente lutam para encontrar soluções de design de alta qualidade, porém acessíveis. É por isso que existimos."
 
-✅ paragraph 1 (conectado ao projeto):
-"Sua vitrine online é provavelmente o primeiro ponto de contato que alguém terá com sua marca de velas artesanais. Destacamos você da multidão criando uma presença digital que mostra quem você é de forma inesquecível."
+📌 E-commerce para Cafeteria (189 caracteres) ✅
+"Identificamos um desafio no setor de cafés especiais—cafeterias artesanais precisam de presença digital forte mas acessível. Nossa expertise transforma conceitos gastronômicos em experiências online memoráveis e lucrativas."
 
-✅ paragraph 2 (filosofia):
-"Design é sobre criar experiências que tornam a vida das pessoas mais fácil, ou até divertida. Com isso em mente, fornecemos serviços para ser seu parceiro neste projeto."
+📌 Website Institucional (215 caracteres) ✅
+"Reconhecemos uma lacuna no mercado de desenvolvimento web—empresas de médio porte frequentemente lutam para encontrar soluções tecnológicas que equilibrem qualidade excepcional com investimento acessível. Nossa missão é preencher essa lacuna."
 
-📌 PROJETO: Arquitetura Residencial
-✅ title:
-"Reconhecemos um desafio no setor residencial—famílias buscam projetos arquitetônicos personalizados mas acessíveis. Nossa expertise preenche essa lacuna."
+📌 Identidade Visual para Arquitetura (203 caracteres) ✅
+"Identificamos um desafio no setor residencial—famílias e profissionais buscam projetos arquitetônicos personalizados mas com preços justos. Nossa expertise combina técnica avançada e sensibilidade criativa para entregar soluções completas."
 
-✅ paragraph 1:
-"Seu projeto arquitetônico é o primeiro passo para transformar seu lar dos sonhos em realidade. Criamos ambientes que refletem seu estilo de vida de forma única e funcional."
+❌ EXEMPLO ERRADO - MUITO CURTO (76 caracteres):
+"Desenvolvemos experiências digitais memoráveis para marcas de café especiais"
+^ REJEITADO! Menos de 150 caracteres!
 
-✅ paragraph 2:
-"Arquitetura é sobre criar espaços que melhoram a qualidade de vida. Combinamos técnica e sensibilidade para entregar projetos que superam expectativas."
+ESTRUTURA DO TITLE IDEAL:
+1. Comece com "Reconhecemos/Identificamos/Percebemos"
+2. Mencione uma "lacuna/desafio/problema" no SETOR específico
+3. Use travessão (—) para explicar DETALHADAMENTE o problema
+4. Termine com por que você existe ou sua solução
+5. CONTE: deve ter 150-250 caracteres!
+
+EXEMPLOS DE PARAGRAPHS:
+
+✅ paragraph 1 (295 caracteres):
+"Seu website é provavelmente o primeiro ponto de contato que alguém terá com sua marca. Destaque-se da multidão criando um site que ajuda você a alcançar seus objetivos de negócio enquanto mostra quem você é de uma forma que as pessoas não vão esquecer."
+
+✅ paragraph 2 (235 caracteres):
+"Design é sobre criar experiências, tornar a vida das pessoas mais fácil, ou até divertida quando não estão tendo o melhor dia. Com isso em mente, fornecemos serviços para ser seu parceiro no próximo projeto."
 
 INSTRUÇÕES FINAIS:
-- NÃO copie os exemplos acima literalmente!
-- USE os dados do projeto para criar conteúdo ÚNICO
-- O title deve falar sobre a PROPOSTA DE VALOR da empresa que faz a proposta
-- Os paragraphs devem conectar essa proposta ao contexto específico do projeto
-- Mantenha tom profissional, autêntico e direto
-- Conte os caracteres antes de enviar!
+- O TITLE É A PRIORIDADE #1 - deve ser LONGO (150+ chars) e IMPACTANTE
+- Use as informações de {projectDescription} e {companyInfo}
+- NÃO use textos genéricos - seja específico ao setor do projeto
+- Paragraphs devem ser completos e profissionais
+- SEMPRE conte os caracteres antes de enviar
+- Textos devem transmitir expertise, confiança e valor
 
 REGRAS ADICIONAIS:
 - NÃO gere campos subtitle, description, hideSubtitle, hideDescription
-- logo sempre null (usuário adiciona depois)
-- Nomes devem ser plausíveis para o setor do projeto
-- Usar linguagem direta, profissional e confiável
+- logo sempre null
+- Nomes devem ser plausíveis e variados para o setor
 - hideSection SEMPRE false
 - items SEMPRE com 12 clientes`,
         expectedFormat: `{
   "hideSection": false,
-  "title": "string (max 200 chars, value proposition)",
+  "title": "string (MIN 150 chars, MAX 300 chars, impactful mission statement)",
   "hideTitle": false,
   "paragraphs": [
-    "string (max 250 chars, how you help clients in this context)",
-    "string (max 200 chars, work philosophy/methodology)"
+    "string (max 400 chars, complete explanation)",
+    "string (max 350 chars, detailed philosophy)"
   ],
   "items": [
     {"id": "1", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 0},
@@ -1095,11 +1105,11 @@ REGRAS ADICIONAIS:
   ]
 }`,
         rules: [
-          "title: até 200 caracteres, proposta de valor da empresa",
-          "paragraph 1: até 250 caracteres, como ajuda clientes neste contexto",
-          "paragraph 2: até 200 caracteres, filosofia de trabalho",
+          "title: MÍNIMO 150 caracteres, MÁXIMO 300 caracteres - DECLARAÇÃO DE MISSÃO",
+          "paragraph 1: até 400 caracteres, explicação completa",
+          "paragraph 2: até 350 caracteres, filosofia detalhada",
           "EXATAMENTE 12 marcas/clientes (obrigatório)",
-          "Nomes em MAIÚSCULAS, até 50 caracteres, plausíveis",
+          "Nomes em MAIÚSCULAS, até 50 caracteres",
           "hideSection SEMPRE false",
           "Conteúdo PERSONALIZADO baseado no projeto",
           "NÃO gerar subtitle ou description",
@@ -1122,16 +1132,16 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
-  "subtitle": "Subtítulo curto e impactante em MAIÚSCULAS com até 50 caracteres (ex: TRANSFORME IDEIA EM RESULTADO)",
+  "subtitle": "Subtítulo curto e impactante em MAIÚSCULAS com até 60 caracteres (ex: TRANSFORME SUAS IDEIAS EM RESULTADOS REAIS)",
   "hideSubtitle": false,
-  "title": "Título principal da seção, direto e profissional com até 100 caracteres",
+  "title": "Título principal da seção, direto e profissional com até 150 caracteres",
   "hideIcon": false,
   "topics": [
     {
       "id": "1",
       "icon": "DiamondIcon",
-      "title": "Nome da área de atuação com até 30 caracteres",
-      "description": "Descrição concisa do serviço com até 120 caracteres",
+      "title": "Nome da área de atuação com até 40 caracteres",
+      "description": "Descrição profissional e completa do serviço com até 180 caracteres, explicando valor e benefícios",
       "sortOrder": 1
     }
   ]
@@ -1150,46 +1160,49 @@ INSTRUÇÕES CRÍTICAS DE CONTAGEM:
 ⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
 
 LIMITES OBRIGATÓRIOS:
-- subtitle: ATÉ 50 caracteres (conte letra por letra!)
-- title: ATÉ 100 caracteres (conte letra por letra!)
+- subtitle: ATÉ 60 caracteres (conte letra por letra!)
+- title: ATÉ 150 caracteres (conte letra por letra!)
 - topics: EXATAMENTE 9 áreas (grid 3x3) - NÃO MAIS, NÃO MENOS!
-- topic.title: ATÉ 30 caracteres CADA (conte!)
-- topic.description: ATÉ 120 caracteres CADA (conte!)
+- topic.title: ATÉ 40 caracteres CADA (conte!)
+- topic.description: ATÉ 180 caracteres CADA (conte e seja PROFISSIONAL!)
 
 EXEMPLOS CORRETOS:
 
-✅ topic.title (30 chars ou menos):
-"Brand Strategy" = 14 chars ✓
-"Social Media" = 12 chars ✓
-"Growth Hacking" = 14 chars ✓
+✅ topic.title (40 chars ou menos):
+"Estratégia de Marca Digital" = 28 chars ✓
+"Marketing de Conteúdo" = 21 chars ✓
+"Design de Experiência do Usuário" = 33 chars ✓
 
-✅ topic.description (120 chars ou menos):
-"Desenvolvemos estratégias de marca que elevam seu posicionamento e criam conexões autênticas" = 94 chars ✓
-"Gestão completa das suas redes sociais com conteúdo estratégico e engajamento real" = 84 chars ✓
+✅ topic.description (180 chars ou menos):
+"Desenvolvemos estratégias de marca completas que elevam seu posicionamento no mercado, criam conexões autênticas com seu público e estabelecem uma identidade visual memorável." = 177 chars ✓
+"Gestão completa das suas redes sociais com conteúdo estratégico, design profissional e engajamento real que transforma seguidores em clientes fiéis." = 151 chars ✓
 
 ❌ ERRADO:
-"Desenvolvemos estratégias completas e integradas de marca que elevam significativamente seu posicionamento no mercado e criam conexões profundas" = 145 chars ✗ REJEITADO!
+"Desenvolvemos estratégias completas e integradas de marca que elevam significativamente seu posicionamento no mercado e criam conexões profundas e duradouras com seu público-alvo através de experiências memoráveis" = 215 chars ✗ REJEITADO!
 
-OUTRAS REGRAS:
-- Selecionar ícones que representem visualmente cada área
-- Usar linguagem direta, profissional e orientada a resultados
-- EVITAR adjetivos excessivos ou linguagem genérica`,
+INSTRUÇÕES FINAIS:
+- Selecionar ícones que representem visualmente cada área de atuação
+- Usar linguagem PROFISSIONAL, COMPLETA e orientada a VALOR e RESULTADOS
+- Cada descrição deve explicar CLARAMENTE o que é feito e qual o BENEFÍCIO
+- NÃO usar adjetivos vagos como "incrível", "fantástico" - ser ESPECÍFICO
+- Textos devem transmitir EXPERTISE e CONFIANÇA
+- Adaptar expertise ao contexto e setor do projeto`,
         expectedFormat: `{
   "hideSection": false,
-  "subtitle": "string (max 50 chars, UPPERCASE)",
+  "subtitle": "string (max 60 chars, UPPERCASE)",
   "hideSubtitle": false,
-  "title": "string (max 100 chars)",
+  "title": "string (max 150 chars)",
   "hideIcon": false,
-  "topics": [{"id": "string", "icon": "string", "title": "string (max 30 chars)", "description": "string (max 120 chars)", "sortOrder": number}]
+  "topics": [{"id": "string", "icon": "string", "title": "string (max 40 chars)", "description": "string (max 180 chars)", "sortOrder": number}]
 }`,
         rules: [
-          "subtitle: até 50 caracteres, EM MAIÚSCULAS",
-          "title: até 100 caracteres",
+          "subtitle: até 60 caracteres, EM MAIÚSCULAS",
+          "title: até 150 caracteres",
           "EXATAMENTE 9 topics (grid 3x3)",
-          "topic.title: até 30 caracteres",
-          "topic.description: até 120 caracteres",
+          "topic.title: até 40 caracteres",
+          "topic.description: até 180 caracteres, PROFISSIONAL e COMPLETO",
           "Ícones apropriados para cada área",
-          "Linguagem direta e profissional",
+          "Linguagem profissional, completa e orientada a valor",
         ],
         minTopics: 9,
         maxTopics: 9,

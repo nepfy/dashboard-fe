@@ -284,6 +284,7 @@ export default function MinimalClients({
                       }
                       editingId="clients-title"
                       className="heading-style-h2"
+                      placeholder="Clique para adicionar um título sobre sua proposta de valor"
                       canEdit={canEdit}
                     />
                   )}
@@ -296,6 +297,7 @@ export default function MinimalClients({
                     onChange={(value) => handleParagraphChange(0, value)}
                     editingId="clients-paragraph-1"
                     className="text-size-medium"
+                    placeholder="Clique para adicionar o primeiro parágrafo sobre como você ajuda seus clientes"
                     canEdit={canEdit}
                   />
                   <EditableText
@@ -303,6 +305,7 @@ export default function MinimalClients({
                     onChange={(value) => handleParagraphChange(1, value)}
                     editingId="clients-paragraph-2"
                     className="text-size-medium"
+                    placeholder="Clique para adicionar o segundo parágrafo sobre sua filosofia de trabalho"
                     canEdit={canEdit}
                   />
                 </div>
