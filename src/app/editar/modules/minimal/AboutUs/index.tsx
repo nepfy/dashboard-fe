@@ -94,26 +94,39 @@ export default function MinimalAboutUs({
         .about-content {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 2rem;
+          gap: 3rem;
+          align-items: start;
         }
 
         .about-item {
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 1.5rem;
           position: relative;
           z-index: 1;
-          transition: all 0.2s ease;
-          border-radius: 1rem;
         }
 
         .about-video {
           width: 100%;
-          aspect-ratio: 16/10;
-          border-radius: 1rem;
+          border-radius: 0;
           overflow: hidden;
           background: rgba(255, 255, 255, 0.05);
           position: relative;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
+        }
+
+        .about-item:nth-child(1) .about-video {
+          aspect-ratio: 16/9;
+        }
+
+        .about-item:nth-child(2) .about-video {
+          aspect-ratio: 9/16;
+          max-height: 630px;
+        }
+
+        .about-video:hover {
+          opacity: 0.9;
         }
 
         .about-video img,
@@ -123,10 +136,11 @@ export default function MinimalAboutUs({
           object-fit: cover;
         }
 
-        .about-paragraph {
-          font-size: 1rem;
-          line-height: 1.6;
-          color: rgba(255, 255, 255, 0.8);
+        .about-caption {
+          font-size: 0.9375rem;
+          line-height: 1.5;
+          color: rgba(255, 255, 255, 0.7);
+          cursor: text;
         }
 
         .about-marquee {
@@ -153,6 +167,13 @@ export default function MinimalAboutUs({
           }
           .about-content {
             grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+          .about-item:nth-child(1) .about-video {
+            aspect-ratio: 16/9;
+          }
+          .about-item:nth-child(2) .about-video {
+            aspect-ratio: 16/9;
           }
           .heading-style-h2 {
             font-size: 2rem;
@@ -160,6 +181,12 @@ export default function MinimalAboutUs({
         }
 
         @media screen and (max-width: 767px) {
+          .about-content {
+            gap: 1.5rem;
+          }
+          .about-item {
+            gap: 1rem;
+          }
         }
       `}</style>
 
@@ -220,62 +247,34 @@ export default function MinimalAboutUs({
 
               <div className="about-content">
                 {workingItems.map((item, index) => (
-                  <div
-                    key={item.id || index}
-                    className={`about-item about-item-${index + 1} relative cursor-pointer border border-transparent hover:border-[#0170D6] hover:bg-[#0170D666] ${
-                      openModalId === item.id
-                        ? "border-[#0170D6] bg-[#0170D666]"
-                        : ""
-                    }`}
-                  >
+                  <div key={item.id || index} className="about-item">
                     <div
-                      className="relative cursor-pointer"
+                      className="about-video"
                       onClick={(e) => {
+                        e.stopPropagation();
                         console.log("🐛 AboutUs item clicked:", {
                           itemId: item.id,
                           index,
                           currentOpenId: openModalId,
-                          target: e.target,
                         });
                         setOpenModalId(
                           openModalId === item.id ? null : (item?.id ?? null)
                         );
                       }}
                     >
-                      <div className="about-video">
-                        {item.image && (
-                          <Image
-                            src={item.image}
-                            alt={item.caption || ""}
-                            fill
-                            style={{ objectFit: "cover" }}
-                            priority={index < 2}
-                          />
-                        )}
-                      </div>
-                      <div className="about-paragraph">
-                        <EditableText
-                          value={item.caption || "Descrição da imagem"}
-                          onChange={(newCaption: string) => {
-                            const updatedItems = [...workingItems];
-                            updatedItems[index] = {
-                              ...item,
-                              caption: newCaption,
-                            };
-                            updateAboutUs({ items: updatedItems });
-                          }}
-                          className="text-size-regular text-color-grey"
-                          editingId={`aboutUs-item-${index}-caption`}
+                      {item.image && (
+                        <Image
+                          src={item.image}
+                          alt={item.caption || ""}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          priority={index < 2}
                         />
-                      </div>
-                      <div
-                        className={`absolute top-0 left-0 z-10 h-full w-full rounded-[1rem] hover:bg-[#0170D666] ${
-                          openModalId === item.id
-                            ? "bg-[#0170D666]"
-                            : "bg-transparent"
-                        }`}
-                      />
+                      )}
                     </div>
+                    {item.caption && (
+                      <p className="about-caption">{item.caption}</p>
+                    )}
                   </div>
                 ))}
               </div>

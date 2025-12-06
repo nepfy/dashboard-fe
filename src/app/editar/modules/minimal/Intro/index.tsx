@@ -16,8 +16,8 @@ import { useEditor } from "../../../contexts/EditorContext";
 
 export default function MinimalIntro({
   userName,
+  clientName,
   title,
-  subtitle,
   logo,
   clientPhoto,
   services,
@@ -28,6 +28,10 @@ export default function MinimalIntro({
     projectData,
     activeEditingId,
   } = useEditor();
+
+  // Use clientName from introduction section, fallback to projectData.clientName or userName for backward compatibility
+  const displayClientName =
+    clientName || projectData?.clientName || userName || "Cliente";
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
 
@@ -297,12 +301,12 @@ export default function MinimalIntro({
                     editingId="intro-logo"
                   />
                   <EditableText
-                    value={userName || "Your Name"}
-                    onChange={(newUserName: string) =>
-                      updateIntroduction({ userName: newUserName })
+                    value={displayClientName}
+                    onChange={(newClientName: string) =>
+                      updateIntroduction({ clientName: newClientName })
                     }
                     className="nav_brand"
-                    editingId="intro-userName"
+                    editingId="intro-clientName-navbar"
                   />
                 </div>
                 <div
@@ -351,12 +355,12 @@ export default function MinimalIntro({
                     className="heading-client-image"
                   />
                   <EditableText
-                    value={userName || "Cliente"}
-                    onChange={(newUserName: string) =>
-                      updateIntroduction({ userName: newUserName })
+                    value={displayClientName}
+                    onChange={(newClientName: string) =>
+                      updateIntroduction({ clientName: newClientName })
                     }
                     className="heading-style-h1 text-weight-light"
-                    editingId="intro-userName-hero"
+                    editingId="intro-clientName-hero"
                   />
                 </div>
                 <h1 className="heading-line">—</h1>
@@ -369,7 +373,7 @@ export default function MinimalIntro({
                   editingId="intro-title"
                 />
               </div>
-              <div className="hero_right">
+              <div className="hero_right self-end">
                 {projectData?.projectValidUntil && (
                   <div className="flex flex-col items-end gap-3">
                     <div
@@ -406,18 +410,6 @@ export default function MinimalIntro({
                         editingId="intro-date"
                       />
                     </div>
-                    {subtitle && (
-                      <div className="max-w-[340px] text-right">
-                        <EditableText
-                          value={subtitle}
-                          onChange={(newSubtitle: string) =>
-                            updateIntroduction({ subtitle: newSubtitle })
-                          }
-                          className="text-size-regular text-color-grey"
-                          editingId="intro-subtitle"
-                        />
-                      </div>
-                    )}
                   </div>
                 )}
               </div>

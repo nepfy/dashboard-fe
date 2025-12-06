@@ -30,11 +30,10 @@ export interface MinimalIntroductionService {
 }
 
 export interface MinimalIntroductionSection {
+  clientName?: string;
   userName?: string;
   email?: string;
   title: string;
-  hideSubtitle?: boolean;
-  subtitle?: string;
   services?: MinimalIntroductionService[];
 }
 
@@ -293,7 +292,6 @@ export const minimalCharacterLimits = {
     userName: 50,
     email: 100,
     title: 120,
-    subtitle: 200,
     serviceName: 50,
   },
   aboutUs: {
@@ -364,10 +362,6 @@ export function validateMinimalCharacterLimits(
       intro.title,
       minimalCharacterLimits.introduction.title
     );
-    validations["introduction.subtitle"] = validateCharacterLimit(
-      intro.subtitle || "",
-      minimalCharacterLimits.introduction.subtitle
-    );
   }
 
   // About Us
@@ -434,9 +428,6 @@ export function getMinimalTemplateDefaults(): Partial<MinimalProposal> {
   return {
     introduction: {
       title: "Soluções inteligentes para transformar seu negócio",
-      subtitle:
-        "Desenvolvemos estratégias focadas em resultados reais e crescimento sustentável",
-      hideSubtitle: false,
       services: [],
     },
     aboutUs: {
@@ -514,8 +505,6 @@ export function generateMinimalProposalOutline(): Partial<MinimalProposal> {
   return {
     introduction: {
       title: "[Título principal da proposta]",
-      subtitle: "[Subtítulo explicativo]",
-      hideSubtitle: false,
       services: [
         {
           id: "1",

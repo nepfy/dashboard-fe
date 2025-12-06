@@ -747,17 +747,16 @@ DADOS DO PROJETO:
 
 FORMATO:
 {
+  "clientName": "{clientName}",
   "userName": "{userName}",
   "email": "{userEmail}",
   "logo": null,
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "Título direto e claro (MÁXIMO 120 caracteres)",
+  "title": "Título INTRODUTÓRIO da proposta, descrevendo o tipo de trabalho/serviço (MÁXIMO 120 caracteres)",
   "description": "Descrição concisa da proposta de valor (MÁXIMO 100 caracteres)",
   "hideDescription": false,
-  "subtitle": "Subtítulo explicativo (MÁXIMO 180 caracteres - CONTE!)",
-  "hideSubtitle": false,
   "services": [
     { "id": "1", "serviceName": "Serviço 1 com até 50 caracteres", "sortOrder": 1 },
     { "id": "2", "serviceName": "Serviço 2 com até 50 caracteres", "sortOrder": 2 },
@@ -774,7 +773,6 @@ FORMATO:
 🔒 LIMITES ABSOLUTOS E INEGOCIÁVEIS (incluindo espaços, pontos, vírgulas, TUDO):
 - title: MÁXIMO ABSOLUTO 120 caracteres | RECOMENDADO: 60-100 caracteres
 - description: MÁXIMO ABSOLUTO 100 caracteres | RECOMENDADO: 50-80 caracteres  
-- subtitle: MÁXIMO ABSOLUTO 180 caracteres | RECOMENDADO: 120-160 caracteres
 - serviceName: MÁXIMO ABSOLUTO 50 caracteres CADA | RECOMENDADO: 30-40 caracteres
 
 📏 MÉTODO OBRIGATÓRIO DE CONTAGEM:
@@ -784,52 +782,57 @@ FORMATO:
 4. Valide contando NOVAMENTE de trás para frente
 5. Só envie depois de ter CERTEZA absoluta
 
-✅ EXEMPLOS VALIDADOS (subtitle 180 chars MAX):
-
-CORRETO ✓ (140 chars - seguro):
-"Desenvolvemos sites modernos e responsivos que destacam sua marca e conectam você com novos clientes através de experiências digitais intuitivas"
-Contagem: D-e-s-e-n-v... = 140 caracteres ✓
-
-CORRETO ✓ (165 chars - no limite):
-"Criamos experiências digitais estratégicas que elevam marcas, conquistam audiências engajadas e transformam visitantes em clientes através de design e tecnologia"
-Contagem: C-r-i-a-m-o-s... = 165 caracteres ✓
-
-❌ ERRADO ✗ (218 chars - REJEITADO):
-"Desenvolvemos sites institucionais modernos e vitrines digitais que destacam sua empresa, produtos e serviços, oferecendo experiências de navegação claras e intuitivas para fortalecer sua presença online"
-Contagem: D-e-s-e-n-v... = 218 caracteres ✗ ISTO VAI SER REJEITADO!
-
-COMO CORRIGIR O EXEMPLO ERRADO:
-Original: 218 chars ✗
-Removendo "produtos e serviços, oferecendo": 168 chars ✓
-Resultado: "Desenvolvemos sites institucionais modernos e vitrines digitais que destacam sua empresa, com experiências de navegação claras e intuitivas para fortalecer sua presença online"
-
 ⚠️ PROCESSO RIGOROSO ANTES DE ENVIAR:
 1. Escreva o texto normalmente
 2. Copie mentalmente e conte: 1, 2, 3, 4... até o fim
 3. Se passar do MÁXIMO, corte palavras imediatamente
 4. Sempre use 20 caracteres ABAIXO do limite máximo para segurança
-5. subtitle: nunca passe de 160 chars (margem de segurança)
-6. title: nunca passe de 100 chars (margem de segurança)
-7. description: nunca passe de 80 chars (margem de segurança)
+5. title: nunca passe de 100 chars (margem de segurança)
+6. description: nunca passe de 80 chars (margem de segurança)
 
 REGRAS DE ESTILO:
 - Linguagem direta e profissional
 - Evite excesso de adjetivos
 - Foco em benefícios concretos
 - Máximo 3-4 serviços principais
-- logo e clientPhoto sempre começam como null (usuário adiciona depois)`,
+- logo e clientPhoto sempre começam como null (usuário adiciona depois)
+
+🚨 REGRA CRÍTICA PARA O CAMPO "title" 🚨
+O campo "title" deve ser um TÍTULO INTRODUTÓRIO da proposta, NÃO o nome do projeto!
+
+❌ ERRADO - Usar apenas o nome do projeto:
+"Residência Horizonte Claro"
+"Projeto Casa Nova"
+"Site para Empresa XYZ"
+
+✅ CORRETO - Título introdutório descritivo:
+"Projeto de Arquitetura Residencial Personalizada"
+"Desenvolvimento de Site Institucional Moderno"
+"Consultoria Estratégica de Marketing Digital"
+"Design de Interiores para Ambientes Corporativos"
+
+ORIENTAÇÃO:
+- O title deve descrever O QUE está sendo oferecido (tipo de serviço/trabalho)
+- Não mencione diretamente o nome do projeto ({projectName})
+- Use palavras que descrevam a natureza do trabalho
+- Seja específico sobre o tipo de serviço oferecido
+
+EXEMPLOS POR ÁREA:
+Arquitetura: "Projeto Arquitetônico Residencial Completo" ou "Reforma e Design de Interiores"
+Marketing: "Estratégia de Marketing Digital Integrada" ou "Gestão de Redes Sociais e Conteúdo"
+Desenvolvimento: "Desenvolvimento de Plataforma Web Personalizada" ou "Sistema de Gestão Empresarial"
+Design: "Identidade Visual e Branding Profissional" ou "Design de Experiência Digital"`,
         expectedFormat: `{
+  "clientName": "string",
   "userName": "string",
   "email": "string",
   "logo": null,
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "string (max 120 chars)",
+  "title": "string (max 120 chars - DESCRIPTIVE intro title, not project name)",
   "description": "string (max 100 chars)",
   "hideDescription": false,
-  "subtitle": "string (max 180 chars)",
-  "hideSubtitle": false,
   "services": [{"id": "string", "serviceName": "string (max 50 chars)", "sortOrder": number}]
 }`,
         rules: [

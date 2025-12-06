@@ -364,15 +364,6 @@ TEXTO REFORMULADO:`;
     }
     this.ensureMaxLength(section.title, 120, "introduction.title");
     
-    // Auto-correct subtitle if exceeds limit
-    if (section.subtitle) {
-      if (section.subtitle.length > 180) {
-        console.warn(`⚠️  Auto-correcting introduction.subtitle (${section.subtitle.length} -> 180 chars)`);
-        section.subtitle = await this.rephraseToFit(section.subtitle, 180, "introduction.subtitle");
-      }
-      this.ensureMaxLength(section.subtitle, 180, "introduction.subtitle");
-    }
-    
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
       for (let index = 0; index < section.services.length; index++) {
@@ -869,6 +860,7 @@ TEXTO REFORMULADO:`;
     const introPrompt = this.getSectionPrompt("introduction", data);
     const introSystemPrompt = this.buildSystemPrompt(agent, "introduction");
     const introResult = await this.runLLMWithJSONRetry<{
+      clientName?: string;
       userName?: string;
       email?: string;
       logo?: string | null;
@@ -878,8 +870,6 @@ TEXTO REFORMULADO:`;
       title?: string;
       description?: string;
       hideDescription?: boolean;
-      subtitle?: string;
-      hideSubtitle?: boolean;
       services?: Array<{
         id?: string;
         serviceName: string;
@@ -889,9 +879,11 @@ TEXTO REFORMULADO:`;
     
     // Log AI result for debugging
     console.log("🔍 DEBUG - Introduction AI Result:", JSON.stringify({
+      hasClientName: !!introResult.clientName,
+      clientName: introResult.clientName,
       hasTitle: !!introResult.title,
+      title: introResult.title,
       hasDescription: !!introResult.description,
-      hasSubtitle: !!introResult.subtitle,
       servicesCount: introResult.services?.length || 0,
     }));
 
@@ -904,11 +896,10 @@ TEXTO REFORMULADO:`;
     ];
 
     sections.introduction = {
+      clientName: introResult.clientName || data.clientName || "",
       userName: introResult.userName || data.userName || "",
       email: introResult.email || data.userEmail || "",
-      title: introResult.title || "Título da proposta",
-      subtitle: introResult.subtitle || "Subtítulo explicativo sobre o projeto",
-      hideSubtitle: introResult.hideSubtitle ?? false,
+      title: introResult.title || "Proposta de Serviços Profissionais",
       services: (introResult.services && introResult.services.length > 0
         ? introResult.services
         : defaultServices
@@ -920,11 +911,10 @@ TEXTO REFORMULADO:`;
     };
     
     console.log("✅ DEBUG - Introduction Section Generated:", {
-      title: sections.introduction.title,
-      titleLength: sections.introduction.title.length,
-      subtitle: sections.introduction.subtitle,
-      subtitleLength: sections.introduction.subtitle?.length ?? 0,
-      subtitleOK: (sections.introduction.subtitle?.length ?? 0) <= 180 ? "✓" : "✗ EXCEEDED!"
+      clientName: sections.introduction?.clientName,
+      title: sections.introduction?.title,
+      titleLength: sections.introduction?.title?.length ?? 0,
+      titleOK: (sections.introduction?.title?.length ?? 0) <= 120 ? "✓" : "✗ EXCEEDED!",
     });
 
     // Generate aboutUs
@@ -933,6 +923,7 @@ TEXTO REFORMULADO:`;
     const aboutUsResult = await this.runLLMWithJSONRetry<{
       hideSection?: boolean;
       title?: string;
+      subtitle?: string;
       description?: string;
       paragraphs?: string[];
       marqueeText?: string;
@@ -949,7 +940,18 @@ TEXTO REFORMULADO:`;
     sections.aboutUs = {
       hideSection: aboutUsResult.hideSection ?? false,
       title: aboutUsResult.title || "Sobre nós",
+      subtitle: aboutUsResult.subtitle || "",
+      hideSubtitle: !aboutUsResult.subtitle,
     };
+    
+    console.log("✅ DEBUG - AboutUs Section Generated:", {
+      title: sections.aboutUs.title,
+      subtitle: sections.aboutUs.subtitle,
+      subtitleLength: sections.aboutUs.subtitle?.length ?? 0,
+      subtitleOK: (sections.aboutUs.subtitle?.length ?? 0) <= 250 ? "✓" : "✗ EXCEEDED!",
+      hasSubtitle: !!sections.aboutUs.subtitle,
+      hideSubtitle: sections.aboutUs.hideSubtitle,
+    });
 
     // Generate team
     const teamPrompt = this.getSectionPrompt("team", data);

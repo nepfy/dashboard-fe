@@ -485,8 +485,6 @@ function convertMinimalToProposalData(
       buttonTitle: "Solicitar Proposta",
       title: proposal.introduction.title,
       validity: requestData.validUntil || new Date().toISOString(),
-      subtitle: proposal.introduction.subtitle,
-      hideSubtitle: proposal.introduction.hideSubtitle || false,
       services:
         proposal.introduction.services?.map((service, index) => ({
           id: service.id,

@@ -479,7 +479,7 @@ export default function ItemEditorModal({
       case "faq":
         return "Perguntas Frequentes";
       case "aboutUs":
-        return "Sobre Nós";
+        return "Mídia";
       case "introServices":
         return "Serviços";
       default:
