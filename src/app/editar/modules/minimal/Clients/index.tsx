@@ -60,7 +60,6 @@ export default function MinimalClients({
     itemsProp: items?.length || 0,
     logosLength: logos.length,
     hideSection,
-    hideSubtitle,
     firstItemName: items?.[0]?.name,
   });
 
