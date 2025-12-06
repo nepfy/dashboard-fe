@@ -22,8 +22,18 @@
     "create-minimal-agents": "npx tsx src/scripts/create-minimal-agents.ts",
     "check-expiring-proposals": "npx tsx src/scripts/check-expiring-proposals.ts",
     "test-minimal-quick": "npx tsx src/scripts/test-minimal-quick.ts",
+    "test-minimal:designer": "npx tsx src/scripts/test-minimal-quick.ts --service=designer",
+    "test-minimal:arquiteto": "npx tsx src/scripts/test-minimal-quick.ts --service=arquiteto",
+    "test-minimal:photography": "npx tsx src/scripts/test-minimal-quick.ts --service=photography",
+    "test-minimal:marketing": "npx tsx src/scripts/test-minimal-quick.ts --service=marketing-digital",
+    "test-minimal:dev": "npx tsx src/scripts/test-minimal-quick.ts --service=desenvolvedor",
     "prepare": "husky",
-    "test": "vitest"
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed",
+    "check-test-user": "npx tsx e2e/scripts/check-test-user.ts"
   },
   "dependencies": {
     "@ai-sdk/togetherai": "^1.0.1",
@@ -61,6 +71,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",

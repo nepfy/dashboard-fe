@@ -48,3 +48,10 @@ next-env.d.ts
 
 # test outputs
 test-output/
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
