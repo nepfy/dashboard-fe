@@ -1,7 +1,10 @@
 # Visual Comparison Checklist: Minimal Template vs Empty Studio
 
 **Reference**: https://empty-studio.webflow.io/  
-**Test URL**: http://localhost:3000/editar/aurora-cafe-co
+**Test URL**: `http://localhost:3000/editar?projectId={YOUR_PROJECT_ID}&templateType=minimal`
+
+> **Nota**: A URL de edição usa query parameters. Você precisa do `projectId` da proposta gerada.
+> Execute `npm run test-minimal:designer` para gerar uma proposta e obter o ID.
 
 ## 🎯 Hero Section (Introduction)
 
@@ -253,13 +256,16 @@ From reference analysis:
    # Make sure dev server is running
    npm run dev
    
-   # Navigate to:
-   http://localhost:3000/editar/aurora-cafe-co
+   # Generate a test proposal
+   npm run test-minimal:designer
+   
+   # Get the projectId from output, then navigate to:
+   http://localhost:3000/editar?projectId={PROJECT_ID}&templateType=minimal
    ```
 
 2. **Compare Side-by-Side**:
    - Open Empty Studio in one window: https://empty-studio.webflow.io/
-   - Open your proposal in another: http://localhost:3000/editar/aurora-cafe-co
+   - Open your proposal in another: `http://localhost:3000/editar?projectId={ID}&templateType=minimal`
    - Use browser dev tools to inspect element sizes
 
 3. **Check Each Section**:

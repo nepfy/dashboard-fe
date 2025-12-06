@@ -16,12 +16,24 @@ Isso criará um arquivo JSON em `test-output/` com a proposta gerada.
 
 ### 2. Abrir a proposta no editor
 
-```bash
-# Com o servidor rodando, navegue para:
-http://localhost:3000/editar/aurora-cafe-co
+Depois de gerar a proposta, você verá no output algo como:
+
+```
+✅ Minimal proposal generated successfully
+📝 Project ID: 0a0a367d-a7d8-4a69-8749-cd2dd32a8a69
 ```
 
-**Ou** encontre a URL na saída do script de teste.
+Use esse ID para abrir no navegador:
+
+```bash
+# Com o servidor rodando, navegue para:
+http://localhost:3000/editar?projectId=0a0a367d-a7d8-4a69-8749-cd2dd32a8a69&templateType=minimal
+```
+
+**Formato da URL:**
+```
+http://localhost:3000/editar?projectId={PROJECT_ID}&templateType=minimal
+```
 
 ### 3. Comparar visualmente
 
@@ -29,7 +41,7 @@ http://localhost:3000/editar/aurora-cafe-co
 
 1. Abra dois navegadores/abas lado a lado:
    - **Esquerda**: https://empty-studio.webflow.io/
-   - **Direita**: http://localhost:3000/editar/aurora-cafe-co
+   - **Direita**: http://localhost:3000/editar?projectId={YOUR_PROJECT_ID}&templateType=minimal
 
 2. Use o checklist em `e2e/VISUAL_COMPARISON_CHECKLIST.md`
 
@@ -178,8 +190,9 @@ npm run test-minimal:designer
 
 ### Passo 2: Inspeção Rápida
 ```bash
+# Pegue o projectId do output do teste
 # Abra a proposta gerada
-open http://localhost:3000/editar/aurora-cafe-co
+open "http://localhost:3000/editar?projectId=0a0a367d-a7d8-4a69-8749-cd2dd32a8a69&templateType=minimal"
 
 # Verificação rápida (2 min):
 ✓ Todas as seções aparecem?
