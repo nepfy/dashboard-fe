@@ -102,6 +102,21 @@ Testa a qualidade do conteúdo gerado pela IA:
 - Seção de Clientes: título longo e descritivo, parágrafos completos, 12 logos
 - Seção de Expertise: tópicos com descrições completas (mínimo 120 caracteres)
 
+### `minimal-visual-validation.spec.ts`
+Valida o layout visual comparando com a referência Empty Studio:
+- Hero section: navbar, título, cliente, data
+- About Us: grid de imagens com aspect ratios diferentes
+- Clients: header em grid 2x2 assimétrico (CRÍTICO)
+- Expertise: grid de tópicos com ícones e descrições
+- Typography e spacing corretos
+
+### `VISUAL_COMPARISON_CHECKLIST.md`
+Checklist manual detalhado para comparação visual:
+- Análise seção por seção
+- Medidas específicas (font sizes, spacing, grid columns)
+- Comparação lado a lado com Empty Studio
+- Critérios de sucesso claros
+
 ## 🐛 Debug
 
 Se um teste falhar, você pode:
