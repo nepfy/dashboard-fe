@@ -22,7 +22,7 @@
       "clientName": "Felipe Ferragens",
       "userName": "Caio Alcantara",
       "email": "alcantaracaiolucas@gmail.com",
-      "title": "Desenvolvimento de Site Institucional com experiências digitais premium",
+      "title": "Impulsione sua presença digital forte com autoridade, prova social e lucro mensurável agora",
       "services": [
         {
           "id": "1",
@@ -31,20 +31,20 @@
         },
         {
           "id": "2",
-          "serviceName": "SEO e Otimização",
+          "serviceName": "Marketing Digital",
           "sortOrder": 2
         },
         {
           "id": "3",
-          "serviceName": "Design Responsivo",
+          "serviceName": "SEO e Otimização",
           "sortOrder": 3
         }
       ]
     },
     "aboutUs": {
       "hideSection": false,
-      "title": "Cresça online",
-      "subtitle": "Desenvolvemos um site institucional moderno para Felipe Ferragens, apresentando sua empresa de forma responsiva e funcional, fortalecendo sua presença digital.",
+      "title": "Elevamos marcas digitais com estratégias inovadoras — autoridade e prova social",
+      "subtitle": "Crescimento online com credibilidade",
       "hideSubtitle": false
     },
     "team": {
@@ -54,21 +54,21 @@
         {
           "id": "1",
           "name": "Caio Alcantara",
-          "role": "Especialista em Marketing",
+          "role": "Especialista em SEO",
           "image": "/images/templates/flash/placeholder.png",
           "sortOrder": 1
         },
         {
           "id": "2",
-          "name": "João Pedro",
+          "name": "Lucas Oliveira",
           "role": "Desenvolvedor Web",
           "image": "/images/templates/flash/placeholder.png",
           "sortOrder": 2
         },
         {
           "id": "3",
-          "name": "Luana Silva",
-          "role": "Especialista em SEO",
+          "name": "Beatriz Silva",
+          "role": "Gerente de Projetos",
           "image": "/images/templates/flash/placeholder.png",
           "sortOrder": 3
         }
@@ -76,15 +76,15 @@
     },
     "expertise": {
       "hideSection": false,
-      "subtitle": "ESPECIALIZAÇÕES",
+      "subtitle": "RESULTADOS REAIS",
       "hideSubtitle": false,
-      "title": "Nossas Áreas de Atuação em Marketing Digital",
+      "title": "Estratégias Digitais Completas para Crescimento Sustentável — autoridade e prova social",
       "topics": [
         {
           "id": "1",
           "icon": "GlobeIcon",
           "title": "Desenvolvimento Web",
-          "description": "Criamos sites institucionais modernos, funcionais e responsivos que apresentam sua empresa, produtos e diferenciais de forma clara e atraente, fortalecendo sua presença digital ...",
+          "description": "Entregamos soluções completas com autoridade, prova social e lucro mensurável para gerar impacto real no seu projeto digital.",
           "hideIcon": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -92,9 +92,9 @@
         },
         {
           "id": "2",
-          "icon": "BulbIcon",
-          "title": "Estratégia de Conteúdo",
-          "description": "Desenvolvemos estratégias de conteúdo que engajam e convertem, através de textos, imagens e vídeos que dialogam com seu público-alvo, criando uma conexão autêntica e duradoura c...",
+          "icon": "EyeIcon",
+          "title": "Análise de Mercado",
+          "description": "Entregamos soluções completas com autoridade, prova social e lucro mensurável para gerar impacto real no seu projeto digital.",
           "hideIcon": false,
           "hideTitleField": false,
           "hideDescription": false,
@@ -104,71 +104,11 @@
           "id": "3",
           "icon": "ThunderIcon",
           "title": "Otimização de Performance",
-          "description": "Aprimoramos a performance dos sites e campanhas, garantindo rapidez e eficiência, para que você possa alcançar seus objetivos de forma rápida e segura, com soluções personalizad...",
+          "description": "Entregamos soluções completas com autoridade, prova social e lucro mensurável para gerar impacto real no seu projeto digital.",
           "hideIcon": false,
           "hideTitleField": false,
           "hideDescription": false,
           "sortOrder": 3
-        },
-        {
-          "id": "4",
-          "icon": "GearIcon",
-          "title": "Gestão de Redes Sociais",
-          "description": "Gerenciamos suas redes sociais de forma estratégica, criando conteúdo relevante, engajando seu público e monitorando resultados, para que você possa aproveitar ao máximo o poten...",
-          "hideIcon": false,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "sortOrder": 4
-        },
-        {
-          "id": "5",
-          "icon": "EyeIcon",
-          "title": "Análise de Métricas",
-          "description": "Analisamos as métricas de desempenho de seus sites e campanhas, identificando oportunidades de melhoria e otimização, para que você possa tomar decisões informadas e alcançar se...",
-          "hideIcon": false,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "sortOrder": 5
-        },
-        {
-          "id": "6",
-          "icon": "StarIcon",
-          "title": "Qualidade e Excelência",
-          "description": "Garantimos a qualidade e excelência em todos os nossos serviços, desde o desenvolvimento de sites até a gestão de redes sociais, para que você possa ter certeza de que está rece...",
-          "hideIcon": false,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "sortOrder": 6
-        },
-        {
-          "id": "7",
-          "icon": "FolderIcon",
-          "title": "Organização e Planejamento",
-          "description": "Organizamos e planejamos suas estratégias de marketing digital de forma eficaz, garantindo que todos os esforços estejam alinhados com seus objetivos e metas, para que você poss...",
-          "hideIcon": false,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "sortOrder": 7
-        },
-        {
-          "id": "8",
-          "icon": "HeartIcon",
-          "title": "Experiência do Usuário",
-          "description": "Criamos experiências de usuário intuitivas e envolventes, que facilitam a navegação e aumentam a satisfação, para que você possa construir uma relação duradoura com seus cliente...",
-          "hideIcon": false,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "sortOrder": 8
-        },
-        {
-          "id": "9",
-          "icon": "CrownIcon",
-          "title": "Liderança e Inovação",
-          "description": "Lidamos com as últimas tendências e inovações em marketing digital, garantindo que você esteja sempre à frente da concorrência, com soluções personalizadas e estratégias de vang...",
-          "hideIcon": false,
-          "hideTitleField": false,
-          "hideDescription": false,
-          "sortOrder": 9
         }
       ]
     },
@@ -177,34 +117,34 @@
       "title": "Resultados Comprovados",
       "items": [
         {
-          "id": "469b3fdc-4b17-4bfc-99be-5264b3d45f95",
+          "id": "fb1eba0e-e89a-4996-acfe-96d0dcefbaac",
           "client": "Felipe Ferragens",
           "investment": "R$ 15.000",
           "roi": "+120%",
           "photo": "",
-          "instagram": "@felipeferragens",
+          "instagram": "@felipeferragensoficial",
           "hidePhoto": false,
           "hideItem": false,
           "sortOrder": 0
         },
         {
-          "id": "ebd4aedf-351a-4e1d-a146-d83926a63a2c",
-          "client": "Rocha Materiais",
+          "id": "44824697-4286-44fa-b071-7a9576492617",
+          "client": "Ferragem São Paulo",
           "investment": "R$ 20.000",
           "roi": "+180%",
           "photo": "",
-          "instagram": "@rochamateriais",
+          "instagram": "@ferragensp",
           "hidePhoto": false,
           "hideItem": false,
           "sortOrder": 1
         },
         {
-          "id": "d93cb609-4c07-4a36-a6e9-6a56526786a8",
-          "client": "Construtora Oliveira",
-          "investment": "R$ 30.000",
-          "roi": "+250%",
+          "id": "23298e83-6b83-4274-a13e-903b517df448",
+          "client": "Materiais de Construção LTDA",
+          "investment": "R$ 10.000",
+          "roi": "+80%",
           "photo": "",
-          "instagram": "@construtoraoliveira",
+          "instagram": "@materiaisconstrucao",
           "hidePhoto": false,
           "hideItem": false,
           "sortOrder": 2
@@ -215,28 +155,28 @@
       "hideSection": false,
       "items": [
         {
-          "id": "83ac0c3f-982d-412f-a980-232863651080",
+          "id": "c8428be1-b168-4aa4-86da-336eda23a578",
           "name": "Felipe Silva",
-          "role": "Dono, Felipe Ferragens",
-          "testimonial": "A Agência Digital Inovadora criou um site institucional que aumentou nossa visibilidade online em 300%. Recomendo!",
+          "role": "Gerente, Felipe Ferragens",
+          "testimonial": "A Agência Digital Inovadora criou um site institucional que superou minhas expectativas. Nossa visibilidade online aumentou em 30% e recebemos 25 solicitações de orçamento nos primeiros 3 meses.",
           "photo": "",
           "hidePhoto": false,
           "sortOrder": 0
         },
         {
-          "id": "b1daa19a-4c6f-4212-bf47-6223a0064d25",
+          "id": "b429cb3e-51b5-4c76-abf5-8d161993009a",
           "name": "Luana Oliveira",
-          "role": "Marketing, LCO",
-          "testimonial": "Com a Agência Digital Inovadora, aumentamos nossas conversões em 25% após a otimização do nosso site. Excelente trabalho!",
+          "role": "Marketing, Felipe Ferragens",
+          "testimonial": "O site desenvolvido pela Agência Digital Inovadora é moderno e fácil de navegar. Nosso engajamento nas redes sociais aumentou em 50% após a integração com o site.",
           "photo": "",
           "hidePhoto": false,
           "sortOrder": 1
         },
         {
-          "id": "8db2494c-3792-4d54-8c94-8e430ede7208",
+          "id": "f6b812a0-617f-4929-9209-2bab275c3f55",
           "name": "Rafael Santos",
-          "role": "Gerente, RS Indústria",
-          "testimonial": "A Agência Digital Inovadora nos ajudou a reduzir o custo por clique em 40% com uma campanha de Google Ads eficaz. Muito satisfeito!",
+          "role": "Diretor, Felipe Ferragens",
+          "testimonial": "A Agência Digital Inovadora nos ajudou a aumentar nossas vendas online em 20% em apenas 6 meses. Seu trabalho em SEO e Google Ads foi fundamental para o nosso crescimento.",
           "photo": "",
           "hidePhoto": false,
           "sortOrder": 2
@@ -245,71 +185,71 @@
     },
     "clients": {
       "hideSection": false,
-      "title": "Reconhecemos a importância de uma presença digital forte para empresas de médio porte, especialmente em ferragens. Nossa missão é oferecer soluções web inovadoras e personalizadas que equilibrem qualidade e investimento acessível.",
+      "title": "Reconhecemos a necessidade de uma presença digital forte em ferragens. Nossa missão é entregar soluções digitais inovadoras que fortaleçam a presença online e transmitam credibilidade. — autoridade e prova social",
       "hideTitle": false,
       "paragraphs": [
-        "Seu site institucional é provavelmente o primeiro ponto de contato que alguém terá com sua marca. Destaque-se da multidão criando um site que ajuda você a alcançar seus objetivos de negócio enquanto mostra quem você é de uma forma que as pessoas não vão esquecer.",
-        "Nossa abordagem combina técnica avançada e sensibilidade criativa para entregar soluções completas que atendam às necessidades específicas de cada cliente, tornando-se um parceiro valioso no crescimento do seu negócio online."
+        "Seu site institucional é a porta de entrada para sua marca digital, e é essencial que ele seja atraente, fácil de navegar e responsivo para diferentes dispositivos. Nossa equipe de especialistas em SEO, Google Ads, redes sociais e automação de marketing trabalha em estreita colaboração para criar experiências digitais memoráveis que ajudam a alcançar seus objetivos de negócio.",
+        "Nossa filosofia é simples: design é sobre criar experiências que tornam a vida das pessoas mais fácil e divertida. Com isso em mente, fornecemos serviços personalizados para ser seu parceiro no desenvolvimento de um site institucional que atenda às necessidades específicas da sua empresa e do seu setor."
       ],
       "items": [
         {
           "id": "1",
-          "name": "FERRAGENS BR",
+          "name": "FERRAGENS BRASIL",
           "sortOrder": 0
         },
         {
           "id": "2",
-          "name": "INDÚSTRIA METAL",
+          "name": "INDÚSTRIA FERRO",
           "sortOrder": 1
         },
         {
           "id": "3",
-          "name": "CONSTRUTORA LÍDER",
+          "name": "METALÚRGICA SUL",
           "sortOrder": 2
         },
         {
           "id": "4",
-          "name": "PROJETOS ARQ",
+          "name": "FERROTEC",
           "sortOrder": 3
         },
         {
           "id": "5",
-          "name": "ENGECORP",
+          "name": "SISTEMAS FERRO",
           "sortOrder": 4
         },
         {
           "id": "6",
-          "name": "FERRAMENTAS ELETRÔNICAS",
+          "name": "FERRAMENTAS ESPECIAIS",
           "sortOrder": 5
         },
         {
           "id": "7",
-          "name": "SISTEMAS DE SEGURANÇA",
+          "name": "INDÚSTRIA METAL",
           "sortOrder": 6
         },
         {
           "id": "8",
-          "name": "EQUIPAMENTOS INDUSTRIAIS",
+          "name": "FERRAGENS INDUSTRIAIS",
           "sortOrder": 7
         },
         {
           "id": "9",
-          "name": "SERVIÇOS DE ENGENHARIA",
+          "name": "SOLUÇÕES FERRO",
           "sortOrder": 8
         },
         {
           "id": "10",
-          "name": "MATERIAIS DE CONSTRUÇÃO",
+          "name": "METALÚRGICA NORTE",
           "sortOrder": 9
         },
         {
           "id": "11",
-          "name": "TECNologia DE PONTA",
+          "name": "FERRAGENS E EQUIPAMENTOS",
           "sortOrder": 10
         },
         {
           "id": "12",
-          "name": "SOLUÇÕES INOVADORAS",
+          "name": "INDÚSTRIA DE FERRO E AÇO",
           "sortOrder": 11
         }
       ]
@@ -319,27 +259,33 @@
       "topics": [
         {
           "id": "1",
-          "title": "Planejamento Estratégico",
-          "description": "Nossa equipe de especialistas em marketing digital trabalha em estreita colaboração com você para entender seus objetivos, identificar oportunidades de crescimento e desenvolver uma estratégia personalizada para o seu site institucional, garantindo que ele atenda às necessidades do seu negócio e seja uma ferramenta eficaz para atrair e reter clientes.",
+          "title": "Análise de Negócios",
+          "description": "Entendemos seu negócio, identificando pontos fortes, oportunidades e objetivos. Isso nos permite criar um site institucional personalizado, que reflete sua essência e atende às necessidades dos seus clientes. Com mais de 5 anos de experiência em crescimento de negócios online, nós aplicamos nossos conhecimentos para potencializar sua presença digital. — autoridade e prova social",
           "sortOrder": 1
         },
         {
           "id": "2",
-          "title": "Desenvolvimento do Site",
-          "description": "Com a estratégia definida, nossa equipe de desenvolvedores experientes cria um site institucional moderno, responsivo e funcional, que não apenas apresenta sua empresa de forma atraente, mas também oferece uma experiência de usuário excepcional, facilitando a navegação e o engajamento dos visitantes, e posicionar sua marca como autoridade em seu setor.",
+          "title": "Desenvolvimento de Estratégia",
+          "description": "Desenvolvemos uma estratégia de comunicação digital eficaz, considerando seu público-alvo, concorrentes e objetivos de negócios. Isso inclui a definição de uma mensagem única, que ressalta seus diferenciais e valor agregado. Com base nessa estratégia, criamos um site que não apenas informa, mas também engage e converte visitantes em clientes. — autoridade e prova social",
           "sortOrder": 2
         },
         {
           "id": "3",
-          "title": "Otimização e Lançamento",
-          "description": "Após o desenvolvimento, otimizamos o site para motores de busca, garantindo visibilidade e alcance máximo, e então o lançamos, acompanhando de perto o desempenho e ajustando estratégias conforme necessário, para assegurar que você alcance seus objetivos de crescimento e consolide sua presença online de forma eficaz e sustentável.",
+          "title": "Criação do Site Institucional",
+          "description": "Nossa equipe cria um site institucional moderno e responsivo, oferecendo experiência de usuário excepcional. Otimizamos para motores de busca, garantindo presença online forte, autoridade, prova social e lucro mensurável.",
           "sortOrder": 3
         },
         {
           "id": "4",
-          "title": "Acompanhamento e Análise",
-          "description": "Com o site em operação, monitoramos constantemente o desempenho, analisando métricas-chave e identificando oportunidades de melhoria, proporcionando relatórios detalhados e recomendações estratégicas para continua otimização, garantindo que sua presença digital continue a evoluir e a gerar resultados positivos para o seu negócio.",
+          "title": "Lançamento e Monitoramento",
+          "description": "Após criar o site, realizamos testes rigorosos para garantir seu funcionamento perfeito. Lançamos o site e monitoramos seu desempenho, identificando oportunidades de melhoria para maximizar resultados e manter seu site institucional atualizado e alinhado com seus objetivos de negócios. — autoridade e prova social",
           "sortOrder": 4
+        },
+        {
+          "id": "5",
+          "title": "Análise e Otimização",
+          "description": "Avaliamos regularmente o desempenho do site com ferramentas de análise para entender a interação dos visitantes. Com esses dados, identificamos áreas de melhoria e implementamos ajustes para aumentar a eficácia do site, garantindo sua evolução e adaptação às necessidades dos clientes e do negócio. — autoridade e prova social",
+          "sortOrder": 5
         }
       ]
     },
@@ -348,8 +294,8 @@
     },
     "investment": {
       "hideSection": false,
-      "title": "Investimento em Digital",
-      "projectScope": "Desenvolvemos site institucional moderno e responsivo para fortalecer sua presença online",
+      "title": "Invista no seu Site Institucional — autoridade e prova social",
+      "projectScope": "Desenvolvemos um site moderno e responsivo para fortalecer sua presença digital e aumentar a credibilidade da marca",
       "hideProjectScope": false
     },
     "plans": {
@@ -358,7 +304,7 @@
         {
           "id": "1",
           "title": "Básico",
-          "description": "Crie sua presença online com um site moderno",
+          "description": "Site institucional moderno e funcional — autoridade e prova social",
           "value": "R$ 1.200",
           "planPeriod": "Investimento único",
           "recommended": false,
@@ -374,36 +320,36 @@
           "sortOrder": 0,
           "includedItems": [
             {
-              "id": "79e56ba1-04a9-412b-a229-5d3422278b6e",
-              "description": "Benefício 1",
+              "id": "9c49f97d-dd13-4910-880f-018a3933a560",
+              "description": "Benefício 1 — autoridade e prova social",
               "sortOrder": 0
             },
             {
-              "id": "46665c80-0551-44da-9e20-4869505b8192",
-              "description": "Benefício 2",
+              "id": "88eb6668-7cce-4ba5-a0a2-9427da178722",
+              "description": "Benefício 2 — autoridade e prova social",
               "sortOrder": 1
             },
             {
-              "id": "0e32c8da-c1a3-4bdc-8756-8b659620f899",
-              "description": "Benefício 3",
+              "id": "330af2fd-5e66-4569-a511-2df3f16cb3e4",
+              "description": "Benefício 3 — autoridade e prova social",
               "sortOrder": 2
             },
             {
-              "id": "95a4541c-005f-4281-b7ab-3c463994a31e",
-              "description": "Benefício 4",
+              "id": "5f095bca-b9d3-403d-9011-22618c82f827",
+              "description": "Benefício 4 — autoridade e prova social",
               "sortOrder": 3
             },
             {
-              "id": "2337b7d7-a77a-4199-a886-1f23168b249a",
-              "description": "Benefício 5",
+              "id": "639f8202-5dbf-4c5a-9b49-88661eb2fde1",
+              "description": "Benefício 5 — autoridade e prova social",
               "sortOrder": 4
             }
           ]
         },
         {
           "id": "2",
-          "title": "Premium",
-          "description": "Elevate sua marca com um site institucional completo",
+          "title": "Premium com autoridade",
+          "description": "Site institucional completo e personalizado — autoridade e prova social",
           "value": "R$ 2.500",
           "planPeriod": "Investimento único",
           "recommended": true,
@@ -419,28 +365,28 @@
           "sortOrder": 1,
           "includedItems": [
             {
-              "id": "c114f3fb-42c2-465f-ab67-d4ad551ac0af",
-              "description": "Benefício 1",
+              "id": "473e44ba-a483-41e0-9d2f-cbad01467024",
+              "description": "Benefício 1 — autoridade e prova social",
               "sortOrder": 0
             },
             {
-              "id": "ec4a1828-15ea-408e-ac08-6a827c2cdd2b",
-              "description": "Benefício 2",
+              "id": "a171d8dc-09ec-4f6b-9581-f04c3e725502",
+              "description": "Benefício 2 — autoridade e prova social",
               "sortOrder": 1
             },
             {
-              "id": "77e71117-259f-434a-bfd3-2eb6955481ba",
-              "description": "Benefício 3",
+              "id": "5c13b575-dd18-4944-a433-ea4cb48ee935",
+              "description": "Benefício 3 — autoridade e prova social",
               "sortOrder": 2
             },
             {
-              "id": "b4cd001f-a5c3-4ebb-b674-6f7b1a0e5950",
-              "description": "Benefício 4",
+              "id": "07663ad5-c575-40b3-aedd-90d43c1aa004",
+              "description": "Benefício 4 — autoridade e prova social",
               "sortOrder": 3
             },
             {
-              "id": "ac388bc9-3edb-4655-8c5f-03c0cf9b4a93",
-              "description": "Benefício 5",
+              "id": "611ca5d6-cc41-4e6a-8c93-66c749d1fc8f",
+              "description": "Benefício 5 — autoridade e prova social",
               "sortOrder": 4
             }
           ]
@@ -452,44 +398,74 @@
       "items": [
         {
           "id": "1",
-          "question": "Quanto tempo leva o desenvolvimento",
-          "answer": "O prazo varia conforme a complexidade. Projetos simples levam de 2 a 4 semanas, enquanto projetos complexos podem levar de 6 a 10 semanas. Após entendermos suas necessidades, fornecemos um cronograma detalhado com todas as etapas e prazos específicos.",
+          "question": "Quanto tempo leva o projeto — autoridade e prova social",
+          "answer": "O prazo varia conforme a complexidade. Projetos simples levam de 2 a 4 semanas, enquanto projetos complexos podem levar de 6 a 10 semanas. Após entendermos suas necessidades, fornecemos um cronograma detalhado com todas as etapas e prazos específicos. — autoridade e prova social",
           "sortOrder": 1
         },
         {
           "id": "2",
-          "question": "O que é responsividade",
-          "answer": "Responsividade significa que o site se adapta a diferentes dispositivos e tamanhos de tela, garantindo uma experiência de usuário fluída e agradável em qualquer lugar.",
+          "question": "O que é um site institucional — autoridade e prova social",
+          "answer": "Um site institucional é uma plataforma online que apresenta a empresa, seus produtos e serviços de forma clara e atraente. Ele é fundamental para estabelecer uma presença digital forte e credível, além de facilitar o contato com clientes e parceiros. — autoridade e prova social",
           "sortOrder": 2
         },
         {
           "id": "3",
-          "question": "Como é feita a manutenção",
-          "answer": "Nossa equipe realiza atualizações regulares para garantir que o site permaneça seguro, rápido e atualizado, além de oferecer suporte contínuo para qualquer necessidade.",
+          "question": "Qual a importância do design responsivo — autoridade e prova social",
+          "answer": "O design responsivo é crucial para garantir que o site se adapte a diferentes dispositivos e tamanhos de tela, proporcionando uma experiência de usuário ótima e aumentando a conversão de visitantes em clientes. — autoridade e prova social",
           "sortOrder": 3
         },
         {
           "id": "4",
-          "question": "O que é SEO",
-          "answer": "SEO significa Otimização para Motores de Busca, um processo que ajuda a melhorar a visibilidade do site nos resultados de busca, aumentando a chance de atrair mais visitantes e clientes.",
+          "question": "Como vocês garantem a segurança do site — autoridade e prova social",
+          "answer": "Nós implementamos medidas de segurança avançadas, como certificados SSL e atualizações regulares, para proteger o site contra ameaças e garantir a integridade dos dados dos visitantes. — autoridade e prova social",
           "sortOrder": 4
         },
         {
           "id": "5",
-          "question": "Como medida o sucesso",
-          "answer": "Medimos o sucesso através de métricas como aumento de tráfego, engagement e conversões, além de realizar análises regulares para identificar áreas de melhoria e otimizar o desempenho do site.",
+          "question": "O que é otimização para motores de busca — autoridade e prova social",
+          "answer": "A otimização para motores de busca é o processo de melhorar a visibilidade e o ranking do site nos resultados de busca, aumentando a chance de atrair visitantes orgânicos e relevantes. — autoridade e prova social",
           "sortOrder": 5
+        },
+        {
+          "id": "6",
+          "question": "Como vocês medem o sucesso do site — autoridade e prova social",
+          "answer": "Nós utilizamos ferramentas de análise para monitorar o desempenho do site, trackear métricas como tráfego, engajamento e conversão, e ajustar a estratégia para garantir o máximo retorno sobre o investimento. — autoridade e prova social",
+          "sortOrder": 6
+        },
+        {
+          "id": "7",
+          "question": "Quais são os benefícios de um site institucional — autoridade e prova social",
+          "answer": "Os benefícios incluem aumento da credibilidade, melhoria da presença digital, facilitação do contato com clientes e parceiros, e aumento da conversão de visitantes em clientes. — autoridade e prova social",
+          "sortOrder": 7
+        },
+        {
+          "id": "8",
+          "question": "Como vocês garantem a acessibilidade do site — autoridade e prova social",
+          "answer": "Nós seguemos as diretrizes de acessibilidade web para garantir que o site seja acessível a todos, independentemente de deficiências ou limitações, e forneça uma experiência de usuário igualitária. — autoridade e prova social",
+          "sortOrder": 8
+        },
+        {
+          "id": "9",
+          "question": "O que é um cronograma de desenvolvimento — autoridade e prova social",
+          "answer": "Um cronograma de desenvolvimento é um plano detalhado que estabelece as etapas, prazos e responsabilidades para o desenvolvimento do site, garantindo que o projeto seja concluído no prazo e dentro do orçamento. — autoridade e prova social",
+          "sortOrder": 9
+        },
+        {
+          "id": "10",
+          "question": "Como vocês realizam a manutenção do site — autoridade e prova social",
+          "answer": "Nós oferecemos serviços de manutenção regulares para garantir que o site permaneça atualizado, seguro e funcionando corretamente, além de realizar ajustes e melhorias contínuas para garantir a melhor experiência de usuário. — autoridade e prova social",
+          "sortOrder": 10
         }
       ]
     },
     "footer": {
-      "callToAction": "Quer crescer online?",
-      "disclaimer": "Proposta válida por 30 dias. Preços e condições sujeitos a alteração após esse período.",
+      "callToAction": "Quer impulsionar seu negócio? — autoridade e prova social",
+      "disclaimer": "Proposta válida por 30 dias. Preços e condições podem variar.",
       "email": "alcantaracaiolucas@gmail.com",
       "phone": "+55 11 98765-4321",
       "hideCallToAction": false,
       "hideDisclaimer": false
     }
   },
-  "generatedAt": "2025-12-07T22:31:58.959Z"
+  "generatedAt": "2025-12-07T23:22:35.269Z"
 }

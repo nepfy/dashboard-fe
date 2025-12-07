@@ -762,8 +762,8 @@ FORMATO:
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "Título INTRODUTÓRIO da proposta, descrevendo o tipo de trabalho/serviço (MÁXIMO 120 caracteres)",
-  "description": "Descrição concisa da proposta de valor (MÁXIMO 100 caracteres)",
+  "title": "Título INTRODUTÓRIO imperativo, inclusivo e direto (MÁXIMO 100 caracteres, sem citar serviço específico ou cliente)",
+  "description": "Descrição concisa da proposta de valor (MÁXIMO 90 caracteres, opcional)",
   "hideDescription": false,
   "services": [
     { "id": "1", "serviceName": "Serviço 1 com até 50 caracteres", "sortOrder": 1 },
@@ -779,8 +779,8 @@ FORMATO:
 ⚠️ O sistema NÃO vai cortar/truncar seu texto. Ele vai REJEITAR e você vai refazer TODO o trabalho!
 
 🔒 LIMITES ABSOLUTOS E INEGOCIÁVEIS (incluindo espaços, pontos, vírgulas, TUDO):
-- title: MÁXIMO ABSOLUTO 120 caracteres | RECOMENDADO: 60-100 caracteres
-- description: MÁXIMO ABSOLUTO 100 caracteres | RECOMENDADO: 50-80 caracteres  
+- title: MÁXIMO ABSOLUTO 100 caracteres | RECOMENDADO: 90-100 caracteres
+- description: MÁXIMO ABSOLUTO 90 caracteres | RECOMENDADO: 60-80 caracteres  
 - serviceName: MÁXIMO ABSOLUTO 50 caracteres CADA | RECOMENDADO: 30-40 caracteres
 
 📏 MÉTODO OBRIGATÓRIO DE CONTAGEM:
@@ -795,8 +795,8 @@ FORMATO:
 2. Copie mentalmente e conte: 1, 2, 3, 4... até o fim
 3. Se passar do MÁXIMO, corte palavras imediatamente
 4. Sempre use 20 caracteres ABAIXO do limite máximo para segurança
-5. title: nunca passe de 100 chars (margem de segurança)
-6. description: nunca passe de 80 chars (margem de segurança)
+5. title: mantenha entre 90 e 100 chars (margem de segurança)
+6. description: mantenha entre 60 e 80 chars (margem de segurança)
 
 REGRAS DE ESTILO:
 - Linguagem direta e profissional
@@ -838,14 +838,14 @@ Design: "Identidade Visual e Branding Profissional" ou "Design de Experiência D
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "string (max 120 chars - DESCRIPTIVE intro title, not project name)",
-  "description": "string (max 100 chars)",
+  "title": "string (max 100 chars - DESCRIPTIVE intro title, not project name)",
+  "description": "string (max 90 chars, optional)",
   "hideDescription": false,
   "services": [{"id": "string", "serviceName": "string (max 50 chars)", "sortOrder": number}]
 }`,
         rules: [
-          "title: até 120 caracteres, direto e claro",
-          "description: até 100 caracteres, proposta de valor concisa",
+          "title: até 100 caracteres, imperativo, inclusivo, direto, sem citar cliente/serviço",
+          "description: até 90 caracteres, proposta de valor concisa (opcional)",
           "subtitle: até 180 caracteres (CRÍTICO: conte os caracteres antes de gerar!)",
           "services: 3-4 itens, cada um com até 50 caracteres",
           "Tom profissional e minimalista",
@@ -868,15 +868,15 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
-  "title": "Proposta de valor clara e direta (até 100 caracteres)",
-  "subtitle": "Descrição detalhada conectando a empresa ao projeto do cliente. DEVE mencionar {clientName} de forma natural (até 250 caracteres)",
-  "marqueeText": "Texto marquee com serviços separados por → (ex: Brand Design → UI Design → Development) (até 200 caracteres)",
+  "title": "Proposta de valor clara, direta e estratégica (até 140 caracteres, sem citar o nome do cliente)",
+  "subtitle": "Frase curta e forte conectando valor e diferenciais (até 95 caracteres, sem citar cliente)",
+  "marqueeText": "Lista de serviços separados por → (ex: Brand Design → UI Design → Development) (até 60 caracteres)",
   "hideMarquee": false,
   "items": [
     {
       "id": "1",
       "image": null,
-      "caption": "Descrição concisa e impactante sobre expertise (até 100 caracteres)",
+      "caption": "Descrição concisa e impactante sobre expertise (até 125 caracteres)",
       "hideImage": false,
       "hideCaption": false,
       "sortOrder": 0
@@ -884,7 +884,7 @@ FORMATO:
     {
       "id": "2",
       "image": null,
-      "caption": "Descrição concisa e impactante sobre metodologia (até 100 caracteres)",
+      "caption": "Descrição concisa e impactante sobre metodologia (até 125 caracteres)",
       "hideImage": false,
       "hideCaption": false,
       "sortOrder": 1
@@ -893,11 +893,11 @@ FORMATO:
 }
 
 REGRAS RÍGIDAS
-- title: ATÉ 100 caracteres - proposta de valor clara e específica
-- subtitle: ATÉ 250 caracteres - DEVE mencionar naturalmente {clientName}
-- marqueeText: ATÉ 200 caracteres - 4-6 serviços separados por →
+- title: ATÉ 140 caracteres - proposta de valor clara e específica
+- subtitle: ATÉ 95 caracteres - não citar cliente, tom estratégico
+- marqueeText: ATÉ 60 caracteres - 3-5 serviços separados por →
 - items: EXATAMENTE 2 itens (1º expertise, 2º metodologia)
-- caption: ATÉ 100 caracteres cada
+- caption: ATÉ 125 caracteres cada
 - image: sempre null (usuário adiciona depois)
 - Planeje a contagem ANTES de escrever; não gere acima dos limites
 - Linguagem direta, autêntica e minimalista
@@ -905,9 +905,9 @@ REGRAS RÍGIDAS
 - Responda apenas com o JSON final`,
         expectedFormat: `{
   "hideSection": false,
-  "title": "string (max 100 chars)",
-  "subtitle": "string (max 250 chars, must mention client name)",
-  "marqueeText": "string (max 200 chars, services separated by →)",
+  "title": "string (max 140 chars)",
+  "subtitle": "string (max 95 chars, do not cite client)",
+  "marqueeText": "string (max 60 chars, services separated by →)",
   "hideMarquee": false,
   "items": [
     {
@@ -921,9 +921,9 @@ REGRAS RÍGIDAS
   ]
 }`,
         rules: [
-          "title: até 100 caracteres",
-          "subtitle: até 250 caracteres, DEVE mencionar o cliente",
-          "marqueeText: até 200 caracteres, 4-6 serviços separados por →",
+          "title: até 140 caracteres",
+          "subtitle: até 95 caracteres, sem citar cliente",
+          "marqueeText: até 60 caracteres, 3-5 serviços separados por →",
           "items: sempre 2 itens",
           "caption: até 100 caracteres por item",
           "image: sempre null",
@@ -1154,16 +1154,16 @@ REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
 FORMATO:
 {
   "hideSection": false,
-  "subtitle": "Subtítulo curto e impactante em MAIÚSCULAS com até 60 caracteres (ex: TRANSFORME SUAS IDEIAS EM RESULTADOS REAIS)",
+  "subtitle": "Tagline curta e impactante em MAIÚSCULAS com até 30 caracteres (ex: RESULTADOS REAIS AGORA)",
   "hideSubtitle": false,
-  "title": "Título principal da seção, direto e profissional com até 150 caracteres",
+  "title": "Título principal da seção, direto e profissional com até 130 caracteres",
   "hideIcon": false,
   "topics": [
     {
       "id": "1",
       "icon": "DiamondIcon",
-      "title": "Nome da área de atuação com até 40 caracteres",
-      "description": "Descrição profissional e completa do serviço com até 180 caracteres, explicando valor e benefícios",
+      "title": "Nome da área de atuação com até 30 caracteres",
+      "description": "Descrição profissional e completa do serviço com entre 90 e 130 caracteres, explicando valor e benefícios",
       "sortOrder": 1
     }
   ]
@@ -1178,16 +1178,16 @@ CrownIcon (para liderança/premium), HexagonalIcon (para estrutura/solidez), Bel
 
 INSTRUÇÕES CRÍTICAS DE CONTAGEM:
 ⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO que NÃO PODE ser ultrapassado!
-⚠️ A DESCRIPTION É O ELEMENTO MAIS IMPORTANTE - deve ter MÍNIMO 120 caracteres!
-⚠️ Escreva, CONTE manualmente, e se tiver menos de 120 chars, REESCREVA mais longo!
+⚠️ A DESCRIPTION É O ELEMENTO MAIS IMPORTANTE - deve ter MÍNIMO 90 caracteres!
+⚠️ Escreva, CONTE manualmente, e se tiver menos de 90 chars, REESCREVA mais longo!
 ⚠️ NÃO envie descriptions curtas - serão REJEITADAS!
 
 LIMITES OBRIGATÓRIOS:
-- subtitle: ATÉ 60 caracteres (conte letra por letra!)
-- title: ATÉ 150 caracteres (conte letra por letra!)
-- topics: EXATAMENTE 9 áreas (grid 3x3) - NÃO MAIS, NÃO MENOS!
-- topic.title: ATÉ 40 caracteres CADA (conte!)
-- topic.description: MÍNIMO 120 caracteres, MÁXIMO 180 caracteres CADA (CONTE e seja PROFISSIONAL!)
+- subtitle: ATÉ 30 caracteres (conte letra por letra!)
+- title: ATÉ 130 caracteres (conte letra por letra!)
+- topics: ENTRE 3 E 9 áreas (grid flexível)
+- topic.title: ATÉ 30 caracteres CADA (conte!)
+- topic.description: MÍNIMO 90 caracteres, MÁXIMO 130 caracteres CADA (CONTE e seja PROFISSIONAL!)
 
 EXEMPLOS CORRETOS:
 
@@ -1220,22 +1220,22 @@ INSTRUÇÕES FINAIS:
 - Adaptar expertise ao contexto e setor do projeto`,
         expectedFormat: `{
   "hideSection": false,
-  "subtitle": "string (max 60 chars, UPPERCASE)",
+  "subtitle": "string (max 30 chars, UPPERCASE)",
   "hideSubtitle": false,
-  "title": "string (max 150 chars)",
+  "title": "string (max 130 chars)",
   "hideIcon": false,
-  "topics": [{"id": "string", "icon": "string", "title": "string (max 40 chars)", "description": "string (MIN 120 chars, MAX 180 chars)", "sortOrder": number}]
+  "topics": [{"id": "string", "icon": "string", "title": "string (max 30 chars)", "description": "string (MIN 90 chars, MAX 130 chars)", "sortOrder": number}]
 }`,
         rules: [
-          "subtitle: até 60 caracteres, EM MAIÚSCULAS",
-          "title: até 150 caracteres",
-          "EXATAMENTE 9 topics (grid 3x3)",
-          "topic.title: até 40 caracteres",
-          "topic.description: MÍNIMO 120, MÁXIMO 180 caracteres - COMPLETO e PROFISSIONAL",
+          "subtitle: até 30 caracteres, EM MAIÚSCULAS",
+          "title: até 130 caracteres",
+          "topics: entre 3 e 9 itens",
+          "topic.title: até 30 caracteres",
+          "topic.description: MÍNIMO 90, MÁXIMO 130 caracteres - COMPLETO e PROFISSIONAL",
           "Ícones apropriados para cada área",
           "Linguagem profissional, completa e orientada a valor",
         ],
-        minTopics: 9,
+        minTopics: 3,
         maxTopics: 9,
       },
 
@@ -1528,8 +1528,8 @@ FORMATO OBRIGATÓRIO
   "items": [
     {
       "id": "1",
-      "question": "Pergunta objetiva com ATÉ 100 caracteres",
-      "answer": "Resposta completa com ATÉ 300 caracteres",
+      "question": "Pergunta objetiva com ATÉ 85 caracteres",
+      "answer": "Resposta completa com ATÉ 310 caracteres",
       "sortOrder": 1
     }
   ]
@@ -1538,26 +1538,26 @@ FORMATO OBRIGATÓRIO
 REGRAS RÍGIDAS
 - CONTEÚDO ÚNICO: Crie perguntas ESPECÍFICAS para o tipo de projeto. Evite FAQs genéricas.
 - Demonstre EXPERTISE do setor nas respostas (ex: para web design, fale de UX e responsividade; para arquitetura, mencione plantas e moodboards)
-- Gere EXATAMENTE 5 pares pergunta e resposta RELEVANTES ao contexto.
+- Gere EXATAMENTE 10 pares pergunta e resposta RELEVANTES ao contexto.
 - Cada question deve ser frase direta, sem ponto de interrogação duplicado.
 - Cada answer deve ser frase(s) corridas em parágrafo único (sem bullets), trazendo benefício concreto ou reforço do processo.
 - Planeje a contagem ANTES de escrever; não gere acima dos limites.
-- question: ATÉ 100 caracteres (conte cada letra, espaço, pontuação)
-- answer: ATÉ 300 caracteres (conte cada letra, espaço, pontuação)
+- question: ATÉ 85 caracteres (conte cada letra, espaço, pontuação)
+- answer: ATÉ 310 caracteres (conte cada letra, espaço, pontuação)
 - Responda apenas com o JSON final.
 
 EXEMPLO DE RESPOSTA BOA (answer com 265 chars):
 "O prazo varia conforme a complexidade. Projetos simples levam de 2 a 4 semanas, enquanto projetos complexos podem levar de 6 a 10 semanas. Após entendermos suas necessidades, fornecemos um cronograma detalhado com todas as etapas e prazos específicos."`,
         expectedFormat: `{
   "hideSection": false,
-  "items": [{"id": "string", "question": "string (max 100 chars)", "answer": "string (max 300 chars)", "sortOrder": number}]
+  "items": [{"id": "string", "question": "string (max 85 chars)", "answer": "string (max 310 chars)", "sortOrder": number}]
 }`,
         rules: [
-          "4-6 perguntas",
-          "Perguntas diretas (até 100 caracteres)",
-          "Respostas práticas (até 300 caracteres)",
+          "Exatamente 10 perguntas",
+          "Perguntas diretas (até 85 caracteres)",
+          "Respostas práticas (até 310 caracteres)",
         ],
-        exactQuestions: 5,
+        exactQuestions: 10,
       },
 
       footer: {

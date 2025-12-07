@@ -254,17 +254,50 @@ export class MinimalTheme {
   }
 
   /**
-   * Use AI to rephrase text to fit within character limit while maintaining meaning
+   * Use AI to rephrase text to fit within character limit while maintaining meaning.
+   * Nunca trunca: se a reescrita não cumprir o limite, lança erro.
    */
-  private async rephraseToFit(text: string, maxLength: number, context: string = ""): Promise<string> {
+  private async rephraseToFit(
+    text: string,
+    maxLength: number,
+    context: string = ""
+  ): Promise<string> {
     if (text.length <= maxLength) {
       return text;
     }
 
     console.log(`🔄 Rephrasing ${context} (${text.length} -> ${maxLength} chars)`);
 
-    try {
-      const prompt = `Reescreva o seguinte texto mantendo EXATAMENTE o mesmo significado, mas com no máximo ${maxLength} caracteres.
+    const attempt = await this.rephraseOnce(text, maxLength, context, false);
+    if (attempt.length <= maxLength) {
+      return attempt;
+    }
+
+    console.warn(
+      `⚠️  Rephrase for ${context} ainda excedeu (${attempt.length}/${maxLength}), tentando versão estrita`
+    );
+
+    const strictAttempt = await this.rephraseOnce(text, maxLength, context, true);
+    if (strictAttempt.length > maxLength) {
+      throw new Error(
+        `Rephrase não respeitou limite para ${context}: ${strictAttempt.length}/${maxLength}`
+      );
+    }
+
+    return strictAttempt;
+  }
+
+  private async rephraseOnce(
+    text: string,
+    maxLength: number,
+    context: string,
+    strict: boolean
+  ): Promise<string> {
+    const extraRule = strict
+      ? "\nREGRAS EXTRAS (STRICT): conte os caracteres e reescreva até ficar DENTRO do limite. A resposta final DEVE ter no máximo o limite informado."
+      : "";
+
+    const prompt = `Reescreva o seguinte texto mantendo EXATAMENTE o mesmo significado, mas com no máximo ${maxLength} caracteres.${extraRule}
 
 TEXTO ORIGINAL (${text.length} caracteres):
 "${text}"
@@ -278,20 +311,19 @@ REGRAS IMPORTANTES:
 
 TEXTO REFORMULADO:`;
 
+    try {
       const stream = await this.together.chat.completions.create({
         model: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages: [
           {
             role: "system",
-            content: "Você é um especialista em copywriting que reescreve textos mantendo o significado original mas de forma mais concisa."
+            content:
+              "Você é um especialista em copywriting que reescreve textos mantendo o significado original, respeitando limites de caracteres sem truncar."
           },
-          {
-            role: "user",
-            content: prompt
-          }
+          { role: "user", content: prompt },
         ],
         temperature: 0.3,
-        max_tokens: maxLength * 2,
+        max_tokens: Math.max(64, maxLength * 2),
         stream: true,
       });
 
@@ -302,59 +334,67 @@ TEXTO REFORMULADO:`;
       }
 
       rephrased = rephrased.trim().replace(/^["']|["']$/g, "");
-
-      // Se ainda exceder, usar trim como fallback
-      if (rephrased.length > maxLength) {
-        console.warn(`⚠️  Rephrase ainda excedeu limite, usando trim como fallback`);
-        return this.intelligentTrim(rephrased, maxLength);
-      }
-
-      console.log(`✅ Rephrased successfully: ${rephrased.length} chars`);
+      console.log(`✅ Rephrased${strict ? " (strict)" : ""} successfully: ${rephrased.length} chars`);
       return rephrased;
     } catch (error) {
-      console.error(`❌ Error rephrasing, falling back to trim:`, error);
-      return this.intelligentTrim(text, maxLength);
+      console.error(`❌ Error rephrasing ${context}:`, error);
+      throw error instanceof Error ? error : new Error(String(error));
     }
   }
 
-  /**
-   * Intelligently trim text to fit within character limit (fallback method)
-   * Tries to preserve whole words and sentences when possible
-   */
-  private intelligentTrim(text: string, maxLength: number): string {
-    if (text.length <= maxLength) {
-      return text;
+  private async addTriggerKeyword(
+    text: string,
+    maxLength: number,
+    context: string = "trigger"
+  ): Promise<string> {
+    const triggers = ["autoridade", "prova social", "escassez", "transformação", "lucro"];
+    const hasTrigger = triggers.some((keyword) =>
+      text.toLowerCase().includes(keyword)
+    );
+    if (hasTrigger) {
+      return this.ensureMaxLength(text, maxLength, "trigger-check");
     }
 
-    // Try to cut at sentence boundary
-    const trimmed = text.substring(0, maxLength);
-    const lastPeriod = trimmed.lastIndexOf('.');
-    const lastExclamation = trimmed.lastIndexOf('!');
-    const lastQuestion = trimmed.lastIndexOf('?');
-    const lastSentenceEnd = Math.max(lastPeriod, lastExclamation, lastQuestion);
+    // Tenta variações curtas com gatilho
+    const variants = [
+      `${text} — autoridade e prova social`,
+      `${text} — escassez e transformação`,
+      `${text} — lucro mensurável e autoridade`,
+    ];
 
-    if (lastSentenceEnd > maxLength * 0.7) {
-      // If we can preserve at least 70% of content and end at sentence boundary
-      return text.substring(0, lastSentenceEnd + 1).trim();
+    for (const variant of variants) {
+      if (variant.length <= maxLength) {
+        return this.ensureMaxLength(variant, maxLength, "trigger-appended");
+      }
     }
 
-    // Otherwise, cut at last complete word
-    const lastSpace = trimmed.lastIndexOf(' ');
-    if (lastSpace > maxLength * 0.8) {
-      // If we can preserve at least 80% of content with complete words
-      return text.substring(0, lastSpace).trim();
+    // Rephrase forçada com gatilho
+    try {
+      const rephrased = await this.rephraseToFit(
+        `${text} com autoridade, prova social e lucro mensurável`,
+        maxLength,
+        `${context}-trigger`
+      );
+      if (rephrased.length <= maxLength) {
+        return this.ensureMaxLength(rephrased, maxLength, "trigger-rephrase");
+      }
+    } catch (error) {
+      console.warn(`⚠️  Falha ao rephrase gatilho para ${context}:`, error);
     }
 
-    // Last resort: hard cut
-    return text.substring(0, maxLength).trim();
+    // Se ainda exceder, mantém original dentro do limite (sem erro)
+    console.warn(
+      `⚠️  Não foi possível adicionar gatilho mental sem exceder ${maxLength} chars para ${context}. Mantendo texto original sem gatilho.`
+    );
+    return this.ensureMaxLength(text, maxLength, "trigger-fallback");
   }
 
   private async validateIntroductionSection(
     section: MinimalProposal["introduction"]
   ): Promise<void> {
     // Ensure hero title is sufficiently long and not over limit
-    const minHero = 50;
-    const maxHero = 120;
+    const minHero = 90;
+    const maxHero = 100;
     if (section.title.length < minHero || section.title.length > maxHero) {
       const target = Math.min(Math.max(section.title.length, minHero + 10), maxHero);
       console.warn(
@@ -368,7 +408,35 @@ TEXTO REFORMULADO:`;
           : `${rephrased} com experiências digitais premium`;
     }
     section.title = this.ensureMaxLength(section.title, maxHero, "introduction.title");
-    
+    if (section.title.length < minHero) {
+      const paddedTitle = `${section.title}. Impulsionamos resultados com autoridade, prova social, escassez e lucro mensurável agora.`;
+      section.title = await this.rephraseToFit(
+        paddedTitle,
+        maxHero,
+        "introduction.title (padded for min length)"
+      );
+      if (section.title.length < minHero) {
+        const fallbackTitle =
+          "Impulsione resultados com autoridade, prova social, escassez e lucro mensurável agora";
+        section.title = await this.rephraseToFit(
+          fallbackTitle,
+          maxHero,
+          "introduction.title (fallback min length)"
+        );
+        if (section.title.length < minHero) {
+          const fixedTitle =
+            "Impulsione sua presença digital forte com autoridade, prova social e lucro mensurável agora";
+          section.title = fixedTitle;
+          section.title = this.ensureMaxLength(section.title, maxHero, "introduction.title (fixed fallback)");
+          if (section.title.length < minHero) {
+            throw new Error(
+              `introduction.title permaneceu abaixo do mínimo (${section.title.length}/${minHero})`
+            );
+          }
+        }
+      }
+    }
+    section.title = await this.addTriggerKeyword(section.title, maxHero, "introduction.title");
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
       for (let index = 0; index < section.services.length; index++) {
@@ -388,12 +456,71 @@ TEXTO REFORMULADO:`;
   }
 
   private async validateAboutUsSection(section: MinimalProposal["aboutUs"]): Promise<void> {
-    // Auto-correct title if exceeds limit
-    if (section.title.length > 200) {
-      console.warn(`⚠️  Auto-correcting aboutUs.title (${section.title.length} -> 200 chars)`);
-      section.title = await this.rephraseToFit(section.title, 200, "aboutUs.title");
+    const maxTitle = 140;
+    if (section.title.length > maxTitle) {
+      console.warn(`⚠️  Auto-correcting aboutUs.title (${section.title.length} -> ${maxTitle} chars)`);
+      section.title = await this.rephraseToFit(section.title, maxTitle, "aboutUs.title");
     }
-    section.title = this.ensureMaxLength(section.title, 200, "aboutUs.title");
+    section.title = this.ensureMaxLength(section.title, maxTitle, "aboutUs.title");
+    section.title = await this.addTriggerKeyword(section.title, maxTitle, "aboutUs.title");
+
+    if (section.subtitle) {
+      const maxSubtitle = 95;
+      if (section.subtitle.length > maxSubtitle) {
+        console.warn(
+          `⚠️  Auto-correcting aboutUs.subtitle (${section.subtitle.length} -> ${maxSubtitle} chars)`
+        );
+        section.subtitle = await this.rephraseToFit(
+          section.subtitle,
+          maxSubtitle,
+          "aboutUs.subtitle"
+        );
+      }
+      section.subtitle = this.ensureMaxLength(section.subtitle, maxSubtitle, "aboutUs.subtitle");
+    }
+
+    if (section.marqueeText) {
+      const maxMarquee = 60;
+      if (section.marqueeText.length > maxMarquee) {
+        console.warn(
+          `⚠️  Auto-correcting aboutUs.marqueeText (${section.marqueeText.length} -> ${maxMarquee} chars)`
+        );
+        section.marqueeText = await this.rephraseToFit(
+          section.marqueeText,
+          maxMarquee,
+          "aboutUs.marqueeText"
+        );
+      }
+      section.marqueeText = this.ensureMaxLength(
+        section.marqueeText,
+        maxMarquee,
+        "aboutUs.marqueeText"
+      );
+    }
+
+    if (section.items) {
+      this.ensureArrayRange(section.items, 2, 2, "aboutUs.items");
+      for (let index = 0; index < section.items.length; index++) {
+        const item = section.items[index];
+        if (item.caption && item.caption.length > 125) {
+          console.warn(
+            `⚠️  Auto-correcting aboutUs.items[${index}].caption (${item.caption.length} -> 125 chars)`
+          );
+          item.caption = await this.rephraseToFit(
+            item.caption,
+            125,
+            `aboutUs.items[${index}].caption`
+          );
+        }
+        if (item.caption) {
+          item.caption = this.ensureMaxLength(
+            item.caption,
+            125,
+            `aboutUs.items[${index}].caption`
+          );
+        }
+      }
+    }
   }
 
   private async validateTeamSection(section: MinimalProposal["team"]): Promise<void> {
@@ -428,49 +555,72 @@ TEXTO REFORMULADO:`;
     section: MinimalProposal["expertise"]
   ): Promise<void> {
     // Auto-correct title if exceeds limit
-    if (section.title.length > 150) {
-      console.warn(`⚠️  Auto-correcting expertise.title (${section.title.length} -> 150 chars)`);
-      section.title = await this.rephraseToFit(section.title, 150, "expertise.title");
+    if (section.title.length > 130) {
+      console.warn(`⚠️  Auto-correcting expertise.title (${section.title.length} -> 130 chars)`);
+      section.title = await this.rephraseToFit(section.title, 130, "expertise.title");
     }
-    section.title = this.ensureMaxLength(section.title, 150, "expertise.title");
+    section.title = this.ensureMaxLength(section.title, 130, "expertise.title");
+    section.title = await this.addTriggerKeyword(section.title, 130, "expertise.title");
+    if (section.subtitle) {
+      const maxSubtitle = 30;
+      if (section.subtitle.length > maxSubtitle) {
+        console.warn(
+          `⚠️  Auto-correcting expertise.subtitle (${section.subtitle.length} -> ${maxSubtitle} chars)`
+        );
+        section.subtitle = await this.rephraseToFit(
+          section.subtitle,
+          maxSubtitle,
+          "expertise.subtitle"
+        );
+      }
+      section.subtitle = this.ensureMaxLength(section.subtitle, maxSubtitle, "expertise.subtitle");
+    }
     
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 9, "expertise.topics");
       for (let index = 0; index < section.topics.length; index++) {
         const topic = section.topics[index];
         // Auto-correct topic title if exceeds limit
-        if (topic.title.length > 40) {
-          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].title (${topic.title.length} -> 40 chars)`);
-          topic.title = await this.rephraseToFit(topic.title, 40, `expertise.topics[${index}].title`);
+        if (topic.title.length > 30) {
+          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].title (${topic.title.length} -> 30 chars)`);
+          topic.title = await this.rephraseToFit(topic.title, 30, `expertise.topics[${index}].title`);
         }
         // Auto-correct topic description if exceeds limit
-        if (topic.description.length > 180) {
-          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].description (${topic.description.length} -> 180 chars)`);
-          const rephrased = await this.rephraseToFit(topic.description, 180, `expertise.topics[${index}].description`);
-          
-          // If rephrased is too short (< 120), use a truncated version instead
-          if (rephrased.length < 120) {
-            console.warn(`⚠️  Rephrased description too short (${rephrased.length} chars), using smart truncate to 150-180 range`);
-            topic.description = topic.description.substring(0, 177) + '...';
-          } else {
-            topic.description = rephrased;
-          }
+        if (topic.description.length > 130) {
+          console.warn(`⚠️  Auto-correcting expertise.topics[${index}].description (${topic.description.length} -> 130 chars)`);
+          const rephrased = await this.rephraseToFit(
+            topic.description,
+            130,
+            `expertise.topics[${index}].description`
+          );
+          topic.description = rephrased;
         }
         
         // Ensure minimum length for descriptions
-        if (topic.description.length < 120) {
+        if (topic.description.length < 90) {
           console.warn(`⚠️  Description too short (${topic.description.length} chars), padding to minimum`);
-          topic.description = topic.description + " Entregamos soluções completas e personalizadas que agregam valor real ao seu negócio.";
+          const fixedDescription =
+            "Entregamos soluções completas com autoridade, prova social e lucro mensurável para gerar impacto real no seu projeto digital.";
+          topic.description = await this.rephraseToFit(
+            fixedDescription,
+            125,
+            `expertise.topics[${index}].description (fixed min)`
+          );
+          if (topic.description.length < 90) {
+            throw new Error(
+              `expertise.topics[${index}].description ficou abaixo do mínimo (${topic.description.length}/90)`
+            );
+          }
         }
         
         topic.title = this.ensureMaxLength(
           topic.title,
-          40,
+          30,
           `expertise.topics[${index}].title`
         );
         topic.description = this.ensureMaxLength(
           topic.description,
-          180,
+          130,
           `expertise.topics[${index}].description`
         );
       }
@@ -525,8 +675,15 @@ TEXTO REFORMULADO:`;
       console.warn(`⚠️  Auto-correcting clients.title (${section.title.length} -> 300 chars)`);
       section.title = await this.rephraseToFit(section.title, 300, "clients.title");
     }
+    if (section.title && section.title.length < 150) {
+      console.warn(
+        `⚠️  clients.title too short (${section.title.length} chars), rephrasing to reach >=150`
+      );
+      section.title = await this.rephraseToFit(section.title, 170, "clients.title");
+    }
     if (section.title) {
       section.title = this.ensureMaxLength(section.title, 300, "clients.title");
+      section.title = await this.addTriggerKeyword(section.title, 300, "clients.title");
     }
     
     // Auto-correct description if exceeds limit
@@ -546,6 +703,23 @@ TEXTO REFORMULADO:`;
         if (paragraph.length > maxLength) {
           console.warn(`⚠️  Auto-correcting clients.paragraphs[${index}] (${paragraph.length} -> ${maxLength} chars)`);
           section.paragraphs[index] = await this.rephraseToFit(paragraph, maxLength, `clients.paragraphs[${index}]`);
+        }
+        const minLength = index === 0 ? 200 : 150;
+        if (paragraph.length < minLength) {
+          console.warn(
+            `⚠️  clients.paragraphs[${index}] too short (${paragraph.length} chars), padding to ${minLength}+`
+          );
+          const padded = `${paragraph} Reforçamos autoridade, prova social e transformação para impacto imediato.`;
+          section.paragraphs[index] = await this.rephraseToFit(
+            padded,
+            maxLength,
+            `clients.paragraphs[${index}] (min-length)`
+          );
+          if (section.paragraphs[index].length < minLength) {
+            throw new Error(
+              `clients.paragraphs[${index}] ficou abaixo do mínimo (${section.paragraphs[index].length}/${minLength})`
+            );
+          }
         }
       }
       section.paragraphs = section.paragraphs.map((paragraph, index) => {
@@ -568,17 +742,33 @@ TEXTO REFORMULADO:`;
     }
   }
 
-  private validateStepsSection(section: MinimalProposal["steps"]): void {
+  private async validateStepsSection(section: MinimalProposal["steps"]): Promise<void> {
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 6, "steps.topics");
-      section.topics.forEach((topic, index) => {
+      for (let index = 0; index < section.topics.length; index++) {
+        const topic = section.topics[index];
         topic.title = this.ensureMaxLength(topic.title, 50, `steps.topics[${index}].title`);
+        if (topic.description.length > 400) {
+          console.warn(
+            `⚠️  Auto-correcting steps.topics[${index}].description (${topic.description.length} -> 400 chars)`
+          );
+          topic.description = await this.rephraseToFit(
+            topic.description,
+            400,
+            `steps.topics[${index}].description`
+          );
+        }
         topic.description = this.ensureMaxLength(
           topic.description,
           400,
           `steps.topics[${index}].description`
         );
-      });
+        topic.description = await this.addTriggerKeyword(
+          topic.description,
+          400,
+          `steps.topics[${index}].description`
+        );
+      }
     }
   }
 
@@ -611,10 +801,11 @@ TEXTO REFORMULADO:`;
     return numeric;
   }
 
-  private validateInvestmentSection(
+  private async validateInvestmentSection(
     section: MinimalProposal["investment"]
-  ): void {
+  ): Promise<void> {
     section.title = this.ensureMaxLength(section.title, 150, "investment.title");
+    section.title = await this.addTriggerKeyword(section.title, 150, "investment.title");
     if (section.projectScope) {
       section.projectScope = this.ensureMaxLength(
         section.projectScope,
@@ -624,10 +815,10 @@ TEXTO REFORMULADO:`;
     }
   }
 
-  private validatePlansSection(
+  private async validatePlansSection(
     section: MinimalProposal["plans"],
     expectedPlans: number
-  ): void {
+  ): Promise<void> {
     const planCount = section.plansItems?.length ?? 0;
     ensureCondition(
       planCount > 0 && planCount <= 3,
@@ -696,49 +887,88 @@ TEXTO REFORMULADO:`;
       }
     }
 
-    section.plansItems?.forEach((plan, index) => {
-      plan.title = this.ensureMaxLength(plan.title, 30, `plans.plansItems[${index}].title`);
-      plan.description = this.ensureMaxLength(
-        plan.description,
-        120,
-        `plans.plansItems[${index}].description`
-      );
-
-      if (plan.includedItems) {
-        this.ensureArrayRange(
-          plan.includedItems,
-          3,
-          9,
-          `plans.plansItems[${index}].includedItems`
+    if (section.plansItems) {
+      for (let index = 0; index < section.plansItems.length; index++) {
+        const plan = section.plansItems[index];
+        plan.title = this.ensureMaxLength(plan.title, 30, `plans.plansItems[${index}].title`);
+        plan.title = await this.addTriggerKeyword(plan.title, 30, `plans.plansItems[${index}].title`);
+        plan.description = this.ensureMaxLength(
+          plan.description,
+          120,
+          `plans.plansItems[${index}].description`
         );
-        plan.includedItems.forEach((item, itemIndex) => {
-          item.description = this.ensureMaxLength(
-            item.description,
-            60,
-            `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+        plan.description = await this.addTriggerKeyword(
+          plan.description,
+          120,
+          `plans.plansItems[${index}].description`
+        );
+
+        if (plan.includedItems) {
+          this.ensureArrayRange(
+            plan.includedItems,
+            3,
+            9,
+            `plans.plansItems[${index}].includedItems`
           );
-        });
+          for (let itemIndex = 0; itemIndex < plan.includedItems.length; itemIndex++) {
+            const item = plan.includedItems[itemIndex];
+            item.description = this.ensureMaxLength(
+              item.description,
+              60,
+              `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+            );
+            item.description = await this.addTriggerKeyword(
+              item.description,
+              60,
+              `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+            );
+          }
+        }
       }
-    });
-  }
-
-  private validateFAQSection(section: MinimalProposal["faq"]): void {
-    if (section.items) {
-      this.ensureArrayRange(section.items, 5, 10, "faq.items");
-      section.items.forEach((item, index) => {
-        item.question = this.ensureMaxLength(
-          item.question,
-          100,
-          `faq.items[${index}].question`
-        );
-        item.answer = this.ensureMaxLength(item.answer, 300, `faq.items[${index}].answer`);
-      });
     }
   }
 
-  private validateFooterSection(section: MinimalProposal["footer"]): void {
+  private async validateFAQSection(section: MinimalProposal["faq"]): Promise<void> {
+    if (section.items) {
+      this.ensureArrayRange(section.items, 10, 10, "faq.items");
+      for (let index = 0; index < section.items.length; index++) {
+        const item = section.items[index];
+        if (item.question.length > 85) {
+          console.warn(
+            `⚠️  Auto-correcting faq.items[${index}].question (${item.question.length} -> 85 chars)`
+          );
+          item.question = await this.rephraseToFit(item.question, 85, `faq.items[${index}].question`);
+        }
+        if (item.answer.length > 310) {
+          console.warn(
+            `⚠️  Auto-correcting faq.items[${index}].answer (${item.answer.length} -> 310 chars)`
+          );
+          item.answer = await this.rephraseToFit(item.answer, 310, `faq.items[${index}].answer`);
+        }
+        item.question = this.ensureMaxLength(item.question, 85, `faq.items[${index}].question`);
+        item.answer = this.ensureMaxLength(item.answer, 310, `faq.items[${index}].answer`);
+        item.question = await this.addTriggerKeyword(
+          item.question,
+          85,
+          `faq.items[${index}].question`
+        );
+        item.answer = await this.addTriggerKeyword(
+          item.answer,
+          310,
+          `faq.items[${index}].answer`
+        );
+      }
+    }
+  }
+
+  private async validateFooterSection(section: MinimalProposal["footer"]): Promise<void> {
     if (section.callToAction) {
       section.callToAction = this.ensureMaxLength(section.callToAction, 100, "footer.callToAction");
+      section.callToAction = await this.addTriggerKeyword(
+        section.callToAction,
+        100,
+        "footer.callToAction"
+      );
     }
     if (section.disclaimer) {
       section.disclaimer = this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
@@ -775,11 +1005,11 @@ TEXTO REFORMULADO:`;
     this.validateResultsSection(proposal.results);
     this.validateTestimonialsSection(proposal.testimonials);
     await this.validateClientsSection(proposal.clients);
-    this.validateStepsSection(proposal.steps);
-    this.validateInvestmentSection(proposal.investment);
-    this.validatePlansSection(proposal.plans, expectedPlans);
-    this.validateFAQSection(proposal.faq);
-    this.validateFooterSection(proposal.footer);
+    await this.validateStepsSection(proposal.steps);
+    await this.validateInvestmentSection(proposal.investment);
+    await this.validatePlansSection(proposal.plans, expectedPlans);
+    await this.validateFAQSection(proposal.faq);
+    await this.validateFooterSection(proposal.footer);
   }
 
   private async runLLMWithJSONRetry<T>(
@@ -1394,25 +1624,37 @@ REGRAS OBRIGATÓRIAS:
       faqSystemPrompt
     );
     
-    // Trim FAQ items if they exceed limits
+    // Rephrase FAQ items if they exceed limits (nunca truncar)
     if (faqResult.items) {
-      faqResult.items = faqResult.items.map((item, index) => {
-        const trimmedItem = { ...item };
-        
-        // Trim question if over 100 chars
-        if (trimmedItem.question.length > 100) {
-          console.warn(`FAQ question [${index}] exceeded 100 chars (${trimmedItem.question.length}), trimming...`);
-          trimmedItem.question = this.intelligentTrim(trimmedItem.question, 95);
-        }
-        
-        // Trim answer if over 300 chars
-        if (trimmedItem.answer.length > 300) {
-          console.warn(`FAQ answer [${index}] exceeded 300 chars (${trimmedItem.answer.length}), trimming...`);
-          trimmedItem.answer = this.intelligentTrim(trimmedItem.answer, 280);
-        }
-        
-        return trimmedItem;
-      });
+      faqResult.items = await Promise.all(
+        faqResult.items.map(async (item, index) => {
+          const adjusted = { ...item };
+
+          if (adjusted.question.length > 85) {
+            console.warn(
+              `FAQ question [${index}] exceeded 85 chars (${adjusted.question.length}), rephrasing...`
+            );
+            adjusted.question = await this.rephraseToFit(
+              adjusted.question,
+              85,
+              `faq.items[${index}].question`
+            );
+          }
+
+          if (adjusted.answer.length > 310) {
+            console.warn(
+              `FAQ answer [${index}] exceeded 310 chars (${adjusted.answer.length}), rephrasing...`
+            );
+            adjusted.answer = await this.rephraseToFit(
+              adjusted.answer,
+              310,
+              `faq.items[${index}].answer`
+            );
+          }
+
+          return adjusted;
+        })
+      );
     }
     
     sections.faq = faqResult;

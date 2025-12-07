@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-12-07T22:31:58.963Z",
+  "generatedAt": "2025-12-07T23:22:35.275Z",
   "totalTests": 1,
   "successful": 1,
   "failed": 0,
@@ -14,7 +14,8 @@
         "structureScore": 10,
         "contentScore": 10,
         "personalizationScore": 10,
-        "overallScore": 10
+        "overallScore": 10,
+        "styleIssues": []
       },
       "filename": "marketing-digital-minimal-proposal.json"
     }

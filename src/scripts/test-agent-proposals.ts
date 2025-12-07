@@ -13,6 +13,7 @@ import {
   MinimalTemplateWorkflow,
   type MinimalWorkflowResult,
 } from "#/modules/ai-generator/themes/minimal";
+import type { MinimalProposal } from "#/modules/ai-generator/templates/minimal/minimal-template";
 // Define the service types used in the database
 type DatabaseServiceType =
   | "marketing-digital"
@@ -567,6 +568,10 @@ async function testAgentProposals() {
       console.log(`   Conteúdo: ${analysis.contentScore}/10`);
       console.log(`   Personalização: ${analysis.personalizationScore}/10`);
       console.log(`   Qualidade geral: ${analysis.overallScore}/10`);
+      if (analysis.styleIssues && analysis.styleIssues.length > 0) {
+        console.log("   Estilo (regras especiais Minimal):");
+        analysis.styleIssues.forEach((issue) => console.log(`   - ${issue}`));
+      }
       } catch (analysisError) {
         console.error(
           "⚠️ Falha ao analisar a proposta:",
@@ -661,6 +666,7 @@ function analyzeProposal(
   contentScore: number;
   personalizationScore: number;
   overallScore: number;
+  styleIssues?: string[];
 } {
   let structureScore = 0;
   let contentScore = 0;
@@ -823,6 +829,18 @@ function analyzeProposal(
       ? (personalizationPassed / personalizationChecks) * 10
       : 5;
 
+  let styleIssues: string[] | undefined;
+
+  if (template === "minimal") {
+    const minimalProposal = proposalData as MinimalProposal;
+    styleIssues = validateMinimalStyle(minimalProposal);
+    // Ajuste de personalização para Minimal: foco em aderência a regras de estilo
+    personalizationScore =
+      styleIssues.length === 0
+        ? 10
+        : Math.max(6, 10 - styleIssues.length * 2);
+  }
+
   const overallScore =
     (structureScore + contentScore + personalizationScore) / 3;
 
@@ -831,7 +849,151 @@ function analyzeProposal(
     contentScore: Math.round(contentScore * 10) / 10,
     personalizationScore: Math.round(personalizationScore * 10) / 10,
     overallScore: Math.round(overallScore * 10) / 10,
+    styleIssues,
   };
+}
+
+function validateMinimalStyle(proposal: MinimalProposal): string[] {
+  const issues: string[] = [];
+  const texts = collectMinimalTexts(proposal);
+  const lowerTexts = texts
+    .filter((t): t is string => typeof t === "string" && t.trim().length > 0)
+    .map((t) => t.toLowerCase());
+
+  const forbiddenPronouns = /\b(eu|meu|minha|meus|minhas|mim|comigo)\b/;
+  const hasForbidden = lowerTexts.some((t) => forbiddenPronouns.test(t));
+  if (hasForbidden) {
+    issues.push("Uso de 1ª pessoa do singular encontrado (eu/meu/minha).");
+  }
+
+  const usesClientName = proposal.introduction.clientName
+    ? lowerTexts.some((t) => t.includes(proposal.introduction.clientName!.toLowerCase()))
+    : false;
+  if (usesClientName) {
+    issues.push("Nome do cliente foi usado em algum texto (regra proíbe).");
+  }
+
+  const pluralPronouns = /\b(nós|nosso|nossa|nossos|nossas|vamos|podemos)\b/;
+  const hasPlural = lowerTexts.some((t) => pluralPronouns.test(t));
+  if (!hasPlural) {
+    issues.push("Ausência de 1ª pessoa do plural (nós/nosso) nos textos.");
+  }
+
+  const secondPerson = /\b(você|vocês|sua|seu|seus|suas)\b/;
+  const hasSecondPerson = lowerTexts.some((t) => secondPerson.test(t));
+  if (!hasSecondPerson) {
+    issues.push("Ausência de 2ª pessoa (você/sua) nos textos.");
+  }
+
+  const triggerKeywords = ["autoridade", "prova social", "escassez", "transformação", "lucro"];
+  const triggerTexts = [
+    proposal.introduction.title,
+    proposal.aboutUs.title,
+    proposal.expertise.title,
+    proposal.clients.title || "",
+    proposal.steps.topics?.map((t) => t.description || "").join(" ") || "",
+    proposal.plans.plansItems?.map((p) => `${p.title || ""} ${p.description || ""}`).join(" ") || "",
+    proposal.faq.items?.map((f) => `${f.question || ""} ${f.answer || ""}`).join(" ") || "",
+    proposal.footer.callToAction || "",
+  ].map((val) => {
+    if (typeof val === "string") return val;
+    return "";
+  });
+  const missingTrigger = triggerTexts.some((sectionText) => {
+    if (!sectionText || typeof sectionText !== "string") return true;
+    return !triggerKeywords.some((keyword) =>
+      sectionText.toLowerCase().includes(keyword)
+    );
+  });
+  if (missingTrigger) {
+    issues.push("Ao menos uma seção não contém gatilho mental (autoridade/prova social/escassez/transformação/lucro).");
+  }
+
+  // Length-focused checks to reflect the spec
+  const titleLen = proposal.introduction.title?.length || 0;
+  if (titleLen < 90 || titleLen > 110) {
+    issues.push(`Título da introdução fora da faixa esperada (90-110). Atual: ${titleLen}.`);
+  }
+
+  const aboutTitleLen = proposal.aboutUs.title?.length || 0;
+  if (aboutTitleLen > 140) {
+    issues.push(`Título do Sobre acima de 140 caracteres (${aboutTitleLen}).`);
+  }
+  const aboutSubtitleLen = proposal.aboutUs.subtitle?.length || 0;
+  if (proposal.aboutUs.subtitle && aboutSubtitleLen > 95) {
+    issues.push(`Subtítulo do Sobre acima de 95 caracteres (${aboutSubtitleLen}).`);
+  }
+
+  const expertiseTopics = proposal.expertise.topics || [];
+  const invalidExpertise = expertiseTopics.some(
+    (topic) =>
+      topic.title.length > 30 ||
+      topic.description.length < 90 ||
+      topic.description.length > 130
+  );
+  if (invalidExpertise) {
+    issues.push("Algum tópico de expertise viola títulos (<=30) ou descrições (90-130).");
+  }
+
+  if ((proposal.faq.items?.length || 0) !== 10) {
+    issues.push("FAQ deve conter exatamente 10 perguntas.");
+  }
+
+  return issues;
+}
+
+function collectMinimalTexts(proposal: MinimalProposal): string[] {
+  const texts: string[] = [];
+
+  const pushText = (value?: string) => {
+    if (typeof value === "string" && value.trim().length > 0) {
+      texts.push(value);
+    }
+  };
+
+  pushText(proposal.introduction.title);
+  pushText((proposal.introduction as { description?: string }).description);
+  proposal.introduction.services?.forEach((s) => pushText(s.serviceName));
+
+  pushText(proposal.aboutUs.title);
+  pushText(proposal.aboutUs.subtitle);
+  pushText((proposal.aboutUs as { marqueeText?: string }).marqueeText);
+  proposal.aboutUs.items?.forEach((item) => pushText(item.caption));
+
+  pushText(proposal.expertise.title);
+  pushText(proposal.expertise.subtitle);
+  proposal.expertise.topics?.forEach((t) => {
+    pushText(t.title);
+    pushText(t.description);
+  });
+
+  pushText(proposal.clients.title);
+  proposal.clients.paragraphs?.forEach((p) => pushText(p));
+  proposal.clients.items?.forEach((c) => pushText(c.name));
+
+  proposal.steps.topics?.forEach((t) => {
+    pushText(t.title);
+    pushText(t.description);
+  });
+
+  pushText(proposal.investment.title);
+  pushText(proposal.investment.projectScope);
+
+  proposal.plans.plansItems?.forEach((p) => {
+    pushText(p.title);
+    pushText(p.description);
+    p.includedItems?.forEach((i) => pushText(i.description));
+  });
+
+  proposal.faq.items?.forEach((item) => {
+    pushText(item.question);
+    pushText(item.answer);
+  });
+
+  pushText(proposal.footer.callToAction);
+  pushText(proposal.footer.disclaimer);
+
+  return texts;
 }
 
 // Run the test
