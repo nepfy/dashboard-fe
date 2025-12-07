@@ -494,22 +494,26 @@ function convertMinimalToProposalData(
 
   return {
     introduction: {
-      userName: requireString(proposal.introduction.userName, "introduction.userName"),
+      userName: requireString(
+        proposal.introduction.userName,
+        "introduction.userName"
+      ),
       email: requireString(proposal.introduction.email, "introduction.email"),
       buttonTitle: "Solicitar Proposta",
       title: requireString(proposal.introduction.title, "introduction.title"),
       validity: requestData.validUntil || new Date().toISOString(),
-      services: ensureArray(proposal.introduction.services, "introduction.services").map(
-        (service, index) => ({
-          id: requireString(service.id, `introduction.services[${index}].id`),
-          serviceName: requireString(
-            service.serviceName,
-            `introduction.services[${index}].serviceName`
-          ),
-          hideService: service.hideItem || false,
-          sortOrder: service.sortOrder || index,
-        })
-      ),
+      services: ensureArray(
+        proposal.introduction.services,
+        "introduction.services"
+      ).map((service, index) => ({
+        id: requireString(service.id, `introduction.services[${index}].id`),
+        serviceName: requireString(
+          service.serviceName,
+          `introduction.services[${index}].serviceName`
+        ),
+        hideService: service.hideItem || false,
+        sortOrder: service.sortOrder || index,
+      })),
     },
     aboutUs: {
       hideSection: proposal.aboutUs.hideSection || false,
@@ -524,14 +528,16 @@ function convertMinimalToProposalData(
       hideSection: proposal.team.hideSection || false,
       title: requireString(proposal.team.title, "team.title"),
       hideTitle: false,
-      members: ensureArray(proposal.team.members, "team.members").map((member, index) => ({
-        id: requireString(member.id, `team.members[${index}].id`),
-        name: requireString(member.name, `team.members[${index}].name`),
-        role: requireString(member.role, `team.members[${index}].role`),
-        image: member.image || "",
-        hideMember: member.hideMember || false,
-        sortOrder: member.sortOrder || index,
-      })),
+      members: ensureArray(proposal.team.members, "team.members").map(
+        (member, index) => ({
+          id: requireString(member.id, `team.members[${index}].id`),
+          name: requireString(member.name, `team.members[${index}].name`),
+          role: requireString(member.role, `team.members[${index}].role`),
+          image: member.image || "",
+          hideMember: member.hideMember || false,
+          sortOrder: member.sortOrder || index,
+        })
+      ),
     },
     expertise: {
       hideSection: proposal.expertise.hideSection || false,
@@ -557,13 +563,18 @@ function convertMinimalToProposalData(
       hideTitle: false,
       introduction: undefined,
       hideIntroduction: true,
-      topics: ensureArray(proposal.steps.topics, "steps.topics").map((topic, index) => ({
-        id: requireString(topic.id, `steps.topics[${index}].id`),
-        title: requireString(topic.title, `steps.topics[${index}].title`),
-        description: requireString(topic.description, `steps.topics[${index}].description`),
-        hideTopic: topic.hideItem || false,
-        sortOrder: topic.sortOrder || index,
-      })),
+      topics: ensureArray(proposal.steps.topics, "steps.topics").map(
+        (topic, index) => ({
+          id: requireString(topic.id, `steps.topics[${index}].id`),
+          title: requireString(topic.title, `steps.topics[${index}].title`),
+          description: requireString(
+            topic.description,
+            `steps.topics[${index}].description`
+          ),
+          hideTopic: topic.hideItem || false,
+          sortOrder: topic.sortOrder || index,
+        })
+      ),
       marquee: [],
     },
     clients: {
@@ -571,19 +582,22 @@ function convertMinimalToProposalData(
       title: requireString(proposal.clients.title, "clients.title"),
       hideTitle: proposal.clients.hideTitle ?? false,
       description: proposal.clients.description || "",
-      paragraphs: ensureArray(proposal.clients.paragraphs, "clients.paragraphs").map(
-        (p, idx) => requireString(p, `clients.paragraphs[${idx}]`)
+      paragraphs: ensureArray(
+        proposal.clients.paragraphs,
+        "clients.paragraphs"
+      ).map((p, idx) => requireString(p, `clients.paragraphs[${idx}]`)),
+      items: ensureArray(proposal.clients.items, "clients.items").map(
+        (client, index) => ({
+          id: requireString(client.id, `clients.items[${index}].id`),
+          name: requireString(client.name, `clients.items[${index}].name`),
+          logo: client.logo || "",
+          hideClient:
+            (client as { hideClient?: boolean }).hideClient ??
+            (client as { hideItem?: boolean }).hideItem ??
+            false,
+          sortOrder: client.sortOrder ?? index,
+        })
       ),
-      items: ensureArray(proposal.clients.items, "clients.items").map((client, index) => ({
-        id: requireString(client.id, `clients.items[${index}].id`),
-        name: requireString(client.name, `clients.items[${index}].name`),
-        logo: client.logo || "",
-        hideClient:
-          (client as { hideClient?: boolean }).hideClient ??
-          (client as { hideItem?: boolean }).hideItem ??
-          false,
-        sortOrder: client.sortOrder ?? index,
-      })),
     },
     testimonials: {
       hideSection: proposal.testimonials.hideSection || false,
@@ -615,16 +629,21 @@ function convertMinimalToProposalData(
       hideSection: proposal.results.hideSection || false,
       title: requireString(proposal.results.title, "results.title"),
       hideTitle: false,
-      items: ensureArray(proposal.results.items, "results.items").map((item, index) => ({
-        id: requireString(item.id, `results.items[${index}].id`),
-        client: requireString(item.client, `results.items[${index}].client`),
-        instagram: item.instagram || "",
-        investment: requireString(item.investment, `results.items[${index}].investment`),
-        roi: requireString(item.roi, `results.items[${index}].roi`),
-        photo: item.photo || "",
-        hidePhoto: item.hidePhoto || false,
-        sortOrder: item.sortOrder || index,
-      })),
+      items: ensureArray(proposal.results.items, "results.items").map(
+        (item, index) => ({
+          id: requireString(item.id, `results.items[${index}].id`),
+          client: requireString(item.client, `results.items[${index}].client`),
+          instagram: item.instagram || "",
+          investment: requireString(
+            item.investment,
+            `results.items[${index}].investment`
+          ),
+          roi: requireString(item.roi, `results.items[${index}].roi`),
+          photo: item.photo || "",
+          hidePhoto: item.hidePhoto || false,
+          sortOrder: item.sortOrder || index,
+        })
+      ),
     },
     deliverables: {
       hideSection: true,
@@ -636,63 +655,81 @@ function convertMinimalToProposalData(
       hideSection: proposal.plans.hideSection || false,
       title: undefined,
       hideTitle: true,
-      plansItems: ensureArray(proposal.plans.plansItems, "plans.plansItems").map(
-        (plan, index) => ({
-          id: requireString(plan.id, `plans.plansItems[${index}].id`),
-          title: requireString(plan.title, `plans.plansItems[${index}].title`),
-          description: requireString(
-            plan.description,
-            `plans.plansItems[${index}].description`
+      plansItems: ensureArray(
+        proposal.plans.plansItems,
+        "plans.plansItems"
+      ).map((plan, index) => ({
+        id: requireString(plan.id, `plans.plansItems[${index}].id`),
+        title: requireString(plan.title, `plans.plansItems[${index}].title`),
+        description: requireString(
+          plan.description,
+          `plans.plansItems[${index}].description`
+        ),
+        value: requireString(
+          String(plan.value),
+          `plans.plansItems[${index}].value`
+        ),
+        planPeriod: plan.planPeriod || "mensal",
+        recommended: plan.recommended || false,
+        buttonTitle: plan.buttonTitle || "Solicitar Proposta",
+        buttonWhereToOpen: plan.buttonWhereToOpen || "link",
+        buttonHref: plan.buttonHref || "",
+        buttonPhone: plan.buttonPhone || "",
+        hideTitleField: plan.hideTitleField || false,
+        hideDescription: plan.hideDescription || false,
+        hidePrice: plan.hidePrice || false,
+        hidePlanPeriod: plan.hidePlanPeriod || false,
+        hideButtonTitle: plan.hideButtonTitle || false,
+        hideItem: plan.hideItem || false,
+        sortOrder: plan.sortOrder || index,
+        includedItems: ensureArray(
+          plan.includedItems,
+          `plans.plansItems[${index}].includedItems`
+        ).map((item, itemIndex) => ({
+          id: requireString(
+            item.id,
+            `plans.plansItems[${index}].includedItems[${itemIndex}].id`
           ),
-          value: requireString(String(plan.value), `plans.plansItems[${index}].value`),
-          planPeriod: plan.planPeriod || "mensal",
-          recommended: plan.recommended || false,
-          buttonTitle: plan.buttonTitle || "Solicitar Proposta",
-          buttonWhereToOpen: plan.buttonWhereToOpen || "link",
-          buttonHref: plan.buttonHref || "",
-          buttonPhone: plan.buttonPhone || "",
-          hideTitleField: plan.hideTitleField || false,
-          hideDescription: plan.hideDescription || false,
-          hidePrice: plan.hidePrice || false,
-          hidePlanPeriod: plan.hidePlanPeriod || false,
-          hideButtonTitle: plan.hideButtonTitle || false,
-          hideItem: plan.hideItem || false,
-          sortOrder: plan.sortOrder || index,
-          includedItems: ensureArray(
-            plan.includedItems,
-            `plans.plansItems[${index}].includedItems`
-          ).map((item, itemIndex) => ({
-            id: requireString(item.id, `plans.plansItems[${index}].includedItems[${itemIndex}].id`),
-            item: requireString(
-              item.description,
-              `plans.plansItems[${index}].includedItems[${itemIndex}].description`
-            ),
-            description: requireString(
-              item.description,
-              `plans.plansItems[${index}].includedItems[${itemIndex}].description`
-            ),
-            hideItem: item.hideItem || false,
-            sortOrder: item.sortOrder || itemIndex,
-            hideDescription: false,
-          })),
-        })
-      ),
+          item: requireString(
+            item.description,
+            `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+          ),
+          description: requireString(
+            item.description,
+            `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+          ),
+          hideItem: item.hideItem || false,
+          sortOrder: item.sortOrder || itemIndex,
+          hideDescription: false,
+        })),
+      })),
     },
     faq: {
       hideSection: proposal.faq.hideSection || false,
       title: "Perguntas Frequentes",
       hideTitle: false,
-      items: ensureArray(proposal.faq.items, "faq.items").map((item, index) => ({
-        id: requireString(item.id, `faq.items[${index}].id`),
-        question: requireString(item.question, `faq.items[${index}].question`),
-        answer: requireString(item.answer, `faq.items[${index}].answer`),
-        hideItem: item.hideItem || false,
-        sortOrder: item.sortOrder || index,
-      })),
+      items: ensureArray(proposal.faq.items, "faq.items").map(
+        (item, index) => ({
+          id: requireString(item.id, `faq.items[${index}].id`),
+          question: requireString(
+            item.question,
+            `faq.items[${index}].question`
+          ),
+          answer: requireString(item.answer, `faq.items[${index}].answer`),
+          hideItem: item.hideItem || false,
+          sortOrder: item.sortOrder || index,
+        })
+      ),
     },
     footer: {
-      callToAction: requireString(proposal.footer.callToAction, "footer.callToAction"),
-      disclaimer: requireString(proposal.footer.disclaimer, "footer.disclaimer"),
+      callToAction: requireString(
+        proposal.footer.callToAction,
+        "footer.callToAction"
+      ),
+      disclaimer: requireString(
+        proposal.footer.disclaimer,
+        "footer.disclaimer"
+      ),
       hideCallToAction: proposal.footer.hideCallToAction || false,
       hideDisclaimer: proposal.footer.hideDisclaimer || false,
       marquee: [],

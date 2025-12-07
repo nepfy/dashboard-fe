@@ -389,6 +389,67 @@ TEXTO REFORMULADO:`;
     return this.ensureMaxLength(text, maxLength, "trigger-fallback");
   }
 
+  /**
+   * Rephrase deliverables/included items to avoid generic terms and ensure concreteness.
+   */
+  private async makeDeliverableSpecific(
+    text: string,
+    maxLength: number,
+    context: string
+  ): Promise<string> {
+    const forbidden = ["benefício", "beneficio", "incluído", "incluso", "pacote"];
+    const lower = text.toLowerCase();
+    const hasForbidden = forbidden.some((w) => lower.includes(w));
+
+    if (!hasForbidden && text.length <= maxLength) {
+      return text;
+    }
+
+    const prompt = `Reescreva o item como uma entrega concreta, sem usar palavras genéricas como "benefício", "pacote" ou "incluído". Use verbo no infinitivo ou substantivo claro. Máximo ${maxLength} caracteres.
+
+Texto original:
+"${text}"
+
+Regras:
+- Evite repetição de termos genéricos.
+- Seja específico e tangível (ex: "Implementar SEO técnico", "Setup de automação de leads", "Dashboard de métricas semanais").
+- Não use "benefício", "incluído", "pacote".
+- Responda apenas com o texto final.`;
+
+    const rewritten = await this.rephraseToFit(prompt, maxLength, `${context}-deliverable`);
+    return rewritten;
+  }
+
+  private getDeliverablePool(selectedService: string): string[] {
+    if (selectedService === "marketing-digital") {
+      return [
+        "Otimizar SEO técnico e Core Web Vitals",
+        "Setup de tags e pixels (GA4, Meta, LinkedIn)",
+        "Landing page de conversão com teste A/B inicial",
+        "Configurar automação de leads (CRM + e-mail)",
+        "Dashboard semanal (GA4 + Ads + CRM)",
+        "Copywriting orientado a conversão",
+        "Fluxos de nurturing e scoring de leads",
+        "Remarketing multicanal com públicos quentes",
+        "Monitoramento e ajustes semanais de campanhas",
+        "Pesquisa de palavras-chave e intenção de busca",
+      ];
+    }
+
+    return [
+      "Planejamento detalhado de escopo e cronograma",
+      "Implementação técnica principal do projeto",
+      "Teste de qualidade e correções",
+      "Entrega com documentação resumida",
+      "Suporte inicial pós-entrega",
+      "Treinamento rápido para uso/operacionalização",
+    ];
+  }
+
+  private normalizeDeliverable(text: string): string {
+    return text.toLowerCase().replace(/\s+/g, " ").trim();
+  }
+
   private async validateIntroductionSection(
     section: MinimalProposal["introduction"]
   ): Promise<void> {
@@ -817,7 +878,8 @@ TEXTO REFORMULADO:`;
 
   private async validatePlansSection(
     section: MinimalProposal["plans"],
-    expectedPlans: number
+    expectedPlans: number,
+    selectedService: string
   ): Promise<void> {
     const planCount = section.plansItems?.length ?? 0;
     ensureCondition(
@@ -910,22 +972,84 @@ TEXTO REFORMULADO:`;
             9,
             `plans.plansItems[${index}].includedItems`
           );
+          const seen = new Set<string>();
+          const pool = this.getDeliverablePool(selectedService);
+          let poolCursor = 0;
+
           for (let itemIndex = 0; itemIndex < plan.includedItems.length; itemIndex++) {
             const item = plan.includedItems[itemIndex];
-            item.description = this.ensureMaxLength(
+            let desc = this.ensureMaxLength(
               item.description,
               60,
               `plans.plansItems[${index}].includedItems[${itemIndex}].description`
             );
-            item.description = await this.addTriggerKeyword(
-              item.description,
+            desc = await this.makeDeliverableSpecific(
+              desc,
               60,
-              `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+              `plans.plansItems[${index}].includedItems[${itemIndex}]`
             );
+
+            let norm = this.normalizeDeliverable(desc);
+            if (seen.has(norm)) {
+              // Tentar variação via rephrase
+              desc = await this.rephraseToFit(
+                `${desc} (varie o foco desta entrega, sem repetir a anterior)`,
+                60,
+                `plans.plansItems[${index}].includedItems[${itemIndex}].dedupe`
+              );
+              norm = this.normalizeDeliverable(desc);
+            }
+
+            if (seen.has(norm)) {
+              // Escolher do pool uma entrega ainda não usada
+              while (poolCursor < pool.length && seen.has(this.normalizeDeliverable(pool[poolCursor]))) {
+                poolCursor++;
+              }
+              const fallback =
+                poolCursor < pool.length
+                  ? pool[poolCursor]
+                  : this.getFallbackDeliverable(selectedService, index, itemIndex);
+              desc = await this.rephraseToFit(
+                fallback,
+                60,
+                `plans.plansItems[${index}].includedItems[${itemIndex}].fallback`
+              );
+              norm = this.normalizeDeliverable(desc);
+              poolCursor++;
+            }
+
+            seen.add(norm);
+            item.description = desc;
           }
         }
       }
     }
+  }
+
+  private getFallbackDeliverable(selectedService: string, planIndex: number, itemIndex: number): string {
+    const marketing = [
+      "Otimizar SEO técnico e Core Web Vitals",
+      "Setup de tags e pixels (GA4, Meta, LinkedIn)",
+      "Landing page de conversão com A/B test inicial",
+      "Configurar automação de leads (CRM + e-mail)",
+      "Dashboard semanal (GA4 + Ads + CRM)",
+      "Copywriting orientado a conversão",
+      "Fluxos de nurturing e scoring de leads",
+      "Remarketing multicanal com públicos quentes",
+      "Monitoramento e ajustes semanais de campanhas",
+    ];
+
+    const generic = [
+      "Planejamento detalhado de escopo e cronograma",
+      "Implementação técnica principal do projeto",
+      "Teste de qualidade e correções",
+      "Entrega com documentação resumida",
+      "Suporte inicial pós-entrega",
+    ];
+
+    const pool = selectedService === "marketing-digital" ? marketing : generic;
+    const idx = (planIndex * 5 + itemIndex) % pool.length;
+    return pool[idx];
   }
 
   private async validateFAQSection(section: MinimalProposal["faq"]): Promise<void> {
@@ -996,7 +1120,8 @@ TEXTO REFORMULADO:`;
 
   private async validateProposal(
     proposal: MinimalProposal,
-    expectedPlans: number
+    expectedPlans: number,
+    selectedService: string
   ): Promise<void> {
     await this.validateIntroductionSection(proposal.introduction);
     await this.validateAboutUsSection(proposal.aboutUs);
@@ -1007,7 +1132,7 @@ TEXTO REFORMULADO:`;
     await this.validateClientsSection(proposal.clients);
     await this.validateStepsSection(proposal.steps);
     await this.validateInvestmentSection(proposal.investment);
-    await this.validatePlansSection(proposal.plans, expectedPlans);
+    await this.validatePlansSection(proposal.plans, expectedPlans, selectedService);
     await this.validateFAQSection(proposal.faq);
     await this.validateFooterSection(proposal.footer);
   }
@@ -1124,7 +1249,7 @@ TEXTO REFORMULADO:`;
     // Validate the complete proposal
     const expectedPlans =
       typeof data.selectedPlans === "number" ? data.selectedPlans : 1;
-    await this.validateProposal(proposal, expectedPlans);
+    await this.validateProposal(proposal, expectedPlans, data.selectedService);
 
     return proposal;
   }
