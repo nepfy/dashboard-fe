@@ -174,6 +174,8 @@ REGRAS RÍGIDAS
 - title: Escreva uma frase e conte. Deve ter pelo menos 50 e no máximo 80 caracteres; se ficar fora dessa faixa, REESCREVA (não trunque).
 - subtitle: Escreva uma frase e conte. Se tiver 98 ou 103 caracteres, REESCREVA até ter EXATAMENTE 100.
 - services[]: Cada item deve ter EXATAMENTE 30 caracteres. Conte cada um individualmente.
+- Use primeira pessoa do plural e trate o leitor em segunda pessoa, sempre em voz ativa.
+- Inclua pelo menos um gatilho (autoridade, prova social, transformação ou lucro) de forma natural.
 - Não utilize aspas extras, emojis ou caracteres especiais fora do padrão ASCII básico.
 - Não mencione diretamente {clientName} ou {projectName} no título, subtítulo ou serviços.
 - Mantenha tom humano, acolhedor e de alto padrão; evite termos vazios como "melhor", "rápido" ou "completo".
@@ -393,6 +395,9 @@ REGRAS OBRIGATÓRIAS:
 - title do objeto principal: ATÉ 140 caracteres
 - Planeje cada campo para já nascer dentro do limite; não escreva para depois cortar
 - Use linguagem profissional, sofisticada e focada em resultados REAIS
+- Use primeira pessoa do plural e segunda pessoa para o leitor; voz ativa e narrativa.
+- Cada tópico deve soar concreto (sem placeholders como “Benefício 1/2”); contextualize com {projectDescription} e {companyInfo}.
+- Insira ao menos um gatilho (autoridade, prova social, transformação ou lucro) distribuído nos textos.
 - Cada especialidade deve ser ÚNICA - evite repetições entre propostas
 - Adapte as especialidades ao contexto específico do projeto
 - Responda APENAS com o JSON válido`,
@@ -556,6 +561,8 @@ REGRAS RÍGIDAS
 - Gere entre 2 e 5 entregáveis; mantenha frases objetivas no singular.
 - Gere até 3 planos, respeitando exatamente a quantidade informada em {selectedPlans} (caso haja mais, escolha os três primeiros). O plano de maior valor deve ter recommended = true e os demais recommended = false.
 - Cada plano deve conter entre 3 e 6 itens em includedItems, todos com descrições curtas (<=45 caracteres) usando verbos no infinitivo ou substantivos fortes.
+- Evite rótulos genéricos como "Benefício 1/2/3"; descreva entregas reais e específicas ao contexto de {projectDescription} e {companyInfo}.
+- Use primeira pessoa do plural e trate o leitor em segunda pessoa; inclua gatilhos (autoridade, transformação, lucro ou prova social) sem soar repetitivo.
 - Valide todos os limites de caracteres antes de responder (não gere para cortar).
 - Responda somente com o JSON final (sem comentários, sem campos extras).`,
         expectedFormat: `{
