@@ -666,18 +666,14 @@ function analyzeProposal(
   let contentScore = 0;
   let personalizationScore = 0;
 
-  // Get the actual proposal data - handle both Flash and Prime structures
+  // Get the actual proposal data - handle both Flash/Prime and Minimal structures
   const proposalData = proposal?.finalProposal || proposal?.data || proposal;
 
-  // Analyze structure - check for required sections
-  const requiredSections = [
-    "introduction",
-    "aboutUs",
-    "specialties",
-    "process",
-    "investment",
-    "plans",
-  ];
+  // Analyze structure - make template-aware
+  const requiredSections =
+    template === "minimal"
+      ? ["introduction", "aboutUs", "expertise", "clients", "steps", "investment", "plans"]
+      : ["introduction", "aboutUs", "specialties", "process", "investment", "plans"];
 
   const presentSections = requiredSections.filter(
     (section) =>
@@ -693,14 +689,7 @@ function analyzeProposal(
   // Check introduction section
   if (
     proposalData.introduction?.title &&
-    proposalData.introduction.title.length > 10
-  ) {
-    contentChecks++;
-    contentPassed++;
-  }
-  if (
-    proposalData.introduction?.subtitle &&
-    proposalData.introduction.subtitle.length > 20
+    proposalData.introduction.title.length > 20
   ) {
     contentChecks++;
     contentPassed++;
@@ -715,36 +704,61 @@ function analyzeProposal(
   }
 
   // Check aboutUs section
-  if (proposalData.aboutUs?.title && proposalData.aboutUs.title.length > 20) {
+  if (proposalData.aboutUs?.title && proposalData.aboutUs.title.length > 15) {
     contentChecks++;
     contentPassed++;
   }
   if (
     proposalData.aboutUs?.subtitle &&
-    proposalData.aboutUs.subtitle.length > 50
+    proposalData.aboutUs.subtitle.length > 40
   ) {
     contentChecks++;
     contentPassed++;
   }
 
-  // Check specialties section
-  if (
-    proposalData.specialties?.topics &&
-    Array.isArray(proposalData.specialties.topics) &&
-    proposalData.specialties.topics.length > 0
-  ) {
-    contentChecks++;
-    contentPassed++;
-  }
-
-  // Check process section
-  if (
-    proposalData.process?.steps &&
-    Array.isArray(proposalData.process.steps) &&
-    proposalData.process.steps.length > 0
-  ) {
-    contentChecks++;
-    contentPassed++;
+  // Template-specific content checks
+  if (template === "minimal") {
+    if (
+      proposalData.expertise?.topics &&
+      Array.isArray(proposalData.expertise.topics) &&
+      proposalData.expertise.topics.length >= 6
+    ) {
+      contentChecks++;
+      contentPassed++;
+    }
+    if (
+      proposalData.steps?.topics &&
+      Array.isArray(proposalData.steps.topics) &&
+      proposalData.steps.topics.length >= 3
+    ) {
+      contentChecks++;
+      contentPassed++;
+    }
+    if (
+      proposalData.clients?.items &&
+      Array.isArray(proposalData.clients.items) &&
+      proposalData.clients.items.length >= 6
+    ) {
+      contentChecks++;
+      contentPassed++;
+    }
+  } else {
+    if (
+      proposalData.specialties?.topics &&
+      Array.isArray(proposalData.specialties.topics) &&
+      proposalData.specialties.topics.length > 0
+    ) {
+      contentChecks++;
+      contentPassed++;
+    }
+    if (
+      proposalData.process?.steps &&
+      Array.isArray(proposalData.process.steps) &&
+      proposalData.process.steps.length > 0
+    ) {
+      contentChecks++;
+      contentPassed++;
+    }
   }
 
   // Check investment/plans section

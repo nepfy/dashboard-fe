@@ -746,6 +746,13 @@ DADOS DO PROJETO:
 - Usuário: {userName}
 - Email: {userEmail}
 
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- Sempre em 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias e termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro) por seção.
+- Priorize presente do indicativo; use futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
 FORMATO:
 {
   "clientName": "{clientName}",
@@ -983,6 +990,13 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- Sempre em 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio apenas para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
 ⚠️⚠️⚠️ REGRA CRÍTICA SOBRE O TITLE ⚠️⚠️⚠️
 O TITLE É O ELEMENTO MAIS IMPORTANTE DESTA SEÇÃO!
 - DEVE ter MÍNIMO 150 caracteres (idealmente 180-250 caracteres)
@@ -1130,6 +1144,13 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Storytelling e pelo menos um gatilho mental por seção (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
 FORMATO:
 {
   "hideSection": false,
@@ -1231,6 +1252,13 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
 FORMATO:
 {
   "hideSection": false,
@@ -1280,6 +1308,13 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 - Planos: {selectedPlans}
+
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 
 FORMATO:
 {
@@ -1480,6 +1515,13 @@ PROJETO: {projectName} - {projectDescription}
 CLIENTE: {clientName}
 EMPRESA: {companyInfo}
 
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
 FORMATO OBRIGATÓRIO
 {
   "hideSection": false,
@@ -1530,6 +1572,13 @@ DADOS DO PROJETO:
 - Empresa: {companyInfo}
 - Usuário: {userName}
 - Email: {userEmail}
+
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 
 FORMATO:
 {
