@@ -11,8 +11,7 @@
  *
  * Saída: relatório de pass/fail e contagem de caracteres.
  */
-
-import { MinimalTemplateWorkflow } from "#/modules/ai-generator/themes/minimal";
+import { MinimalTemplateWorkflow } from "../modules/ai-generator/themes/minimal";
 
 type Check = { name: string; ok: boolean; info?: string };
 
@@ -20,7 +19,7 @@ async function validate() {
   const workflow = new MinimalTemplateWorkflow();
 
   const payload = {
-    selectedService: "design" as const, // mantém qualidade textual alta e compatível com ServiceType
+    selectedService: "designer", // alinha com agentes reais (designer)
     companyInfo:
       "Agência digital especializada em branding, design e web. Criamos experiências premium unindo estratégia, UX/UI e desenvolvimento.",
     clientName: "Aurora Café & Co.",
@@ -61,7 +60,9 @@ async function validate() {
     null;
 
   if (!proposal) {
-    console.error("❌ Falha na geração Minimal: objeto proposal não encontrado.");
+    console.error(
+      "❌ Falha na geração Minimal: objeto proposal não encontrado."
+    );
     console.error(
       "Chaves disponíveis em result:",
       Object.keys(result || {}).join(", ")
@@ -152,7 +153,9 @@ async function validate() {
 
   console.log("\n📊 Validação Minimal (dados) — referência Empty Studio");
   checks.forEach((c) => {
-    console.log(`${c.ok ? "✅" : "❌"} ${c.name}${c.info ? " — " + c.info : ""}`);
+    console.log(
+      `${c.ok ? "✅" : "❌"} ${c.name}${c.info ? " — " + c.info : ""}`
+    );
   });
   console.log(`\nResultado: ${passed}/${total} checks passaram`);
 
@@ -165,4 +168,3 @@ validate().catch((err) => {
   console.error("❌ Erro no script:", err);
   process.exit(1);
 });
-

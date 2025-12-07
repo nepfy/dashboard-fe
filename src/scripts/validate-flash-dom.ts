@@ -19,11 +19,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { JSDOM } from "jsdom";
-import type { FlashProposal } from "../src/modules/ai-generator/templates/flash/flash-template";
-import type { FlashWorkflowResult } from "../src/modules/ai-generator/themes/flash";
-import type { NepfyAIRequestData } from "../src/app/api/projects/ai-generate/route";
-import type { ProposalData } from "../src/types/proposal-data";
-import type { ButtonConfig } from "../src/types/template-data";
+import type { FlashProposal } from "../modules/ai-generator/templates/flash/flash-template";
+import type { FlashWorkflowResult } from "../modules/ai-generator/themes/flash";
+import type { NepfyAIRequestData } from "../app/api/projects/ai-generate/route";
+import type { ProposalData } from "../types/proposal-data";
+import type { ButtonConfig } from "../types/template-data";
 
 type Assertion = { name: string; ok: boolean; detail?: string };
 type FlashApiResponse = {
@@ -47,11 +47,7 @@ function pickText(el: Element | null): string {
   return el?.textContent?.trim() ?? "";
 }
 
-function setId(
-  doc: Document,
-  selector: string,
-  id: string
-): Element | null {
+function setId(doc: Document, selector: string, id: string): Element | null {
   const el = doc.querySelector(selector);
   if (el && !el.id) {
     el.id = id;
@@ -59,11 +55,7 @@ function setId(
   return el;
 }
 
-function ensureElement(
-  doc: Document,
-  selector: string,
-  id: string
-): Element {
+function ensureElement(doc: Document, selector: string, id: string): Element {
   const existing = doc.getElementById(id);
   if (existing) return existing;
   const anchor = doc.querySelector(selector) || doc.body;
@@ -85,7 +77,11 @@ function attachVisualizeIds(doc: Document) {
     ".hero_bottom-wrap.is--right .text-weight-medium.text-size-medium",
     "introduction-subtitle"
   );
-  setId(doc, ".hero_bottom .hero_text-wrap.is--opacity", "introduction-services");
+  setId(
+    doc,
+    ".hero_bottom .hero_text-wrap.is--opacity",
+    "introduction-services"
+  );
   setId(doc, ".nav_brand .text-weight-medium", "introduction-username");
   ensureElement(doc, ".nav_brand", "introduction-email");
 
@@ -114,11 +110,7 @@ function attachVisualizeIds(doc: Document) {
   setId(doc, ".section_faq .accordion", "faq-items");
 
   setId(doc, ".footer_heading h3", "footer-callToAction");
-  setId(
-    doc,
-    ".footer .proposal-date .opacity-60 div",
-    "footer-validity"
-  );
+  setId(doc, ".footer .proposal-date .opacity-60 div", "footer-validity");
   setId(doc, ".footer_subtitle p", "footer-disclaimer");
 
   const testimonialsSlider = doc.querySelector(".section_tesitominal .slider");
@@ -177,9 +169,7 @@ async function callFlashApi(body: NepfyAIRequestData): Promise<{
 
   if (!resp.ok) {
     const text = await resp.text();
-    throw new Error(
-      `Falha na API (${resp.status}): ${text.slice(0, 500)}`
-    );
+    throw new Error(`Falha na API (${resp.status}): ${text.slice(0, 500)}`);
   }
 
   const payload = (await resp.json()) as FlashApiResponse;
@@ -197,7 +187,9 @@ async function callFlashApi(body: NepfyAIRequestData): Promise<{
     (data as any)?.proposalData?.proposal;
 
   if (!proposal) {
-    throw new Error("Resposta da API não trouxe proposal para o template Flash.");
+    throw new Error(
+      "Resposta da API não trouxe proposal para o template Flash."
+    );
   }
 
   return {
@@ -417,9 +409,11 @@ async function waitForInjection(
   // Force visualize mode (JSDOM window type is not the DOM Window; loosen typing)
   (window as unknown as { parent: unknown }).parent = window as unknown;
 
-  const injector = (window as unknown as {
-    flashInjectData?: (data: typeof payload) => void;
-  }).flashInjectData;
+  const injector = (
+    window as unknown as {
+      flashInjectData?: (data: typeof payload) => void;
+    }
+  ).flashInjectData;
 
   if (!injector) {
     throw new Error("flashInjectData não encontrado no contexto JSDOM.");
@@ -438,10 +432,7 @@ async function waitForInjection(
   });
 }
 
-function runDomAssertions(
-  dom: JSDOM,
-  proposalData: ProposalData
-): Assertion[] {
+function runDomAssertions(dom: JSDOM, proposalData: ProposalData): Assertion[] {
   const doc = dom.window.document;
   const assertions: Assertion[] = [];
 
@@ -467,9 +458,8 @@ function runDomAssertions(
   });
 
   const teamCount =
-    doc
-      .getElementById("team-members-list")
-      ?.querySelectorAll(".team_card").length || 0;
+    doc.getElementById("team-members-list")?.querySelectorAll(".team_card")
+      .length || 0;
   assertions.push({
     name: "Time renderizado",
     ok: teamCount === (proposalData.team?.members?.length || 0),
@@ -487,9 +477,8 @@ function runDomAssertions(
   });
 
   const resultsCount =
-    doc
-      .getElementById("results-list")
-      ?.querySelectorAll(".proof_card").length || 0;
+    doc.getElementById("results-list")?.querySelectorAll(".proof_card")
+      .length || 0;
   assertions.push({
     name: "Resultados renderizados",
     ok: resultsCount === (proposalData.results?.items?.length || 0),
@@ -567,7 +556,7 @@ async function main() {
     validUntil: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
       .toISOString()
       .slice(0, 10),
-      buttonConfig: {
+    buttonConfig: {
       buttonTitle: "Iniciar Projeto",
       buttonWhereToOpen: undefined,
       buttonHref: undefined,
@@ -615,7 +604,9 @@ async function main() {
 
   console.log("\n📊 Validação DOM Flash");
   assertions.forEach((a) =>
-    console.log(`${a.ok ? "✅" : "❌"} ${a.name}${a.detail ? ` — ${a.detail}` : ""}`)
+    console.log(
+      `${a.ok ? "✅" : "❌"} ${a.name}${a.detail ? ` — ${a.detail}` : ""}`
+    )
   );
 
   const passed = assertions.filter((a) => a.ok).length;
@@ -631,4 +622,3 @@ main().catch((err) => {
   console.error("❌ Erro na validação DOM Flash:", err);
   process.exit(1);
 });
-

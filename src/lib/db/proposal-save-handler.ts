@@ -547,10 +547,21 @@ function convertMinimalToProposalData(
       marquee: [],
     },
     clients: {
-      hideSection: true,
-      title: undefined,
-      hideTitle: false,
-      items: [],
+      hideSection: proposal.clients.hideSection ?? false,
+      title: proposal.clients.title,
+      hideTitle: proposal.clients.hideTitle ?? false,
+      description: proposal.clients.description,
+      paragraphs: proposal.clients.paragraphs,
+      items:
+        proposal.clients.items?.map((client, index) => ({
+          id: client.id,
+          name: client.name,
+          logo: client.logo || "",
+          hideClient: (client as { hideClient?: boolean }).hideClient
+            ?? (client as { hideItem?: boolean }).hideItem
+            ?? false,
+          sortOrder: client.sortOrder ?? index,
+        })) || [],
     },
     testimonials: {
       hideSection: proposal.testimonials.hideSection || false,
