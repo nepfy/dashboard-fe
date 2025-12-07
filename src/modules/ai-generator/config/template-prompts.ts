@@ -157,7 +157,7 @@ Gerar textos premium, ÚNICOS e com VALOR REAL, com CONTAGEM EXATA de caracteres
 
 FORMATO OBRIGATÓRIO
 {
-  "title": "Frase imperativa, inclusiva e sofisticada com EXATAMENTE 60 caracteres (sem aspas adicionais)",
+  "title": "Frase imperativa, inclusiva e sofisticada com entre 50 e 80 caracteres (sem aspas adicionais)",
   "subtitle": "Frase sobre benefício e transformação com EXATAMENTE 100 caracteres",
   "services": [
     "Serviço 1 com EXATAMENTE 30 caracteres",
@@ -171,7 +171,7 @@ FORMATO OBRIGATÓRIO
 
 REGRAS RÍGIDAS
 - CRÍTICO: Conte MANUALMENTE cada caractere (incluindo espaços) ANTES de finalizar cada campo.
-- title: Escreva uma frase e conte. Se tiver 58 ou 62 caracteres, REESCREVA até ter EXATAMENTE 60.
+- title: Escreva uma frase e conte. Deve ter pelo menos 50 e no máximo 80 caracteres; se ficar fora dessa faixa, REESCREVA (não trunque).
 - subtitle: Escreva uma frase e conte. Se tiver 98 ou 103 caracteres, REESCREVA até ter EXATAMENTE 100.
 - services[]: Cada item deve ter EXATAMENTE 30 caracteres. Conte cada um individualmente.
 - Não utilize aspas extras, emojis ou caracteres especiais fora do padrão ASCII básico.
@@ -181,9 +181,10 @@ REGRAS RÍGIDAS
 
 EXEMPLOS CORRETOS (conte os caracteres):
 
-✅ TITLE (60 chars):
+✅ TITLE (faixa 50–80 chars):
 "Elevamos sua presença visual no mercado com excelência" = 60 chars ✓
 "Transformamos sua visão em realidade com excelência total" = 60 chars ✓
+"Criamos experiências digitais premium que fortalecem sua marca" = 67 chars ✓
 
 ❌ TITLE ERRADO:
 "Ativamos Estratégia de Marketing Digital Completa com entreg" = 61 chars (TRUNCADO!)
@@ -209,7 +210,7 @@ PROCESSO:
 3. Se não bater EXATAMENTE, REESCREVA (não trunce!)
 4. Valide novamente antes de enviar`,
         expectedFormat: `{
-  "title": "string (exactly 60 characters, Title Case, premium tone)",
+  "title": "string (50 a 80 caracteres, Title Case, tom premium e inclusivo)",
   "subtitle": "string (exactly 100 characters, sensory premium tone)",
   "services": [
     "string (exactly 30 characters)",
@@ -221,7 +222,7 @@ PROCESSO:
   "buttonText": "Solicitar Proposta"
 }`,
         rules: [
-          "title: EXATAMENTE 60 caracteres, imperativo, inclusivo e sofisticado",
+          "title: entre 50 e 80 caracteres, imperativo, inclusivo e sofisticado",
           "subtitle: EXATAMENTE 100 caracteres, linguagem sensorial premium",
           "services: EXATAMENTE 4 itens com EXATAMENTE 30 caracteres cada",
           'validity: manter "15 dias"',

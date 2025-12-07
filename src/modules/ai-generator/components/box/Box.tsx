@@ -11,6 +11,7 @@ export function Box({
   disabled,
   step,
   onInfoClick,
+  ...rest
 }: {
   title?: string;
   description?: string;
@@ -21,6 +22,7 @@ export function Box({
   disabled?: boolean;
   step?: string;
   onInfoClick?: () => void;
+  "data-testid"?: string;
 }) {
   return (
     <div
@@ -28,6 +30,7 @@ export function Box({
       style={{
         background: `linear-gradient(141.87deg, rgba(253, 253, 253, 0) 1.74%, rgba(172, 153, 243, 0.5) 50.87%, rgba(106, 75, 222, 0.5) 100%)`,
       }}
+      data-testid={rest?.["data-testid"] || undefined}
     >
       <div className="bg-white-neutral-light-200 rounded-[12px] p-3 md:p-6 w-full h-full">
         <div className="mb-6 flex items-center justify-between">

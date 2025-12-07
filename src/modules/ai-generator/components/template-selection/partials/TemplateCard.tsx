@@ -69,6 +69,7 @@ export const TemplateCard = ({
   <div
     className="h-auto w-[350px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 border-white-neutral-light-300 px-1 shadow-md"
     tabIndex={0}
+    data-testid={`template-card-${template.title.toLowerCase()}`}
   >
     {/* Header */}
     <div className="px-7 py-4">
@@ -117,6 +118,7 @@ export const TemplateCard = ({
           }
           `}
         onClick={onSelectTemplate}
+        data-testid={`template-select-${template.title.toLowerCase()}`}
       >
         Selecionar
       </button>

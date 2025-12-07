@@ -12,6 +12,8 @@ export default defineConfig({
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // Use persisted auth state if available
+    storageState: process.env.PLAYWRIGHT_STORAGE || 'e2e/.auth/state.json',
   },
 
   projects: [

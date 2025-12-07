@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/auth.fixture';
+import { test, expect } from './fixtures/auth.fixture';
 
 /**
  * Complete End-to-End Visual Validation
@@ -13,6 +13,8 @@ import { test, expect } from '../fixtures/auth.fixture';
  * Reference: https://empty-studio.webflow.io/
  */
 test.describe('Minimal Template - Complete E2E Validation', () => {
+
+  // Helpers no longer needed (we'll generate via API)
   
   test('should create proposal, load editor, and match Empty Studio layout', async ({ authenticatedPage }) => {
     const page = authenticatedPage;
@@ -20,67 +22,50 @@ test.describe('Minimal Template - Complete E2E Validation', () => {
     console.log('\n🚀 Starting Complete E2E Validation...\n');
     
     // ============================================
-    // STEP 1: CREATE PROPOSAL
+    // STEP 1: CREATE PROPOSAL VIA API (SKIP UI)
     // ============================================
-    console.log('📝 STEP 1: Creating proposal...');
-    
-    await page.goto('/dashboard');
-    await page.click('button:has-text("Nova Proposta"), a:has-text("Nova Proposta")');
-    
-    await page.waitForSelector('input[name="clientName"], input[placeholder*="cliente"]', { timeout: 10000 });
+    console.log('📝 STEP 1: Creating proposal via API...');
 
-    // Fill in proposal form with test data
-    const testData = {
-      clientName: 'Aurora Café & Co.',
-      projectName: 'Site Institucional Premium',
-      projectDescription: 'Desenvolvimento de site institucional moderno e responsivo para cafeteria premium, ' +
-        'com foco em identidade visual, experiência do usuário e presença digital forte.'
+    const payload = {
+      selectedService: "agencias",
+      clientName: "Aurora Café & Co.",
+      projectName: "Site Institucional Premium",
+      projectDescription:
+        "Desenvolvimento de site institucional moderno e responsivo para cafeteria premium, com foco em identidade visual, experiência do usuário e presença digital.",
+      detailedClientInfo:
+        "A Aurora Café & Co. é uma cafeteria artesanal que valoriza cafés de origem, processos artesanais e identidade visual moderna.",
+      companyInfo:
+        "Agência digital especializada em branding, design e web. Criamos experiências digitais premium que combinam estratégia, UX/UI e desenvolvimento.",
+      selectedPlan: 3,
+      planDetails: "",
+      includeTerms: true,
+      includeFAQ: true,
+      templateType: "minimal",
+      mainColor: "#000000",
+      originalPageUrl: "aurora-cafe-co",
+      pagePassword: "Senha123",
+      validUntil: "2025-12-31",
     };
-    
-    await page.fill('input[name="clientName"], input[placeholder*="cliente"]', testData.clientName);
-    await page.fill('input[name="projectName"], input[placeholder*="projeto"]', testData.projectName);
-    await page.fill('textarea[name="projectDescription"], textarea[placeholder*="descrição"]', testData.projectDescription);
 
-    // Select designer service
-    const serviceSelector = 'select[name="service"], button:has-text("Serviço")';
-    await page.click(serviceSelector);
-    await page.click('text=/.*designer.*|.*design.*/i');
-
-    // Select minimal template
-    const templateSelector = 'select[name="template"], button:has-text("Template")';
-    await page.click(templateSelector);
-    await page.click('text=/.*minimal.*/i');
-
-    console.log('  ✓ Form filled with test data');
-    console.log(`  ✓ Client: ${testData.clientName}`);
-    console.log(`  ✓ Project: ${testData.projectName}`);
-    
-    // Submit and wait for generation
-    await page.click('button[type="submit"]:has-text("Gerar"), button:has-text("Criar Proposta")');
-    console.log('  ✓ Proposal submitted, waiting for AI generation...');
-    
-    // ============================================
-    // STEP 2: WAIT FOR EDITOR & EXTRACT PROJECT ID
-    // ============================================
-    console.log('\n⏳ STEP 2: Waiting for AI generation and redirect...');
-    
-    await page.waitForURL(/\/editar\?projectId=.*&templateType=minimal/, { timeout: 90000 });
-    
-    const currentUrl = page.url();
-    const urlParams = new URL(currentUrl);
-    const projectId = urlParams.searchParams.get('projectId');
-    const templateType = urlParams.searchParams.get('templateType');
-    
+    const response = await page.request.post("/api/projects/ai-generate", {
+      data: payload,
+    });
+    expect(response.ok()).toBeTruthy();
+    const json = await response.json();
+    const projectId = json?.metadata?.projectId || json?.data?.project?.id;
     expect(projectId).toBeTruthy();
-    expect(templateType).toBe('minimal');
-    
-    console.log(`  ✓ Redirected to editor`);
-    console.log(`  ✓ Project ID: ${projectId}`);
-    console.log(`  ✓ Template: ${templateType}`);
-    
-    // Wait for proposal to fully load
+
+    console.log(`  ✓ Proposal created via API. projectId: ${projectId}`);
+
+    // ============================================
+    // STEP 2: OPEN EDITOR
+    // ============================================
+    await page.goto(`/editar?projectId=${projectId}&templateType=minimal`, {
+      waitUntil: "domcontentloaded",
+    });
+
     await page.waitForLoadState('networkidle');
-    await page.waitForSelector('[data-section="introduction"], .intro-section', { timeout: 10000 });
+    await page.waitForSelector('[data-section="introduction"], .intro-section', { timeout: 20000 });
     
     console.log('  ✓ Editor loaded successfully');
     

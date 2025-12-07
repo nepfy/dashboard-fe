@@ -674,6 +674,9 @@ export async function POST(request: NextRequest) {
           templateType: newProject.templateType,
           mainColor: newProject.mainColor,
         },
+        // Conveniência para consumo externo
+        projectId: newProject.id,
+        projectUrl: newProject.projectUrl,
       },
       metadata: {
         service: agentServiceId,

@@ -352,12 +352,22 @@ TEXTO REFORMULADO:`;
   private async validateIntroductionSection(
     section: MinimalProposal["introduction"]
   ): Promise<void> {
-    // Auto-correct title if exceeds limit
-    if (section.title.length > 120) {
-      console.warn(`⚠️  Auto-correcting introduction.title (${section.title.length} -> 120 chars)`);
-      section.title = await this.rephraseToFit(section.title, 120, "introduction.title");
+    // Ensure hero title is sufficiently long and not over limit
+    const minHero = 50;
+    const maxHero = 120;
+    if (section.title.length < minHero || section.title.length > maxHero) {
+      const target = Math.min(Math.max(section.title.length, minHero + 10), maxHero);
+      console.warn(
+        `⚠️  Rephrasing introduction.title (${section.title.length} -> target ~${target} chars)`
+      );
+      const rephrased = await this.rephraseToFit(section.title, target, "introduction.title");
+      // If still short, pad with a short clause to reach minHero
+      section.title =
+        rephrased.length >= minHero
+          ? rephrased
+          : `${rephrased} com experiências digitais premium`;
     }
-    section.title = this.ensureMaxLength(section.title, 120, "introduction.title");
+    section.title = this.ensureMaxLength(section.title, maxHero, "introduction.title");
     
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
