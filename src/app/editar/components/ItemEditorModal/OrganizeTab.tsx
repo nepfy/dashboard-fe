@@ -32,7 +32,15 @@ import {
 import GrabIcon from "#/components/icons/GrabIcon";
 
 interface OrganizeTabProps {
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
+  itemType:
+    | "team"
+    | "results"
+    | "expertise"
+    | "testimonials"
+    | "steps"
+    | "faq"
+    | "aboutUs"
+    | "introServices";
   items: (
     | TeamMember
     | Result
@@ -69,7 +77,15 @@ interface SortableItemProps {
     | FAQItem
     | AboutUsItem
     | IntroductionService;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
+  itemType:
+    | "team"
+    | "results"
+    | "expertise"
+    | "testimonials"
+    | "steps"
+    | "faq"
+    | "aboutUs"
+    | "introServices";
   onDeleteItem: (itemId: string) => void;
 }
 
@@ -103,7 +119,7 @@ function SortableItem({
       <div
         {...attributes}
         {...listeners}
-        className="hover:bg-white-neutral-light-300 flex w-10 min-h-[112px] cursor-grab items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
+        className="hover:bg-white-neutral-light-300 flex min-h-[112px] w-10 cursor-grab items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
       >
         <div className="scale-100">
           <GrabIcon />
@@ -141,15 +157,13 @@ function SortableItem({
                       ? (item as FAQItem).question
                       : itemType === "aboutUs"
                         ? (item as AboutUsItem).caption || "Sem descrição"
-                        : itemType === "introServices"
-                          ? (item as IntroductionService).serviceName || "Sem nome"
-                          : (item as Testimonial).name}
+                        : (item as Testimonial).name}
           </div>
         )}
       </div>
 
       {/* Delete Button */}
-      <div className="hover:bg-white-neutral-light-300 flex h-10 w-10 self-center cursor-pointer items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
+      <div className="hover:bg-white-neutral-light-300 flex h-10 w-10 cursor-pointer items-center justify-center self-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
         <button
           onClick={() => onDeleteItem(item.id!)}
           className="cursor-pointer rounded p-2 text-[#D00003]"
