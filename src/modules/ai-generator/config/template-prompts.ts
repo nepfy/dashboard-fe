@@ -754,7 +754,7 @@ REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
 - Priorize presente do indicativo; use futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
 - Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 
-FORMATO:
+FORMATO (RESPEITE COMPRIMENTOS!):
 {
   "clientName": "{clientName}",
   "userName": "{userName}",
@@ -763,7 +763,7 @@ FORMATO:
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "Título INTRODUTÓRIO imperativo, inclusivo e direto (MÁXIMO 100 caracteres, sem citar serviço específico ou cliente)",
+  "title": "Título INTRODUTÓRIO imperativo, inclusivo e direto (OBRIGATORIAMENTE entre 90 e 100 caracteres; conte antes de enviar; sem citar serviço específico ou cliente)",
   "description": "Descrição concisa da proposta de valor (MÁXIMO 90 caracteres, opcional)",
   "hideDescription": false,
   "services": [
@@ -773,31 +773,18 @@ FORMATO:
   ]
 }
 
-🚨🚨🚨 INSTRUÇÕES CRÍTICAS DE CONTAGEM - LEIA ANTES DE GERAR 🚨🚨🚨
+🚨 INSTRUÇÕES CRÍTICAS DE CONTAGEM - LEIA ANTES DE GERAR 🚨
+- Cada campo tem limite rígido. NÃO envie curto nem longo demais.
+- title: OBRIGATORIAMENTE entre 90 e 100 caracteres (conte antes de enviar; se vier <90, reescreva até 90-100).
+- description: até 90 caracteres, preferencial 60-80.
+- services: até 50 caracteres cada.
+- Se vier fora do intervalo, REESCREVA (não trunque). O sistema não vai cortar por você.
 
-⚠️ ATENÇÃO MÁXIMA: Cada campo tem um limite RÍGIDO que é VERIFICADO AUTOMATICAMENTE!
-⚠️ Se você ultrapassar qualquer limite, sua resposta será REJEITADA e você terá que gerar TUDO NOVAMENTE!
-⚠️ O sistema NÃO vai cortar/truncar seu texto. Ele vai REJEITAR e você vai refazer TODO o trabalho!
-
-🔒 LIMITES ABSOLUTOS E INEGOCIÁVEIS (incluindo espaços, pontos, vírgulas, TUDO):
-- title: MÁXIMO ABSOLUTO 100 caracteres | RECOMENDADO: 90-100 caracteres
-- description: MÁXIMO ABSOLUTO 90 caracteres | RECOMENDADO: 60-80 caracteres  
-- serviceName: MÁXIMO ABSOLUTO 50 caracteres CADA | RECOMENDADO: 30-40 caracteres
-
-📏 MÉTODO OBRIGATÓRIO DE CONTAGEM:
-1. Escreva o texto
-2. CONTE caractere por caractere, incluindo TODOS os espaços
-3. Se estiver acima do limite, DELETE palavras até ficar ABAIXO
-4. Valide contando NOVAMENTE de trás para frente
-5. Só envie depois de ter CERTEZA absoluta
-
-⚠️ PROCESSO RIGOROSO ANTES DE ENVIAR:
-1. Escreva o texto normalmente
-2. Copie mentalmente e conte: 1, 2, 3, 4... até o fim
-3. Se passar do MÁXIMO, corte palavras imediatamente
-4. Sempre use 20 caracteres ABAIXO do limite máximo para segurança
-5. title: mantenha entre 90 e 100 chars (margem de segurança)
-6. description: mantenha entre 60 e 80 chars (margem de segurança)
+EXEMPLOS DE TITLE (90-100 chars, sem cliente/projeto):
+- "Planejamos e executamos identidade visual autoral com direção artística e resultado concreto"
+- "Fotografia de casamento com direção sensível, narrativa elegante e entrega premium garantida"
+- "Consultoria estratégica de marketing digital com plano claro, execução ágil e ROI mensurável"
+- "Site institucional moderno com UX focada em conversão, conteúdo autoral e performance"
 
 REGRAS DE ESTILO:
 - Linguagem direta e profissional
@@ -839,7 +826,7 @@ Design: "Identidade Visual e Branding Profissional" ou "Design de Experiência D
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "string (max 100 chars - DESCRIPTIVE intro title, not project name)",
+          "title": "string (90-100 chars - DESCRIPTIVE intro title, not project name)",
   "description": "string (max 90 chars, optional)",
   "hideDescription": false,
   "services": [{"id": "string", "serviceName": "string (max 50 chars)", "sortOrder": number}]
@@ -1148,23 +1135,24 @@ DADOS DO PROJETO:
 REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
 - 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
 - Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
-- Storytelling e pelo menos um gatilho mental por seção (autoridade, prova social, escassez, transformação ou lucro).
+- Storytelling e pelo menos um gatilho mental por seção (variar entre autoridade, credibilidade validada, prova concreta, urgência moderada, transformação, lucro mensurável). Não repita o mesmo gatilho em seções diferentes.
+- Proibido usar literalmente “autoridade e prova social”; use sinônimos curtos.
 - Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
 - Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 
-FORMATO:
+FORMATO (RESPEITE COMPRIMENTOS!):
 {
   "hideSection": false,
   "subtitle": "Tagline curta e impactante em MAIÚSCULAS com até 30 caracteres (ex: RESULTADOS REAIS AGORA)",
   "hideSubtitle": false,
-  "title": "Título principal da seção, direto e profissional com até 130 caracteres",
+  "title": "Título principal da seção, direto e profissional OBRIGATORIAMENTE entre 90 e 130 caracteres (conte antes de enviar, nada genérico)",
   "hideIcon": false,
   "topics": [
     {
       "id": "1",
       "icon": "DiamondIcon",
       "title": "Nome da área de atuação com até 30 caracteres",
-      "description": "Descrição profissional e completa do serviço com entre 90 e 130 caracteres, explicando valor e benefícios",
+      "description": "Descrição profissional e completa do serviço com entre 90 e 130 caracteres, explicando valor e benefícios. Se ficar abaixo de 90, REESCREVA até 90-130 com benefícios tangíveis e contexto do serviço.",
       "sortOrder": 1
     }
   ]

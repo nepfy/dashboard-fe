@@ -147,7 +147,16 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
 export class MinimalTheme {
   private moaService: MOAService;
   private templateConfig: TemplateConfig;
+  private currentProjectDescription: string | null = null;
   private static readonly VALIDATION_MAX_ATTEMPTS = 5;
+  private static readonly INTRO_INSTRUCTIONAL_PATTERNS = [
+    /reescreva/i,
+    /recrie/i,
+    /title/i,
+    /título/i,
+    /string/i,
+    /obrigatoriamente/i,
+  ];
 
   constructor(private together: Together) {
     this.moaService = new MOAService(together, {
@@ -472,50 +481,80 @@ Regras:
   }
 
   private async validateIntroductionSection(
-    section: MinimalProposal["introduction"]
+    section: MinimalProposal["introduction"],
+    selectedService?: string,
+    projectDescription?: string
   ): Promise<void> {
     // Ensure hero title is sufficiently long and not over limit
     const minHero = 90;
     const maxHero = 100;
+    // Se título inicial já estiver aceitável (80-105), evita rephrase para não encolher
+    if (section.title.length >= 80 && section.title.length <= 105) {
+      section.title = this.ensureMaxLength(section.title, maxHero, "introduction.title");
+      return;
+    }
+
     if (section.title.length < minHero || section.title.length > maxHero) {
-      const target = Math.min(Math.max(section.title.length, minHero + 10), maxHero);
+      const target = Math.min(Math.max(section.title.length, minHero + 20), maxHero);
       console.warn(
         `⚠️  Rephrasing introduction.title (${section.title.length} -> target ~${target} chars)`
       );
-      const rephrased = await this.rephraseToFit(section.title, target, "introduction.title");
-      // If still short, pad with a short clause to reach minHero
-      section.title =
-        rephrased.length >= minHero
-          ? rephrased
-          : `${rephrased} com experiências digitais premium`;
+      section.title = await this.rephraseToFit(section.title, target, "introduction.title");
     }
     section.title = this.ensureMaxLength(section.title, maxHero, "introduction.title");
+
     if (section.title.length < minHero) {
-      const paddedTitle = `${section.title}. Impulsionamos resultados com autoridade, prova social, escassez e lucro mensurável agora.`;
+      const contextual =
+        projectDescription && projectDescription.length > 60
+          ? `${section.title}. ${projectDescription.slice(0, 180)}`
+          : `${section.title}. ${selectedService || "Projeto"} autoral com narrativa forte e impacto imediato.`;
       section.title = await this.rephraseToFit(
-        paddedTitle,
+        contextual,
         maxHero,
-        "introduction.title (padded for min length)"
+        "introduction.title (contextual lengthen)"
       );
       if (section.title.length < minHero) {
-        const fallbackTitle =
-          "Impulsione resultados com autoridade, prova social, escassez e lucro mensurável agora";
+        const instructive = `Reescreva o título em 1 frase, 90 a 100 caracteres, imperativa e específica para ${selectedService || "o serviço"}, sem genérico. Não use texto fixo.`;
         section.title = await this.rephraseToFit(
-          fallbackTitle,
+          instructive,
           maxHero,
-          "introduction.title (fallback min length)"
+          "introduction.title (explicit length target)"
         );
-        if (section.title.length < minHero) {
-          const fixedTitle =
-            "Impulsione sua presença digital forte com autoridade, prova social e lucro mensurável agora";
-          section.title = fixedTitle;
-          section.title = this.ensureMaxLength(section.title, maxHero, "introduction.title (fixed fallback)");
-          if (section.title.length < minHero) {
-            throw new Error(
-              `introduction.title permaneceu abaixo do mínimo (${section.title.length}/${minHero})`
-            );
-          }
-        }
+      }
+    }
+    // Se ainda ficar curto, toleramos >=75 (warning) para não travar
+    if (section.title.length < 75) {
+      console.warn(
+        `⚠️  introduction.title curto (${section.title.length}/90). Aceitando para não travar, mas rephrase recomendado.`
+      );
+    }
+
+    // Bloqueia respostas instrucionais
+    if (
+      MinimalTheme.INTRO_INSTRUCTIONAL_PATTERNS.some((re) => re.test(section.title))
+    ) {
+      console.warn("⚠️  Detected instructional text in introduction.title, forcing rephrase to 90-100 chars");
+      const explicit = `Crie um título INTRODUTÓRIO em 1 frase, entre 90 e 100 caracteres, imperativo, inclusivo e direto, para ${selectedService || "o serviço"}; cite o benefício chave e o tipo de entrega. Não use palavras como "reescreva", "string" ou instruções. Conte os caracteres antes de responder.`;
+      section.title = await this.rephraseToFit(explicit, maxHero, "introduction.title (anti-instructional)");
+      if (section.title.length < 75) {
+        console.warn(
+          `⚠️  introduction.title ainda curto (${section.title.length}/90) após anti-instructional; aceitando para não travar`
+        );
+      }
+    }
+
+    // Último guardrail: se ainda estiver <75, tenta mais uma vez
+    if (section.title.length < 75) {
+      const finalPrompt = `Reescreva o título para 90-100 caracteres, imperativo e específico para ${selectedService || "o serviço"}, sem termos instrucionais. Destaque benefício claro (ex: direção artística + entrega premium) e seja fluido.`;
+      section.title = await this.rephraseToFit(
+        `${section.title}. ${finalPrompt}`,
+        maxHero,
+        "introduction.title (final attempt)"
+      );
+      if (section.title.length < 75) {
+        console.warn(
+          `⚠️  introduction.title permaneceu curto (${section.title.length}/90); aceitando para concluir.`
+        );
       }
     }
     section.title = await this.addTriggerKeyword(section.title, maxHero, "introduction.title");
@@ -634,14 +673,27 @@ Regras:
   }
 
   private async validateExpertiseSection(
-    section: MinimalProposal["expertise"]
+    section: MinimalProposal["expertise"],
+    selectedService?: string
   ): Promise<void> {
     // Auto-correct title if exceeds limit
-    if (section.title.length > 130) {
-      console.warn(`⚠️  Auto-correcting expertise.title (${section.title.length} -> 130 chars)`);
-      section.title = await this.rephraseToFit(section.title, 130, "expertise.title");
+    const maxTitle = 130;
+    if (section.title.length > maxTitle) {
+      console.warn(`⚠️  Auto-correcting expertise.title (${section.title.length} -> ${maxTitle} chars)`);
+      section.title = await this.rephraseToFit(section.title, maxTitle, "expertise.title");
     }
-    section.title = this.ensureMaxLength(section.title, 130, "expertise.title");
+    const minTitle = 90;
+    if (section.title.length < minTitle) {
+      console.warn(
+        `⚠️  expertise.title too short (${section.title.length} chars), rephrasing with context`
+      );
+      const contextual =
+        selectedService === "photography"
+          ? `${section.title}. Título de impacto para fotografia de casamento premium, com direção artística, confiança e emoção.`
+          : `${section.title}. Título comercial forte para ${selectedService || "design"}, destacando autoridade, diferenciação e resultado.`;
+      section.title = await this.rephraseToFit(contextual, maxTitle, "expertise.title (contextual)");
+    }
+    section.title = this.ensureMaxLength(section.title, maxTitle, "expertise.title");
     // Evitamos gatilho aqui para não repetir em excesso
     if (section.subtitle) {
       const maxSubtitle = 30;
@@ -658,6 +710,17 @@ Regras:
       section.subtitle = this.ensureMaxLength(section.subtitle, maxSubtitle, "expertise.subtitle");
     }
     
+    const genericPatterns = [
+      "soluções completas",
+      "autoridade",
+      "prova social",
+      "lucro mensurável",
+      "impacto real",
+      "projeto digital",
+      "entregamos",
+      "solução completa",
+    ];
+
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 9, "expertise.topics");
       for (let index = 0; index < section.topics.length; index++) {
@@ -678,21 +741,34 @@ Regras:
           topic.description = rephrased;
         }
         
-        // Ensure minimum length for descriptions
-        if (topic.description.length < 90) {
-          console.warn(`⚠️  Description too short (${topic.description.length} chars), padding to minimum`);
-          const fixedDescription =
-            "Entregamos soluções completas com autoridade, prova social e lucro mensurável para gerar impacto real no seu projeto digital.";
-          topic.description = await this.rephraseToFit(
-            fixedDescription,
-            125,
-            `expertise.topics[${index}].description (fixed min)`
+        const lowerDesc = topic.description.toLowerCase();
+        const isGeneric = genericPatterns.some((g) => lowerDesc.includes(g));
+
+        // Ensure minimum length for descriptions and eliminar genericismo
+        if (topic.description.length < 90 || isGeneric) {
+          console.warn(
+            `⚠️  Description too short/genérica (${topic.description.length} chars, generic=${isGeneric}), rephrasing with context`
           );
-          if (topic.description.length < 90) {
-            throw new Error(
-              `expertise.topics[${index}].description ficou abaixo do mínimo (${topic.description.length}/90)`
-            );
-          }
+          const contextPrompt =
+            selectedService === "photography"
+              ? `Reescreva em 90-130 caracteres, específico para fotografia de casamento: fale de direção artística, storytelling visual, timeline de entrega, consistência de estilo e confiança com casais. Nada de “soluções completas”, “autoridade”, “prova social” ou termos genéricos.`
+              : `Reescreva em 90-130 caracteres, específico para ${selectedService || "o serviço"}: benefícios tangíveis, diferenciais claros, processo e resultado. Proibido termos genéricos como “soluções completas”, “autoridade”, “prova social”.`;
+          topic.description = await this.rephraseToFit(
+            `${topic.description}. ${contextPrompt}`,
+            130,
+            `expertise.topics[${index}].description (anti-generic)`
+          );
+        // Aceita >=50 com warning (sempre rephrase, sem fallback fixo)
+        if (topic.description.length < 50) {
+          throw new Error(
+            `expertise.topics[${index}].description ficou abaixo do mínimo (${topic.description.length}/50)`
+          );
+        }
+        if (topic.description.length < 90) {
+          console.warn(
+            `⚠️  expertise.topics[${index}].description curto (${topic.description.length}/90), aceitando com warning.`
+          );
+        }
         }
         
         topic.title = this.ensureMaxLength(
@@ -752,19 +828,28 @@ Regras:
   }
 
   private async validateClientsSection(section: MinimalProposal["clients"]): Promise<void> {
-    // Auto-correct title if exceeds limit
-    if (section.title && section.title.length > 300) {
-      console.warn(`⚠️  Auto-correcting clients.title (${section.title.length} -> 300 chars)`);
-      section.title = await this.rephraseToFit(section.title, 300, "clients.title");
+    // Auto-correct title if exceeds limit (tornar mais enxuto ~3-4 linhas)
+    const maxClientTitle = 220;
+    if (section.title && section.title.length > maxClientTitle) {
+      console.warn(`⚠️  Auto-correcting clients.title (${section.title.length} -> ${maxClientTitle} chars)`);
+      section.title = await this.rephraseToFit(
+        section.title,
+        maxClientTitle,
+        "clients.title"
+      );
     }
     if (section.title && section.title.length < 150) {
       console.warn(
         `⚠️  clients.title too short (${section.title.length} chars), rephrasing to reach >=150`
       );
-      section.title = await this.rephraseToFit(section.title, 170, "clients.title");
+      section.title = await this.rephraseToFit(
+        `${section.title}. Seja conciso (3-4 linhas), destaque valor e contexto do serviço.`,
+        200,
+        "clients.title"
+      );
     }
     if (section.title) {
-      section.title = this.ensureMaxLength(section.title, 300, "clients.title");
+      section.title = this.ensureMaxLength(section.title, maxClientTitle, "clients.title");
       // Evitamos gatilho no título de clients para não repetir
     }
     
@@ -975,12 +1060,41 @@ Regras:
           120,
           `plans.plansItems[${index}].description`
         );
+        // Reforça diferenciação textual por nível
+        const levelTag =
+          index === 0 ? "essencial" : index === 1 ? "profissional" : "premium completo";
+        plan.description = await this.rephraseToFit(
+          `${plan.description} (plano ${levelTag}, benefícios proporcionais ao nível)`,
+          120,
+          `plans.plansItems[${index}].description.level`
+        );
 
         if (plan.includedItems) {
+          // Diferencia quantidade por nível
+          const minByLevel = index === 0 ? 4 : index === 1 ? 5 : 7;
+          const maxByLevel = index === 0 ? 5 : index === 1 ? 7 : 9;
+          // Completa com itens do pool se faltar quantidade
+          if (plan.includedItems.length < minByLevel) {
+            const pool = this.getDeliverablePool(selectedService);
+            let poolCursor = 0;
+            while (plan.includedItems.length < minByLevel && poolCursor < pool.length) {
+              const candidate = pool[poolCursor++];
+              const norm = this.normalizeDeliverable(candidate);
+              const alreadyUsed = plan.includedItems.some((i) => this.normalizeDeliverable(i.description || "") === norm);
+              if (!alreadyUsed) {
+                plan.includedItems.push({
+                  id: crypto.randomUUID(),
+                  description: candidate,
+                  hideItem: false,
+                  sortOrder: plan.includedItems.length,
+                });
+              }
+            }
+          }
           this.ensureArrayRange(
             plan.includedItems,
-            3,
-            9,
+            minByLevel,
+            maxByLevel,
             `plans.plansItems[${index}].includedItems`
           );
           const seen = new Set<string>();
@@ -1131,11 +1245,21 @@ Regras:
 
   private async validateFooterSection(section: MinimalProposal["footer"]): Promise<void> {
     if (section.callToAction) {
-      section.callToAction = this.ensureMaxLength(section.callToAction, 100, "footer.callToAction");
+      const minCTA = 60;
+      const maxCTA = 120;
+      if (section.callToAction.length < minCTA) {
+        section.callToAction = await this.rephraseToFit(
+          `${section.callToAction}. Storytelling curto convidando a ação imediata com benefício claro.`,
+          maxCTA,
+          "footer.callToAction (min length)"
+        );
+      }
+      section.callToAction = this.ensureMaxLength(section.callToAction, maxCTA, "footer.callToAction");
       section.callToAction = this.stripTriggerNoise(section.callToAction);
     }
     if (section.disclaimer) {
-      section.disclaimer = this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
+      const maxDisclaimer = 320;
+      section.disclaimer = this.ensureMaxLength(section.disclaimer, maxDisclaimer, "footer.disclaimer");
       section.disclaimer = this.stripTriggerNoise(section.disclaimer);
     }
     if (section.email) {
@@ -1164,10 +1288,14 @@ Regras:
     expectedPlans: number,
     selectedService: string
   ): Promise<void> {
-    await this.validateIntroductionSection(proposal.introduction);
+    await this.validateIntroductionSection(
+      proposal.introduction,
+      selectedService,
+      this.currentProjectDescription!
+    );
     await this.validateAboutUsSection(proposal.aboutUs);
     await this.validateTeamSection(proposal.team);
-    await this.validateExpertiseSection(proposal.expertise);
+    await this.validateExpertiseSection(proposal.expertise, selectedService);
     this.validateResultsSection(proposal.results);
     this.validateTestimonialsSection(proposal.testimonials);
     await this.validateClientsSection(proposal.clients);
@@ -1234,6 +1362,7 @@ Regras:
 
   async execute(data: MinimalThemeData): Promise<MinimalProposal> {
     console.log("Debug - Minimal theme execute called with:", data);
+    this.currentProjectDescription = data.projectDescription || null;
 
     const agent = await getAgentByServiceAndTemplate(
       data.selectedService,
