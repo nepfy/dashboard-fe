@@ -182,6 +182,24 @@ export default function ContentTab({
     );
   }
 
+  // Simplified layout for introServices: only legenda/caption
+  if (itemType === "introServices") {
+    return (
+      <div className="mt-4 space-y-4 px-1">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#2A2A2A]">Legenda</label>
+          <input
+            type="text"
+            value={getFormValue("serviceName")}
+            onChange={(e) => handleInputChange("serviceName", e.target.value)}
+            className="w-full rounded-[8px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 text-sm text-[#161616] outline-none focus:border-[#7B61FF]"
+            placeholder="Digite a legenda"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-4 space-y-6 px-1">
       {/* Nome field */}
@@ -419,22 +437,6 @@ export default function ContentTab({
             className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
             placeholder="Digite a descrição"
             rows={5}
-          />
-        </div>
-      )}
-
-      {/* IntroServices-specific fields */}
-      {itemType === "introServices" && (
-        <div className="flex items-center justify-between gap-2">
-          <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
-            Nome do serviço
-          </label>
-          <input
-            type="text"
-            value={getFormValue("serviceName")}
-            onChange={(e) => handleInputChange("serviceName", e.target.value)}
-            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
-            placeholder="Digite o nome do serviço"
           />
         </div>
       )}
