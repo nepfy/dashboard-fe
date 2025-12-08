@@ -1670,16 +1670,17 @@
     }
 
     if (data.mainColor) {
-      const gradientColors = getHeroGradientColors(data.mainColor);
-      document.documentElement.style.setProperty("--bg", data.mainColor);
-      document.documentElement.style.setProperty(
-        "--bg-dark",
-        gradientColors.dark
-      );
-      document.documentElement.style.setProperty(
-        "--bg-light",
-        gradientColors.light
-      );
+      // Apply color only to pricing buttons, not to the whole template
+      const applyPricingColors = (mainColor) => {
+        const bestColor = lightenColor(mainColor, 10);
+        document
+          .querySelectorAll(".btn-animate-chars__bg")
+          .forEach((el) => (el.style.backgroundColor = mainColor));
+        document
+          .querySelectorAll(".btn-animate-chars__bg.is-best")
+          .forEach((el) => (el.style.backgroundColor = bestColor));
+      };
+      applyPricingColors(data.mainColor);
     }
 
     // Button configuration

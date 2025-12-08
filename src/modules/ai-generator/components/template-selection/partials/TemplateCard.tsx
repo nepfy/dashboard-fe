@@ -54,8 +54,13 @@ export const colorToImageName: Record<string, string> = {
 };
 
 export const getImagePath = (templateName: string, color: string): string => {
+  const lower = templateName.toLowerCase();
+  // Minimal: sempre mostra preview preto, independentemente da cor selecionada
+  if (lower === "minimal") {
+    return `/images/templates/minimal/preto.jpg`;
+  }
   const imageName = colorToImageName[color] || "azul"; // fallback para azul
-  return `/images/templates/${templateName.toLowerCase()}/${imageName}.jpg`;
+  return `/images/templates/${lower}/${imageName}.jpg`;
 };
 
 export const TemplateCard = ({
@@ -67,36 +72,36 @@ export const TemplateCard = ({
   isSelected,
 }: TemplateCardProps) => (
   <div
-    className="h-auto w-[350px] max-w-full border-1 rounded-2xs bg-white-neutral-light-100 border-white-neutral-light-300 px-1 shadow-md"
+    className="rounded-2xs bg-white-neutral-light-100 border-white-neutral-light-300 h-auto w-[350px] max-w-full border-1 px-1 shadow-md"
     tabIndex={0}
     data-testid={`template-card-${template.title.toLowerCase()}`}
   >
     {/* Header */}
     <div className="px-7 py-4">
-      <h4 className="font-medium text-white-neutral-light-800 text-lg">
+      <h4 className="text-white-neutral-light-800 text-lg font-medium">
         {template.title}
       </h4>
-      <p className="text-white-neutral-light-500 text-sm mt-2">
+      <p className="text-white-neutral-light-500 mt-2 text-sm">
         {template.description}
       </p>
     </div>
 
     {/* Preview - Agora com imagem */}
-    <div className="rounded-2xs h-[190px] m-2 overflow-hidden">
+    <div className="rounded-2xs m-2 h-[190px] overflow-hidden">
       <Image
         key={`${template.title}-${selectedColor}`}
         src={getImagePath(template.title, selectedColor)}
         alt={`Preview do template ${template.title}`}
         width={324}
         height={190}
-        className="w-full h-full object-cover rounded-2xs"
+        className="rounded-2xs h-full w-full object-cover"
         unoptimized
       />
     </div>
 
     {/* Color Selection */}
     <div className="px-7 py-4">
-      <p className="text-white-neutral-light-500 text-sm mb-2">
+      <p className="text-white-neutral-light-500 mb-2 text-sm">
         Escolha a cor principal que será usada em toda a proposta
       </p>
       <ColorPicker
@@ -107,16 +112,14 @@ export const TemplateCard = ({
     </div>
 
     {/* Actions */}
-    <div className="border-t border-white-neutral-light-300 flex items-center gap-4 p-5">
+    <div className="border-white-neutral-light-300 flex items-center gap-4 border-t p-5">
       <button
         type="button"
-        className={`w-[105px] h-9 border border-white-neutral-light-300 rounded-xs flex items-center justify-center cursor-pointer hover:bg-white-neutral-light-200 transition-colors
-          ${
-            isSelected
-              ? "bg-white-neutral-light-200"
-              : "bg-white-neutral-light-100"
-          }
-          `}
+        className={`border-white-neutral-light-300 hover:bg-white-neutral-light-200 flex h-9 w-[105px] cursor-pointer items-center justify-center rounded-xs border transition-colors ${
+          isSelected
+            ? "bg-white-neutral-light-200"
+            : "bg-white-neutral-light-100"
+        } `}
         onClick={onSelectTemplate}
         data-testid={`template-select-${template.title.toLowerCase()}`}
       >
@@ -124,7 +127,7 @@ export const TemplateCard = ({
       </button>
       <button
         type="button"
-        className="w-[105px] h-9 cursor-pointer text-white-neutral-light-800 hover:text-white-neutral-light-600 transition-colors"
+        className="text-white-neutral-light-800 hover:text-white-neutral-light-600 h-9 w-[105px] cursor-pointer transition-colors"
         onClick={onPreviewTemplate}
       >
         Visualizar
