@@ -31,7 +31,7 @@ const templates: TemplateModel[] = [
     title: "Minimal",
     description:
       "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
-    colorsList: ["#000000"],
+    colorsList: ["#006DC5"],
     preview: "minimal",
   },
   // {
