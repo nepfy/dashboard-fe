@@ -749,7 +749,8 @@ DADOS DO PROJETO:
 REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
 - Sempre em 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
 - Tom empático, moderno, acessível, profissional e impactante; evite gírias e termos técnicos.
-- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro) por seção.
+- Use storytelling e inclua gatilhos mentais com VARIAÇÃO (autoridade, credibilidade validada, prova concreta, urgência moderada, transformação, lucro mensurável). Evite repetir o mesmo gatilho em seções diferentes.
+- PROIBIDO usar literalmente “autoridade e prova social”. Prefira sinônimos curtos: “credibilidade validada por clientes reais”, “cases comprovados”, “confiança construída”, “retorno comprovado”.
 - Priorize presente do indicativo; use futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
 - Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 

@@ -347,46 +347,52 @@ TEXTO REFORMULADO:`;
     maxLength: number,
     context: string = "trigger"
   ): Promise<string> {
-    const triggers = ["autoridade", "prova social", "escassez", "transformação", "lucro"];
-    const hasTrigger = triggers.some((keyword) =>
-      text.toLowerCase().includes(keyword)
-    );
-    if (hasTrigger) {
+    const forbidden = /autoridade\s*e\s*prova\s*social/i;
+    const triggerSynonyms = [
+      "credibilidade validada",
+      "cases comprovados",
+      "confiança construída",
+      "retorno mensurável",
+      "urgência limitada",
+      "transformação real"
+    ];
+
+    const hasForbidden = forbidden.test(text);
+    const hasAnyTrigger =
+      triggerSynonyms.some((kw) => text.toLowerCase().includes(kw.toLowerCase())) ||
+      /(autoridade|prova\s*social|escassez|transformação|lucro)/i.test(text);
+
+    if (hasAnyTrigger && !hasForbidden) {
       return this.ensureMaxLength(text, maxLength, "trigger-check");
     }
 
-    // Tenta variações curtas com gatilho
-    const variants = [
-      `${text} — autoridade e prova social`,
-      `${text} — escassez e transformação`,
-      `${text} — lucro mensurável e autoridade`,
-    ];
-
-    for (const variant of variants) {
+    // Escolhe uma variação curta que caiba
+    for (const kw of triggerSynonyms) {
+      const variant = `${text} — ${kw}`;
       if (variant.length <= maxLength) {
         return this.ensureMaxLength(variant, maxLength, "trigger-appended");
       }
     }
 
-    // Rephrase forçada com gatilho
+    // Rephrase forçada com sinônimos
     try {
       const rephrased = await this.rephraseToFit(
-        `${text} com autoridade, prova social e lucro mensurável`,
+        `${text} com credibilidade validada e casos reais`,
         maxLength,
         `${context}-trigger`
       );
-      if (rephrased.length <= maxLength) {
+      if (rephrased.length <= maxLength && !forbidden.test(rephrased)) {
         return this.ensureMaxLength(rephrased, maxLength, "trigger-rephrase");
       }
     } catch (error) {
       console.warn(`⚠️  Falha ao rephrase gatilho para ${context}:`, error);
     }
 
-    // Se ainda exceder, mantém original dentro do limite (sem erro)
+    // Se ainda exceder, mantém original dentro do limite (sem gatilho literal)
     console.warn(
       `⚠️  Não foi possível adicionar gatilho mental sem exceder ${maxLength} chars para ${context}. Mantendo texto original sem gatilho.`
     );
-    return this.ensureMaxLength(text, maxLength, "trigger-fallback");
+    return this.ensureMaxLength(text.replace(forbidden, "").trim(), maxLength, "trigger-fallback");
   }
 
   /**
@@ -538,7 +544,7 @@ Regras:
       section.title = await this.rephraseToFit(section.title, maxTitle, "aboutUs.title");
     }
     section.title = this.ensureMaxLength(section.title, maxTitle, "aboutUs.title");
-    section.title = await this.addTriggerKeyword(section.title, maxTitle, "aboutUs.title");
+    // Evitamos reforçar gatilho aqui; mantemos apenas no título principal da introdução
 
     if (section.subtitle) {
       const maxSubtitle = 95;
@@ -636,7 +642,7 @@ Regras:
       section.title = await this.rephraseToFit(section.title, 130, "expertise.title");
     }
     section.title = this.ensureMaxLength(section.title, 130, "expertise.title");
-    section.title = await this.addTriggerKeyword(section.title, 130, "expertise.title");
+    // Evitamos gatilho aqui para não repetir em excesso
     if (section.subtitle) {
       const maxSubtitle = 30;
       if (section.subtitle.length > maxSubtitle) {
@@ -759,7 +765,7 @@ Regras:
     }
     if (section.title) {
       section.title = this.ensureMaxLength(section.title, 300, "clients.title");
-      section.title = await this.addTriggerKeyword(section.title, 300, "clients.title");
+      // Evitamos gatilho no título de clients para não repetir
     }
     
     // Auto-correct description if exceeds limit
@@ -839,11 +845,7 @@ Regras:
           400,
           `steps.topics[${index}].description`
         );
-        topic.description = await this.addTriggerKeyword(
-          topic.description,
-          400,
-          `steps.topics[${index}].description`
-        );
+        // Não adicionamos gatilho em passos para evitar repetição
       }
     }
   }
@@ -881,7 +883,7 @@ Regras:
     section: MinimalProposal["investment"]
   ): Promise<void> {
     section.title = this.ensureMaxLength(section.title, 150, "investment.title");
-    section.title = await this.addTriggerKeyword(section.title, 150, "investment.title");
+    // Não adicionamos gatilho aqui para evitar repetição
     if (section.projectScope) {
       section.projectScope = this.ensureMaxLength(
         section.projectScope,
@@ -968,13 +970,7 @@ Regras:
       for (let index = 0; index < section.plansItems.length; index++) {
         const plan = section.plansItems[index];
         plan.title = this.ensureMaxLength(plan.title, 30, `plans.plansItems[${index}].title`);
-        plan.title = await this.addTriggerKeyword(plan.title, 30, `plans.plansItems[${index}].title`);
         plan.description = this.ensureMaxLength(
-          plan.description,
-          120,
-          `plans.plansItems[${index}].description`
-        );
-        plan.description = await this.addTriggerKeyword(
           plan.description,
           120,
           `plans.plansItems[${index}].description`
@@ -1125,16 +1121,7 @@ Regras:
           );
         }
 
-        item.question = await this.addTriggerKeyword(
-          item.question,
-          85,
-          `faq.items[${index}].question`
-        );
-        item.answer = await this.addTriggerKeyword(
-          item.answer,
-          310,
-          `faq.items[${index}].answer`
-        );
+        // Evitamos gatilho em FAQ para não repetir em excesso
 
         seenQuestions.add(this.normalizeDeliverable(item.question));
         seenAnswers.add(this.normalizeDeliverable(item.answer));
@@ -1146,20 +1133,10 @@ Regras:
     if (section.callToAction) {
       section.callToAction = this.ensureMaxLength(section.callToAction, 100, "footer.callToAction");
       section.callToAction = this.stripTriggerNoise(section.callToAction);
-      section.callToAction = await this.addTriggerKeyword(
-        section.callToAction,
-        100,
-        "footer.callToAction"
-      );
     }
     if (section.disclaimer) {
       section.disclaimer = this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
       section.disclaimer = this.stripTriggerNoise(section.disclaimer);
-      section.disclaimer = await this.addTriggerKeyword(
-        section.disclaimer,
-        300,
-        "footer.disclaimer"
-      );
     }
     if (section.email) {
       // Basic email validation
