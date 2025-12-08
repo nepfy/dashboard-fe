@@ -162,6 +162,7 @@ export default function TabContent({
         <ImageTab
           itemType={itemType as "team" | "results" | "testimonials" | "aboutUs" | "introServices"}
           currentItem={currentItem as TeamMember | Result | Testimonial | AboutUsItem | IntroductionService}
+          onDeleteItem={onDelete}
           onUpdate={
             onUpdate as (
               data: Partial<TeamMember> | Partial<Result> | Partial<Testimonial> | Partial<AboutUsItem> | Partial<IntroductionService>

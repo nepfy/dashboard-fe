@@ -59,7 +59,7 @@ function SortableItem({ item, onDeleteItem }: SortableItemProps) {
       <div
         {...attributes}
         {...listeners}
-        className="hover:bg-white-neutral-light-300 flex h-[38px] w-[32px] cursor-grab items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
+        className="hover:bg-white-neutral-light-300 min-h-full flex-1 cursor-grab rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
       >
         <GrabIcon />
       </div>

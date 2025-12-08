@@ -12,7 +12,7 @@ import EditableDate from "#/app/editar/components/EditableDate";
 import EditableButton from "#/app/editar/components/EditableButton";
 import EditableLogo from "#/app/editar/components/EditableLogo";
 import EditableAvatar from "#/app/editar/components/EditableAvatar";
-import EditableImage from "#/app/editar/components/EditableImage";
+import IntroMarqueeModal from "#/app/editar/components/IntroMarqueeModal";
 import { useEditor } from "../../../contexts/EditorContext";
 
 export default function MinimalIntro({
@@ -25,7 +25,6 @@ export default function MinimalIntro({
 }: IntroductionSection) {
   const {
     updateIntroduction,
-    updateIntroductionService,
     reorderIntroductionServices,
     projectData,
     activeEditingId,
@@ -36,7 +35,8 @@ export default function MinimalIntro({
     clientName || projectData?.clientName || userName || "Cliente";
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
-  const [openModalId, setOpenModalId] = useState<string | null>(null);
+  const [isMarqueeModalOpen, setIsMarqueeModalOpen] = useState<boolean>(false);
+  const [selectedMarqueeId, setSelectedMarqueeId] = useState<string | null>(null);
 
   const canEdit = activeEditingId === null;
 
@@ -431,7 +431,8 @@ export default function MinimalIntro({
                   className="marquee-img relative overflow-hidden rounded-[1rem] cursor-pointer group"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setOpenModalId(service?.id ?? null);
+                    setSelectedMarqueeId(service?.id ?? null);
+                    setIsMarqueeModalOpen(true);
                   }}
                 >
                   {service.image ? (
@@ -460,7 +461,8 @@ export default function MinimalIntro({
                   className="marquee-img relative overflow-hidden rounded-[1rem] cursor-pointer group"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setOpenModalId(service?.id ?? null);
+                    setSelectedMarqueeId(service?.id ?? null);
+                    setIsMarqueeModalOpen(true);
                   }}
                 >
                   {service.image ? (
@@ -485,23 +487,15 @@ export default function MinimalIntro({
         </div>
 
         {/* Editor modal for marquee images */}
-        {(services?.length ? services : workingServices).map((service) => (
-          <EditableImage
-            key={`modal-${service.id}`}
-            isModalOpen={openModalId === service.id}
-            setIsModalOpen={(isOpen) =>
-              setOpenModalId(isOpen ? (service?.id ?? null) : null)
-            }
-            editingId={`introServices-${service.id}`}
-            itemType="introServices"
-            items={(services?.length ? services : workingServices) as IntroductionService[]}
-            currentItemId={service?.id ?? null}
-            onUpdateItem={updateIntroductionService}
-            onReorderItems={(reorderedItems) =>
-              reorderIntroductionServices(reorderedItems as IntroductionService[])
-            }
-          />
-        ))}
+        <IntroMarqueeModal
+          isOpen={isMarqueeModalOpen}
+          onClose={() => setIsMarqueeModalOpen(false)}
+          items={services || []}
+          initialItemId={selectedMarqueeId}
+          onSave={(finalItems) =>
+            reorderIntroductionServices(finalItems as IntroductionService[])
+          }
+        />
       </section>
     </>
   );

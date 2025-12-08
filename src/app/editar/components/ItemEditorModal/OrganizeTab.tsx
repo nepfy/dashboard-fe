@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import {
   DndContext,
   closestCenter,
@@ -96,41 +97,62 @@ function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 rounded-lg"
+      className="flex items-stretch gap-3 rounded-lg"
     >
       {/* Drag Handle */}
       <div
         {...attributes}
         {...listeners}
-        className="hover:bg-white-neutral-light-300 flex h-[38px] w-[32px] cursor-grab items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
+        className="hover:bg-white-neutral-light-300 flex w-10 min-h-[112px] cursor-grab items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
       >
-        <GrabIcon />
+        <div className="scale-100">
+          <GrabIcon />
+        </div>
       </div>
 
-      {/* Name Field */}
-      <div className="flex flex-1 items-center rounded border border-[#DBDDDF] bg-[#F6F8FA] px-4 py-2 font-medium text-[#161616]">
-        {itemType === "team"
-          ? (item as TeamMember).name
-          : itemType === "results"
-            ? (item as Result).client
-            : itemType === "expertise"
-              ? (item as ExpertiseTopic).title
-              : itemType === "steps"
-                ? (item as StepTopic).title
-                : itemType === "faq"
-                  ? (item as FAQItem).question
-                  : itemType === "aboutUs"
-                    ? (item as AboutUsItem).caption || "Sem descrição"
-                    : itemType === "introServices"
-                      ? (item as IntroductionService).serviceName || "Sem nome"
-                      : (item as Testimonial).name}
+      {/* Content */}
+      <div className="flex flex-1 items-stretch rounded-[10px] border border-[#E0E3E9] bg-white px-3 py-2">
+        {itemType === "introServices" ? (
+          <div
+            className="relative w-full overflow-hidden rounded-[8px] border border-[#DBDDDF] bg-[#F6F8FA]"
+            style={{ aspectRatio: "16 / 9", minHeight: "96px" }}
+          >
+            <Image
+              src={
+                (item as IntroductionService).image ||
+                "/images/templates/flash/placeholder.png"
+              }
+              alt={(item as IntroductionService).serviceName || "Imagem"}
+              fill
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <div className="w-full text-left font-medium text-[#161616]">
+            {itemType === "team"
+              ? (item as TeamMember).name
+              : itemType === "results"
+                ? (item as Result).client
+                : itemType === "expertise"
+                  ? (item as ExpertiseTopic).title
+                  : itemType === "steps"
+                    ? (item as StepTopic).title
+                    : itemType === "faq"
+                      ? (item as FAQItem).question
+                      : itemType === "aboutUs"
+                        ? (item as AboutUsItem).caption || "Sem descrição"
+                        : itemType === "introServices"
+                          ? (item as IntroductionService).serviceName || "Sem nome"
+                          : (item as Testimonial).name}
+          </div>
+        )}
       </div>
 
       {/* Delete Button */}
-      <div className="hover:bg-white-neutral-light-300 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
+      <div className="hover:bg-white-neutral-light-300 flex h-10 w-10 self-center cursor-pointer items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
         <button
-          onClick={() => onDeleteItem(item.id!)} // Change this to call onDeleteItem
-          className="cursor-pointer rounded p-1 text-[#D00003]"
+          onClick={() => onDeleteItem(item.id!)}
+          className="cursor-pointer rounded p-2 text-[#D00003]"
         >
           <svg
             className="h-4 w-4"
@@ -202,29 +224,27 @@ export default function OrganizeTab({
   }
 
   return (
-    <div className="mt-4 max-h-[300px] space-y-3 overflow-y-auto pb-14">
-      <div className="space-y-4">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
+    <div className="mt-4 space-y-4 pb-6">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={items.map((item) => item.id!)}
+          strategy={verticalListSortingStrategy}
         >
-          <SortableContext
-            items={items.map((item) => item.id!)}
-            strategy={verticalListSortingStrategy}
-          >
-            {items.map((item) => (
-              <SortableItem
-                key={item.id}
-                item={item}
-                itemType={itemType}
-                onDeleteItem={onDeleteItem} // Add this prop
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
-      </div>
+          {items.map((item) => (
+            <SortableItem
+              key={item.id}
+              item={item}
+              itemType={itemType}
+              onDeleteItem={onDeleteItem}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
