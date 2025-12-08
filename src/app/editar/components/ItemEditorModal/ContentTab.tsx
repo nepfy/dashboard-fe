@@ -200,6 +200,46 @@ export default function ContentTab({
     );
   }
 
+  // Simplified layout for aboutUs: only legenda/caption
+  if (itemType === "aboutUs") {
+    return (
+      <div className="mt-4 space-y-6 px-1">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#2A2A2A]">Legenda</label>
+          <input
+            type="text"
+            value={getFormValue("caption")}
+            onChange={(e) => handleInputChange("caption", e.target.value)}
+            className="w-full rounded-[8px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 text-sm text-[#161616] outline-none focus:border-[#7B61FF]"
+            placeholder="Digite a legenda"
+          />
+        </div>
+
+        <div className="mb-14 flex items-center justify-center pt-4">
+          <button
+            onClick={() => currentItem?.id && onDeleteItem(currentItem.id)}
+            className="text-white-neutral-light-900 flex cursor-pointer items-center gap-2 text-sm font-medium hover:text-red-700"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Excluir item
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-4 space-y-6 px-1">
       {/* Nome field */}
@@ -423,22 +463,6 @@ export default function ContentTab({
             />
           </div>
         </>
-      )}
-
-      {/* AboutUs-specific fields */}
-      {itemType === "aboutUs" && (
-        <div className="flex items-center justify-between gap-2">
-          <label className="mb-1 block text-sm font-medium text-[#2A2A2A]">
-            Descrição
-          </label>
-          <textarea
-            value={getFormValue("caption")}
-            onChange={(e) => handleInputChange("caption", e.target.value)}
-            className="w-[210px] rounded-[4px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 font-medium text-[#161616]"
-            placeholder="Digite a descrição"
-            rows={5}
-          />
-        </div>
       )}
 
       {/* Action buttons */}
