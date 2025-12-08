@@ -239,13 +239,15 @@ export default function MainModalContent({
     >
       <ModalHeader title={title} onClose={onClose} />
 
-      <ItemSelector
-        items={itemsWithChanges}
-        selectedItemId={selectedItemId}
-        onItemSelect={onItemSelect}
-        onAddItem={onAddItem}
-        itemType={detectedItemType}
-      />
+      {detectedItemType !== "aboutUs" && (
+        <ItemSelector
+          items={itemsWithChanges}
+          selectedItemId={selectedItemId}
+          onItemSelect={onItemSelect}
+          onAddItem={onAddItem}
+          itemType={detectedItemType}
+        />
+      )}
 
       <TabNavigation
         activeTab={activeTab}
