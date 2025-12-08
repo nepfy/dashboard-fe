@@ -116,7 +116,6 @@ export default function EditableModal({
       const anchor = container.parentElement;
       const activeAnchorRect =
         anchorRectProp ?? anchor?.getBoundingClientRect() ?? null;
-      if (!activeAnchorRect) return;
       const viewportMetrics = getViewportMetrics();
       const { width: viewportWidth, height: viewportHeight } = viewportMetrics;
       const viewportLeft = viewportMetrics.left;
@@ -125,6 +124,30 @@ export default function EditableModal({
       const panelRect = panel.getBoundingClientRect();
       const panelWidth = panelRect.width;
       const panelHeight = panelRect.height;
+
+      // Fallback: if no anchor available, center in viewport
+      if (!activeAnchorRect) {
+        const navigationHeight = window.innerWidth < 640 ? 56 : 66;
+        const topSafeArea = viewportTop + navigationHeight + VIEWPORT_PADDING;
+        const centeredTop = viewportTop + viewportHeight / 2 - panelHeight / 2;
+        const centeredLeft = viewportLeft + viewportWidth / 2 - panelWidth / 2;
+        const clamped = {
+          top: clamp(
+            centeredTop + offsetTop,
+            topSafeArea,
+            viewportTop + viewportHeight - panelHeight - VIEWPORT_PADDING
+          ),
+          left: clamp(
+            centeredLeft + offsetLeft,
+            viewportLeft + VIEWPORT_PADDING,
+            viewportLeft + viewportWidth - panelWidth - VIEWPORT_PADDING
+          ),
+        };
+        setPosition(clamped);
+        setIsPositioned(true);
+        setArrowStyle(null);
+        return;
+      }
 
       const anchorCenterX =
         activeAnchorRect.left + activeAnchorRect.width / 2;

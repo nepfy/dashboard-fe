@@ -6,6 +6,7 @@ import { AboutUsSection, AboutUsItem } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import EditableImage from "#/app/editar/components/EditableImage";
+import EditableMarqueeText from "#/app/editar/components/EditableMarqueeText";
 import { useEditor } from "../../../contexts/EditorContext";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 
@@ -306,7 +307,7 @@ export default function MinimalAboutUs({
           <div className="about-marquee">
             <div className="marquee_content">
               <div className="about-marquee_text">
-                <EditableText
+                <EditableMarqueeText
                   value={
                     marqueeText ||
                     "Brand Design → Design Systems → UI Design → Webflow Development"
@@ -314,8 +315,9 @@ export default function MinimalAboutUs({
                   onChange={(newMarqueeText: string) =>
                     updateAboutUs({ marqueeText: newMarqueeText })
                   }
-                  className="about-marquee_text"
                   editingId="aboutUs-marquee"
+                  title="Marquee"
+                  placeholder="Clique para adicionar imagem e descrição"
                 />
               </div>
             </div>

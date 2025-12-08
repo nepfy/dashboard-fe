@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FooterSection } from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
+import EditableMarqueeText from "#/app/editar/components/EditableMarqueeText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 
@@ -272,7 +273,7 @@ export default function MinimalFooter({
               <div className="footer-marquee">
                 <div className="marquee_content">
                   <div className="footer-marquee_text">
-                    <EditableText
+                    <EditableMarqueeText
                       value={
                         marqueeText ||
                         "Brand Design → Design Systems → UI Design → Webflow Development"
@@ -280,8 +281,9 @@ export default function MinimalFooter({
                       onChange={(newMarqueeText) =>
                         updateFooter({ marqueeText: newMarqueeText })
                       }
-                      className="footer-marquee_text"
                       editingId="footer-marquee"
+                      title="Marquee"
+                      placeholder="Clique para adicionar imagem e descrição"
                     />
                   </div>
                 </div>
