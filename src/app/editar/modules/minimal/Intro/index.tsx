@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   IntroductionSection,
   IntroductionService,
@@ -11,7 +12,7 @@ import EditableDate from "#/app/editar/components/EditableDate";
 import EditableButton from "#/app/editar/components/EditableButton";
 import EditableLogo from "#/app/editar/components/EditableLogo";
 import EditableAvatar from "#/app/editar/components/EditableAvatar";
-import EditableMarqueeImage from "#/app/editar/components/EditableMarqueeImage";
+import EditableImage from "#/app/editar/components/EditableImage";
 import { useEditor } from "../../../contexts/EditorContext";
 
 export default function MinimalIntro({
@@ -25,6 +26,7 @@ export default function MinimalIntro({
   const {
     updateIntroduction,
     updateIntroductionService,
+    reorderIntroductionServices,
     projectData,
     activeEditingId,
   } = useEditor();
@@ -34,6 +36,7 @@ export default function MinimalIntro({
     clientName || projectData?.clientName || userName || "Cliente";
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
+  const [openModalId, setOpenModalId] = useState<string | null>(null);
 
   const canEdit = activeEditingId === null;
 
@@ -423,39 +426,82 @@ export default function MinimalIntro({
             {/* First set of images */}
             <div className="marquee_item">
               {workingServices.map((service) => (
-                <EditableMarqueeImage
+                <div
                   key={service.id}
-                  imageUrl={service.image}
-                  onImageChange={(url) => {
-                    updateIntroductionService(service.id, {
-                      image: url || undefined,
-                    });
+                  className="marquee-img relative overflow-hidden rounded-[1rem] cursor-pointer group"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenModalId(service?.id ?? null);
                   }}
-                  editingId={`intro-service-${service.id}`}
-                  alt={service.serviceName || ""}
-                  className="marquee-img"
-                />
+                >
+                  {service.image ? (
+                    <Image
+                      src={service.image}
+                      alt={service.serviceName || ""}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      priority
+                      className="pointer-events-none select-none"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/60">
+                      Adicionar imagem
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                </div>
               ))}
             </div>
             {/* Second set (duplicate for infinite scroll) */}
             <div className="marquee_item">
               {workingServices.map((service) => (
-                <EditableMarqueeImage
+                <div
                   key={`${service.id}-clone`}
-                  imageUrl={service.image}
-                  onImageChange={(url) => {
-                    updateIntroductionService(service.id, {
-                      image: url || undefined,
-                    });
+                  className="marquee-img relative overflow-hidden rounded-[1rem] cursor-pointer group"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenModalId(service?.id ?? null);
                   }}
-                  editingId={`intro-service-${service.id}-clone`}
-                  alt={service.serviceName || ""}
-                  className="marquee-img"
-                />
+                >
+                  {service.image ? (
+                    <Image
+                      src={service.image}
+                      alt={service.serviceName || ""}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      priority
+                      className="pointer-events-none select-none"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/60">
+                      Adicionar imagem
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                </div>
               ))}
             </div>
           </div>
         </div>
+
+        {/* Editor modal for marquee images */}
+        {(services?.length ? services : workingServices).map((service) => (
+          <EditableImage
+            key={`modal-${service.id}`}
+            isModalOpen={openModalId === service.id}
+            setIsModalOpen={(isOpen) =>
+              setOpenModalId(isOpen ? (service?.id ?? null) : null)
+            }
+            editingId={`introServices-${service.id}`}
+            itemType="introServices"
+            items={(services?.length ? services : workingServices) as IntroductionService[]}
+            currentItemId={service?.id ?? null}
+            onUpdateItem={updateIntroductionService}
+            onReorderItems={(reorderedItems) =>
+              reorderIntroductionServices(reorderedItems as IntroductionService[])
+            }
+          />
+        ))}
       </section>
     </>
   );
