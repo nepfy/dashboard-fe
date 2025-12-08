@@ -425,14 +425,14 @@ Regras:
       return [
         "Otimizar SEO técnico e Core Web Vitals",
         "Setup de tags e pixels (GA4, Meta, LinkedIn)",
+        "Pesquisa de palavras-chave e intenção de busca",
         "Landing page de conversão com teste A/B inicial",
         "Configurar automação de leads (CRM + e-mail)",
-        "Dashboard semanal (GA4 + Ads + CRM)",
         "Copywriting orientado a conversão",
         "Fluxos de nurturing e scoring de leads",
         "Remarketing multicanal com públicos quentes",
+        "Dashboard semanal (GA4 + Ads + CRM)",
         "Monitoramento e ajustes semanais de campanhas",
-        "Pesquisa de palavras-chave e intenção de busca",
       ];
     }
 
@@ -447,7 +447,22 @@ Regras:
   }
 
   private normalizeDeliverable(text: string): string {
-    return text.toLowerCase().replace(/\s+/g, " ").trim();
+    return text
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/["“”]/g, "")
+      .trim();
+  }
+
+  private stripTriggerNoise(text: string): string {
+    return text
+      .replace(/—\s*autoridade.*$/i, "")
+      .replace(/\(\s*autoridade.*\)/gi, "")
+      .replace(/autoridade\s+e\s+prova\s+social/gi, "")
+      .replace(/autoridade/gi, "")
+      .replace(/prova\s+social/gi, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
   }
 
   private async validateIntroductionSection(
@@ -978,8 +993,32 @@ Regras:
 
           for (let itemIndex = 0; itemIndex < plan.includedItems.length; itemIndex++) {
             const item = plan.includedItems[itemIndex];
-            let desc = this.ensureMaxLength(
-              item.description,
+            let desc = item.description || "";
+            // se for genérico ou conter "benefício" ou "focus", descartamos o original
+            const lower = desc.toLowerCase();
+            const isGeneric =
+              !desc.trim() ||
+              lower.includes("benefício") ||
+              lower.includes("beneficio") ||
+              lower.includes("incluído") ||
+              lower.includes("included") ||
+              lower.includes("focus") ||
+              lower.includes("variar foco");
+
+            if (isGeneric) {
+              while (poolCursor < pool.length && seen.has(this.normalizeDeliverable(pool[poolCursor]))) {
+                poolCursor++;
+              }
+              const fallback =
+                poolCursor < pool.length
+                  ? pool[poolCursor]
+                  : this.getFallbackDeliverable(selectedService, index, itemIndex);
+              desc = fallback;
+              poolCursor++;
+            }
+
+            desc = this.ensureMaxLength(
+              desc,
               60,
               `plans.plansItems[${index}].includedItems[${itemIndex}].description`
             );
@@ -990,16 +1029,6 @@ Regras:
             );
 
             let norm = this.normalizeDeliverable(desc);
-            if (seen.has(norm)) {
-              // Tentar variação via rephrase
-              desc = await this.rephraseToFit(
-                `${desc} (varie o foco desta entrega, sem repetir a anterior)`,
-                60,
-                `plans.plansItems[${index}].includedItems[${itemIndex}].dedupe`
-              );
-              norm = this.normalizeDeliverable(desc);
-            }
-
             if (seen.has(norm)) {
               // Escolher do pool uma entrega ainda não usada
               while (poolCursor < pool.length && seen.has(this.normalizeDeliverable(pool[poolCursor]))) {
@@ -1055,6 +1084,8 @@ Regras:
   private async validateFAQSection(section: MinimalProposal["faq"]): Promise<void> {
     if (section.items) {
       this.ensureArrayRange(section.items, 10, 10, "faq.items");
+      const seenQuestions = new Set<string>();
+      const seenAnswers = new Set<string>();
       for (let index = 0; index < section.items.length; index++) {
         const item = section.items[index];
         if (item.question.length > 85) {
@@ -1071,6 +1102,29 @@ Regras:
         }
         item.question = this.ensureMaxLength(item.question, 85, `faq.items[${index}].question`);
         item.answer = this.ensureMaxLength(item.answer, 310, `faq.items[${index}].answer`);
+
+        // Remove ruído de gatilho repetitivo
+        item.question = this.stripTriggerNoise(item.question);
+        item.answer = this.stripTriggerNoise(item.answer);
+
+        // Deduplicação simples
+        const normQ = this.normalizeDeliverable(item.question);
+        const normA = this.normalizeDeliverable(item.answer);
+        if (seenQuestions.has(normQ)) {
+          item.question = await this.rephraseToFit(
+            `${item.question} (reescreva sem repetir perguntas anteriores, mantenha o sentido)`,
+            85,
+            `faq.items[${index}].question.dedupe`
+          );
+        }
+        if (seenAnswers.has(normA)) {
+          item.answer = await this.rephraseToFit(
+            `${item.answer} (reescreva sem repetir respostas anteriores, mantenha o sentido)`,
+            310,
+            `faq.items[${index}].answer.dedupe`
+          );
+        }
+
         item.question = await this.addTriggerKeyword(
           item.question,
           85,
@@ -1081,6 +1135,9 @@ Regras:
           310,
           `faq.items[${index}].answer`
         );
+
+        seenQuestions.add(this.normalizeDeliverable(item.question));
+        seenAnswers.add(this.normalizeDeliverable(item.answer));
       }
     }
   }
@@ -1088,6 +1145,7 @@ Regras:
   private async validateFooterSection(section: MinimalProposal["footer"]): Promise<void> {
     if (section.callToAction) {
       section.callToAction = this.ensureMaxLength(section.callToAction, 100, "footer.callToAction");
+      section.callToAction = this.stripTriggerNoise(section.callToAction);
       section.callToAction = await this.addTriggerKeyword(
         section.callToAction,
         100,
@@ -1096,6 +1154,12 @@ Regras:
     }
     if (section.disclaimer) {
       section.disclaimer = this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
+      section.disclaimer = this.stripTriggerNoise(section.disclaimer);
+      section.disclaimer = await this.addTriggerKeyword(
+        section.disclaimer,
+        300,
+        "footer.disclaimer"
+      );
     }
     if (section.email) {
       // Basic email validation

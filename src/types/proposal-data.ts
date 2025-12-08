@@ -28,6 +28,16 @@ export interface ProposalData {
     hideSupportText?: boolean;
     subtitle?: string;
     hideSubtitle?: boolean;
+    marqueeText?: string;
+    hideMarquee?: boolean;
+    items?: Array<{
+      id?: string;
+      image?: string;
+      caption?: string;
+      hideImage?: boolean;
+      hideCaption?: boolean;
+      sortOrder?: number;
+    }>;
   };
 
   // Team Section

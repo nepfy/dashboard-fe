@@ -501,6 +501,11 @@ function convertMinimalToProposalData(
       email: requireString(proposal.introduction.email, "introduction.email"),
       buttonTitle: "Solicitar Proposta",
       title: requireString(proposal.introduction.title, "introduction.title"),
+      // Preencher subtitle para evitar placeholder na visualização
+      subtitle:
+        proposal.aboutUs?.subtitle ||
+        proposal.aboutUs?.title ||
+        proposal.introduction.title,
       validity: requestData.validUntil || new Date().toISOString(),
       services: ensureArray(
         proposal.introduction.services,
@@ -523,6 +528,17 @@ function convertMinimalToProposalData(
       hideSupportText: true,
       subtitle: proposal.aboutUs.subtitle || "",
       hideSubtitle: proposal.aboutUs.hideSubtitle || false,
+      marqueeText: proposal.aboutUs.marqueeText || "",
+      hideMarquee: proposal.aboutUs.hideMarquee || false,
+      items:
+        proposal.aboutUs.items?.map((item, index) => ({
+          id: requireString(item.id, `aboutUs.items[${index}].id`),
+          image: item.image || "",
+          caption: item.caption || "",
+          hideImage: item.hideImage || false,
+          hideCaption: item.hideCaption || false,
+          sortOrder: item.sortOrder || index,
+        })) || [],
     },
     team: {
       hideSection: proposal.team.hideSection || false,
