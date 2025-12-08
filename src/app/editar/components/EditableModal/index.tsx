@@ -21,6 +21,7 @@ interface ModalProps {
     top?: number;
     left?: number;
   };
+  anchorRect?: DOMRect | null;
 }
 
 const GAP = 12;
@@ -61,9 +62,11 @@ export default function EditableModal({
   className,
   preferredPlacement,
   offset,
+  anchorRect,
   ...deprecatedProps
 }: ModalProps) {
   void deprecatedProps;
+  const anchorRectProp = anchorRect;
   const placeholderRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ top: number; left: number }>({
@@ -113,7 +116,9 @@ export default function EditableModal({
       const anchor = container.parentElement;
       if (!anchor) return;
 
-      const anchorRect = anchor.getBoundingClientRect();
+      const anchorRect =
+        anchorRectProp ?? anchor?.getBoundingClientRect() ?? null;
+      if (!anchorRect) return;
       const viewportMetrics = getViewportMetrics();
       const { width: viewportWidth, height: viewportHeight } = viewportMetrics;
       const viewportLeft = viewportMetrics.left;

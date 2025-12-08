@@ -26,6 +26,7 @@ export default function MinimalAboutUs({
   } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  const [modalAnchorRect, setModalAnchorRect] = useState<DOMRect | null>(null);
 
   // Create temporary items when array is empty so modal can work
   const workingItems =
@@ -252,11 +253,10 @@ export default function MinimalAboutUs({
                       className="about-video"
                       onClick={(e) => {
                         e.stopPropagation();
-                        console.log("🐛 AboutUs item clicked:", {
-                          itemId: item.id,
-                          index,
-                          currentOpenId: openModalId,
-                        });
+                        const rect = (
+                          e.currentTarget as HTMLDivElement
+                        ).getBoundingClientRect();
+                        setModalAnchorRect(rect);
                         setOpenModalId(
                           openModalId === item.id ? null : (item?.id ?? null)
                         );
@@ -294,6 +294,7 @@ export default function MinimalAboutUs({
             itemType="aboutUs"
             items={workingItems}
             currentItemId={item?.id ?? null}
+            anchorRect={modalAnchorRect}
             onUpdateItem={updateAboutUsItem}
             onReorderItems={(reorderedItems) =>
               reorderAboutUsItems(reorderedItems as AboutUsItem[])

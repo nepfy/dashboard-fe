@@ -61,6 +61,7 @@ interface ItemEditorModalProps {
   ) => void;
   onUpdateSection?: (data: { hideIcon?: boolean }) => void;
   hideIcon?: boolean;
+  anchorRect?: DOMRect | null;
 }
 
 type TabType = "conteudo" | "imagem" | "organizar";
@@ -75,6 +76,7 @@ export default function ItemEditorModal({
   onReorderItems,
   onUpdateSection,
   hideIcon,
+  anchorRect,
 }: ItemEditorModalProps) {
   const { projectData } = useEditor();
   const [activeTab, setActiveTab] = useState<TabType>("conteudo");
@@ -525,6 +527,7 @@ export default function ItemEditorModal({
         preferredPlacement={
           itemType === "steps" || itemType === "faq" ? "top" : "right"
         }
+        anchorRect={anchorRect}
       >
         {!showExploreGalleryInfo &&
           !showPexelsGallery &&

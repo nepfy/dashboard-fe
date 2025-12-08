@@ -30,6 +30,7 @@ interface EditableImageProps {
     | IntroductionService
   )[];
   currentItemId: string | null;
+  anchorRect?: DOMRect | null;
   onUpdateItem: (
     itemId: string,
     data:
@@ -64,6 +65,7 @@ export default function EditableImage({
   itemType,
   items,
   currentItemId,
+  anchorRect,
   onUpdateItem,
   onReorderItems,
   onUpdateSection,
@@ -104,6 +106,7 @@ export default function EditableImage({
       itemType={itemType}
       items={items}
       currentItemId={currentItemId}
+      anchorRect={anchorRect}
       onUpdateItem={onUpdateItem}
       onReorderItems={onReorderItems}
       onUpdateSection={onUpdateSection}
