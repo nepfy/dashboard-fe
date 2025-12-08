@@ -114,11 +114,9 @@ export default function EditableModal({
       if (!container || !panel) return;
 
       const anchor = container.parentElement;
-      if (!anchor) return;
-
-      const anchorRect =
+      const activeAnchorRect =
         anchorRectProp ?? anchor?.getBoundingClientRect() ?? null;
-      if (!anchorRect) return;
+      if (!activeAnchorRect) return;
       const viewportMetrics = getViewportMetrics();
       const { width: viewportWidth, height: viewportHeight } = viewportMetrics;
       const viewportLeft = viewportMetrics.left;
@@ -128,17 +126,19 @@ export default function EditableModal({
       const panelWidth = panelRect.width;
       const panelHeight = panelRect.height;
 
-      const anchorCenterX = anchorRect.left + anchorRect.width / 2;
-      const anchorCenterY = anchorRect.top + anchorRect.height / 2;
+      const anchorCenterX =
+        activeAnchorRect.left + activeAnchorRect.width / 2;
+      const anchorCenterY =
+        activeAnchorRect.top + activeAnchorRect.height / 2;
 
       const navigationHeight = window.innerWidth < 640 ? 56 : 66;
       const topSafeArea = viewportTop + navigationHeight + VIEWPORT_PADDING;
 
       const availableSpace: Record<Placement, number> = {
-        bottom: viewportTop + viewportHeight - anchorRect.bottom,
-        top: anchorRect.top - viewportTop,
-        right: viewportLeft + viewportWidth - anchorRect.right,
-        left: anchorRect.left - viewportLeft,
+        bottom: viewportTop + viewportHeight - activeAnchorRect.bottom,
+        top: activeAnchorRect.top - viewportTop,
+        right: viewportLeft + viewportWidth - activeAnchorRect.right,
+        left: activeAnchorRect.left - viewportLeft,
       };
 
       const preferredOrder = preferredPlacement
@@ -167,22 +167,22 @@ export default function EditableModal({
       const computeCoords = (targetPlacement: Placement) => {
         switch (targetPlacement) {
           case "bottom": {
-            const top = anchorRect.bottom + GAP;
+            const top = activeAnchorRect.bottom + GAP;
             const left = anchorCenterX - panelWidth / 2;
             return { top, left };
           }
           case "top": {
-            const top = anchorRect.top - panelHeight - GAP;
+            const top = activeAnchorRect.top - panelHeight - GAP;
             const left = anchorCenterX - panelWidth / 2;
             return { top, left };
           }
           case "right": {
-            const left = anchorRect.right + GAP;
+            const left = activeAnchorRect.right + GAP;
             const top = anchorCenterY - panelHeight / 2;
             return { top, left };
           }
           case "left": {
-            const left = anchorRect.left - panelWidth - GAP;
+            const left = activeAnchorRect.left - panelWidth - GAP;
             const top = anchorCenterY - panelHeight / 2;
             return { top, left };
           }
@@ -330,7 +330,7 @@ export default function EditableModal({
       setIsPositioned(true);
       setArrowStyle(nextArrowStyle);
     });
-  }, [isOpen, preferredPlacement, offsetLeft, offsetTop]);
+  }, [isOpen, preferredPlacement, offsetLeft, offsetTop, anchorRectProp]);
 
   useLayoutEffect(() => {
     if (!isOpen) return;
