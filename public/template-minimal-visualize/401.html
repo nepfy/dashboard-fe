@@ -16,6 +16,33 @@
   <!--  JS  -->
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.2.3/dist/lenis.min.js"></script>
   <meta name="format-detection" content="telephone=no">
+  <style>
+    /* Fixar cores da página de senha para não herdar mainColor do template */
+    :root {
+      --password-bg: #ffffff;
+      --password-text: #0f0f0f;
+      --password-button: #4f21a1;
+    }
+
+    body,
+    .utility-page_component,
+    .utility-page_wrapper {
+      background: var(--password-bg) !important;
+      color: var(--password-text) !important;
+    }
+
+    .utility-page_form .form_input {
+      color: var(--password-text) !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .utility-page_form .button {
+      background: var(--password-button) !important;
+      border-color: var(--password-button) !important;
+      color: #ffffff !important;
+      box-shadow: none !important;
+    }
+  </style>
 </head>
 <body>
   <div class="utility-page_component">

@@ -210,6 +210,22 @@
     }
   }
 
+  // Helpers to validate content presence
+  function isNonEmptyText(value) {
+    return typeof value === "string" && value.trim().length > 0;
+  }
+
+  function getVisibleItems(items, predicate) {
+    if (!Array.isArray(items)) return [];
+    return items.filter((item) => {
+      try {
+        return predicate(item);
+      } catch {
+        return false;
+      }
+    });
+  }
+
   function updateFooterEmailVisualize(email, fallback) {
     const button = document.querySelector(".copy-email-button");
     if (!button) return;
@@ -325,7 +341,11 @@
         logosContainer.querySelector("[data-logo-template]") ||
         document.createElement("div");
       logosContainer.innerHTML = "";
-      const logos = clients.items || [];
+      const logos = (clients.items || []).filter(
+        (logo) =>
+          !(logo.hideClient || logo.hideItem) &&
+          (isNonEmptyText(logo.logo) || isNonEmptyText(logo.name))
+      );
       logos.forEach((logo) => {
         const clone = template.cloneNode(true);
         clone.removeAttribute("data-logo-template");
@@ -529,7 +549,7 @@
 
     // Filter out hidden topics and sort
     const visibleTopics = topics
-      .filter((t) => !t.hideItem)
+      .filter((t) => !t.hideItem && !t.hideTopic)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
     // Get template (first child)
@@ -888,8 +908,19 @@
 
     // Filter out hidden items and sort
     const visibleItems = items
-      .filter(() => true) // No hideItem for testimonials in the interface
+      .filter(
+        (item) =>
+          !(item.hideItem || item.hideTestimonial) &&
+          (isNonEmptyText(item.testimonial) ||
+            isNonEmptyText(item.name) ||
+            isNonEmptyText(item.role) ||
+            isNonEmptyText(item.photo))
+      )
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+    if (visibleItems.length === 0) {
+      return;
+    }
 
     // Get the first slide as a template (preserve it for slider structure)
     const existingSlides = container.querySelectorAll(".w-slide");
@@ -972,7 +1003,7 @@
 
     // Filter out hidden items and sort
     const visibleTopics = topics
-      .filter((s) => !s.hideItem)
+      .filter((s) => !s.hideItem && !s.hideTopic)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
     // Get template (first accordion item)
@@ -1501,6 +1532,56 @@
     const pd = data.proposalData;
     const bc = data.buttonConfig || {};
 
+    // Precompute visibility for list-based sections
+    const aboutVisibleItems = getVisibleItems(pd.aboutUs?.items, (item) =>
+      isNonEmptyText(item.image) || isNonEmptyText(item.caption)
+    );
+    const teamVisibleMembers = getVisibleItems(pd.team?.members, (member) =>
+      !member.hideMember &&
+      (isNonEmptyText(member.name) ||
+        isNonEmptyText(member.role) ||
+        isNonEmptyText(member.image))
+    );
+    const expertiseVisibleTopics = getVisibleItems(
+      pd.expertise?.topics,
+      (topic) =>
+        !(topic.hideItem || topic.hideTopic) &&
+        (isNonEmptyText(topic.title) || isNonEmptyText(topic.description))
+    );
+    const resultsVisibleItems = getVisibleItems(pd.results?.items, (item) =>
+      !item.hideItem &&
+      (isNonEmptyText(item.client) ||
+        isNonEmptyText(item.investment) ||
+        isNonEmptyText(item.roi) ||
+        isNonEmptyText(item.photo))
+    );
+    const testimonialsVisibleItems = getVisibleItems(
+      pd.testimonials?.items,
+      (item) =>
+        !(item.hideItem || item.hideTestimonial) &&
+        (isNonEmptyText(item.testimonial) ||
+          isNonEmptyText(item.name) ||
+          isNonEmptyText(item.role) ||
+          isNonEmptyText(item.photo))
+    );
+    const faqVisibleItems = getVisibleItems(pd.faq?.items, (item) =>
+      !(item.hideItem || item.hideQuestion || item.hideAnswer) &&
+      isNonEmptyText(item.question) &&
+      isNonEmptyText(item.answer)
+    );
+    const clientsVisibleItems = getVisibleItems(pd.clients?.items, (item) =>
+      !(item.hideClient || item.hideItem) &&
+      (isNonEmptyText(item.logo) || isNonEmptyText(item.name))
+    );
+    const stepsVisibleTopics = getVisibleItems(pd.steps?.topics, (topic) =>
+      !(topic.hideItem || topic.hideTopic) &&
+      (isNonEmptyText(topic.title) || isNonEmptyText(topic.description))
+    );
+    const plansVisibleItems = getVisibleItems(pd.plans?.plansItems, (plan) =>
+      !plan.hideItem &&
+      (isNonEmptyText(plan.title) || isNonEmptyText(String(plan.value)))
+    );
+
     // Simple text fields - Introduction
     if (pd.introduction) {
       const intro = pd.introduction;
@@ -1522,7 +1603,7 @@
     // About Us
     if (pd.aboutUs) {
       updateTitleWithWordSpans("aboutus-title", pd.aboutUs.title);
-      renderAboutUsItems(pd.aboutUs.items);
+      renderAboutUsItems(aboutVisibleItems);
       
       // Update subtitle within about section
       if (pd.aboutUs.subtitle) {
@@ -1534,18 +1615,21 @@
         toggleElementVisibility("introduction-subtitle", true);
       }
       
-      toggleSectionVisibility(
-        ".section_about",
-        pd.aboutUs.hideSection === true
-      );
+      const shouldHideAbout =
+        pd.aboutUs.hideSection === true ||
+        !isNonEmptyText(pd.aboutUs.title) ||
+        aboutVisibleItems.length === 0;
+      toggleSectionVisibility(".section_about", shouldHideAbout);
     }
 
     // Team
     if (pd.team) {
       // team-title ID doesn't exist in HTML, skip it
       // updateTitleWithWordSpans("team-title", pd.team.title);
-      renderTeamMembers("team-members-list", pd.team.members);
-      toggleSectionVisibility(".section_team", pd.team.hideSection === true);
+      renderTeamMembers("team-members-list", teamVisibleMembers);
+      const shouldHideTeam =
+        pd.team.hideSection === true || teamVisibleMembers.length === 0;
+      toggleSectionVisibility(".section_team", shouldHideTeam);
     }
 
     // Expertise
@@ -1561,38 +1645,52 @@
       updateTitleWithWordSpans("expertise-title", pd.expertise.title);
       renderExpertiseTopics(
         "expertise-topics-list",
-        pd.expertise.topics,
+        expertiseVisibleTopics,
         pd.expertise.hideIcon
       );
-      toggleSectionVisibility(
-        ".section_expertise",
-        pd.expertise.hideSection === true
-      );
+      const shouldHideExpertise =
+        pd.expertise.hideSection === true ||
+        !isNonEmptyText(pd.expertise.title) ||
+        expertiseVisibleTopics.length === 0;
+      toggleSectionVisibility(".section_expertise", shouldHideExpertise);
     }
 
     // Results
     if (pd.results) {
       // results-title ID doesn't exist in HTML, skip it
       // updateTitleWithWordSpans("results-title", pd.results.title);
-      renderResults("results-list", pd.results.items);
-      toggleSectionVisibility(
-        ".section_proof",
-        pd.results.hideSection === true
-      );
+      renderResults("results-list", resultsVisibleItems);
+      const shouldHideResults =
+        pd.results.hideSection === true || resultsVisibleItems.length === 0;
+      toggleSectionVisibility(".section_proof", shouldHideResults);
     }
 
     // Testimonials
     if (pd.testimonials) {
-      renderTestimonials(pd.testimonials.items);
-      toggleSectionVisibility(
-        ".section_tesitominal",
-        pd.testimonials.hideSection === true
-      );
+      renderTestimonials(testimonialsVisibleItems);
+      const shouldHideTestimonials =
+        pd.testimonials.hideSection === true ||
+        testimonialsVisibleItems.length === 0;
+      toggleSectionVisibility(".section_tesitominal", shouldHideTestimonials);
     }
 
     // Clients / Brands
     if (pd.clients) {
-      renderClientsSectionVisualize(pd.clients);
+      const hasClientsText =
+        isNonEmptyText(pd.clients.title) ||
+        isNonEmptyText(pd.clients.subtitle) ||
+        isNonEmptyText(pd.clients.description) ||
+        (pd.clients.paragraphs || []).some((p) => isNonEmptyText(p));
+      const shouldHideClients =
+        pd.clients.hideSection === true ||
+        clientsVisibleItems.length === 0 ||
+        !hasClientsText;
+      const safeClients = {
+        ...pd.clients,
+        items: clientsVisibleItems,
+      };
+      renderClientsSectionVisualize(safeClients);
+      toggleSectionVisibility(".section_partners--dynamic", shouldHideClients);
     } else {
       const section = document.querySelector(".section_partners--dynamic");
       if (section) {
@@ -1602,13 +1700,12 @@
 
     // Steps
     if (pd.steps) {
-      renderSteps("steps-list", pd.steps.topics);
+      renderSteps("steps-list", stepsVisibleTopics);
       // steps-number ID doesn't exist in HTML, skip it
       // updateTextField("steps-number", pd.steps.topics.length);
-      toggleSectionVisibility(
-        ".section_process",
-        pd.steps.hideSection === true
-      );
+      const shouldHideSteps =
+        pd.steps.hideSection === true || stepsVisibleTopics.length === 0;
+      toggleSectionVisibility(".section_process", shouldHideSteps);
     }
 
     // Investment
@@ -1632,14 +1729,16 @@
 
     // Plans
     if (pd.plans) {
-      renderPlans("plans-plansItems", pd.plans.plansItems);
+      renderPlans("plans-plansItems", plansVisibleItems);
     }
 
     // Handle pricing section visibility (investment and plans share the same section)
     if (pd.investment || pd.plans) {
       const investmentHidden =
         pd.investment && pd.investment.hideSection === true;
-      const plansHidden = pd.plans && pd.plans.hideSection === true;
+      const plansHidden =
+        (pd.plans && pd.plans.hideSection === true) ||
+        (pd.plans && plansVisibleItems.length === 0);
       const shouldHidePricing =
         pd.investment && pd.plans
           ? investmentHidden && plansHidden
@@ -1649,8 +1748,10 @@
 
     // FAQ
     if (pd.faq) {
-      renderFAQItems("faq-items", pd.faq.items);
-      toggleSectionVisibility(".section_faq", pd.faq.hideSection === true);
+      renderFAQItems("faq-items", faqVisibleItems);
+      const shouldHideFaq =
+        pd.faq.hideSection === true || faqVisibleItems.length === 0;
+      toggleSectionVisibility(".section_faq", shouldHideFaq);
     }
 
     // Footer
