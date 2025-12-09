@@ -331,6 +331,109 @@ export class MinimalTheme {
     return strictAttempt;
   }
 
+  /**
+   * Reescreve garantindo faixa mínima e máxima (útil para evitar que o modelo encurte demais).
+   * Se não respeitar a faixa após tentativa strict, lança erro.
+   */
+  private async rephraseToRange(
+    text: string,
+    minLength: number,
+    maxLength: number,
+    context: string = "",
+    extraGuidance: string = ""
+  ): Promise<string> {
+    const attempt = await this.rephraseOnceRange(
+      text,
+      minLength,
+      maxLength,
+      context,
+      false,
+      extraGuidance
+    );
+
+    if (attempt.length >= minLength && attempt.length <= maxLength) {
+      return attempt;
+    }
+
+    console.warn(
+      `⚠️  Rephrase para ${context} ficou fora da faixa (${attempt.length}/${minLength}-${maxLength}), tentando versão estrita`
+    );
+
+    const strictAttempt = await this.rephraseOnceRange(
+      text,
+      minLength,
+      maxLength,
+      context,
+      true,
+      extraGuidance
+    );
+
+    if (
+      strictAttempt.length < minLength ||
+      strictAttempt.length > maxLength
+    ) {
+      console.warn(
+        `⚠️  Rephrase não respeitou faixa para ${context}: ${strictAttempt.length}/${minLength}-${maxLength}. Aplicando fallback com cap em ${maxLength}.`
+      );
+      const capped = await this.rephraseToFit(
+        strictAttempt,
+        maxLength,
+        `${context} (fallback-cap)`
+      );
+      if (capped.length < minLength) {
+        console.warn(
+          `⚠️  Mesmo após cap, ${context} ficou abaixo do mínimo (${capped.length}/${minLength}). Aceitando para não travar.`
+        );
+      }
+      return capped;
+    }
+
+    return strictAttempt;
+  }
+
+  private async rephraseOnceRange(
+    text: string,
+    minLength: number,
+    maxLength: number,
+    context: string,
+    strict: boolean,
+    extraGuidance: string
+  ): Promise<string> {
+    const extraRule = strict
+      ? "\nREGRAS EXTRAS (STRICT): conte os caracteres e reescreva até ficar DENTRO da faixa. A resposta final DEVE ter no mínimo o mínimo e no máximo o máximo informado."
+      : "";
+
+    const prompt = `Reescreva o seguinte texto mantendo o mesmo sentido, com ENTRE ${minLength} e ${maxLength} caracteres.${extraRule}
+
+${extraGuidance ? `Instrução adicional: ${extraGuidance}\n` : ""}TEXTO ORIGINAL (${text.length} caracteres):
+"${text}"
+
+REGRAS IMPORTANTES:
+- Preserve fatos, nomes e significado.
+- Se precisar, reorganize ou sintetize, mas sem perder precisão.
+- Não use listas, apenas frase(s) corridas.
+- Não adicione novos fatos.
+- Responda apenas com o texto reescrito, sem aspas.`;
+
+    const completion = await this.together.chat.completions.create({
+      model: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      messages: [
+        {
+          role: "system",
+          content: "Você é um assistente que reescreve textos em português brasileiro com faixa de caracteres controlada.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.6,
+      max_tokens: 200,
+    });
+
+    const result =
+      completion.choices[0]?.message?.content?.trim() ?? text.slice(0, maxLength);
+
+    return result;
+  }
+
   private async rephraseOnce(
     text: string,
     maxLength: number,
@@ -527,6 +630,20 @@ Regras:
       .replace(/prova\s+social/gi, "")
       .replace(/\s{2,}/g, " ")
       .trim();
+  }
+
+  private containsInstruction(text: string): boolean {
+    const patterns = [
+      /seja\s+conciso/i,
+      /crie\s+t[ií]tulo/i,
+      /storytelling\s+curto/i,
+      /conte\s+os\s+caracteres/i,
+      /call\s*to\s*action/i,
+      /proposta\s+v[áa]lida/i,
+      /string/i,
+      /reescreva/i,
+    ];
+    return patterns.some((re) => re.test(text));
   }
 
   private async validateIntroductionSection(
@@ -903,24 +1020,15 @@ Regras:
           );
           const contextPrompt =
             selectedService === "photography"
-              ? `Reescreva em 90-130 caracteres, específico para fotografia de casamento: fale de direção artística, storytelling visual, timeline de entrega, consistência de estilo e confiança com casais. Nada de “soluções completas”, “autoridade”, “prova social” ou termos genéricos.`
-              : `Reescreva em 90-130 caracteres, específico para ${selectedService || "o serviço"}: benefícios tangíveis, diferenciais claros, processo e resultado. Proibido termos genéricos como “soluções completas”, “autoridade”, “prova social”.`;
-          topic.description = await this.rephraseToFit(
+              ? `Reescreva em 100-130 caracteres, específico para fotografia de casamento: direção artística, storytelling visual, timeline de entrega, consistência de estilo e confiança com casais. Proibido “soluções completas”, “autoridade”, “prova social”.`
+              : `Reescreva em 100-130 caracteres, específico para ${selectedService || "o serviço"}: benefícios tangíveis, diferenciais claros, processo e resultado. Proibido termos genéricos como “soluções completas”, “autoridade”, “prova social”.`;
+          topic.description = await this.rephraseToRange(
             `${topic.description}. ${contextPrompt}`,
+            100,
             130,
-            `expertise.topics[${index}].description (anti-generic)`
+            `expertise.topics[${index}].description (anti-generic)`,
+            "Mantenha texto conciso mas acima de 100 caracteres; evite encurtar demais."
           );
-          // Aceita >=50 com warning (sempre rephrase, sem fallback fixo)
-          if (topic.description.length < 50) {
-            throw new Error(
-              `expertise.topics[${index}].description ficou abaixo do mínimo (${topic.description.length}/50)`
-            );
-          }
-          if (topic.description.length < 90) {
-            console.warn(
-              `⚠️  expertise.topics[${index}].description curto (${topic.description.length}/90), aceitando com warning.`
-            );
-          }
         }
 
         topic.title = this.ensureMaxLength(
@@ -998,14 +1106,19 @@ Regras:
         "clients.title"
       );
     }
-    if (section.title && section.title.length < 150) {
+    if (
+      section.title &&
+      (section.title.length < 150 || this.containsInstruction(section.title))
+    ) {
       console.warn(
-        `⚠️  clients.title too short (${section.title.length} chars), rephrasing to reach >=150`
+        `⚠️  clients.title short/instructional (${section.title.length} chars), rephrasing to 150-200`
       );
-      section.title = await this.rephraseToFit(
-        `${section.title}. Seja conciso (3-4 linhas), destaque valor e contexto do serviço.`,
+      section.title = await this.rephraseToRange(
+        section.title,
+        150,
         200,
-        "clients.title"
+        "clients.title",
+        "Escreva 2-3 frases com valor claro para o cliente e o setor; sem instruções ou placeholders."
       );
     }
     if (section.title) {
@@ -1017,15 +1130,22 @@ Regras:
       // Evitamos gatilho no título de clients para não repetir
     }
 
-    // Auto-correct description if exceeds limit
-    if (section.description && section.description.length > 180) {
+    // Auto-correct description if exceeds limit or é instrucional/curto
+    if (
+      section.description &&
+      (section.description.length > 180 ||
+        section.description.length < 90 ||
+        this.containsInstruction(section.description))
+    ) {
       console.warn(
-        `⚠️  Auto-correcting clients.description (${section.description.length} -> 180 chars)`
+        `⚠️  Auto-correcting clients.description (${section.description.length} chars)`
       );
-      section.description = await this.rephraseToFit(
+      section.description = await this.rephraseToRange(
         section.description,
+        120,
         180,
-        "clients.description"
+        "clients.description",
+        "Escreva 1-2 frases objetivas sobre contexto e valor entregue; sem instruções."
       );
     }
     if (section.description) {
@@ -1036,37 +1156,27 @@ Regras:
       );
     }
 
-    // Auto-correct paragraphs if exceed limit
+    // Auto-correct paragraphs if exceed limit ou são instrucionais/curtos
     if (section.paragraphs) {
       for (let index = 0; index < section.paragraphs.length; index++) {
         const paragraph = section.paragraphs[index];
         const maxLength = index === 0 ? 400 : 350; // paragraph 1: 400, paragraph 2: 350
-        if (paragraph.length > maxLength) {
-          console.warn(
-            `⚠️  Auto-correcting clients.paragraphs[${index}] (${paragraph.length} -> ${maxLength} chars)`
-          );
-          section.paragraphs[index] = await this.rephraseToFit(
-            paragraph,
-            maxLength,
-            `clients.paragraphs[${index}]`
-          );
-        }
         const minLength = index === 0 ? 200 : 150;
-        if (paragraph.length < minLength) {
+        if (
+          paragraph.length > maxLength ||
+          paragraph.length < minLength ||
+          this.containsInstruction(paragraph)
+        ) {
           console.warn(
-            `⚠️  clients.paragraphs[${index}] too short (${paragraph.length} chars), padding to ${minLength}+`
+            `⚠️  Auto-correcting clients.paragraphs[${index}] (${paragraph.length} chars)`
           );
-          const padded = `${paragraph} Reforçamos autoridade, prova social e transformação para impacto imediato.`;
-          section.paragraphs[index] = await this.rephraseToFit(
-            padded,
+          section.paragraphs[index] = await this.rephraseToRange(
+            paragraph,
+            Math.max(minLength, 200),
             maxLength,
-            `clients.paragraphs[${index}] (min-length)`
+            `clients.paragraphs[${index}]`,
+            "Explique valor, contexto e resultados; sem instruções ou placeholders."
           );
-          if (section.paragraphs[index].length < minLength) {
-            throw new Error(
-              `clients.paragraphs[${index}] ficou abaixo do mínimo (${section.paragraphs[index].length}/${minLength})`
-            );
-          }
         }
       }
       section.paragraphs = section.paragraphs.map((paragraph, index) => {
@@ -1517,11 +1627,16 @@ Regras:
     if (section.callToAction) {
       const minCTA = 60;
       const maxCTA = 120;
-      if (section.callToAction.length < minCTA) {
-        section.callToAction = await this.rephraseToFit(
-          `${section.callToAction}. Storytelling curto convidando a ação imediata com benefício claro.`,
+      if (
+        section.callToAction.length < minCTA ||
+        this.containsInstruction(section.callToAction)
+      ) {
+        section.callToAction = await this.rephraseToRange(
+          section.callToAction,
+          minCTA,
           maxCTA,
-          "footer.callToAction (min length)"
+          "footer.callToAction",
+          "Convite persuasivo em 1 frase, com benefício claro e urgência moderada; sem instruções."
         );
       }
       section.callToAction = this.ensureMaxLength(
