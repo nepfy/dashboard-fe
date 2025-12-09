@@ -96,13 +96,19 @@ export default function MinimalFooter({
           max-height: 390px;
         }
 
+        .footer-marquee .marquee_content {
+          display: flex;
+          gap: 3rem;
+          animation: marquee 60s linear infinite;
+        }
+
         .footer-marquee_text {
           font-size: 15vw;
           font-weight: 300;
           color: rgba(0, 0, 0);
           white-space: nowrap;
-          animation: marquee 200s linear infinite;
           margin-top: 3rem;
+          flex: none;
         }
 
         @media screen and (max-width: 991px) {
@@ -286,6 +292,10 @@ export default function MinimalFooter({
                       placeholder="Clique para adicionar imagem e descrição"
                     />
                   </div>
+                    <div className="footer-marquee_text opacity-60 pointer-events-none select-none">
+                      {marqueeText ||
+                        "Brand Design → Design Systems → UI Design → Webflow Development"}
+                    </div>
                 </div>
               </div>
             )}

@@ -153,13 +153,28 @@ export default function MinimalAboutUs({
           transition: all 0.2s ease;
         }
 
+        .about-marquee .marquee_content {
+          display: flex;
+          gap: 3rem;
+          animation: marquee 60s linear infinite;
+        }
+
         .about-marquee_text {
           font-size: 15vw;
           font-weight: 300;
           color: rgba(255, 255, 255);
           white-space: nowrap;
-          animation: marquee 200s linear infinite;
           margin-top: 3rem;
+          flex: none;
+        }
+
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
 
         @media screen and (max-width: 991px) {
@@ -319,6 +334,10 @@ export default function MinimalAboutUs({
                   title="Marquee"
                   placeholder="Clique para adicionar imagem e descrição"
                 />
+              </div>
+              <div className="about-marquee_text opacity-60 pointer-events-none select-none">
+                {marqueeText ||
+                  "Brand Design → Design Systems → UI Design → Webflow Development"}
               </div>
             </div>
           </div>

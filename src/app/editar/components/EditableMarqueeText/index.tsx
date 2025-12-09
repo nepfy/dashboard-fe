@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import EditableModal from "#/app/editar/components/EditableModal";
 import ModalHeader from "#/app/editar/components/ItemEditorModal/ModalHeader";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
@@ -21,7 +20,7 @@ export default function EditableMarqueeText({
   title = "Marquee",
   placeholder = "Clique para adicionar imagem e descrição",
 }: EditableMarqueeTextProps) {
-  const { startEditing, stopEditing } = useEditor();
+  const { stopEditing } = useEditor();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
   const [draft, setDraft] = useState(value);
@@ -31,19 +30,13 @@ export default function EditableMarqueeText({
   }, [value, isModalOpen]);
 
   useEffect(() => {
-    if (isModalOpen) {
-      const canStart = startEditing(editingId);
-      if (!canStart) {
-        setIsModalOpen(false);
-        return;
-      }
-    } else {
+    if (!isModalOpen) {
       stopEditing(editingId);
     }
     return () => {
       stopEditing(editingId);
     };
-  }, [isModalOpen, editingId, startEditing, stopEditing]);
+  }, [isModalOpen, editingId, stopEditing]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
@@ -70,6 +63,7 @@ export default function EditableMarqueeText({
 
       <EditableModal
         isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         className="flex min-h-[300px] cursor-default flex-col items-stretch w-[360px] max-w-[360px]"
         preferredPlacement="right"
         anchorRect={anchorRect}

@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 
 type Placement = "top" | "bottom" | "left" | "right";
 
@@ -22,12 +23,13 @@ interface ModalProps {
     left?: number;
   };
   anchorRect?: DOMRect | null;
+  onClose?: () => void;
 }
 
 const GAP = 12;
 const VIEWPORT_PADDING = 12;
 const ARROW_SIZE = 12;
-const PANEL_Z_INDEX = 2000;
+const PANEL_Z_INDEX = 12000;
 
 const clamp = (value: number, min: number, max: number) => {
   if (Number.isNaN(value)) return min;
@@ -63,6 +65,7 @@ export default function EditableModal({
   preferredPlacement,
   offset,
   anchorRect,
+  onClose,
   ...deprecatedProps
 }: ModalProps) {
   void deprecatedProps;
@@ -415,10 +418,26 @@ export default function EditableModal({
       <div className="hidden lg:block" style={arrowStyle} />
     ) : null;
 
+  const desktopModal = (
+    <div ref={placeholderRef}>
+      {arrowNode}
+      <div
+        ref={panelRef}
+        className={`bg-white-neutral-light-100 h-[550px] w-full overflow-hidden rounded-[8px] border border-[#CDCDCD] px-4 py-6 sm:w-[360px] ${className ?? ""}`}
+        style={panelStyle}
+      >
+        {children}
+      </div>
+    </div>
+  );
+
   return (
     <>
       {/* Mobile backdrop - only visible on mobile */}
-      <div className="bg-filter fixed inset-0 z-[9999] lg:hidden" />
+      <div
+        className="bg-filter fixed inset-0 z-[9999] lg:hidden"
+        onClick={() => onClose?.()}
+      />
 
       {/* Mobile modal container - centered on mobile */}
       <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 lg:hidden">
@@ -427,17 +446,8 @@ export default function EditableModal({
         </div>
       </div>
 
-      {/* Desktop placeholder to locate anchor element */}
-      <div ref={placeholderRef} className="hidden lg:block">
-        {arrowNode}
-        <div
-          ref={panelRef}
-          className={`bg-white-neutral-light-100 h-[550px] w-full overflow-hidden rounded-[8px] border border-[#CDCDCD] px-4 py-6 sm:w-[360px] ${className ?? ""}`}
-          style={panelStyle}
-        >
-          {children}
-        </div>
-      </div>
+      {/* Desktop modal rendered in a portal to avoid clipping/overflow */}
+      {createPortal(desktopModal, document.body)}
     </>
   );
 }
