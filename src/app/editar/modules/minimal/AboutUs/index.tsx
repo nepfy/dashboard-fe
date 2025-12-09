@@ -91,6 +91,7 @@ export default function MinimalAboutUs({
         .about-heading_title {
           display: flex;
           align-items: flex-start;
+          max-width: 72ch;
         }
 
         .about-content {
@@ -278,16 +279,16 @@ export default function MinimalAboutUs({
                         );
                       }}
                     >
-                        {item.image && (
-                          <Image
-                            src={item.image}
-                            alt={item.caption || ""}
-                            fill
-                            style={{ objectFit: "cover" }}
-                            priority={index < 2}
-                          />
-                        )}
-                      </div>
+                      {item.image && (
+                        <Image
+                          src={item.image}
+                          alt={item.caption || ""}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          priority={index < 2}
+                        />
+                      )}
+                    </div>
                     {item.caption && (
                       <p className="about-caption">{item.caption}</p>
                     )}
@@ -335,7 +336,7 @@ export default function MinimalAboutUs({
                   placeholder="Clique para adicionar imagem e descrição"
                 />
               </div>
-              <div className="about-marquee_text opacity-60 pointer-events-none select-none">
+              <div className="about-marquee_text pointer-events-none opacity-60 select-none">
                 {marqueeText ||
                   "Brand Design → Design Systems → UI Design → Webflow Development"}
               </div>

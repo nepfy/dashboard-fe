@@ -1172,13 +1172,24 @@ Regras:
       150,
       "investment.title"
     );
-    // Não adicionamos gatilho aqui para evitar repetição
     if (section.projectScope) {
-      section.projectScope = this.ensureMaxLength(
-        section.projectScope,
-        200,
-        "investment.projectScope"
-      );
+      const maxScope = 200;
+      if (section.projectScope.length > maxScope) {
+        console.warn(
+          `⚠️  investment.projectScope too long (${section.projectScope.length} chars), rephrasing to fit ${maxScope} chars`
+        );
+        section.projectScope = await this.rephraseToFit(
+          section.projectScope,
+          maxScope,
+          "investment.projectScope"
+        );
+      } else {
+        section.projectScope = this.ensureMaxLength(
+          section.projectScope,
+          maxScope,
+          "investment.projectScope"
+        );
+      }
     }
   }
 
@@ -2306,6 +2317,11 @@ REGRAS OBRIGATÓRIAS:
       ? `\n\nExpected JSON format:\n${expectedFormat}`
       : "";
 
+    const lengthGuidelines =
+      sectionKey === "specialties"
+        ? "\n- Para specialties.topics[].description, garanta no mínimo 60 caracteres (ideal 90-130) para atender à validação do template Minimal."
+        : "";
+
     return `${agent.systemPrompt}
 
 You are generating content for the "${sectionKey}" section of a Minimal template proposal.
@@ -2315,7 +2331,7 @@ Key principles for Minimal template:
 - Direct and professional tone
 - Emphasis on clarity and simplicity
 - Avoid excessive decoration
-- Focus on essential information${formatInstruction}
+- Focus on essential information${lengthGuidelines}${formatInstruction}
 
 IMPORTANT: You must respond ONLY with valid JSON matching the expected format.`;
   }

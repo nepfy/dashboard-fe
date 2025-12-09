@@ -36,7 +36,9 @@ export default function MinimalIntro({
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
   const [isMarqueeModalOpen, setIsMarqueeModalOpen] = useState<boolean>(false);
-  const [selectedMarqueeId, setSelectedMarqueeId] = useState<string | null>(null);
+  const [selectedMarqueeId, setSelectedMarqueeId] = useState<string | null>(
+    null
+  );
 
   const canEdit = activeEditingId === null;
 
@@ -117,14 +119,13 @@ export default function MinimalIntro({
         .btn-animate-chars {
           position: relative;
           overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          border-radius: 0.75rem;
           padding: 1rem 1.75rem;
           text-decoration: none;
           display: inline-block;
           transition: all 0.3s ease;
-          background: transparent;
           cursor: pointer;
+          background: #333030 !important;
+          border: 0 none !important;
         }
 
         .btn-animate-chars:hover {
@@ -428,7 +429,7 @@ export default function MinimalIntro({
               {workingServices.map((service) => (
                 <div
                   key={service.id}
-                  className="marquee-img relative overflow-hidden rounded-[1rem] cursor-pointer group"
+                  className="marquee-img group relative cursor-pointer overflow-hidden rounded-[1rem]"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedMarqueeId(service?.id ?? null);
@@ -458,7 +459,7 @@ export default function MinimalIntro({
               {workingServices.map((service) => (
                 <div
                   key={`${service.id}-clone`}
-                  className="marquee-img relative overflow-hidden rounded-[1rem] cursor-pointer group"
+                  className="marquee-img group relative cursor-pointer overflow-hidden rounded-[1rem]"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedMarqueeId(service?.id ?? null);

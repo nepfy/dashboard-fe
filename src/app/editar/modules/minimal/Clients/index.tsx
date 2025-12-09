@@ -129,7 +129,7 @@ export default function MinimalClients({
           display: grid;
           grid-template-columns: 1.6fr 1fr;
           grid-template-rows: auto auto;
-          gap: 4rem 6rem;
+          gap: 4rem 0rem;
           margin-bottom: 6rem;
         }
 
@@ -214,7 +214,7 @@ export default function MinimalClients({
           .partners-header-grid {
             grid-template-columns: 1fr;
             grid-template-rows: auto auto;
-            gap: 3rem;
+            gap: 2rem;
             margin-bottom: 4rem;
           }
           .partners-heading {

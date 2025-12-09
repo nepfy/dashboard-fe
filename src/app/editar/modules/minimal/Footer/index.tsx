@@ -54,7 +54,7 @@ export default function MinimalFooter({
         .footer-heading {
           display: flex;
           flex-flow: column;
-          max-width: 52ch;
+          max-width: 72ch;
           grid-column-gap: 1.5rem;
           grid-row-gap: 1.5rem;
         }
@@ -292,10 +292,10 @@ export default function MinimalFooter({
                       placeholder="Clique para adicionar imagem e descrição"
                     />
                   </div>
-                    <div className="footer-marquee_text opacity-60 pointer-events-none select-none">
-                      {marqueeText ||
-                        "Brand Design → Design Systems → UI Design → Webflow Development"}
-                    </div>
+                  <div className="footer-marquee_text pointer-events-none opacity-60 select-none">
+                    {marqueeText ||
+                      "Brand Design → Design Systems → UI Design → Webflow Development"}
+                  </div>
                 </div>
               </div>
             )}
