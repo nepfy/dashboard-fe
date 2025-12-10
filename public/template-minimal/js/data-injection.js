@@ -1301,19 +1301,47 @@
       .map((topic) => topic.title)
       .filter((title) => title.trim().length > 0);
 
-    if (stepTitles.length === 0) return;
+    const marqueeText =
+      stepTitles.length > 0
+        ? stepTitles.join(" → ")
+        : "Brand Design → Design Systems → UI Design → Webflow Development";
 
-    const marqueeText = stepTitles.join(" → ");
-
-    // Find all marquee text elements within the about-marquee section
-    const marqueeSection = document.querySelector(".about-marquee");
-    if (marqueeSection) {
-      const marqueeTextElements = marqueeSection.querySelectorAll(
+    // Find the marquee container (the element with data-marquee attribute)
+    const marqueeContainer = document.querySelector(
+      ".about-marquee .marquee_content[data-marquee]"
+    );
+    if (marqueeContainer) {
+      // Update all marquee text elements
+      const marqueeTextElements = marqueeContainer.querySelectorAll(
         ".about-marquee_text"
       );
       marqueeTextElements.forEach((el) => {
         el.textContent = marqueeText;
       });
+
+      // Reinitialize marquee animation after updating content
+      // Cleanup existing animation first
+      if (typeof cleanupMarqueeAnimations === "function") {
+        cleanupMarqueeAnimations();
+      } else if (marqueeContainer._marqueeAnimation) {
+        marqueeContainer._marqueeAnimation.kill();
+        marqueeContainer._marqueeAnimation = null;
+        // Remove cloned elements
+        marqueeContainer
+          .querySelectorAll("[data-marquee-clone]")
+          .forEach((clone) => {
+            clone.remove();
+          });
+      }
+
+      // Reinitialize the marquee
+      setTimeout(() => {
+        if (typeof setupMarqueeElement === "function") {
+          setupMarqueeElement(marqueeContainer);
+        } else if (typeof initMontegrapaMarquees === "function") {
+          initMontegrapaMarquees();
+        }
+      }, 100);
     }
   }
 
@@ -1856,6 +1884,16 @@
         ".section_process",
         pd.steps.hideSection === true
       );
+    } else {
+      // Even if no steps, ensure marquee is initialized with default text
+      const marqueeContainer = document.querySelector(
+        ".about-marquee .marquee_content[data-marquee]"
+      );
+      if (marqueeContainer && typeof setupMarqueeElement === "function") {
+        setTimeout(() => {
+          setupMarqueeElement(marqueeContainer);
+        }, 100);
+      }
     }
 
     // Investment
@@ -1910,6 +1948,13 @@
 
     // Button configuration
     updateButtons(bc);
+
+    // Reinitialize all marquees after data injection to ensure animations work
+    setTimeout(() => {
+      if (typeof initMontegrapaMarquees === "function") {
+        initMontegrapaMarquees();
+      }
+    }, 200);
 
     // Hide loading and show content after data is injected
     showContent();
