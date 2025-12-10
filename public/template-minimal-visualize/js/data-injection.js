@@ -1548,6 +1548,15 @@
       }
     }
 
+    // Reorder sections to: intro, about, expertise, clients, results, plans/investment, steps, FAQ, footer
+    function reorderSections() {
+      const partners = document.querySelector(".section_partners--dynamic");
+      const expertise = document.querySelector(".section_expertise");
+      if (partners && expertise && expertise.parentNode) {
+        expertise.parentNode.insertBefore(partners, expertise.nextSibling);
+      }
+    }
+
     if (!data || !data.proposalData) {
       // Still show content even if no data
       showContent();
@@ -1556,6 +1565,10 @@
 
     const pd = data.proposalData;
     const bc = data.buttonConfig || {};
+
+    // Adjust static UI and section order
+    localizeStaticTexts();
+    reorderSections();
 
     // Precompute visibility for list-based sections
     const aboutVisibleItems = getVisibleItems(pd.aboutUs?.items, (item) =>
