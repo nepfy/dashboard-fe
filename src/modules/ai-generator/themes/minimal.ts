@@ -368,10 +368,7 @@ export class MinimalTheme {
       extraGuidance
     );
 
-    if (
-      strictAttempt.length < minLength ||
-      strictAttempt.length > maxLength
-    ) {
+    if (strictAttempt.length < minLength || strictAttempt.length > maxLength) {
       console.warn(
         `⚠️  Rephrase não respeitou faixa para ${context}: ${strictAttempt.length}/${minLength}-${maxLength}. Aplicando fallback com cap em ${maxLength}.`
       );
@@ -420,7 +417,8 @@ REGRAS IMPORTANTES:
       messages: [
         {
           role: "system",
-          content: "Você é um assistente que reescreve textos em português brasileiro com faixa de caracteres controlada.",
+          content:
+            "Você é um assistente que reescreve textos em português brasileiro com faixa de caracteres controlada.",
         },
         { role: "user", content: prompt },
       ],
@@ -429,7 +427,8 @@ REGRAS IMPORTANTES:
     });
 
     const result =
-      completion.choices[0]?.message?.content?.trim() ?? text.slice(0, maxLength);
+      completion.choices[0]?.message?.content?.trim() ??
+      text.slice(0, maxLength);
 
     return result;
   }
@@ -632,6 +631,21 @@ Regras:
       .trim();
   }
 
+  private craftHeroTitle(
+    selectedService?: string,
+    clientName?: string
+  ): string {
+    const serviceLabel =
+      selectedService === "agencias-consultoria"
+        ? "agências e consultoria"
+        : selectedService?.replace(/-/g, " ") || "sua marca";
+
+    const clientLabel = clientName ? `para ${clientName}` : "para sua marca";
+
+    // Mantém entre ~90-100 chars
+    return `Presença digital premium ${clientLabel}, narrativa clara e conversão para ${serviceLabel}`;
+  }
+
   private containsInstruction(text: string): boolean {
     const patterns = [
       /seja\s+conciso/i,
@@ -648,105 +662,40 @@ Regras:
 
   private async validateIntroductionSection(
     section: MinimalProposal["introduction"],
-    selectedService?: string,
-    projectDescription?: string
+    selectedService?: string
   ): Promise<void> {
-    // Ensure hero title is sufficiently long and not over limit
-    const minHero = 90;
     const maxHero = 100;
-    // Se título inicial já estiver aceitável (80-105), evita rephrase para não encolher
-    if (section.title.length >= 80 && section.title.length <= 105) {
-      section.title = this.ensureMaxLength(
-        section.title,
-        maxHero,
-        "introduction.title"
-      );
-      return;
-    }
+    const minHero = 90;
 
-    if (section.title.length < minHero || section.title.length > maxHero) {
-      const target = Math.min(
-        Math.max(section.title.length, minHero + 20),
-        maxHero
-      );
-      console.warn(
-        `⚠️  Rephrasing introduction.title (${section.title.length} -> target ~${target} chars)`
-      );
-      section.title = await this.rephraseToFit(
-        section.title,
-        target,
-        "introduction.title"
-      );
-    }
-    section.title = this.ensureMaxLength(
-      section.title,
+    const crafted = this.craftHeroTitle(selectedService, section.clientName);
+    const needsRewrite =
+      this.containsInstruction(section.title) ||
+      section.title.length < minHero ||
+      section.title.length > maxHero;
+
+    const seed = needsRewrite ? crafted : section.title;
+
+    // Rephrase com faixa definida, sem truncar
+    section.title = await this.rephraseToRange(
+      seed,
+      minHero,
       maxHero,
-      "introduction.title"
+      "introduction.title",
+      "Título em 1 frase, 90-100 caracteres, benefício claro e específico; sem palavras instrucionais ou placeholders."
     );
 
-    if (section.title.length < minHero) {
-      const contextual =
-        projectDescription && projectDescription.length > 60
-          ? `${section.title}. ${projectDescription.slice(0, 180)}`
-          : `${section.title}. ${selectedService || "Projeto"} autoral com narrativa forte e impacto imediato.`;
-      section.title = await this.rephraseToFit(
-        contextual,
+    // Segunda defesa contra instruções
+    if (this.containsInstruction(section.title)) {
+      section.title = await this.rephraseToRange(
+        crafted,
+        minHero,
         maxHero,
-        "introduction.title (contextual lengthen)"
-      );
-      if (section.title.length < minHero) {
-        const instructive = `Reescreva o título em 1 frase, 90 a 100 caracteres, imperativa e específica para ${selectedService || "o serviço"}, sem genérico. Não use texto fixo.`;
-        section.title = await this.rephraseToFit(
-          instructive,
-          maxHero,
-          "introduction.title (explicit length target)"
-        );
-      }
-    }
-    // Se ainda ficar curto, toleramos >=75 (warning) para não travar
-    if (section.title.length < 75) {
-      console.warn(
-        `⚠️  introduction.title curto (${section.title.length}/90). Aceitando para não travar, mas rephrase recomendado.`
+        "introduction.title (sanitized)",
+        "Use benefício e oferta claros; evite termos instrucionais ou genéricos."
       );
     }
 
-    // Bloqueia respostas instrucionais
-    if (
-      MinimalTheme.INTRO_INSTRUCTIONAL_PATTERNS.some((re) =>
-        re.test(section.title)
-      )
-    ) {
-      console.warn(
-        "⚠️  Detected instructional text in introduction.title, forcing rephrase to 90-100 chars"
-      );
-      const explicit = `Crie um título INTRODUTÓRIO em 1 frase, entre 90 e 100 caracteres, imperativo, inclusivo e direto, para ${selectedService || "o serviço"}; cite o benefício chave e o tipo de entrega. Não use palavras como "reescreva", "string" ou instruções. Conte os caracteres antes de responder.`;
-      section.title = await this.rephraseToFit(
-        explicit,
-        maxHero,
-        "introduction.title (anti-instructional)"
-      );
-      if (section.title.length < 75) {
-        console.warn(
-          `⚠️  introduction.title ainda curto (${section.title.length}/90) após anti-instructional; aceitando para não travar`
-        );
-      }
-    }
-
-    // Último guardrail: se ainda estiver <75, tenta mais uma vez
-    if (section.title.length < 75) {
-      const finalPrompt = `Reescreva o título para 90-100 caracteres, imperativo e específico para ${selectedService || "o serviço"}, sem termos instrucionais. Destaque benefício claro (ex: direção artística + entrega premium) e seja fluido.`;
-      section.title = await this.rephraseToFit(
-        `${section.title}. ${finalPrompt}`,
-        maxHero,
-        "introduction.title (final attempt)"
-      );
-      if (section.title.length < 75) {
-        console.warn(
-          `⚠️  introduction.title permaneceu curto (${section.title.length}/90); aceitando para concluir.`
-        );
-      }
-    }
-    section.title = await this.addTriggerKeyword(
+    section.title = this.ensureMaxLength(
       section.title,
       maxHero,
       "introduction.title"
@@ -1683,8 +1632,7 @@ Regras:
   ): Promise<void> {
     await this.validateIntroductionSection(
       proposal.introduction,
-      selectedService,
-      this.currentProjectDescription!
+      selectedService
     );
     await this.validateAboutUsSection(proposal.aboutUs);
     await this.validateTeamSection(proposal.team);
