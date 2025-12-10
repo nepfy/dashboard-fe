@@ -5,7 +5,7 @@ import MinimalClients from "./Clients";
 import MinimalExpertise from "./Expertise";
 
 import MinimalPlans from "./Plans";
-import MinimalScope from "./Scope";
+
 import MinimalTermsAndConditions from "./MinimalTermsAndConditions";
 import MinimalFAQ from "./FAQ";
 import MinimalFooter from "./Footer";
@@ -25,10 +25,10 @@ export default function Minimal() {
         {...projectData?.proposalData?.expertise}
         mainColor={projectData?.mainColor}
       />
-      <MinimalScope
+      {/* <MinimalScope
         hideProjectScope={projectData?.proposalData?.escope?.hideSection}
         projectScope={projectData?.proposalData?.investment?.projectScope}
-      />
+      /> */}
 
       <MinimalPlans
         {...projectData?.proposalData?.plans}

@@ -54,15 +54,29 @@ export default function ClientEditorModal({
     });
   }, [currentItemId]);
 
+  // Debug effect to log pending changes
+  useEffect(() => {
+    console.log("🔍 ClientEditorModal pendingChanges updated:", pendingChanges);
+  }, [pendingChanges]);
+
   const currentItem =
     items?.find((item) => item.id === selectedItemId) ||
     pendingChanges.newItems.find((item) => item.id === selectedItemId) ||
     null;
 
   const getCurrentItemWithChanges = () => {
-    if (!currentItem) return null;
+    if (!currentItem) {
+      console.log("⚠️ getCurrentItemWithChanges: no currentItem");
+      return null;
+    }
     const pendingUpdates = pendingChanges.itemUpdates[currentItem.id!] || {};
-    return { ...currentItem, ...pendingUpdates };
+    const itemWithChanges = { ...currentItem, ...pendingUpdates };
+    console.log("🔄 getCurrentItemWithChanges:", {
+      currentItem,
+      pendingUpdates,
+      itemWithChanges,
+    });
+    return itemWithChanges;
   };
 
   const handleItemSelect = (itemId: string) => {
@@ -90,18 +104,30 @@ export default function ClientEditorModal({
   };
 
   const handleUpdate = (data: Partial<Client>) => {
-    if (!currentItem?.id) return;
+    if (!currentItem?.id) {
+      console.warn("⚠️ handleUpdate called but no currentItem.id");
+      return;
+    }
 
-    setPendingChanges((prev) => ({
-      ...prev,
-      itemUpdates: {
-        ...prev.itemUpdates,
-        [currentItem.id!]: {
-          ...prev.itemUpdates[currentItem.id!],
-          ...data,
+    console.log("🔄 handleUpdate called:", {
+      currentItemId: currentItem.id,
+      data,
+    });
+
+    setPendingChanges((prev) => {
+      const updated = {
+        ...prev,
+        itemUpdates: {
+          ...prev.itemUpdates,
+          [currentItem.id!]: {
+            ...prev.itemUpdates[currentItem.id!],
+            ...data,
+          },
         },
-      },
-    }));
+      };
+      console.log("📝 Updated pendingChanges:", updated);
+      return updated;
+    });
   };
 
   const handleDeleteItem = (itemId: string) => {
@@ -142,18 +168,24 @@ export default function ClientEditorModal({
   };
 
   const handleSave = () => {
+    console.log("💾 handleSave called for clients:", { pendingChanges, items });
+
     // Apply all pending changes to existing items (excluding deleted ones)
     const itemsWithUpdates = items
       .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
       .map((item) => {
         const updates = pendingChanges.itemUpdates[item.id!];
-        return updates ? { ...item, ...updates } : item;
+        const updated = updates ? { ...item, ...updates } : item;
+        console.log("📦 Item update:", { itemId: item.id, updates, updated });
+        return updated;
       });
 
     // Add new items with their updates applied
     const newItemsWithUpdates = pendingChanges.newItems.map((newItem) => {
       const updates = pendingChanges.itemUpdates[newItem.id!];
-      return updates ? { ...newItem, ...updates } : newItem;
+      const updated = updates ? { ...newItem, ...updates } : newItem;
+      console.log("➕ New item:", { newItem, updates, updated });
+      return updated;
     });
 
     // Combine all items
@@ -165,8 +197,10 @@ export default function ClientEditorModal({
     // Update sortOrder based on final order
     const sortedItems = finalItems.map((item, index) => ({
       ...item,
-      sortOrder: index + 1,
+      sortOrder: index,
     }));
+
+    console.log("✅ Final sorted items to save:", sortedItems);
 
     // Save all changes at once by calling onReorderItems with the final sorted array
     // This will update the entire clients array with all changes applied
@@ -185,12 +219,20 @@ export default function ClientEditorModal({
   };
 
   const hasPendingChanges = () => {
-    return (
+    const hasChanges =
       Object.keys(pendingChanges.itemUpdates).length > 0 ||
       pendingChanges.deletedItems.length > 0 ||
       pendingChanges.newItems.length > 0 ||
-      pendingChanges.reorderedItems !== undefined
-    );
+      pendingChanges.reorderedItems !== undefined;
+    console.log("🔍 hasPendingChanges:", {
+      hasChanges,
+      itemUpdates: Object.keys(pendingChanges.itemUpdates).length,
+      deletedItems: pendingChanges.deletedItems.length,
+      newItems: pendingChanges.newItems.length,
+      reorderedItems: pendingChanges.reorderedItems !== undefined,
+      pendingChanges,
+    });
+    return hasChanges;
   };
 
   const sortedItems = [

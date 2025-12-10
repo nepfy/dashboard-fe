@@ -28,16 +28,27 @@ export default function ImageTab({
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.warn("⚠️ No file selected");
+      return;
+    }
 
+    console.log("📤 Uploading file:", {
+      fileName: file.name,
+      fileSize: file.size,
+    });
     setIsUploading(true);
     try {
       const result = await uploadImage(file);
+      console.log("📥 Upload result:", result);
       if (result.success && result.data) {
+        console.log("✅ Upload successful, updating logo:", result.data.url);
         onUpdate({ logo: result.data.url });
+      } else {
+        console.error("❌ Upload failed:", result);
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("❌ Error uploading image:", error);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
