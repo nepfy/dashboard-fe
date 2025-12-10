@@ -763,13 +763,20 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         sortOrder?: number;
       }>
     ) => {
-      if (!projectData?.proposalData?.aboutUs) return;
+      console.log("🔄 updateAboutUsItem called:", { itemId, data });
+
+      if (!projectData?.proposalData?.aboutUs) {
+        console.warn("⚠️ aboutUs section not found in projectData");
+        return;
+      }
 
       // Initialize items array if it doesn't exist
       const currentItems = projectData.proposalData.aboutUs.items || [];
+      console.log("📦 Current items:", currentItems);
 
       // Check if item exists, if not, add it as a new item
       const itemExists = currentItems.some((item) => item.id === itemId);
+      console.log("🔍 Item exists:", itemExists, "for itemId:", itemId);
 
       // Check if this is a temporary ID (starts with "temp-" or "aboutUs-temp-")
       const isTempId =
@@ -782,7 +789,9 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
           if (item.id === itemId) {
             // If updating a temp item, convert it to a real item with a new UUID
             const finalId = isTempId ? crypto.randomUUID() : itemId;
-            return { ...item, ...data, id: finalId };
+            const updatedItem = { ...item, ...data, id: finalId };
+            console.log("✅ Updating existing item:", updatedItem);
+            return updatedItem;
           }
           return item;
         });
@@ -790,16 +799,16 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         // Add new item if it doesn't exist
         // Convert temp IDs to real UUIDs
         const finalId = isTempId ? crypto.randomUUID() : itemId;
-        updatedItems = [
-          ...currentItems,
-          {
-            id: finalId,
-            ...data,
-            sortOrder: data.sortOrder ?? currentItems.length,
-          },
-        ];
+        const newItem = {
+          id: finalId,
+          ...data,
+          sortOrder: data.sortOrder ?? currentItems.length,
+        };
+        updatedItems = [...currentItems, newItem];
+        console.log("➕ Adding new item:", newItem);
       }
 
+      console.log("💾 Final updated items:", updatedItems);
       updateSection("aboutUs", { items: updatedItems });
     },
     [projectData, updateSection]

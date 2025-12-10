@@ -24,7 +24,15 @@ import {
 interface ItemEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
+  itemType:
+    | "team"
+    | "results"
+    | "expertise"
+    | "testimonials"
+    | "steps"
+    | "faq"
+    | "aboutUs"
+    | "introServices";
   items: (
     | TeamMember
     | Result
@@ -264,7 +272,7 @@ export default function ItemEditorModal({
 
       setSelectedItemId(newItem.id!);
       setActiveTab("conteudo");
-      
+
       // Track block added
       if (projectData?.id) {
         trackBlockAdded({
@@ -423,12 +431,47 @@ export default function ItemEditorModal({
       // Use reorderItems to set the final state
       onReorderItems(finalItems);
     } else {
-      // If only individual field updates (no reordering/deletion/addition), use onUpdateItem
-      Object.entries(pendingChanges.itemUpdates).forEach(
-        ([itemId, updates]) => {
-          onUpdateItem(itemId, updates);
-        }
-      );
+      // If only individual field updates (no reordering/deletion/addition)
+      // For aboutUs, we need to ensure all items are saved together to maintain consistency
+      if (
+        itemType === "aboutUs" &&
+        Object.keys(pendingChanges.itemUpdates).length > 0
+      ) {
+        // Get all current items and apply updates
+        const currentItems = items.filter(
+          (item) => !pendingChanges.deletedItems.includes(item.id!)
+        );
+
+        const updatedItems = currentItems.map((item) => {
+          const updates = pendingChanges.itemUpdates[item.id!];
+          if (updates) {
+            return { ...item, ...updates };
+          }
+          return item;
+        });
+
+        // Add any new items with their updates
+        const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
+
+        const finalItems = [...updatedItems, ...newItemsWithUpdates];
+        console.log("💾 Saving aboutUs items via reorder:", { finalItems });
+        onReorderItems(finalItems);
+      } else {
+        // For other item types, use onUpdateItem for each update
+        Object.entries(pendingChanges.itemUpdates).forEach(
+          ([itemId, updates]) => {
+            console.log("💾 Saving item update:", {
+              itemId,
+              updates,
+              itemType,
+            });
+            onUpdateItem(itemId, updates);
+          }
+        );
+      }
     }
 
     setPendingChanges({
@@ -584,7 +627,9 @@ export default function ItemEditorModal({
             onClose={() => setShowPexelsGallery(false)}
             onSelectImage={(imageUrl) => {
               handleUpdateItem(
-                itemType === "team" || itemType === "aboutUs" || itemType === "introServices"
+                itemType === "team" ||
+                  itemType === "aboutUs" ||
+                  itemType === "introServices"
                   ? { image: imageUrl }
                   : { photo: imageUrl }
               );
