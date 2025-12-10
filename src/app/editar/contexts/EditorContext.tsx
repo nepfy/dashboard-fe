@@ -37,7 +37,10 @@ import {
   FAQItem,
 } from "#/types/template-data";
 import { useRouter } from "next/navigation";
-import { trackProposalSaved, trackEditorSettingsChanged } from "#/lib/analytics/track";
+import {
+  trackProposalSaved,
+  trackEditorSettingsChanged,
+} from "#/lib/analytics/track";
 
 interface EditorContextType {
   // State
@@ -107,11 +110,33 @@ interface EditorContextType {
   reorderExpertiseTopics: (topics: ExpertiseTopic[]) => void;
 
   // AboutUs item CRUD operations
-  updateAboutUsItem: (itemId: string, data: Partial<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => void;
-  reorderAboutUsItems: (items: Array<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => void;
+  updateAboutUsItem: (
+    itemId: string,
+    data: Partial<{
+      id: string;
+      image?: string;
+      caption?: string;
+      hideImage?: boolean;
+      hideCaption?: boolean;
+      sortOrder?: number;
+    }>
+  ) => void;
+  reorderAboutUsItems: (
+    items: Array<{
+      id: string;
+      image?: string;
+      caption?: string;
+      hideImage?: boolean;
+      hideCaption?: boolean;
+      sortOrder?: number;
+    }>
+  ) => void;
 
   // Introduction Services CRUD operations
-  updateIntroductionService: (serviceId: string, data: Partial<IntroductionService>) => void;
+  updateIntroductionService: (
+    serviceId: string,
+    data: Partial<IntroductionService>
+  ) => void;
   addIntroductionService: () => void;
   deleteIntroductionService: (serviceId: string) => void;
   reorderIntroductionServices: (services: IntroductionService[]) => void;
@@ -727,12 +752,53 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
   // AboutUs item CRUD operations
   const updateAboutUsItem = useCallback(
-    (itemId: string, data: Partial<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => {
-      if (!projectData?.proposalData?.aboutUs?.items) return;
+    (
+      itemId: string,
+      data: Partial<{
+        id: string;
+        image?: string;
+        caption?: string;
+        hideImage?: boolean;
+        hideCaption?: boolean;
+        sortOrder?: number;
+      }>
+    ) => {
+      if (!projectData?.proposalData?.aboutUs) return;
 
-      const updatedItems = projectData.proposalData.aboutUs.items.map(
-        (item) => (item.id === itemId ? { ...item, ...data } : item)
-      );
+      // Initialize items array if it doesn't exist
+      const currentItems = projectData.proposalData.aboutUs.items || [];
+
+      // Check if item exists, if not, add it as a new item
+      const itemExists = currentItems.some((item) => item.id === itemId);
+
+      // Check if this is a temporary ID (starts with "temp-" or "aboutUs-temp-")
+      const isTempId =
+        itemId.startsWith("temp-") || itemId.startsWith("aboutUs-temp-");
+
+      let updatedItems;
+      if (itemExists) {
+        // Update existing item
+        updatedItems = currentItems.map((item) => {
+          if (item.id === itemId) {
+            // If updating a temp item, convert it to a real item with a new UUID
+            const finalId = isTempId ? crypto.randomUUID() : itemId;
+            return { ...item, ...data, id: finalId };
+          }
+          return item;
+        });
+      } else {
+        // Add new item if it doesn't exist
+        // Convert temp IDs to real UUIDs
+        const finalId = isTempId ? crypto.randomUUID() : itemId;
+        updatedItems = [
+          ...currentItems,
+          {
+            id: finalId,
+            ...data,
+            sortOrder: data.sortOrder ?? currentItems.length,
+          },
+        ];
+      }
 
       updateSection("aboutUs", { items: updatedItems });
     },
@@ -740,13 +806,29 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   );
 
   const reorderAboutUsItems = useCallback(
-    (items: Array<{ id: string; image?: string; caption?: string; hideImage?: boolean; hideCaption?: boolean; sortOrder?: number }>) => {
-      const reorderedItems = items.map((item, index) => ({
-        ...item,
-        sortOrder: index,
-      }));
+    (
+      items: Array<{
+        id: string;
+        image?: string;
+        caption?: string;
+        hideImage?: boolean;
+        hideCaption?: boolean;
+        sortOrder?: number;
+      }>
+    ) => {
+      // Convert all temporary IDs to real UUIDs and ensure proper sortOrder
+      const itemsToSave = items.map((item, index) => {
+        // If item has temp ID (starts with "temp-" or "aboutUs-temp-"), generate a new UUID
+        const isTempId =
+          item.id?.startsWith("temp-") || item.id?.startsWith("aboutUs-temp-");
+        return {
+          ...item,
+          id: isTempId ? crypto.randomUUID() : item.id,
+          sortOrder: index,
+        };
+      });
 
-      updateSection("aboutUs", { items: reorderedItems });
+      updateSection("aboutUs", { items: itemsToSave });
     },
     [updateSection]
   );
@@ -756,9 +838,10 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     (serviceId: string, data: Partial<IntroductionService>) => {
       if (!projectData?.proposalData?.introduction?.services) return;
 
-      const updatedServices = projectData.proposalData.introduction.services.map(
-        (service) => (service.id === serviceId ? { ...service, ...data } : service)
-      );
+      const updatedServices =
+        projectData.proposalData.introduction.services.map((service) =>
+          service.id === serviceId ? { ...service, ...data } : service
+        );
 
       updateSection("introduction", { services: updatedServices });
     },
@@ -766,8 +849,9 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   );
 
   const addIntroductionService = useCallback(() => {
-    const currentServices = projectData?.proposalData?.introduction?.services || [];
-    
+    const currentServices =
+      projectData?.proposalData?.introduction?.services || [];
+
     const newService: IntroductionService = {
       id: crypto.randomUUID(),
       serviceName: `Imagem ${currentServices.length + 1}`,
@@ -776,7 +860,9 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
       hideItem: false,
     };
 
-    updateSection("introduction", { services: [...currentServices, newService] });
+    updateSection("introduction", {
+      services: [...currentServices, newService],
+    });
   }, [projectData, updateSection]);
 
   const deleteIntroductionService = useCallback(
