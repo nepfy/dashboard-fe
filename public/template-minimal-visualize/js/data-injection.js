@@ -497,10 +497,18 @@
 
   // Render introduction marquee images
   function renderIntroMarquee(services) {
-    const marqueeContent = document.querySelector(
-      "#intro-marquee-carousel .marquee_content"
-    );
-    if (!marqueeContent || !services || !Array.isArray(services)) return;
+    const marqueeContainer = document.querySelector("#intro-marquee-carousel");
+    const marqueeContent = marqueeContainer
+      ? marqueeContainer.querySelector(".marquee_content")
+      : null;
+
+    if (
+      !marqueeContainer ||
+      !marqueeContent ||
+      !services ||
+      !Array.isArray(services)
+    )
+      return;
 
     const templateItem = marqueeContent.querySelector("[data-marquee-content]");
     if (!templateItem) return;
@@ -511,36 +519,52 @@
 
     if (visibleServices.length === 0) return;
 
-    marqueeContent.innerHTML = "";
-
-    const createItem = () => {
-      const item = templateItem.cloneNode(true);
-      item.innerHTML = "";
-
-      visibleServices.forEach((service) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "marquee-img";
-
-        const img = document.createElement("img");
-        img.className = "image";
-        img.loading = "lazy";
-        img.src = service.image || "";
-        img.srcset = service.image || "";
-        img.sizes = "(max-width: 1160px) 100vw, 1160px";
-        img.alt = service.serviceName || "Marquee image";
-
-        wrapper.appendChild(img);
-        item.appendChild(wrapper);
-      });
-
-      return item;
-    };
-
-    // Duplicate items to keep marquee seamless
-    const repeatCount = visibleServices.length > 0 ? 2 : 0;
-    for (let i = 0; i < repeatCount; i++) {
-      marqueeContent.appendChild(createItem());
+    // Cleanup existing marquee animation before modifying content
+    if (typeof cleanupMarqueeAnimations === "function") {
+      cleanupMarqueeAnimations();
+    } else if (marqueeContainer._marqueeAnimation) {
+      marqueeContainer._marqueeAnimation.kill();
+      marqueeContainer._marqueeAnimation = null;
     }
+
+    // Remove all existing clones
+    marqueeContent.querySelectorAll("[data-marquee-clone]").forEach((clone) => {
+      clone.remove();
+    });
+
+    // Create a single [data-marquee-content] element with all services
+    const contentItem = templateItem.cloneNode(true);
+    contentItem.innerHTML = "";
+
+    visibleServices.forEach((service) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "marquee-img";
+
+      const img = document.createElement("img");
+      img.className = "image";
+      img.loading = "lazy";
+      img.src = service.image || "";
+      img.srcset = service.image || "";
+      img.sizes = "(max-width: 1160px) 100vw, 1160px";
+      img.alt = service.serviceName || "Marquee image";
+
+      wrapper.appendChild(img);
+      contentItem.appendChild(wrapper);
+    });
+
+    // Replace all content with the new single item
+    marqueeContent.innerHTML = "";
+    marqueeContent.appendChild(contentItem);
+
+    // Reinitialize marquee to create clones and start animation
+    // Wait a bit for DOM to update
+    setTimeout(() => {
+      if (typeof initMontegrapaMarquees === "function") {
+        initMontegrapaMarquees();
+      } else if (typeof setupMarqueeElement === "function") {
+        setupMarqueeElement(marqueeContainer);
+      }
+    }, 100);
   }
 
   // Render team members list
