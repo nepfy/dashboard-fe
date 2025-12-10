@@ -1840,6 +1840,8 @@
     // About Us
     if (pd.aboutUs) {
       updateTitleWithWordSpans("about-title", pd.aboutUs.title);
+      updateTextField("about-description", pd.aboutUs.subtitle);
+
       renderAboutUsItems(pd.aboutUs.items);
 
       toggleSectionVisibility("about-section", pd.aboutUs.hideSection === true);
