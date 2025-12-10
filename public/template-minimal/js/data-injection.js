@@ -1761,6 +1761,8 @@
       const validityText = formatDate(data.projectValidUntil);
       if (validityText) {
         updateTextField("introduction-validity", validityText);
+        updateTextField("about-validity", validityText);
+        updateTextField("invest-validity", validityText);
       } else {
         console.warn("[Minimal Template] No projectValidUntil date provided");
       }
