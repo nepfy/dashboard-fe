@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import EditableModal from "#/app/editar/components/EditableModal";
 import ModalHeader from "../ItemEditorModal/ModalHeader";
 import TabNavigation from "./TabNavigation";
@@ -44,20 +44,51 @@ export default function ClientEditorModal({
   });
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-  useEffect(() => {
-    setSelectedItemId(currentItemId);
-    setPendingChanges({
-      itemUpdates: {},
-      reorderedItems: undefined,
-      deletedItems: [],
-      newItems: [],
-    });
-  }, [currentItemId]);
+  // Reset pending changes and selected item when modal opens
+  // Only reset if items prop has actually changed (not just on open)
+  const prevItemsRef = useRef<Client[]>(items);
+  const justAppliedChangesRef = useRef(false);
 
-  // Debug effect to log pending changes
   useEffect(() => {
-    console.log("🔍 ClientEditorModal pendingChanges updated:", pendingChanges);
-  }, [pendingChanges]);
+    if (isOpen) {
+      // Check if items actually changed
+      const itemsChanged =
+        prevItemsRef.current.length !== items.length ||
+        prevItemsRef.current.some((item, index) => {
+          const newItem = items[index];
+          return (
+            !newItem || item.id !== newItem.id || item.logo !== newItem.logo
+          );
+        });
+
+      if (itemsChanged) {
+        // If we just applied changes (logo upload), don't reset pendingChanges
+        // because the changes are already applied and we want to keep the button enabled
+        if (justAppliedChangesRef.current) {
+          justAppliedChangesRef.current = false;
+          // Update prevItemsRef to prevent this from triggering again
+          prevItemsRef.current = items;
+        } else {
+          prevItemsRef.current = items;
+          setPendingChanges({
+            itemUpdates: {},
+            reorderedItems: undefined,
+            deletedItems: [],
+            newItems: [],
+          });
+        }
+      }
+
+      setSelectedItemId(currentItemId);
+    }
+  }, [isOpen, currentItemId, items]);
+
+  // Update selectedItemId when currentItemId changes (but don't reset pendingChanges)
+  useEffect(() => {
+    if (isOpen && currentItemId !== selectedItemId) {
+      setSelectedItemId(currentItemId);
+    }
+  }, [currentItemId, isOpen, selectedItemId]);
 
   const currentItem =
     items?.find((item) => item.id === selectedItemId) ||
@@ -66,17 +97,10 @@ export default function ClientEditorModal({
 
   const getCurrentItemWithChanges = () => {
     if (!currentItem) {
-      console.log("⚠️ getCurrentItemWithChanges: no currentItem");
       return null;
     }
     const pendingUpdates = pendingChanges.itemUpdates[currentItem.id!] || {};
-    const itemWithChanges = { ...currentItem, ...pendingUpdates };
-    console.log("🔄 getCurrentItemWithChanges:", {
-      currentItem,
-      pendingUpdates,
-      itemWithChanges,
-    });
-    return itemWithChanges;
+    return { ...currentItem, ...pendingUpdates };
   };
 
   const handleItemSelect = (itemId: string) => {
@@ -105,14 +129,11 @@ export default function ClientEditorModal({
 
   const handleUpdate = (data: Partial<Client>) => {
     if (!currentItem?.id) {
-      console.warn("⚠️ handleUpdate called but no currentItem.id");
       return;
     }
 
-    console.log("🔄 handleUpdate called:", {
-      currentItemId: currentItem.id,
-      data,
-    });
+    // Check if this is a logo upload (has logo in data)
+    const isLogoUpload = "logo" in data && data.logo !== undefined;
 
     setPendingChanges((prev) => {
       const updated = {
@@ -125,8 +146,49 @@ export default function ClientEditorModal({
           },
         },
       };
-      console.log("📝 Updated pendingChanges:", updated);
-      return updated;
+
+      // Force a new object reference to ensure React detects the change
+      const newPendingChanges = {
+        itemUpdates: { ...updated.itemUpdates },
+        reorderedItems: updated.reorderedItems,
+        deletedItems: [...updated.deletedItems],
+        newItems: [...updated.newItems],
+      };
+
+      // If this is a logo upload, immediately apply changes and update parent
+      if (isLogoUpload) {
+        justAppliedChangesRef.current = true;
+
+        // Apply all pending changes (including the new logo)
+        const itemsWithUpdates = items
+          .filter((item) => !newPendingChanges.deletedItems.includes(item.id!))
+          .map((item) => {
+            const updates = newPendingChanges.itemUpdates[item.id!];
+            return updates ? { ...item, ...updates } : item;
+          });
+
+        const newItemsWithUpdates = newPendingChanges.newItems.map(
+          (newItem) => {
+            const updates = newPendingChanges.itemUpdates[newItem.id!];
+            return updates ? { ...newItem, ...updates } : newItem;
+          }
+        );
+
+        const allItems = [...itemsWithUpdates, ...newItemsWithUpdates];
+        const finalItems = newPendingChanges.reorderedItems || allItems;
+        const sortedItems = finalItems.map((item, index) => ({
+          ...item,
+          sortOrder: index,
+        }));
+
+        // Apply changes immediately to parent state
+        onReorderItems(sortedItems);
+
+        // Don't reset pendingChanges here - let it stay so the button remains enabled
+        // The changes are already applied to the parent state via onReorderItems
+      }
+
+      return newPendingChanges;
     });
   };
 
@@ -168,31 +230,43 @@ export default function ClientEditorModal({
   };
 
   const handleSave = () => {
-    console.log("💾 handleSave called for clients:", { pendingChanges, items });
-
     // Apply all pending changes to existing items (excluding deleted ones)
     const itemsWithUpdates = items
       .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
       .map((item) => {
         const updates = pendingChanges.itemUpdates[item.id!];
-        const updated = updates ? { ...item, ...updates } : item;
-        console.log("📦 Item update:", { itemId: item.id, updates, updated });
-        return updated;
+        return updates ? { ...item, ...updates } : item;
       });
 
     // Add new items with their updates applied
     const newItemsWithUpdates = pendingChanges.newItems.map((newItem) => {
       const updates = pendingChanges.itemUpdates[newItem.id!];
-      const updated = updates ? { ...newItem, ...updates } : newItem;
-      console.log("➕ New item:", { newItem, updates, updated });
-      return updated;
+      return updates ? { ...newItem, ...updates } : newItem;
     });
 
     // Combine all items
     const allItems = [...itemsWithUpdates, ...newItemsWithUpdates];
 
-    // Apply reordering if any, otherwise use current order
-    const finalItems = pendingChanges.reorderedItems || allItems;
+    // If there's a reorderedItems, we need to apply updates to those items too
+    let finalItems = allItems;
+    if (pendingChanges.reorderedItems) {
+      // Create a map of updates by item ID for quick lookup
+      const updatesMap = new Map<string, Partial<Client>>();
+      allItems.forEach((item) => {
+        if (item.id) {
+          const updates = pendingChanges.itemUpdates[item.id];
+          if (updates) {
+            updatesMap.set(item.id, updates);
+          }
+        }
+      });
+
+      // Apply updates to reordered items
+      finalItems = pendingChanges.reorderedItems.map((item) => {
+        const updates = updatesMap.get(item.id!);
+        return updates ? { ...item, ...updates } : item;
+      });
+    }
 
     // Update sortOrder based on final order
     const sortedItems = finalItems.map((item, index) => ({
@@ -200,13 +274,11 @@ export default function ClientEditorModal({
       sortOrder: index,
     }));
 
-    console.log("✅ Final sorted items to save:", sortedItems);
-
     // Save all changes at once by calling onReorderItems with the final sorted array
     // This will update the entire clients array with all changes applied
     onReorderItems(sortedItems);
 
-    // Reset pending changes
+    // Reset pending changes immediately after saving
     setPendingChanges({
       itemUpdates: {},
       reorderedItems: undefined,
@@ -218,28 +290,35 @@ export default function ClientEditorModal({
     onClose();
   };
 
-  const hasPendingChanges = () => {
-    const hasChanges =
-      Object.keys(pendingChanges.itemUpdates).length > 0 ||
-      pendingChanges.deletedItems.length > 0 ||
-      pendingChanges.newItems.length > 0 ||
-      pendingChanges.reorderedItems !== undefined;
-    console.log("🔍 hasPendingChanges:", {
-      hasChanges,
-      itemUpdates: Object.keys(pendingChanges.itemUpdates).length,
-      deletedItems: pendingChanges.deletedItems.length,
-      newItems: pendingChanges.newItems.length,
-      reorderedItems: pendingChanges.reorderedItems !== undefined,
-      pendingChanges,
-    });
-    return hasChanges;
-  };
+  // Calculate hasPendingChanges directly (not using useMemo to ensure it updates)
+  const itemUpdatesCount = Object.keys(pendingChanges.itemUpdates).length;
+  const deletedItemsCount = pendingChanges.deletedItems.length;
+  const newItemsCount = pendingChanges.newItems.length;
+  const hasReorderedItems = pendingChanges.reorderedItems !== undefined;
+
+  const hasPendingChanges =
+    itemUpdatesCount > 0 ||
+    deletedItemsCount > 0 ||
+    newItemsCount > 0 ||
+    hasReorderedItems;
+
+  // Apply pending changes to items for display
+  const itemsWithPendingUpdates =
+    items
+      ?.filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+      .map((item) => {
+        const updates = pendingChanges.itemUpdates[item.id!];
+        return updates ? { ...item, ...updates } : item;
+      }) || [];
+
+  const newItemsWithPendingUpdates = pendingChanges.newItems.map((newItem) => {
+    const updates = pendingChanges.itemUpdates[newItem.id!];
+    return updates ? { ...newItem, ...updates } : newItem;
+  });
 
   const sortedItems = [
-    ...(items?.filter(
-      (item) => !pendingChanges.deletedItems.includes(item.id!)
-    ) || []),
-    ...pendingChanges.newItems,
+    ...itemsWithPendingUpdates,
+    ...newItemsWithPendingUpdates,
   ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
   if (!isOpen) return null;
@@ -333,7 +412,11 @@ export default function ClientEditorModal({
             </div>
           </div>
         ) : (
-          <SaveButton onSave={handleSave} hasChanges={hasPendingChanges()} />
+          <SaveButton
+            key={`save-button-${hasPendingChanges}-${Object.keys(pendingChanges.itemUpdates).join("-")}-${pendingChanges.deletedItems.join("-")}-${pendingChanges.newItems.length}`}
+            onSave={handleSave}
+            hasChanges={hasPendingChanges}
+          />
         )}
       </div>
     </div>

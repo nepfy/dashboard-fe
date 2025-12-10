@@ -33,19 +33,11 @@ export default function ImageTab({
       return;
     }
 
-    console.log("📤 Uploading file:", {
-      fileName: file.name,
-      fileSize: file.size,
-    });
     setIsUploading(true);
     try {
       const result = await uploadImage(file);
-      console.log("📥 Upload result:", result);
       if (result.success && result.data) {
-        console.log("✅ Upload successful, updating logo:", result.data.url);
         onUpdate({ logo: result.data.url });
-      } else {
-        console.error("❌ Upload failed:", result);
       }
     } catch (error) {
       console.error("❌ Error uploading image:", error);
