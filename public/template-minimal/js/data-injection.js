@@ -1806,6 +1806,11 @@
     if (pd.introduction) {
       const intro = pd.introduction;
       updateTextField("introduction-clientName", data.clientName);
+      if (data.clientPhoto) {
+        updateTextField("introduction-clientPhoto", data.clientPhoto);
+      } else {
+        toggleElementVisibility("introduction-clientPhoto", true);
+      }
       // introduction-email ID doesn't exist in HTML, skip it
       // updateTextField("introduction-email", intro.email);
       updateTitleWithWordSpans("introduction-title", intro.title);
