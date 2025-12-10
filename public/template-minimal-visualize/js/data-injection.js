@@ -1523,6 +1523,31 @@
 
   // Main data injection function
   function injectData(data) {
+    // Localize static labels to pt-BR
+    function localizeStaticTexts() {
+      const setTexts = (anchorSelector, label) => {
+        document
+          .querySelectorAll(`${anchorSelector} .progress-nav__btn-text`)
+          .forEach((el) => (el.textContent = label));
+      };
+      setTexts('[data-progress-nav-target="#about"]', "Sobre");
+      setTexts('[data-progress-nav-target="#expertise"]', "Expertise");
+      setTexts('[data-progress-nav-target="#investiment"]', "Investimento");
+      setTexts(".progress-nav__btn.is-mobile", "Iniciar Projeto");
+
+      const heroHello = document.querySelector(
+        ".heading-wrap .heading-style-h1.text-weight-light"
+      );
+      if (heroHello) {
+        heroHello.textContent = "Olá,";
+      }
+
+      const heroCta = document.getElementById("buttonconfig-buttontitle");
+      if (heroCta) {
+        heroCta.textContent = "Iniciar Projeto";
+      }
+    }
+
     if (!data || !data.proposalData) {
       // Still show content even if no data
       showContent();
@@ -1581,6 +1606,9 @@
       !plan.hideItem &&
       (isNonEmptyText(plan.title) || isNonEmptyText(String(plan.value)))
     );
+
+    // Localize static UI before injecting dynamic data
+    localizeStaticTexts();
 
     // Simple text fields - Introduction
     if (pd.introduction) {
