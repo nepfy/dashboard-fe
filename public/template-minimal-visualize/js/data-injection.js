@@ -210,44 +210,28 @@
     }
   }
 
-  // Helpers to validate content presence
-  function isNonEmptyText(value) {
-    return typeof value === "string" && value.trim().length > 0;
-  }
-
-  function getVisibleItems(items, predicate) {
-    if (!Array.isArray(items)) return [];
-    return items.filter((item) => {
-      try {
-        return predicate(item);
-      } catch {
-        return false;
-      }
-    });
-  }
-
-  function updateFooterEmailVisualize(email, fallback) {
+  function updateFooterEmail(email, fallback) {
     const button = document.querySelector(".copy-email-button");
     if (!button) return;
     const emailValue = email || fallback || "";
     if (emailValue) {
       button.setAttribute("data-copy-email", emailValue);
-      const textEl = document.getElementById("footer-email-visualize");
+      const textEl = button.querySelector("[data-copy-email-element]");
       if (textEl) {
         textEl.textContent = emailValue;
       }
     }
   }
 
-  function updateFooterPhoneVisualize(phone) {
-    const phoneElement = document.getElementById("footer-phone-visualize");
+  function updateFooterPhone(phone) {
+    const phoneElement = document.getElementById("footer-phone");
     if (phoneElement && phone) {
       phoneElement.textContent = phone;
     }
   }
 
   function renderAboutUsItems(items) {
-    const container = document.getElementById("aboutus-items-container");
+    const container = document.getElementById("about-content");
     if (!container || !items || items.length === 0) {
       return;
     }
@@ -286,72 +270,99 @@
     });
   }
 
-  function renderClientsSectionVisualize(clients) {
-    const sectionSelector = ".section_partners--dynamic";
+  function renderClientsSection(clients) {
+    const sectionSelector = "clients-section";
     if (!clients) {
-      const section = document.querySelector(sectionSelector);
-      if (section) {
-        section.style.display = "none";
-      }
+      toggleSectionVisibility(sectionSelector, true);
       return;
     }
 
-    const section = document.querySelector(sectionSelector);
-    if (section) {
-      section.style.display = clients.hideSection === true ? "none" : "";
-    }
+    toggleSectionVisibility(sectionSelector, clients.hideSection === true);
 
     // Inject subtitle if exists
-    const subtitleEl = document.getElementById("clients-subtitle-visualize");
-    if (subtitleEl && clients.subtitle) {
-      subtitleEl.textContent = clients.subtitle;
-      subtitleEl.style.display = clients.hideSubtitle ? "none" : "";
+    if (clients.subtitle) {
+      updateTextField("clients-subtitle", clients.subtitle);
+      if (clients.hideSubtitle) {
+        toggleElementVisibility("clients-subtitle", true);
+      }
     }
 
     // Inject title
-    const titleEl = document.getElementById("clients-title-visualize");
-    if (titleEl && clients.title) {
-      titleEl.textContent = clients.title;
-      titleEl.style.display = clients.hideTitle ? "none" : "";
-    }
-
-    // Inject description
-    const descriptionEl = document.getElementById(
-      "clients-description-visualize"
-    );
-    if (descriptionEl && clients.description) {
-      descriptionEl.textContent = clients.description;
-      descriptionEl.style.display = clients.hideDescription ? "none" : "";
+    if (clients.title) {
+      updateTextField("clients-title", clients.title);
+      if (clients.hideTitle) {
+        toggleElementVisibility("clients-title", true);
+      }
     }
 
     // Inject paragraphs
     const paragraphs = clients.paragraphs || [];
-    const paragraphOne = document.getElementById("clients-paragraph-1-visualize");
-    if (paragraphOne && paragraphs[0]) {
-      paragraphOne.textContent = paragraphs[0];
+    if (paragraphs[0]) {
+      updateTextField("clients-paragraph-1", paragraphs[0]);
     }
-    const paragraphTwo = document.getElementById("clients-paragraph-2-visualize");
-    if (paragraphTwo && paragraphs[1]) {
-      paragraphTwo.textContent = paragraphs[1];
+    if (paragraphs[1]) {
+      updateTextField("clients-paragraph-2", paragraphs[1]);
     }
 
-    const logosContainer = document.getElementById("clients-logos-visualize");
+    const logosContainer = document.getElementById("clients-logos");
+    const logos = Array.isArray(clients.items)
+      ? clients.items
+          .filter((logo) => logo && logo.hideClient !== true)
+          .sort(
+            (a, b) =>
+              (a.sortOrder ?? Number.MAX_SAFE_INTEGER) -
+              (b.sortOrder ?? Number.MAX_SAFE_INTEGER)
+          )
+      : [];
+
     if (logosContainer) {
       const template =
         logosContainer.querySelector("[data-logo-template]") ||
-        document.createElement("div");
+        (() => {
+          const div = document.createElement("div");
+          div.className = "partners-logo";
+          div.setAttribute("data-logo-template", "true");
+          const img = document.createElement("img");
+          img.className = "logo-img";
+          img.loading = "lazy";
+          img.style.display = "none";
+          const text = document.createElement("div");
+          text.className = "logo-text";
+          text.textContent = "Sua marca";
+          div.appendChild(img);
+          div.appendChild(text);
+          return div;
+        })();
+
       logosContainer.innerHTML = "";
-      const logos = (clients.items || []).filter(
-        (logo) =>
-          !(logo.hideClient || logo.hideItem) &&
-          (isNonEmptyText(logo.logo) || isNonEmptyText(logo.name))
-      );
+
+      if (logos.length === 0) {
+        const placeholder = template.cloneNode(true);
+        placeholder.removeAttribute("data-logo-template");
+        const textElement = placeholder.querySelector(".logo-text");
+        if (textElement) {
+          textElement.textContent = "Sua marca";
+          textElement.style.display = "block";
+        }
+        const imgElement = placeholder.querySelector(".logo-img");
+        if (imgElement) {
+          imgElement.style.display = "none";
+        }
+        logosContainer.appendChild(placeholder);
+        return;
+      }
+
       logos.forEach((logo) => {
         const clone = template.cloneNode(true);
         clone.removeAttribute("data-logo-template");
+
         const textElement = clone.querySelector(".logo-text");
         const imgElement = clone.querySelector(".logo-img");
-        if (logo.logo && imgElement) {
+
+        const hasLogoImage =
+          typeof logo.logo === "string" && logo.logo.trim().length > 0;
+
+        if (hasLogoImage && imgElement) {
           imgElement.src = logo.logo;
           imgElement.alt = logo.name || "Cliente";
           imgElement.style.display = "block";
@@ -363,26 +374,13 @@
             imgElement.style.display = "none";
           }
           if (textElement) {
-            textElement.textContent = logo.name || "";
+            textElement.textContent = logo.name || "Cliente";
             textElement.style.display = "block";
           }
         }
+
         logosContainer.appendChild(clone);
       });
-
-      if (logos.length === 0 && template) {
-        const placeholder = template.cloneNode(true);
-        placeholder.removeAttribute("data-logo-template");
-        const textElement = placeholder.querySelector(".logo-text");
-        if (textElement) {
-          textElement.textContent = "Sua marca";
-        }
-        const imgElement = placeholder.querySelector(".logo-img");
-        if (imgElement) {
-          imgElement.style.display = "none";
-        }
-        logosContainer.appendChild(placeholder);
-      }
     }
   }
 
@@ -440,6 +438,7 @@
 
   // Hide loading and show content
   function showContent() {
+    console.log("[Minimal Template] Showing content, hiding loading");
     const loadingEl = document.getElementById("minimal-template-loading");
     const contentEl = document.getElementById("minimal-template-content");
 
@@ -475,26 +474,26 @@
   }
 
   // Render introduction services list
-  function renderIntroductionServices(containerId, services) {
-    const container = document.getElementById(containerId);
-    if (!container || !services || !Array.isArray(services)) return;
+  // function renderIntroductionServices(containerId, services) {
+  //   const container = document.getElementById(containerId);
+  //   if (!container || !services || !Array.isArray(services)) return;
 
-    // Filter out hidden services and sort
-    const visibleServices = services
-      .filter((s) => !s.hideItem)
-      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  //   // Filter out hidden services and sort
+  //   const visibleServices = services
+  //     .filter((s) => !s.hideItem)
+  //     .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Clear existing content
-    container.innerHTML = "";
+  //   // Clear existing content
+  //   container.innerHTML = "";
 
-    // Create new items
-    visibleServices.forEach((service) => {
-      const div = document.createElement("div");
-      div.className = "text-weight-medium";
-      div.textContent = service.serviceName || "";
-      container.appendChild(div);
-    });
-  }
+  //   // Create new items
+  //   visibleServices.forEach((service) => {
+  //     const div = document.createElement("div");
+  //     div.className = "text-weight-medium";
+  //     div.textContent = service.serviceName || "";
+  //     container.appendChild(div);
+  //   });
+  // }
 
   // Render team members list
   function renderTeamMembers(containerId, members) {
@@ -549,7 +548,7 @@
 
     // Filter out hidden topics and sort
     const visibleTopics = topics
-      .filter((t) => !t.hideItem && !t.hideTopic)
+      .filter((t) => !t.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
     // Get template (first child)
@@ -908,19 +907,8 @@
 
     // Filter out hidden items and sort
     const visibleItems = items
-      .filter(
-        (item) =>
-          !(item.hideItem || item.hideTestimonial) &&
-          (isNonEmptyText(item.testimonial) ||
-            isNonEmptyText(item.name) ||
-            isNonEmptyText(item.role) ||
-            isNonEmptyText(item.photo))
-      )
+      .filter(() => true) // No hideItem for testimonials in the interface
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-
-    if (visibleItems.length === 0) {
-      return;
-    }
 
     // Get the first slide as a template (preserve it for slider structure)
     const existingSlides = container.querySelectorAll(".w-slide");
@@ -1003,7 +991,7 @@
 
     // Filter out hidden items and sort
     const visibleTopics = topics
-      .filter((s) => !s.hideItem && !s.hideTopic)
+      .filter((s) => !s.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
     // Get template (first accordion item)
@@ -1130,299 +1118,148 @@
 
   // Render FAQ items
   function renderFAQItems(containerId, items) {
-    const container = document.getElementById(containerId);
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".faq") ||
+      document.getElementById("faq-section");
+
     if (!container || !items || !Array.isArray(items)) return;
 
-    // Filter out hidden items and sort
     const visibleItems = items
       .filter((f) => !f.hideItem && !f.hideQuestion && !f.hideAnswer)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template (first accordion item)
-    const template = container.querySelector(".accordion_item");
+    // Use the first FAQ item as the template
+    const template =
+      container.querySelector(".faq-item") || container.firstElementChild;
     if (!template) return;
 
-    // Clear container
     container.innerHTML = "";
 
-    // Clone and populate for each FAQ item
-    visibleItems.forEach((item, index) => {
+    visibleItems.forEach((item) => {
       const clone = template.cloneNode(true);
 
-      // Update question number
-      const numberDiv = clone.querySelector(".accordion_left .opacity-60 div");
-      if (numberDiv) {
-        numberDiv.textContent = `${String(index + 1).padStart(2, "0")}.`;
+      // Question text
+      const questionEl =
+        clone.querySelector(".faq-top .text-size-regular.text-weight-medium") ||
+        clone.querySelector(".faq-top > div:first-child");
+      if (questionEl) {
+        questionEl.textContent = item.question || "";
       }
 
-      // Update question
-      const questionDiv = clone.querySelector(
-        ".accordion_left .text-weight-medium.text-size-medium"
-      );
-      if (questionDiv) {
-        questionDiv.textContent = item.question || "";
-      }
-
-      // Update answer
-      const answerP = clone.querySelector(
-        ".accordion_open .accordion_margin p"
-      );
-      if (answerP) {
-        answerP.textContent = item.answer || "";
-      }
-
-      // Set up accordion click handler
-      const accordionOpen = clone.querySelector(".accordion_open");
-      if (accordionOpen) {
-        // Initially set height to 0 (closed)
-        if (typeof gsap !== "undefined") {
-          gsap.set(accordionOpen, {
-            height: 0,
-            overflow: "hidden",
-          });
-        } else {
-          accordionOpen.style.height = "0";
-          accordionOpen.style.overflow = "hidden";
-        }
-
-        // Add click handler to toggle accordion
-        clone.addEventListener("click", (e) => {
-          e.stopPropagation();
-
-          // Kill any existing animations on this element
-          if (typeof gsap !== "undefined") {
-            gsap.killTweensOf(accordionOpen);
-          }
-
-          // Check current state - use data attribute for reliable tracking
-          const isOpen = clone.dataset.isOpen === "true";
-
-          if (isOpen) {
-            // Close accordion
-            clone.dataset.isOpen = "false";
-            if (typeof gsap !== "undefined") {
-              const currentHeight =
-                accordionOpen.scrollHeight || accordionOpen.offsetHeight;
-              gsap.fromTo(
-                accordionOpen,
-                { height: currentHeight },
-                {
-                  height: 0,
-                  duration: 0.4,
-                  ease: "power2.inOut",
-                }
-              );
-            } else {
-              accordionOpen.style.height = "0";
-            }
-          } else {
-            // Open accordion
-            clone.dataset.isOpen = "true";
-            if (typeof gsap !== "undefined") {
-              gsap.set(accordionOpen, { height: "auto" });
-              const naturalHeight = accordionOpen.scrollHeight;
-              gsap.set(accordionOpen, { height: 0 });
-              gsap.to(accordionOpen, {
-                height: naturalHeight,
-                duration: 0.4,
-                ease: "power2.inOut",
-              });
-            } else {
-              accordionOpen.style.height = "auto";
-            }
-          }
-        });
+      // Answer text
+      const answerEl = clone.querySelector(".faq-answer p");
+      if (answerEl) {
+        answerEl.textContent = item.answer || "";
       }
 
       container.appendChild(clone);
     });
   }
 
-  // Render plans list
-  function renderPlans(containerId, plans) {
-    const container = document.getElementById(containerId);
+  // Render plans list (investment cards)
+  function renderPlans(containerId, plans, planConfig = {}) {
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".invest-grid") ||
+      (document.getElementById("investiment") &&
+        document.getElementById("investiment").querySelector(".invest-grid"));
+
     if (!container || !plans || !Array.isArray(plans)) return;
 
-    // Filter out hidden plans and sort
+    if (planConfig.hideSection === true) {
+      container.style.display = "none";
+      return;
+    }
+    container.style.display = "";
+
     const visiblePlans = plans
       .filter((p) => !p.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template - prefer one without is--center to avoid inheriting the class
-    let template = container.querySelector(".pricing_card:not(.is--center)");
-    if (!template) {
-      template = container.querySelector(".pricing_card");
-    }
-    if (!template) return;
+    const regularTemplate =
+      container.querySelector(".invest-card:not(.is-best)") ||
+      container.querySelector(".invest-card");
+    const bestTemplate = container.querySelector(".invest-card.is-best");
+    const fallbackTemplate = regularTemplate || bestTemplate;
+    if (!fallbackTemplate) return;
 
-    // Clear container
     container.innerHTML = "";
 
-    // Clone and populate for each plan
     visiblePlans.forEach((plan) => {
-      const clone = template.cloneNode(true);
+      const templateToUse =
+        plan.recommended === true && bestTemplate
+          ? bestTemplate
+          : fallbackTemplate;
+      const clone = templateToUse.cloneNode(true);
 
-      // Normalize recommended value (handle both boolean and string)
-      const isRecommended = plan.recommended === true;
-
-      // Handle is--center class
-      clone.classList.remove("is--center");
-      if (isRecommended) {
-        clone.classList.add("is--center");
-      }
-
-      // Handle badge
-      let badge = clone.querySelector(".pricing_badge");
-      if (isRecommended) {
-        if (!badge) {
-          badge = document.createElement("div");
-          badge.className = "pricing_badge";
-          badge.innerHTML = `
-            <div class="embed_icon is--tiny w-embed">
-              <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4.56132 0.302089C4.75098 -0.0446829 5.24902 -0.0446824 5.43868 0.30209L6.6975 2.60375C6.74338 2.68764 6.81236 2.75662 6.89625 2.8025L9.19791 4.06132C9.54468 4.25098 9.54468 4.74902 9.19791 4.93868L6.89625 6.1975C6.81236 6.24338 6.74338 6.31236 6.6975 6.39625L5.43868 8.69791C5.24902 9.04468 4.75098 9.04468 4.56132 8.69791L3.3025 6.39625C3.25662 6.31236 3.18764 6.24338 3.10375 6.1975L0.802089 4.93868C0.455317 4.74902 0.455318 4.25098 0.80209 4.06132L3.10375 2.8025C3.18764 2.75662 3.25662 2.68764 3.3025 2.60375L4.56132 0.302089Z" fill="#E6E6E6"/>
-              </svg>
-            </div>
-            <div class="text-weight-medium">Melhor Oferta</div>
-          `;
-          clone.insertBefore(badge, clone.firstChild);
-        }
-        badge.style.display = "";
+      // Recommended flag
+      if (plan.recommended) {
+        clone.classList.add("is-best");
       } else {
-        if (badge) {
-          badge.style.display = "none";
-        }
+        clone.classList.remove("is-best");
       }
 
-      // Handle pricing_top.is--best-offer class
-      const pricingTop = clone.querySelector(".pricing_top");
-      if (pricingTop) {
-        if (isRecommended) {
-          pricingTop.classList.add("is--best-offer");
+      // Title
+      const titleEl =
+        clone.querySelector(".invest-best_wrap > div:first-child") ||
+        clone.querySelector(".invest-top > div:first-child");
+      if (titleEl) {
+        if (plan.hideTitleField) {
+          titleEl.style.display = "none";
         } else {
-          pricingTop.classList.remove("is--best-offer");
+          titleEl.style.display = "";
+          titleEl.textContent = plan.title || "";
         }
       }
 
-      // Update title
-      const titleDiv = clone.querySelector(
-        ".pricing_name .text-size-large.text-weight-semibold"
+      // Price
+      const priceEl = clone.querySelector(
+        ".invest-top .heading-style-h1.text-weight-medium"
       );
-      if (titleDiv && !plan.hideTitleField) {
-        titleDiv.textContent = plan.title || "";
-      } else if (titleDiv && plan.hideTitleField) {
-        titleDiv.style.display = "none";
-      }
-
-      // Update description
-      const descDiv = clone.querySelector(".pricing_description .opacity_80");
-      if (descDiv && !plan.hideDescription) {
-        descDiv.textContent = plan.description || "";
-      } else if (descDiv && plan.hideDescription) {
-        descDiv.style.display = "none";
-      }
-
-      // Update price
-      const priceDiv = clone.querySelector(
-        ".pricing_price .heading-style-h3.text-weight-medium"
-      );
-      if (priceDiv && !plan.hidePrice) {
-        priceDiv.textContent = formatCurrency(plan.value);
-      } else if (priceDiv && plan.hidePrice) {
-        priceDiv.style.display = "none";
-      }
-
-      // Update plan period
-      const periodDiv = clone.querySelector(".pricing_price .opacity_80");
-      if (periodDiv && !plan.hidePlanPeriod) {
-        periodDiv.textContent = plan.planPeriod || "";
-      } else if (periodDiv && plan.hidePlanPeriod) {
-        periodDiv.style.display = "none";
-      }
-
-      // Update included items
-      const includedContainer = clone.querySelector(".pricing_item-wrap");
-      if (includedContainer && plan.includedItems) {
-        const itemTemplate = includedContainer.querySelector(".pricing_item");
-        if (itemTemplate) {
-          includedContainer.innerHTML = "";
-          const visibleItems = (plan.includedItems || [])
-            .filter((item) => !item.hideItem)
-            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-
-          visibleItems.forEach((item) => {
-            const itemClone = itemTemplate.cloneNode(true);
-            const itemText = itemClone.querySelector(
-              ".pricing_item > div:last-child"
-            );
-            if (itemText) {
-              itemText.textContent = item.description || item.item || "";
-            }
-            includedContainer.appendChild(itemClone);
-          });
-        }
-      }
-
-      // Update button
-      const buttonText = clone.querySelector(
-        ".pricing_button .btn-magnetic__text-p"
-      );
-      if (buttonText && !plan.hideButtonTitle) {
-        buttonText.textContent = plan.buttonTitle || "Fechar pacote";
-        const duplicate = clone.querySelector(
-          ".pricing_button .btn-magnetic__text-p.is--duplicate"
-        );
-        if (duplicate) {
-          duplicate.textContent = plan.buttonTitle || "Fechar pacote";
-        }
-      } else if (buttonText && plan.hideButtonTitle) {
-        const button = clone.querySelector(".pricing_button");
-        if (button) {
-          button.style.display = "none";
-        }
-      }
-
-      // Handle btn-magnetic__text-p.is--black class for recommended plans
-      const allButtonTexts = clone.querySelectorAll(
-        ".pricing_button .btn-magnetic__text-p"
-      );
-      allButtonTexts.forEach((textEl) => {
-        if (isRecommended) {
-          textEl.classList.add("is--black");
+      if (priceEl) {
+        if (plan.hidePrice) {
+          priceEl.style.display = "none";
         } else {
-          textEl.classList.remove("is--black");
-        }
-      });
-
-      // Handle btn-magnetic__fill.is--white class for recommended plans
-      const buttonFill = clone.querySelector(
-        ".pricing_button .btn-magnetic__fill"
-      );
-      if (buttonFill) {
-        if (isRecommended) {
-          buttonFill.classList.add("is--white");
-        } else {
-          buttonFill.classList.remove("is--white");
+          priceEl.style.display = "";
+          priceEl.textContent = plan.value ? formatCurrency(plan.value) : "";
         }
       }
 
-      // Update button href
-      const buttonLink = clone.querySelector(
-        ".btn-animate-chars.is-invest"
+      // Description
+      const descEl = clone.querySelector(
+        ".invest-button-wrap .max-width-small .text-size-regular"
       );
+      if (descEl) {
+        if (plan.hideDescription) {
+          descEl.style.display = "none";
+        } else {
+          descEl.style.display = "";
+          descEl.textContent = plan.description || "";
+        }
+      }
+
+      // Button text and behavior
+      const buttonLink = clone.querySelector(".btn-animate-chars.is-invest");
+      const buttonText = clone.querySelector(".btn-animate-chars__text");
+      if (buttonText) {
+        if (plan.hideButtonTitle) {
+          buttonText.style.display = "none";
+        } else {
+          buttonText.style.display = "";
+          buttonText.textContent = plan.buttonTitle || "Fechar pacote";
+        }
+      }
+
       if (buttonLink) {
         const isViewingMode = window.parent && window.parent !== window;
-        
+        buttonLink.href = "#";
+        buttonLink.removeAttribute("target");
+        buttonLink.removeAttribute("rel");
+
         if (isViewingMode) {
-          // In viewing mode, send message to parent to open modal
-          buttonLink.href = "#";
-          buttonLink.removeAttribute("target");
-          buttonLink.removeAttribute("rel");
-          
           buttonLink.addEventListener("click", (e) => {
             e.preventDefault();
-            
-            // Send message to parent window with selected plan
             window.parent.postMessage(
               {
                 type: "PLAN_SELECTED",
@@ -1440,13 +1277,101 @@
           buttonLink.rel = "noopener noreferrer";
         } else if (plan.buttonHref) {
           buttonLink.href = plan.buttonHref;
-          buttonLink.target = "_blank";
-          buttonLink.rel = "noopener noreferrer";
+          if (plan.buttonWhereToOpen === "_self") {
+            buttonLink.target = "_self";
+          } else {
+            buttonLink.target = "_blank";
+            buttonLink.rel = "noopener noreferrer";
+          }
         }
+      }
+
+      // Recommended badge visibility
+      const bestTag = clone.querySelector(".invest-best-tag");
+      if (bestTag) {
+        bestTag.style.display = plan.recommended ? "" : "none";
+      }
+
+      // Included items
+      const includedContainer = clone.querySelector(".invest-feature");
+      if (includedContainer) {
+        const itemTemplate =
+          includedContainer.querySelector(".invest-list") ||
+          includedContainer.firstElementChild;
+        includedContainer.innerHTML = "";
+
+        const visibleItems = (plan.includedItems || [])
+          .filter((item) => !item.hideItem)
+          .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+        visibleItems.forEach((item) => {
+          const itemClone = itemTemplate
+            ? itemTemplate.cloneNode(true)
+            : document.createElement("div");
+          if (!itemTemplate) {
+            itemClone.className = "invest-list";
+          }
+          const itemText =
+            itemClone.querySelector(".text-size-regular") ||
+            itemClone.querySelector("div:last-child");
+          if (itemText) {
+            itemText.textContent = item.description || item.item || "";
+          }
+          includedContainer.appendChild(itemClone);
+        });
       }
 
       container.appendChild(clone);
     });
+
+    if (visiblePlans.length === 0) {
+      container.style.display = "none";
+    }
+  }
+
+  // Update investment header content and visibility
+  function renderInvestmentSection(investment) {
+    if (!investment) return;
+
+    const section = document.querySelector(".section_invest");
+    if (section) {
+      if (investment.hideSection === true) {
+        section.style.display = "none";
+      } else {
+        section.style.display = "";
+      }
+    }
+
+    const titleEl = document.querySelector(
+      ".invest-heading .about-heading_title h2"
+    );
+    if (titleEl) {
+      if (investment.hideTitle) {
+        titleEl.style.display = "none";
+      } else {
+        titleEl.style.display = "";
+        if (investment.title !== undefined && investment.title !== null) {
+          titleEl.textContent = investment.title || "";
+        }
+      }
+    }
+
+    const scopeEl = document.querySelector(
+      ".invest-heading .about-heading_left > div:nth-child(2)"
+    );
+    if (scopeEl) {
+      if (investment.hideProjectScope) {
+        scopeEl.style.display = "none";
+      } else {
+        scopeEl.style.display = "";
+        if (
+          investment.projectScope !== undefined &&
+          investment.projectScope !== null
+        ) {
+          scopeEl.textContent = investment.projectScope || "";
+        }
+      }
+    }
   }
 
   // Update button configuration
@@ -1470,12 +1395,7 @@
     // Update button links
     const isViewingMode = window.parent && window.parent !== window;
     const buttonLinks = document.querySelectorAll(".btn-animate-chars");
-    
-    console.log("updateButtons called, isViewingMode:", isViewingMode);
-    console.log("Found buttons:", buttonLinks.length);
-    console.log("window.parent:", window.parent);
-    console.log("window:", window);
-    
+
     buttonLinks.forEach((link) => {
       // Skip if this is a pricing button (will be handled separately)
       if (link.classList.contains("is-invest")) {
@@ -1490,17 +1410,16 @@
         anchor.href = "#invest-section";
         anchor.removeAttribute("target");
         anchor.removeAttribute("rel");
-        
-        console.log("Adding scroll handler to button:", anchor);
-        
+
         // Add click handler to scroll smoothly
         anchor.addEventListener("click", (e) => {
           e.preventDefault();
-          console.log("Scroll button clicked!");
           const investSection = document.querySelector(".section_invest");
-          console.log("Found invest section:", investSection);
           if (investSection) {
-            investSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            investSection.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
           }
         });
       } else if (
@@ -1523,42 +1442,17 @@
 
   // Main data injection function
   function injectData(data) {
-    // Localize static labels to pt-BR
-    function localizeStaticTexts() {
-      const setTexts = (anchorSelector, label) => {
-        document
-          .querySelectorAll(`${anchorSelector} .progress-nav__btn-text`)
-          .forEach((el) => (el.textContent = label));
-      };
-      setTexts('[data-progress-nav-target="#about"]', "Sobre");
-      setTexts('[data-progress-nav-target="#expertise"]', "Expertise");
-      setTexts('[data-progress-nav-target="#investiment"]', "Investimento");
-      setTexts(".progress-nav__btn.is-mobile", "Iniciar Projeto");
-
-      const heroHello = document.querySelector(
-        ".heading-wrap .heading-style-h1.text-weight-light"
-      );
-      if (heroHello) {
-        heroHello.textContent = "Olá,";
-      }
-
-      const heroCta = document.getElementById("buttonconfig-buttontitle");
-      if (heroCta) {
-        heroCta.textContent = "Iniciar Projeto";
-      }
-    }
-
-    // Reorder sections to: intro, about, expertise, clients, results, plans/investment, steps, FAQ, footer
-    function reorderSections() {
-      const partners = document.querySelector(".section_partners--dynamic");
-      const expertise = document.querySelector(".section_expertise");
-      if (partners && expertise && expertise.parentNode) {
-        expertise.parentNode.insertBefore(partners, expertise.nextSibling);
-      }
-    }
+    console.log("[Minimal Template] injectData called", {
+      hasData: !!data,
+      hasProposalData: !!data?.proposalData,
+      projectName: data?.projectName,
+    });
 
     if (!data || !data.proposalData) {
       // Still show content even if no data
+      console.warn(
+        "[Minimal Template] No data or proposalData, showing content anyway"
+      );
       showContent();
       return;
     }
@@ -1566,67 +1460,10 @@
     const pd = data.proposalData;
     const bc = data.buttonConfig || {};
 
-    // Adjust static UI and section order
-    localizeStaticTexts();
-    reorderSections();
-
-    // Precompute visibility for list-based sections
-    const aboutVisibleItems = getVisibleItems(pd.aboutUs?.items, (item) =>
-      isNonEmptyText(item.image) || isNonEmptyText(item.caption)
-    );
-    const teamVisibleMembers = getVisibleItems(pd.team?.members, (member) =>
-      !member.hideMember &&
-      (isNonEmptyText(member.name) ||
-        isNonEmptyText(member.role) ||
-        isNonEmptyText(member.image))
-    );
-    const expertiseVisibleTopics = getVisibleItems(
-      pd.expertise?.topics,
-      (topic) =>
-        !(topic.hideItem || topic.hideTopic) &&
-        (isNonEmptyText(topic.title) || isNonEmptyText(topic.description))
-    );
-    const resultsVisibleItems = getVisibleItems(pd.results?.items, (item) =>
-      !item.hideItem &&
-      (isNonEmptyText(item.client) ||
-        isNonEmptyText(item.investment) ||
-        isNonEmptyText(item.roi) ||
-        isNonEmptyText(item.photo))
-    );
-    const testimonialsVisibleItems = getVisibleItems(
-      pd.testimonials?.items,
-      (item) =>
-        !(item.hideItem || item.hideTestimonial) &&
-        (isNonEmptyText(item.testimonial) ||
-          isNonEmptyText(item.name) ||
-          isNonEmptyText(item.role) ||
-          isNonEmptyText(item.photo))
-    );
-    const faqVisibleItems = getVisibleItems(pd.faq?.items, (item) =>
-      !(item.hideItem || item.hideQuestion || item.hideAnswer) &&
-      isNonEmptyText(item.question) &&
-      isNonEmptyText(item.answer)
-    );
-    const clientsVisibleItems = getVisibleItems(pd.clients?.items, (item) =>
-      !(item.hideClient || item.hideItem) &&
-      (isNonEmptyText(item.logo) || isNonEmptyText(item.name))
-    );
-    const stepsVisibleTopics = getVisibleItems(pd.steps?.topics, (topic) =>
-      !(topic.hideItem || topic.hideTopic) &&
-      (isNonEmptyText(topic.title) || isNonEmptyText(topic.description))
-    );
-    const plansVisibleItems = getVisibleItems(pd.plans?.plansItems, (plan) =>
-      !plan.hideItem &&
-      (isNonEmptyText(plan.title) || isNonEmptyText(String(plan.value)))
-    );
-
-    // Localize static UI before injecting dynamic data
-    localizeStaticTexts();
-
     // Simple text fields - Introduction
     if (pd.introduction) {
       const intro = pd.introduction;
-      updateTextField("introduction-username", intro.userName);
+      updateTextField("introduction-clientName", data.clientName);
       // introduction-email ID doesn't exist in HTML, skip it
       // updateTextField("introduction-email", intro.email);
       updateTitleWithWordSpans("introduction-title", intro.title);
@@ -1634,43 +1471,39 @@
         "introduction-validity",
         formatDate(data.projectValidUntil)
       );
+      updateTextField("introduction-subtitle", intro.subtitle);
 
-      // Note: introduction-subtitle element is in the about section, populated there
+      // Hide subtitle if needed
+      if (intro.hideSubtitle) {
+        toggleElementVisibility("introduction-subtitle", true);
+      }
 
-      // Render services list
-      renderIntroductionServices("introduction-services", intro.services);
+      if (!intro.elements || intro.elements.length === 0) {
+        toggleSectionVisibility("marquee_component", true);
+      }
     }
 
     // About Us
     if (pd.aboutUs) {
-      updateTitleWithWordSpans("aboutus-title", pd.aboutUs.title);
-      renderAboutUsItems(aboutVisibleItems);
-      
-      // Update subtitle within about section
-      if (pd.aboutUs.subtitle) {
-        updateTextField("introduction-subtitle", pd.aboutUs.subtitle);
-      }
-      
-      // Hide subtitle if needed
-      if (pd.aboutUs.hideSubtitle) {
-        toggleElementVisibility("introduction-subtitle", true);
-      }
-      
-      const shouldHideAbout =
-        pd.aboutUs.hideSection === true ||
-        !isNonEmptyText(pd.aboutUs.title) ||
-        aboutVisibleItems.length === 0;
-      toggleSectionVisibility(".section_about", shouldHideAbout);
+      updateTitleWithWordSpans("about-title", pd.aboutUs.title);
+      renderAboutUsItems(pd.aboutUs.items);
+
+      toggleSectionVisibility("about-section", pd.aboutUs.hideSection === true);
+    }
+
+    // Clients / Brands
+    if (pd.clients) {
+      renderClientsSection(pd.clients);
+    } else {
+      toggleSectionVisibility(".section_partners--dynamic", true);
     }
 
     // Team
     if (pd.team) {
       // team-title ID doesn't exist in HTML, skip it
       // updateTitleWithWordSpans("team-title", pd.team.title);
-      renderTeamMembers("team-members-list", teamVisibleMembers);
-      const shouldHideTeam =
-        pd.team.hideSection === true || teamVisibleMembers.length === 0;
-      toggleSectionVisibility(".section_team", shouldHideTeam);
+      renderTeamMembers("team-members-list", pd.team.members);
+      toggleSectionVisibility(".section_team", pd.team.hideSection === true);
     }
 
     // Expertise
@@ -1682,117 +1515,76 @@
           toggleElementVisibility("expertise-subtitle", true);
         }
       }
-      
+
       updateTitleWithWordSpans("expertise-title", pd.expertise.title);
       renderExpertiseTopics(
         "expertise-topics-list",
-        expertiseVisibleTopics,
+        pd.expertise.topics,
         pd.expertise.hideIcon
       );
-      const shouldHideExpertise =
-        pd.expertise.hideSection === true ||
-        !isNonEmptyText(pd.expertise.title) ||
-        expertiseVisibleTopics.length === 0;
-      toggleSectionVisibility(".section_expertise", shouldHideExpertise);
+      toggleSectionVisibility(
+        ".section_expertise",
+        pd.expertise.hideSection === true
+      );
     }
 
     // Results
     if (pd.results) {
       // results-title ID doesn't exist in HTML, skip it
       // updateTitleWithWordSpans("results-title", pd.results.title);
-      renderResults("results-list", resultsVisibleItems);
-      const shouldHideResults =
-        pd.results.hideSection === true || resultsVisibleItems.length === 0;
-      toggleSectionVisibility(".section_proof", shouldHideResults);
+      renderResults("results-list", pd.results.items);
+      toggleSectionVisibility(
+        ".section_proof",
+        pd.results.hideSection === true
+      );
     }
 
     // Testimonials
     if (pd.testimonials) {
-      renderTestimonials(testimonialsVisibleItems);
-      const shouldHideTestimonials =
-        pd.testimonials.hideSection === true ||
-        testimonialsVisibleItems.length === 0;
-      toggleSectionVisibility(".section_tesitominal", shouldHideTestimonials);
-    }
-
-    // Clients / Brands
-    if (pd.clients) {
-      const hasClientsText =
-        isNonEmptyText(pd.clients.title) ||
-        isNonEmptyText(pd.clients.subtitle) ||
-        isNonEmptyText(pd.clients.description) ||
-        (pd.clients.paragraphs || []).some((p) => isNonEmptyText(p));
-      const shouldHideClients =
-        pd.clients.hideSection === true ||
-        clientsVisibleItems.length === 0 ||
-        !hasClientsText;
-      const safeClients = {
-        ...pd.clients,
-        items: clientsVisibleItems,
-      };
-      renderClientsSectionVisualize(safeClients);
-      toggleSectionVisibility(".section_partners--dynamic", shouldHideClients);
-    } else {
-      const section = document.querySelector(".section_partners--dynamic");
-      if (section) {
-        section.style.display = "none";
-      }
+      renderTestimonials(pd.testimonials.items);
+      toggleSectionVisibility(
+        ".section_tesitominal",
+        pd.testimonials.hideSection === true
+      );
     }
 
     // Steps
     if (pd.steps) {
-      renderSteps("steps-list", stepsVisibleTopics);
+      renderSteps("steps-list", pd.steps.topics);
       // steps-number ID doesn't exist in HTML, skip it
       // updateTextField("steps-number", pd.steps.topics.length);
-      const shouldHideSteps =
-        pd.steps.hideSection === true || stepsVisibleTopics.length === 0;
-      toggleSectionVisibility(".section_process", shouldHideSteps);
+      toggleSectionVisibility(
+        ".section_process",
+        pd.steps.hideSection === true
+      );
     }
 
     // Investment
     if (pd.investment) {
-      updateTitleWithWordSpans("investment-title", pd.investment.title);
-      updateTextField("investment-projectScope", pd.investment.projectScope);
-
-      // Hide projectScope container if escope.hideSection is true or investment.hideProjectScope is true
-      const shouldHideProjectScope =
-        (pd.escope && pd.escope.hideSection === true) ||
-        pd.investment.hideProjectScope === true;
-      const projectScopeContainer = document.querySelector(".pricing_scope");
-      if (projectScopeContainer) {
-        if (shouldHideProjectScope) {
-          projectScopeContainer.style.display = "none";
-        } else {
-          projectScopeContainer.style.display = "";
-        }
-      }
+      const investmentData = {
+        ...pd.investment,
+        hideProjectScope:
+          (pd.escope && pd.escope.hideSection === true) ||
+          pd.investment.hideProjectScope === true,
+      };
+      renderInvestmentSection(investmentData);
     }
 
     // Plans
     if (pd.plans) {
-      renderPlans("plans-plansItems", plansVisibleItems);
+      renderPlans("invest-grid", pd.plans.plansItems, pd.plans);
     }
 
     // Handle pricing section visibility (investment and plans share the same section)
-    if (pd.investment || pd.plans) {
-      const investmentHidden =
-        pd.investment && pd.investment.hideSection === true;
-      const plansHidden =
-        (pd.plans && pd.plans.hideSection === true) ||
-        (pd.plans && plansVisibleItems.length === 0);
-      const shouldHidePricing =
-        pd.investment && pd.plans
-          ? investmentHidden && plansHidden
-          : investmentHidden || plansHidden;
-      toggleSectionVisibility(".section_pricing", shouldHidePricing);
-    }
+    const investmentHidden =
+      !pd.investment || pd.investment.hideSection === true;
+    const plansHidden = !pd.plans || pd.plans.hideSection === true;
+    toggleSectionVisibility(".section_invest", investmentHidden && plansHidden);
 
     // FAQ
     if (pd.faq) {
-      renderFAQItems("faq-items", faqVisibleItems);
-      const shouldHideFaq =
-        pd.faq.hideSection === true || faqVisibleItems.length === 0;
-      toggleSectionVisibility(".section_faq", shouldHideFaq);
+      renderFAQItems("faq-section", pd.faq.items);
+      toggleSectionVisibility("#faq-section", pd.faq.hideSection === true);
     }
 
     // Footer
@@ -1800,8 +1592,8 @@
       updateTextField("footer-callToAction", pd.footer.callToAction);
       updateTextField("footer-validity", formatDate(data.projectValidUntil));
       updateTextField("footer-disclaimer", pd.footer.disclaimer);
-      updateFooterEmailVisualize(pd.footer.email, data?.userEmail || data?.user?.email);
-      updateFooterPhoneVisualize(pd.footer.phone);
+      updateFooterEmail(pd.footer.email, data?.userEmail || data?.user?.email);
+      updateFooterPhone(pd.footer.phone);
 
       if (pd.footer.hideCallToAction) {
         toggleElementVisibility("footer-callToAction", true);
@@ -1812,17 +1604,16 @@
     }
 
     if (data.mainColor) {
-      // Apply color only to pricing buttons, not to the whole template
-      const applyPricingColors = (mainColor) => {
-        const bestColor = lightenColor(mainColor, 10);
-        document
-          .querySelectorAll(".btn-animate-chars__bg")
-          .forEach((el) => (el.style.backgroundColor = mainColor));
-        document
-          .querySelectorAll(".btn-animate-chars__bg.is-best")
-          .forEach((el) => (el.style.backgroundColor = bestColor));
-      };
-      applyPricingColors(data.mainColor);
+      const gradientColors = getHeroGradientColors(data.mainColor);
+      document.documentElement.style.setProperty("--bg", data.mainColor);
+      document.documentElement.style.setProperty(
+        "--bg-dark",
+        gradientColors.dark
+      );
+      document.documentElement.style.setProperty(
+        "--bg-light",
+        gradientColors.light
+      );
     }
 
     // Button configuration
@@ -1866,10 +1657,17 @@
 
   // Listen for postMessage from parent window
   window.addEventListener("message", function (event) {
+    console.log("[Minimal Template] Received postMessage:", {
+      type: event.data?.type,
+      hasData: !!event.data?.data,
+      origin: event.origin,
+    });
+
     // Security: optionally verify origin
     // if (event.origin !== "http://localhost:3000") return;
 
     if (event.data && event.data.type === "MINIMAL_TEMPLATE_DATA") {
+      console.log("[Minimal Template] Processing template data");
       receivedData = event.data.data;
       handleDataInjection(event.data.data);
     }
@@ -1889,4 +1687,3 @@
     handleDataInjection(data);
   };
 })();
-
