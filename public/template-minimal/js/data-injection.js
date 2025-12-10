@@ -468,9 +468,20 @@
   // Get SVG icon markup by icon name
   function getIconSvg(iconName) {
     if (!iconName || typeof iconName !== "string") {
+      console.warn("[Minimal Template] Invalid icon name:", iconName);
       return iconMap.AwardIcon; // Default icon
     }
-    return iconMap[iconName] || iconMap.AwardIcon; // Return icon or default
+    const icon = iconMap[iconName];
+    if (!icon) {
+      console.warn(
+        "[Minimal Template] Icon not found in map:",
+        iconName,
+        "Available icons:",
+        Object.keys(iconMap).slice(0, 5).join(", ")
+      );
+      return iconMap.AwardIcon; // Return default icon
+    }
+    return icon;
   }
 
   // Hide loading and show content
@@ -662,16 +673,37 @@
     const container =
       document.getElementById(containerId) ||
       document.querySelector(".expertise-grid");
-    if (!container || !topics || !Array.isArray(topics)) return;
+    if (!container) {
+      console.warn(
+        "[Minimal Template] Expertise container not found:",
+        containerId
+      );
+      return;
+    }
+    if (!topics || !Array.isArray(topics)) {
+      console.warn("[Minimal Template] No topics provided or invalid format");
+      return;
+    }
 
     // Filter out hidden topics and sort
     const visibleTopics = topics
       .filter((t) => !t.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
+    console.log("[Minimal Template] Rendering expertise topics:", {
+      total: topics.length,
+      visible: visibleTopics.length,
+      hideIcon: hideIcon,
+    });
+
     // Get template (first child) - use .expertise-card (with hyphen) not .expertise_card
     const template = container.querySelector(".expertise-card");
-    if (!template) return;
+    if (!template) {
+      console.warn(
+        "[Minimal Template] Expertise card template not found in container"
+      );
+      return;
+    }
 
     // Clear container
     container.innerHTML = "";
@@ -686,17 +718,29 @@
           clone.querySelector(".expertise-icon_wrapper") ||
           clone.querySelector(".expertise_icon");
         if (iconContainer) {
-          // Check if it's a wrapper with img inside or direct icon container
-          const img = iconContainer.querySelector("img.expertise-icon");
-          if (img) {
-            // Replace img with SVG
-            const iconSvg = getIconSvg(topic.icon);
-            iconContainer.innerHTML = iconSvg;
-          } else {
-            // Direct icon container
-            const iconSvg = getIconSvg(topic.icon);
-            iconContainer.innerHTML = iconSvg;
-          }
+          const iconSvg = getIconSvg(topic.icon);
+
+          // Always replace the content with SVG (removes any existing img)
+          iconContainer.innerHTML = iconSvg;
+
+          // Ensure the icon is visible
+          iconContainer.style.display = "";
+        } else {
+          console.warn(
+            "[Minimal Template] Icon container not found for expertise card",
+            {
+              topicTitle: topic.title,
+              iconName: topic.icon,
+            }
+          );
+        }
+      } else if (!hideIcon && !topic.icon) {
+        // Hide icon container if no icon is provided
+        const iconContainer =
+          clone.querySelector(".expertise-icon_wrapper") ||
+          clone.querySelector(".expertise_icon");
+        if (iconContainer) {
+          iconContainer.style.display = "none";
         }
       } else if (hideIcon) {
         const iconContainer =
@@ -1261,11 +1305,15 @@
 
     const marqueeText = stepTitles.join(" → ");
 
-    const marqueeContent = document.querySelector(
-      "[data-marquee-content] .about-marquee_text"
-    );
-    if (marqueeContent) {
-      marqueeContent.textContent = marqueeText;
+    // Find all marquee text elements within the about-marquee section
+    const marqueeSection = document.querySelector(".about-marquee");
+    if (marqueeSection) {
+      const marqueeTextElements = marqueeSection.querySelectorAll(
+        ".about-marquee_text"
+      );
+      marqueeTextElements.forEach((el) => {
+        el.textContent = marqueeText;
+      });
     }
   }
 
@@ -1693,8 +1741,10 @@
     });
 
     if (!data || !data.proposalData) {
-      // Keep loading until data arrives; do not show content
-      console.warn("[Minimal Template] No data or proposalData, waiting...");
+      // Don't show content if no data - wait for postMessage with valid data
+      console.warn(
+        "[Minimal Template] No data or proposalData, waiting for data..."
+      );
       return;
     }
 
@@ -1708,10 +1758,12 @@
       // introduction-email ID doesn't exist in HTML, skip it
       // updateTextField("introduction-email", intro.email);
       updateTitleWithWordSpans("introduction-title", intro.title);
-      updateTextField(
-        "introduction-validity",
-        formatDate(data.projectValidUntil)
-      );
+      const validityText = formatDate(data.projectValidUntil);
+      if (validityText) {
+        updateTextField("introduction-validity", validityText);
+      } else {
+        console.warn("[Minimal Template] No projectValidUntil date provided");
+      }
       updateTextField("introduction-subtitle", intro.subtitle);
 
       // Hide subtitle if needed
