@@ -224,17 +224,54 @@
   }
 
   function updateFooterPhone(phone) {
-    const phoneElement = document.getElementById("footer-phone");
+    const phoneElement =
+      document.getElementById("footer-phone") ||
+      document.querySelector(".footer-contact_wrap .text-weight-normal");
     if (phoneElement && phone) {
       phoneElement.textContent = phone;
     }
   }
 
+  function renderFooter(footer, projectValidUntil, userEmail) {
+    if (!footer) return;
+
+    const heading = document.querySelector(".footer-heading p");
+    if (heading && footer.callToAction !== undefined) {
+      heading.textContent = footer.callToAction || "";
+    }
+
+    const validityEl = document.querySelector(
+      ".footer-proposal .text-size-regular"
+    );
+    if (validityEl) {
+      const formattedDate = formatDate(projectValidUntil);
+      validityEl.textContent = formattedDate
+        ? `Proposta válida até ${formattedDate}`
+        : "";
+    }
+
+    updateFooterEmail(footer.email, userEmail);
+    updateFooterPhone(footer.phone);
+
+    if (footer.hideCallToAction && heading) {
+      heading.style.display = "none";
+    }
+    if (footer.hideDisclaimer && validityEl) {
+      validityEl.style.display = "none";
+    }
+  }
+
   function renderAboutUsItems(items) {
     const container = document.getElementById("about-content");
-    if (!container || !items || items.length === 0) {
+    if (!container) return;
+
+    if (!items || items.length === 0) {
+      container.innerHTML = "";
+      container.style.display = "none";
       return;
     }
+
+    container.style.display = "";
 
     // Clear container
     container.innerHTML = "";
@@ -606,7 +643,9 @@
 
   // Render expertise topics list
   function renderExpertiseTopics(containerId, topics, hideIcon) {
-    const container = document.getElementById(containerId);
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".expertise-grid");
     if (!container || !topics || !Array.isArray(topics)) return;
 
     // Filter out hidden topics and sort
@@ -660,6 +699,27 @@
 
       container.appendChild(clone);
     });
+  }
+
+  function updateExpertiseHeading(expertise) {
+    const heading = document.querySelector(".expertise-heading");
+    if (!heading) return;
+
+    const subtitleEl = heading.querySelector(".text-style-allcaps");
+    const titleEl = heading.querySelector("h1, h2, h3");
+
+    if (subtitleEl && expertise.subtitle !== undefined) {
+      subtitleEl.textContent = expertise.subtitle || "";
+      if (expertise.hideSubtitle) {
+        subtitleEl.style.display = "none";
+      } else {
+        subtitleEl.style.display = "";
+      }
+    }
+
+    if (titleEl && expertise.title !== undefined) {
+      titleEl.textContent = expertise.title || "";
+    }
   }
 
   // Render results list
@@ -1512,11 +1572,8 @@
     });
 
     if (!data || !data.proposalData) {
-      // Still show content even if no data
-      console.warn(
-        "[Minimal Template] No data or proposalData, showing content anyway"
-      );
-      showContent();
+      // Keep loading until data arrives; do not show content
+      console.warn("[Minimal Template] No data or proposalData, waiting...");
       return;
     }
 
@@ -1560,6 +1617,8 @@
       renderAboutUsItems(pd.aboutUs.items);
 
       toggleSectionVisibility("about-section", pd.aboutUs.hideSection === true);
+    } else {
+      toggleSectionVisibility("about-section", true);
     }
 
     // Clients / Brands
@@ -1579,15 +1638,7 @@
 
     // Expertise
     if (pd.expertise) {
-      // Inject subtitle if exists
-      if (pd.expertise.subtitle) {
-        updateTextField("expertise-subtitle", pd.expertise.subtitle);
-        if (pd.expertise.hideSubtitle) {
-          toggleElementVisibility("expertise-subtitle", true);
-        }
-      }
-
-      updateTitleWithWordSpans("expertise-title", pd.expertise.title);
+      updateExpertiseHeading(pd.expertise);
       renderExpertiseTopics(
         "expertise-topics-list",
         pd.expertise.topics,
@@ -1597,6 +1648,8 @@
         ".section_expertise",
         pd.expertise.hideSection === true
       );
+    } else {
+      toggleSectionVisibility(".section_expertise", true);
     }
 
     // Results
@@ -1660,18 +1713,11 @@
 
     // Footer
     if (pd.footer) {
-      updateTextField("footer-callToAction", pd.footer.callToAction);
-      updateTextField("footer-validity", formatDate(data.projectValidUntil));
-      updateTextField("footer-disclaimer", pd.footer.disclaimer);
-      updateFooterEmail(pd.footer.email, data?.userEmail || data?.user?.email);
-      updateFooterPhone(pd.footer.phone);
-
-      if (pd.footer.hideCallToAction) {
-        toggleElementVisibility("footer-callToAction", true);
-      }
-      if (pd.footer.hideDisclaimer) {
-        toggleElementVisibility("footer-disclaimer", true);
-      }
+      renderFooter(
+        pd.footer,
+        data.projectValidUntil,
+        data?.userEmail || data?.user?.email
+      );
     }
 
     if (data.mainColor) {
@@ -1714,17 +1760,6 @@
       }, 150);
     }
   }
-
-  // Fallback: Show content after a timeout if no data is received
-  setTimeout(() => {
-    const loadingEl = document.getElementById("minimal-template-loading");
-    if (loadingEl && loadingEl.style.display !== "none") {
-      console.warn(
-        "Minimal template: No data received after 5s, showing content anyway"
-      );
-      showContent();
-    }
-  }, 5000); // 5 second timeout
 
   // Listen for postMessage from parent window
   window.addEventListener("message", function (event) {
