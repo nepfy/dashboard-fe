@@ -669,8 +669,8 @@
       .filter((t) => !t.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template (first child)
-    const template = container.querySelector(".expertise_card");
+    // Get template (first child) - use .expertise-card (with hyphen) not .expertise_card
+    const template = container.querySelector(".expertise-card");
     if (!template) return;
 
     // Clear container
@@ -682,22 +682,34 @@
 
       // Update icon (if provided and not globally hidden)
       if (!hideIcon && topic.icon) {
-        const iconContainer = clone.querySelector(".expertise_icon");
+        const iconContainer =
+          clone.querySelector(".expertise-icon_wrapper") ||
+          clone.querySelector(".expertise_icon");
         if (iconContainer) {
-          // Get SVG markup from icon name
-          const iconSvg = getIconSvg(topic.icon);
-          iconContainer.innerHTML = iconSvg;
+          // Check if it's a wrapper with img inside or direct icon container
+          const img = iconContainer.querySelector("img.expertise-icon");
+          if (img) {
+            // Replace img with SVG
+            const iconSvg = getIconSvg(topic.icon);
+            iconContainer.innerHTML = iconSvg;
+          } else {
+            // Direct icon container
+            const iconSvg = getIconSvg(topic.icon);
+            iconContainer.innerHTML = iconSvg;
+          }
         }
       } else if (hideIcon) {
-        const iconContainer = clone.querySelector(".expertise_icon");
+        const iconContainer =
+          clone.querySelector(".expertise-icon_wrapper") ||
+          clone.querySelector(".expertise_icon");
         if (iconContainer) {
           iconContainer.style.display = "none";
         }
       }
 
-      // Update title
+      // Update title - selector matches HTML structure
       const titleDiv = clone.querySelector(
-        ".text-weight-medium.text-size-medium"
+        ".text-size-medium.text-weight-medium"
       );
       if (titleDiv && !topic.hideTitleField) {
         titleDiv.textContent = topic.title || "";
@@ -705,12 +717,14 @@
         titleDiv.style.display = "none";
       }
 
-      // Update description
-      const descP = clone.querySelector(".opacity_80 p");
-      if (descP && !topic.hideDescription) {
-        descP.textContent = topic.description || "";
-      } else if (descP && topic.hideDescription) {
-        descP.style.display = "none";
+      // Update description - selector matches HTML structure (.expertise-paragraph .text-size-regular)
+      const descDiv = clone.querySelector(
+        ".expertise-paragraph .text-size-regular"
+      );
+      if (descDiv && !topic.hideDescription) {
+        descDiv.textContent = topic.description || "";
+      } else if (descDiv && topic.hideDescription) {
+        descDiv.style.display = "none";
       }
 
       container.appendChild(clone);
