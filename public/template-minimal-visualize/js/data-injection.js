@@ -444,7 +444,11 @@
       );
       return iconMap.AwardIcon; // Return default icon
     }
-    return icon;
+    // Replace white stroke with dark color for visibility on light backgrounds
+    // Use currentColor to inherit from CSS, or fallback to dark color
+    return icon
+      .replace(/stroke="white"/g, 'stroke="currentColor"')
+      .replace(/stroke='white'/g, "stroke='currentColor'");
   }
 
   // Hide loading and show content
@@ -686,10 +690,17 @@
           // Always replace the content with SVG (removes any existing img)
           iconContainer.innerHTML = iconSvg;
 
-          // Ensure the icon is visible
+          // Ensure the icon is visible and has proper color
           iconContainer.style.display = "";
           iconContainer.style.visibility = "visible";
           iconContainer.style.opacity = "1";
+          iconContainer.style.color = "#121212"; // Dark color for icons on light background
+
+          // Also set color on SVG elements directly
+          const svgElement = iconContainer.querySelector("svg");
+          if (svgElement) {
+            svgElement.style.color = "#121212";
+          }
         } else {
           console.warn(
             "[Minimal Template] Icon container not found for expertise card",
