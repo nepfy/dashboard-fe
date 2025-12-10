@@ -98,7 +98,7 @@ export default function FlashScope({
       <div className="bg-black">
         <div className="padding-global pt-80 pb-60">
           <div className="container-large">
-            <div id="investiment" className="scope-component">
+            <div id="investment" className="scope-component">
               <div className="scope-heading">
                 <div className="invest_left pt-4">
                   <div
@@ -136,10 +136,6 @@ export default function FlashScope({
                       className="text-size-medium"
                       editingId="investment-subtitle"
                     />
-                    <p className="text-size-small text-weight-light">
-                      Focus on the Aurore product growing while we cover the
-                      brand design
-                    </p>
                   </div>
                 </div>
 
