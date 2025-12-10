@@ -495,6 +495,54 @@
   //   });
   // }
 
+  // Render introduction marquee images
+  function renderIntroMarquee(services) {
+    const marqueeContent = document.querySelector(
+      "#intro-marquee-carousel .marquee_content"
+    );
+    if (!marqueeContent || !services || !Array.isArray(services)) return;
+
+    const templateItem = marqueeContent.querySelector("[data-marquee-content]");
+    if (!templateItem) return;
+
+    const visibleServices = services
+      .filter((s) => !s.hideService && !s.hideItem)
+      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+    if (visibleServices.length === 0) return;
+
+    marqueeContent.innerHTML = "";
+
+    const createItem = () => {
+      const item = templateItem.cloneNode(true);
+      item.innerHTML = "";
+
+      visibleServices.forEach((service) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "marquee-img";
+
+        const img = document.createElement("img");
+        img.className = "image";
+        img.loading = "lazy";
+        img.src = service.image || "";
+        img.srcset = service.image || "";
+        img.sizes = "(max-width: 1160px) 100vw, 1160px";
+        img.alt = service.serviceName || "Marquee image";
+
+        wrapper.appendChild(img);
+        item.appendChild(wrapper);
+      });
+
+      return item;
+    };
+
+    // Duplicate items to keep marquee seamless
+    const repeatCount = visibleServices.length > 0 ? 2 : 0;
+    for (let i = 0; i < repeatCount; i++) {
+      marqueeContent.appendChild(createItem());
+    }
+  }
+
   // Render team members list
   function renderTeamMembers(containerId, members) {
     const container = document.getElementById(containerId);
@@ -1480,6 +1528,10 @@
 
       if (!intro.elements || intro.elements.length === 0) {
         toggleSectionVisibility("marquee_component", true);
+      }
+
+      if (intro.services) {
+        renderIntroMarquee(intro.services);
       }
     }
 

@@ -231,7 +231,7 @@
   }
 
   function renderAboutUsItems(items) {
-    const container = document.getElementById("aboutus-items-container");
+    const container = document.getElementById("about-content");
     if (!container || !items || items.length === 0) {
       return;
     }
@@ -271,7 +271,7 @@
   }
 
   function renderClientsSection(clients) {
-    const sectionSelector = ".section_partners--dynamic";
+    const sectionSelector = "clients-section";
     if (!clients) {
       toggleSectionVisibility(sectionSelector, true);
       return;
@@ -295,14 +295,6 @@
       }
     }
 
-    // Inject description
-    if (clients.description) {
-      updateTextField("clients-description", clients.description);
-      if (clients.hideDescription) {
-        toggleElementVisibility("clients-description", true);
-      }
-    }
-
     // Inject paragraphs
     const paragraphs = clients.paragraphs || [];
     if (paragraphs[0]) {
@@ -313,13 +305,52 @@
     }
 
     const logosContainer = document.getElementById("clients-logos");
+    const logos = Array.isArray(clients.items)
+      ? clients.items
+          .filter((logo) => logo && logo.hideClient !== true)
+          .sort(
+            (a, b) =>
+              (a.sortOrder ?? Number.MAX_SAFE_INTEGER) -
+              (b.sortOrder ?? Number.MAX_SAFE_INTEGER)
+          )
+      : [];
+
     if (logosContainer) {
       const template =
         logosContainer.querySelector("[data-logo-template]") ||
-        document.createElement("div");
+        (() => {
+          const div = document.createElement("div");
+          div.className = "partners-logo";
+          div.setAttribute("data-logo-template", "true");
+          const img = document.createElement("img");
+          img.className = "logo-img";
+          img.loading = "lazy";
+          img.style.display = "none";
+          const text = document.createElement("div");
+          text.className = "logo-text";
+          text.textContent = "Sua marca";
+          div.appendChild(img);
+          div.appendChild(text);
+          return div;
+        })();
+
       logosContainer.innerHTML = "";
 
-      const logos = clients.items || [];
+      if (logos.length === 0) {
+        const placeholder = template.cloneNode(true);
+        placeholder.removeAttribute("data-logo-template");
+        const textElement = placeholder.querySelector(".logo-text");
+        if (textElement) {
+          textElement.textContent = "Sua marca";
+          textElement.style.display = "block";
+        }
+        const imgElement = placeholder.querySelector(".logo-img");
+        if (imgElement) {
+          imgElement.style.display = "none";
+        }
+        logosContainer.appendChild(placeholder);
+        return;
+      }
 
       logos.forEach((logo) => {
         const clone = template.cloneNode(true);
@@ -328,7 +359,10 @@
         const textElement = clone.querySelector(".logo-text");
         const imgElement = clone.querySelector(".logo-img");
 
-        if (logo.logo && imgElement) {
+        const hasLogoImage =
+          typeof logo.logo === "string" && logo.logo.trim().length > 0;
+
+        if (hasLogoImage && imgElement) {
           imgElement.src = logo.logo;
           imgElement.alt = logo.name || "Cliente";
           imgElement.style.display = "block";
@@ -340,27 +374,13 @@
             imgElement.style.display = "none";
           }
           if (textElement) {
-            textElement.textContent = logo.name || "";
+            textElement.textContent = logo.name || "Cliente";
             textElement.style.display = "block";
           }
         }
 
         logosContainer.appendChild(clone);
       });
-
-      if (logos.length === 0 && template) {
-        const placeholder = template.cloneNode(true);
-        placeholder.removeAttribute("data-logo-template");
-        const textElement = placeholder.querySelector(".logo-text");
-        if (textElement) {
-          textElement.textContent = "Sua marca";
-        }
-        const imgElement = placeholder.querySelector(".logo-img");
-        if (imgElement) {
-          imgElement.style.display = "none";
-        }
-        logosContainer.appendChild(placeholder);
-      }
     }
   }
 
@@ -454,25 +474,73 @@
   }
 
   // Render introduction services list
-  function renderIntroductionServices(containerId, services) {
-    const container = document.getElementById(containerId);
-    if (!container || !services || !Array.isArray(services)) return;
+  // function renderIntroductionServices(containerId, services) {
+  //   const container = document.getElementById(containerId);
+  //   if (!container || !services || !Array.isArray(services)) return;
 
-    // Filter out hidden services and sort
+  //   // Filter out hidden services and sort
+  //   const visibleServices = services
+  //     .filter((s) => !s.hideItem)
+  //     .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  //   // Clear existing content
+  //   container.innerHTML = "";
+
+  //   // Create new items
+  //   visibleServices.forEach((service) => {
+  //     const div = document.createElement("div");
+  //     div.className = "text-weight-medium";
+  //     div.textContent = service.serviceName || "";
+  //     container.appendChild(div);
+  //   });
+  // }
+
+  // Render introduction marquee images
+  function renderIntroMarquee(services) {
+    const marqueeContent = document.querySelector(
+      "#intro-marquee-carousel .marquee_content"
+    );
+    if (!marqueeContent || !services || !Array.isArray(services)) return;
+
+    const templateItem = marqueeContent.querySelector("[data-marquee-content]");
+    if (!templateItem) return;
+
     const visibleServices = services
-      .filter((s) => !s.hideItem)
+      .filter((s) => !s.hideService && !s.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Clear existing content
-    container.innerHTML = "";
+    if (visibleServices.length === 0) return;
 
-    // Create new items
-    visibleServices.forEach((service) => {
-      const div = document.createElement("div");
-      div.className = "text-weight-medium";
-      div.textContent = service.serviceName || "";
-      container.appendChild(div);
-    });
+    marqueeContent.innerHTML = "";
+
+    const createItem = () => {
+      const item = templateItem.cloneNode(true);
+      item.innerHTML = "";
+
+      visibleServices.forEach((service) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "marquee-img";
+
+        const img = document.createElement("img");
+        img.className = "image";
+        img.loading = "lazy";
+        img.src = service.image || "";
+        img.srcset = service.image || "";
+        img.sizes = "(max-width: 1160px) 100vw, 1160px";
+        img.alt = service.serviceName || "Marquee image";
+
+        wrapper.appendChild(img);
+        item.appendChild(wrapper);
+      });
+
+      return item;
+    };
+
+    // Duplicate items to keep marquee seamless
+    const repeatCount = visibleServices.length > 0 ? 2 : 0;
+    for (let i = 0; i < repeatCount; i++) {
+      marqueeContent.appendChild(createItem());
+    }
   }
 
   // Render team members list
@@ -1098,299 +1166,148 @@
 
   // Render FAQ items
   function renderFAQItems(containerId, items) {
-    const container = document.getElementById(containerId);
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".faq") ||
+      document.getElementById("faq-section");
+
     if (!container || !items || !Array.isArray(items)) return;
 
-    // Filter out hidden items and sort
     const visibleItems = items
       .filter((f) => !f.hideItem && !f.hideQuestion && !f.hideAnswer)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template (first accordion item)
-    const template = container.querySelector(".accordion_item");
+    // Use the first FAQ item as the template
+    const template =
+      container.querySelector(".faq-item") || container.firstElementChild;
     if (!template) return;
 
-    // Clear container
     container.innerHTML = "";
 
-    // Clone and populate for each FAQ item
-    visibleItems.forEach((item, index) => {
+    visibleItems.forEach((item) => {
       const clone = template.cloneNode(true);
 
-      // Update question number
-      const numberDiv = clone.querySelector(".accordion_left .opacity-60 div");
-      if (numberDiv) {
-        numberDiv.textContent = `${String(index + 1).padStart(2, "0")}.`;
+      // Question text
+      const questionEl =
+        clone.querySelector(".faq-top .text-size-regular.text-weight-medium") ||
+        clone.querySelector(".faq-top > div:first-child");
+      if (questionEl) {
+        questionEl.textContent = item.question || "";
       }
 
-      // Update question
-      const questionDiv = clone.querySelector(
-        ".accordion_left .text-weight-medium.text-size-medium"
-      );
-      if (questionDiv) {
-        questionDiv.textContent = item.question || "";
-      }
-
-      // Update answer
-      const answerP = clone.querySelector(
-        ".accordion_open .accordion_margin p"
-      );
-      if (answerP) {
-        answerP.textContent = item.answer || "";
-      }
-
-      // Set up accordion click handler
-      const accordionOpen = clone.querySelector(".accordion_open");
-      if (accordionOpen) {
-        // Initially set height to 0 (closed)
-        if (typeof gsap !== "undefined") {
-          gsap.set(accordionOpen, {
-            height: 0,
-            overflow: "hidden",
-          });
-        } else {
-          accordionOpen.style.height = "0";
-          accordionOpen.style.overflow = "hidden";
-        }
-
-        // Add click handler to toggle accordion
-        clone.addEventListener("click", (e) => {
-          e.stopPropagation();
-
-          // Kill any existing animations on this element
-          if (typeof gsap !== "undefined") {
-            gsap.killTweensOf(accordionOpen);
-          }
-
-          // Check current state - use data attribute for reliable tracking
-          const isOpen = clone.dataset.isOpen === "true";
-
-          if (isOpen) {
-            // Close accordion
-            clone.dataset.isOpen = "false";
-            if (typeof gsap !== "undefined") {
-              const currentHeight =
-                accordionOpen.scrollHeight || accordionOpen.offsetHeight;
-              gsap.fromTo(
-                accordionOpen,
-                { height: currentHeight },
-                {
-                  height: 0,
-                  duration: 0.4,
-                  ease: "power2.inOut",
-                }
-              );
-            } else {
-              accordionOpen.style.height = "0";
-            }
-          } else {
-            // Open accordion
-            clone.dataset.isOpen = "true";
-            if (typeof gsap !== "undefined") {
-              gsap.set(accordionOpen, { height: "auto" });
-              const naturalHeight = accordionOpen.scrollHeight;
-              gsap.set(accordionOpen, { height: 0 });
-              gsap.to(accordionOpen, {
-                height: naturalHeight,
-                duration: 0.4,
-                ease: "power2.inOut",
-              });
-            } else {
-              accordionOpen.style.height = "auto";
-            }
-          }
-        });
+      // Answer text
+      const answerEl = clone.querySelector(".faq-answer p");
+      if (answerEl) {
+        answerEl.textContent = item.answer || "";
       }
 
       container.appendChild(clone);
     });
   }
 
-  // Render plans list
-  function renderPlans(containerId, plans) {
-    const container = document.getElementById(containerId);
+  // Render plans list (investment cards)
+  function renderPlans(containerId, plans, planConfig = {}) {
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".invest-grid") ||
+      (document.getElementById("investiment") &&
+        document.getElementById("investiment").querySelector(".invest-grid"));
+
     if (!container || !plans || !Array.isArray(plans)) return;
 
-    // Filter out hidden plans and sort
+    if (planConfig.hideSection === true) {
+      container.style.display = "none";
+      return;
+    }
+    container.style.display = "";
+
     const visiblePlans = plans
       .filter((p) => !p.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template - prefer one without is--center to avoid inheriting the class
-    let template = container.querySelector(".pricing_card:not(.is--center)");
-    if (!template) {
-      template = container.querySelector(".pricing_card");
-    }
-    if (!template) return;
+    const regularTemplate =
+      container.querySelector(".invest-card:not(.is-best)") ||
+      container.querySelector(".invest-card");
+    const bestTemplate = container.querySelector(".invest-card.is-best");
+    const fallbackTemplate = regularTemplate || bestTemplate;
+    if (!fallbackTemplate) return;
 
-    // Clear container
     container.innerHTML = "";
 
-    // Clone and populate for each plan
     visiblePlans.forEach((plan) => {
-      const clone = template.cloneNode(true);
+      const templateToUse =
+        plan.recommended === true && bestTemplate
+          ? bestTemplate
+          : fallbackTemplate;
+      const clone = templateToUse.cloneNode(true);
 
-      // Normalize recommended value (handle both boolean and string)
-      const isRecommended = plan.recommended === true;
-
-      // Handle is--center class
-      clone.classList.remove("is--center");
-      if (isRecommended) {
-        clone.classList.add("is--center");
-      }
-
-      // Handle badge
-      let badge = clone.querySelector(".pricing_badge");
-      if (isRecommended) {
-        if (!badge) {
-          badge = document.createElement("div");
-          badge.className = "pricing_badge";
-          badge.innerHTML = `
-            <div class="embed_icon is--tiny w-embed">
-              <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4.56132 0.302089C4.75098 -0.0446829 5.24902 -0.0446824 5.43868 0.30209L6.6975 2.60375C6.74338 2.68764 6.81236 2.75662 6.89625 2.8025L9.19791 4.06132C9.54468 4.25098 9.54468 4.74902 9.19791 4.93868L6.89625 6.1975C6.81236 6.24338 6.74338 6.31236 6.6975 6.39625L5.43868 8.69791C5.24902 9.04468 4.75098 9.04468 4.56132 8.69791L3.3025 6.39625C3.25662 6.31236 3.18764 6.24338 3.10375 6.1975L0.802089 4.93868C0.455317 4.74902 0.455318 4.25098 0.80209 4.06132L3.10375 2.8025C3.18764 2.75662 3.25662 2.68764 3.3025 2.60375L4.56132 0.302089Z" fill="#E6E6E6"/>
-              </svg>
-            </div>
-            <div class="text-weight-medium">Melhor Oferta</div>
-          `;
-          clone.insertBefore(badge, clone.firstChild);
-        }
-        badge.style.display = "";
+      // Recommended flag
+      if (plan.recommended) {
+        clone.classList.add("is-best");
       } else {
-        if (badge) {
-          badge.style.display = "none";
-        }
+        clone.classList.remove("is-best");
       }
 
-      // Handle pricing_top.is--best-offer class
-      const pricingTop = clone.querySelector(".pricing_top");
-      if (pricingTop) {
-        if (isRecommended) {
-          pricingTop.classList.add("is--best-offer");
+      // Title
+      const titleEl =
+        clone.querySelector(".invest-best_wrap > div:first-child") ||
+        clone.querySelector(".invest-top > div:first-child");
+      if (titleEl) {
+        if (plan.hideTitleField) {
+          titleEl.style.display = "none";
         } else {
-          pricingTop.classList.remove("is--best-offer");
+          titleEl.style.display = "";
+          titleEl.textContent = plan.title || "";
         }
       }
 
-      // Update title
-      const titleDiv = clone.querySelector(
-        ".pricing_name .text-size-large.text-weight-semibold"
+      // Price
+      const priceEl = clone.querySelector(
+        ".invest-top .heading-style-h1.text-weight-medium"
       );
-      if (titleDiv && !plan.hideTitleField) {
-        titleDiv.textContent = plan.title || "";
-      } else if (titleDiv && plan.hideTitleField) {
-        titleDiv.style.display = "none";
-      }
-
-      // Update description
-      const descDiv = clone.querySelector(".pricing_description .opacity_80");
-      if (descDiv && !plan.hideDescription) {
-        descDiv.textContent = plan.description || "";
-      } else if (descDiv && plan.hideDescription) {
-        descDiv.style.display = "none";
-      }
-
-      // Update price
-      const priceDiv = clone.querySelector(
-        ".pricing_price .heading-style-h3.text-weight-medium"
-      );
-      if (priceDiv && !plan.hidePrice) {
-        priceDiv.textContent = formatCurrency(plan.value);
-      } else if (priceDiv && plan.hidePrice) {
-        priceDiv.style.display = "none";
-      }
-
-      // Update plan period
-      const periodDiv = clone.querySelector(".pricing_price .opacity_80");
-      if (periodDiv && !plan.hidePlanPeriod) {
-        periodDiv.textContent = plan.planPeriod || "";
-      } else if (periodDiv && plan.hidePlanPeriod) {
-        periodDiv.style.display = "none";
-      }
-
-      // Update included items
-      const includedContainer = clone.querySelector(".pricing_item-wrap");
-      if (includedContainer && plan.includedItems) {
-        const itemTemplate = includedContainer.querySelector(".pricing_item");
-        if (itemTemplate) {
-          includedContainer.innerHTML = "";
-          const visibleItems = (plan.includedItems || [])
-            .filter((item) => !item.hideItem)
-            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-
-          visibleItems.forEach((item) => {
-            const itemClone = itemTemplate.cloneNode(true);
-            const itemText = itemClone.querySelector(
-              ".pricing_item > div:last-child"
-            );
-            if (itemText) {
-              itemText.textContent = item.description || item.item || "";
-            }
-            includedContainer.appendChild(itemClone);
-          });
-        }
-      }
-
-      // Update button
-      const buttonText = clone.querySelector(
-        ".pricing_button .btn-magnetic__text-p"
-      );
-      if (buttonText && !plan.hideButtonTitle) {
-        buttonText.textContent = plan.buttonTitle || "Fechar pacote";
-        const duplicate = clone.querySelector(
-          ".pricing_button .btn-magnetic__text-p.is--duplicate"
-        );
-        if (duplicate) {
-          duplicate.textContent = plan.buttonTitle || "Fechar pacote";
-        }
-      } else if (buttonText && plan.hideButtonTitle) {
-        const button = clone.querySelector(".pricing_button");
-        if (button) {
-          button.style.display = "none";
-        }
-      }
-
-      // Handle btn-magnetic__text-p.is--black class for recommended plans
-      const allButtonTexts = clone.querySelectorAll(
-        ".pricing_button .btn-magnetic__text-p"
-      );
-      allButtonTexts.forEach((textEl) => {
-        if (isRecommended) {
-          textEl.classList.add("is--black");
+      if (priceEl) {
+        if (plan.hidePrice) {
+          priceEl.style.display = "none";
         } else {
-          textEl.classList.remove("is--black");
-        }
-      });
-
-      // Handle btn-magnetic__fill.is--white class for recommended plans
-      const buttonFill = clone.querySelector(
-        ".pricing_button .btn-magnetic__fill"
-      );
-      if (buttonFill) {
-        if (isRecommended) {
-          buttonFill.classList.add("is--white");
-        } else {
-          buttonFill.classList.remove("is--white");
+          priceEl.style.display = "";
+          priceEl.textContent = plan.value ? formatCurrency(plan.value) : "";
         }
       }
 
-      // Update button href
-      const buttonLink = clone.querySelector(
-        ".btn-animate-chars.is-invest"
+      // Description
+      const descEl = clone.querySelector(
+        ".invest-button-wrap .max-width-small .text-size-regular"
       );
+      if (descEl) {
+        if (plan.hideDescription) {
+          descEl.style.display = "none";
+        } else {
+          descEl.style.display = "";
+          descEl.textContent = plan.description || "";
+        }
+      }
+
+      // Button text and behavior
+      const buttonLink = clone.querySelector(".btn-animate-chars.is-invest");
+      const buttonText = clone.querySelector(".btn-animate-chars__text");
+      if (buttonText) {
+        if (plan.hideButtonTitle) {
+          buttonText.style.display = "none";
+        } else {
+          buttonText.style.display = "";
+          buttonText.textContent = plan.buttonTitle || "Fechar pacote";
+        }
+      }
+
       if (buttonLink) {
         const isViewingMode = window.parent && window.parent !== window;
-        
+        buttonLink.href = "#";
+        buttonLink.removeAttribute("target");
+        buttonLink.removeAttribute("rel");
+
         if (isViewingMode) {
-          // In viewing mode, send message to parent to open modal
-          buttonLink.href = "#";
-          buttonLink.removeAttribute("target");
-          buttonLink.removeAttribute("rel");
-          
           buttonLink.addEventListener("click", (e) => {
             e.preventDefault();
-            
-            // Send message to parent window with selected plan
             window.parent.postMessage(
               {
                 type: "PLAN_SELECTED",
@@ -1408,13 +1325,101 @@
           buttonLink.rel = "noopener noreferrer";
         } else if (plan.buttonHref) {
           buttonLink.href = plan.buttonHref;
-          buttonLink.target = "_blank";
-          buttonLink.rel = "noopener noreferrer";
+          if (plan.buttonWhereToOpen === "_self") {
+            buttonLink.target = "_self";
+          } else {
+            buttonLink.target = "_blank";
+            buttonLink.rel = "noopener noreferrer";
+          }
         }
+      }
+
+      // Recommended badge visibility
+      const bestTag = clone.querySelector(".invest-best-tag");
+      if (bestTag) {
+        bestTag.style.display = plan.recommended ? "" : "none";
+      }
+
+      // Included items
+      const includedContainer = clone.querySelector(".invest-feature");
+      if (includedContainer) {
+        const itemTemplate =
+          includedContainer.querySelector(".invest-list") ||
+          includedContainer.firstElementChild;
+        includedContainer.innerHTML = "";
+
+        const visibleItems = (plan.includedItems || [])
+          .filter((item) => !item.hideItem)
+          .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+        visibleItems.forEach((item) => {
+          const itemClone = itemTemplate
+            ? itemTemplate.cloneNode(true)
+            : document.createElement("div");
+          if (!itemTemplate) {
+            itemClone.className = "invest-list";
+          }
+          const itemText =
+            itemClone.querySelector(".text-size-regular") ||
+            itemClone.querySelector("div:last-child");
+          if (itemText) {
+            itemText.textContent = item.description || item.item || "";
+          }
+          includedContainer.appendChild(itemClone);
+        });
       }
 
       container.appendChild(clone);
     });
+
+    if (visiblePlans.length === 0) {
+      container.style.display = "none";
+    }
+  }
+
+  // Update investment header content and visibility
+  function renderInvestmentSection(investment) {
+    if (!investment) return;
+
+    const section = document.querySelector(".section_invest");
+    if (section) {
+      if (investment.hideSection === true) {
+        section.style.display = "none";
+      } else {
+        section.style.display = "";
+      }
+    }
+
+    const titleEl = document.querySelector(
+      ".invest-heading .about-heading_title h2"
+    );
+    if (titleEl) {
+      if (investment.hideTitle) {
+        titleEl.style.display = "none";
+      } else {
+        titleEl.style.display = "";
+        if (investment.title !== undefined && investment.title !== null) {
+          titleEl.textContent = investment.title || "";
+        }
+      }
+    }
+
+    const scopeEl = document.querySelector(
+      ".invest-heading .about-heading_left > div:nth-child(2)"
+    );
+    if (scopeEl) {
+      if (investment.hideProjectScope) {
+        scopeEl.style.display = "none";
+      } else {
+        scopeEl.style.display = "";
+        if (
+          investment.projectScope !== undefined &&
+          investment.projectScope !== null
+        ) {
+          scopeEl.textContent = investment.projectScope || "";
+        }
+      }
+    }
   }
 
   // Update button configuration
@@ -1438,7 +1443,7 @@
     // Update button links
     const isViewingMode = window.parent && window.parent !== window;
     const buttonLinks = document.querySelectorAll(".btn-animate-chars");
-    
+
     buttonLinks.forEach((link) => {
       // Skip if this is a pricing button (will be handled separately)
       if (link.classList.contains("is-invest")) {
@@ -1453,13 +1458,16 @@
         anchor.href = "#invest-section";
         anchor.removeAttribute("target");
         anchor.removeAttribute("rel");
-        
+
         // Add click handler to scroll smoothly
         anchor.addEventListener("click", (e) => {
           e.preventDefault();
           const investSection = document.querySelector(".section_invest");
           if (investSection) {
-            investSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            investSection.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
           }
         });
       } else if (
@@ -1485,12 +1493,14 @@
     console.log("[Minimal Template] injectData called", {
       hasData: !!data,
       hasProposalData: !!data?.proposalData,
-      projectName: data?.projectName
+      projectName: data?.projectName,
     });
-    
+
     if (!data || !data.proposalData) {
       // Still show content even if no data
-      console.warn("[Minimal Template] No data or proposalData, showing content anyway");
+      console.warn(
+        "[Minimal Template] No data or proposalData, showing content anyway"
+      );
       showContent();
       return;
     }
@@ -1501,7 +1511,7 @@
     // Simple text fields - Introduction
     if (pd.introduction) {
       const intro = pd.introduction;
-      updateTextField("introduction-username", intro.userName);
+      updateTextField("introduction-clientName", data.clientName);
       // introduction-email ID doesn't exist in HTML, skip it
       // updateTextField("introduction-email", intro.email);
       updateTitleWithWordSpans("introduction-title", intro.title);
@@ -1516,18 +1526,28 @@
         toggleElementVisibility("introduction-subtitle", true);
       }
 
-      // Render services list
-      renderIntroductionServices("introduction-services", intro.services);
+      if (!intro.elements || intro.elements.length === 0) {
+        toggleSectionVisibility("marquee_component", true);
+      }
+
+      if (intro.services) {
+        renderIntroMarquee(intro.services);
+      }
     }
 
     // About Us
     if (pd.aboutUs) {
-      updateTitleWithWordSpans("aboutus-title", pd.aboutUs.title);
+      updateTitleWithWordSpans("about-title", pd.aboutUs.title);
       renderAboutUsItems(pd.aboutUs.items);
-      toggleSectionVisibility(
-        ".section_about",
-        pd.aboutUs.hideSection === true
-      );
+
+      toggleSectionVisibility("about-section", pd.aboutUs.hideSection === true);
+    }
+
+    // Clients / Brands
+    if (pd.clients) {
+      renderClientsSection(pd.clients);
+    } else {
+      toggleSectionVisibility(".section_partners--dynamic", true);
     }
 
     // Team
@@ -1547,7 +1567,7 @@
           toggleElementVisibility("expertise-subtitle", true);
         }
       }
-      
+
       updateTitleWithWordSpans("expertise-title", pd.expertise.title);
       renderExpertiseTopics(
         "expertise-topics-list",
@@ -1580,13 +1600,6 @@
       );
     }
 
-    // Clients / Brands
-    if (pd.clients) {
-      renderClientsSection(pd.clients);
-    } else {
-      toggleSectionVisibility(".section_partners--dynamic", true);
-    }
-
     // Steps
     if (pd.steps) {
       renderSteps("steps-list", pd.steps.topics);
@@ -1600,44 +1613,30 @@
 
     // Investment
     if (pd.investment) {
-      updateTitleWithWordSpans("investment-title", pd.investment.title);
-      updateTextField("investment-projectScope", pd.investment.projectScope);
-
-      // Hide projectScope container if escope.hideSection is true or investment.hideProjectScope is true
-      const shouldHideProjectScope =
-        (pd.escope && pd.escope.hideSection === true) ||
-        pd.investment.hideProjectScope === true;
-      const projectScopeContainer = document.querySelector(".pricing_scope");
-      if (projectScopeContainer) {
-        if (shouldHideProjectScope) {
-          projectScopeContainer.style.display = "none";
-        } else {
-          projectScopeContainer.style.display = "";
-        }
-      }
+      const investmentData = {
+        ...pd.investment,
+        hideProjectScope:
+          (pd.escope && pd.escope.hideSection === true) ||
+          pd.investment.hideProjectScope === true,
+      };
+      renderInvestmentSection(investmentData);
     }
 
     // Plans
     if (pd.plans) {
-      renderPlans("plans-plansItems", pd.plans.plansItems);
+      renderPlans("invest-grid", pd.plans.plansItems, pd.plans);
     }
 
     // Handle pricing section visibility (investment and plans share the same section)
-    if (pd.investment || pd.plans) {
-      const investmentHidden =
-        pd.investment && pd.investment.hideSection === true;
-      const plansHidden = pd.plans && pd.plans.hideSection === true;
-      const shouldHidePricing =
-        pd.investment && pd.plans
-          ? investmentHidden && plansHidden
-          : investmentHidden || plansHidden;
-      toggleSectionVisibility(".section_pricing", shouldHidePricing);
-    }
+    const investmentHidden =
+      !pd.investment || pd.investment.hideSection === true;
+    const plansHidden = !pd.plans || pd.plans.hideSection === true;
+    toggleSectionVisibility(".section_invest", investmentHidden && plansHidden);
 
     // FAQ
     if (pd.faq) {
-      renderFAQItems("faq-items", pd.faq.items);
-      toggleSectionVisibility(".section_faq", pd.faq.hideSection === true);
+      renderFAQItems("faq-section", pd.faq.items);
+      toggleSectionVisibility("#faq-section", pd.faq.hideSection === true);
     }
 
     // Footer
@@ -1713,9 +1712,9 @@
     console.log("[Minimal Template] Received postMessage:", {
       type: event.data?.type,
       hasData: !!event.data?.data,
-      origin: event.origin
+      origin: event.origin,
     });
-    
+
     // Security: optionally verify origin
     // if (event.origin !== "http://localhost:3000") return;
 
@@ -1740,4 +1739,3 @@
     handleDataInjection(data);
   };
 })();
-
