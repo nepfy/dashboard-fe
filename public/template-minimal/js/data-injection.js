@@ -497,10 +497,20 @@
 
   // Render introduction marquee images
   function renderIntroMarquee(services) {
-    const marqueeContent = document.querySelector(
-      "#intro-marquee-carousel .marquee_content"
-    );
-    if (!marqueeContent || !services || !Array.isArray(services)) return;
+    const marqueeComponent =
+      document.getElementById("intro-marquee-carousel") ||
+      document.querySelector(".marquee_component");
+    const marqueeContent =
+      marqueeComponent && marqueeComponent.querySelector(".marquee_content");
+
+    if (
+      !marqueeComponent ||
+      !marqueeContent ||
+      !services ||
+      !Array.isArray(services)
+    ) {
+      return;
+    }
 
     const templateItem = marqueeContent.querySelector("[data-marquee-content]");
     if (!templateItem) return;
@@ -509,8 +519,12 @@
       .filter((s) => !s.hideService && !s.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    if (visibleServices.length === 0) return;
+    if (visibleServices.length === 0) {
+      marqueeComponent.style.display = "none";
+      return;
+    }
 
+    marqueeComponent.style.display = "";
     marqueeContent.innerHTML = "";
 
     const createItem = () => {
@@ -537,7 +551,8 @@
     };
 
     // Duplicate items to keep marquee seamless
-    const repeatCount = visibleServices.length > 0 ? 2 : 0;
+    // Duplicate items to keep marquee seamless (at least 2 loops)
+    const repeatCount = Math.max(2, Math.ceil(visibleServices.length / 3));
     for (let i = 0; i < repeatCount; i++) {
       marqueeContent.appendChild(createItem());
     }
@@ -1526,12 +1541,16 @@
         toggleElementVisibility("introduction-subtitle", true);
       }
 
-      if (!intro.elements || intro.elements.length === 0) {
-        toggleSectionVisibility("marquee_component", true);
-      }
-
-      if (intro.services) {
+      const hasVisibleServices =
+        Array.isArray(intro.services) &&
+        intro.services.some((s) => !s.hideService && !s.hideItem);
+      if (intro.hideMarquee === true) {
+        toggleSectionVisibility(".marquee_component", true);
+      } else if (hasVisibleServices) {
         renderIntroMarquee(intro.services);
+        toggleSectionVisibility(".marquee_component", false);
+      } else {
+        toggleSectionVisibility(".marquee_component", true);
       }
     }
 
