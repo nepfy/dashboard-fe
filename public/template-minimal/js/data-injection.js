@@ -1276,6 +1276,97 @@
         answerEl.textContent = item.answer || "";
       }
 
+      // Set up accordion functionality
+      const faqAnswer = clone.querySelector(".faq-answer");
+      const faqTop = clone.querySelector(".faq-top");
+      const faqArrow = clone.querySelector(".faq-arrow-img");
+
+      if (faqAnswer && faqTop) {
+        // Initially set height to 0 (closed)
+        if (typeof gsap !== "undefined") {
+          gsap.set(faqAnswer, {
+            height: 0,
+            overflow: "hidden",
+          });
+        } else {
+          faqAnswer.style.height = "0";
+          faqAnswer.style.overflow = "hidden";
+        }
+
+        // Add click handler to toggle accordion
+        faqTop.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          // Kill any existing animations on this element
+          if (typeof gsap !== "undefined") {
+            gsap.killTweensOf(faqAnswer);
+            if (faqArrow) {
+              gsap.killTweensOf(faqArrow);
+            }
+          }
+
+          // Check current state - use data attribute for reliable tracking
+          const isOpen = clone.dataset.isOpen === "true";
+
+          if (isOpen) {
+            // Close accordion
+            clone.dataset.isOpen = "false";
+            clone.classList.remove("is-open");
+            if (typeof gsap !== "undefined") {
+              const currentHeight =
+                faqAnswer.scrollHeight || faqAnswer.offsetHeight;
+              gsap.fromTo(
+                faqAnswer,
+                { height: currentHeight },
+                {
+                  height: 0,
+                  duration: 0.4,
+                  ease: "power2.inOut",
+                }
+              );
+              if (faqArrow) {
+                gsap.to(faqArrow, {
+                  rotation: 0,
+                  duration: 0.4,
+                  ease: "power2.inOut",
+                });
+              }
+            } else {
+              faqAnswer.style.height = "0";
+              if (faqArrow) {
+                faqArrow.style.transform = "rotate(0deg)";
+              }
+            }
+          } else {
+            // Open accordion
+            clone.dataset.isOpen = "true";
+            clone.classList.add("is-open");
+            if (typeof gsap !== "undefined") {
+              gsap.set(faqAnswer, { height: "auto" });
+              const naturalHeight = faqAnswer.scrollHeight;
+              gsap.set(faqAnswer, { height: 0 });
+              gsap.to(faqAnswer, {
+                height: naturalHeight,
+                duration: 0.4,
+                ease: "power2.inOut",
+              });
+              if (faqArrow) {
+                gsap.to(faqArrow, {
+                  rotation: 180,
+                  duration: 0.4,
+                  ease: "power2.inOut",
+                });
+              }
+            } else {
+              faqAnswer.style.height = "auto";
+              if (faqArrow) {
+                faqArrow.style.transform = "rotate(180deg)";
+              }
+            }
+          }
+        });
+      }
+
       container.appendChild(clone);
     });
   }
