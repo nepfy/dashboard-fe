@@ -215,6 +215,16 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   }, [isDirty]);
 
   const setProjectData = useCallback((data: TemplateData) => {
+    // Ensure expertise subtitle always exists (for minimal template)
+    if (data?.proposalData?.expertise) {
+      if (data.proposalData.expertise.subtitle === undefined) {
+        data.proposalData.expertise.subtitle = "";
+      }
+      if (data.proposalData.expertise.hideSubtitle === undefined) {
+        data.proposalData.expertise.hideSubtitle = false;
+      }
+    }
+
     setProjectDataState(data);
     setIsDirty(false);
     setError(null);
@@ -261,13 +271,33 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
       setProjectDataState((prev) => {
         if (!prev) return prev;
 
+        // Ensure expertise subtitle is always preserved/initialized
+        let finalUpdates = updates;
+        if (sectionName === "expertise") {
+          const expertiseUpdates = updates as Partial<ExpertiseSection>;
+          const currentExpertise = prev.proposalData?.expertise;
+          finalUpdates = {
+            ...currentExpertise,
+            ...expertiseUpdates,
+            // Ensure subtitle always exists
+            subtitle:
+              expertiseUpdates.subtitle !== undefined
+                ? expertiseUpdates.subtitle
+                : (currentExpertise?.subtitle ?? ""),
+            hideSubtitle:
+              expertiseUpdates.hideSubtitle !== undefined
+                ? expertiseUpdates.hideSubtitle
+                : (currentExpertise?.hideSubtitle ?? false),
+          } as Partial<ExpertiseSection>;
+        }
+
         const updated = {
           ...prev,
           proposalData: {
             ...prev.proposalData,
             [sectionName]: {
               ...prev.proposalData?.[sectionName],
-              ...updates,
+              ...finalUpdates,
             },
           } as ProposalData,
         };
@@ -581,6 +611,16 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
       setError(null);
 
       try {
+        // Ensure expertise subtitle exists before saving
+        if (projectData.proposalData?.expertise) {
+          if (projectData.proposalData.expertise.subtitle === undefined) {
+            projectData.proposalData.expertise.subtitle = "";
+          }
+          if (projectData.proposalData.expertise.hideSubtitle === undefined) {
+            projectData.proposalData.expertise.hideSubtitle = false;
+          }
+        }
+
         // Merge options into projectData if provided
         const dataToSave = {
           ...projectData,
@@ -591,6 +631,17 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
             isPublished: options.isPublished,
           }),
         };
+
+        // Debug: Log expertise data before saving
+        if (dataToSave.proposalData?.expertise) {
+          console.log("[EditorContext] Saving expertise data:", {
+            hasSubtitle: !!dataToSave.proposalData.expertise.subtitle,
+            subtitle: dataToSave.proposalData.expertise.subtitle,
+            hasTitle: !!dataToSave.proposalData.expertise.title,
+            title: dataToSave.proposalData.expertise.title,
+            fullExpertise: dataToSave.proposalData.expertise,
+          });
+        }
 
         const response = await fetch(`/api/projects/${projectData.id}`, {
           method: "PUT",

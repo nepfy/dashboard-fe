@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ExpertiseSection } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableImage from "#/app/editar/components/EditableImage";
@@ -65,8 +65,73 @@ export default function MinimalExpertise({
     updateExpertise,
     updateExpertiseTopic,
     reorderExpertiseTopics,
+    saveProject,
+    projectData,
   } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedTitleRef = useRef<string | undefined>(title);
+  const lastSavedSubtitleRef = useRef<string | undefined>(subtitle);
+  const isInitialMountRef = useRef(true);
+
+  // Initialize refs on mount
+  useEffect(() => {
+    if (isInitialMountRef.current) {
+      lastSavedTitleRef.current = projectData?.proposalData?.expertise?.title;
+      lastSavedSubtitleRef.current =
+        projectData?.proposalData?.expertise?.subtitle;
+      isInitialMountRef.current = false;
+    }
+  }, []);
+
+  // Auto-save when title or subtitle changes
+  useEffect(() => {
+    // Skip on initial mount
+    if (isInitialMountRef.current) {
+      return;
+    }
+
+    const currentTitle = projectData?.proposalData?.expertise?.title;
+    const currentSubtitle = projectData?.proposalData?.expertise?.subtitle;
+
+    // Check if title or subtitle changed
+    const titleChanged = currentTitle !== lastSavedTitleRef.current;
+    const subtitleChanged = currentSubtitle !== lastSavedSubtitleRef.current;
+
+    if (titleChanged || subtitleChanged) {
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      // Set new timeout to save after 500ms of no changes
+      saveTimeoutRef.current = setTimeout(async () => {
+        try {
+          await saveProject({ skipNavigation: true });
+          // Update refs after successful save
+          lastSavedTitleRef.current = currentTitle;
+          lastSavedSubtitleRef.current = currentSubtitle;
+          console.log("[MinimalExpertise] Auto-saved expertise:", {
+            title: currentTitle,
+            subtitle: currentSubtitle,
+          });
+        } catch (error) {
+          console.error("[MinimalExpertise] Error auto-saving:", error);
+        }
+      }, 500);
+    }
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [
+    projectData?.proposalData?.expertise?.title,
+    projectData?.proposalData?.expertise?.subtitle,
+    saveProject,
+  ]);
 
   const renderIcon = (iconName: string) => {
     return iconMap[iconName as keyof typeof iconMap];
@@ -248,7 +313,7 @@ export default function MinimalExpertise({
             grid-column-gap: 1.25rem;
             grid-row-gap: 1.25rem;
           }
-          
+
           .expertise-card {
             padding: 2rem 1.5rem;
           }
@@ -290,18 +355,18 @@ export default function MinimalExpertise({
                 {!hideSubtitle && (
                   <EditableText
                     value={subtitle || "TRANSFORME IDEIA EM RESULTADO"}
-                    onChange={(newSubtitle: string) =>
-                      updateExpertise({ subtitle: newSubtitle })
-                    }
+                    onChange={(newSubtitle: string) => {
+                      updateExpertise({ subtitle: newSubtitle });
+                    }}
                     className="text-style-allcaps text-size-small"
                     editingId="expertise-subtitle"
                   />
                 )}
                 <EditableText
                   value={title || ""}
-                  onChange={(newTitle: string) =>
-                    updateExpertise({ title: newTitle })
-                  }
+                  onChange={(newTitle: string) => {
+                    updateExpertise({ title: newTitle });
+                  }}
                   className="heading-style-h2"
                   editingId="expertise-title"
                 />
