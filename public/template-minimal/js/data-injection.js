@@ -428,163 +428,153 @@
       childrenCount: logosContainer.children.length,
     });
 
-      // Find template BEFORE clearing innerHTML
-      const existingTemplate = logosContainer.querySelector(
-        "[data-logo-template]"
-      );
-      let template;
+    // Find template BEFORE clearing innerHTML
+    const existingTemplate = logosContainer.querySelector(
+      "[data-logo-template]"
+    );
+    let template;
 
-      if (existingTemplate) {
-        template = existingTemplate;
-        console.log("[Minimal Template] Found existing template:", template);
-      } else {
-        // Create template if not found
-        template = document.createElement("div");
-        template.className = "partners-logo";
-        template.setAttribute("data-logo-template", "true");
-        const img = document.createElement("img");
-        img.className = "logo-img";
-        img.loading = "lazy";
-        img.style.display = "none";
-        const text = document.createElement("div");
-        text.className = "logo-text";
-        text.textContent = "Sua marca";
-        template.appendChild(img);
-        template.appendChild(text);
-        console.log("[Minimal Template] Created new template:", template);
+    if (existingTemplate) {
+      template = existingTemplate;
+      console.log("[Minimal Template] Found existing template:", template);
+    } else {
+      // Create template if not found
+      template = document.createElement("div");
+      template.className = "partners-logo";
+      template.setAttribute("data-logo-template", "true");
+      const img = document.createElement("img");
+      img.className = "logo-img";
+      img.loading = "lazy";
+      img.style.display = "none";
+      const text = document.createElement("div");
+      text.className = "logo-text";
+      text.textContent = "Sua marca";
+      template.appendChild(img);
+      template.appendChild(text);
+      console.log("[Minimal Template] Created new template:", template);
+    }
+
+    // Clear container AFTER capturing template
+    logosContainer.innerHTML = "";
+
+    if (logos.length === 0) {
+      const placeholder = template.cloneNode(true);
+      placeholder.removeAttribute("data-logo-template");
+      // Apply correct styling to placeholder (matches CSS)
+      placeholder.style.display = "flex";
+      placeholder.style.justifyContent = "center";
+      placeholder.style.alignItems = "center";
+      placeholder.style.aspectRatio = "1";
+      placeholder.style.backgroundColor =
+        "var(--background-color--background-tetriary)";
+      placeholder.style.transition = "background-color 0.4s";
+      placeholder.style.width = "100%";
+      placeholder.style.maxWidth = "180px";
+      placeholder.style.maxHeight = "180px";
+      placeholder.style.padding = "0";
+      const textElement = placeholder.querySelector(".logo-text");
+      if (textElement) {
+        textElement.textContent = "Sua marca";
+        textElement.style.display = "block";
+        textElement.style.fontSize = "1.1rem";
+        textElement.style.textAlign = "center";
+        textElement.style.width = "100%";
+      }
+      const imgElement = placeholder.querySelector(".logo-img");
+      if (imgElement) {
+        imgElement.style.display = "none";
+      }
+      logosContainer.appendChild(placeholder);
+      console.log("[Minimal Template] Added placeholder logo");
+      return;
+    }
+
+    console.log("[Minimal Template] Rendering", logos.length, "logos");
+
+    logos.forEach((logo, index) => {
+      const clone = template.cloneNode(true);
+      clone.removeAttribute("data-logo-template");
+
+      // Remove any .logo-embed elements that might be in the template (for SVG logos)
+      const logoEmbed = clone.querySelector(".logo-embed");
+      if (logoEmbed) {
+        logoEmbed.remove();
       }
 
-      // Clear container AFTER capturing template
-      logosContainer.innerHTML = "";
+      const textElement = clone.querySelector(".logo-text");
+      const imgElement = clone.querySelector(".logo-img");
 
-      if (logos.length === 0) {
-        const placeholder = template.cloneNode(true);
-        placeholder.removeAttribute("data-logo-template");
-        // Apply correct styling to placeholder (matches CSS)
-        placeholder.style.display = "flex";
-        placeholder.style.justifyContent = "center";
-        placeholder.style.alignItems = "center";
-        placeholder.style.aspectRatio = "1";
-        placeholder.style.backgroundColor =
-          "var(--background-color--background-tetriary)";
-        placeholder.style.transition = "background-color 0.4s";
-        placeholder.style.width = "100%";
-        placeholder.style.maxWidth = "180px";
-        placeholder.style.maxHeight = "180px";
-        placeholder.style.padding = "0";
-        const textElement = placeholder.querySelector(".logo-text");
+      const hasLogoImage =
+        typeof logo.logo === "string" && logo.logo.trim().length > 0;
+
+      console.log("[Minimal Template] Logo", index, ":", {
+        name: logo.name,
+        hasLogoImage: hasLogoImage,
+        logo: logo.logo,
+        textElementFound: !!textElement,
+        imgElementFound: !!imgElement,
+      });
+
+      // Ensure the container follows the correct flex layout (matches CSS)
+      clone.style.display = "flex";
+      clone.style.justifyContent = "center";
+      clone.style.alignItems = "center";
+      clone.style.aspectRatio = "1";
+      clone.style.backgroundColor =
+        "var(--background-color--background-tetriary)";
+      clone.style.transition = "background-color 0.4s";
+      clone.style.width = "100%";
+      clone.style.maxWidth = "180px";
+      clone.style.maxHeight = "180px";
+
+      if (hasLogoImage && imgElement) {
+        // Show image, hide text
+        imgElement.src = logo.logo;
+        imgElement.alt = logo.name || "Cliente";
+        imgElement.style.display = "block";
+        imgElement.style.visibility = "visible";
+        imgElement.style.width = "100%";
+        imgElement.style.height = "auto";
+        imgElement.style.maxWidth = "120px";
+        imgElement.style.maxHeight = "120px";
+        imgElement.style.objectFit = "contain";
+        imgElement.style.objectPosition = "center";
+        // Add padding to container for image spacing
+        clone.style.padding = "1rem";
         if (textElement) {
-          textElement.textContent = "Sua marca";
+          textElement.style.display = "none";
+        }
+      } else {
+        // Remove padding when showing text
+        clone.style.padding = "0";
+        // Hide image, show text
+        if (imgElement) {
+          imgElement.style.display = "none";
+          imgElement.src = "";
+        }
+        if (textElement) {
+          textElement.textContent = logo.name || "Cliente";
           textElement.style.display = "block";
+          textElement.style.visibility = "visible";
+          // Ensure text styling matches CSS
           textElement.style.fontSize = "1.1rem";
           textElement.style.textAlign = "center";
           textElement.style.width = "100%";
+          textElement.style.padding = "0";
         }
-        const imgElement = placeholder.querySelector(".logo-img");
-        if (imgElement) {
-          imgElement.style.display = "none";
-        }
-        logosContainer.appendChild(placeholder);
-        console.log("[Minimal Template] Added placeholder logo");
-        return;
       }
 
-      console.log("[Minimal Template] Rendering", logos.length, "logos");
+      logosContainer.appendChild(clone);
+      console.log("[Minimal Template] Appended logo", index, "to container");
+    });
 
-      logos.forEach((logo, index) => {
-        const clone = template.cloneNode(true);
-        clone.removeAttribute("data-logo-template");
-
-        // Remove any .logo-embed elements that might be in the template (for SVG logos)
-        const logoEmbed = clone.querySelector(".logo-embed");
-        if (logoEmbed) {
-          logoEmbed.remove();
-        }
-
-        const textElement = clone.querySelector(".logo-text");
-        const imgElement = clone.querySelector(".logo-img");
-
-        const hasLogoImage =
-          typeof logo.logo === "string" && logo.logo.trim().length > 0;
-
-        console.log("[Minimal Template] Logo", index, ":", {
-          name: logo.name,
-          hasLogoImage: hasLogoImage,
-          logo: logo.logo,
-          textElementFound: !!textElement,
-          imgElementFound: !!imgElement,
-        });
-
-        // Ensure the container follows the correct flex layout (matches CSS)
-        clone.style.display = "flex";
-        clone.style.justifyContent = "center";
-        clone.style.alignItems = "center";
-        clone.style.aspectRatio = "1";
-        clone.style.backgroundColor =
-          "var(--background-color--background-tetriary)";
-        clone.style.transition = "background-color 0.4s";
-        clone.style.width = "100%";
-        clone.style.maxWidth = "180px";
-        clone.style.maxHeight = "180px";
-
-        if (hasLogoImage && imgElement) {
-          // Show image, hide text
-          imgElement.src = logo.logo;
-          imgElement.alt = logo.name || "Cliente";
-          imgElement.style.display = "block";
-          imgElement.style.visibility = "visible";
-          imgElement.style.width = "100%";
-          imgElement.style.height = "auto";
-          imgElement.style.maxWidth = "120px";
-          imgElement.style.maxHeight = "120px";
-          imgElement.style.objectFit = "contain";
-          imgElement.style.objectPosition = "center";
-          // Add padding to container for image spacing
-          clone.style.padding = "1rem";
-          if (textElement) {
-            textElement.style.display = "none";
-          }
-        } else {
-          // Remove padding when showing text
-          clone.style.padding = "0";
-          // Hide image, show text
-          if (imgElement) {
-            imgElement.style.display = "none";
-            imgElement.src = "";
-          }
-          if (textElement) {
-            textElement.textContent = logo.name || "Cliente";
-            textElement.style.display = "block";
-            textElement.style.visibility = "visible";
-            // Ensure text styling matches CSS
-            textElement.style.fontSize = "1.1rem";
-            textElement.style.textAlign = "center";
-            textElement.style.width = "100%";
-            textElement.style.padding = "0";
-          }
-        }
-
-        logosContainer.appendChild(clone);
-        console.log("[Minimal Template] Appended logo", index, "to container");
-      });
-
-      console.log(
-        "[Minimal Template] Successfully injected",
-        logos.length,
-        "logos into #clients-logos container. Container now has",
-        logosContainer.children.length,
-        "children"
-      );
-
-      console.log(
-        "[Minimal Template] Rendered logos, container children:",
-        logosContainer.children.length
-      );
-    } else {
-      console.warn(
-        "[Minimal Template] logosContainer not found: clients-logos"
-      );
-    }
+    console.log(
+      "[Minimal Template] Successfully injected",
+      logos.length,
+      "logos into #clients-logos container. Container now has",
+      logosContainer.children.length,
+      "children"
+    );
   }
 
   // Icon mapping for expertise topics
