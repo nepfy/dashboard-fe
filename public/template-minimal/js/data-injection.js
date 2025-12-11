@@ -1396,7 +1396,12 @@
         clone.querySelector(".faq-top .text-size-regular.text-weight-medium") ||
         clone.querySelector(".faq-top > div:first-child");
       if (questionEl) {
-        questionEl.textContent = item.question || "";
+        const question = item.question || "";
+        const formattedQuestion =
+          question && !question.trim().endsWith("?")
+            ? `${question.trim()}?`
+            : question;
+        questionEl.textContent = formattedQuestion;
       }
 
       // Answer text
