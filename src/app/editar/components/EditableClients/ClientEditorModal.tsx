@@ -323,10 +323,37 @@ export default function ClientEditorModal({
     return updates ? { ...newItem, ...updates } : newItem;
   });
 
-  const sortedItems = [
-    ...itemsWithPendingUpdates,
-    ...newItemsWithPendingUpdates,
-  ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  // If items were reordered, use that order and apply any pending updates
+  let sortedItems: Client[];
+  if (pendingChanges.reorderedItems) {
+    // Create a map of all items (existing + new) with their updates
+    const allItemsMap = new Map<string, Client>();
+    [...itemsWithPendingUpdates, ...newItemsWithPendingUpdates].forEach(
+      (item) => {
+        if (item.id) {
+          allItemsMap.set(item.id, item);
+        }
+      }
+    );
+
+    // Use the reordered order, but apply any pending updates from the map
+    sortedItems = pendingChanges.reorderedItems
+      .map((item) => {
+        const updatedItem = allItemsMap.get(item.id!);
+        if (updatedItem) {
+          // Merge the reordered item with any pending updates
+          return { ...item, ...updatedItem };
+        }
+        return item;
+      })
+      .filter((item) => item !== undefined) as Client[];
+  } else {
+    // No reordering, just combine and sort
+    sortedItems = [
+      ...itemsWithPendingUpdates,
+      ...newItemsWithPendingUpdates,
+    ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  }
 
   if (!isOpen) return null;
 
