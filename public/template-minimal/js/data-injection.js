@@ -382,6 +382,8 @@
       updateTextField("clients-paragraph-2", paragraphs[1]);
     }
 
+    // Target the exact container where logos should be injected
+    // This is the <div class="w-layout-grid partners-grid" id="clients-logos"> container
     const logosContainer = document.getElementById("clients-logos");
 
     console.log("[Minimal Template] renderClientsSection:", {
@@ -389,6 +391,8 @@
       hasItems: !!clients.items,
       itemsLength: clients.items?.length || 0,
       items: clients.items,
+      containerFound: !!logosContainer,
+      containerId: logosContainer?.id,
     });
 
     const logos = Array.isArray(clients.items)
@@ -410,8 +414,19 @@
       logos: logos,
     });
 
-    if (logosContainer) {
-      console.log("[Minimal Template] Found logosContainer:", logosContainer);
+    if (!logosContainer) {
+      console.error(
+        "[Minimal Template] ERROR: Could not find #clients-logos container!"
+      );
+      return;
+    }
+
+    console.log("[Minimal Template] Found logosContainer:", {
+      element: logosContainer,
+      id: logosContainer.id,
+      className: logosContainer.className,
+      childrenCount: logosContainer.children.length,
+    });
 
       // Find template BEFORE clearing innerHTML
       const existingTemplate = logosContainer.querySelector(
@@ -445,11 +460,25 @@
       if (logos.length === 0) {
         const placeholder = template.cloneNode(true);
         placeholder.removeAttribute("data-logo-template");
-        placeholder.style.display = ""; // Ensure it's visible
+        // Apply correct styling to placeholder (matches CSS)
+        placeholder.style.display = "flex";
+        placeholder.style.justifyContent = "center";
+        placeholder.style.alignItems = "center";
+        placeholder.style.aspectRatio = "1";
+        placeholder.style.backgroundColor =
+          "var(--background-color--background-tetriary)";
+        placeholder.style.transition = "background-color 0.4s";
+        placeholder.style.width = "100%";
+        placeholder.style.maxWidth = "180px";
+        placeholder.style.maxHeight = "180px";
+        placeholder.style.padding = "0";
         const textElement = placeholder.querySelector(".logo-text");
         if (textElement) {
           textElement.textContent = "Sua marca";
           textElement.style.display = "block";
+          textElement.style.fontSize = "1.1rem";
+          textElement.style.textAlign = "center";
+          textElement.style.width = "100%";
         }
         const imgElement = placeholder.querySelector(".logo-img");
         if (imgElement) {
@@ -465,9 +494,12 @@
       logos.forEach((logo, index) => {
         const clone = template.cloneNode(true);
         clone.removeAttribute("data-logo-template");
-        clone.style.display = ""; // Ensure cloned element is visible
-        clone.style.visibility = "visible"; // Ensure visibility
-        clone.style.opacity = "1"; // Ensure opacity
+
+        // Remove any .logo-embed elements that might be in the template (for SVG logos)
+        const logoEmbed = clone.querySelector(".logo-embed");
+        if (logoEmbed) {
+          logoEmbed.remove();
+        }
 
         const textElement = clone.querySelector(".logo-text");
         const imgElement = clone.querySelector(".logo-img");
@@ -483,28 +515,66 @@
           imgElementFound: !!imgElement,
         });
 
+        // Ensure the container follows the correct flex layout (matches CSS)
+        clone.style.display = "flex";
+        clone.style.justifyContent = "center";
+        clone.style.alignItems = "center";
+        clone.style.aspectRatio = "1";
+        clone.style.backgroundColor =
+          "var(--background-color--background-tetriary)";
+        clone.style.transition = "background-color 0.4s";
+        clone.style.width = "100%";
+        clone.style.maxWidth = "180px";
+        clone.style.maxHeight = "180px";
+
         if (hasLogoImage && imgElement) {
+          // Show image, hide text
           imgElement.src = logo.logo;
           imgElement.alt = logo.name || "Cliente";
           imgElement.style.display = "block";
           imgElement.style.visibility = "visible";
+          imgElement.style.width = "100%";
+          imgElement.style.height = "auto";
+          imgElement.style.maxWidth = "120px";
+          imgElement.style.maxHeight = "120px";
+          imgElement.style.objectFit = "contain";
+          imgElement.style.objectPosition = "center";
+          // Add padding to container for image spacing
+          clone.style.padding = "1rem";
           if (textElement) {
             textElement.style.display = "none";
           }
         } else {
+          // Remove padding when showing text
+          clone.style.padding = "0";
+          // Hide image, show text
           if (imgElement) {
             imgElement.style.display = "none";
+            imgElement.src = "";
           }
           if (textElement) {
             textElement.textContent = logo.name || "Cliente";
             textElement.style.display = "block";
             textElement.style.visibility = "visible";
+            // Ensure text styling matches CSS
+            textElement.style.fontSize = "1.1rem";
+            textElement.style.textAlign = "center";
+            textElement.style.width = "100%";
+            textElement.style.padding = "0";
           }
         }
 
         logosContainer.appendChild(clone);
         console.log("[Minimal Template] Appended logo", index, "to container");
       });
+
+      console.log(
+        "[Minimal Template] Successfully injected",
+        logos.length,
+        "logos into #clients-logos container. Container now has",
+        logosContainer.children.length,
+        "children"
+      );
 
       console.log(
         "[Minimal Template] Rendered logos, container children:",
