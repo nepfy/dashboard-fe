@@ -237,6 +237,27 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
         });
       }
 
+      // Debug log for expertise updates
+      if (sectionName === "expertise") {
+        console.log("[EditorContext] Updating expertise:", {
+          sectionName,
+          updates,
+          currentSubtitle: projectData.proposalData?.expertise?.subtitle,
+          newSubtitle: (updates as Partial<ExpertiseSection>)?.subtitle,
+        });
+      }
+
+      // Debug log for clients updates
+      if (sectionName === "clients") {
+        console.log("[EditorContext] Updating clients:", {
+          sectionName,
+          updates,
+          currentItems: projectData.proposalData?.clients?.items?.length || 0,
+          newItems: (updates as Partial<ClientsSection>)?.items?.length || 0,
+          items: (updates as Partial<ClientsSection>)?.items,
+        });
+      }
+
       setProjectDataState((prev) => {
         if (!prev) return prev;
 
@@ -256,6 +277,24 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
           console.log("[EditorContext] State updated:", {
             introductionLogo: updated.proposalData?.introduction?.logo,
             fullIntroduction: updated.proposalData?.introduction,
+          });
+        }
+
+        // Debug log for expertise state update
+        if (sectionName === "expertise") {
+          console.log("[EditorContext] Expertise state updated:", {
+            expertiseSubtitle: updated.proposalData?.expertise?.subtitle,
+            fullExpertise: updated.proposalData?.expertise,
+          });
+        }
+
+        // Debug log for clients state update
+        if (sectionName === "clients") {
+          console.log("[EditorContext] Clients state updated:", {
+            clientsItemsLength:
+              updated.proposalData?.clients?.items?.length || 0,
+            clientsItems: updated.proposalData?.clients?.items,
+            fullClients: updated.proposalData?.clients,
           });
         }
 
@@ -313,6 +352,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
   const updateClients = useCallback(
     (data: Partial<ClientsSection>) => {
+      console.log("[EditorContext] updateClients called with:", data);
       updateSection("clients", data);
     },
     [updateSection]
@@ -320,6 +360,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
   const updateExpertise = useCallback(
     (data: Partial<ExpertiseSection>) => {
+      console.log("[EditorContext] updateExpertise called with:", data);
       updateSection("expertise", data);
     },
     [updateSection]

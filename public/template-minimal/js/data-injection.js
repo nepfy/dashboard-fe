@@ -412,24 +412,34 @@
 
     if (logosContainer) {
       console.log("[Minimal Template] Found logosContainer:", logosContainer);
-      const template =
-        logosContainer.querySelector("[data-logo-template]") ||
-        (() => {
-          const div = document.createElement("div");
-          div.className = "partners-logo";
-          div.setAttribute("data-logo-template", "true");
-          const img = document.createElement("img");
-          img.className = "logo-img";
-          img.loading = "lazy";
-          img.style.display = "none";
-          const text = document.createElement("div");
-          text.className = "logo-text";
-          text.textContent = "Sua marca";
-          div.appendChild(img);
-          div.appendChild(text);
-          return div;
-        })();
 
+      // Find template BEFORE clearing innerHTML
+      const existingTemplate = logosContainer.querySelector(
+        "[data-logo-template]"
+      );
+      let template;
+
+      if (existingTemplate) {
+        template = existingTemplate;
+        console.log("[Minimal Template] Found existing template:", template);
+      } else {
+        // Create template if not found
+        template = document.createElement("div");
+        template.className = "partners-logo";
+        template.setAttribute("data-logo-template", "true");
+        const img = document.createElement("img");
+        img.className = "logo-img";
+        img.loading = "lazy";
+        img.style.display = "none";
+        const text = document.createElement("div");
+        text.className = "logo-text";
+        text.textContent = "Sua marca";
+        template.appendChild(img);
+        template.appendChild(text);
+        console.log("[Minimal Template] Created new template:", template);
+      }
+
+      // Clear container AFTER capturing template
       logosContainer.innerHTML = "";
 
       if (logos.length === 0) {
@@ -456,6 +466,8 @@
         const clone = template.cloneNode(true);
         clone.removeAttribute("data-logo-template");
         clone.style.display = ""; // Ensure cloned element is visible
+        clone.style.visibility = "visible"; // Ensure visibility
+        clone.style.opacity = "1"; // Ensure opacity
 
         const textElement = clone.querySelector(".logo-text");
         const imgElement = clone.querySelector(".logo-img");
@@ -467,12 +479,15 @@
           name: logo.name,
           hasLogoImage: hasLogoImage,
           logo: logo.logo,
+          textElementFound: !!textElement,
+          imgElementFound: !!imgElement,
         });
 
         if (hasLogoImage && imgElement) {
           imgElement.src = logo.logo;
           imgElement.alt = logo.name || "Cliente";
           imgElement.style.display = "block";
+          imgElement.style.visibility = "visible";
           if (textElement) {
             textElement.style.display = "none";
           }
@@ -483,10 +498,12 @@
           if (textElement) {
             textElement.textContent = logo.name || "Cliente";
             textElement.style.display = "block";
+            textElement.style.visibility = "visible";
           }
         }
 
         logosContainer.appendChild(clone);
+        console.log("[Minimal Template] Appended logo", index, "to container");
       });
 
       console.log(
@@ -878,8 +895,13 @@
     const heading = document.querySelector(".expertise-heading");
     if (!heading) return;
 
-    const subtitleEl = heading.querySelector(".text-style-allcaps");
-    const titleEl = heading.querySelector("h1, h2, h3");
+    // Use ID directly for subtitle (more reliable)
+    const subtitleEl =
+      document.getElementById("expertise-subtitle") ||
+      heading.querySelector(".text-style-allcaps");
+    const titleEl =
+      document.getElementById("expertise-title") ||
+      heading.querySelector("h1, h2, h3");
 
     if (subtitleEl && expertise.subtitle !== undefined) {
       subtitleEl.textContent = expertise.subtitle || "";

@@ -562,7 +562,9 @@ function convertMinimalToProposalData(
     expertise: {
       hideSection: proposal.expertise.hideSection || false,
       title: requireString(proposal.expertise.title, "expertise.title"),
-      hideTitle: false,
+      hideTitle: proposal.expertise.hideTitle ?? false,
+      subtitle: proposal.expertise.subtitle || "",
+      hideSubtitle: proposal.expertise.hideSubtitle ?? false,
       topics: ensureArray(proposal.expertise.topics, "expertise.topics").map(
         (topic, index) => ({
           id: requireString(topic.id, `expertise.topics[${index}].id`),

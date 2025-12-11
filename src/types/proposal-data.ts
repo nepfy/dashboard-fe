@@ -62,6 +62,8 @@ export interface ProposalData {
     hideSection?: boolean;
     title?: string;
     hideTitle?: boolean;
+    subtitle?: string;
+    hideSubtitle?: boolean;
     topics?: Array<{
       title: string;
       description: string;

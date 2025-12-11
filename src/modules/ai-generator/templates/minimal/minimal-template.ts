@@ -92,6 +92,7 @@ export interface MinimalExpertiseSection {
   hideSection?: boolean;
   subtitle?: string;
   hideSubtitle?: boolean;
+  hideTitle?: boolean;
   title: string;
   hideIcon?: boolean;
   topics?: MinimalExpertiseTopic[];
