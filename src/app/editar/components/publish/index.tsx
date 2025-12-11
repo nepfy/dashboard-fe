@@ -8,7 +8,7 @@ export default function Publish() {
   const isAlreadyPublished = projectData?.isPublished ?? false;
 
   const handlePublish = async () => {
-    if (isSaving || (!isDirty && isAlreadyPublished)) {
+    if (isSaving) {
       return;
     }
 
@@ -17,7 +17,7 @@ export default function Publish() {
         projectStatus: "active",
         isPublished: true,
       });
-      
+
       // Track proposal published
       if (projectData?.id) {
         trackProposalPublished({
@@ -26,7 +26,7 @@ export default function Publish() {
           template_type: projectData.templateType,
         });
       }
-      
+
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
@@ -34,12 +34,15 @@ export default function Publish() {
     }
   };
 
+  // Only disable if saving or if there are no changes and project is not published yet
+  const isDisabled = isSaving || (!isDirty && !isAlreadyPublished);
+
   return (
     <button
       onClick={handlePublish}
-      disabled={isSaving || (!isDirty && isAlreadyPublished)}
+      disabled={isDisabled}
       className={`flex w-full transform items-center justify-center rounded-[12px] px-5 py-3 text-sm font-medium shadow-lg transition-all duration-200 hover:shadow-xl sm:w-auto ${
-        isSaving || (!isDirty && isAlreadyPublished)
+        isDisabled
           ? "cursor-not-allowed bg-gray-400 text-gray-200"
           : "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
       }`}

@@ -53,21 +53,23 @@ function SortableItem({ item, onDeleteItem }: SortableItemProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 rounded-lg"
+      className="flex items-stretch gap-3 rounded-lg"
     >
       {/* Drag Handle */}
       <div
         {...attributes}
         {...listeners}
-        className="hover:bg-white-neutral-light-300 min-h-full flex-1 cursor-grab rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
+        className="hover:bg-white-neutral-light-300 flex min-h-[112px] w-10 cursor-grab items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA] active:cursor-grabbing"
       >
-        <GrabIcon />
+        <div className="scale-100">
+          <GrabIcon />
+        </div>
       </div>
 
-      {/* Logo/Name Field */}
-      <div className="flex flex-1 items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA] px-4 py-2">
+      {/* Content */}
+      <div className="flex flex-1 items-center gap-3 rounded-[10px] border border-[#E0E3E9] bg-white px-3 py-2">
         {item.logo ? (
-          <div className="relative h-12 w-12">
+          <div className="relative h-12 w-12 flex-shrink-0">
             <Image
               src={item.logo}
               alt={item.name || "Client logo"}
@@ -75,18 +77,17 @@ function SortableItem({ item, onDeleteItem }: SortableItemProps) {
               style={{ objectFit: "contain" }}
             />
           </div>
-        ) : (
-          <span className="font-medium text-[#161616]">
-            {item.name || "Cliente sem nome"}
-          </span>
-        )}
+        ) : null}
+        <div className="flex-1 text-left font-medium text-[#161616]">
+          {item.name || "Cliente sem nome"}
+        </div>
       </div>
 
       {/* Delete Button */}
-      <div className="hover:bg-white-neutral-light-300 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
+      <div className="hover:bg-white-neutral-light-300 flex h-10 w-10 cursor-pointer items-center justify-center self-center rounded border border-[#DBDDDF] bg-[#F6F8FA]">
         <button
           onClick={() => onDeleteItem(item.id!)}
-          className="cursor-pointer rounded p-1 text-[#D00003]"
+          className="cursor-pointer rounded p-2 text-[#D00003]"
         >
           <svg
             className="h-4 w-4"
@@ -157,28 +158,26 @@ export default function OrganizeTab({
   }
 
   return (
-    <div className="mt-4 max-h-[300px] space-y-3 overflow-y-auto pb-14">
-      <div className="space-y-4">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
+    <div className="mt-4 space-y-4 pb-6">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={items.map((item) => item.id!)}
+          strategy={verticalListSortingStrategy}
         >
-          <SortableContext
-            items={items.map((item) => item.id!)}
-            strategy={verticalListSortingStrategy}
-          >
-            {items.map((item) => (
-              <SortableItem
-                key={item.id}
-                item={item}
-                onDeleteItem={onDeleteItem}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
-      </div>
+          {items.map((item) => (
+            <SortableItem
+              key={item.id}
+              item={item}
+              onDeleteItem={onDeleteItem}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
