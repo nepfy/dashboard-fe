@@ -10,7 +10,6 @@ interface MinimalClientsProps extends ClientsSection {
 }
 
 export default function MinimalClients({
-  hideSection,
   title,
   hideTitle,
   paragraphs,
@@ -56,20 +55,6 @@ export default function MinimalClients({
   };
 
   const logos = items && items.length > 0 ? items : [];
-
-  // DEBUG: Log incoming data from AI
-  console.log("🔍 MinimalClients - Incoming Props:", {
-    hasTitle: !!title,
-    titleLength: title?.length || 0,
-    titlePreview: title?.substring(0, 50),
-    hasParagraphs: !!paragraphs,
-    paragraphsCount: paragraphs?.length || 0,
-    paragraph1Preview: paragraphs?.[0]?.substring(0, 50),
-    paragraph2Preview: paragraphs?.[1]?.substring(0, 50),
-    itemsCount: items?.length || 0,
-    hideSection,
-    hideTitle,
-  });
 
   // Always ensure we have 12 clients for 2x6 grid
   const logoDefaults =

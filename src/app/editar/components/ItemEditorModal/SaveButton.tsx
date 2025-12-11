@@ -3,18 +3,43 @@
 interface SaveButtonProps {
   onSave: () => void;
   hasChanges: boolean;
+  isLoading?: boolean;
 }
 
 // Separate components to force complete remount
-function EnabledSaveButton({ onSave }: { onSave: () => void }) {
+function EnabledSaveButton({
+  onSave,
+  isLoading = false,
+}: {
+  onSave: () => void;
+  isLoading?: boolean;
+}) {
   return (
     <div className="bg-white-neutral-light-100 w-full flex-shrink-0 pt-2">
       <button
-        onClick={onSave}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!isLoading) {
+            onSave();
+          }
+        }}
         type="button"
-        className="flex w-full transform cursor-pointer items-center justify-center gap-1 rounded-[12px] bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 hover:from-purple-700 hover:to-blue-700"
+        disabled={isLoading}
+        className={`flex w-full transform items-center justify-center gap-1 rounded-[12px] px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 ${
+          isLoading
+            ? "cursor-not-allowed bg-gray-400 opacity-50"
+            : "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+        }`}
       >
-        Salvar Alterações
+        {isLoading ? (
+          <>
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+            Salvando...
+          </>
+        ) : (
+          "Salvar Alterações"
+        )}
       </button>
     </div>
   );
@@ -34,12 +59,16 @@ function DisabledSaveButton() {
   );
 }
 
-export default function SaveButton({ onSave, hasChanges }: SaveButtonProps) {
+export default function SaveButton({
+  onSave,
+  hasChanges,
+  isLoading = false,
+}: SaveButtonProps) {
   // Render completely different components based on hasChanges
   // No keys needed on children since parent has key that changes
   // This forces React to unmount/remount completely when parent key changes
   if (hasChanges) {
-    return <EnabledSaveButton onSave={onSave} />;
+    return <EnabledSaveButton onSave={onSave} isLoading={isLoading} />;
   }
 
   return <DisabledSaveButton />;
