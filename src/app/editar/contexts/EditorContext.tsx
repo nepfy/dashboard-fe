@@ -227,10 +227,20 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     ) => {
       if (!projectData) return;
 
+      // Debug log for introduction updates
+      if (sectionName === "introduction") {
+        console.log("[EditorContext] Updating introduction:", {
+          sectionName,
+          updates,
+          currentLogo: projectData.proposalData?.introduction?.logo,
+          newLogo: (updates as Partial<IntroductionSection>)?.logo,
+        });
+      }
+
       setProjectDataState((prev) => {
         if (!prev) return prev;
 
-        return {
+        const updated = {
           ...prev,
           proposalData: {
             ...prev.proposalData,
@@ -240,6 +250,16 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
             },
           } as ProposalData,
         };
+
+        // Debug log after state update
+        if (sectionName === "introduction") {
+          console.log("[EditorContext] State updated:", {
+            introductionLogo: updated.proposalData?.introduction?.logo,
+            fullIntroduction: updated.proposalData?.introduction,
+          });
+        }
+
+        return updated;
       });
 
       setIsDirty(true);

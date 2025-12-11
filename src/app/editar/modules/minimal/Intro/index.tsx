@@ -33,6 +33,8 @@ export default function MinimalIntro({
   // Use clientName from introduction section, fallback to projectData.clientName or userName for backward compatibility
   const displayClientName =
     clientName || projectData?.clientName || userName || "Cliente";
+  // Use userName for navigation (not clientName)
+  const displayUserName = userName || "";
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
   const [isMarqueeModalOpen, setIsMarqueeModalOpen] = useState<boolean>(false);
@@ -305,12 +307,12 @@ export default function MinimalIntro({
                     editingId="intro-logo"
                   />
                   <EditableText
-                    value={displayClientName}
-                    onChange={(newClientName: string) =>
-                      updateIntroduction({ clientName: newClientName })
+                    value={displayUserName}
+                    onChange={(newUserName: string) =>
+                      updateIntroduction({ userName: newUserName })
                     }
                     className="nav_brand"
-                    editingId="intro-clientName-navbar"
+                    editingId="intro-userName-navbar"
                   />
                 </div>
                 <div
@@ -352,7 +354,9 @@ export default function MinimalIntro({
                   <EditableAvatar
                     imageUrl={clientPhoto}
                     onImageChange={(newPhoto: string | null) =>
-                      updateIntroduction({ clientPhoto: newPhoto || undefined })
+                      updateIntroduction({
+                        clientPhoto: newPhoto ? newPhoto : undefined,
+                      })
                     }
                     size="lg"
                     editingId="intro-clientPhoto"

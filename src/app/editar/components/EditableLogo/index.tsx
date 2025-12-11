@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useImageUpload } from "#/hooks/useImageUpload";
 import { useEditor } from "../../contexts/EditorContext";
 
@@ -20,13 +20,58 @@ export default function EditableLogo({
   editingId,
   size = "md",
 }: EditableLogoProps) {
-  const { activeEditingId, setActiveEditingId } = useEditor();
+  const { activeEditingId, setActiveEditingId, saveProject, projectData } =
+    useEditor();
   const { uploadImage, isUploading } = useImageUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [shouldAutoSave, setShouldAutoSave] = useState(false);
+  const previousLogoRef = useRef<string | null | undefined>(
+    projectData?.proposalData?.introduction?.logo
+  );
 
   const isEditing = activeEditingId === editingId;
   const canInteract = activeEditingId === null || isEditing;
+
+  // Auto-save when logo changes in projectData
+  useEffect(() => {
+    const currentLogo = projectData?.proposalData?.introduction?.logo;
+
+    // Only auto-save if logo actually changed and we have a project
+    if (
+      shouldAutoSave &&
+      projectData?.id &&
+      previousLogoRef.current !== currentLogo
+    ) {
+      const saveTimeout = setTimeout(async () => {
+        try {
+          console.log("[EditableLogo] Auto-saving after logo change:", {
+            previousLogo: previousLogoRef.current,
+            currentLogo,
+            projectId: projectData.id,
+            hasProposalData: !!projectData.proposalData,
+            introductionLogo: projectData.proposalData?.introduction?.logo,
+            fullIntroduction: projectData.proposalData?.introduction,
+          });
+          await saveProject?.({ skipNavigation: true });
+          setShouldAutoSave(false);
+          previousLogoRef.current = currentLogo;
+        } catch (saveError) {
+          console.error("Error auto-saving after logo change:", saveError);
+          setShouldAutoSave(false);
+        }
+      }, 500); // Increased delay to ensure state is fully updated
+
+      return () => clearTimeout(saveTimeout);
+    }
+  }, [shouldAutoSave, projectData, saveProject]);
+
+  // Update ref when logoUrl prop changes (for initial load)
+  useEffect(() => {
+    if (projectData?.proposalData?.introduction?.logo !== undefined) {
+      previousLogoRef.current = projectData.proposalData.introduction.logo;
+    }
+  }, [projectData?.proposalData?.introduction?.logo]);
 
   const sizeClasses = {
     sm: "w-8 h-8",
@@ -36,11 +81,11 @@ export default function EditableLogo({
 
   const handleClick = () => {
     if (!canInteract || isUploading) return;
-    
+
     if (!isEditing) {
       setActiveEditingId(editingId);
     }
-    
+
     fileInputRef.current?.click();
   };
 
@@ -49,7 +94,12 @@ export default function EditableLogo({
     if (!file) return;
 
     // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/svg+xml",
+    ];
     if (!allowedTypes.includes(file.type)) {
       alert("Tipo de arquivo não suportado. Use apenas JPG, PNG ou SVG.");
       return;
@@ -64,9 +114,11 @@ export default function EditableLogo({
 
     try {
       const result = await uploadImage(file);
-      
+
       if (result.success && result.data) {
         onLogoChange?.(result.data.url);
+        // Trigger auto-save via useEffect
+        setShouldAutoSave(true);
       } else {
         alert(result.error || "Erro ao fazer upload da logo");
       }
@@ -84,9 +136,11 @@ export default function EditableLogo({
   const handleRemoveLogo = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!canInteract) return;
-    
+
     onLogoChange?.(null);
     setActiveEditingId(null);
+    // Trigger auto-save via useEffect
+    setShouldAutoSave(true);
   };
 
   const shouldShowBorder = isHovered || isEditing;
@@ -98,18 +152,7 @@ export default function EditableLogo({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`
-          ${sizeClasses[size]}
-          relative
-          overflow-hidden
-          rounded-lg
-          transition-all
-          duration-200
-          cursor-pointer
-          ${shouldShowBorder ? "ring-2 ring-[#0170D6]" : "ring-1 ring-white/20"}
-          ${!canInteract ? "opacity-50 cursor-not-allowed" : ""}
-          ${isUploading ? "opacity-50" : ""}
-        `}
+        className={` ${sizeClasses[size]} relative cursor-pointer overflow-hidden rounded-lg transition-all duration-200 ${shouldShowBorder ? "ring-2 ring-[#0170D6]" : "ring-1 ring-white/20"} ${!canInteract ? "cursor-not-allowed opacity-50" : ""} ${isUploading ? "opacity-50" : ""} `}
         onClick={handleClick}
       >
         {logoUrl ? (
@@ -117,20 +160,20 @@ export default function EditableLogo({
             <img
               src={logoUrl}
               alt="Logo"
-              className="w-full h-full object-contain bg-white/5"
+              className="h-full w-full bg-white/5 object-contain"
             />
             {shouldShowBorder && canInteract && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <span className="text-white text-[10px] font-medium">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <span className="text-[10px] font-medium text-white">
                   {isUploading ? "Enviando..." : "Alterar"}
                 </span>
               </div>
             )}
           </>
         ) : (
-          <div className="w-full h-full bg-white/5 flex items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center bg-white/5">
             <svg
-              className="w-5 h-5 text-white/40"
+              className="h-5 w-5 text-white/40"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -143,8 +186,8 @@ export default function EditableLogo({
               />
             </svg>
             {shouldShowBorder && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <span className="text-white text-[10px] font-medium">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <span className="text-[10px] font-medium text-white">
                   {isUploading ? "Enviando..." : "Logo"}
                 </span>
               </div>
@@ -156,11 +199,11 @@ export default function EditableLogo({
       {logoUrl && shouldShowBorder && canInteract && !isUploading && (
         <button
           onClick={handleRemoveLogo}
-          className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors z-10"
+          className="absolute -top-2 -right-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
           title="Remover logo"
         >
           <svg
-            className="w-3 h-3"
+            className="h-3 w-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -185,4 +228,3 @@ export default function EditableLogo({
     </div>
   );
 }
-

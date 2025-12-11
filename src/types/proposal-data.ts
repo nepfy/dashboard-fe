@@ -17,6 +17,9 @@ export interface ProposalData {
       hideService?: boolean;
       sortOrder?: number;
     }>;
+    logo?: string;
+    clientPhoto?: string;
+    clientName?: string;
   };
 
   // About Us Section

@@ -210,6 +210,47 @@
     }
   }
 
+  // Render navigation logo and username
+  function renderNavigationBrand(logo, userName) {
+    const navBrandElement = document.getElementById("introduction-logo");
+    if (!navBrandElement) {
+      console.warn(
+        "[Minimal Template] Navigation brand element not found: introduction-logo"
+      );
+      return;
+    }
+
+    // Clear existing content
+    navBrandElement.innerHTML = "";
+
+    // If logo is provided, render it
+    if (logo) {
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.src = logo;
+      img.alt = userName || "Logo";
+      img.className = "nav_logo";
+      navBrandElement.appendChild(img);
+    }
+
+    // If username is provided, add it after the logo (or as fallback if no logo)
+    if (userName) {
+      if (logo) {
+        // Logo exists, add username as a span element after the logo
+        const userNameSpan = document.createElement("span");
+        userNameSpan.textContent = userName;
+        userNameSpan.style.marginLeft = "0.75rem"; // Add spacing between logo and text
+        userNameSpan.style.display = "inline-block";
+        userNameSpan.style.verticalAlign = "middle";
+        navBrandElement.appendChild(userNameSpan);
+      } else {
+        // No logo, show username as text
+        navBrandElement.textContent = userName;
+      }
+    }
+    // If neither logo nor userName is provided, element remains empty
+  }
+
   function updateFooterEmail(email, fallback) {
     const button = document.querySelector(".copy-email-button");
     if (!button) return;
@@ -1810,11 +1851,30 @@
     // Simple text fields - Introduction
     if (pd.introduction) {
       const intro = pd.introduction;
+
+      // Render navigation logo and username
+      // Logo and userName come from introduction section (not clientName)
+      const navLogo = intro.logo;
+      const navUserName = intro.userName;
+      renderNavigationBrand(navLogo, navUserName);
+
       updateTextField("introduction-clientName", data.clientName);
-      if (data.clientPhoto) {
-        updateTextField("introduction-clientPhoto", data.clientPhoto);
-      } else {
-        toggleElementVisibility("introduction-clientPhoto", true);
+
+      // Render client photo if available (from introduction section)
+      const clientPhoto = intro.clientPhoto || data.clientPhoto;
+      const clientPhotoElement = document.getElementById(
+        "introduction-clientPhoto"
+      );
+      if (clientPhotoElement) {
+        if (clientPhoto) {
+          // Use background-image style (matching CSS structure)
+          clientPhotoElement.style.backgroundImage = `url('${clientPhoto}')`;
+          clientPhotoElement.style.display = "";
+        } else {
+          // No photo, hide the element completely (no fallback)
+          clientPhotoElement.style.display = "none";
+          clientPhotoElement.style.backgroundImage = "none";
+        }
       }
       // introduction-email ID doesn't exist in HTML, skip it
       // updateTextField("introduction-email", intro.email);

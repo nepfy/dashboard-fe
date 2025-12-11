@@ -507,6 +507,10 @@ function convertMinimalToProposalData(
         proposal.aboutUs?.title ||
         proposal.introduction.title,
       validity: requestData.validUntil || new Date().toISOString(),
+      // Include logo, clientName, and clientPhoto if provided
+      logo: proposal.introduction.logo ?? undefined,
+      clientName: proposal.introduction.clientName ?? undefined,
+      clientPhoto: proposal.introduction.clientPhoto ?? undefined,
       services: ensureArray(
         proposal.introduction.services,
         "introduction.services"

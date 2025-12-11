@@ -133,6 +133,16 @@ export async function PUT(
     // Parse request body
     const body = await request.json();
 
+    // Debug: Log introduction data to verify logo and clientName are being saved
+    if (body.proposalData?.introduction) {
+      console.log("[API] Saving introduction data:", {
+        hasLogo: !!body.proposalData.introduction.logo,
+        logo: body.proposalData.introduction.logo,
+        hasClientName: !!body.proposalData.introduction.clientName,
+        clientName: body.proposalData.introduction.clientName,
+      });
+    }
+
     let projectSlug = existingProject[0].projectUrl;
 
     if (body.projectUrl !== undefined) {

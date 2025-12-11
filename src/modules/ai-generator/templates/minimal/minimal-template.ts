@@ -34,6 +34,8 @@ export interface MinimalIntroductionSection {
   userName?: string;
   email?: string;
   title: string;
+  logo?: string;
+  clientPhoto?: string;
   services?: MinimalIntroductionService[];
 }
 
