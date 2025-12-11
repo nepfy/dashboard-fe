@@ -349,7 +349,7 @@
   }
 
   function renderClientsSection(clients) {
-    const sectionSelector = "clients-section";
+    const sectionSelector = "#clients-section";
     if (!clients) {
       toggleSectionVisibility(sectionSelector, true);
       return;
@@ -383,9 +383,21 @@
     }
 
     const logosContainer = document.getElementById("clients-logos");
+
+    console.log("[Minimal Template] renderClientsSection:", {
+      hasClients: !!clients,
+      hasItems: !!clients.items,
+      itemsLength: clients.items?.length || 0,
+      items: clients.items,
+    });
+
     const logos = Array.isArray(clients.items)
       ? clients.items
-          .filter((logo) => logo && logo.hideClient !== true)
+          .filter((logo) => {
+            const isVisible =
+              logo && logo.hideClient !== true && logo.hideItem !== true;
+            return isVisible;
+          })
           .sort(
             (a, b) =>
               (a.sortOrder ?? Number.MAX_SAFE_INTEGER) -
@@ -393,7 +405,13 @@
           )
       : [];
 
+    console.log("[Minimal Template] Filtered logos:", {
+      logosLength: logos.length,
+      logos: logos,
+    });
+
     if (logosContainer) {
+      console.log("[Minimal Template] Found logosContainer:", logosContainer);
       const template =
         logosContainer.querySelector("[data-logo-template]") ||
         (() => {
@@ -417,6 +435,7 @@
       if (logos.length === 0) {
         const placeholder = template.cloneNode(true);
         placeholder.removeAttribute("data-logo-template");
+        placeholder.style.display = ""; // Ensure it's visible
         const textElement = placeholder.querySelector(".logo-text");
         if (textElement) {
           textElement.textContent = "Sua marca";
@@ -427,18 +446,28 @@
           imgElement.style.display = "none";
         }
         logosContainer.appendChild(placeholder);
+        console.log("[Minimal Template] Added placeholder logo");
         return;
       }
 
-      logos.forEach((logo) => {
+      console.log("[Minimal Template] Rendering", logos.length, "logos");
+
+      logos.forEach((logo, index) => {
         const clone = template.cloneNode(true);
         clone.removeAttribute("data-logo-template");
+        clone.style.display = ""; // Ensure cloned element is visible
 
         const textElement = clone.querySelector(".logo-text");
         const imgElement = clone.querySelector(".logo-img");
 
         const hasLogoImage =
           typeof logo.logo === "string" && logo.logo.trim().length > 0;
+
+        console.log("[Minimal Template] Logo", index, ":", {
+          name: logo.name,
+          hasLogoImage: hasLogoImage,
+          logo: logo.logo,
+        });
 
         if (hasLogoImage && imgElement) {
           imgElement.src = logo.logo;
@@ -459,6 +488,15 @@
 
         logosContainer.appendChild(clone);
       });
+
+      console.log(
+        "[Minimal Template] Rendered logos, container children:",
+        logosContainer.children.length
+      );
+    } else {
+      console.warn(
+        "[Minimal Template] logosContainer not found: clients-logos"
+      );
     }
   }
 
@@ -1923,7 +1961,7 @@
     if (pd.clients) {
       renderClientsSection(pd.clients);
     } else {
-      toggleSectionVisibility(".section_partners--dynamic", true);
+      toggleSectionVisibility("#clients-section", true);
     }
 
     // Team
