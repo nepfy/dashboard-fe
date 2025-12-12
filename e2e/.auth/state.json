@@ -1,0 +1,127 @@
+{
+  "cookies": [
+    {
+      "name": "__cf_bm",
+      "value": "AJuXHc2DLhWbh9k9LjcGuqsp7sNR9Tzgzlw0mZe0NOs-1765069499-1.0.1.1-uqBRE0.j7rbzmPmQ0JEni.31M699z5vCbtlrgqcFsxkSVF0RAKuWb_LlarNxwTBJT.LsmKatxxvm3BPnS2_5UMx4o3SDAPuI9XQbZ1jDssY",
+      "domain": ".thorough-liger-2.clerk.accounts.dev",
+      "path": "/",
+      "expires": 1765071299.663487,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_cfuvid",
+      "value": "8JLJjkc8J.CqffRE6wz7TcNGVhPS7YcZx0a1FGZQR2c-1765069499682-0.0.1.1-604800000",
+      "domain": ".thorough-liger-2.clerk.accounts.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__clerk_db_jwt",
+      "value": "dvb_36UmPUDkWUuDBdglroFGZngU3cU",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1796605566,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__clerk_db_jwt_J38-rFs_",
+      "value": "dvb_36UmPUDkWUuDBdglroFGZngU3cU",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1796605566,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "clerk_active_context",
+      "value": "sess_36UmRdoHqwhKtKX99hXx7Gf7h1X:",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__session",
+      "value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18ydkMzMGRsNnAzNWtaWlNOVmV3a2I1UVU2c0IiLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUwNjk2MjYsImZ2YSI6WzAsLTFdLCJpYXQiOjE3NjUwNjk1NjYsImlzcyI6Imh0dHBzOi8vdGhvcm91Z2gtbGlnZXItMi5jbGVyay5hY2NvdW50cy5kZXYiLCJqdGkiOiJjMzI2YTkxNDcxYThkOGQ0MTkxNyIsIm1ldGFkYXRhIjp7ImFwcGxpY2F0aW9uTmFtZSI6bnVsbCwiYXBwbGljYXRpb25UeXBlIjpudWxsLCJvbmJvYXJkaW5nQ29tcGxldGUiOnRydWUsIm9uYm9hcmRpbmdQcm9ncmVzcyI6bnVsbH0sIm5iZiI6MTc2NTA2OTU1Niwic2lkIjoic2Vzc18zNlVtUmRvSHF3aEt0S1g5OWhYeDdHZjdoMVgiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2VVpUakNXMlV4RTk1VXJYSUt4cXFqbTJ0cyJ9.j9Xuf3Blg4iHPyJ-QmHcroYRH2rOHqn69ndlwRm4D_eJQr_CB0_Vk-GS-HuBhEdsoxv_e-MXTlYxAroiSoYSOHLHUAXdQUfNKL8SJKrckiddm1j0yRA8RuEMKHyshwCnSsMSNb1_A0DO8Dy3vYpPDRNGVJhvySkzbB1V2OPxCq8WJipAgNTtzugQUvIWQYKmQtvAJ-Ao5MqNV0rq4Fpd6MzhR_6dxdNNysS_kkamug1D-lc-Xbh8eR3jlCTZ7o4JAF9s2qISplAFQ6k8IZPiFAEGsA6Qvgbd3zWO1Kxo4LQlLrQ02w9x3ao7VfX2ipxtBCHEdh9c4HtDskAcSt38fA",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1796605576,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__session_J38-rFs_",
+      "value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18ydkMzMGRsNnAzNWtaWlNOVmV3a2I1UVU2c0IiLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUwNjk2MjYsImZ2YSI6WzAsLTFdLCJpYXQiOjE3NjUwNjk1NjYsImlzcyI6Imh0dHBzOi8vdGhvcm91Z2gtbGlnZXItMi5jbGVyay5hY2NvdW50cy5kZXYiLCJqdGkiOiJjMzI2YTkxNDcxYThkOGQ0MTkxNyIsIm1ldGFkYXRhIjp7ImFwcGxpY2F0aW9uTmFtZSI6bnVsbCwiYXBwbGljYXRpb25UeXBlIjpudWxsLCJvbmJvYXJkaW5nQ29tcGxldGUiOnRydWUsIm9uYm9hcmRpbmdQcm9ncmVzcyI6bnVsbH0sIm5iZiI6MTc2NTA2OTU1Niwic2lkIjoic2Vzc18zNlVtUmRvSHF3aEt0S1g5OWhYeDdHZjdoMVgiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2VVpUakNXMlV4RTk1VXJYSUt4cXFqbTJ0cyJ9.j9Xuf3Blg4iHPyJ-QmHcroYRH2rOHqn69ndlwRm4D_eJQr_CB0_Vk-GS-HuBhEdsoxv_e-MXTlYxAroiSoYSOHLHUAXdQUfNKL8SJKrckiddm1j0yRA8RuEMKHyshwCnSsMSNb1_A0DO8Dy3vYpPDRNGVJhvySkzbB1V2OPxCq8WJipAgNTtzugQUvIWQYKmQtvAJ-Ao5MqNV0rq4Fpd6MzhR_6dxdNNysS_kkamug1D-lc-Xbh8eR3jlCTZ7o4JAF9s2qISplAFQ6k8IZPiFAEGsA6Qvgbd3zWO1Kxo4LQlLrQ02w9x3ao7VfX2ipxtBCHEdh9c4HtDskAcSt38fA",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1796605576,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__client_uat_J38-rFs_",
+      "value": "1765069517",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1796605576,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "__client_uat",
+      "value": "1765069517",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1796605576,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "ph_phc_X2LTDMyVolYLABT1iKNR3Y7PFimsaIhNLZqUIK0vz8r_posthog",
+      "value": "%7B%22distinct_id%22%3A%22user_36UZTjCW2UxE95UrXIKxqqjm2ts%22%2C%22%24sesid%22%3A%5B1765069579409%2C%22019af657-3110-756e-829f-0f13b57cbc85%22%2C1765069500688%5D%2C%22%24epp%22%3Atrue%7D",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1796605579,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "__clerk_environment",
+          "value": "{\"value\":{\"object\":\"environment\",\"auth_config\":{\"claimed_at\":null,\"id\":\"\",\"object\":\"auth_config\",\"reverification\":true,\"single_session_mode\":true},\"display_config\":{\"object\":\"display_config\",\"after_create_organization_url\":\"http://localhost:3000\",\"after_join_waitlist_url\":\"http://localhost:3000\",\"after_leave_organization_url\":\"http://localhost:3000\",\"after_sign_in_url\":\"http://localhost:3000\",\"after_sign_out_all_url\":\"http://localhost:3000/login\",\"after_sign_out_one_url\":\"https://thorough-liger-2.accounts.dev/sign-in/choose\",\"after_sign_up_url\":\"http://localhost:3000\",\"after_switch_session_url\":\"http://localhost:3000\",\"application_name\":\"nepfy-dashboard\",\"branded\":false,\"captcha_heartbeat\":false,\"captcha_oauth_bypass\":[],\"captcha_provider\":\"turnstile\",\"captcha_public_key_invisible\":\"0x4AAAAAAAFV93qQdS0ycilX\",\"captcha_public_key\":\"0x4AAAAAAAWXJGBD7bONzLBd\",\"captcha_widget_type\":\"smart\",\"clerk_js_version\":\"5\",\"create_organization_url\":\"https://thorough-liger-2.accounts.dev/create-organization\",\"favicon_image_url\":\"\",\"home_url\":\"http://localhost:3000/dashboard\",\"id\":\"display_config_2vC30eTfoGaQjlvZJ1q9byzM0gJ\",\"instance_environment_type\":\"development\",\"logo_image_url\":\"https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvdXBsb2FkZWQvaW1nXzJ5dmNjVXNyMDBuWDdRb05OakZsclBtUzB2NCJ9\",\"organization_profile_url\":\"https://thorough-liger-2.accounts.dev/organization\",\"preferred_sign_in_strategy\":\"password\",\"privacy_policy_url\":\"https://app.nepfy.com/termos-de-uso\",\"show_devmode_warning\":true,\"sign_in_url\":\"http://localhost:3000/login\",\"sign_up_url\":\"http://localhost:3000/criar-conta\",\"support_email\":\"\",\"terms_url\":\"https://app.nepfy.com/termos-de-uso\",\"theme\":{\"buttons\":{\"font_color\":\"#ffffff\",\"font_family\":\"\\\"Source Sans Pro\\\", sans-serif\",\"font_weight\":\"600\"},\"general\":{\"color\":\"#6c47ff\",\"padding\":\"1em\",\"box_shadow\":\"0 2px 8px rgba(0, 0, 0, 0.2)\",\"font_color\":\"#151515\",\"font_family\":\"\\\"Source Sans Pro\\\", sans-serif\",\"border_radius\":\"0.5em\",\"background_color\":\"#ffffff\",\"label_font_weight\":\"600\"},\"accounts\":{\"background_color\":\"#ffffff\"}},\"user_profile_url\":\"https://thorough-liger-2.accounts.dev/user\",\"waitlist_url\":\"https://thorough-liger-2.accounts.dev/waitlist\"},\"id\":\"\",\"maintenance_mode\":false,\"client_debug_mode\":false,\"organization_settings\":{\"actions\":{\"admin_delete\":true},\"domains\":{\"enabled\":false,\"enrollment_modes\":[],\"default_role\":\"org:member\"},\"enabled\":true,\"max_allowed_memberships\":5},\"user_settings\":{\"actions\":{\"delete_self\":true,\"create_organization\":true,\"create_organizations_limit\":null},\"attributes\":{\"email_address\":{\"enabled\":true,\"required\":true,\"used_for_first_factor\":true,\"first_factors\":[\"email_code\"],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[\"email_code\"],\"verify_at_sign_up\":true,\"name\":\"email_address\"},\"phone_number\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"phone_number\"},\"username\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"username\"},\"web3_wallet\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"web3_wallet\"},\"first_name\":{\"enabled\":true,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"first_name\"},\"last_name\":{\"enabled\":true,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"last_name\"},\"password\":{\"enabled\":true,\"required\":true,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"password\"},\"authenticator_app\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"authenticator_app\"},\"ticket\":{\"enabled\":true,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"ticket\"},\"backup_code\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"backup_code\"},\"passkey\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"name\":\"passkey\"}},\"passkey_settings\":{\"allow_autofill\":true,\"show_sign_in_button\":true},\"password_settings\":{\"disable_hibp\":false,\"min_length\":8,\"max_length\":72,\"require_special_char\":false,\"require_numbers\":false,\"require_uppercase\":false,\"require_lowercase\":false,\"show_zxcvbn\":false,\"min_zxcvbn_strength\":0,\"enforce_hibp_on_sign_in\":true,\"allowed_special_characters\":\"!\\\"#$%&'()*+,-./:;<=>?@[]^_`{|}~\"},\"saml\":{\"enabled\":false},\"sign_in\":{\"second_factor\":{\"required\":false}},\"sign_up\":{\"captcha_enabled\":true,\"captcha_widget_type\":\"smart\",\"custom_action_required\":false,\"progressive\":true,\"mode\":\"public\",\"legal_consent_enabled\":true},\"social\":{\"oauth_google\":{\"enabled\":true,\"required\":false,\"authenticatable\":true,\"block_email_subaddresses\":true,\"strategy\":\"oauth_google\",\"not_selectable\":false,\"deprecated\":false,\"name\":\"Google\",\"logo_url\":\"https://img.clerk.com/static/google.png\"}}},\"commerce_settings\":{\"billing\":{\"stripe_publishable_key\":null,\"organization\":{\"enabled\":false,\"has_paid_plans\":false},\"user\":{\"enabled\":false,\"has_paid_plans\":false}}},\"api_keys_settings\":{\"user_api_keys_enabled\":false,\"orgs_api_keys_enabled\":false},\"protect_config\":{\"object\":\"protect_config\",\"id\":\"\"}},\"exp\":1765155900590}"
+        },
+        {
+          "name": "last-activity-timestamp",
+          "value": "1765069523165"
+        },
+        {
+          "name": "ph_phc_X2LTDMyVolYLABT1iKNR3Y7PFimsaIhNLZqUIK0vz8r_posthog",
+          "value": "{\"$initialization_time\":\"2025-12-07T01:05:00.143Z\",\"$configured_session_timeout_ms\":1800000,\"distinct_id\":\"user_36UZTjCW2UxE95UrXIKxqqjm2ts\",\"$device_id\":\"019af657-2eef-7231-8fff-ebcadc083caa\",\"$user_state\":\"identified\",\"$session_recording_remote_config\":{\"enabled\":true,\"endpoint\":\"/s/\",\"consoleLogRecordingEnabled\":true,\"recorderVersion\":\"v2\",\"sampleRate\":null,\"minimumDurationMilliseconds\":null,\"linkedFlag\":null,\"networkPayloadCapture\":{\"capturePerformance\":{\"network_timing\":true,\"web_vitals\":true,\"web_vitals_allowed_metrics\":null}},\"masking\":null,\"urlTriggers\":[],\"scriptConfig\":null,\"urlBlocklist\":[],\"eventTriggers\":[],\"triggerMatchType\":null,\"canvasRecording\":{}},\"$autocapture_disabled_server_side\":false,\"$heatmaps_enabled_server_side\":true,\"$web_vitals_enabled_server_side\":true,\"$web_vitals_allowed_metrics\":null,\"$exception_capture_enabled_server_side\":false,\"$error_tracking_suppression_rules\":[],\"$dead_clicks_enabled_server_side\":false,\"$active_feature_flags\":[],\"$enabled_feature_flags\":{},\"$feature_flag_payloads\":{},\"$feature_flag_details\":{},\"$feature_flag_request_id\":\"a18428de-2fb7-4667-ae38-c06485f933c9\",\"$sesid\":[1765069579409,\"019af657-3110-756e-829f-0f13b57cbc85\",1765069500688],\"$client_session_props\":{\"sessionId\":\"019af657-3110-756e-829f-0f13b57cbc85\",\"props\":{\"r\":\"$direct\",\"u\":\"http://localhost:3000/login\"}},\"$sess_rec_flush_size\":332461,\"$epp\":true,\"$user_id\":\"user_36UZTjCW2UxE95UrXIKxqqjm2ts\",\"$stored_person_properties\":{\"email\":\"teste.e2e@nepfy.com\",\"name\":\"Teste E2E\",\"plan\":\"free\",\"subscription_status\":\"none\",\"subscription_active\":false,\"subscription_id\":null,\"customer_id\":null,\"onboarding_complete\":false}}"
+        },
+        {
+          "name": "user-storage",
+          "value": "\"{\\\"state\\\":{\\\"userData\\\":{\\\"id\\\":\\\"da829546-5295-45f7-837e-1b92d964e956\\\",\\\"clerkUserId\\\":\\\"user_36UZTjCW2UxE95UrXIKxqqjm2ts\\\",\\\"firstName\\\":\\\"Teste\\\",\\\"lastName\\\":\\\"e2e\\\",\\\"userName\\\":\\\"testeintegracao\\\",\\\"email\\\":\\\"teste.e2e@nepfy.com\\\",\\\"cpf\\\":\\\"21264465734\\\",\\\"phone\\\":\\\"11995984722\\\",\\\"street\\\":null,\\\"number\\\":null,\\\"neighborhood\\\":null,\\\"state\\\":null,\\\"city\\\":null,\\\"cep\\\":null,\\\"additionalAddress\\\":null,\\\"updated_at\\\":\\\"2025-12-07T00:18:07.401Z\\\",\\\"created_at\\\":\\\"2025-12-07T00:18:07.401Z\\\",\\\"deleted_at\\\":null,\\\"userJobType\\\":4,\\\"userDiscovery\\\":2,\\\"userUsedBefore\\\":1,\\\"companyInfo\\\":null,\\\"companyData\\\":null,\\\"unsafeMetadata\\\":{},\\\"publicMetadata\\\":{\\\"applicationName\\\":null,\\\"applicationType\\\":null,\\\"onboardingComplete\\\":true,\\\"onboardingProgress\\\":null},\\\"stripe\\\":null}},\\\"version\\\":0}\""
+        }
+      ]
+    }
+  ]
+}

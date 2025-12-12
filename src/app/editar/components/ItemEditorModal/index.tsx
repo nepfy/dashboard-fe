@@ -17,12 +17,22 @@ import {
   Testimonial,
   StepTopic,
   FAQItem,
+  AboutUsItem,
+  IntroductionService,
 } from "#/types/template-data";
 
 interface ItemEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  itemType:
+    | "team"
+    | "results"
+    | "expertise"
+    | "testimonials"
+    | "steps"
+    | "faq"
+    | "aboutUs"
+    | "introServices";
   items: (
     | TeamMember
     | Result
@@ -30,6 +40,8 @@ interface ItemEditorModalProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
   )[];
   currentItemId: string | null;
   onUpdateItem: (
@@ -41,6 +53,8 @@ interface ItemEditorModalProps {
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
+      | Partial<IntroductionService>
   ) => void;
   onReorderItems: (
     items:
@@ -50,9 +64,12 @@ interface ItemEditorModalProps {
       | Testimonial[]
       | StepTopic[]
       | FAQItem[]
+      | AboutUsItem[]
+      | IntroductionService[]
   ) => void;
   onUpdateSection?: (data: { hideIcon?: boolean }) => void;
   hideIcon?: boolean;
+  anchorRect?: DOMRect | null;
 }
 
 type TabType = "conteudo" | "imagem" | "organizar";
@@ -67,6 +84,7 @@ export default function ItemEditorModal({
   onReorderItems,
   onUpdateSection,
   hideIcon,
+  anchorRect,
 }: ItemEditorModalProps) {
   const { projectData } = useEditor();
   const [activeTab, setActiveTab] = useState<TabType>("conteudo");
@@ -87,6 +105,8 @@ export default function ItemEditorModal({
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
+      | Partial<IntroductionService>
     >;
     reorderedItems?: (
       | TeamMember
@@ -95,6 +115,8 @@ export default function ItemEditorModal({
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
+      | IntroductionService
     )[];
     deletedItems: string[];
     newItems: (
@@ -104,6 +126,8 @@ export default function ItemEditorModal({
       | Testimonial
       | StepTopic
       | FAQItem
+      | AboutUsItem
+      | IntroductionService
     )[];
     sectionUpdates?: { hideIcon?: boolean };
   }>({
@@ -157,7 +181,7 @@ export default function ItemEditorModal({
         ? 10
         : itemType === "expertise"
           ? 9
-          : 6; // team, results, testimonials
+          : 6; // team, results, testimonials, aboutUs, introServices
 
     if (totalItems < maxItems) {
       const newItem:
@@ -166,7 +190,9 @@ export default function ItemEditorModal({
         | ExpertiseTopic
         | Testimonial
         | StepTopic
-        | FAQItem =
+        | FAQItem
+        | AboutUsItem
+        | IntroductionService =
         itemType === "team"
           ? {
               id: `temp-${Date.now()}`,
@@ -215,15 +241,29 @@ export default function ItemEditorModal({
                       hideQuestion: false,
                       hideAnswer: false,
                     }
-                  : {
-                      id: `temp-${Date.now()}`,
-                      name: "",
-                      role: "",
-                      testimonial: "",
-                      photo: "",
-                      sortOrder: totalItems,
-                      hidePhoto: false,
-                    };
+                  : itemType === "aboutUs"
+                    ? {
+                        id: `temp-${Date.now()}`,
+                        image: "",
+                        caption: "",
+                        sortOrder: totalItems,
+                      }
+                    : itemType === "introServices"
+                      ? {
+                          id: `temp-${Date.now()}`,
+                          image: "",
+                          serviceName: "",
+                          sortOrder: totalItems,
+                        }
+                      : {
+                          id: `temp-${Date.now()}`,
+                          name: "",
+                          role: "",
+                          testimonial: "",
+                          photo: "",
+                          sortOrder: totalItems,
+                          hidePhoto: false,
+                        };
 
       setPendingChanges((prev) => ({
         ...prev,
@@ -232,7 +272,7 @@ export default function ItemEditorModal({
 
       setSelectedItemId(newItem.id!);
       setActiveTab("conteudo");
-      
+
       // Track block added
       if (projectData?.id) {
         trackBlockAdded({
@@ -391,12 +431,47 @@ export default function ItemEditorModal({
       // Use reorderItems to set the final state
       onReorderItems(finalItems);
     } else {
-      // If only individual field updates (no reordering/deletion/addition), use onUpdateItem
-      Object.entries(pendingChanges.itemUpdates).forEach(
-        ([itemId, updates]) => {
-          onUpdateItem(itemId, updates);
-        }
-      );
+      // If only individual field updates (no reordering/deletion/addition)
+      // For aboutUs, we need to ensure all items are saved together to maintain consistency
+      if (
+        itemType === "aboutUs" &&
+        Object.keys(pendingChanges.itemUpdates).length > 0
+      ) {
+        // Get all current items and apply updates
+        const currentItems = items.filter(
+          (item) => !pendingChanges.deletedItems.includes(item.id!)
+        );
+
+        const updatedItems = currentItems.map((item) => {
+          const updates = pendingChanges.itemUpdates[item.id!];
+          if (updates) {
+            return { ...item, ...updates };
+          }
+          return item;
+        });
+
+        // Add any new items with their updates
+        const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
+
+        const finalItems = [...updatedItems, ...newItemsWithUpdates];
+        console.log("💾 Saving aboutUs items via reorder:", { finalItems });
+        onReorderItems(finalItems);
+      } else {
+        // For other item types, use onUpdateItem for each update
+        Object.entries(pendingChanges.itemUpdates).forEach(
+          ([itemId, updates]) => {
+            console.log("💾 Saving item update:", {
+              itemId,
+              updates,
+              itemType,
+            });
+            onUpdateItem(itemId, updates);
+          }
+        );
+      }
     }
 
     setPendingChanges({
@@ -448,6 +523,10 @@ export default function ItemEditorModal({
         return "Etapas do processo";
       case "faq":
         return "Perguntas Frequentes";
+      case "aboutUs":
+        return "Mídia";
+      case "introServices":
+        return "Serviços";
       default:
         return "Passos";
     }
@@ -491,6 +570,7 @@ export default function ItemEditorModal({
         preferredPlacement={
           itemType === "steps" || itemType === "faq" ? "top" : "right"
         }
+        anchorRect={anchorRect}
       >
         {!showExploreGalleryInfo &&
           !showPexelsGallery &&
@@ -547,7 +627,11 @@ export default function ItemEditorModal({
             onClose={() => setShowPexelsGallery(false)}
             onSelectImage={(imageUrl) => {
               handleUpdateItem(
-                itemType === "team" ? { image: imageUrl } : { photo: imageUrl }
+                itemType === "team" ||
+                  itemType === "aboutUs" ||
+                  itemType === "introServices"
+                  ? { image: imageUrl }
+                  : { photo: imageUrl }
               );
               setShowPexelsGallery(false);
             }}

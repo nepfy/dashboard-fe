@@ -1,22 +1,79 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
-import { IntroductionSection } from "#/types/template-data";
+import Image from "next/image";
+import {
+  IntroductionSection,
+  IntroductionService,
+} from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import EditableButton from "#/app/editar/components/EditableButton";
 import EditableLogo from "#/app/editar/components/EditableLogo";
 import EditableAvatar from "#/app/editar/components/EditableAvatar";
+import IntroMarqueeModal from "#/app/editar/components/IntroMarqueeModal";
 import { useEditor } from "../../../contexts/EditorContext";
 
-export default function MinimalIntro({ userName, title, subtitle, logo, clientPhoto }: IntroductionSection) {
-  const { updateIntroduction, projectData, activeEditingId } = useEditor();
+export default function MinimalIntro({
+  userName,
+  clientName,
+  title,
+  logo,
+  clientPhoto,
+  services,
+}: IntroductionSection) {
+  const {
+    updateIntroduction,
+    reorderIntroductionServices,
+    projectData,
+    activeEditingId,
+  } = useEditor();
+
+  // Use clientName from introduction section, fallback to projectData.clientName or userName for backward compatibility
+  const displayClientName =
+    clientName || projectData?.clientName || userName || "Cliente";
+  // Use userName for navigation (not clientName)
+  const displayUserName = userName || "";
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
   const [isButtonModalOpen, setIsButtonModalOpen] = useState<boolean>(false);
+  const [isMarqueeModalOpen, setIsMarqueeModalOpen] = useState<boolean>(false);
+  const [selectedMarqueeId, setSelectedMarqueeId] = useState<string | null>(
+    null
+  );
 
   const canEdit = activeEditingId === null;
+
+  // Create temporary items when array is empty so marquee always shows
+  const workingServices =
+    services && services.length > 0
+      ? services
+      : [
+          {
+            id: "intro-service-temp-1",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 1",
+            sortOrder: 0,
+          } as IntroductionService,
+          {
+            id: "intro-service-temp-2",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 2",
+            sortOrder: 1,
+          } as IntroductionService,
+          {
+            id: "intro-service-temp-3",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 3",
+            sortOrder: 2,
+          } as IntroductionService,
+          {
+            id: "intro-service-temp-4",
+            image: "/images/templates/flash/placeholder.png",
+            serviceName: "Serviço 4",
+            sortOrder: 3,
+          } as IntroductionService,
+        ];
 
   return (
     <>
@@ -64,14 +121,13 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
         .btn-animate-chars {
           position: relative;
           overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          border-radius: 0.75rem;
           padding: 1rem 1.75rem;
           text-decoration: none;
           display: inline-block;
           transition: all 0.3s ease;
-          background: transparent;
           cursor: pointer;
+          background: #333030 !important;
+          border: 0 none !important;
         }
 
         .btn-animate-chars:hover {
@@ -94,12 +150,13 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
           grid-column-gap: 4rem;
           grid-row-gap: 4rem;
           justify-content: space-between;
-          align-items: flex-end;
+          align-items: flex-start;
           display: flex;
         }
 
         .hero_left {
-          flex: 1;
+          flex: 0 1 auto;
+          max-width: 60%;
         }
 
         .heading-wrap {
@@ -150,34 +207,34 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
 
         .marquee_component {
           position: relative;
-          overflow: hidden;
           margin-top: 4rem;
+        }
+
+        .marquee_component:hover .marquee_content {
+          animation-play-state: paused;
         }
 
         .marquee_content {
           display: flex;
-          gap: 1rem;
+          align-items: center;
+          gap: 1.5rem;
           animation: marquee 30s linear infinite;
-          max-height: 560px;
         }
 
         .marquee_item {
           display: flex;
-          gap: 1rem;
+          align-items: center;
+          gap: 1.5rem;
           flex-shrink: 0;
-          max-height: 560px;
         }
 
         .marquee-img {
           width: 72.5rem;
-          height: 100%;
-          border-radius: 1rem;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.05);
+          height: 560px;
           flex-shrink: 0;
+          display: block;
         }
 
-        .marquee-img img,
         .marquee-img video {
           width: 100%;
           height: 100%;
@@ -227,7 +284,7 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
             padding-right: 1.5rem;
           }
           .marquee-img {
-            width: 100vw;
+            width: 85vw;
             height: auto;
             aspect-ratio: 16/10;
           }
@@ -250,12 +307,12 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
                     editingId="intro-logo"
                   />
                   <EditableText
-                    value={userName || "Your Name"}
+                    value={displayUserName}
                     onChange={(newUserName: string) =>
                       updateIntroduction({ userName: newUserName })
                     }
                     className="nav_brand"
-                    editingId="intro-userName"
+                    editingId="intro-userName-navbar"
                   />
                 </div>
                 <div
@@ -297,19 +354,21 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
                   <EditableAvatar
                     imageUrl={clientPhoto}
                     onImageChange={(newPhoto: string | null) =>
-                      updateIntroduction({ clientPhoto: newPhoto || undefined })
+                      updateIntroduction({
+                        clientPhoto: newPhoto ? newPhoto : undefined,
+                      })
                     }
                     size="lg"
                     editingId="intro-clientPhoto"
                     className="heading-client-image"
                   />
                   <EditableText
-                    value={userName || "Cliente"}
-                    onChange={(newUserName: string) =>
-                      updateIntroduction({ userName: newUserName })
+                    value={displayClientName}
+                    onChange={(newClientName: string) =>
+                      updateIntroduction({ clientName: newClientName })
                     }
                     className="heading-style-h1 text-weight-light"
-                    editingId="intro-userName-hero"
+                    editingId="intro-clientName-hero"
                   />
                 </div>
                 <h1 className="heading-line">—</h1>
@@ -322,9 +381,9 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
                   editingId="intro-title"
                 />
               </div>
-              <div className="hero_right">
+              <div className="hero_right self-end">
                 {projectData?.projectValidUntil && (
-                  <div className="flex flex-col gap-3 items-end">
+                  <div className="flex flex-col items-end gap-3">
                     <div
                       className={`relative m-0 h-auto w-auto border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                     >
@@ -359,18 +418,6 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
                         editingId="intro-date"
                       />
                     </div>
-                    {subtitle && (
-                      <div className="max-w-[340px] text-right">
-                        <EditableText
-                          value={subtitle}
-                          onChange={(newSubtitle: string) =>
-                            updateIntroduction({ subtitle: newSubtitle })
-                          }
-                          className="text-size-regular text-color-grey"
-                          editingId="intro-subtitle"
-                        />
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -381,44 +428,79 @@ export default function MinimalIntro({ userName, title, subtitle, logo, clientPh
         {/* Marquee */}
         <div className="marquee_component">
           <div className="marquee_content">
+            {/* First set of images */}
             <div className="marquee_item">
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
+              {workingServices.map((service) => (
+                <div
+                  key={service.id}
+                  className="marquee-img group relative cursor-pointer overflow-hidden rounded-[1rem]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedMarqueeId(service?.id ?? null);
+                    setIsMarqueeModalOpen(true);
+                  }}
+                >
+                  {service.image ? (
+                    <Image
+                      src={service.image}
+                      alt={service.serviceName || ""}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      priority
+                      className="pointer-events-none select-none"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/60">
+                      Adicionar imagem
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                </div>
+              ))}
             </div>
+            {/* Second set (duplicate for infinite scroll) */}
             <div className="marquee_item">
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
-              <div className="marquee-img">
-                {}
-                <img src="/images/templates/flash/placeholder.png" alt="" />
-              </div>
+              {workingServices.map((service) => (
+                <div
+                  key={`${service.id}-clone`}
+                  className="marquee-img group relative cursor-pointer overflow-hidden rounded-[1rem]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedMarqueeId(service?.id ?? null);
+                    setIsMarqueeModalOpen(true);
+                  }}
+                >
+                  {service.image ? (
+                    <Image
+                      src={service.image}
+                      alt={service.serviceName || ""}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      priority
+                      className="pointer-events-none select-none"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/60">
+                      Adicionar imagem
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                </div>
+              ))}
             </div>
           </div>
         </div>
+
+        {/* Editor modal for marquee images */}
+        <IntroMarqueeModal
+          isOpen={isMarqueeModalOpen}
+          onClose={() => setIsMarqueeModalOpen(false)}
+          items={services || []}
+          initialItemId={selectedMarqueeId}
+          onSave={(finalItems) =>
+            reorderIntroductionServices(finalItems as IntroductionService[])
+          }
+        />
       </section>
     </>
   );

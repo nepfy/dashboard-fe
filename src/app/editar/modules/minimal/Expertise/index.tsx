@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ExpertiseSection } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableImage from "#/app/editar/components/EditableImage";
@@ -65,11 +65,74 @@ export default function MinimalExpertise({
     updateExpertise,
     updateExpertiseTopic,
     reorderExpertiseTopics,
-    activeEditingId,
+    saveProject,
+    projectData,
   } = useEditor();
   const [openModalId, setOpenModalId] = useState<string | null>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedTitleRef = useRef<string | undefined>(title);
+  const lastSavedSubtitleRef = useRef<string | undefined>(subtitle);
+  const isInitialMountRef = useRef(true);
 
-  const canEdit = activeEditingId === null;
+  // Initialize refs on mount
+  useEffect(() => {
+    if (isInitialMountRef.current) {
+      lastSavedTitleRef.current = projectData?.proposalData?.expertise?.title;
+      lastSavedSubtitleRef.current =
+        projectData?.proposalData?.expertise?.subtitle;
+      isInitialMountRef.current = false;
+    }
+  }, []);
+
+  // Auto-save when title or subtitle changes
+  useEffect(() => {
+    // Skip on initial mount
+    if (isInitialMountRef.current) {
+      return;
+    }
+
+    const currentTitle = projectData?.proposalData?.expertise?.title;
+    const currentSubtitle = projectData?.proposalData?.expertise?.subtitle;
+
+    // Check if title or subtitle changed
+    const titleChanged = currentTitle !== lastSavedTitleRef.current;
+    const subtitleChanged = currentSubtitle !== lastSavedSubtitleRef.current;
+
+    if (titleChanged || subtitleChanged) {
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      // Set new timeout to save after 500ms of no changes
+      saveTimeoutRef.current = setTimeout(async () => {
+        try {
+          await saveProject({ skipNavigation: true });
+          // Update refs after successful save
+          lastSavedTitleRef.current = currentTitle;
+          lastSavedSubtitleRef.current = currentSubtitle;
+          console.log("[MinimalExpertise] Auto-saved expertise:", {
+            title: currentTitle,
+            subtitle: currentSubtitle,
+          });
+        } catch (error) {
+          console.error("[MinimalExpertise] Error auto-saving:", error);
+        }
+      }, 500);
+    }
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [
+    projectData?.proposalData?.expertise?.title,
+    projectData?.proposalData?.expertise?.subtitle,
+    saveProject,
+  ]);
+
   const renderIcon = (iconName: string) => {
     return iconMap[iconName as keyof typeof iconMap];
   };
@@ -123,22 +186,25 @@ export default function MinimalExpertise({
           max-width: 100ch;
         }
 
-        .text-style-allcaps {
+        .expertise-heading :global(.text-style-allcaps) {
           text-transform: uppercase;
           letter-spacing: 0.1em;
-          color: #000000;
+          color: #040404 !important;
+          font-size: 0.875rem !important;
+          font-weight: 500 !important;
+          opacity: 0.6 !important;
         }
 
-        .text-size-small {
-          font-size: 0.875rem;
+        .expertise-heading :global(.text-size-small) {
+          font-size: 0.875rem !important;
         }
 
-        .heading-style-h2 {
-          color: #040404;
-          margin: 0.75rem 0 0;
-          font-size: 2.5rem;
-          font-weight: 400;
-          line-height: 1.25;
+        .expertise-heading :global(.heading-style-h2) {
+          color: #040404 !important;
+          margin: 1.5rem 0 0 !important;
+          font-size: 3.5rem !important;
+          font-weight: 400 !important;
+          line-height: 1.3 !important;
           max-width: 48ch;
         }
 
@@ -188,27 +254,27 @@ export default function MinimalExpertise({
           height: 1.5rem;
         }
 
-        .text-weight-medium {
+        .expertise-card :global(.text-weight-medium) {
           font-weight: 500;
         }
 
-        .text-size-medium {
-          font-size: 1.125rem;
-          line-height: 1.35;
-          margin-bottom: 0.625rem;
-          font-weight: 500;
-          color: #040404;
+        .expertise-card :global(.text-size-medium) {
+          font-size: 1.25rem !important;
+          line-height: 1.4 !important;
+          margin-bottom: 0.75rem !important;
+          font-weight: 500 !important;
+          color: #040404 !important;
         }
 
-        .expertise-paragraph {
-          opacity: 0.7;
+        .expertise-card .expertise-paragraph {
+          opacity: 0.65 !important;
           max-width: 100%;
         }
 
-        .text-size-regular {
-          font-size: 0.9375rem;
-          line-height: 1.5;
-          color: #040404;
+        .expertise-card .expertise-paragraph :global(.text-size-regular) {
+          font-size: 1rem !important;
+          line-height: 1.6 !important;
+          color: #040404 !important;
         }
 
         .edit-button {
@@ -247,7 +313,7 @@ export default function MinimalExpertise({
             grid-column-gap: 1.25rem;
             grid-row-gap: 1.25rem;
           }
-          
+
           .expertise-card {
             padding: 2rem 1.5rem;
           }
@@ -289,18 +355,18 @@ export default function MinimalExpertise({
                 {!hideSubtitle && (
                   <EditableText
                     value={subtitle || "TRANSFORME IDEIA EM RESULTADO"}
-                    onChange={(newSubtitle: string) =>
-                      updateExpertise({ subtitle: newSubtitle })
-                    }
+                    onChange={(newSubtitle: string) => {
+                      updateExpertise({ subtitle: newSubtitle });
+                    }}
                     className="text-style-allcaps text-size-small"
                     editingId="expertise-subtitle"
                   />
                 )}
                 <EditableText
                   value={title || ""}
-                  onChange={(newTitle: string) =>
-                    updateExpertise({ title: newTitle })
-                  }
+                  onChange={(newTitle: string) => {
+                    updateExpertise({ title: newTitle });
+                  }}
                   className="heading-style-h2"
                   editingId="expertise-title"
                 />
@@ -309,18 +375,12 @@ export default function MinimalExpertise({
                 {topics.map((topic) => (
                   <div
                     key={topic.id}
-                    className={`expertise-card relative ${
+                    className={`expertise-card relative cursor-pointer ${
                       openModalId === topic.id
-                        ? "cursor-default border-[#0170D6] bg-[#0170D666]"
-                        : canEdit
-                          ? "cursor-pointer hover:border-[#0170D6] hover:bg-[#0170D666]"
-                          : "cursor-not-allowed"
+                        ? "border-[#0170D6] bg-[#0170D666]"
+                        : "hover:border-[#0170D6] hover:bg-[#0170D666]"
                     }`}
-                    onClick={() => {
-                      if (canEdit || openModalId === topic.id) {
-                        setOpenModalId(topic?.id ?? null);
-                      }
-                    }}
+                    onClick={() => setOpenModalId(topic?.id ?? null)}
                   >
                     <div className="expertise-icon_wrapper">
                       {renderIcon(topic.icon || "")}

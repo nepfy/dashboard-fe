@@ -30,11 +30,12 @@ export interface MinimalIntroductionService {
 }
 
 export interface MinimalIntroductionSection {
+  clientName?: string;
   userName?: string;
   email?: string;
   title: string;
-  hideSubtitle?: boolean;
-  subtitle?: string;
+  logo?: string;
+  clientPhoto?: string;
   services?: MinimalIntroductionService[];
 }
 
@@ -89,6 +90,9 @@ export interface MinimalExpertiseTopic {
 
 export interface MinimalExpertiseSection {
   hideSection?: boolean;
+  subtitle?: string;
+  hideSubtitle?: boolean;
+  hideTitle?: boolean;
   title: string;
   hideIcon?: boolean;
   topics?: MinimalExpertiseTopic[];
@@ -139,8 +143,12 @@ export interface MinimalClientLogo {
 
 export interface MinimalClientsSection {
   hideSection?: boolean;
+  subtitle?: string;
+  hideSubtitle?: boolean;
   title?: string;
+  hideTitle?: boolean;
   description?: string;
+  hideDescription?: boolean;
   paragraphs?: string[];
   items?: MinimalClientLogo[];
 }
@@ -287,7 +295,6 @@ export const minimalCharacterLimits = {
     userName: 50,
     email: 100,
     title: 120,
-    subtitle: 200,
     serviceName: 50,
   },
   aboutUs: {
@@ -322,14 +329,14 @@ export const minimalCharacterLimits = {
     projectScope: 200,
   },
   plans: {
-    planTitle: 50,
-    planDescription: 150,
-    itemDescription: 100,
+    planTitle: 30,
+    planDescription: 120,
+    itemDescription: 60,
     buttonTitle: 30,
   },
   faq: {
-    question: 150,
-    answer: 500,
+    question: 100,
+    answer: 300,
   },
   footer: {
     callToAction: 100,
@@ -357,10 +364,6 @@ export function validateMinimalCharacterLimits(
     validations["introduction.title"] = validateCharacterLimit(
       intro.title,
       minimalCharacterLimits.introduction.title
-    );
-    validations["introduction.subtitle"] = validateCharacterLimit(
-      intro.subtitle || "",
-      minimalCharacterLimits.introduction.subtitle
     );
   }
 
@@ -428,9 +431,6 @@ export function getMinimalTemplateDefaults(): Partial<MinimalProposal> {
   return {
     introduction: {
       title: "Soluções inteligentes para transformar seu negócio",
-      subtitle:
-        "Desenvolvemos estratégias focadas em resultados reais e crescimento sustentável",
-      hideSubtitle: false,
       services: [],
     },
     aboutUs: {
@@ -508,8 +508,6 @@ export function generateMinimalProposalOutline(): Partial<MinimalProposal> {
   return {
     introduction: {
       title: "[Título principal da proposta]",
-      subtitle: "[Subtítulo explicativo]",
-      hideSubtitle: false,
       services: [
         {
           id: "1",

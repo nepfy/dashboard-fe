@@ -8,11 +8,13 @@ import {
   Testimonial,
   StepTopic,
   FAQItem,
+  AboutUsItem,
+  IntroductionService,
 } from "#/types/template-data";
 import { CurrencyInput } from "#/components/Inputs";
 
 interface ContentTabProps {
-  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq";
+  itemType: "team" | "results" | "expertise" | "testimonials" | "steps" | "faq" | "aboutUs" | "introServices";
   currentItem:
     | TeamMember
     | Result
@@ -20,6 +22,8 @@ interface ContentTabProps {
     | Testimonial
     | StepTopic
     | FAQItem
+    | AboutUsItem
+    | IntroductionService
     | null;
   onUpdate: (
     data:
@@ -29,6 +33,8 @@ interface ContentTabProps {
       | Partial<Testimonial>
       | Partial<StepTopic>
       | Partial<FAQItem>
+      | Partial<AboutUsItem>
+      | Partial<IntroductionService>
   ) => void;
   onDeleteItem: (itemId: string) => void; // Change this to accept itemId
 }
@@ -95,6 +101,12 @@ export default function ContentTab({
       if (field === "name") return testimonial.name || "";
       if (field === "role") return testimonial.role || "";
       if (field === "testimonial") return testimonial.testimonial || "";
+    } else if (itemType === "aboutUs") {
+      const aboutUs = currentItem as AboutUsItem;
+      if (field === "caption") return aboutUs.caption || "";
+    } else if (itemType === "introServices") {
+      const introService = currentItem as IntroductionService;
+      if (field === "serviceName") return introService.serviceName || "";
     }
 
     return "";
@@ -143,14 +155,21 @@ export default function ContentTab({
       } else if (field === "answer") {
         onUpdate({ answer: value });
       }
-    } else {
-      // testimonials
+    } else if (itemType === "testimonials") {
       if (field === "name") {
         onUpdate({ name: value });
       } else if (field === "role") {
         onUpdate({ role: value });
       } else if (field === "testimonial") {
         onUpdate({ testimonial: value });
+      }
+    } else if (itemType === "aboutUs") {
+      if (field === "caption") {
+        onUpdate({ caption: value });
+      }
+    } else if (itemType === "introServices") {
+      if (field === "serviceName") {
+        onUpdate({ serviceName: value });
       }
     }
   };
@@ -159,6 +178,64 @@ export default function ContentTab({
     return (
       <div className="flex h-32 items-center justify-center text-gray-500">
         Selecione um item para editar
+      </div>
+    );
+  }
+
+  // Simplified layout for introServices: only legenda/caption
+  if (itemType === "introServices") {
+    return (
+      <div className="mt-4 space-y-6 px-1">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#2A2A2A]">Legenda</label>
+          <input
+            type="text"
+            value={getFormValue("serviceName")}
+            onChange={(e) => handleInputChange("serviceName", e.target.value)}
+            className="w-full rounded-[8px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 text-sm text-[#161616] outline-none focus:border-[#7B61FF]"
+            placeholder="Digite a legenda"
+          />
+        </div>
+
+        <div className="flex items-center justify-center pt-4">
+          <button
+            onClick={() => currentItem?.id && onDeleteItem(currentItem.id)}
+            className="text-white-neutral-light-900 flex cursor-pointer items-center gap-2 text-sm font-medium hover:text-red-700"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Excluir item
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Simplified layout for aboutUs: only legenda/caption
+  if (itemType === "aboutUs") {
+    return (
+      <div className="mt-4 space-y-6 px-1">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[#2A2A2A]">Legenda</label>
+          <input
+            type="text"
+            value={getFormValue("caption")}
+            onChange={(e) => handleInputChange("caption", e.target.value)}
+            className="w-full rounded-[8px] border border-[#DBDDDF] bg-[#F6F8FA] px-3 py-2 text-sm text-[#161616] outline-none focus:border-[#7B61FF]"
+            placeholder="Digite a legenda"
+          />
+        </div>
       </div>
     );
   }

@@ -66,11 +66,13 @@ export function CompanyInfo({
         disabled={!aboutCompany || isSaving}
         info
         onInfoClick={() => setIsModalOpen(true)}
+        data-testid="company-step"
       >
         <div className="space-y-6 py-4">
           <TextAreaField
             id="description"
             textareaName="description"
+            data-testid="company-description"
             placeholder="Quanto mais detalhes você der, mais personalizada fica a proposta!"
             rows={9}
             value={aboutCompany || ""}

@@ -11,7 +11,9 @@ interface TabNavigationProps {
     | "expertise"
     | "testimonials"
     | "steps"
-    | "faq";
+    | "faq"
+    | "aboutUs"
+    | "introServices";
 }
 
 export default function TabNavigation({
@@ -19,23 +21,29 @@ export default function TabNavigation({
   onTabChange,
   itemType = "team",
 }: TabNavigationProps) {
-  const tabs = [
-    { id: "conteudo", label: "Conteúdo" },
-    ...(itemType !== "steps" && itemType !== "faq"
+  const tabs =
+    itemType === "aboutUs"
       ? [
-          {
-            id: "imagem" as const,
-            label:
-              itemType === "expertise"
-                ? "Ícone"
-                : itemType === "testimonials"
-                  ? "Imagem"
-                  : "Imagem",
-          },
+          { id: "conteudo", label: "Conteúdo" },
+          { id: "imagem", label: "Imagem" },
         ]
-      : []),
-    { id: "organizar", label: "Organizar" },
-  ];
+      : [
+          { id: "conteudo", label: "Conteúdo" },
+          ...(itemType !== "steps" && itemType !== "faq"
+            ? [
+                {
+                  id: "imagem" as const,
+                  label:
+                    itemType === "expertise"
+                      ? "Ícone"
+                      : itemType === "testimonials"
+                        ? "Imagem"
+                        : "Imagem",
+                },
+              ]
+            : []),
+          { id: "organizar", label: "Organizar" },
+        ];
 
   return (
     <div className="bg-white-neutral-light-200 mb-4 flex flex-shrink-0 justify-between rounded-[10px] p-[1px]">

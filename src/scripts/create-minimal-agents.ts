@@ -1507,10 +1507,10 @@ async function createMinimalAgents() {
 
   // Fotógrafo Minimal Agent
   const fotografoAgent: MinimalAgent = {
-    id: "fotografo-minimal-agent",
+    id: "photography-minimal-agent",
     name: "Especialista em Fotografia - Minimal",
     sector: "Fotografia",
-    service_type: "fotografo",
+    service_type: "photography",
     system_prompt: JSON.stringify({
       agent: {
         description: "Você é um especialista em fotografia, capturando momentos únicos e emoções e criando memórias inesquecíveis.",

@@ -17,6 +17,9 @@ export interface ProposalData {
       hideService?: boolean;
       sortOrder?: number;
     }>;
+    logo?: string;
+    clientPhoto?: string;
+    clientName?: string;
   };
 
   // About Us Section
@@ -28,6 +31,16 @@ export interface ProposalData {
     hideSupportText?: boolean;
     subtitle?: string;
     hideSubtitle?: boolean;
+    marqueeText?: string;
+    hideMarquee?: boolean;
+    items?: Array<{
+      id?: string;
+      image?: string;
+      caption?: string;
+      hideImage?: boolean;
+      hideCaption?: boolean;
+      sortOrder?: number;
+    }>;
   };
 
   // Team Section
@@ -49,6 +62,8 @@ export interface ProposalData {
     hideSection?: boolean;
     title?: string;
     hideTitle?: boolean;
+    subtitle?: string;
+    hideSubtitle?: boolean;
     topics?: Array<{
       title: string;
       description: string;

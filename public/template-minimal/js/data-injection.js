@@ -210,6 +210,47 @@
     }
   }
 
+  // Render navigation logo and username
+  function renderNavigationBrand(logo, userName) {
+    const navBrandElement = document.getElementById("introduction-logo");
+    if (!navBrandElement) {
+      console.warn(
+        "[Minimal Template] Navigation brand element not found: introduction-logo"
+      );
+      return;
+    }
+
+    // Clear existing content
+    navBrandElement.innerHTML = "";
+
+    // If logo is provided, render it
+    if (logo) {
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.src = logo;
+      img.alt = userName || "Logo";
+      img.className = "nav_logo";
+      navBrandElement.appendChild(img);
+    }
+
+    // If username is provided, add it after the logo (or as fallback if no logo)
+    if (userName) {
+      if (logo) {
+        // Logo exists, add username as a span element after the logo
+        const userNameSpan = document.createElement("span");
+        userNameSpan.textContent = userName;
+        userNameSpan.style.marginLeft = "0.75rem"; // Add spacing between logo and text
+        userNameSpan.style.display = "inline-block";
+        userNameSpan.style.verticalAlign = "middle";
+        navBrandElement.appendChild(userNameSpan);
+      } else {
+        // No logo, show username as text
+        navBrandElement.textContent = userName;
+      }
+    }
+    // If neither logo nor userName is provided, element remains empty
+  }
+
   function updateFooterEmail(email, fallback) {
     const button = document.querySelector(".copy-email-button");
     if (!button) return;
@@ -224,14 +265,91 @@
   }
 
   function updateFooterPhone(phone) {
-    const phoneElement = document.getElementById("footer-phone");
+    const phoneElement =
+      document.getElementById("footer-phone") ||
+      document.querySelector(".footer-contact_wrap .text-weight-normal");
     if (phoneElement && phone) {
       phoneElement.textContent = phone;
     }
   }
 
+  function renderFooter(footer, projectValidUntil, userEmail) {
+    if (!footer) return;
+
+    const heading = document.querySelector(".footer-heading p");
+    if (heading && footer.callToAction !== undefined) {
+      heading.textContent = footer.callToAction || "";
+    }
+
+    const validityEl = document.querySelector(
+      ".footer-proposal .text-size-regular"
+    );
+    if (validityEl) {
+      const formattedDate = formatDate(projectValidUntil);
+      validityEl.textContent = formattedDate
+        ? `Proposta válida até ${formattedDate}`
+        : "";
+    }
+
+    updateFooterEmail(footer.email, userEmail);
+    updateFooterPhone(footer.phone);
+
+    if (footer.hideCallToAction && heading) {
+      heading.style.display = "none";
+    }
+    if (footer.hideDisclaimer && validityEl) {
+      validityEl.style.display = "none";
+    }
+  }
+
+  function renderAboutUsItems(items) {
+    const container = document.getElementById("about-content");
+    if (!container) return;
+
+    if (!items || items.length === 0) {
+      container.innerHTML = "";
+      container.style.display = "none";
+      return;
+    }
+
+    container.style.display = "";
+
+    // Clear container
+    container.innerHTML = "";
+
+    // Render each item
+    items.forEach((item, index) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = `about-item about-item-${index + 1}`;
+
+      const videoDiv = document.createElement("div");
+      videoDiv.className = index === 1 ? "about-video is-figma" : "about-video";
+
+      if (item.image) {
+        const img = document.createElement("img");
+        img.src = item.image;
+        img.alt = item.caption || "";
+        img.className = "image";
+        videoDiv.appendChild(img);
+      }
+
+      const paragraphDiv = document.createElement("div");
+      paragraphDiv.className = "about-paragraph";
+
+      if (item.caption) {
+        const p = document.createElement("p");
+        p.textContent = item.caption;
+        paragraphDiv.appendChild(p);
+      }
+
+      itemDiv.appendChild(videoDiv);
+      itemDiv.appendChild(paragraphDiv);
+      container.appendChild(itemDiv);
+    });
+  }
+
   function renderClientsSection(clients) {
-    const sectionSelector = ".section_partners--dynamic";
+    const sectionSelector = "#clients-section";
     if (!clients) {
       toggleSectionVisibility(sectionSelector, true);
       return;
@@ -239,12 +357,23 @@
 
     toggleSectionVisibility(sectionSelector, clients.hideSection === true);
 
+    // Inject subtitle if exists
+    if (clients.subtitle) {
+      updateTextField("clients-subtitle", clients.subtitle);
+      if (clients.hideSubtitle) {
+        toggleElementVisibility("clients-subtitle", true);
+      }
+    }
+
+    // Inject title
     if (clients.title) {
       updateTextField("clients-title", clients.title);
+      if (clients.hideTitle) {
+        toggleElementVisibility("clients-title", true);
+      }
     }
-    if (clients.description) {
-      updateTextField("clients-description", clients.description);
-    }
+
+    // Inject paragraphs
     const paragraphs = clients.paragraphs || [];
     if (paragraphs[0]) {
       updateTextField("clients-paragraph-1", paragraphs[0]);
@@ -253,56 +382,199 @@
       updateTextField("clients-paragraph-2", paragraphs[1]);
     }
 
+    // Target the exact container where logos should be injected
+    // This is the <div class="w-layout-grid partners-grid" id="clients-logos"> container
     const logosContainer = document.getElementById("clients-logos");
-    if (logosContainer) {
-      const template =
-        logosContainer.querySelector("[data-logo-template]") ||
-        document.createElement("div");
-      logosContainer.innerHTML = "";
 
-      const logos = clients.items || [];
+    console.log("[Minimal Template] renderClientsSection:", {
+      hasClients: !!clients,
+      hasItems: !!clients.items,
+      itemsLength: clients.items?.length || 0,
+      items: clients.items,
+      containerFound: !!logosContainer,
+      containerId: logosContainer?.id,
+    });
 
-      logos.forEach((logo) => {
-        const clone = template.cloneNode(true);
-        clone.removeAttribute("data-logo-template");
+    const logos = Array.isArray(clients.items)
+      ? clients.items
+          .filter((logo) => {
+            const isVisible =
+              logo && logo.hideClient !== true && logo.hideItem !== true;
+            return isVisible;
+          })
+          .sort(
+            (a, b) =>
+              (a.sortOrder ?? Number.MAX_SAFE_INTEGER) -
+              (b.sortOrder ?? Number.MAX_SAFE_INTEGER)
+          )
+      : [];
 
-        const textElement = clone.querySelector(".logo-text");
-        const imgElement = clone.querySelector(".logo-img");
+    console.log("[Minimal Template] Filtered logos:", {
+      logosLength: logos.length,
+      logos: logos,
+    });
 
-        if (logo.logo && imgElement) {
-          imgElement.src = logo.logo;
-          imgElement.alt = logo.name || "Cliente";
-          imgElement.style.display = "block";
-          if (textElement) {
-            textElement.style.display = "none";
-          }
-        } else {
-          if (imgElement) {
-            imgElement.style.display = "none";
-          }
-          if (textElement) {
-            textElement.textContent = logo.name || "";
-            textElement.style.display = "block";
-          }
-        }
+    if (!logosContainer) {
+      console.error(
+        "[Minimal Template] ERROR: Could not find #clients-logos container!"
+      );
+      return;
+    }
 
-        logosContainer.appendChild(clone);
+    console.log("[Minimal Template] Found logosContainer:", {
+      element: logosContainer,
+      id: logosContainer.id,
+      className: logosContainer.className,
+      childrenCount: logosContainer.children.length,
+    });
+
+    // Find template BEFORE clearing innerHTML
+    const existingTemplate = logosContainer.querySelector(
+      "[data-logo-template]"
+    );
+    let template;
+
+    if (existingTemplate) {
+      template = existingTemplate;
+      console.log("[Minimal Template] Found existing template:", template);
+    } else {
+      // Create template if not found
+      template = document.createElement("div");
+      template.className = "partners-logo";
+      template.setAttribute("data-logo-template", "true");
+      const img = document.createElement("img");
+      img.className = "logo-img";
+      img.loading = "lazy";
+      img.style.display = "none";
+      const text = document.createElement("div");
+      text.className = "logo-text";
+      text.textContent = "Sua marca";
+      template.appendChild(img);
+      template.appendChild(text);
+      console.log("[Minimal Template] Created new template:", template);
+    }
+
+    // Clear container AFTER capturing template
+    logosContainer.innerHTML = "";
+
+    if (logos.length === 0) {
+      const placeholder = template.cloneNode(true);
+      placeholder.removeAttribute("data-logo-template");
+      // Apply correct styling to placeholder (matches CSS)
+      placeholder.style.display = "flex";
+      placeholder.style.justifyContent = "center";
+      placeholder.style.alignItems = "center";
+      placeholder.style.aspectRatio = "1";
+      placeholder.style.backgroundColor =
+        "var(--background-color--background-tetriary)";
+      placeholder.style.transition = "background-color 0.4s";
+      placeholder.style.width = "100%";
+      placeholder.style.maxWidth = "180px";
+      placeholder.style.maxHeight = "180px";
+      placeholder.style.padding = "0";
+      const textElement = placeholder.querySelector(".logo-text");
+      if (textElement) {
+        textElement.textContent = "Sua marca";
+        textElement.style.display = "block";
+        textElement.style.fontSize = "1.1rem";
+        textElement.style.textAlign = "center";
+        textElement.style.width = "100%";
+      }
+      const imgElement = placeholder.querySelector(".logo-img");
+      if (imgElement) {
+        imgElement.style.display = "none";
+      }
+      logosContainer.appendChild(placeholder);
+      console.log("[Minimal Template] Added placeholder logo");
+      return;
+    }
+
+    console.log("[Minimal Template] Rendering", logos.length, "logos");
+
+    logos.forEach((logo, index) => {
+      const clone = template.cloneNode(true);
+      clone.removeAttribute("data-logo-template");
+
+      // Remove any .logo-embed elements that might be in the template (for SVG logos)
+      const logoEmbed = clone.querySelector(".logo-embed");
+      if (logoEmbed) {
+        logoEmbed.remove();
+      }
+
+      const textElement = clone.querySelector(".logo-text");
+      const imgElement = clone.querySelector(".logo-img");
+
+      const hasLogoImage =
+        typeof logo.logo === "string" && logo.logo.trim().length > 0;
+
+      console.log("[Minimal Template] Logo", index, ":", {
+        name: logo.name,
+        hasLogoImage: hasLogoImage,
+        logo: logo.logo,
+        textElementFound: !!textElement,
+        imgElementFound: !!imgElement,
       });
 
-      if (logos.length === 0 && template) {
-        const placeholder = template.cloneNode(true);
-        placeholder.removeAttribute("data-logo-template");
-        const textElement = placeholder.querySelector(".logo-text");
+      // Ensure the container follows the correct flex layout (matches CSS)
+      clone.style.display = "flex";
+      clone.style.justifyContent = "center";
+      clone.style.alignItems = "center";
+      clone.style.aspectRatio = "1";
+      clone.style.backgroundColor =
+        "var(--background-color--background-tetriary)";
+      clone.style.transition = "background-color 0.4s";
+      clone.style.width = "100%";
+      clone.style.maxWidth = "180px";
+      clone.style.maxHeight = "180px";
+
+      if (hasLogoImage && imgElement) {
+        // Show image, hide text
+        imgElement.src = logo.logo;
+        imgElement.alt = logo.name || "Cliente";
+        imgElement.style.display = "block";
+        imgElement.style.visibility = "visible";
+        imgElement.style.width = "100%";
+        imgElement.style.height = "auto";
+        imgElement.style.maxWidth = "120px";
+        imgElement.style.maxHeight = "120px";
+        imgElement.style.objectFit = "contain";
+        imgElement.style.objectPosition = "center";
+        // Add padding to container for image spacing
+        clone.style.padding = "1rem";
         if (textElement) {
-          textElement.textContent = "Sua marca";
+          textElement.style.display = "none";
         }
-        const imgElement = placeholder.querySelector(".logo-img");
+      } else {
+        // Remove padding when showing text
+        clone.style.padding = "0";
+        // Hide image, show text
         if (imgElement) {
           imgElement.style.display = "none";
+          imgElement.src = "";
         }
-        logosContainer.appendChild(placeholder);
+        if (textElement) {
+          textElement.textContent = logo.name || "Cliente";
+          textElement.style.display = "block";
+          textElement.style.visibility = "visible";
+          // Ensure text styling matches CSS
+          textElement.style.fontSize = "1.1rem";
+          textElement.style.textAlign = "center";
+          textElement.style.width = "100%";
+          textElement.style.padding = "0";
+        }
       }
-    }
+
+      logosContainer.appendChild(clone);
+      console.log("[Minimal Template] Appended logo", index, "to container");
+    });
+
+    console.log(
+      "[Minimal Template] Successfully injected",
+      logos.length,
+      "logos into #clients-logos container. Container now has",
+      logosContainer.children.length,
+      "children"
+    );
   }
 
   // Icon mapping for expertise topics
@@ -352,9 +624,24 @@
   // Get SVG icon markup by icon name
   function getIconSvg(iconName) {
     if (!iconName || typeof iconName !== "string") {
+      console.warn("[Minimal Template] Invalid icon name:", iconName);
       return iconMap.AwardIcon; // Default icon
     }
-    return iconMap[iconName] || iconMap.AwardIcon; // Return icon or default
+    const icon = iconMap[iconName];
+    if (!icon) {
+      console.warn(
+        "[Minimal Template] Icon not found in map:",
+        iconName,
+        "Available icons:",
+        Object.keys(iconMap).slice(0, 5).join(", ")
+      );
+      return iconMap.AwardIcon; // Return default icon
+    }
+    // Replace white stroke with dark color for visibility on light backgrounds
+    // Use currentColor to inherit from CSS, or fallback to dark color
+    return icon
+      .replace(/stroke="white"/g, 'stroke="currentColor"')
+      .replace(/stroke='white'/g, "stroke='currentColor'");
   }
 
   // Hide loading and show content
@@ -395,25 +682,104 @@
   }
 
   // Render introduction services list
-  function renderIntroductionServices(containerId, services) {
-    const container = document.getElementById(containerId);
-    if (!container || !services || !Array.isArray(services)) return;
+  // function renderIntroductionServices(containerId, services) {
+  //   const container = document.getElementById(containerId);
+  //   if (!container || !services || !Array.isArray(services)) return;
 
-    // Filter out hidden services and sort
+  //   // Filter out hidden services and sort
+  //   const visibleServices = services
+  //     .filter((s) => !s.hideItem)
+  //     .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  //   // Clear existing content
+  //   container.innerHTML = "";
+
+  //   // Create new items
+  //   visibleServices.forEach((service) => {
+  //     const div = document.createElement("div");
+  //     div.className = "text-weight-medium";
+  //     div.textContent = service.serviceName || "";
+  //     container.appendChild(div);
+  //   });
+  // }
+
+  // Render introduction marquee images
+  function renderIntroMarquee(services) {
+    const marqueeComponent =
+      document.getElementById("intro-marquee-carousel") ||
+      document.querySelector(".marquee_component");
+    const marqueeContent =
+      marqueeComponent && marqueeComponent.querySelector(".marquee_content");
+
+    if (
+      !marqueeComponent ||
+      !marqueeContent ||
+      !services ||
+      !Array.isArray(services)
+    ) {
+      return;
+    }
+
+    const templateItem = marqueeContent.querySelector("[data-marquee-content]");
+    if (!templateItem) return;
+
     const visibleServices = services
-      .filter((s) => !s.hideItem)
+      .filter((s) => !s.hideService && !s.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Clear existing content
-    container.innerHTML = "";
+    if (visibleServices.length === 0) {
+      marqueeComponent.style.display = "none";
+      return;
+    }
 
-    // Create new items
-    visibleServices.forEach((service) => {
-      const div = document.createElement("div");
-      div.className = "text-weight-medium";
-      div.textContent = service.serviceName || "";
-      container.appendChild(div);
+    marqueeComponent.style.display = "";
+
+    // Cleanup existing marquee animation before modifying content
+    if (typeof cleanupMarqueeAnimations === "function") {
+      cleanupMarqueeAnimations();
+    } else if (marqueeComponent._marqueeAnimation) {
+      marqueeComponent._marqueeAnimation.kill();
+      marqueeComponent._marqueeAnimation = null;
+    }
+
+    // Remove all existing clones
+    marqueeContent.querySelectorAll("[data-marquee-clone]").forEach((clone) => {
+      clone.remove();
     });
+
+    // Create a single [data-marquee-content] element with all services
+    const contentItem = templateItem.cloneNode(true);
+    contentItem.innerHTML = "";
+
+    visibleServices.forEach((service) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "marquee-img";
+
+      const img = document.createElement("img");
+      img.className = "image";
+      img.loading = "lazy";
+      img.src = service.image || "";
+      img.srcset = service.image || "";
+      img.sizes = "(max-width: 1160px) 100vw, 1160px";
+      img.alt = service.serviceName || "Marquee image";
+
+      wrapper.appendChild(img);
+      contentItem.appendChild(wrapper);
+    });
+
+    // Replace all content with the new single item
+    marqueeContent.innerHTML = "";
+    marqueeContent.appendChild(contentItem);
+
+    // Reinitialize marquee to create clones and start animation
+    // Wait a bit for DOM to update
+    setTimeout(() => {
+      if (typeof initMontegrapaMarquees === "function") {
+        initMontegrapaMarquees();
+      } else if (typeof setupMarqueeElement === "function") {
+        setupMarqueeElement(marqueeComponent);
+      }
+    }, 100);
   }
 
   // Render team members list
@@ -464,17 +830,40 @@
 
   // Render expertise topics list
   function renderExpertiseTopics(containerId, topics, hideIcon) {
-    const container = document.getElementById(containerId);
-    if (!container || !topics || !Array.isArray(topics)) return;
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".expertise-grid");
+    if (!container) {
+      console.warn(
+        "[Minimal Template] Expertise container not found:",
+        containerId
+      );
+      return;
+    }
+    if (!topics || !Array.isArray(topics)) {
+      console.warn("[Minimal Template] No topics provided or invalid format");
+      return;
+    }
 
     // Filter out hidden topics and sort
     const visibleTopics = topics
       .filter((t) => !t.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template (first child)
-    const template = container.querySelector(".expertise_card");
-    if (!template) return;
+    console.log("[Minimal Template] Rendering expertise topics:", {
+      total: topics.length,
+      visible: visibleTopics.length,
+      hideIcon: hideIcon,
+    });
+
+    // Get template (first child) - use .expertise-card (with hyphen) not .expertise_card
+    const template = container.querySelector(".expertise-card");
+    if (!template) {
+      console.warn(
+        "[Minimal Template] Expertise card template not found in container"
+      );
+      return;
+    }
 
     // Clear container
     container.innerHTML = "";
@@ -485,22 +874,62 @@
 
       // Update icon (if provided and not globally hidden)
       if (!hideIcon && topic.icon) {
-        const iconContainer = clone.querySelector(".expertise_icon");
+        const iconContainer =
+          clone.querySelector(".expertise-icon_wrapper") ||
+          clone.querySelector(".expertise_icon");
         if (iconContainer) {
-          // Get SVG markup from icon name
           const iconSvg = getIconSvg(topic.icon);
+
+          console.log("[Minimal Template] Injecting icon:", {
+            topicTitle: topic.title,
+            iconName: topic.icon,
+            iconSvgLength: iconSvg?.length,
+            iconContainerFound: !!iconContainer,
+          });
+
+          // Always replace the content with SVG (removes any existing img)
           iconContainer.innerHTML = iconSvg;
+
+          // Ensure the icon is visible and has proper color
+          iconContainer.style.display = "";
+          iconContainer.style.visibility = "visible";
+          iconContainer.style.opacity = "1";
+          iconContainer.style.color = "#121212"; // Dark color for icons on light background
+
+          // Also set color on SVG elements directly
+          const svgElement = iconContainer.querySelector("svg");
+          if (svgElement) {
+            svgElement.style.color = "#121212";
+          }
+        } else {
+          console.warn(
+            "[Minimal Template] Icon container not found for expertise card",
+            {
+              topicTitle: topic.title,
+              iconName: topic.icon,
+            }
+          );
+        }
+      } else if (!hideIcon && !topic.icon) {
+        // Hide icon container if no icon is provided
+        const iconContainer =
+          clone.querySelector(".expertise-icon_wrapper") ||
+          clone.querySelector(".expertise_icon");
+        if (iconContainer) {
+          iconContainer.style.display = "none";
         }
       } else if (hideIcon) {
-        const iconContainer = clone.querySelector(".expertise_icon");
+        const iconContainer =
+          clone.querySelector(".expertise-icon_wrapper") ||
+          clone.querySelector(".expertise_icon");
         if (iconContainer) {
           iconContainer.style.display = "none";
         }
       }
 
-      // Update title
+      // Update title - selector matches HTML structure
       const titleDiv = clone.querySelector(
-        ".text-weight-medium.text-size-medium"
+        ".text-size-medium.text-weight-medium"
       );
       if (titleDiv && !topic.hideTitleField) {
         titleDiv.textContent = topic.title || "";
@@ -508,16 +937,44 @@
         titleDiv.style.display = "none";
       }
 
-      // Update description
-      const descP = clone.querySelector(".opacity_80 p");
-      if (descP && !topic.hideDescription) {
-        descP.textContent = topic.description || "";
-      } else if (descP && topic.hideDescription) {
-        descP.style.display = "none";
+      // Update description - selector matches HTML structure (.expertise-paragraph .text-size-regular)
+      const descDiv = clone.querySelector(
+        ".expertise-paragraph .text-size-regular"
+      );
+      if (descDiv && !topic.hideDescription) {
+        descDiv.textContent = topic.description || "";
+      } else if (descDiv && topic.hideDescription) {
+        descDiv.style.display = "none";
       }
 
       container.appendChild(clone);
     });
+  }
+
+  function updateExpertiseHeading(expertise) {
+    const heading = document.querySelector(".expertise-heading");
+    if (!heading) return;
+
+    // Use ID directly for subtitle (more reliable)
+    const subtitleEl =
+      document.getElementById("expertise-subtitle") ||
+      heading.querySelector(".text-style-allcaps");
+    const titleEl =
+      document.getElementById("expertise-title") ||
+      heading.querySelector("h1, h2, h3");
+
+    if (subtitleEl && expertise.subtitle !== undefined) {
+      subtitleEl.textContent = expertise.subtitle || "";
+      if (expertise.hideSubtitle) {
+        subtitleEl.style.display = "none";
+      } else {
+        subtitleEl.style.display = "";
+      }
+    }
+
+    if (titleEl && expertise.title !== undefined) {
+      titleEl.textContent = expertise.title || "";
+    }
   }
 
   // Render results list
@@ -1025,82 +1482,122 @@
       .map((topic) => topic.title)
       .filter((title) => title.trim().length > 0);
 
-    if (stepTitles.length === 0) return;
+    const marqueeText =
+      stepTitles.length > 0
+        ? stepTitles.join(" → ")
+        : "Brand Design → Design Systems → UI Design → Webflow Development";
 
-    const marqueeText = stepTitles.join(" → ");
-
-    const marqueeContent = document.querySelector(
-      "[data-marquee-content] .about-marquee_text"
+    // Update both main marquee and footer marquee
+    const marqueeContainers = document.querySelectorAll(
+      ".about-marquee .marquee_content[data-marquee]"
     );
-    if (marqueeContent) {
-      marqueeContent.textContent = marqueeText;
-    }
+
+    marqueeContainers.forEach((marqueeContainer) => {
+      if (marqueeContainer) {
+        // Update all marquee text elements
+        const marqueeTextElements = marqueeContainer.querySelectorAll(
+          ".about-marquee_text"
+        );
+        marqueeTextElements.forEach((el) => {
+          el.textContent = marqueeText;
+        });
+
+        // Reinitialize marquee animation after updating content
+        // Cleanup existing animation first
+        if (typeof cleanupMarqueeAnimations === "function") {
+          cleanupMarqueeAnimations();
+        } else if (marqueeContainer._marqueeAnimation) {
+          marqueeContainer._marqueeAnimation.kill();
+          marqueeContainer._marqueeAnimation = null;
+          // Remove cloned elements
+          marqueeContainer
+            .querySelectorAll("[data-marquee-clone]")
+            .forEach((clone) => {
+              clone.remove();
+            });
+        }
+
+        // Reinitialize the marquee
+        setTimeout(() => {
+          if (typeof setupMarqueeElement === "function") {
+            setupMarqueeElement(marqueeContainer);
+          } else if (typeof initMontegrapaMarquees === "function") {
+            initMontegrapaMarquees();
+          }
+        }, 100);
+      }
+    });
   }
 
   // Render FAQ items
   function renderFAQItems(containerId, items) {
-    const container = document.getElementById(containerId);
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".faq") ||
+      document.getElementById("faq-section");
+
     if (!container || !items || !Array.isArray(items)) return;
 
-    // Filter out hidden items and sort
     const visibleItems = items
       .filter((f) => !f.hideItem && !f.hideQuestion && !f.hideAnswer)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template (first accordion item)
-    const template = container.querySelector(".accordion_item");
+    // Use the first FAQ item as the template
+    const template =
+      container.querySelector(".faq-item") || container.firstElementChild;
     if (!template) return;
 
-    // Clear container
     container.innerHTML = "";
 
-    // Clone and populate for each FAQ item
-    visibleItems.forEach((item, index) => {
+    visibleItems.forEach((item) => {
       const clone = template.cloneNode(true);
 
-      // Update question number
-      const numberDiv = clone.querySelector(".accordion_left .opacity-60 div");
-      if (numberDiv) {
-        numberDiv.textContent = `${String(index + 1).padStart(2, "0")}.`;
+      // Question text
+      const questionEl =
+        clone.querySelector(".faq-top .text-size-regular.text-weight-medium") ||
+        clone.querySelector(".faq-top > div:first-child");
+      if (questionEl) {
+        const question = item.question || "";
+        const formattedQuestion =
+          question && !question.trim().endsWith("?")
+            ? `${question.trim()}?`
+            : question;
+        questionEl.textContent = formattedQuestion;
       }
 
-      // Update question
-      const questionDiv = clone.querySelector(
-        ".accordion_left .text-weight-medium.text-size-medium"
-      );
-      if (questionDiv) {
-        questionDiv.textContent = item.question || "";
+      // Answer text
+      const answerEl = clone.querySelector(".faq-answer p");
+      if (answerEl) {
+        answerEl.textContent = item.answer || "";
       }
 
-      // Update answer
-      const answerP = clone.querySelector(
-        ".accordion_open .accordion_margin p"
-      );
-      if (answerP) {
-        answerP.textContent = item.answer || "";
-      }
+      // Set up accordion functionality
+      const faqAnswer = clone.querySelector(".faq-answer");
+      const faqTop = clone.querySelector(".faq-top");
+      const faqArrow = clone.querySelector(".faq-arrow-img");
 
-      // Set up accordion click handler
-      const accordionOpen = clone.querySelector(".accordion_open");
-      if (accordionOpen) {
+      if (faqAnswer && faqTop) {
         // Initially set height to 0 (closed)
         if (typeof gsap !== "undefined") {
-          gsap.set(accordionOpen, {
+          gsap.set(faqAnswer, {
             height: 0,
             overflow: "hidden",
           });
         } else {
-          accordionOpen.style.height = "0";
-          accordionOpen.style.overflow = "hidden";
+          faqAnswer.style.height = "0";
+          faqAnswer.style.overflow = "hidden";
         }
 
         // Add click handler to toggle accordion
-        clone.addEventListener("click", (e) => {
+        faqTop.addEventListener("click", (e) => {
           e.stopPropagation();
 
           // Kill any existing animations on this element
           if (typeof gsap !== "undefined") {
-            gsap.killTweensOf(accordionOpen);
+            gsap.killTweensOf(faqAnswer);
+            if (faqArrow) {
+              gsap.killTweensOf(faqArrow);
+            }
           }
 
           // Check current state - use data attribute for reliable tracking
@@ -1109,11 +1606,12 @@
           if (isOpen) {
             // Close accordion
             clone.dataset.isOpen = "false";
+            clone.classList.remove("is-open");
             if (typeof gsap !== "undefined") {
               const currentHeight =
-                accordionOpen.scrollHeight || accordionOpen.offsetHeight;
+                faqAnswer.scrollHeight || faqAnswer.offsetHeight;
               gsap.fromTo(
-                accordionOpen,
+                faqAnswer,
                 { height: currentHeight },
                 {
                   height: 0,
@@ -1121,23 +1619,44 @@
                   ease: "power2.inOut",
                 }
               );
+              if (faqArrow) {
+                gsap.to(faqArrow, {
+                  rotation: 0,
+                  duration: 0.4,
+                  ease: "power2.inOut",
+                });
+              }
             } else {
-              accordionOpen.style.height = "0";
+              faqAnswer.style.height = "0";
+              if (faqArrow) {
+                faqArrow.style.transform = "rotate(0deg)";
+              }
             }
           } else {
             // Open accordion
             clone.dataset.isOpen = "true";
+            clone.classList.add("is-open");
             if (typeof gsap !== "undefined") {
-              gsap.set(accordionOpen, { height: "auto" });
-              const naturalHeight = accordionOpen.scrollHeight;
-              gsap.set(accordionOpen, { height: 0 });
-              gsap.to(accordionOpen, {
+              gsap.set(faqAnswer, { height: "auto" });
+              const naturalHeight = faqAnswer.scrollHeight;
+              gsap.set(faqAnswer, { height: 0 });
+              gsap.to(faqAnswer, {
                 height: naturalHeight,
                 duration: 0.4,
                 ease: "power2.inOut",
               });
+              if (faqArrow) {
+                gsap.to(faqArrow, {
+                  rotation: 180,
+                  duration: 0.4,
+                  ease: "power2.inOut",
+                });
+              }
             } else {
-              accordionOpen.style.height = "auto";
+              faqAnswer.style.height = "auto";
+              if (faqArrow) {
+                faqArrow.style.transform = "rotate(180deg)";
+              }
             }
           }
         });
@@ -1147,191 +1666,109 @@
     });
   }
 
-  // Render plans list
-  function renderPlans(containerId, plans) {
-    const container = document.getElementById(containerId);
+  // Render plans list (investment cards)
+  function renderPlans(containerId, plans, planConfig = {}) {
+    const container =
+      document.getElementById(containerId) ||
+      document.querySelector(".invest-grid") ||
+      (document.getElementById("investiment") &&
+        document.getElementById("investiment").querySelector(".invest-grid"));
+
     if (!container || !plans || !Array.isArray(plans)) return;
 
-    // Filter out hidden plans and sort
+    if (planConfig.hideSection === true) {
+      container.style.display = "none";
+      return;
+    }
+    container.style.display = "";
+
     const visiblePlans = plans
       .filter((p) => !p.hideItem)
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    // Get template - prefer one without is--center to avoid inheriting the class
-    let template = container.querySelector(".pricing_card:not(.is--center)");
-    if (!template) {
-      template = container.querySelector(".pricing_card");
-    }
-    if (!template) return;
+    const regularTemplate =
+      container.querySelector(".invest-card:not(.is-best)") ||
+      container.querySelector(".invest-card");
+    const bestTemplate = container.querySelector(".invest-card.is-best");
+    const fallbackTemplate = regularTemplate || bestTemplate;
+    if (!fallbackTemplate) return;
 
-    // Clear container
     container.innerHTML = "";
 
-    // Clone and populate for each plan
     visiblePlans.forEach((plan) => {
-      const clone = template.cloneNode(true);
+      const templateToUse =
+        plan.recommended === true && bestTemplate
+          ? bestTemplate
+          : fallbackTemplate;
+      const clone = templateToUse.cloneNode(true);
 
-      // Normalize recommended value (handle both boolean and string)
-      const isRecommended = plan.recommended === true;
-
-      // Handle is--center class
-      clone.classList.remove("is--center");
-      if (isRecommended) {
-        clone.classList.add("is--center");
-      }
-
-      // Handle badge
-      let badge = clone.querySelector(".pricing_badge");
-      if (isRecommended) {
-        if (!badge) {
-          badge = document.createElement("div");
-          badge.className = "pricing_badge";
-          badge.innerHTML = `
-            <div class="embed_icon is--tiny w-embed">
-              <svg width="10" height="9" viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4.56132 0.302089C4.75098 -0.0446829 5.24902 -0.0446824 5.43868 0.30209L6.6975 2.60375C6.74338 2.68764 6.81236 2.75662 6.89625 2.8025L9.19791 4.06132C9.54468 4.25098 9.54468 4.74902 9.19791 4.93868L6.89625 6.1975C6.81236 6.24338 6.74338 6.31236 6.6975 6.39625L5.43868 8.69791C5.24902 9.04468 4.75098 9.04468 4.56132 8.69791L3.3025 6.39625C3.25662 6.31236 3.18764 6.24338 3.10375 6.1975L0.802089 4.93868C0.455317 4.74902 0.455318 4.25098 0.80209 4.06132L3.10375 2.8025C3.18764 2.75662 3.25662 2.68764 3.3025 2.60375L4.56132 0.302089Z" fill="#E6E6E6"/>
-              </svg>
-            </div>
-            <div class="text-weight-medium">Melhor Oferta</div>
-          `;
-          clone.insertBefore(badge, clone.firstChild);
-        }
-        badge.style.display = "";
+      // Recommended flag
+      if (plan.recommended) {
+        clone.classList.add("is-best");
       } else {
-        if (badge) {
-          badge.style.display = "none";
-        }
+        clone.classList.remove("is-best");
       }
 
-      // Handle pricing_top.is--best-offer class
-      const pricingTop = clone.querySelector(".pricing_top");
-      if (pricingTop) {
-        if (isRecommended) {
-          pricingTop.classList.add("is--best-offer");
+      // Title
+      const titleEl =
+        clone.querySelector(".invest-best_wrap > div:first-child") ||
+        clone.querySelector(".invest-top > div:first-child");
+      if (titleEl) {
+        if (plan.hideTitleField) {
+          titleEl.style.display = "none";
         } else {
-          pricingTop.classList.remove("is--best-offer");
+          titleEl.style.display = "";
+          titleEl.textContent = plan.title || "";
         }
       }
 
-      // Update title
-      const titleDiv = clone.querySelector(
-        ".pricing_name .text-size-large.text-weight-semibold"
+      // Price
+      const priceEl = clone.querySelector(
+        ".invest-top .heading-style-h1.text-weight-medium"
       );
-      if (titleDiv && !plan.hideTitleField) {
-        titleDiv.textContent = plan.title || "";
-      } else if (titleDiv && plan.hideTitleField) {
-        titleDiv.style.display = "none";
-      }
-
-      // Update description
-      const descDiv = clone.querySelector(".pricing_description .opacity_80");
-      if (descDiv && !plan.hideDescription) {
-        descDiv.textContent = plan.description || "";
-      } else if (descDiv && plan.hideDescription) {
-        descDiv.style.display = "none";
-      }
-
-      // Update price
-      const priceDiv = clone.querySelector(
-        ".pricing_price .heading-style-h3.text-weight-medium"
-      );
-      if (priceDiv && !plan.hidePrice) {
-        priceDiv.textContent = formatCurrency(plan.value);
-      } else if (priceDiv && plan.hidePrice) {
-        priceDiv.style.display = "none";
-      }
-
-      // Update plan period
-      const periodDiv = clone.querySelector(".pricing_price .opacity_80");
-      if (periodDiv && !plan.hidePlanPeriod) {
-        periodDiv.textContent = plan.planPeriod || "";
-      } else if (periodDiv && plan.hidePlanPeriod) {
-        periodDiv.style.display = "none";
-      }
-
-      // Update included items
-      const includedContainer = clone.querySelector(".pricing_item-wrap");
-      if (includedContainer && plan.includedItems) {
-        const itemTemplate = includedContainer.querySelector(".pricing_item");
-        if (itemTemplate) {
-          includedContainer.innerHTML = "";
-          const visibleItems = (plan.includedItems || [])
-            .filter((item) => !item.hideItem)
-            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-
-          visibleItems.forEach((item) => {
-            const itemClone = itemTemplate.cloneNode(true);
-            const itemText = itemClone.querySelector(
-              ".pricing_item > div:last-child"
-            );
-            if (itemText) {
-              itemText.textContent = item.description || item.item || "";
-            }
-            includedContainer.appendChild(itemClone);
-          });
-        }
-      }
-
-      // Update button
-      const buttonText = clone.querySelector(
-        ".pricing_button .btn-magnetic__text-p"
-      );
-      if (buttonText && !plan.hideButtonTitle) {
-        buttonText.textContent = plan.buttonTitle || "Fechar pacote";
-        const duplicate = clone.querySelector(
-          ".pricing_button .btn-magnetic__text-p.is--duplicate"
-        );
-        if (duplicate) {
-          duplicate.textContent = plan.buttonTitle || "Fechar pacote";
-        }
-      } else if (buttonText && plan.hideButtonTitle) {
-        const button = clone.querySelector(".pricing_button");
-        if (button) {
-          button.style.display = "none";
-        }
-      }
-
-      // Handle btn-magnetic__text-p.is--black class for recommended plans
-      const allButtonTexts = clone.querySelectorAll(
-        ".pricing_button .btn-magnetic__text-p"
-      );
-      allButtonTexts.forEach((textEl) => {
-        if (isRecommended) {
-          textEl.classList.add("is--black");
+      if (priceEl) {
+        if (plan.hidePrice) {
+          priceEl.style.display = "none";
         } else {
-          textEl.classList.remove("is--black");
-        }
-      });
-
-      // Handle btn-magnetic__fill.is--white class for recommended plans
-      const buttonFill = clone.querySelector(
-        ".pricing_button .btn-magnetic__fill"
-      );
-      if (buttonFill) {
-        if (isRecommended) {
-          buttonFill.classList.add("is--white");
-        } else {
-          buttonFill.classList.remove("is--white");
+          priceEl.style.display = "";
+          priceEl.textContent = plan.value ? formatCurrency(plan.value) : "";
         }
       }
 
-      // Update button href
-      const buttonLink = clone.querySelector(
-        ".btn-animate-chars.is-invest"
+      // Description
+      const descEl = clone.querySelector(
+        ".invest-button-wrap .max-width-small .text-size-regular"
       );
+      if (descEl) {
+        if (plan.hideDescription) {
+          descEl.style.display = "none";
+        } else {
+          descEl.style.display = "";
+          descEl.textContent = plan.description || "";
+        }
+      }
+
+      // Button text and behavior
+      const buttonLink = clone.querySelector(".btn-animate-chars.is-invest");
+      const buttonText = clone.querySelector(".btn-animate-chars__text");
+      if (buttonText) {
+        if (plan.hideButtonTitle) {
+          buttonText.style.display = "none";
+        } else {
+          buttonText.style.display = "";
+          buttonText.textContent = plan.buttonTitle || "Fechar pacote";
+        }
+      }
+
       if (buttonLink) {
         const isViewingMode = window.parent && window.parent !== window;
-        
+        buttonLink.href = "#";
+        buttonLink.removeAttribute("target");
+        buttonLink.removeAttribute("rel");
+
         if (isViewingMode) {
-          // In viewing mode, send message to parent to open modal
-          buttonLink.href = "#";
-          buttonLink.removeAttribute("target");
-          buttonLink.removeAttribute("rel");
-          
           buttonLink.addEventListener("click", (e) => {
             e.preventDefault();
-            
-            // Send message to parent window with selected plan
             window.parent.postMessage(
               {
                 type: "PLAN_SELECTED",
@@ -1349,13 +1786,101 @@
           buttonLink.rel = "noopener noreferrer";
         } else if (plan.buttonHref) {
           buttonLink.href = plan.buttonHref;
-          buttonLink.target = "_blank";
-          buttonLink.rel = "noopener noreferrer";
+          if (plan.buttonWhereToOpen === "_self") {
+            buttonLink.target = "_self";
+          } else {
+            buttonLink.target = "_blank";
+            buttonLink.rel = "noopener noreferrer";
+          }
         }
+      }
+
+      // Recommended badge visibility
+      const bestTag = clone.querySelector(".invest-best-tag");
+      if (bestTag) {
+        bestTag.style.display = plan.recommended ? "" : "none";
+      }
+
+      // Included items
+      const includedContainer = clone.querySelector(".invest-feature");
+      if (includedContainer) {
+        const itemTemplate =
+          includedContainer.querySelector(".invest-list") ||
+          includedContainer.firstElementChild;
+        includedContainer.innerHTML = "";
+
+        const visibleItems = (plan.includedItems || [])
+          .filter((item) => !item.hideItem)
+          .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+        visibleItems.forEach((item) => {
+          const itemClone = itemTemplate
+            ? itemTemplate.cloneNode(true)
+            : document.createElement("div");
+          if (!itemTemplate) {
+            itemClone.className = "invest-list";
+          }
+          const itemText =
+            itemClone.querySelector(".text-size-regular") ||
+            itemClone.querySelector("div:last-child");
+          if (itemText) {
+            itemText.textContent = item.description || item.item || "";
+          }
+          includedContainer.appendChild(itemClone);
+        });
       }
 
       container.appendChild(clone);
     });
+
+    if (visiblePlans.length === 0) {
+      container.style.display = "none";
+    }
+  }
+
+  // Update investment header content and visibility
+  function renderInvestmentSection(investment) {
+    if (!investment) return;
+
+    const section = document.querySelector(".section_invest");
+    if (section) {
+      if (investment.hideSection === true) {
+        section.style.display = "none";
+      } else {
+        section.style.display = "";
+      }
+    }
+
+    const titleEl = document.querySelector(
+      ".invest-heading .about-heading_title h2"
+    );
+    if (titleEl) {
+      if (investment.hideTitle) {
+        titleEl.style.display = "none";
+      } else {
+        titleEl.style.display = "";
+        if (investment.title !== undefined && investment.title !== null) {
+          titleEl.textContent = investment.title || "";
+        }
+      }
+    }
+
+    const scopeEl = document.querySelector(
+      ".invest-heading .about-heading_left > div:nth-child(2)"
+    );
+    if (scopeEl) {
+      if (investment.hideProjectScope) {
+        scopeEl.style.display = "none";
+      } else {
+        scopeEl.style.display = "";
+        if (
+          investment.projectScope !== undefined &&
+          investment.projectScope !== null
+        ) {
+          scopeEl.textContent = investment.projectScope || "";
+        }
+      }
+    }
   }
 
   // Update button configuration
@@ -1379,7 +1904,7 @@
     // Update button links
     const isViewingMode = window.parent && window.parent !== window;
     const buttonLinks = document.querySelectorAll(".btn-animate-chars");
-    
+
     buttonLinks.forEach((link) => {
       // Skip if this is a pricing button (will be handled separately)
       if (link.classList.contains("is-invest")) {
@@ -1394,13 +1919,16 @@
         anchor.href = "#invest-section";
         anchor.removeAttribute("target");
         anchor.removeAttribute("rel");
-        
+
         // Add click handler to scroll smoothly
         anchor.addEventListener("click", (e) => {
           e.preventDefault();
           const investSection = document.querySelector(".section_invest");
           if (investSection) {
-            investSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            investSection.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
           }
         });
       } else if (
@@ -1426,13 +1954,14 @@
     console.log("[Minimal Template] injectData called", {
       hasData: !!data,
       hasProposalData: !!data?.proposalData,
-      projectName: data?.projectName
+      projectName: data?.projectName,
     });
-    
+
     if (!data || !data.proposalData) {
-      // Still show content even if no data
-      console.warn("[Minimal Template] No data or proposalData, showing content anyway");
-      showContent();
+      // Don't show content if no data - wait for postMessage with valid data
+      console.warn(
+        "[Minimal Template] No data or proposalData, waiting for data..."
+      );
       return;
     }
 
@@ -1442,13 +1971,42 @@
     // Simple text fields - Introduction
     if (pd.introduction) {
       const intro = pd.introduction;
-      updateTextField("introduction-username", intro.userName);
-      updateTextField("introduction-email", intro.email);
-      updateTitleWithWordSpans("introduction-title", intro.title);
-      updateTextField(
-        "introduction-validity",
-        formatDate(data.projectValidUntil)
+
+      // Render navigation logo and username
+      // Logo and userName come from introduction section (not clientName)
+      const navLogo = intro.logo;
+      const navUserName = intro.userName;
+      renderNavigationBrand(navLogo, navUserName);
+
+      updateTextField("introduction-clientName", data.clientName);
+
+      // Render client photo if available (from introduction section)
+      const clientPhoto = intro.clientPhoto || data.clientPhoto;
+      const clientPhotoElement = document.getElementById(
+        "introduction-clientPhoto"
       );
+      if (clientPhotoElement) {
+        if (clientPhoto) {
+          // Use background-image style (matching CSS structure)
+          clientPhotoElement.style.backgroundImage = `url('${clientPhoto}')`;
+          clientPhotoElement.style.display = "";
+        } else {
+          // No photo, hide the element completely (no fallback)
+          clientPhotoElement.style.display = "none";
+          clientPhotoElement.style.backgroundImage = "none";
+        }
+      }
+      // introduction-email ID doesn't exist in HTML, skip it
+      // updateTextField("introduction-email", intro.email);
+      updateTitleWithWordSpans("introduction-title", intro.title);
+      const validityText = formatDate(data.projectValidUntil);
+      if (validityText) {
+        updateTextField("introduction-validity", validityText);
+        updateTextField("about-validity", validityText);
+        updateTextField("invest-validity", validityText);
+      } else {
+        console.warn("[Minimal Template] No projectValidUntil date provided");
+      }
       updateTextField("introduction-subtitle", intro.subtitle);
 
       // Hide subtitle if needed
@@ -1456,29 +2014,49 @@
         toggleElementVisibility("introduction-subtitle", true);
       }
 
-      // Render services list
-      renderIntroductionServices("introduction-services", intro.services);
+      const hasVisibleServices =
+        Array.isArray(intro.services) &&
+        intro.services.some((s) => !s.hideService && !s.hideItem);
+      if (intro.hideMarquee === true) {
+        toggleSectionVisibility(".marquee_component", true);
+      } else if (hasVisibleServices) {
+        renderIntroMarquee(intro.services);
+        toggleSectionVisibility(".marquee_component", false);
+      } else {
+        toggleSectionVisibility(".marquee_component", true);
+      }
     }
 
     // About Us
     if (pd.aboutUs) {
-      updateTitleWithWordSpans("aboutus-title", pd.aboutUs.title);
-      toggleSectionVisibility(
-        ".section_about",
-        pd.aboutUs.hideSection === true
-      );
+      updateTitleWithWordSpans("about-title", pd.aboutUs.title);
+      updateTextField("about-description", pd.aboutUs.subtitle);
+
+      renderAboutUsItems(pd.aboutUs.items);
+
+      toggleSectionVisibility("about-section", pd.aboutUs.hideSection === true);
+    } else {
+      toggleSectionVisibility("about-section", true);
+    }
+
+    // Clients / Brands
+    if (pd.clients) {
+      renderClientsSection(pd.clients);
+    } else {
+      toggleSectionVisibility("#clients-section", true);
     }
 
     // Team
     if (pd.team) {
-      updateTitleWithWordSpans("team-title", pd.team.title);
+      // team-title ID doesn't exist in HTML, skip it
+      // updateTitleWithWordSpans("team-title", pd.team.title);
       renderTeamMembers("team-members-list", pd.team.members);
       toggleSectionVisibility(".section_team", pd.team.hideSection === true);
     }
 
     // Expertise
     if (pd.expertise) {
-      updateTitleWithWordSpans("expertise-title", pd.expertise.title);
+      updateExpertiseHeading(pd.expertise);
       renderExpertiseTopics(
         "expertise-topics-list",
         pd.expertise.topics,
@@ -1488,11 +2066,14 @@
         ".section_expertise",
         pd.expertise.hideSection === true
       );
+    } else {
+      toggleSectionVisibility(".section_expertise", true);
     }
 
     // Results
     if (pd.results) {
-      updateTitleWithWordSpans("results-title", pd.results.title);
+      // results-title ID doesn't exist in HTML, skip it
+      // updateTitleWithWordSpans("results-title", pd.results.title);
       renderResults("results-list", pd.results.items);
       toggleSectionVisibility(
         ".section_proof",
@@ -1509,79 +2090,71 @@
       );
     }
 
-    // Clients / Brands
-    if (pd.clients) {
-      renderClientsSection(pd.clients);
-    } else {
-      toggleSectionVisibility(".section_partners--dynamic", true);
-    }
-
     // Steps
     if (pd.steps) {
       renderSteps("steps-list", pd.steps.topics);
-      updateTextField("steps-number", pd.steps.topics.length);
+      // steps-number ID doesn't exist in HTML, skip it
+      // updateTextField("steps-number", pd.steps.topics.length);
       toggleSectionVisibility(
         ".section_process",
         pd.steps.hideSection === true
       );
+    } else {
+      // Even if no steps, ensure marquees are initialized with default text
+      const marqueeContainers = document.querySelectorAll(
+        ".about-marquee .marquee_content[data-marquee]"
+      );
+      marqueeContainers.forEach((marqueeContainer) => {
+        if (marqueeContainer && typeof setupMarqueeElement === "function") {
+          setTimeout(() => {
+            setupMarqueeElement(marqueeContainer);
+          }, 100);
+        } else if (
+          marqueeContainer &&
+          typeof initMontegrapaMarquees === "function"
+        ) {
+          setTimeout(() => {
+            initMontegrapaMarquees();
+          }, 100);
+        }
+      });
     }
 
     // Investment
     if (pd.investment) {
-      updateTitleWithWordSpans("investment-title", pd.investment.title);
-      updateTextField("investment-projectScope", pd.investment.projectScope);
-
-      // Hide projectScope container if escope.hideSection is true or investment.hideProjectScope is true
-      const shouldHideProjectScope =
-        (pd.escope && pd.escope.hideSection === true) ||
-        pd.investment.hideProjectScope === true;
-      const projectScopeContainer = document.querySelector(".pricing_scope");
-      if (projectScopeContainer) {
-        if (shouldHideProjectScope) {
-          projectScopeContainer.style.display = "none";
-        } else {
-          projectScopeContainer.style.display = "";
-        }
-      }
+      const investmentData = {
+        ...pd.investment,
+        hideProjectScope:
+          (pd.escope && pd.escope.hideSection === true) ||
+          pd.investment.hideProjectScope === true,
+      };
+      renderInvestmentSection(investmentData);
     }
 
     // Plans
     if (pd.plans) {
-      renderPlans("plans-plansItems", pd.plans.plansItems);
+      renderPlans("invest-grid", pd.plans.plansItems, pd.plans);
     }
 
     // Handle pricing section visibility (investment and plans share the same section)
-    if (pd.investment || pd.plans) {
-      const investmentHidden =
-        pd.investment && pd.investment.hideSection === true;
-      const plansHidden = pd.plans && pd.plans.hideSection === true;
-      const shouldHidePricing =
-        pd.investment && pd.plans
-          ? investmentHidden && plansHidden
-          : investmentHidden || plansHidden;
-      toggleSectionVisibility(".section_pricing", shouldHidePricing);
-    }
+    const investmentHidden =
+      !pd.investment || pd.investment.hideSection === true;
+    const plansHidden = !pd.plans || pd.plans.hideSection === true;
+    toggleSectionVisibility(".section_invest", investmentHidden && plansHidden);
 
     // FAQ
     if (pd.faq) {
-      renderFAQItems("faq-items", pd.faq.items);
-      toggleSectionVisibility(".section_faq", pd.faq.hideSection === true);
+      renderFAQItems("faq-section", pd.faq.items);
+      toggleSectionVisibility("#faq-section", pd.faq.hideSection === true);
     }
 
     // Footer
     if (pd.footer) {
-      updateTextField("footer-callToAction", pd.footer.callToAction);
-      updateTextField("footer-validity", formatDate(data.projectValidUntil));
-      updateTextField("footer-disclaimer", pd.footer.disclaimer);
-      updateFooterEmail(pd.footer.email, data?.userEmail || data?.user?.email);
-      updateFooterPhone(pd.footer.phone);
-
-      if (pd.footer.hideCallToAction) {
-        toggleElementVisibility("footer-callToAction", true);
-      }
-      if (pd.footer.hideDisclaimer) {
-        toggleElementVisibility("footer-disclaimer", true);
-      }
+      renderFooter(
+        pd.footer,
+        data.projectValidUntil,
+        data?.userEmail || data?.user?.email
+      );
     }
 
     if (data.mainColor) {
@@ -1599,6 +2172,13 @@
 
     // Button configuration
     updateButtons(bc);
+
+    // Reinitialize all marquees after data injection to ensure animations work
+    setTimeout(() => {
+      if (typeof initMontegrapaMarquees === "function") {
+        initMontegrapaMarquees();
+      }
+    }, 200);
 
     // Hide loading and show content after data is injected
     showContent();
@@ -1625,25 +2205,14 @@
     }
   }
 
-  // Fallback: Show content after a timeout if no data is received
-  setTimeout(() => {
-    const loadingEl = document.getElementById("minimal-template-loading");
-    if (loadingEl && loadingEl.style.display !== "none") {
-      console.warn(
-        "Minimal template: No data received after 5s, showing content anyway"
-      );
-      showContent();
-    }
-  }, 5000); // 5 second timeout
-
   // Listen for postMessage from parent window
   window.addEventListener("message", function (event) {
     console.log("[Minimal Template] Received postMessage:", {
       type: event.data?.type,
       hasData: !!event.data?.data,
-      origin: event.origin
+      origin: event.origin,
     });
-    
+
     // Security: optionally verify origin
     // if (event.origin !== "http://localhost:3000") return;
 
@@ -1668,4 +2237,3 @@
     handleDataInjection(data);
   };
 })();
-

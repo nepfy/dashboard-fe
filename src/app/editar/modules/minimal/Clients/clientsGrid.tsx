@@ -44,7 +44,7 @@ function calculateGridConfig(count: number): GridConfig {
 }
 
 interface ClientsGridProps {
-  items: Client[];
+  items: Client[] | null;
   onLogoNameChange?: (
     id: string | undefined,
     value: string,
@@ -55,7 +55,7 @@ interface ClientsGridProps {
 }
 
 export default function ClientsGrid({
-  items,
+  items = [],
   onLogoNameChange,
   onReorderClients,
   canEdit = false,
@@ -68,7 +68,7 @@ export default function ClientsGrid({
   useEffect(() => {
     if (
       wasSavingRef.current &&
-      previousItemsRef.current.length !== items.length
+      previousItemsRef.current?.length !== items?.length
     ) {
       setOpenModalId(null);
       wasSavingRef.current = false;
@@ -84,7 +84,7 @@ export default function ClientsGrid({
     [onReorderClients]
   );
 
-  const count = items.length;
+  const count = items?.length || 0;
   const config = calculateGridConfig(count);
 
   // Split items into rows
@@ -92,7 +92,7 @@ export default function ClientsGrid({
   let currentIndex = 0;
   for (let i = 0; i < config.rows; i++) {
     const colsInRow = config.colsPerRow[i] || config.colsPerRow[0];
-    rows.push(items.slice(currentIndex, currentIndex + colsInRow));
+    rows.push(items?.slice(currentIndex, currentIndex + colsInRow) || []);
     currentIndex += colsInRow;
   }
 
@@ -249,12 +249,8 @@ export default function ClientsGrid({
                 {row.map((client) => (
                   <div
                     key={client.id || client.name}
-                    className={`client-box relative border border-transparent ${openModalId === client.id ? "editing" : ""} ${canEdit ? "" : "cursor-not-allowed"}`}
-                    onClick={() => {
-                      if (canEdit || openModalId === client.id) {
-                        setOpenModalId(client.id || null);
-                      }
-                    }}
+                    className={`client-box relative cursor-pointer border border-transparent ${openModalId === client.id ? "editing" : ""}`}
+                    onClick={() => setOpenModalId(client.id || null)}
                   >
                     {client.logo ? (
                       <div className="client-logo-container">
@@ -302,15 +298,11 @@ export default function ClientsGrid({
 
         {/* Tablet/Mobile: Single wrapping container */}
         <div className="clients-grid-mobile">
-          {items.map((client) => (
+          {items?.map((client) => (
             <div
               key={client.id || client.name}
-              className={`client-box relative border border-transparent ${openModalId === client.id ? "editing" : ""} ${canEdit ? "" : "cursor-not-allowed"}`}
-              onClick={() => {
-                if (canEdit || openModalId === client.id) {
-                  setOpenModalId(client.id || null);
-                }
-              }}
+              className={`client-box relative cursor-pointer border border-transparent ${openModalId === client.id ? "editing" : ""}`}
+              onClick={() => setOpenModalId(client.id || null)}
             >
               {client.logo ? (
                 <div className="client-logo-container">

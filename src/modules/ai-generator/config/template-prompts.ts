@@ -157,7 +157,7 @@ Gerar textos premium, ÚNICOS e com VALOR REAL, com CONTAGEM EXATA de caracteres
 
 FORMATO OBRIGATÓRIO
 {
-  "title": "Frase imperativa, inclusiva e sofisticada com EXATAMENTE 60 caracteres (sem aspas adicionais)",
+  "title": "Frase imperativa, inclusiva e sofisticada com entre 50 e 80 caracteres (sem aspas adicionais)",
   "subtitle": "Frase sobre benefício e transformação com EXATAMENTE 100 caracteres",
   "services": [
     "Serviço 1 com EXATAMENTE 30 caracteres",
@@ -171,7 +171,7 @@ FORMATO OBRIGATÓRIO
 
 REGRAS RÍGIDAS
 - CRÍTICO: Conte MANUALMENTE cada caractere (incluindo espaços) ANTES de finalizar cada campo.
-- title: Escreva uma frase e conte. Se tiver 58 ou 62 caracteres, REESCREVA até ter EXATAMENTE 60.
+- title: Escreva uma frase e conte. Deve ter pelo menos 50 e no máximo 80 caracteres; se ficar fora dessa faixa, REESCREVA (não trunque).
 - subtitle: Escreva uma frase e conte. Se tiver 98 ou 103 caracteres, REESCREVA até ter EXATAMENTE 100.
 - services[]: Cada item deve ter EXATAMENTE 30 caracteres. Conte cada um individualmente.
 - Não utilize aspas extras, emojis ou caracteres especiais fora do padrão ASCII básico.
@@ -181,9 +181,10 @@ REGRAS RÍGIDAS
 
 EXEMPLOS CORRETOS (conte os caracteres):
 
-✅ TITLE (60 chars):
+✅ TITLE (faixa 50–80 chars):
 "Elevamos sua presença visual no mercado com excelência" = 60 chars ✓
 "Transformamos sua visão em realidade com excelência total" = 60 chars ✓
+"Criamos experiências digitais premium que fortalecem sua marca" = 67 chars ✓
 
 ❌ TITLE ERRADO:
 "Ativamos Estratégia de Marketing Digital Completa com entreg" = 61 chars (TRUNCADO!)
@@ -209,7 +210,7 @@ PROCESSO:
 3. Se não bater EXATAMENTE, REESCREVA (não trunce!)
 4. Valide novamente antes de enviar`,
         expectedFormat: `{
-  "title": "string (exactly 60 characters, Title Case, premium tone)",
+  "title": "string (50 a 80 caracteres, Title Case, tom premium e inclusivo)",
   "subtitle": "string (exactly 100 characters, sensory premium tone)",
   "services": [
     "string (exactly 30 characters)",
@@ -221,7 +222,7 @@ PROCESSO:
   "buttonText": "Solicitar Proposta"
 }`,
         rules: [
-          "title: EXATAMENTE 60 caracteres, imperativo, inclusivo e sofisticado",
+          "title: entre 50 e 80 caracteres, imperativo, inclusivo e sofisticado",
           "subtitle: EXATAMENTE 100 caracteres, linguagem sensorial premium",
           "services: EXATAMENTE 4 itens com EXATAMENTE 30 caracteres cada",
           'validity: manter "15 dias"',
@@ -745,19 +746,26 @@ DADOS DO PROJETO:
 - Usuário: {userName}
 - Email: {userEmail}
 
-FORMATO:
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- Sempre em 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias e termos técnicos.
+- Use storytelling e inclua gatilhos mentais com VARIAÇÃO (autoridade, credibilidade validada, prova concreta, urgência moderada, transformação, lucro mensurável). Evite repetir o mesmo gatilho em seções diferentes.
+- PROIBIDO usar literalmente “autoridade e prova social”. Prefira sinônimos curtos: “credibilidade validada por clientes reais”, “cases comprovados”, “confiança construída”, “retorno comprovado”.
+- Priorize presente do indicativo; use futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
+FORMATO (RESPEITE COMPRIMENTOS!):
 {
+  "clientName": "{clientName}",
   "userName": "{userName}",
   "email": "{userEmail}",
   "logo": null,
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "Título direto e claro (MÁXIMO 120 caracteres)",
-  "description": "Descrição concisa da proposta de valor (MÁXIMO 100 caracteres)",
+  "title": "Título INTRODUTÓRIO imperativo, inclusivo e direto (OBRIGATORIAMENTE entre 90 e 100 caracteres; conte antes de enviar; sem citar serviço específico ou cliente)",
+  "description": "Descrição concisa da proposta de valor (MÁXIMO 90 caracteres, opcional)",
   "hideDescription": false,
-  "subtitle": "Subtítulo explicativo (MÁXIMO 180 caracteres - CONTE!)",
-  "hideSubtitle": false,
   "services": [
     { "id": "1", "serviceName": "Serviço 1 com até 50 caracteres", "sortOrder": 1 },
     { "id": "2", "serviceName": "Serviço 2 com até 50 caracteres", "sortOrder": 2 },
@@ -765,76 +773,67 @@ FORMATO:
   ]
 }
 
-🚨🚨🚨 INSTRUÇÕES CRÍTICAS DE CONTAGEM - LEIA ANTES DE GERAR 🚨🚨🚨
+🚨 INSTRUÇÕES CRÍTICAS DE CONTAGEM - LEIA ANTES DE GERAR 🚨
+- Cada campo tem limite rígido. NÃO envie curto nem longo demais.
+- title: OBRIGATORIAMENTE entre 90 e 100 caracteres (conte antes de enviar; se vier <90, reescreva até 90-100).
+- description: até 90 caracteres, preferencial 60-80.
+- services: até 50 caracteres cada.
+- Se vier fora do intervalo, REESCREVA (não trunque). O sistema não vai cortar por você.
 
-⚠️ ATENÇÃO MÁXIMA: Cada campo tem um limite RÍGIDO que é VERIFICADO AUTOMATICAMENTE!
-⚠️ Se você ultrapassar qualquer limite, sua resposta será REJEITADA e você terá que gerar TUDO NOVAMENTE!
-⚠️ O sistema NÃO vai cortar/truncar seu texto. Ele vai REJEITAR e você vai refazer TODO o trabalho!
-
-🔒 LIMITES ABSOLUTOS E INEGOCIÁVEIS (incluindo espaços, pontos, vírgulas, TUDO):
-- title: MÁXIMO ABSOLUTO 120 caracteres | RECOMENDADO: 60-100 caracteres
-- description: MÁXIMO ABSOLUTO 100 caracteres | RECOMENDADO: 50-80 caracteres  
-- subtitle: MÁXIMO ABSOLUTO 180 caracteres | RECOMENDADO: 120-160 caracteres
-- serviceName: MÁXIMO ABSOLUTO 50 caracteres CADA | RECOMENDADO: 30-40 caracteres
-
-📏 MÉTODO OBRIGATÓRIO DE CONTAGEM:
-1. Escreva o texto
-2. CONTE caractere por caractere, incluindo TODOS os espaços
-3. Se estiver acima do limite, DELETE palavras até ficar ABAIXO
-4. Valide contando NOVAMENTE de trás para frente
-5. Só envie depois de ter CERTEZA absoluta
-
-✅ EXEMPLOS VALIDADOS (subtitle 180 chars MAX):
-
-CORRETO ✓ (140 chars - seguro):
-"Desenvolvemos sites modernos e responsivos que destacam sua marca e conectam você com novos clientes através de experiências digitais intuitivas"
-Contagem: D-e-s-e-n-v... = 140 caracteres ✓
-
-CORRETO ✓ (165 chars - no limite):
-"Criamos experiências digitais estratégicas que elevam marcas, conquistam audiências engajadas e transformam visitantes em clientes através de design e tecnologia"
-Contagem: C-r-i-a-m-o-s... = 165 caracteres ✓
-
-❌ ERRADO ✗ (218 chars - REJEITADO):
-"Desenvolvemos sites institucionais modernos e vitrines digitais que destacam sua empresa, produtos e serviços, oferecendo experiências de navegação claras e intuitivas para fortalecer sua presença online"
-Contagem: D-e-s-e-n-v... = 218 caracteres ✗ ISTO VAI SER REJEITADO!
-
-COMO CORRIGIR O EXEMPLO ERRADO:
-Original: 218 chars ✗
-Removendo "produtos e serviços, oferecendo": 168 chars ✓
-Resultado: "Desenvolvemos sites institucionais modernos e vitrines digitais que destacam sua empresa, com experiências de navegação claras e intuitivas para fortalecer sua presença online"
-
-⚠️ PROCESSO RIGOROSO ANTES DE ENVIAR:
-1. Escreva o texto normalmente
-2. Copie mentalmente e conte: 1, 2, 3, 4... até o fim
-3. Se passar do MÁXIMO, corte palavras imediatamente
-4. Sempre use 20 caracteres ABAIXO do limite máximo para segurança
-5. subtitle: nunca passe de 160 chars (margem de segurança)
-6. title: nunca passe de 100 chars (margem de segurança)
-7. description: nunca passe de 80 chars (margem de segurança)
+EXEMPLOS DE TITLE (90-100 chars, sem cliente/projeto):
+- "Planejamos e executamos identidade visual autoral com direção artística e resultado concreto"
+- "Fotografia de casamento com direção sensível, narrativa elegante e entrega premium garantida"
+- "Consultoria estratégica de marketing digital com plano claro, execução ágil e ROI mensurável"
+- "Site institucional moderno com UX focada em conversão, conteúdo autoral e performance"
 
 REGRAS DE ESTILO:
 - Linguagem direta e profissional
 - Evite excesso de adjetivos
 - Foco em benefícios concretos
 - Máximo 3-4 serviços principais
-- logo e clientPhoto sempre começam como null (usuário adiciona depois)`,
+- logo e clientPhoto sempre começam como null (usuário adiciona depois)
+
+🚨 REGRA CRÍTICA PARA O CAMPO "title" 🚨
+O campo "title" deve ser um TÍTULO INTRODUTÓRIO da proposta, NÃO o nome do projeto!
+
+❌ ERRADO - Usar apenas o nome do projeto:
+"Residência Horizonte Claro"
+"Projeto Casa Nova"
+"Site para Empresa XYZ"
+
+✅ CORRETO - Título introdutório descritivo:
+"Projeto de Arquitetura Residencial Personalizada"
+"Desenvolvimento de Site Institucional Moderno"
+"Consultoria Estratégica de Marketing Digital"
+"Design de Interiores para Ambientes Corporativos"
+
+ORIENTAÇÃO:
+- O title deve descrever O QUE está sendo oferecido (tipo de serviço/trabalho)
+- Não mencione diretamente o nome do projeto ({projectName})
+- Use palavras que descrevam a natureza do trabalho
+- Seja específico sobre o tipo de serviço oferecido
+
+EXEMPLOS POR ÁREA:
+Arquitetura: "Projeto Arquitetônico Residencial Completo" ou "Reforma e Design de Interiores"
+Marketing: "Estratégia de Marketing Digital Integrada" ou "Gestão de Redes Sociais e Conteúdo"
+Desenvolvimento: "Desenvolvimento de Plataforma Web Personalizada" ou "Sistema de Gestão Empresarial"
+Design: "Identidade Visual e Branding Profissional" ou "Design de Experiência Digital"`,
         expectedFormat: `{
+  "clientName": "string",
   "userName": "string",
   "email": "string",
   "logo": null,
   "hideLogo": false,
   "clientPhoto": null,
   "hideClientPhoto": false,
-  "title": "string (max 120 chars)",
-  "description": "string (max 100 chars)",
+          "title": "string (90-100 chars - DESCRIPTIVE intro title, not project name)",
+  "description": "string (max 90 chars, optional)",
   "hideDescription": false,
-  "subtitle": "string (max 180 chars)",
-  "hideSubtitle": false,
   "services": [{"id": "string", "serviceName": "string (max 50 chars)", "sortOrder": number}]
 }`,
         rules: [
-          "title: até 120 caracteres, direto e claro",
-          "description: até 100 caracteres, proposta de valor concisa",
+          "title: até 100 caracteres, imperativo, inclusivo, direto, sem citar cliente/serviço",
+          "description: até 90 caracteres, proposta de valor concisa (opcional)",
           "subtitle: até 180 caracteres (CRÍTICO: conte os caracteres antes de gerar!)",
           "services: 3-4 itens, cada um com até 50 caracteres",
           "Tom profissional e minimalista",
@@ -857,15 +856,15 @@ DADOS DO PROJETO:
 FORMATO:
 {
   "hideSection": false,
-  "title": "Proposta de valor clara e direta (até 100 caracteres)",
-  "subtitle": "Descrição detalhada conectando a empresa ao projeto do cliente. DEVE mencionar {clientName} de forma natural (até 250 caracteres)",
-  "marqueeText": "Texto marquee com serviços separados por → (ex: Brand Design → UI Design → Development) (até 200 caracteres)",
+  "title": "Proposta de valor clara, direta e estratégica (até 140 caracteres, sem citar o nome do cliente)",
+  "subtitle": "Frase curta e forte conectando valor e diferenciais (até 95 caracteres, sem citar cliente)",
+  "marqueeText": "Lista de serviços separados por → (ex: Brand Design → UI Design → Development) (até 60 caracteres)",
   "hideMarquee": false,
   "items": [
     {
       "id": "1",
       "image": null,
-      "caption": "Descrição concisa e impactante sobre expertise (até 100 caracteres)",
+      "caption": "Descrição concisa e impactante sobre expertise (até 125 caracteres)",
       "hideImage": false,
       "hideCaption": false,
       "sortOrder": 0
@@ -873,7 +872,7 @@ FORMATO:
     {
       "id": "2",
       "image": null,
-      "caption": "Descrição concisa e impactante sobre metodologia (até 100 caracteres)",
+      "caption": "Descrição concisa e impactante sobre metodologia (até 125 caracteres)",
       "hideImage": false,
       "hideCaption": false,
       "sortOrder": 1
@@ -881,26 +880,22 @@ FORMATO:
   ]
 }
 
-INSTRUÇÕES CRÍTICAS DE CONTAGEM:
-⚠️ ANTES de gerar cada texto, CONTE os caracteres mentalmente!
-⚠️ Se ultrapassar o limite, REESCREVA o texto mais curto!
-⚠️ Nunca envie texto que ultrapasse os limites abaixo:
-
-REGRAS:
-- title: MÁXIMO 100 caracteres (conte letra por letra incluindo espaços!)
-- subtitle: MÁXIMO 250 caracteres (conte!) - OBRIGATÓRIO incluir {clientName}
-- marqueeText: MÁXIMO 200 caracteres (conte!) - 4-6 serviços separados por " → "
-- items: SEMPRE 2 itens (NÃO MAIS, NÃO MENOS!)
-- caption: MÁXIMO 100 caracteres cada (conte!)
+REGRAS RÍGIDAS
+- title: ATÉ 140 caracteres - proposta de valor clara e específica
+- subtitle: ATÉ 95 caracteres - não citar cliente, tom estratégico
+- marqueeText: ATÉ 60 caracteres - 3-5 serviços separados por →
+- items: EXATAMENTE 2 itens (1º expertise, 2º metodologia)
+- caption: ATÉ 125 caracteres cada
 - image: sempre null (usuário adiciona depois)
-- Linguagem direta e autêntica
-- Foco na proposta de valor personalizada
-- Evite clichês e jargões`,
+- Planeje a contagem ANTES de escrever; não gere acima dos limites
+- Linguagem direta, autêntica e minimalista
+- Evite clichês e jargões
+- Responda apenas com o JSON final`,
         expectedFormat: `{
   "hideSection": false,
-  "title": "string (max 100 chars)",
-  "subtitle": "string (max 250 chars, must mention client name)",
-  "marqueeText": "string (max 200 chars, services separated by →)",
+  "title": "string (max 140 chars)",
+  "subtitle": "string (max 95 chars, do not cite client)",
+  "marqueeText": "string (max 60 chars, services separated by →)",
   "hideMarquee": false,
   "items": [
     {
@@ -914,9 +909,9 @@ REGRAS:
   ]
 }`,
         rules: [
-          "title: até 100 caracteres",
-          "subtitle: até 250 caracteres, DEVE mencionar o cliente",
-          "marqueeText: até 200 caracteres, 4-6 serviços separados por →",
+          "title: até 140 caracteres",
+          "subtitle: até 95 caracteres, sem citar cliente",
+          "marqueeText: até 60 caracteres, 3-5 serviços separados por →",
           "items: sempre 2 itens",
           "caption: até 100 caracteres por item",
           "image: sempre null",
@@ -975,7 +970,7 @@ REGRAS:
         prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
 NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
 
-Gere seção de clientes/parceiros com estilo minimalista e profissional.
+Gere seção de clientes/parceiros PERSONALIZADA para o projeto específico.
 
 DADOS DO PROJETO:
 - Cliente: {clientName}
@@ -983,78 +978,144 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
-FORMATO:
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- Sempre em 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio apenas para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
+⚠️⚠️⚠️ REGRA CRÍTICA SOBRE O TITLE ⚠️⚠️⚠️
+O TITLE É O ELEMENTO MAIS IMPORTANTE DESTA SEÇÃO!
+- DEVE ter MÍNIMO 150 caracteres (idealmente 180-250 caracteres)
+- DEVE seguir o padrão: "Reconhecemos/Identificamos [problema no setor]—[contexto detalhado]. [Por que existimos/nossa solução]."
+- DEVE usar travessão (—) para separar ideias
+- DEVE ser uma DECLARAÇÃO DE MISSÃO completa e impactante
+- NÃO seja genérico - mencione o SETOR específico do projeto
+- CONTE os caracteres - se tiver menos de 150, REESCREVA mais longo!
+
+⚠️⚠️⚠️ REGRA ABSOLUTA #1 ⚠️⚠️⚠️
+SEMPRE retorne "hideSection": false
+Esta seção DEVE estar SEMPRE visível quando há projeto
+NUNCA defina hideSection como true
+
+⚠️⚠️⚠️ REGRA ABSOLUTA #2 ⚠️⚠️⚠️
+items DEVE conter EXATAMENTE 12 clientes
+NÃO envie lista vazia []
+NÃO envie menos de 12
+NÃO envie mais de 12
+
+FORMATO OBRIGATÓRIO:
 {
   "hideSection": false,
-  "subtitle": "Subtítulo curto em MAIÚSCULAS com até 50 caracteres (ex: PARCEIROS QUE CONFIAM)",
-  "hideSubtitle": false,
-  "title": "Título principal sobre confiança/parceria com até 100 caracteres",
+  "title": "DECLARAÇÃO DE MISSÃO LONGA E IMPACTANTE - MÍNIMO 150 CARACTERES, máximo 300",
   "hideTitle": false,
-  "description": "Descrição sobre a relação com clientes com até 180 caracteres",
-  "hideDescription": false,
   "paragraphs": [
-    "Parágrafo 1 sobre abordagem de trabalho com até 200 caracteres",
-    "Parágrafo 2 sobre proposta de valor com até 200 caracteres"
+    "Parágrafo 1: Explicação completa de como a empresa ajuda clientes no contexto do projeto - máx 400 caracteres",
+    "Parágrafo 2: Filosofia, metodologia e abordagem de trabalho da empresa de forma detalhada - máx 350 caracteres"
   ],
   "items": [
-    {
-      "id": "1",
-      "name": "NOME MARCA",
-      "logo": null,
-      "sortOrder": 0,
-      "hideClient": false
-    }
+    {"id": "1", "name": "NOME MARCA 1", "logo": null, "sortOrder": 0},
+    {"id": "2", "name": "NOME MARCA 2", "logo": null, "sortOrder": 1},
+    {"id": "3", "name": "NOME MARCA 3", "logo": null, "sortOrder": 2},
+    {"id": "4", "name": "NOME MARCA 4", "logo": null, "sortOrder": 3},
+    {"id": "5", "name": "NOME MARCA 5", "logo": null, "sortOrder": 4},
+    {"id": "6", "name": "NOME MARCA 6", "logo": null, "sortOrder": 5},
+    {"id": "7", "name": "NOME MARCA 7", "logo": null, "sortOrder": 6},
+    {"id": "8", "name": "NOME MARCA 8", "logo": null, "sortOrder": 7},
+    {"id": "9", "name": "NOME MARCA 9", "logo": null, "sortOrder": 8},
+    {"id": "10", "name": "NOME MARCA 10", "logo": null, "sortOrder": 9},
+    {"id": "11", "name": "NOME MARCA 11", "logo": null, "sortOrder": 10},
+    {"id": "12", "name": "NOME MARCA 12", "logo": null, "sortOrder": 11}
   ]
 }
 
-INSTRUÇÕES CRÍTICAS DE CONTAGEM:
-⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO que NÃO PODE ser ultrapassado!
-⚠️ Escreva, CONTE manualmente, e se ultrapassar, REESCREVA mais curto!
-⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
-
 LIMITES OBRIGATÓRIOS:
-- subtitle: ATÉ 50 caracteres (conte letra por letra!)
-- title: ATÉ 100 caracteres (conte letra por letra!)
-- description: ATÉ 180 caracteres (conte letra por letra!)
-- paragraphs: 2 parágrafos, ATÉ 200 caracteres CADA (conte!)
-- items: EXATAMENTE 12 nomes (NÃO MAIS, NÃO MENOS!)
-- item.name: ATÉ 50 caracteres, MAIÚSCULAS (conte!)
+- title: MÍNIMO 150 caracteres, MÁXIMO 300 caracteres (CONTE!)
+- paragraph 1: ATÉ 400 caracteres (explicação completa)
+- paragraph 2: ATÉ 350 caracteres (filosofia e metodologia)
+- items: EXATAMENTE 12 clientes
+- item.name: ATÉ 50 caracteres, MAIÚSCULAS
 
-EXEMPLOS CORRETOS:
+EXEMPLOS DE TITLE CORRETO (OBSERVE O TAMANHO!):
 
-✅ subtitle (50 chars ou menos):
-"PARCEIROS QUE CONFIAM" = 21 chars ✓
-"CLIENTES DE SUCESSO" = 19 chars ✓
+📌 Agência de Design Digital (177 caracteres) ✅
+"Reconhecemos uma lacuna na indústria criativa—pequenos negócios frequentemente lutam para encontrar soluções de design de alta qualidade, porém acessíveis. É por isso que existimos."
 
-✅ paragraphs (200 chars ou menos):
-"Trabalhamos lado a lado com nossos clientes, entendendo suas necessidades únicas e desenvolvendo soluções personalizadas que geram resultados concretos e duradouros" = 168 chars ✓
+📌 E-commerce para Cafeteria (189 caracteres) ✅
+"Identificamos um desafio no setor de cafés especiais—cafeterias artesanais precisam de presença digital forte mas acessível. Nossa expertise transforma conceitos gastronômicos em experiências online memoráveis e lucrativas."
 
-❌ ERRADO:
-"Trabalhamos de forma colaborativa lado a lado com todos os nossos clientes, entendendo profundamente suas necessidades específicas e únicas e desenvolvendo soluções completamente personalizadas" = 198 chars... ✗ MUITO LONGO!
+📌 Website Institucional (215 caracteres) ✅
+"Reconhecemos uma lacuna no mercado de desenvolvimento web—empresas de médio porte frequentemente lutam para encontrar soluções tecnológicas que equilibrem qualidade excepcional com investimento acessível. Nossa missão é preencher essa lacuna."
 
-REGRAS:
-- logo sempre null (usuário adiciona depois)
-- Nomes devem ser plausíveis para o setor do projeto
-- Usar linguagem direta, profissional e confiável`,
+📌 Identidade Visual para Arquitetura (203 caracteres) ✅
+"Identificamos um desafio no setor residencial—famílias e profissionais buscam projetos arquitetônicos personalizados mas com preços justos. Nossa expertise combina técnica avançada e sensibilidade criativa para entregar soluções completas."
+
+❌ EXEMPLO ERRADO - MUITO CURTO (76 caracteres):
+"Desenvolvemos experiências digitais memoráveis para marcas de café especiais"
+^ REJEITADO! Menos de 150 caracteres!
+
+ESTRUTURA DO TITLE IDEAL:
+1. Comece com "Reconhecemos/Identificamos/Percebemos"
+2. Mencione uma "lacuna/desafio/problema" no SETOR específico
+3. Use travessão (—) para explicar DETALHADAMENTE o problema
+4. Termine com por que você existe ou sua solução
+5. CONTE: deve ter 150-250 caracteres!
+
+EXEMPLOS DE PARAGRAPHS:
+
+✅ paragraph 1 (295 caracteres):
+"Seu website é provavelmente o primeiro ponto de contato que alguém terá com sua marca. Destaque-se da multidão criando um site que ajuda você a alcançar seus objetivos de negócio enquanto mostra quem você é de uma forma que as pessoas não vão esquecer."
+
+✅ paragraph 2 (235 caracteres):
+"Design é sobre criar experiências, tornar a vida das pessoas mais fácil, ou até divertida quando não estão tendo o melhor dia. Com isso em mente, fornecemos serviços para ser seu parceiro no próximo projeto."
+
+INSTRUÇÕES FINAIS:
+- O TITLE É A PRIORIDADE #1 - deve ser LONGO (150+ chars) e IMPACTANTE
+- Use as informações de {projectDescription} e {companyInfo}
+- NÃO use textos genéricos - seja específico ao setor do projeto
+- Paragraphs devem ser completos e profissionais
+- SEMPRE conte os caracteres antes de enviar
+- Textos devem transmitir expertise, confiança e valor
+
+REGRAS ADICIONAIS:
+- NÃO gere campos subtitle, description, hideSubtitle, hideDescription
+- logo sempre null
+- Nomes devem ser plausíveis e variados para o setor
+- hideSection SEMPRE false
+- items SEMPRE com 12 clientes`,
         expectedFormat: `{
   "hideSection": false,
-  "subtitle": "string (max 50 chars, UPPERCASE)",
-  "hideSubtitle": false,
-  "title": "string (max 100 chars)",
+  "title": "string (MIN 150 chars, MAX 300 chars, impactful mission statement)",
   "hideTitle": false,
-  "description": "string (max 180 chars)",
-  "hideDescription": false,
-  "paragraphs": ["string (max 200 chars)", "string (max 200 chars)"],
-  "items": [{"id": "string", "name": "string (UPPERCASE)", "logo": null, "sortOrder": number, "hideClient": false}]
+  "paragraphs": [
+    "string (max 400 chars, complete explanation)",
+    "string (max 350 chars, detailed philosophy)"
+  ],
+  "items": [
+    {"id": "1", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 0},
+    {"id": "2", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 1},
+    {"id": "3", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 2},
+    {"id": "4", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 3},
+    {"id": "5", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 4},
+    {"id": "6", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 5},
+    {"id": "7", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 6},
+    {"id": "8", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 7},
+    {"id": "9", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 8},
+    {"id": "10", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 9},
+    {"id": "11", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 10},
+    {"id": "12", "name": "string (UPPERCASE, max 50 chars)", "logo": null, "sortOrder": 11}
+  ]
 }`,
         rules: [
-          "subtitle: até 50 caracteres, EM MAIÚSCULAS",
-          "title: até 100 caracteres",
-          "description: até 180 caracteres",
-          "paragraphs: 2 parágrafos, até 200 caracteres cada",
-          "EXATAMENTE 12 marcas/clientes",
-          "Nomes em MAIÚSCULAS, curtos e plausíveis",
-          "Linguagem profissional e confiável",
+          "title: MÍNIMO 150 caracteres, MÁXIMO 300 caracteres - DECLARAÇÃO DE MISSÃO",
+          "paragraph 1: até 400 caracteres, explicação completa",
+          "paragraph 2: até 350 caracteres, filosofia detalhada",
+          "EXATAMENTE 12 marcas/clientes (obrigatório)",
+          "Nomes em MAIÚSCULAS, até 50 caracteres",
+          "hideSection SEMPRE false",
+          "Conteúdo PERSONALIZADO baseado no projeto",
+          "NÃO gerar subtitle ou description",
         ],
       },
 
@@ -1071,19 +1132,27 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 
-FORMATO:
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Storytelling e pelo menos um gatilho mental por seção (variar entre autoridade, credibilidade validada, prova concreta, urgência moderada, transformação, lucro mensurável). Não repita o mesmo gatilho em seções diferentes.
+- Proibido usar literalmente “autoridade e prova social”; use sinônimos curtos.
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
+FORMATO (RESPEITE COMPRIMENTOS!):
 {
   "hideSection": false,
-  "subtitle": "Subtítulo curto e impactante em MAIÚSCULAS com até 50 caracteres (ex: TRANSFORME IDEIA EM RESULTADO)",
+  "subtitle": "Tagline curta e impactante em MAIÚSCULAS com até 30 caracteres (ex: RESULTADOS REAIS AGORA)",
   "hideSubtitle": false,
-  "title": "Título principal da seção, direto e profissional com até 100 caracteres",
+  "title": "Título principal da seção, direto e profissional OBRIGATORIAMENTE entre 90 e 130 caracteres (conte antes de enviar, nada genérico)",
   "hideIcon": false,
   "topics": [
     {
       "id": "1",
       "icon": "DiamondIcon",
       "title": "Nome da área de atuação com até 30 caracteres",
-      "description": "Descrição concisa do serviço com até 120 caracteres",
+      "description": "Descrição profissional e completa do serviço com entre 90 e 130 caracteres, explicando valor e benefícios. Se ficar abaixo de 90, REESCREVA até 90-130 com benefícios tangíveis e contexto do serviço.",
       "sortOrder": 1
     }
   ]
@@ -1098,52 +1167,64 @@ CrownIcon (para liderança/premium), HexagonalIcon (para estrutura/solidez), Bel
 
 INSTRUÇÕES CRÍTICAS DE CONTAGEM:
 ⚠️ CRÍTICO: Cada campo tem um limite RÍGIDO que NÃO PODE ser ultrapassado!
-⚠️ Escreva, CONTE manualmente, e se ultrapassar, REESCREVA mais curto!
-⚠️ NÃO envie textos longos esperando corte - serão REJEITADOS!
+⚠️ A DESCRIPTION É O ELEMENTO MAIS IMPORTANTE - deve ter MÍNIMO 90 caracteres!
+⚠️ Escreva, CONTE manualmente, e se tiver menos de 90 chars, REESCREVA mais longo!
+⚠️ NÃO envie descriptions curtas - serão REJEITADAS!
 
 LIMITES OBRIGATÓRIOS:
-- subtitle: ATÉ 50 caracteres (conte letra por letra!)
-- title: ATÉ 100 caracteres (conte letra por letra!)
-- topics: EXATAMENTE 9 áreas (grid 3x3) - NÃO MAIS, NÃO MENOS!
+- subtitle: ATÉ 30 caracteres (conte letra por letra!)
+- title: ATÉ 130 caracteres (conte letra por letra!)
+- topics: ENTRE 3 E 9 áreas (grid flexível)
 - topic.title: ATÉ 30 caracteres CADA (conte!)
-- topic.description: ATÉ 120 caracteres CADA (conte!)
+- topic.description: MÍNIMO 90 caracteres, MÁXIMO 130 caracteres CADA (CONTE e seja PROFISSIONAL!)
 
 EXEMPLOS CORRETOS:
 
-✅ topic.title (30 chars ou menos):
-"Brand Strategy" = 14 chars ✓
-"Social Media" = 12 chars ✓
-"Growth Hacking" = 14 chars ✓
+✅ topic.title (40 chars ou menos):
+"Estratégia de Marca Digital" = 28 chars ✓
+"Marketing de Conteúdo" = 21 chars ✓
+"Design de Experiência do Usuário" = 33 chars ✓
 
-✅ topic.description (120 chars ou menos):
-"Desenvolvemos estratégias de marca que elevam seu posicionamento e criam conexões autênticas" = 94 chars ✓
-"Gestão completa das suas redes sociais com conteúdo estratégico e engajamento real" = 84 chars ✓
+✅ topic.description (120-180 chars - OBSERVE O TAMANHO!):
+"Desenvolvemos estratégias de marca completas que elevam seu posicionamento no mercado, criam conexões autênticas com seu público e estabelecem uma identidade visual memorável." = 177 chars ✓
+
+"Gestão completa das suas redes sociais com conteúdo estratégico, design profissional e engajamento real que transforma seguidores em clientes fiéis e fortalece sua presença online." = 180 chars ✓
+
+"Criamos experiências de usuário intuitivas e envolventes que facilitam a navegação, aumentam a satisfação e convertem visitantes em clientes através de design centrado no usuário." = 178 chars ✓
+
+❌ EXEMPLO ERRADO - MUITO CURTO (95 chars):
+"Desenvolvemos identidades visuais fortes e coerentes que destacam sua marca no mercado digital."
+^ REJEITADO! Menos de 120 caracteres!
 
 ❌ ERRADO:
-"Desenvolvemos estratégias completas e integradas de marca que elevam significativamente seu posicionamento no mercado e criam conexões profundas" = 145 chars ✗ REJEITADO!
+"Desenvolvemos estratégias completas e integradas de marca que elevam significativamente seu posicionamento no mercado e criam conexões profundas e duradouras com seu público-alvo através de experiências memoráveis" = 215 chars ✗ REJEITADO!
 
-OUTRAS REGRAS:
-- Selecionar ícones que representem visualmente cada área
-- Usar linguagem direta, profissional e orientada a resultados
-- EVITAR adjetivos excessivos ou linguagem genérica`,
+INSTRUÇÕES FINAIS:
+- Selecionar ícones que representem visualmente cada área de atuação
+- Usar linguagem PROFISSIONAL, COMPLETA e orientada a VALOR e RESULTADOS
+- Cada descrição deve explicar CLARAMENTE o que é feito e qual o BENEFÍCIO
+- Descriptions devem ter MÍNIMO 120 caracteres - conte antes de enviar!
+- NÃO usar adjetivos vagos como "incrível", "fantástico" - ser ESPECÍFICO
+- Textos devem transmitir EXPERTISE e CONFIANÇA
+- Adaptar expertise ao contexto e setor do projeto`,
         expectedFormat: `{
   "hideSection": false,
-  "subtitle": "string (max 50 chars, UPPERCASE)",
+  "subtitle": "string (max 30 chars, UPPERCASE)",
   "hideSubtitle": false,
-  "title": "string (max 100 chars)",
+  "title": "string (max 130 chars)",
   "hideIcon": false,
-  "topics": [{"id": "string", "icon": "string", "title": "string (max 30 chars)", "description": "string (max 120 chars)", "sortOrder": number}]
+  "topics": [{"id": "string", "icon": "string", "title": "string (max 30 chars)", "description": "string (MIN 90 chars, MAX 130 chars)", "sortOrder": number}]
 }`,
         rules: [
-          "subtitle: até 50 caracteres, EM MAIÚSCULAS",
-          "title: até 100 caracteres",
-          "EXATAMENTE 9 topics (grid 3x3)",
+          "subtitle: até 30 caracteres, EM MAIÚSCULAS",
+          "title: até 130 caracteres",
+          "topics: entre 3 e 9 itens",
           "topic.title: até 30 caracteres",
-          "topic.description: até 120 caracteres",
+          "topic.description: MÍNIMO 90, MÁXIMO 130 caracteres - COMPLETO e PROFISSIONAL",
           "Ícones apropriados para cada área",
-          "Linguagem direta e profissional",
+          "Linguagem profissional, completa e orientada a valor",
         ],
-        minTopics: 9,
+        minTopics: 3,
         maxTopics: 9,
       },
 
@@ -1159,6 +1240,13 @@ DADOS DO PROJETO:
 - Projeto: {projectName}
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
+
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 
 FORMATO:
 {
@@ -1209,6 +1297,13 @@ DADOS DO PROJETO:
 - Descrição: {projectDescription}
 - Empresa: {companyInfo}
 - Planos: {selectedPlans}
+
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 
 FORMATO:
 {
@@ -1403,41 +1498,55 @@ OUTRAS REGRAS:
         prompt: `⚠️ IDIOMA OBRIGATÓRIO: TODO o conteúdo DEVE ser gerado EXCLUSIVAMENTE em português brasileiro (pt-BR).
 NUNCA use inglês, japonês, chinês, espanhol ou qualquer outro idioma. APENAS pt-BR.
 
-Gere seção de FAQ minimalista.
+Gere APENAS um JSON válido para perguntas frequentes, respeitando rigorosamente os limites.
 
-DADOS DO PROJETO:
-- Cliente: {clientName}
-- Projeto: {projectName}
-- Descrição: {projectDescription}
-- Empresa: {companyInfo}
+PROJETO: {projectName} - {projectDescription}
+CLIENTE: {clientName}
+EMPRESA: {companyInfo}
 
-FORMATO:
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
+
+FORMATO OBRIGATÓRIO
 {
   "hideSection": false,
   "items": [
     {
       "id": "1",
-      "question": "Pergunta direta com até 150 caracteres",
-      "answer": "Resposta clara e objetiva com até 500 caracteres",
+      "question": "Pergunta objetiva com ATÉ 85 caracteres",
+      "answer": "Resposta completa com ATÉ 310 caracteres",
       "sortOrder": 1
     }
   ]
 }
 
-REGRAS:
-- 4-6 perguntas essenciais
-- Respostas diretas e práticas
-- Evite jargões técnicos desnecessários`,
+REGRAS RÍGIDAS
+- CONTEÚDO ÚNICO: Crie perguntas ESPECÍFICAS para o tipo de projeto. Evite FAQs genéricas.
+- Demonstre EXPERTISE do setor nas respostas (ex: para web design, fale de UX e responsividade; para arquitetura, mencione plantas e moodboards)
+- Gere EXATAMENTE 10 pares pergunta e resposta RELEVANTES ao contexto.
+- Cada question deve ser frase direta, sem ponto de interrogação duplicado.
+- Cada answer deve ser frase(s) corridas em parágrafo único (sem bullets), trazendo benefício concreto ou reforço do processo.
+- Planeje a contagem ANTES de escrever; não gere acima dos limites.
+- question: ATÉ 85 caracteres (conte cada letra, espaço, pontuação)
+- answer: ATÉ 310 caracteres (conte cada letra, espaço, pontuação)
+- Responda apenas com o JSON final.
+
+EXEMPLO DE RESPOSTA BOA (answer com 265 chars):
+"O prazo varia conforme a complexidade. Projetos simples levam de 2 a 4 semanas, enquanto projetos complexos podem levar de 6 a 10 semanas. Após entendermos suas necessidades, fornecemos um cronograma detalhado com todas as etapas e prazos específicos."`,
         expectedFormat: `{
   "hideSection": false,
-  "items": [{"id": "string", "question": "string (max 150 chars)", "answer": "string (max 500 chars)", "sortOrder": number}]
+  "items": [{"id": "string", "question": "string (max 85 chars)", "answer": "string (max 310 chars)", "sortOrder": number}]
 }`,
         rules: [
-          "4-6 perguntas",
-          "Perguntas diretas (até 150 caracteres)",
-          "Respostas práticas (até 500 caracteres)",
+          "Exatamente 10 perguntas",
+          "Perguntas diretas (até 85 caracteres)",
+          "Respostas práticas (até 310 caracteres)",
         ],
-        exactQuestions: 5,
+        exactQuestions: 10,
       },
 
       footer: {
@@ -1452,6 +1561,13 @@ DADOS DO PROJETO:
 - Empresa: {companyInfo}
 - Usuário: {userName}
 - Email: {userEmail}
+
+REGRAS DE ESTILO GLOBAIS (APLICAR A TODOS OS CAMPOS GERADOS):
+- 1ª pessoa do plural e 2ª pessoa para o leitor; voz ativa.
+- Tom empático, moderno, acessível, profissional e impactante; evite gírias/termos técnicos.
+- Use storytelling e inclua ao menos um gatilho mental (autoridade, prova social, escassez, transformação ou lucro).
+- Priorize presente do indicativo; futuro do presente para promessas/planos; presente do subjuntivo para intenção; gerúndio só para ações contínuas.
+- Não use condicional/futuro do pretérito. Não cite o nome do cliente nos textos.
 
 FORMATO:
 {

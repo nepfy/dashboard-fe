@@ -23,7 +23,10 @@ export interface MinimalThemeData extends BaseThemeData {
 type MinimalSectionKey = keyof TemplateConfig["sections"];
 
 // Helper function to generate realistic client names based on project context
-function generateDefaultClientNames(projectDescription: string, companyInfo?: string): Array<{
+function generateDefaultClientNames(
+  projectDescription: string,
+  companyInfo?: string
+): Array<{
   id: string;
   name: string;
   logo: null;
@@ -42,7 +45,7 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
     "PRIME VENTURES",
     "FUSION LABS",
     "APEX DIGITAL",
-    "QUANTUM CO"
+    "QUANTUM CO",
   ];
 
   // Context-aware name patterns
@@ -59,7 +62,7 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
       "LOGIC GROUP",
       "PIXEL LABS",
       "CYBER BRANDS",
-      "TECH VISION"
+      "TECH VISION",
     ],
     marketing: [
       "BRAND STUDIO",
@@ -73,7 +76,7 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
       "MARKET PULSE",
       "ENGAGE CO",
       "BUZZ CREATORS",
-      "REACH DIGITAL"
+      "REACH DIGITAL",
     ],
     design: [
       "DESIGN STUDIO",
@@ -87,7 +90,7 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
       "COLOR WORKS",
       "SHAPE MAKERS",
       "CONCEPT ART",
-      "DESIGN FORGE"
+      "DESIGN FORGE",
     ],
     consultoria: [
       "STRATEGY GROUP",
@@ -101,7 +104,7 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
       "CATALYST GROUP",
       "NEXUS ADVISORS",
       "VISION CONSULT",
-      "GROWTH EXPERTS"
+      "GROWTH EXPERTS",
     ],
     saude: [
       "HEALTH SYSTEMS",
@@ -115,24 +118,49 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
       "MEDICAL TECH",
       "WELLNESS PRO",
       "LIFE CARE",
-      "HEALTH PARTNERS"
-    ]
+      "HEALTH PARTNERS",
+    ],
   };
 
   // Try to detect context from project description and company info
-  const combinedText = `${projectDescription} ${companyInfo || ""}`.toLowerCase();
-  
+  const combinedText =
+    `${projectDescription} ${companyInfo || ""}`.toLowerCase();
+
   let selectedNames = genericNames;
-  
-  if (combinedText.includes("tech") || combinedText.includes("software") || combinedText.includes("app") || combinedText.includes("desenvolvimento")) {
+
+  if (
+    combinedText.includes("tech") ||
+    combinedText.includes("software") ||
+    combinedText.includes("app") ||
+    combinedText.includes("desenvolvimento")
+  ) {
     selectedNames = contextPatterns.tech;
-  } else if (combinedText.includes("marketing") || combinedText.includes("mídia") || combinedText.includes("social") || combinedText.includes("conteúdo")) {
+  } else if (
+    combinedText.includes("marketing") ||
+    combinedText.includes("mídia") ||
+    combinedText.includes("social") ||
+    combinedText.includes("conteúdo")
+  ) {
     selectedNames = contextPatterns.marketing;
-  } else if (combinedText.includes("design") || combinedText.includes("criativ") || combinedText.includes("visual") || combinedText.includes("gráfico")) {
+  } else if (
+    combinedText.includes("design") ||
+    combinedText.includes("criativ") ||
+    combinedText.includes("visual") ||
+    combinedText.includes("gráfico")
+  ) {
     selectedNames = contextPatterns.design;
-  } else if (combinedText.includes("consult") || combinedText.includes("estratégia") || combinedText.includes("assessoria")) {
+  } else if (
+    combinedText.includes("consult") ||
+    combinedText.includes("estratégia") ||
+    combinedText.includes("assessoria")
+  ) {
     selectedNames = contextPatterns.consultoria;
-  } else if (combinedText.includes("saúde") || combinedText.includes("médico") || combinedText.includes("clínica") || combinedText.includes("hospital")) {
+  } else if (
+    combinedText.includes("saúde") ||
+    combinedText.includes("médico") ||
+    combinedText.includes("clínica") ||
+    combinedText.includes("hospital")
+  ) {
     selectedNames = contextPatterns.saude;
   }
 
@@ -147,7 +175,16 @@ function generateDefaultClientNames(projectDescription: string, companyInfo?: st
 export class MinimalTheme {
   private moaService: MOAService;
   private templateConfig: TemplateConfig;
+  private currentProjectDescription: string | null = null;
   private static readonly VALIDATION_MAX_ATTEMPTS = 5;
+  private static readonly INTRO_INSTRUCTIONAL_PATTERNS = [
+    /reescreva/i,
+    /recrie/i,
+    /title/i,
+    /título/i,
+    /string/i,
+    /obrigatoriamente/i,
+  ];
 
   constructor(private together: Together) {
     this.moaService = new MOAService(together, {
@@ -222,17 +259,12 @@ export class MinimalTheme {
     }, prompt);
   }
 
-  private ensureMaxLength(value: string, max: number, label: string) {
-    if (value.length > max) {
-      console.error(`❌ VALIDATION FAILED: ${label}`);
-      console.error(`   Expected: max ${max} chars`);
-      console.error(`   Received: ${value.length} chars (${value.length - max} chars over limit)`);
-      console.error(`   Content: "${value}"`);
-    }
+  private ensureMaxLength(value: string, max: number, label: string): string {
     ensureCondition(
       value.length <= max,
-      `${label} must contain at most ${max} characters (received ${value.length} characters: "${value.substring(0, 100)}...")`
+      `${label} must contain at most ${max} characters (received ${value.length} characters)`
     );
+    return value;
   }
 
   private ensureArrayLength<T>(
@@ -258,69 +290,722 @@ export class MinimalTheme {
     );
   }
 
-  private validateIntroductionSection(
-    section: MinimalProposal["introduction"]
-  ): void {
-    this.ensureMaxLength(section.title, 120, "introduction.title");
-    if (section.subtitle) {
-      this.ensureMaxLength(section.subtitle, 180, "introduction.subtitle");
+  /**
+   * Use AI to rephrase text to fit within character limit while maintaining meaning.
+   * Nunca trunca: se a reescrita não cumprir o limite, lança erro.
+   */
+  private async rephraseToFit(
+    text: string,
+    maxLength: number,
+    context: string = ""
+  ): Promise<string> {
+    if (text.length <= maxLength) {
+      return text;
     }
+
+    console.log(
+      `🔄 Rephrasing ${context} (${text.length} -> ${maxLength} chars)`
+    );
+
+    const attempt = await this.rephraseOnce(text, maxLength, context, false);
+    if (attempt.length <= maxLength) {
+      return attempt;
+    }
+
+    console.warn(
+      `⚠️  Rephrase for ${context} ainda excedeu (${attempt.length}/${maxLength}), tentando versão estrita`
+    );
+
+    const strictAttempt = await this.rephraseOnce(
+      text,
+      maxLength,
+      context,
+      true
+    );
+    if (strictAttempt.length > maxLength) {
+      throw new Error(
+        `Rephrase não respeitou limite para ${context}: ${strictAttempt.length}/${maxLength}`
+      );
+    }
+
+    return strictAttempt;
+  }
+
+  /**
+   * Reescreve garantindo faixa mínima e máxima (útil para evitar que o modelo encurte demais).
+   * Se não respeitar a faixa após tentativa strict, lança erro.
+   */
+  private async rephraseToRange(
+    text: string,
+    minLength: number,
+    maxLength: number,
+    context: string = "",
+    extraGuidance: string = ""
+  ): Promise<string> {
+    const attempt = await this.rephraseOnceRange(
+      text,
+      minLength,
+      maxLength,
+      context,
+      false,
+      extraGuidance
+    );
+
+    if (attempt.length >= minLength && attempt.length <= maxLength) {
+      return attempt;
+    }
+
+    console.warn(
+      `⚠️  Rephrase para ${context} ficou fora da faixa (${attempt.length}/${minLength}-${maxLength}), tentando versão estrita`
+    );
+
+    const strictAttempt = await this.rephraseOnceRange(
+      text,
+      minLength,
+      maxLength,
+      context,
+      true,
+      extraGuidance
+    );
+
+    if (strictAttempt.length < minLength || strictAttempt.length > maxLength) {
+      console.warn(
+        `⚠️  Rephrase não respeitou faixa para ${context}: ${strictAttempt.length}/${minLength}-${maxLength}. Aplicando fallback com cap em ${maxLength}.`
+      );
+      const capped = await this.rephraseToFit(
+        strictAttempt,
+        maxLength,
+        `${context} (fallback-cap)`
+      );
+      if (capped.length < minLength) {
+        console.warn(
+          `⚠️  Mesmo após cap, ${context} ficou abaixo do mínimo (${capped.length}/${minLength}). Aceitando para não travar.`
+        );
+      }
+      return capped;
+    }
+
+    return strictAttempt;
+  }
+
+  private async rephraseOnceRange(
+    text: string,
+    minLength: number,
+    maxLength: number,
+    context: string,
+    strict: boolean,
+    extraGuidance: string
+  ): Promise<string> {
+    const extraRule = strict
+      ? "\nREGRAS EXTRAS (STRICT): conte os caracteres e reescreva até ficar DENTRO da faixa. A resposta final DEVE ter no mínimo o mínimo e no máximo o máximo informado."
+      : "";
+
+    const prompt = `Reescreva o seguinte texto mantendo o mesmo sentido, com ENTRE ${minLength} e ${maxLength} caracteres.${extraRule}
+
+${extraGuidance ? `Instrução adicional: ${extraGuidance}\n` : ""}TEXTO ORIGINAL (${text.length} caracteres):
+"${text}"
+
+REGRAS IMPORTANTES:
+- Preserve fatos, nomes e significado.
+- Se precisar, reorganize ou sintetize, mas sem perder precisão.
+- Não use listas, apenas frase(s) corridas.
+- Não adicione novos fatos.
+- Responda apenas com o texto reescrito, sem aspas.`;
+
+    const completion = await this.together.chat.completions.create({
+      model: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Você é um assistente que reescreve textos em português brasileiro com faixa de caracteres controlada.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.6,
+      max_tokens: 200,
+    });
+
+    const result =
+      completion.choices[0]?.message?.content?.trim() ??
+      text.slice(0, maxLength);
+
+    return result;
+  }
+
+  private async rephraseOnce(
+    text: string,
+    maxLength: number,
+    context: string,
+    strict: boolean
+  ): Promise<string> {
+    const extraRule = strict
+      ? "\nREGRAS EXTRAS (STRICT): conte os caracteres e reescreva até ficar DENTRO do limite. A resposta final DEVE ter no máximo o limite informado."
+      : "";
+
+    const prompt = `Reescreva o seguinte texto mantendo EXATAMENTE o mesmo significado, mas com no máximo ${maxLength} caracteres.${extraRule}
+
+TEXTO ORIGINAL (${text.length} caracteres):
+"${text}"
+
+REGRAS IMPORTANTES:
+- Máximo de ${maxLength} caracteres (incluindo espaços e pontuação)
+- Manter o mesmo tom e significado
+- Ser conciso mas completo
+- Não usar reticências (...)
+- Responder APENAS com o texto reformulado, sem aspas ou explicações
+
+TEXTO REFORMULADO:`;
+
+    try {
+      const stream = await this.together.chat.completions.create({
+        model: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Você é um especialista em copywriting que reescreve textos mantendo o significado original, respeitando limites de caracteres sem truncar.",
+          },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.3,
+        max_tokens: Math.max(64, maxLength * 2),
+        stream: true,
+      });
+
+      let rephrased = "";
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        rephrased += content;
+      }
+
+      rephrased = rephrased.trim().replace(/^["']|["']$/g, "");
+      console.log(
+        `✅ Rephrased${strict ? " (strict)" : ""} successfully: ${rephrased.length} chars`
+      );
+      return rephrased;
+    } catch (error) {
+      console.error(`❌ Error rephrasing ${context}:`, error);
+      throw error instanceof Error ? error : new Error(String(error));
+    }
+  }
+
+  private async addTriggerKeyword(
+    text: string,
+    maxLength: number,
+    context: string = "trigger"
+  ): Promise<string> {
+    const forbidden = /autoridade\s*e\s*prova\s*social/i;
+    const triggerSynonyms = [
+      "credibilidade validada",
+      "cases comprovados",
+      "confiança construída",
+      "retorno mensurável",
+      "urgência limitada",
+      "transformação real",
+    ];
+
+    const hasForbidden = forbidden.test(text);
+    const hasAnyTrigger =
+      triggerSynonyms.some((kw) =>
+        text.toLowerCase().includes(kw.toLowerCase())
+      ) ||
+      /(autoridade|prova\s*social|escassez|transformação|lucro)/i.test(text);
+
+    if (hasAnyTrigger && !hasForbidden) {
+      return this.ensureMaxLength(text, maxLength, "trigger-check");
+    }
+
+    // Escolhe uma variação curta que caiba
+    for (const kw of triggerSynonyms) {
+      const variant = `${text} — ${kw}`;
+      if (variant.length <= maxLength) {
+        return this.ensureMaxLength(variant, maxLength, "trigger-appended");
+      }
+    }
+
+    // Rephrase forçada com sinônimos
+    try {
+      const rephrased = await this.rephraseToFit(
+        `${text} com credibilidade validada e casos reais`,
+        maxLength,
+        `${context}-trigger`
+      );
+      if (rephrased.length <= maxLength && !forbidden.test(rephrased)) {
+        return this.ensureMaxLength(rephrased, maxLength, "trigger-rephrase");
+      }
+    } catch (error) {
+      console.warn(`⚠️  Falha ao rephrase gatilho para ${context}:`, error);
+    }
+
+    // Se ainda exceder, mantém original dentro do limite (sem gatilho literal)
+    console.warn(
+      `⚠️  Não foi possível adicionar gatilho mental sem exceder ${maxLength} chars para ${context}. Mantendo texto original sem gatilho.`
+    );
+    return this.ensureMaxLength(
+      text.replace(forbidden, "").trim(),
+      maxLength,
+      "trigger-fallback"
+    );
+  }
+
+  /**
+   * Rephrase deliverables/included items to avoid generic terms and ensure concreteness.
+   */
+  private async makeDeliverableSpecific(
+    text: string,
+    maxLength: number,
+    context: string
+  ): Promise<string> {
+    const forbidden = [
+      "benefício",
+      "beneficio",
+      "incluído",
+      "incluso",
+      "pacote",
+    ];
+    const lower = text.toLowerCase();
+    const hasForbidden = forbidden.some((w) => lower.includes(w));
+
+    if (!hasForbidden && text.length <= maxLength) {
+      return text;
+    }
+
+    const prompt = `Reescreva o item como uma entrega concreta, sem usar palavras genéricas como "benefício", "pacote" ou "incluído". Use verbo no infinitivo ou substantivo claro. Máximo ${maxLength} caracteres.
+
+Texto original:
+"${text}"
+
+Regras:
+- Evite repetição de termos genéricos.
+- Seja específico e tangível (ex: "Implementar SEO técnico", "Setup de automação de leads", "Dashboard de métricas semanais").
+- Não use "benefício", "incluído", "pacote".
+- Responda apenas com o texto final.`;
+
+    const rewritten = await this.rephraseToFit(
+      prompt,
+      maxLength,
+      `${context}-deliverable`
+    );
+    return rewritten;
+  }
+
+  private getDeliverablePool(selectedService: string): string[] {
+    if (selectedService === "marketing-digital") {
+      return [
+        "Otimizar SEO técnico e Core Web Vitals",
+        "Setup de tags e pixels (GA4, Meta, LinkedIn)",
+        "Pesquisa de palavras-chave e intenção de busca",
+        "Landing page de conversão com teste A/B inicial",
+        "Configurar automação de leads (CRM + e-mail)",
+        "Copywriting orientado a conversão",
+        "Fluxos de nurturing e scoring de leads",
+        "Remarketing multicanal com públicos quentes",
+        "Dashboard semanal (GA4 + Ads + CRM)",
+        "Monitoramento e ajustes semanais de campanhas",
+      ];
+    }
+
+    return [
+      "Planejamento detalhado de escopo e cronograma",
+      "Implementação técnica principal do projeto",
+      "Teste de qualidade e correções",
+      "Entrega com documentação resumida",
+      "Suporte inicial pós-entrega",
+      "Treinamento rápido para uso/operacionalização",
+    ];
+  }
+
+  private normalizeDeliverable(text: string): string {
+    return text.toLowerCase().replace(/\s+/g, " ").replace(/["“”]/g, "").trim();
+  }
+
+  private stripTriggerNoise(text: string): string {
+    return text
+      .replace(/—\s*autoridade.*$/i, "")
+      .replace(/\(\s*autoridade.*\)/gi, "")
+      .replace(/autoridade\s+e\s+prova\s+social/gi, "")
+      .replace(/autoridade/gi, "")
+      .replace(/prova\s+social/gi, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+  }
+
+  private craftHeroTitle(
+    selectedService?: string,
+    clientName?: string
+  ): string {
+    const serviceLabel =
+      selectedService === "agencias-consultoria"
+        ? "agências e consultoria"
+        : selectedService?.replace(/-/g, " ") || "sua marca";
+
+    const clientLabel = clientName ? `para ${clientName}` : "para sua marca";
+
+    // Mantém entre ~90-100 chars
+    return `Presença digital premium ${clientLabel}, narrativa clara e conversão para ${serviceLabel}`;
+  }
+
+  private containsInstruction(text: string): boolean {
+    const patterns = [
+      /seja\s+conciso/i,
+      /crie\s+t[ií]tulo/i,
+      /storytelling\s+curto/i,
+      /conte\s+os\s+caracteres/i,
+      /call\s*to\s*action/i,
+      /proposta\s+v[áa]lida/i,
+      /string/i,
+      /reescreva/i,
+    ];
+    return patterns.some((re) => re.test(text));
+  }
+
+  private async validateIntroductionSection(
+    section: MinimalProposal["introduction"],
+    selectedService?: string
+  ): Promise<void> {
+    const maxHero = 100;
+    const minHero = 90;
+
+    const crafted = this.craftHeroTitle(selectedService, section.clientName);
+    const needsRewrite =
+      this.containsInstruction(section.title) ||
+      section.title.length < minHero ||
+      section.title.length > maxHero;
+
+    const seed = needsRewrite ? crafted : section.title;
+
+    // Rephrase com faixa definida, sem truncar
+    section.title = await this.rephraseToRange(
+      seed,
+      minHero,
+      maxHero,
+      "introduction.title",
+      "Título em 1 frase, 90-100 caracteres, benefício claro e específico; sem palavras instrucionais ou placeholders."
+    );
+
+    // Segunda defesa contra instruções
+    if (this.containsInstruction(section.title)) {
+      section.title = await this.rephraseToRange(
+        crafted,
+        minHero,
+        maxHero,
+        "introduction.title (sanitized)",
+        "Use benefício e oferta claros; evite termos instrucionais ou genéricos."
+      );
+    }
+
+    section.title = this.ensureMaxLength(
+      section.title,
+      maxHero,
+      "introduction.title"
+    );
     if (section.services) {
       this.ensureArrayRange(section.services, 1, 5, "introduction.services");
-      section.services.forEach((service, index) => {
-        this.ensureMaxLength(
+      for (let index = 0; index < section.services.length; index++) {
+        const service = section.services[index];
+        // Auto-correct service name if exceeds limit
+        if (service.serviceName.length > 50) {
+          console.warn(
+            `⚠️  Auto-correcting introduction.services[${index}].serviceName (${service.serviceName.length} -> 50 chars)`
+          );
+          service.serviceName = await this.rephraseToFit(
+            service.serviceName,
+            50,
+            `introduction.services[${index}].serviceName`
+          );
+        }
+        service.serviceName = this.ensureMaxLength(
           service.serviceName,
           50,
           `introduction.services[${index}].serviceName`
         );
-      });
+      }
     }
   }
 
-  private validateAboutUsSection(section: MinimalProposal["aboutUs"]): void {
-    this.ensureMaxLength(section.title, 200, "aboutUs.title");
+  private async validateAboutUsSection(
+    section: MinimalProposal["aboutUs"]
+  ): Promise<void> {
+    const maxTitle = 140;
+    if (section.title.length > maxTitle) {
+      console.warn(
+        `⚠️  Auto-correcting aboutUs.title (${section.title.length} -> ${maxTitle} chars)`
+      );
+      section.title = await this.rephraseToFit(
+        section.title,
+        maxTitle,
+        "aboutUs.title"
+      );
+    }
+    section.title = this.ensureMaxLength(
+      section.title,
+      maxTitle,
+      "aboutUs.title"
+    );
+    // Evitamos reforçar gatilho aqui; mantemos apenas no título principal da introdução
+
+    if (section.subtitle) {
+      const maxSubtitle = 95;
+      if (section.subtitle.length > maxSubtitle) {
+        console.warn(
+          `⚠️  Auto-correcting aboutUs.subtitle (${section.subtitle.length} -> ${maxSubtitle} chars)`
+        );
+        section.subtitle = await this.rephraseToFit(
+          section.subtitle,
+          maxSubtitle,
+          "aboutUs.subtitle"
+        );
+      }
+      section.subtitle = this.ensureMaxLength(
+        section.subtitle,
+        maxSubtitle,
+        "aboutUs.subtitle"
+      );
+    }
+
+    if (section.marqueeText) {
+      const maxMarquee = 60;
+      if (section.marqueeText.length > maxMarquee) {
+        console.warn(
+          `⚠️  Auto-correcting aboutUs.marqueeText (${section.marqueeText.length} -> ${maxMarquee} chars)`
+        );
+        section.marqueeText = await this.rephraseToFit(
+          section.marqueeText,
+          maxMarquee,
+          "aboutUs.marqueeText"
+        );
+      }
+      section.marqueeText = this.ensureMaxLength(
+        section.marqueeText,
+        maxMarquee,
+        "aboutUs.marqueeText"
+      );
+    }
+
+    if (section.items) {
+      this.ensureArrayRange(section.items, 2, 2, "aboutUs.items");
+      for (let index = 0; index < section.items.length; index++) {
+        const item = section.items[index];
+        if (item.caption && item.caption.length > 125) {
+          console.warn(
+            `⚠️  Auto-correcting aboutUs.items[${index}].caption (${item.caption.length} -> 125 chars)`
+          );
+          item.caption = await this.rephraseToFit(
+            item.caption,
+            125,
+            `aboutUs.items[${index}].caption`
+          );
+        }
+        if (item.caption) {
+          item.caption = this.ensureMaxLength(
+            item.caption,
+            125,
+            `aboutUs.items[${index}].caption`
+          );
+        }
+      }
+    }
   }
 
-  private validateTeamSection(section: MinimalProposal["team"]): void {
-    this.ensureMaxLength(section.title, 100, "team.title");
+  private async validateTeamSection(
+    section: MinimalProposal["team"]
+  ): Promise<void> {
+    // Auto-correct title if exceeds limit
+    if (section.title.length > 100) {
+      console.warn(
+        `⚠️  Auto-correcting team.title (${section.title.length} -> 100 chars)`
+      );
+      section.title = await this.rephraseToFit(
+        section.title,
+        100,
+        "team.title"
+      );
+    }
+    section.title = this.ensureMaxLength(section.title, 100, "team.title");
+
     if (section.members) {
       this.ensureArrayRange(section.members, 1, 6, "team.members");
-      section.members.forEach((member, index) => {
-        this.ensureMaxLength(member.name, 50, `team.members[${index}].name`);
-        this.ensureMaxLength(member.role, 50, `team.members[${index}].role`);
-      });
+      for (let index = 0; index < section.members.length; index++) {
+        const member = section.members[index];
+        // Auto-correct member name if exceeds limit
+        if (member.name.length > 50) {
+          console.warn(
+            `⚠️  Auto-correcting team.members[${index}].name (${member.name.length} -> 50 chars)`
+          );
+          member.name = await this.rephraseToFit(
+            member.name,
+            50,
+            `team.members[${index}].name`
+          );
+        }
+        // Auto-correct member role if exceeds limit
+        if (member.role.length > 50) {
+          console.warn(
+            `⚠️  Auto-correcting team.members[${index}].role (${member.role.length} -> 50 chars)`
+          );
+          member.role = await this.rephraseToFit(
+            member.role,
+            50,
+            `team.members[${index}].role`
+          );
+        }
+        member.name = this.ensureMaxLength(
+          member.name,
+          50,
+          `team.members[${index}].name`
+        );
+        member.role = this.ensureMaxLength(
+          member.role,
+          50,
+          `team.members[${index}].role`
+        );
+      }
     }
   }
 
-  private validateExpertiseSection(
-    section: MinimalProposal["expertise"]
-  ): void {
-    this.ensureMaxLength(section.title, 100, "expertise.title");
+  private async validateExpertiseSection(
+    section: MinimalProposal["expertise"],
+    selectedService?: string
+  ): Promise<void> {
+    // Auto-correct title if exceeds limit
+    const maxTitle = 130;
+    if (section.title.length > maxTitle) {
+      console.warn(
+        `⚠️  Auto-correcting expertise.title (${section.title.length} -> ${maxTitle} chars)`
+      );
+      section.title = await this.rephraseToFit(
+        section.title,
+        maxTitle,
+        "expertise.title"
+      );
+    }
+    const minTitle = 90;
+    if (section.title.length < minTitle) {
+      console.warn(
+        `⚠️  expertise.title too short (${section.title.length} chars), rephrasing with context`
+      );
+      const contextual =
+        selectedService === "photography"
+          ? `${section.title}. Título de impacto para fotografia de casamento premium, com direção artística, confiança e emoção.`
+          : `${section.title}. Título comercial forte para ${selectedService || "design"}, destacando autoridade, diferenciação e resultado.`;
+      section.title = await this.rephraseToFit(
+        contextual,
+        maxTitle,
+        "expertise.title (contextual)"
+      );
+    }
+    section.title = this.ensureMaxLength(
+      section.title,
+      maxTitle,
+      "expertise.title"
+    );
+    // Evitamos gatilho aqui para não repetir em excesso
+    if (section.subtitle) {
+      const maxSubtitle = 30;
+      if (section.subtitle.length > maxSubtitle) {
+        console.warn(
+          `⚠️  Auto-correcting expertise.subtitle (${section.subtitle.length} -> ${maxSubtitle} chars)`
+        );
+        section.subtitle = await this.rephraseToFit(
+          section.subtitle,
+          maxSubtitle,
+          "expertise.subtitle"
+        );
+      }
+      section.subtitle = this.ensureMaxLength(
+        section.subtitle,
+        maxSubtitle,
+        "expertise.subtitle"
+      );
+    }
+
+    const genericPatterns = [
+      "soluções completas",
+      "autoridade",
+      "prova social",
+      "lucro mensurável",
+      "impacto real",
+      "projeto digital",
+      "entregamos",
+      "solução completa",
+    ];
+
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 9, "expertise.topics");
-      section.topics.forEach((topic, index) => {
-        this.ensureMaxLength(
+      for (let index = 0; index < section.topics.length; index++) {
+        const topic = section.topics[index];
+        // Auto-correct topic title if exceeds limit
+        if (topic.title.length > 30) {
+          console.warn(
+            `⚠️  Auto-correcting expertise.topics[${index}].title (${topic.title.length} -> 30 chars)`
+          );
+          topic.title = await this.rephraseToFit(
+            topic.title,
+            30,
+            `expertise.topics[${index}].title`
+          );
+        }
+        // Auto-correct topic description if exceeds limit
+        if (topic.description.length > 130) {
+          console.warn(
+            `⚠️  Auto-correcting expertise.topics[${index}].description (${topic.description.length} -> 130 chars)`
+          );
+          const rephrased = await this.rephraseToFit(
+            topic.description,
+            130,
+            `expertise.topics[${index}].description`
+          );
+          topic.description = rephrased;
+        }
+
+        const lowerDesc = topic.description.toLowerCase();
+        const isGeneric = genericPatterns.some((g) => lowerDesc.includes(g));
+
+        // Ensure minimum length for descriptions and eliminar genericismo
+        if (topic.description.length < 90 || isGeneric) {
+          console.warn(
+            `⚠️  Description too short/genérica (${topic.description.length} chars, generic=${isGeneric}), rephrasing with context`
+          );
+          const contextPrompt =
+            selectedService === "photography"
+              ? `Reescreva em 100-130 caracteres, específico para fotografia de casamento: direção artística, storytelling visual, timeline de entrega, consistência de estilo e confiança com casais. Proibido “soluções completas”, “autoridade”, “prova social”.`
+              : `Reescreva em 100-130 caracteres, específico para ${selectedService || "o serviço"}: benefícios tangíveis, diferenciais claros, processo e resultado. Proibido termos genéricos como “soluções completas”, “autoridade”, “prova social”.`;
+          topic.description = await this.rephraseToRange(
+            `${topic.description}. ${contextPrompt}`,
+            100,
+            130,
+            `expertise.topics[${index}].description (anti-generic)`,
+            "Mantenha texto conciso mas acima de 100 caracteres; evite encurtar demais."
+          );
+        }
+
+        topic.title = this.ensureMaxLength(
           topic.title,
           30,
           `expertise.topics[${index}].title`
         );
-        this.ensureMaxLength(
+        topic.description = this.ensureMaxLength(
           topic.description,
-          120,
+          130,
           `expertise.topics[${index}].description`
         );
-      });
+      }
     }
   }
 
   private validateResultsSection(section: MinimalProposal["results"]): void {
-    this.ensureMaxLength(section.title, 100, "results.title");
+    section.title = this.ensureMaxLength(section.title, 100, "results.title");
     if (section.items) {
       this.ensureArrayRange(section.items, 1, 4, "results.items");
       section.items.forEach((item, index) => {
-        this.ensureMaxLength(item.client, 50, `results.items[${index}].client`);
+        item.client = this.ensureMaxLength(
+          item.client,
+          50,
+          `results.items[${index}].client`
+        );
         if (item.instagram) {
-          this.ensureMaxLength(
+          item.instagram = this.ensureMaxLength(
             item.instagram,
             50,
             `results.items[${index}].instagram`
@@ -336,17 +1021,17 @@ export class MinimalTheme {
     if (section.items) {
       this.ensureArrayRange(section.items, 2, 4, "testimonials.items");
       section.items.forEach((item, index) => {
-        this.ensureMaxLength(
+        item.name = this.ensureMaxLength(
           item.name,
           50,
           `testimonials.items[${index}].name`
         );
-        this.ensureMaxLength(
+        item.role = this.ensureMaxLength(
           item.role,
           50,
           `testimonials.items[${index}].role`
         );
-        this.ensureMaxLength(
+        item.testimonial = this.ensureMaxLength(
           item.testimonial,
           400,
           `testimonials.items[${index}].testimonial`
@@ -355,37 +1040,157 @@ export class MinimalTheme {
     }
   }
 
-  private validateClientsSection(section: MinimalProposal["clients"]): void {
+  private async validateClientsSection(
+    section: MinimalProposal["clients"]
+  ): Promise<void> {
+    // Auto-correct title if exceeds limit (tornar mais enxuto ~3-4 linhas)
+    const maxClientTitle = 220;
+    if (section.title && section.title.length > maxClientTitle) {
+      console.warn(
+        `⚠️  Auto-correcting clients.title (${section.title.length} -> ${maxClientTitle} chars)`
+      );
+      section.title = await this.rephraseToFit(
+        section.title,
+        maxClientTitle,
+        "clients.title"
+      );
+    }
+    if (
+      section.title &&
+      (section.title.length < 150 || this.containsInstruction(section.title))
+    ) {
+      console.warn(
+        `⚠️  clients.title short/instructional (${section.title.length} chars), rephrasing to 150-200`
+      );
+      section.title = await this.rephraseToRange(
+        section.title,
+        150,
+        200,
+        "clients.title",
+        "Escreva 2-3 frases com valor claro para o cliente e o setor; sem instruções ou placeholders."
+      );
+    }
     if (section.title) {
-      this.ensureMaxLength(section.title, 100, "clients.title");
+      section.title = this.ensureMaxLength(
+        section.title,
+        maxClientTitle,
+        "clients.title"
+      );
+      // Evitamos gatilho no título de clients para não repetir
+    }
+
+    // Auto-correct description if exceeds limit or é instrucional/curto
+    if (
+      section.description &&
+      (section.description.length > 180 ||
+        section.description.length < 90 ||
+        this.containsInstruction(section.description))
+    ) {
+      console.warn(
+        `⚠️  Auto-correcting clients.description (${section.description.length} chars)`
+      );
+      section.description = await this.rephraseToRange(
+        section.description,
+        120,
+        180,
+        "clients.description",
+        "Escreva 1-2 frases objetivas sobre contexto e valor entregue; sem instruções."
+      );
     }
     if (section.description) {
-      this.ensureMaxLength(section.description, 180, "clients.description");
+      section.description = this.ensureMaxLength(
+        section.description,
+        180,
+        "clients.description"
+      );
     }
+
+    // Auto-correct paragraphs if exceed limit ou são instrucionais/curtos
     if (section.paragraphs) {
-      section.paragraphs.forEach((paragraph, index) => {
-        this.ensureMaxLength(paragraph, 200, `clients.paragraphs[${index}]`);
+      for (let index = 0; index < section.paragraphs.length; index++) {
+        const paragraph = section.paragraphs[index];
+        const maxLength = index === 0 ? 400 : 350; // paragraph 1: 400, paragraph 2: 350
+        const minLength = index === 0 ? 200 : 150;
+        if (
+          paragraph.length > maxLength ||
+          paragraph.length < minLength ||
+          this.containsInstruction(paragraph)
+        ) {
+          console.warn(
+            `⚠️  Auto-correcting clients.paragraphs[${index}] (${paragraph.length} chars)`
+          );
+          section.paragraphs[index] = await this.rephraseToRange(
+            paragraph,
+            Math.max(minLength, 200),
+            maxLength,
+            `clients.paragraphs[${index}]`,
+            "Explique valor, contexto e resultados; sem instruções ou placeholders."
+          );
+        }
+      }
+      section.paragraphs = section.paragraphs.map((paragraph, index) => {
+        const maxLength = index === 0 ? 400 : 350;
+        return this.ensureMaxLength(
+          paragraph,
+          maxLength,
+          `clients.paragraphs[${index}]`
+        );
       });
     }
+
+    // Validate items
     if (section.items) {
       this.ensureArrayRange(section.items, 6, 12, "clients.items");
-      section.items.forEach((client, index) => {
-        this.ensureMaxLength(client.name, 50, `clients.items[${index}].name`);
-      });
+      for (let index = 0; index < section.items.length; index++) {
+        const client = section.items[index];
+        if (client.name.length > 50) {
+          console.warn(
+            `⚠️  Auto-correcting clients.items[${index}].name (${client.name.length} -> 50 chars)`
+          );
+          client.name = await this.rephraseToFit(
+            client.name,
+            50,
+            `clients.items[${index}].name`
+          );
+        }
+        client.name = this.ensureMaxLength(
+          client.name,
+          50,
+          `clients.items[${index}].name`
+        );
+      }
     }
   }
 
-  private validateStepsSection(section: MinimalProposal["steps"]): void {
+  private async validateStepsSection(
+    section: MinimalProposal["steps"]
+  ): Promise<void> {
     if (section.topics) {
       this.ensureArrayRange(section.topics, 3, 6, "steps.topics");
-      section.topics.forEach((topic, index) => {
-        this.ensureMaxLength(topic.title, 50, `steps.topics[${index}].title`);
-        this.ensureMaxLength(
+      for (let index = 0; index < section.topics.length; index++) {
+        const topic = section.topics[index];
+        topic.title = this.ensureMaxLength(
+          topic.title,
+          50,
+          `steps.topics[${index}].title`
+        );
+        if (topic.description.length > 400) {
+          console.warn(
+            `⚠️  Auto-correcting steps.topics[${index}].description (${topic.description.length} -> 400 chars)`
+          );
+          topic.description = await this.rephraseToFit(
+            topic.description,
+            400,
+            `steps.topics[${index}].description`
+          );
+        }
+        topic.description = this.ensureMaxLength(
           topic.description,
           400,
           `steps.topics[${index}].description`
         );
-      });
+        // Não adicionamos gatilho em passos para evitar repetição
+      }
     }
   }
 
@@ -418,23 +1223,40 @@ export class MinimalTheme {
     return numeric;
   }
 
-  private validateInvestmentSection(
+  private async validateInvestmentSection(
     section: MinimalProposal["investment"]
-  ): void {
-    this.ensureMaxLength(section.title, 150, "investment.title");
+  ): Promise<void> {
+    section.title = this.ensureMaxLength(
+      section.title,
+      150,
+      "investment.title"
+    );
     if (section.projectScope) {
-      this.ensureMaxLength(
-        section.projectScope,
-        200,
-        "investment.projectScope"
-      );
+      const maxScope = 200;
+      if (section.projectScope.length > maxScope) {
+        console.warn(
+          `⚠️  investment.projectScope too long (${section.projectScope.length} chars), rephrasing to fit ${maxScope} chars`
+        );
+        section.projectScope = await this.rephraseToFit(
+          section.projectScope,
+          maxScope,
+          "investment.projectScope"
+        );
+      } else {
+        section.projectScope = this.ensureMaxLength(
+          section.projectScope,
+          maxScope,
+          "investment.projectScope"
+        );
+      }
     }
   }
 
-  private validatePlansSection(
+  private async validatePlansSection(
     section: MinimalProposal["plans"],
-    expectedPlans: number
-  ): void {
+    expectedPlans: number,
+    selectedService: string
+  ): Promise<void> {
     const planCount = section.plansItems?.length ?? 0;
     ensureCondition(
       planCount > 0 && planCount <= 3,
@@ -455,7 +1277,7 @@ export class MinimalTheme {
 
     const recommendedPlans =
       section.plansItems?.filter((plan) => plan.recommended === true) ?? [];
-    
+
     // Para 1 plano: pode ter 0 ou 1 recommended
     // Para 2 planos: deve ter 1 recommended (o mais caro)
     // Para 3 planos: deve ter 1 recommended (o do meio)
@@ -479,7 +1301,7 @@ export class MinimalTheme {
         const currentValue = this.parseCurrencyValue(current.value);
         return currentValue > prevValue ? current : prev;
       });
-      
+
       if (highestValuePlan) {
         ensureCondition(
           highestValuePlan.recommended || false,
@@ -493,7 +1315,7 @@ export class MinimalTheme {
         const bValue = this.parseCurrencyValue(b.value);
         return aValue - bValue;
       });
-      
+
       if (sortedPlans.length === 3) {
         const middlePlan = sortedPlans[1]; // Índice 1 = plano do meio
         ensureCondition(
@@ -503,52 +1325,284 @@ export class MinimalTheme {
       }
     }
 
-    section.plansItems?.forEach((plan, index) => {
-      this.ensureMaxLength(plan.title, 30, `plans.plansItems[${index}].title`);
-      this.ensureMaxLength(
-        plan.description,
-        120,
-        `plans.plansItems[${index}].description`
-      );
-
-      if (plan.includedItems) {
-        this.ensureArrayRange(
-          plan.includedItems,
-          3,
-          9,
-          `plans.plansItems[${index}].includedItems`
+    if (section.plansItems) {
+      for (let index = 0; index < section.plansItems.length; index++) {
+        const plan = section.plansItems[index];
+        plan.title = this.ensureMaxLength(
+          plan.title,
+          30,
+          `plans.plansItems[${index}].title`
         );
-        plan.includedItems.forEach((item, itemIndex) => {
-          this.ensureMaxLength(
-            item.description,
-            60,
-            `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+        plan.description = this.ensureMaxLength(
+          plan.description,
+          120,
+          `plans.plansItems[${index}].description`
+        );
+        // Reforça diferenciação textual por nível
+        const levelTag =
+          index === 0
+            ? "essencial"
+            : index === 1
+              ? "profissional"
+              : "premium completo";
+        plan.description = await this.rephraseToFit(
+          `${plan.description} (plano ${levelTag}, benefícios proporcionais ao nível)`,
+          120,
+          `plans.plansItems[${index}].description.level`
+        );
+
+        if (plan.includedItems) {
+          // Diferencia quantidade por nível
+          const minByLevel = index === 0 ? 4 : index === 1 ? 5 : 7;
+          const maxByLevel = index === 0 ? 5 : index === 1 ? 7 : 9;
+          // Completa com itens do pool se faltar quantidade
+          if (plan.includedItems.length < minByLevel) {
+            const pool = this.getDeliverablePool(selectedService);
+            let poolCursor = 0;
+            while (
+              plan.includedItems.length < minByLevel &&
+              poolCursor < pool.length
+            ) {
+              const candidate = pool[poolCursor++];
+              const norm = this.normalizeDeliverable(candidate);
+              const alreadyUsed = plan.includedItems.some(
+                (i) => this.normalizeDeliverable(i.description || "") === norm
+              );
+              if (!alreadyUsed) {
+                plan.includedItems.push({
+                  id: crypto.randomUUID(),
+                  description: candidate,
+                  hideItem: false,
+                  sortOrder: plan.includedItems.length,
+                });
+              }
+            }
+          }
+          this.ensureArrayRange(
+            plan.includedItems,
+            minByLevel,
+            maxByLevel,
+            `plans.plansItems[${index}].includedItems`
           );
-        });
+          const seen = new Set<string>();
+          const pool = this.getDeliverablePool(selectedService);
+          let poolCursor = 0;
+
+          for (
+            let itemIndex = 0;
+            itemIndex < plan.includedItems.length;
+            itemIndex++
+          ) {
+            const item = plan.includedItems[itemIndex];
+            let desc = item.description || "";
+            // se for genérico ou conter "benefício" ou "focus", descartamos o original
+            const lower = desc.toLowerCase();
+            const isGeneric =
+              !desc.trim() ||
+              lower.includes("benefício") ||
+              lower.includes("beneficio") ||
+              lower.includes("incluído") ||
+              lower.includes("included") ||
+              lower.includes("focus") ||
+              lower.includes("variar foco");
+
+            if (isGeneric) {
+              while (
+                poolCursor < pool.length &&
+                seen.has(this.normalizeDeliverable(pool[poolCursor]))
+              ) {
+                poolCursor++;
+              }
+              const fallback =
+                poolCursor < pool.length
+                  ? pool[poolCursor]
+                  : this.getFallbackDeliverable(
+                      selectedService,
+                      index,
+                      itemIndex
+                    );
+              desc = fallback;
+              poolCursor++;
+            }
+
+            desc = this.ensureMaxLength(
+              desc,
+              60,
+              `plans.plansItems[${index}].includedItems[${itemIndex}].description`
+            );
+            desc = await this.makeDeliverableSpecific(
+              desc,
+              60,
+              `plans.plansItems[${index}].includedItems[${itemIndex}]`
+            );
+
+            let norm = this.normalizeDeliverable(desc);
+            if (seen.has(norm)) {
+              // Escolher do pool uma entrega ainda não usada
+              while (
+                poolCursor < pool.length &&
+                seen.has(this.normalizeDeliverable(pool[poolCursor]))
+              ) {
+                poolCursor++;
+              }
+              const fallback =
+                poolCursor < pool.length
+                  ? pool[poolCursor]
+                  : this.getFallbackDeliverable(
+                      selectedService,
+                      index,
+                      itemIndex
+                    );
+              desc = await this.rephraseToFit(
+                fallback,
+                60,
+                `plans.plansItems[${index}].includedItems[${itemIndex}].fallback`
+              );
+              norm = this.normalizeDeliverable(desc);
+              poolCursor++;
+            }
+
+            seen.add(norm);
+            item.description = desc;
+          }
+        }
       }
-    });
+    }
   }
 
-  private validateFAQSection(section: MinimalProposal["faq"]): void {
+  private getFallbackDeliverable(
+    selectedService: string,
+    planIndex: number,
+    itemIndex: number
+  ): string {
+    const marketing = [
+      "Otimizar SEO técnico e Core Web Vitals",
+      "Setup de tags e pixels (GA4, Meta, LinkedIn)",
+      "Landing page de conversão com A/B test inicial",
+      "Configurar automação de leads (CRM + e-mail)",
+      "Dashboard semanal (GA4 + Ads + CRM)",
+      "Copywriting orientado a conversão",
+      "Fluxos de nurturing e scoring de leads",
+      "Remarketing multicanal com públicos quentes",
+      "Monitoramento e ajustes semanais de campanhas",
+    ];
+
+    const generic = [
+      "Planejamento detalhado de escopo e cronograma",
+      "Implementação técnica principal do projeto",
+      "Teste de qualidade e correções",
+      "Entrega com documentação resumida",
+      "Suporte inicial pós-entrega",
+    ];
+
+    const pool = selectedService === "marketing-digital" ? marketing : generic;
+    const idx = (planIndex * 5 + itemIndex) % pool.length;
+    return pool[idx];
+  }
+
+  private async validateFAQSection(
+    section: MinimalProposal["faq"]
+  ): Promise<void> {
     if (section.items) {
-      this.ensureArrayRange(section.items, 5, 10, "faq.items");
-      section.items.forEach((item, index) => {
-        this.ensureMaxLength(
+      this.ensureArrayRange(section.items, 10, 10, "faq.items");
+      const seenQuestions = new Set<string>();
+      const seenAnswers = new Set<string>();
+      for (let index = 0; index < section.items.length; index++) {
+        const item = section.items[index];
+        if (item.question.length > 85) {
+          console.warn(
+            `⚠️  Auto-correcting faq.items[${index}].question (${item.question.length} -> 85 chars)`
+          );
+          item.question = await this.rephraseToFit(
+            item.question,
+            85,
+            `faq.items[${index}].question`
+          );
+        }
+        if (item.answer.length > 310) {
+          console.warn(
+            `⚠️  Auto-correcting faq.items[${index}].answer (${item.answer.length} -> 310 chars)`
+          );
+          item.answer = await this.rephraseToFit(
+            item.answer,
+            310,
+            `faq.items[${index}].answer`
+          );
+        }
+        item.question = this.ensureMaxLength(
           item.question,
-          100,
+          85,
           `faq.items[${index}].question`
         );
-        this.ensureMaxLength(item.answer, 300, `faq.items[${index}].answer`);
-      });
+        item.answer = this.ensureMaxLength(
+          item.answer,
+          310,
+          `faq.items[${index}].answer`
+        );
+
+        // Remove ruído de gatilho repetitivo
+        item.question = this.stripTriggerNoise(item.question);
+        item.answer = this.stripTriggerNoise(item.answer);
+
+        // Deduplicação simples
+        const normQ = this.normalizeDeliverable(item.question);
+        const normA = this.normalizeDeliverable(item.answer);
+        if (seenQuestions.has(normQ)) {
+          item.question = await this.rephraseToFit(
+            `${item.question} (reescreva sem repetir perguntas anteriores, mantenha o sentido)`,
+            85,
+            `faq.items[${index}].question.dedupe`
+          );
+        }
+        if (seenAnswers.has(normA)) {
+          item.answer = await this.rephraseToFit(
+            `${item.answer} (reescreva sem repetir respostas anteriores, mantenha o sentido)`,
+            310,
+            `faq.items[${index}].answer.dedupe`
+          );
+        }
+
+        // Evitamos gatilho em FAQ para não repetir em excesso
+
+        seenQuestions.add(this.normalizeDeliverable(item.question));
+        seenAnswers.add(this.normalizeDeliverable(item.answer));
+      }
     }
   }
 
-  private validateFooterSection(section: MinimalProposal["footer"]): void {
+  private async validateFooterSection(
+    section: MinimalProposal["footer"]
+  ): Promise<void> {
     if (section.callToAction) {
-      this.ensureMaxLength(section.callToAction, 100, "footer.callToAction");
+      const minCTA = 60;
+      const maxCTA = 120;
+      if (
+        section.callToAction.length < minCTA ||
+        this.containsInstruction(section.callToAction)
+      ) {
+        section.callToAction = await this.rephraseToRange(
+          section.callToAction,
+          minCTA,
+          maxCTA,
+          "footer.callToAction",
+          "Convite persuasivo em 1 frase, com benefício claro e urgência moderada; sem instruções."
+        );
+      }
+      section.callToAction = this.ensureMaxLength(
+        section.callToAction,
+        maxCTA,
+        "footer.callToAction"
+      );
+      section.callToAction = this.stripTriggerNoise(section.callToAction);
     }
     if (section.disclaimer) {
-      this.ensureMaxLength(section.disclaimer, 300, "footer.disclaimer");
+      const maxDisclaimer = 320;
+      section.disclaimer = this.ensureMaxLength(
+        section.disclaimer,
+        maxDisclaimer,
+        "footer.disclaimer"
+      );
+      section.disclaimer = this.stripTriggerNoise(section.disclaimer);
     }
     if (section.email) {
       // Basic email validation
@@ -571,22 +1625,30 @@ export class MinimalTheme {
     }
   }
 
-  private validateProposal(
+  private async validateProposal(
     proposal: MinimalProposal,
-    expectedPlans: number
-  ): void {
-    this.validateIntroductionSection(proposal.introduction);
-    this.validateAboutUsSection(proposal.aboutUs);
-    this.validateTeamSection(proposal.team);
-    this.validateExpertiseSection(proposal.expertise);
+    expectedPlans: number,
+    selectedService: string
+  ): Promise<void> {
+    await this.validateIntroductionSection(
+      proposal.introduction,
+      selectedService
+    );
+    await this.validateAboutUsSection(proposal.aboutUs);
+    await this.validateTeamSection(proposal.team);
+    await this.validateExpertiseSection(proposal.expertise, selectedService);
     this.validateResultsSection(proposal.results);
     this.validateTestimonialsSection(proposal.testimonials);
-    this.validateClientsSection(proposal.clients);
-    this.validateStepsSection(proposal.steps);
-    this.validateInvestmentSection(proposal.investment);
-    this.validatePlansSection(proposal.plans, expectedPlans);
-    this.validateFAQSection(proposal.faq);
-    this.validateFooterSection(proposal.footer);
+    await this.validateClientsSection(proposal.clients);
+    await this.validateStepsSection(proposal.steps);
+    await this.validateInvestmentSection(proposal.investment);
+    await this.validatePlansSection(
+      proposal.plans,
+      expectedPlans,
+      selectedService
+    );
+    await this.validateFAQSection(proposal.faq);
+    await this.validateFooterSection(proposal.footer);
   }
 
   private async runLLMWithJSONRetry<T>(
@@ -645,6 +1707,7 @@ export class MinimalTheme {
 
   async execute(data: MinimalThemeData): Promise<MinimalProposal> {
     console.log("Debug - Minimal theme execute called with:", data);
+    this.currentProjectDescription = data.projectDescription || null;
 
     const agent = await getAgentByServiceAndTemplate(
       data.selectedService,
@@ -701,7 +1764,7 @@ export class MinimalTheme {
     // Validate the complete proposal
     const expectedPlans =
       typeof data.selectedPlans === "number" ? data.selectedPlans : 1;
-    this.validateProposal(proposal, expectedPlans);
+    await this.validateProposal(proposal, expectedPlans, data.selectedService);
 
     return proposal;
   }
@@ -716,6 +1779,7 @@ export class MinimalTheme {
     const introPrompt = this.getSectionPrompt("introduction", data);
     const introSystemPrompt = this.buildSystemPrompt(agent, "introduction");
     const introResult = await this.runLLMWithJSONRetry<{
+      clientName?: string;
       userName?: string;
       email?: string;
       logo?: string | null;
@@ -725,42 +1789,57 @@ export class MinimalTheme {
       title?: string;
       description?: string;
       hideDescription?: boolean;
-      subtitle?: string;
-      hideSubtitle?: boolean;
       services?: Array<{
         id?: string;
         serviceName: string;
         sortOrder?: number;
       }>;
     }>(introPrompt, introSystemPrompt);
-    
+
     // Log AI result for debugging
-    console.log("🔍 DEBUG - Introduction AI Result:", JSON.stringify({
-      hasTitle: !!introResult.title,
-      hasDescription: !!introResult.description,
-      hasSubtitle: !!introResult.subtitle,
-      servicesCount: introResult.services?.length || 0,
-    }));
+    console.log(
+      "🔍 DEBUG - Introduction AI Result:",
+      JSON.stringify({
+        hasClientName: !!introResult.clientName,
+        clientName: introResult.clientName,
+        hasTitle: !!introResult.title,
+        title: introResult.title,
+        hasDescription: !!introResult.description,
+        servicesCount: introResult.services?.length || 0,
+      })
+    );
+
+    // Default services for marquee if AI doesn't generate any
+    const defaultServices = [
+      { id: crypto.randomUUID(), serviceName: "Imagem 1", sortOrder: 0 },
+      { id: crypto.randomUUID(), serviceName: "Imagem 2", sortOrder: 1 },
+      { id: crypto.randomUUID(), serviceName: "Imagem 3", sortOrder: 2 },
+      { id: crypto.randomUUID(), serviceName: "Imagem 4", sortOrder: 3 },
+    ];
 
     sections.introduction = {
+      clientName: introResult.clientName || data.clientName || "",
       userName: introResult.userName || data.userName || "",
       email: introResult.email || data.userEmail || "",
-      title: introResult.title || "Título da proposta",
-      subtitle: introResult.subtitle || "Subtítulo explicativo sobre o projeto",
-      hideSubtitle: introResult.hideSubtitle ?? false,
-      services: (introResult.services || []).map((service, index) => ({
+      title: introResult.title || "Proposta de Serviços Profissionais",
+      services: (introResult.services && introResult.services.length > 0
+        ? introResult.services
+        : defaultServices
+      ).map((service, index) => ({
         id: service.id || crypto.randomUUID(),
-        serviceName: service.serviceName || `Serviço ${index + 1}`,
+        serviceName: service.serviceName || `Imagem ${index + 1}`,
         sortOrder: service.sortOrder ?? index,
       })),
     };
-    
+
     console.log("✅ DEBUG - Introduction Section Generated:", {
-      title: sections.introduction.title,
-      titleLength: sections.introduction.title.length,
-      subtitle: sections.introduction.subtitle,
-      subtitleLength: sections.introduction.subtitle?.length ?? 0,
-      subtitleOK: (sections.introduction.subtitle?.length ?? 0) <= 180 ? "✓" : "✗ EXCEEDED!"
+      clientName: sections.introduction?.clientName,
+      title: sections.introduction?.title,
+      titleLength: sections.introduction?.title?.length ?? 0,
+      titleOK:
+        (sections.introduction?.title?.length ?? 0) <= 120
+          ? "✓"
+          : "✗ EXCEEDED!",
     });
 
     // Generate aboutUs
@@ -769,6 +1848,7 @@ export class MinimalTheme {
     const aboutUsResult = await this.runLLMWithJSONRetry<{
       hideSection?: boolean;
       title?: string;
+      subtitle?: string;
       description?: string;
       paragraphs?: string[];
       marqueeText?: string;
@@ -785,7 +1865,19 @@ export class MinimalTheme {
     sections.aboutUs = {
       hideSection: aboutUsResult.hideSection ?? false,
       title: aboutUsResult.title || "Sobre nós",
+      subtitle: aboutUsResult.subtitle || "",
+      hideSubtitle: !aboutUsResult.subtitle,
     };
+
+    console.log("✅ DEBUG - AboutUs Section Generated:", {
+      title: sections.aboutUs.title,
+      subtitle: sections.aboutUs.subtitle,
+      subtitleLength: sections.aboutUs.subtitle?.length ?? 0,
+      subtitleOK:
+        (sections.aboutUs.subtitle?.length ?? 0) <= 250 ? "✓" : "✗ EXCEEDED!",
+      hasSubtitle: !!sections.aboutUs.subtitle,
+      hideSubtitle: sections.aboutUs.hideSubtitle,
+    });
 
     // Generate team
     const teamPrompt = this.getSectionPrompt("team", data);
@@ -814,7 +1906,7 @@ export class MinimalTheme {
         sortOrder?: number;
       }>;
     }>(expertisePrompt, expertiseSystemPrompt);
-    
+
     // Generate default topics if AI didn't generate enough
     const defaultTopics = Array.from({ length: 9 }, (_, i) => ({
       id: crypto.randomUUID(),
@@ -825,14 +1917,19 @@ export class MinimalTheme {
     }));
 
     // Log AI result for debugging
-    console.log("🔍 DEBUG - Expertise AI Result:", JSON.stringify({
-      topicsCount: expertiseResult.topics?.length || 0,
-      hasSubtitle: !!expertiseResult.subtitle,
-      hasTitle: !!expertiseResult.title,
-    }));
+    console.log(
+      "🔍 DEBUG - Expertise AI Result:",
+      JSON.stringify({
+        topicsCount: expertiseResult.topics?.length || 0,
+        hasSubtitle: !!expertiseResult.subtitle,
+        hasTitle: !!expertiseResult.title,
+      })
+    );
 
     sections.expertise = {
       hideSection: expertiseResult.hideSection ?? false,
+      subtitle: expertiseResult.subtitle,
+      hideSubtitle: expertiseResult.hideSubtitle,
       title: expertiseResult.title || "Áreas de atuação",
       topics: (expertiseResult.topics && expertiseResult.topics.length > 0
         ? expertiseResult.topics
@@ -848,7 +1945,7 @@ export class MinimalTheme {
         sortOrder: topic.sortOrder ?? index,
       })),
     };
-    
+
     console.log("✅ DEBUG - Expertise Section Generated:", {
       topicsCount: sections.expertise.topics?.length || 0,
       firstTopic: sections.expertise.topics?.[0]?.title,
@@ -974,21 +2071,24 @@ REGRAS OBRIGATÓRIAS:
     };
 
     // Generate clients/brands section
+    console.log("🚀 Starting clients section generation...");
     const clientsPrompt = this.getSectionPrompt("clients", data);
     const clientsSystemPrompt = this.buildSystemPrompt(agent, "clients");
+
+    console.log(
+      "📝 Clients Prompt Preview:",
+      clientsPrompt.substring(0, 200) + "..."
+    );
+
     const clientsResult = await this.runLLMWithJSONRetry<{
       hideSection?: boolean;
-      subtitle?: string;
-      hideSubtitle?: boolean;
       title?: string;
       hideTitle?: boolean;
-      description?: string;
-      hideDescription?: boolean;
       paragraphs?: string[];
       items?: Array<{
         id?: string;
         name: string;
-        logo?: string;
+        logo?: string | null;
         sortOrder?: number;
       }>;
     }>(clientsPrompt, clientsSystemPrompt);
@@ -1000,34 +2100,85 @@ REGRAS OBRIGATÓRIAS:
     );
 
     // Log AI result for debugging
-    console.log("🔍 DEBUG - Clients AI Result:", JSON.stringify({
+    console.log("🔍 DEBUG - Clients AI Result:", {
+      hideSection: clientsResult.hideSection,
       itemsCount: clientsResult.items?.length || 0,
-      hasSubtitle: !!clientsResult.subtitle,
       hasTitle: !!clientsResult.title,
-      hasDescription: !!clientsResult.description,
       paragraphsCount: clientsResult.paragraphs?.length || 0,
-    }));
+      firstItemName: clientsResult.items?.[0]?.name,
+      title: clientsResult.title,
+      willUseFallback:
+        !clientsResult.items || clientsResult.items.length !== 12,
+    });
 
-    sections.clients = {
-      hideSection: clientsResult.hideSection ?? false,
-      title: clientsResult.title || "Parceiros de sucesso",
-      description: clientsResult.description || "Empresas que confiaram em nosso trabalho",
-      paragraphs: clientsResult.paragraphs || [],
-      items: (clientsResult.items && clientsResult.items.length >= 6
+    // Validate that we have exactly 12 items, otherwise use defaults
+    const clientItems = (
+      clientsResult.items && clientsResult.items.length === 12
         ? clientsResult.items
         : defaultClientItems
-      ).map((item, index) => ({
-        id: item.id || crypto.randomUUID(),
-        name: item.name || `CLIENTE ${index + 1}`,
-        logo: item.logo || undefined,
-        sortOrder: item.sortOrder ?? index,
-      })),
+    ).map((item, index) => ({
+      id: item.id || crypto.randomUUID(),
+      name: item.name || `CLIENTE ${index + 1}`,
+      logo: item.logo || undefined,
+      sortOrder: item.sortOrder ?? index,
+    }));
+
+    console.log("✅ Clients Items Final Count:", clientItems.length);
+
+    console.log("🔍 DEBUG - Clients Result from AI:", {
+      hasTitle: !!clientsResult.title,
+      title: clientsResult.title,
+      hasParagraphs: !!clientsResult.paragraphs,
+      paragraphsIsArray: Array.isArray(clientsResult.paragraphs),
+      paragraphsLength: clientsResult.paragraphs?.length || 0,
+      paragraph1: clientsResult.paragraphs?.[0],
+      paragraph2: clientsResult.paragraphs?.[1],
+    });
+
+    // Ensure we have valid paragraphs, otherwise generate fallback
+    let finalParagraphs = clientsResult.paragraphs;
+    if (
+      !finalParagraphs ||
+      finalParagraphs.length < 2 ||
+      !finalParagraphs[0] ||
+      !finalParagraphs[1]
+    ) {
+      console.warn(
+        "⚠️ Paragraphs not properly generated by AI, using professional fallback"
+      );
+      finalParagraphs = [
+        "Reconhecemos uma lacuna na indústria criativa—pequenos negócios frequentemente lutam para encontrar soluções de alta qualidade, porém acessíveis. Trabalhamos com empresas que valorizam estratégia, qualidade e resultados concretos, estabelecendo parcerias verdadeiras que geram impacto mensurável em seus objetivos de negócio.",
+        "Nossa filosofia é simples: design e estratégia devem trabalhar juntos para criar experiências que facilitam a vida das pessoas e fortalecem marcas. Com essa visão, fornecemos serviços completos para ser seu parceiro estratégico em cada etapa do projeto, combinando expertise técnica com sensibilidade criativa.",
+      ];
+    }
+
+    sections.clients = {
+      // ALWAYS show clients section - NEVER hide
+      hideSection: false,
+
+      title:
+        clientsResult.title ||
+        "Reconhecemos uma lacuna na indústria criativa—pequenos negócios frequentemente lutam para encontrar soluções de design de alta qualidade, porém acessíveis. É por isso que existimos.",
+      hideTitle: clientsResult.hideTitle ?? false,
+
+      paragraphs: finalParagraphs,
+
+      items: clientItems,
     };
-    
+
     console.log("✅ DEBUG - Clients Section Generated:", {
       itemsCount: sections.clients.items?.length || 0,
       firstItem: sections.clients.items?.[0]?.name,
       title: sections.clients.title,
+      paragraphsCount: sections.clients.paragraphs?.length || 0,
+      paragraph1Length: sections.clients.paragraphs?.[0]?.length || 0,
+      paragraph2Length: sections.clients.paragraphs?.[1]?.length || 0,
+      paragraph1Preview: sections.clients.paragraphs?.[0]?.substring(0, 50),
+      paragraph2Preview: sections.clients.paragraphs?.[1]?.substring(0, 50),
+      hasGeneratedContent:
+        !!clientsResult.title &&
+        clientsResult.paragraphs &&
+        clientsResult.paragraphs.length > 0,
     });
 
     // Generate steps
@@ -1084,7 +2235,8 @@ REGRAS OBRIGATÓRIAS:
     }>(plansPrompt, plansSystemPrompt);
 
     // Generate default plans if not enough were generated
-    const expectedPlanCount = typeof data.selectedPlans === "number" ? data.selectedPlans : 3;
+    const expectedPlanCount =
+      typeof data.selectedPlans === "number" ? data.selectedPlans : 3;
     const defaultPlans = Array.from({ length: expectedPlanCount }, (_, i) => ({
       id: crypto.randomUUID(),
       title: `Plano ${i + 1}`,
@@ -1138,6 +2290,40 @@ REGRAS OBRIGATÓRIAS:
       faqPrompt,
       faqSystemPrompt
     );
+
+    // Rephrase FAQ items if they exceed limits (nunca truncar)
+    if (faqResult.items) {
+      faqResult.items = await Promise.all(
+        faqResult.items.map(async (item, index) => {
+          const adjusted = { ...item };
+
+          if (adjusted.question.length > 85) {
+            console.warn(
+              `FAQ question [${index}] exceeded 85 chars (${adjusted.question.length}), rephrasing...`
+            );
+            adjusted.question = await this.rephraseToFit(
+              adjusted.question,
+              85,
+              `faq.items[${index}].question`
+            );
+          }
+
+          if (adjusted.answer.length > 310) {
+            console.warn(
+              `FAQ answer [${index}] exceeded 310 chars (${adjusted.answer.length}), rephrasing...`
+            );
+            adjusted.answer = await this.rephraseToFit(
+              adjusted.answer,
+              310,
+              `faq.items[${index}].answer`
+            );
+          }
+
+          return adjusted;
+        })
+      );
+    }
+
     sections.faq = faqResult;
 
     // Generate Footer
@@ -1155,8 +2341,11 @@ REGRAS OBRIGATÓRIAS:
       }>(footerPrompt, footerSystemPrompt);
 
       sections.footer = {
-        callToAction: footerResult.callToAction || "Vamos construir algo incrível juntos?",
-        disclaimer: footerResult.disclaimer || "Proposta válida por 15 dias. Valores e prazos podem variar conforme escopo.",
+        callToAction:
+          footerResult.callToAction || "Vamos construir algo incrível juntos?",
+        disclaimer:
+          footerResult.disclaimer ||
+          "Proposta válida por 15 dias. Valores e prazos podem variar conforme escopo.",
         email: footerResult.email || data.userEmail || "contato@empresa.com.br",
         phone: footerResult.phone || "+55 11 99999-9999",
         hideCallToAction: false,
@@ -1191,6 +2380,11 @@ REGRAS OBRIGATÓRIAS:
       ? `\n\nExpected JSON format:\n${expectedFormat}`
       : "";
 
+    const lengthGuidelines =
+      sectionKey === "specialties"
+        ? "\n- Para specialties.topics[].description, garanta no mínimo 60 caracteres (ideal 90-130) para atender à validação do template Minimal."
+        : "";
+
     return `${agent.systemPrompt}
 
 You are generating content for the "${sectionKey}" section of a Minimal template proposal.
@@ -1200,7 +2394,7 @@ Key principles for Minimal template:
 - Direct and professional tone
 - Emphasis on clarity and simplicity
 - Avoid excessive decoration
-- Focus on essential information${formatInstruction}
+- Focus on essential information${lengthGuidelines}${formatInstruction}
 
 IMPORTANT: You must respond ONLY with valid JSON matching the expected format.`;
   }

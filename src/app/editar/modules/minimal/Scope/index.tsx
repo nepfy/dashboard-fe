@@ -26,7 +26,7 @@ export default function FlashScope({
           margin-right: auto;
         }
 
-        .invest-heading {
+        .scope-heading {
           width: 100%;
           display: flex;
           justify-content: space-between;
@@ -34,21 +34,21 @@ export default function FlashScope({
           gap: 4rem;
         }
 
-        .invest-component {
+        .scope-component {
           display: flex;
           justify-content: space-between;
           align-items: center;
           gap: 4rem;
         }
 
-        .about-heading_left {
+        .invest_left {
           display: flex;
           flex-direction: column;
           gap: 1rem;
           max-width: 40ch;
         }
 
-        .about-heading_title {
+        .invest_title {
           max-width: 87ch;
           justify-self: flex-start;
         }
@@ -80,16 +80,16 @@ export default function FlashScope({
         }
 
         @media screen and (max-width: 991px) {
-          .invest-heading {
+          .scope-heading {
             flex-direction: column;
             gap: 2rem;
           }
 
-          .about-heading_left {
+          .invest_left {
             max-width: 100%;
           }
 
-          .about-heading_title {
+          .invest_title {
             max-width: 100%;
           }
         }
@@ -98,9 +98,9 @@ export default function FlashScope({
       <div className="bg-black">
         <div className="padding-global pt-80 pb-60">
           <div className="container-large">
-            <div id="investiment" className="invest-component">
-              <div className="invest-heading">
-                <div className="about-heading_left pt-4">
+            <div id="investment" className="scope-component">
+              <div className="scope-heading">
+                <div className="invest_left pt-4">
                   <div
                     className={`relative m-0 h-auto w-fit border p-0 hover:border-[#0170D6] hover:bg-[#0170D666] ${isDateModalOpen ? "border-[#0170D6] bg-[#0170D666]" : "border-transparent bg-transparent"}`}
                   >
@@ -127,7 +127,7 @@ export default function FlashScope({
                     </div>
                   </div>
 
-                  <div className="about-heading_subtitle">
+                  <div className="invest_subtitle">
                     <EditableText
                       value={subtitle || ""}
                       onChange={(newSubtitle: string) =>
@@ -136,14 +136,10 @@ export default function FlashScope({
                       className="text-size-medium"
                       editingId="investment-subtitle"
                     />
-                    <p className="text-size-small text-weight-light">
-                      Focus on the Aurore product growing while we cover the
-                      brand design
-                    </p>
                   </div>
                 </div>
 
-                <div className="about-heading_title">
+                <div className="invest_title">
                   <EditableText
                     value={projectScope || ""}
                     onChange={(newProjectScope: string) =>

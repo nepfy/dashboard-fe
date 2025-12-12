@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 
 type Placement = "top" | "bottom" | "left" | "right";
 
@@ -21,12 +22,14 @@ interface ModalProps {
     top?: number;
     left?: number;
   };
+  anchorRect?: DOMRect | null;
+  onClose?: () => void;
 }
 
 const GAP = 12;
 const VIEWPORT_PADDING = 12;
 const ARROW_SIZE = 12;
-const PANEL_Z_INDEX = 2000;
+const PANEL_Z_INDEX = 12000;
 
 const clamp = (value: number, min: number, max: number) => {
   if (Number.isNaN(value)) return min;
@@ -61,9 +64,12 @@ export default function EditableModal({
   className,
   preferredPlacement,
   offset,
+  anchorRect,
+  onClose,
   ...deprecatedProps
 }: ModalProps) {
   void deprecatedProps;
+  const anchorRectProp = anchorRect;
   const placeholderRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ top: number; left: number }>({
@@ -111,9 +117,8 @@ export default function EditableModal({
       if (!container || !panel) return;
 
       const anchor = container.parentElement;
-      if (!anchor) return;
-
-      const anchorRect = anchor.getBoundingClientRect();
+      const activeAnchorRect =
+        anchorRectProp ?? anchor?.getBoundingClientRect() ?? null;
       const viewportMetrics = getViewportMetrics();
       const { width: viewportWidth, height: viewportHeight } = viewportMetrics;
       const viewportLeft = viewportMetrics.left;
@@ -123,17 +128,43 @@ export default function EditableModal({
       const panelWidth = panelRect.width;
       const panelHeight = panelRect.height;
 
-      const anchorCenterX = anchorRect.left + anchorRect.width / 2;
-      const anchorCenterY = anchorRect.top + anchorRect.height / 2;
+      // Fallback: if no anchor available, center in viewport
+      if (!activeAnchorRect) {
+        const navigationHeight = window.innerWidth < 640 ? 56 : 66;
+        const topSafeArea = viewportTop + navigationHeight + VIEWPORT_PADDING;
+        const centeredTop = viewportTop + viewportHeight / 2 - panelHeight / 2;
+        const centeredLeft = viewportLeft + viewportWidth / 2 - panelWidth / 2;
+        const clamped = {
+          top: clamp(
+            centeredTop + offsetTop,
+            topSafeArea,
+            viewportTop + viewportHeight - panelHeight - VIEWPORT_PADDING
+          ),
+          left: clamp(
+            centeredLeft + offsetLeft,
+            viewportLeft + VIEWPORT_PADDING,
+            viewportLeft + viewportWidth - panelWidth - VIEWPORT_PADDING
+          ),
+        };
+        setPosition(clamped);
+        setIsPositioned(true);
+        setArrowStyle(null);
+        return;
+      }
+
+      const anchorCenterX =
+        activeAnchorRect.left + activeAnchorRect.width / 2;
+      const anchorCenterY =
+        activeAnchorRect.top + activeAnchorRect.height / 2;
 
       const navigationHeight = window.innerWidth < 640 ? 56 : 66;
       const topSafeArea = viewportTop + navigationHeight + VIEWPORT_PADDING;
 
       const availableSpace: Record<Placement, number> = {
-        bottom: viewportTop + viewportHeight - anchorRect.bottom,
-        top: anchorRect.top - viewportTop,
-        right: viewportLeft + viewportWidth - anchorRect.right,
-        left: anchorRect.left - viewportLeft,
+        bottom: viewportTop + viewportHeight - activeAnchorRect.bottom,
+        top: activeAnchorRect.top - viewportTop,
+        right: viewportLeft + viewportWidth - activeAnchorRect.right,
+        left: activeAnchorRect.left - viewportLeft,
       };
 
       const preferredOrder = preferredPlacement
@@ -162,22 +193,22 @@ export default function EditableModal({
       const computeCoords = (targetPlacement: Placement) => {
         switch (targetPlacement) {
           case "bottom": {
-            const top = anchorRect.bottom + GAP;
+            const top = activeAnchorRect.bottom + GAP;
             const left = anchorCenterX - panelWidth / 2;
             return { top, left };
           }
           case "top": {
-            const top = anchorRect.top - panelHeight - GAP;
+            const top = activeAnchorRect.top - panelHeight - GAP;
             const left = anchorCenterX - panelWidth / 2;
             return { top, left };
           }
           case "right": {
-            const left = anchorRect.right + GAP;
+            const left = activeAnchorRect.right + GAP;
             const top = anchorCenterY - panelHeight / 2;
             return { top, left };
           }
           case "left": {
-            const left = anchorRect.left - panelWidth - GAP;
+            const left = activeAnchorRect.left - panelWidth - GAP;
             const top = anchorCenterY - panelHeight / 2;
             return { top, left };
           }
@@ -325,7 +356,7 @@ export default function EditableModal({
       setIsPositioned(true);
       setArrowStyle(nextArrowStyle);
     });
-  }, [isOpen, preferredPlacement, offsetLeft, offsetTop]);
+  }, [isOpen, preferredPlacement, offsetLeft, offsetTop, anchorRectProp]);
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -387,10 +418,26 @@ export default function EditableModal({
       <div className="hidden lg:block" style={arrowStyle} />
     ) : null;
 
+  const desktopModal = (
+    <div ref={placeholderRef}>
+      {arrowNode}
+      <div
+        ref={panelRef}
+        className={`bg-white-neutral-light-100 h-[550px] w-full overflow-hidden rounded-[8px] border border-[#CDCDCD] px-4 py-6 sm:w-[360px] ${className ?? ""}`}
+        style={panelStyle}
+      >
+        {children}
+      </div>
+    </div>
+  );
+
   return (
     <>
       {/* Mobile backdrop - only visible on mobile */}
-      <div className="bg-filter fixed inset-0 z-[9999] lg:hidden" />
+      <div
+        className="bg-filter fixed inset-0 z-[9999] lg:hidden"
+        onClick={() => onClose?.()}
+      />
 
       {/* Mobile modal container - centered on mobile */}
       <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 lg:hidden">
@@ -399,17 +446,8 @@ export default function EditableModal({
         </div>
       </div>
 
-      {/* Desktop placeholder to locate anchor element */}
-      <div ref={placeholderRef} className="hidden lg:block">
-        {arrowNode}
-        <div
-          ref={panelRef}
-          className={`bg-white-neutral-light-100 h-[550px] w-full overflow-hidden rounded-[8px] border border-[#CDCDCD] px-4 py-6 sm:w-[360px] ${className ?? ""}`}
-          style={panelStyle}
-        >
-          {children}
-        </div>
-      </div>
+      {/* Desktop modal rendered in a portal to avoid clipping/overflow */}
+      {createPortal(desktopModal, document.body)}
     </>
   );
 }

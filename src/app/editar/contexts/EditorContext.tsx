@@ -13,6 +13,7 @@ import {
   TemplateData,
   ProposalData,
   IntroductionSection,
+  IntroductionService,
   AboutUsSection,
   TeamSection,
   PlansSection,
@@ -36,7 +37,10 @@ import {
   FAQItem,
 } from "#/types/template-data";
 import { useRouter } from "next/navigation";
-import { trackProposalSaved, trackEditorSettingsChanged } from "#/lib/analytics/track";
+import {
+  trackProposalSaved,
+  trackEditorSettingsChanged,
+} from "#/lib/analytics/track";
 
 interface EditorContextType {
   // State
@@ -104,6 +108,38 @@ interface EditorContextType {
   addExpertiseTopic: () => void;
   deleteExpertiseTopic: (topicId: string) => void;
   reorderExpertiseTopics: (topics: ExpertiseTopic[]) => void;
+
+  // AboutUs item CRUD operations
+  updateAboutUsItem: (
+    itemId: string,
+    data: Partial<{
+      id: string;
+      image?: string;
+      caption?: string;
+      hideImage?: boolean;
+      hideCaption?: boolean;
+      sortOrder?: number;
+    }>
+  ) => void;
+  reorderAboutUsItems: (
+    items: Array<{
+      id: string;
+      image?: string;
+      caption?: string;
+      hideImage?: boolean;
+      hideCaption?: boolean;
+      sortOrder?: number;
+    }>
+  ) => void;
+
+  // Introduction Services CRUD operations
+  updateIntroductionService: (
+    serviceId: string,
+    data: Partial<IntroductionService>
+  ) => void;
+  addIntroductionService: () => void;
+  deleteIntroductionService: (serviceId: string) => void;
+  reorderIntroductionServices: (services: IntroductionService[]) => void;
 
   // Testimonial CRUD operations
   updateTestimonialItem: (itemId: string, data: Partial<Testimonial>) => void;
@@ -179,6 +215,16 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   }, [isDirty]);
 
   const setProjectData = useCallback((data: TemplateData) => {
+    // Ensure expertise subtitle always exists (for minimal template)
+    if (data?.proposalData?.expertise) {
+      if (data.proposalData.expertise.subtitle === undefined) {
+        data.proposalData.expertise.subtitle = "";
+      }
+      if (data.proposalData.expertise.hideSubtitle === undefined) {
+        data.proposalData.expertise.hideSubtitle = false;
+      }
+    }
+
     setProjectDataState(data);
     setIsDirty(false);
     setError(null);
@@ -191,19 +237,98 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     ) => {
       if (!projectData) return;
 
+      // Debug log for introduction updates
+      if (sectionName === "introduction") {
+        console.log("[EditorContext] Updating introduction:", {
+          sectionName,
+          updates,
+          currentLogo: projectData.proposalData?.introduction?.logo,
+          newLogo: (updates as Partial<IntroductionSection>)?.logo,
+        });
+      }
+
+      // Debug log for expertise updates
+      if (sectionName === "expertise") {
+        console.log("[EditorContext] Updating expertise:", {
+          sectionName,
+          updates,
+          currentSubtitle: projectData.proposalData?.expertise?.subtitle,
+          newSubtitle: (updates as Partial<ExpertiseSection>)?.subtitle,
+        });
+      }
+
+      // Debug log for clients updates
+      if (sectionName === "clients") {
+        console.log("[EditorContext] Updating clients:", {
+          sectionName,
+          updates,
+          currentItems: projectData.proposalData?.clients?.items?.length || 0,
+          newItems: (updates as Partial<ClientsSection>)?.items?.length || 0,
+          items: (updates as Partial<ClientsSection>)?.items,
+        });
+      }
+
       setProjectDataState((prev) => {
         if (!prev) return prev;
 
-        return {
+        // Ensure expertise subtitle is always preserved/initialized
+        let finalUpdates = updates;
+        if (sectionName === "expertise") {
+          const expertiseUpdates = updates as Partial<ExpertiseSection>;
+          const currentExpertise = prev.proposalData?.expertise;
+          finalUpdates = {
+            ...currentExpertise,
+            ...expertiseUpdates,
+            // Ensure subtitle always exists
+            subtitle:
+              expertiseUpdates.subtitle !== undefined
+                ? expertiseUpdates.subtitle
+                : (currentExpertise?.subtitle ?? ""),
+            hideSubtitle:
+              expertiseUpdates.hideSubtitle !== undefined
+                ? expertiseUpdates.hideSubtitle
+                : (currentExpertise?.hideSubtitle ?? false),
+          } as Partial<ExpertiseSection>;
+        }
+
+        const updated = {
           ...prev,
           proposalData: {
             ...prev.proposalData,
             [sectionName]: {
               ...prev.proposalData?.[sectionName],
-              ...updates,
+              ...finalUpdates,
             },
           } as ProposalData,
         };
+
+        // Debug log after state update
+        if (sectionName === "introduction") {
+          console.log("[EditorContext] State updated:", {
+            introductionLogo: updated.proposalData?.introduction?.logo,
+            fullIntroduction: updated.proposalData?.introduction,
+          });
+        }
+
+        // Debug log for expertise state update
+        if (sectionName === "expertise") {
+          console.log("[EditorContext] Expertise state updated:", {
+            expertiseSubtitle: updated.proposalData?.expertise?.subtitle,
+            fullExpertise: updated.proposalData?.expertise,
+          });
+        }
+
+        // Debug log for clients state update
+        if (sectionName === "clients") {
+          console.log("[EditorContext] Clients state updated:", {
+            clientsItemsLength:
+              updated.proposalData?.clients?.items?.length || 0,
+            clientsItems: updated.proposalData?.clients?.items,
+            fullClients: updated.proposalData?.clients,
+          });
+        }
+
+        return updated;
       });
 
       setIsDirty(true);
@@ -257,6 +382,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
   const updateClients = useCallback(
     (data: Partial<ClientsSection>) => {
+      console.log("[EditorContext] updateClients called with:", data);
       updateSection("clients", data);
     },
     [updateSection]
@@ -264,6 +390,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
 
   const updateExpertise = useCallback(
     (data: Partial<ExpertiseSection>) => {
+      console.log("[EditorContext] updateExpertise called with:", data);
       updateSection("expertise", data);
     },
     [updateSection]
@@ -484,6 +611,16 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
       setError(null);
 
       try {
+        // Ensure expertise subtitle exists before saving
+        if (projectData.proposalData?.expertise) {
+          if (projectData.proposalData.expertise.subtitle === undefined) {
+            projectData.proposalData.expertise.subtitle = "";
+          }
+          if (projectData.proposalData.expertise.hideSubtitle === undefined) {
+            projectData.proposalData.expertise.hideSubtitle = false;
+          }
+        }
+
         // Merge options into projectData if provided
         const dataToSave = {
           ...projectData,
@@ -494,6 +631,17 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
             isPublished: options.isPublished,
           }),
         };
+
+        // Debug: Log expertise data before saving
+        if (dataToSave.proposalData?.expertise) {
+          console.log("[EditorContext] Saving expertise data:", {
+            hasSubtitle: !!dataToSave.proposalData.expertise.subtitle,
+            subtitle: dataToSave.proposalData.expertise.subtitle,
+            hasTitle: !!dataToSave.proposalData.expertise.title,
+            title: dataToSave.proposalData.expertise.title,
+            fullExpertise: dataToSave.proposalData.expertise,
+          });
+        }
 
         const response = await fetch(`/api/projects/${projectData.id}`, {
           method: "PUT",
@@ -710,6 +858,158 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
       }));
 
       updateSection("expertise", { topics: reorderedTopics });
+    },
+    [updateSection]
+  );
+
+  // AboutUs item CRUD operations
+  const updateAboutUsItem = useCallback(
+    (
+      itemId: string,
+      data: Partial<{
+        id: string;
+        image?: string;
+        caption?: string;
+        hideImage?: boolean;
+        hideCaption?: boolean;
+        sortOrder?: number;
+      }>
+    ) => {
+      console.log("🔄 updateAboutUsItem called:", { itemId, data });
+
+      if (!projectData?.proposalData?.aboutUs) {
+        console.warn("⚠️ aboutUs section not found in projectData");
+        return;
+      }
+
+      // Initialize items array if it doesn't exist
+      const currentItems = projectData.proposalData.aboutUs.items || [];
+      console.log("📦 Current items:", currentItems);
+
+      // Check if item exists, if not, add it as a new item
+      const itemExists = currentItems.some((item) => item.id === itemId);
+      console.log("🔍 Item exists:", itemExists, "for itemId:", itemId);
+
+      // Check if this is a temporary ID (starts with "temp-" or "aboutUs-temp-")
+      const isTempId =
+        itemId.startsWith("temp-") || itemId.startsWith("aboutUs-temp-");
+
+      let updatedItems;
+      if (itemExists) {
+        // Update existing item
+        updatedItems = currentItems.map((item) => {
+          if (item.id === itemId) {
+            // If updating a temp item, convert it to a real item with a new UUID
+            const finalId = isTempId ? crypto.randomUUID() : itemId;
+            const updatedItem = { ...item, ...data, id: finalId };
+            console.log("✅ Updating existing item:", updatedItem);
+            return updatedItem;
+          }
+          return item;
+        });
+      } else {
+        // Add new item if it doesn't exist
+        // Convert temp IDs to real UUIDs
+        const finalId = isTempId ? crypto.randomUUID() : itemId;
+        const newItem = {
+          id: finalId,
+          ...data,
+          sortOrder: data.sortOrder ?? currentItems.length,
+        };
+        updatedItems = [...currentItems, newItem];
+        console.log("➕ Adding new item:", newItem);
+      }
+
+      console.log("💾 Final updated items:", updatedItems);
+      updateSection("aboutUs", { items: updatedItems });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderAboutUsItems = useCallback(
+    (
+      items: Array<{
+        id: string;
+        image?: string;
+        caption?: string;
+        hideImage?: boolean;
+        hideCaption?: boolean;
+        sortOrder?: number;
+      }>
+    ) => {
+      // Convert all temporary IDs to real UUIDs and ensure proper sortOrder
+      const itemsToSave = items.map((item, index) => {
+        // If item has temp ID (starts with "temp-" or "aboutUs-temp-"), generate a new UUID
+        const isTempId =
+          item.id?.startsWith("temp-") || item.id?.startsWith("aboutUs-temp-");
+        return {
+          ...item,
+          id: isTempId ? crypto.randomUUID() : item.id,
+          sortOrder: index,
+        };
+      });
+
+      updateSection("aboutUs", { items: itemsToSave });
+    },
+    [updateSection]
+  );
+
+  // Introduction Services CRUD operations
+  const updateIntroductionService = useCallback(
+    (serviceId: string, data: Partial<IntroductionService>) => {
+      if (!projectData?.proposalData?.introduction?.services) return;
+
+      const updatedServices =
+        projectData.proposalData.introduction.services.map((service) =>
+          service.id === serviceId ? { ...service, ...data } : service
+        );
+
+      updateSection("introduction", { services: updatedServices });
+    },
+    [projectData, updateSection]
+  );
+
+  const addIntroductionService = useCallback(() => {
+    const currentServices =
+      projectData?.proposalData?.introduction?.services || [];
+
+    const newService: IntroductionService = {
+      id: crypto.randomUUID(),
+      serviceName: `Imagem ${currentServices.length + 1}`,
+      image: undefined,
+      sortOrder: currentServices.length,
+      hideItem: false,
+    };
+
+    updateSection("introduction", {
+      services: [...currentServices, newService],
+    });
+  }, [projectData, updateSection]);
+
+  const deleteIntroductionService = useCallback(
+    (serviceId: string) => {
+      if (!projectData?.proposalData?.introduction?.services) return;
+
+      const updatedServices = projectData.proposalData.introduction.services
+        .filter((service) => service.id !== serviceId)
+        .map((service, index) => ({
+          ...service,
+          sortOrder: index,
+        }));
+
+      updateSection("introduction", { services: updatedServices });
+    },
+    [projectData, updateSection]
+  );
+
+  const reorderIntroductionServices = useCallback(
+    (services: IntroductionService[]) => {
+      const reorderedServices = services.map((service, index) => ({
+        ...service,
+        sortOrder: index,
+      }));
+
+      updateSection("introduction", { services: reorderedServices });
     },
     [updateSection]
   );
@@ -1039,6 +1339,12 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     addExpertiseTopic,
     deleteExpertiseTopic,
     reorderExpertiseTopics,
+    updateAboutUsItem,
+    reorderAboutUsItems,
+    updateIntroductionService,
+    addIntroductionService,
+    deleteIntroductionService,
+    reorderIntroductionServices,
     updateTestimonialItem,
     addTestimonialItem,
     deleteTestimonialItem,

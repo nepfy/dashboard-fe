@@ -133,6 +133,39 @@ export async function PUT(
     // Parse request body
     const body = await request.json();
 
+    // Debug: Log introduction data to verify logo and clientName are being saved
+    if (body.proposalData?.introduction) {
+      console.log("[API] Saving introduction data:", {
+        hasLogo: !!body.proposalData.introduction.logo,
+        logo: body.proposalData.introduction.logo,
+        hasClientName: !!body.proposalData.introduction.clientName,
+        clientName: body.proposalData.introduction.clientName,
+      });
+    }
+
+    // Debug: Log expertise data to verify subtitle is being saved
+    if (body.proposalData?.expertise) {
+      console.log("[API] Saving expertise data:", {
+        hasSubtitle: !!body.proposalData.expertise.subtitle,
+        subtitle: body.proposalData.expertise.subtitle,
+        hasTitle: !!body.proposalData.expertise.title,
+        title: body.proposalData.expertise.title,
+        fullExpertise: body.proposalData.expertise,
+      });
+    }
+
+    // Debug: Log clients data to verify items are being saved
+    if (body.proposalData?.clients) {
+      console.log("[API] Saving clients data:", {
+        hasItems: !!body.proposalData.clients.items,
+        itemsLength: body.proposalData.clients.items?.length || 0,
+        items: body.proposalData.clients.items,
+        hasTitle: !!body.proposalData.clients.title,
+        title: body.proposalData.clients.title,
+        fullClients: body.proposalData.clients,
+      });
+    }
+
     let projectSlug = existingProject[0].projectUrl;
 
     if (body.projectUrl !== undefined) {

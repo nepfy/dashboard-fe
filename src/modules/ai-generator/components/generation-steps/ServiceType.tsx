@@ -87,6 +87,7 @@ export function ServiceType({
         handleBack={handleBack || (() => {})}
         handleNext={handleNext || (() => {})}
         disabled={!selectedService}
+        data-testid="service-step"
       >
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {services.map((service) => {
@@ -95,6 +96,7 @@ export function ServiceType({
             return (
               <label
                 key={service.id}
+                data-testid={`service-card-${service.id}`}
                 className={`w-full flex flex-col items-start cursor-pointer p-2 rounded-[8px]
                     ${
                       isSelected
@@ -119,6 +121,7 @@ export function ServiceType({
                 </div>
                 <input
                   type="radio"
+                  data-testid={`service-radio-${service.id}`}
                   name="service"
                   value={service.id}
                   checked={isSelected}

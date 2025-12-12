@@ -1,12 +1,14 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { AboutUsSection } from "#/types/template-data";
+import { useState } from "react";
+import Image from "next/image";
+import { AboutUsSection, AboutUsItem } from "#/types/template-data";
 import EditableText from "#/app/editar/components/EditableText";
 import EditableDate from "#/app/editar/components/EditableDate";
+import EditableImage from "#/app/editar/components/EditableImage";
+import EditableMarqueeText from "#/app/editar/components/EditableMarqueeText";
 import { useEditor } from "../../../contexts/EditorContext";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
-import { useState } from "react";
 
 export default function MinimalAboutUs({
   title,
@@ -16,8 +18,46 @@ export default function MinimalAboutUs({
   hideMarquee,
   items,
 }: AboutUsSection) {
-  const { updateAboutUs, projectData } = useEditor();
+  const {
+    updateAboutUs,
+    updateAboutUsItem,
+    reorderAboutUsItems,
+    projectData,
+    activeEditingId,
+  } = useEditor();
   const [isDateModalOpen, setIsDateModalOpen] = useState<boolean>(false);
+  const [openModalId, setOpenModalId] = useState<string | null>(null);
+  const [modalAnchorRect, setModalAnchorRect] = useState<DOMRect | null>(null);
+
+  // Create temporary items when array is empty so modal can work
+  const workingItems =
+    items && items.length > 0
+      ? items
+      : [
+          {
+            id: "aboutUs-temp-1",
+            image: "/images/templates/flash/placeholder.png",
+            caption: "Clique para adicionar imagem e descrição",
+            sortOrder: 0,
+          } as AboutUsItem,
+          {
+            id: "aboutUs-temp-2",
+            image: "/images/templates/flash/placeholder.png",
+            caption: "Clique para adicionar imagem e descrição",
+            sortOrder: 1,
+          } as AboutUsItem,
+        ];
+
+  console.log("🐛 AboutUs Debug:", {
+    itemsLength: items?.length || 0,
+    workingItemsLength: workingItems.length,
+    hideSection,
+    openModalId,
+    activeEditingId,
+    items: items,
+    workingItems: workingItems,
+    firstItem: items?.[0],
+  });
 
   if (hideSection) return null;
 
@@ -36,10 +76,10 @@ export default function MinimalAboutUs({
         }
 
         .about-heading {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 4rem;
+          display: flex;
+          justify-content: space-between;
           align-items: flex-start;
+          gap: 4rem;
         }
 
         .about-heading_left {
@@ -51,26 +91,45 @@ export default function MinimalAboutUs({
         .about-heading_title {
           display: flex;
           align-items: flex-start;
+          max-width: 72ch;
         }
 
         .about-content {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 2rem;
+          gap: 3rem;
+          align-items: start;
         }
 
         .about-item {
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 1.5rem;
+          position: relative;
+          z-index: 1;
         }
 
         .about-video {
           width: 100%;
-          aspect-ratio: 16/10;
-          border-radius: 1rem;
+          border-radius: 0;
           overflow: hidden;
           background: rgba(255, 255, 255, 0.05);
+          position: relative;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
+        }
+
+        .about-item:nth-child(1) .about-video {
+          aspect-ratio: 16/9;
+        }
+
+        .about-item:nth-child(2) .about-video {
+          aspect-ratio: 9/16;
+          max-height: 630px;
+        }
+
+        .about-video:hover {
+          opacity: 0.9;
         }
 
         .about-video img,
@@ -80,10 +139,11 @@ export default function MinimalAboutUs({
           object-fit: cover;
         }
 
-        .about-paragraph {
-          font-size: 1rem;
-          line-height: 1.6;
-          color: rgba(255, 255, 255, 0.8);
+        .about-caption {
+          font-size: 0.9375rem;
+          line-height: 1.5;
+          color: rgba(255, 255, 255, 0.7);
+          cursor: text;
         }
 
         .about-marquee {
@@ -91,6 +151,13 @@ export default function MinimalAboutUs({
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           overflow: hidden;
           max-height: 390px;
+          transition: all 0.2s ease;
+        }
+
+        .about-marquee .marquee_content {
+          display: flex;
+          gap: 3rem;
+          animation: marquee 60s linear infinite;
         }
 
         .about-marquee_text {
@@ -98,8 +165,17 @@ export default function MinimalAboutUs({
           font-weight: 300;
           color: rgba(255, 255, 255);
           white-space: nowrap;
-          animation: marquee 200s linear infinite;
           margin-top: 3rem;
+          flex: none;
+        }
+
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
 
         @media screen and (max-width: 991px) {
@@ -109,6 +185,13 @@ export default function MinimalAboutUs({
           }
           .about-content {
             grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+          .about-item:nth-child(1) .about-video {
+            aspect-ratio: 16/9;
+          }
+          .about-item:nth-child(2) .about-video {
+            aspect-ratio: 16/9;
           }
           .heading-style-h2 {
             font-size: 2rem;
@@ -116,6 +199,12 @@ export default function MinimalAboutUs({
         }
 
         @media screen and (max-width: 767px) {
+          .about-content {
+            gap: 1.5rem;
+          }
+          .about-item {
+            gap: 1rem;
+          }
         }
       `}</style>
 
@@ -175,74 +264,66 @@ export default function MinimalAboutUs({
               </div>
 
               <div className="about-content">
-                {items && items.length > 0 ? (
-                  items.map((item, index) => (
+                {workingItems.map((item, index) => (
+                  <div key={item.id || index} className="about-item">
                     <div
-                      key={item.id || index}
-                      className={`about-item about-item-${index + 1}`}
+                      className="about-video"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const rect = (
+                          e.currentTarget as HTMLDivElement
+                        ).getBoundingClientRect();
+                        setModalAnchorRect(rect);
+                        setOpenModalId(
+                          openModalId === item.id ? null : (item?.id ?? null)
+                        );
+                      }}
                     >
-                      <div className="about-video">
-                        <img
-                          src={
-                            item.image ||
-                            "/images/templates/flash/placeholder.png"
-                          }
+                      {item.image && (
+                        <Image
+                          src={item.image}
                           alt={item.caption || ""}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          priority={index < 2}
                         />
-                      </div>
-                      <div className="about-paragraph">
-                        <EditableText
-                          value={item.caption || "Descrição da imagem"}
-                          onChange={(newCaption: string) => {
-                            const updatedItems = [...(items || [])];
-                            updatedItems[index] = {
-                              ...item,
-                              caption: newCaption,
-                            };
-                            updateAboutUs({ items: updatedItems });
-                          }}
-                          className="text-size-regular text-color-grey"
-                          editingId={`aboutUs-item-${index}-caption`}
-                        />
-                      </div>
+                      )}
                     </div>
-                  ))
-                ) : (
-                  <>
-                    <div className="about-item about-item-1">
-                      <div className="about-video">
-                        <img
-                          src="/images/templates/flash/placeholder.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="about-paragraph">
-                        <p>Descrição da primeira imagem</p>
-                      </div>
-                    </div>
-                    <div className="about-item about-item-2">
-                      <div className="about-video">
-                        <img
-                          src="/images/templates/flash/placeholder.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="about-paragraph">
-                        <p>Descrição da segunda imagem</p>
-                      </div>
-                    </div>
-                  </>
-                )}
+                    {item.caption && (
+                      <p className="about-caption">{item.caption}</p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
 
+        {/* EditableImage modals rendered outside overflow container */}
+        {workingItems.map((item) => (
+          <EditableImage
+            key={`modal-${item.id}`}
+            isModalOpen={openModalId === item.id}
+            setIsModalOpen={(isOpen) =>
+              setOpenModalId(isOpen ? (item?.id ?? null) : null)
+            }
+            editingId={`aboutUs-${item.id}`}
+            itemType="aboutUs"
+            items={workingItems}
+            currentItemId={item?.id ?? null}
+            anchorRect={modalAnchorRect}
+            onUpdateItem={updateAboutUsItem}
+            onReorderItems={(reorderedItems) =>
+              reorderAboutUsItems(reorderedItems as AboutUsItem[])
+            }
+          />
+        ))}
+
         {!hideMarquee && (
           <div className="about-marquee">
             <div className="marquee_content">
               <div className="about-marquee_text">
-                <EditableText
+                <EditableMarqueeText
                   value={
                     marqueeText ||
                     "Brand Design → Design Systems → UI Design → Webflow Development"
@@ -250,9 +331,14 @@ export default function MinimalAboutUs({
                   onChange={(newMarqueeText: string) =>
                     updateAboutUs({ marqueeText: newMarqueeText })
                   }
-                  className="about-marquee_text"
                   editingId="aboutUs-marquee"
+                  title="Marquee"
+                  placeholder="Clique para adicionar imagem e descrição"
                 />
+              </div>
+              <div className="about-marquee_text pointer-events-none opacity-60 select-none">
+                {marqueeText ||
+                  "Brand Design → Design Systems → UI Design → Webflow Development"}
               </div>
             </div>
           </div>

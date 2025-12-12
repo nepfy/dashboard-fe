@@ -32,6 +32,9 @@ export default function MinimalPlans({
           background-color: #000000;
           color: #fbfbfb;
           padding: 8rem 0 10rem;
+          justify-content: center;
+          align-items: center;
+          display: flex;
         }
 
         .invest-component {

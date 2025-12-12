@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import EditableModal from "#/app/editar/components/EditableModal";
 import ModalHeader from "../ItemEditorModal/ModalHeader";
 import TabNavigation from "./TabNavigation";
 import ImageTab from "./ImageTab";
 import OrganizeTab from "./OrganizeTab";
 import SaveButton from "../ItemEditorModal/SaveButton";
+import { useEditor } from "#/app/editar/contexts/EditorContext";
 import type { Client } from "#/types/template-data";
 
 interface ClientEditorModalProps {
@@ -26,6 +27,7 @@ export default function ClientEditorModal({
   currentItemId,
   onReorderItems,
 }: ClientEditorModalProps) {
+  const { saveProject } = useEditor();
   const [activeTab, setActiveTab] = useState<TabType>("imagem");
   const [showConfirmExclusion, setShowConfirmExclusion] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(
@@ -44,23 +46,63 @@ export default function ClientEditorModal({
   });
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Reset pending changes and selected item when modal opens
+  // Only reset if items prop has actually changed (not just on open)
+  const prevItemsRef = useRef<Client[]>(items);
+  const justAppliedChangesRef = useRef(false);
+
   useEffect(() => {
-    setSelectedItemId(currentItemId);
-    setPendingChanges({
-      itemUpdates: {},
-      reorderedItems: undefined,
-      deletedItems: [],
-      newItems: [],
-    });
-  }, [currentItemId]);
+    if (isOpen) {
+      // Check if items actually changed
+      const itemsChanged =
+        prevItemsRef.current.length !== items.length ||
+        prevItemsRef.current.some((item, index) => {
+          const newItem = items[index];
+          return (
+            !newItem || item.id !== newItem.id || item.logo !== newItem.logo
+          );
+        });
+
+      if (itemsChanged) {
+        // If we just applied changes (logo upload), don't reset pendingChanges
+        // because the changes are already applied and we want to keep the button enabled
+        if (justAppliedChangesRef.current) {
+          justAppliedChangesRef.current = false;
+          // Update prevItemsRef to prevent this from triggering again
+          prevItemsRef.current = items;
+        } else {
+          prevItemsRef.current = items;
+          setPendingChanges({
+            itemUpdates: {},
+            reorderedItems: undefined,
+            deletedItems: [],
+            newItems: [],
+          });
+        }
+      }
+
+      setSelectedItemId(currentItemId);
+    }
+  }, [isOpen, currentItemId, items]);
+
+  // Update selectedItemId when currentItemId changes (but don't reset pendingChanges)
+  useEffect(() => {
+    if (isOpen && currentItemId !== selectedItemId) {
+      setSelectedItemId(currentItemId);
+    }
+  }, [currentItemId, isOpen, selectedItemId]);
 
   const currentItem =
-    items.find((item) => item.id === selectedItemId) ||
+    items?.find((item) => item.id === selectedItemId) ||
     pendingChanges.newItems.find((item) => item.id === selectedItemId) ||
     null;
 
   const getCurrentItemWithChanges = () => {
-    if (!currentItem) return null;
+    if (!currentItem) {
+      return null;
+    }
     const pendingUpdates = pendingChanges.itemUpdates[currentItem.id!] || {};
     return { ...currentItem, ...pendingUpdates };
   };
@@ -70,7 +112,7 @@ export default function ClientEditorModal({
   };
 
   const handleAddItem = () => {
-    const totalItems = items.length + pendingChanges.newItems.length;
+    const totalItems = (items?.length || 0) + pendingChanges.newItems.length;
     const maxItems = 12;
 
     if (totalItems < maxItems) {
@@ -90,18 +132,72 @@ export default function ClientEditorModal({
   };
 
   const handleUpdate = (data: Partial<Client>) => {
-    if (!currentItem?.id) return;
+    if (!currentItem?.id) {
+      return;
+    }
 
-    setPendingChanges((prev) => ({
-      ...prev,
-      itemUpdates: {
-        ...prev.itemUpdates,
-        [currentItem.id!]: {
-          ...prev.itemUpdates[currentItem.id!],
-          ...data,
+    // Check if this is a logo upload (has logo in data)
+    const isLogoUpload = "logo" in data && data.logo !== undefined;
+
+    setPendingChanges((prev) => {
+      const updated = {
+        ...prev,
+        itemUpdates: {
+          ...prev.itemUpdates,
+          [currentItem.id!]: {
+            ...prev.itemUpdates[currentItem.id!],
+            ...data,
+          },
         },
-      },
-    }));
+      };
+
+      // Force a new object reference to ensure React detects the change
+      const newPendingChanges = {
+        itemUpdates: { ...updated.itemUpdates },
+        reorderedItems: updated.reorderedItems,
+        deletedItems: [...updated.deletedItems],
+        newItems: [...updated.newItems],
+      };
+
+      // If this is a logo upload, immediately apply changes and update parent
+      if (isLogoUpload) {
+        justAppliedChangesRef.current = true;
+
+        // Apply all pending changes (including the new logo)
+        const itemsWithUpdates = items
+          .filter((item) => !newPendingChanges.deletedItems.includes(item.id!))
+          .map((item) => {
+            const updates = newPendingChanges.itemUpdates[item.id!];
+            return updates ? { ...item, ...updates } : item;
+          });
+
+        const newItemsWithUpdates = newPendingChanges.newItems.map(
+          (newItem) => {
+            const updates = newPendingChanges.itemUpdates[newItem.id!];
+            return updates ? { ...newItem, ...updates } : newItem;
+          }
+        );
+
+        const allItems = [...itemsWithUpdates, ...newItemsWithUpdates];
+        const finalItems = newPendingChanges.reorderedItems || allItems;
+        const sortedItems = finalItems.map((item, index) => ({
+          ...item,
+          sortOrder: index,
+        }));
+
+        // Apply changes immediately to parent state
+        onReorderItems(sortedItems);
+
+        // Keep the logo update in pendingChanges so that when handleSave is called,
+        // it will use the correct data even if the items prop hasn't been updated yet
+        // The logo update will be applied correctly because we're using sortedItems
+        // which already includes all pending changes
+
+        return newPendingChanges;
+      }
+
+      return newPendingChanges;
+    });
   };
 
   const handleDeleteItem = (itemId: string) => {
@@ -141,62 +237,123 @@ export default function ClientEditorModal({
     setItemToDelete(null);
   };
 
-  const handleSave = () => {
-    // Apply all pending changes to existing items (excluding deleted ones)
-    const itemsWithUpdates = items
-      .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+  const handleSave = async () => {
+    if (isSaving) return; // Prevent multiple saves
+
+    setIsSaving(true);
+
+    try {
+      // Always use sortedItems which are already being rendered in the grid
+      // These include all pending changes (including logo updates that were applied immediately)
+      // sortedItems are calculated from items + pendingChanges.itemUpdates, so they have the latest state
+
+      // If there's a reorderedItems, we need to preserve that order but use the latest state from sortedItems
+      let finalItems: Client[];
+
+      if (pendingChanges.reorderedItems) {
+        // If items were reordered, we need to preserve that order
+        // But we need to get the latest state of each item from sortedItems
+        const sortedItemsMap = new Map<string, Client>();
+        sortedItems.forEach((item) => {
+          if (item.id) {
+            sortedItemsMap.set(item.id, item);
+          }
+        });
+
+        // Use the reordered order, but get the latest state from sortedItems
+        finalItems = pendingChanges.reorderedItems
+          .map((item) => {
+            // Get the latest state from sortedItems (which has all updates applied)
+            const latestItem = sortedItemsMap.get(item.id!);
+            return latestItem || item;
+          })
+          .filter((item) => item !== undefined) as Client[];
+      } else {
+        // Use the sortedItems that are already being rendered (they already have all updates applied)
+        // sortedItems are calculated from items + pendingChanges.itemUpdates, so they include:
+        // - Logo updates that were applied immediately (via onReorderItems) and are now in items prop
+        // - Logo updates that are still in pendingChanges.itemUpdates
+        // - Any other pending changes
+        finalItems = sortedItems;
+      }
+
+      // Update sortOrder based on final order
+      const itemsToSave = finalItems.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
+
+      // Save all changes at once by calling onReorderItems with the final sorted array
+      // This will update the entire clients array with all changes applied
+      // This ensures that even if logo was updated immediately, we're saving the correct final state
+      onReorderItems(itemsToSave);
+
+      // Reset pending changes immediately after saving
+      setPendingChanges({
+        itemUpdates: {},
+        reorderedItems: undefined,
+        deletedItems: [],
+        newItems: [],
+      });
+
+      // Save to backend immediately
+      await saveProject({ skipNavigation: true });
+
+      // Close the modal after saving
+      onClose();
+    } catch (error) {
+      console.error("Error saving project:", error);
+      // Don't close modal if save fails
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Apply pending changes to items for display
+  const itemsWithPendingUpdates =
+    items
+      ?.filter((item) => !pendingChanges.deletedItems.includes(item.id!))
       .map((item) => {
         const updates = pendingChanges.itemUpdates[item.id!];
         return updates ? { ...item, ...updates } : item;
-      });
+      }) || [];
 
-    // Add new items with their updates applied
-    const newItemsWithUpdates = pendingChanges.newItems.map((newItem) => {
-      const updates = pendingChanges.itemUpdates[newItem.id!];
-      return updates ? { ...newItem, ...updates } : newItem;
-    });
+  const newItemsWithPendingUpdates = pendingChanges.newItems.map((newItem) => {
+    const updates = pendingChanges.itemUpdates[newItem.id!];
+    return updates ? { ...newItem, ...updates } : newItem;
+  });
 
-    // Combine all items
-    const allItems = [...itemsWithUpdates, ...newItemsWithUpdates];
-
-    // Apply reordering if any, otherwise use current order
-    const finalItems = pendingChanges.reorderedItems || allItems;
-
-    // Update sortOrder based on final order
-    const sortedItems = finalItems.map((item, index) => ({
-      ...item,
-      sortOrder: index + 1,
-    }));
-
-    // Save all changes at once by calling onReorderItems with the final sorted array
-    // This will update the entire clients array with all changes applied
-    onReorderItems(sortedItems);
-
-    // Reset pending changes
-    setPendingChanges({
-      itemUpdates: {},
-      reorderedItems: undefined,
-      deletedItems: [],
-      newItems: [],
-    });
-
-    // Close the modal after saving
-    onClose();
-  };
-
-  const hasPendingChanges = () => {
-    return (
-      Object.keys(pendingChanges.itemUpdates).length > 0 ||
-      pendingChanges.deletedItems.length > 0 ||
-      pendingChanges.newItems.length > 0 ||
-      pendingChanges.reorderedItems !== undefined
+  // If items were reordered, use that order and apply any pending updates
+  let sortedItems: Client[];
+  if (pendingChanges.reorderedItems) {
+    // Create a map of all items (existing + new) with their updates
+    const allItemsMap = new Map<string, Client>();
+    [...itemsWithPendingUpdates, ...newItemsWithPendingUpdates].forEach(
+      (item) => {
+        if (item.id) {
+          allItemsMap.set(item.id, item);
+        }
+      }
     );
-  };
 
-  const sortedItems = [
-    ...items.filter((item) => !pendingChanges.deletedItems.includes(item.id!)),
-    ...pendingChanges.newItems,
-  ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    // Use the reordered order, but apply any pending updates from the map
+    sortedItems = pendingChanges.reorderedItems
+      .map((item) => {
+        const updatedItem = allItemsMap.get(item.id!);
+        if (updatedItem) {
+          // Merge the reordered item with any pending updates
+          return { ...item, ...updatedItem };
+        }
+        return item;
+      })
+      .filter((item) => item !== undefined) as Client[];
+  } else {
+    // No reordering, just combine and sort
+    sortedItems = [
+      ...itemsWithPendingUpdates,
+      ...newItemsWithPendingUpdates,
+    ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  }
 
   if (!isOpen) return null;
 
@@ -242,7 +399,7 @@ export default function ClientEditorModal({
         </div>
       )}
 
-      <div className="flex flex-shrink-0 flex-col">
+      <div className="relative z-10 flex flex-shrink-0 flex-col">
         {showConfirmExclusion ? (
           <div className="flex flex-1 flex-col gap-4">
             <div>
@@ -289,7 +446,7 @@ export default function ClientEditorModal({
             </div>
           </div>
         ) : (
-          <SaveButton onSave={handleSave} hasChanges={hasPendingChanges()} />
+          <SaveButton onSave={handleSave} hasChanges isLoading={isSaving} />
         )}
       </div>
     </div>

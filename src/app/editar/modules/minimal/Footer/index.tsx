@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FooterSection } from "#/types/template-data";
 import { formatDateToDDDeMonthDeYYYY } from "#/helpers/formatDateAndTime";
 import EditableText from "#/app/editar/components/EditableText";
+import EditableMarqueeText from "#/app/editar/components/EditableMarqueeText";
 import EditableDate from "#/app/editar/components/EditableDate";
 import { useEditor } from "#/app/editar/contexts/EditorContext";
 
@@ -53,7 +54,7 @@ export default function MinimalFooter({
         .footer-heading {
           display: flex;
           flex-flow: column;
-          max-width: 52ch;
+          max-width: 72ch;
           grid-column-gap: 1.5rem;
           grid-row-gap: 1.5rem;
         }
@@ -95,13 +96,19 @@ export default function MinimalFooter({
           max-height: 390px;
         }
 
+        .footer-marquee .marquee_content {
+          display: flex;
+          gap: 3rem;
+          animation: marquee 60s linear infinite;
+        }
+
         .footer-marquee_text {
           font-size: 15vw;
           font-weight: 300;
           color: rgba(0, 0, 0);
           white-space: nowrap;
-          animation: marquee 200s linear infinite;
           margin-top: 3rem;
+          flex: none;
         }
 
         @media screen and (max-width: 991px) {
@@ -272,7 +279,7 @@ export default function MinimalFooter({
               <div className="footer-marquee">
                 <div className="marquee_content">
                   <div className="footer-marquee_text">
-                    <EditableText
+                    <EditableMarqueeText
                       value={
                         marqueeText ||
                         "Brand Design → Design Systems → UI Design → Webflow Development"
@@ -280,9 +287,14 @@ export default function MinimalFooter({
                       onChange={(newMarqueeText) =>
                         updateFooter({ marqueeText: newMarqueeText })
                       }
-                      className="footer-marquee_text"
                       editingId="footer-marquee"
+                      title="Marquee"
+                      placeholder="Clique para adicionar imagem e descrição"
                     />
+                  </div>
+                  <div className="footer-marquee_text pointer-events-none opacity-60 select-none">
+                    {marqueeText ||
+                      "Brand Design → Design Systems → UI Design → Webflow Development"}
                   </div>
                 </div>
               </div>

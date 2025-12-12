@@ -228,11 +228,13 @@ export interface DeliverablesSection extends BaseSection {
 export interface IntroductionService extends HideableItem, SortableItem {
   id: string;
   serviceName: string;
+  image?: string;
 }
 
 export interface IntroductionSection {
   mainColor?: string;
-  userName?: string;
+  userName?: string; // @deprecated - Use clientName instead. This field stores the professional's name for backward compatibility
+  clientName?: string; // Name of the client receiving the proposal
   email?: string;
   logo?: string;
   hideLogo?: boolean;

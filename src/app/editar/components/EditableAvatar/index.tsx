@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useImageUpload } from "#/hooks/useImageUpload";
 import { useEditor } from "../../contexts/EditorContext";
 
@@ -20,13 +20,59 @@ export default function EditableAvatar({
   editingId,
   size = "lg",
 }: EditableAvatarProps) {
-  const { activeEditingId, setActiveEditingId } = useEditor();
+  const { activeEditingId, setActiveEditingId, saveProject, projectData } =
+    useEditor();
   const { uploadImage, isUploading } = useImageUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [shouldAutoSave, setShouldAutoSave] = useState(false);
+  const previousImageRef = useRef<string | null | undefined>(
+    projectData?.proposalData?.introduction?.clientPhoto
+  );
 
   const isEditing = activeEditingId === editingId;
   const canInteract = activeEditingId === null || isEditing;
+
+  // Auto-save when clientPhoto changes in projectData
+  useEffect(() => {
+    const currentPhoto = projectData?.proposalData?.introduction?.clientPhoto;
+
+    // Only auto-save if photo actually changed and we have a project
+    if (
+      shouldAutoSave &&
+      projectData?.id &&
+      previousImageRef.current !== currentPhoto
+    ) {
+      const saveTimeout = setTimeout(async () => {
+        try {
+          console.log("[EditableAvatar] Auto-saving after photo change:", {
+            previousPhoto: previousImageRef.current,
+            currentPhoto,
+            projectId: projectData.id,
+            hasProposalData: !!projectData.proposalData,
+            introductionPhoto:
+              projectData.proposalData?.introduction?.clientPhoto,
+          });
+          await saveProject?.({ skipNavigation: true });
+          setShouldAutoSave(false);
+          previousImageRef.current = currentPhoto;
+        } catch (saveError) {
+          console.error("Error auto-saving after photo change:", saveError);
+          setShouldAutoSave(false);
+        }
+      }, 500);
+
+      return () => clearTimeout(saveTimeout);
+    }
+  }, [shouldAutoSave, projectData, saveProject]);
+
+  // Update ref when imageUrl prop changes (for initial load)
+  useEffect(() => {
+    if (projectData?.proposalData?.introduction?.clientPhoto !== undefined) {
+      previousImageRef.current =
+        projectData.proposalData.introduction.clientPhoto;
+    }
+  }, [projectData?.proposalData?.introduction?.clientPhoto]);
 
   const sizeClasses = {
     sm: "w-12 h-12",
@@ -37,11 +83,11 @@ export default function EditableAvatar({
 
   const handleClick = () => {
     if (!canInteract || isUploading) return;
-    
+
     if (!isEditing) {
       setActiveEditingId(editingId);
     }
-    
+
     fileInputRef.current?.click();
   };
 
@@ -65,9 +111,11 @@ export default function EditableAvatar({
 
     try {
       const result = await uploadImage(file);
-      
+
       if (result.success && result.data) {
         onImageChange?.(result.data.url);
+        // Trigger auto-save via useEffect
+        setShouldAutoSave(true);
       } else {
         alert(result.error || "Erro ao fazer upload da foto");
       }
@@ -85,9 +133,11 @@ export default function EditableAvatar({
   const handleRemoveImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!canInteract) return;
-    
+
     onImageChange?.(null);
     setActiveEditingId(null);
+    // Trigger auto-save via useEffect
+    setShouldAutoSave(true);
   };
 
   const shouldShowBorder = isHovered || isEditing;
@@ -99,18 +149,7 @@ export default function EditableAvatar({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`
-          ${sizeClasses[size]}
-          relative
-          overflow-hidden
-          rounded-full
-          transition-all
-          duration-200
-          cursor-pointer
-          ${shouldShowBorder ? "ring-2 ring-[#0170D6]" : "ring-1 ring-white/20"}
-          ${!canInteract ? "opacity-50 cursor-not-allowed" : ""}
-          ${isUploading ? "opacity-50" : ""}
-        `}
+        className={` ${sizeClasses[size]} relative cursor-pointer overflow-hidden rounded-full transition-all duration-200 ${shouldShowBorder ? "ring-2 ring-[#0170D6]" : "ring-1 ring-white/20"} ${!canInteract ? "cursor-not-allowed opacity-50" : ""} ${isUploading ? "opacity-50" : ""} `}
         onClick={handleClick}
       >
         {imageUrl ? (
@@ -118,20 +157,20 @@ export default function EditableAvatar({
             <img
               src={imageUrl}
               alt="Avatar"
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
             {shouldShowBorder && canInteract && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <span className="text-white text-xs font-medium">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <span className="text-xs font-medium text-white">
                   {isUploading ? "Enviando..." : "Alterar"}
                 </span>
               </div>
             )}
           </>
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-500 to-purple-700">
             <svg
-              className="w-8 h-8 text-white/60"
+              className="h-8 w-8 text-white/60"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -144,8 +183,8 @@ export default function EditableAvatar({
               />
             </svg>
             {shouldShowBorder && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <span className="text-white text-xs font-medium">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <span className="text-xs font-medium text-white">
                   {isUploading ? "Enviando..." : "Foto"}
                 </span>
               </div>
@@ -157,11 +196,11 @@ export default function EditableAvatar({
       {imageUrl && shouldShowBorder && canInteract && !isUploading && (
         <button
           onClick={handleRemoveImage}
-          className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors z-10 shadow-lg"
+          className="absolute -top-1 -right-1 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-colors hover:bg-red-600"
           title="Remover foto"
         >
           <svg
-            className="w-3 h-3"
+            className="h-3 w-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -186,4 +225,3 @@ export default function EditableAvatar({
     </div>
   );
 }
-

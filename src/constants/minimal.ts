@@ -168,7 +168,6 @@ const minimal = {
 
   clients: {
     hideSection: false,
-    title: "Marcas que já confiaram no nosso trabalho",
     description:
       "Estratégia, posicionamento e conteúdo com foco em autoridade e crescimento real no digital.",
     paragraphs: [
@@ -463,4 +462,3 @@ const minimal = {
 };
 
 export default minimal;
-

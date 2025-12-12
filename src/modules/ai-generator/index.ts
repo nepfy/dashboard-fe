@@ -1,6 +1,6 @@
 /**
  * AI Generator - Central Export Module
- * 
+ *
  * Este arquivo centraliza todos os exports principais do módulo ai-generator,
  * facilitando imports e mantendo uma API pública consistente.
  */
@@ -51,10 +51,7 @@ export type {
 // ============================================================================
 
 // Flash Template
-export type {
-  FlashProposal,
-  FlashTemplateData,
-} from "./templates/flash";
+export type { FlashProposal, FlashTemplateData } from "./templates/flash";
 
 export {
   flashTemplateConfig,
@@ -110,21 +107,7 @@ export type {
   FlashWorkflowResult,
 } from "./themes/flash";
 
-export {
-  FlashTemplateWorkflow,
-} from "./themes/flash";
-
-export type {
-  BaseThemeData,
-  BaseThemeConfig,
-} from "./themes/base-theme";
-
-export {
-  baseThemeConfig,
-  generateThemeCSS,
-  validateThemeData,
-  getThemeDefaults,
-} from "./themes/base-theme";
+export { FlashTemplateWorkflow } from "./themes/flash";
 
 // ============================================================================
 // SERVICES
@@ -140,9 +123,7 @@ export {
 // CONFIG
 // ============================================================================
 
-export type {
-  TemplateConfigManager,
-} from "./config/template-prompts";
+export type { TemplateConfigManager } from "./config/template-prompts";
 
 export {
   templateConfigManager,
@@ -158,25 +139,25 @@ export {
   ensureCondition,
   ensureString,
   ensureArray,
-  
+
   // Character length validation
   ensureExactLength,
   ensureMaxLength,
   validateLengthWithWarning,
   validateMaxLengthWithWarning,
-  
+
   // Array length validation
   ensureExactArrayLength,
   ensureLengthBetween,
-  
+
   // Regex validation
   ensureMatchesRegex,
-  
+
   // JSON parsing
   safeJSONParse,
   generateJSONRetryPrompt,
   type JSONParseResult,
-  
+
   // Utility functions
   ensureItemsHaveIds,
   sanitizeString,
@@ -226,4 +207,3 @@ export {
   safeJSONParse as deprecatedSafeJSONParse,
   generateJSONRetryPrompt as deprecatedGenerateJSONRetryPrompt,
 } from "./themes/json-utils";
-
