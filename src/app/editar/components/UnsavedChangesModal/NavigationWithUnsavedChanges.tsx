@@ -10,12 +10,14 @@ import Sections from "../sections";
 import Publish from "../publish";
 import UnsavedChangesModal from "../UnsavedChangesModal/UnsavedChangesModal";
 import { useEditor } from "../../contexts/EditorContext";
+import SaveTemplateModal from "#/components/SaveTemplateModal";
 
 type OpenModal = "personalize" | "sections" | null;
 
 export default function NavigationWithUnsavedChanges() {
   const [openModal, setOpenModal] = useState<OpenModal>(null);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const { isDirty, saveProject, projectData } = useEditor();
   const router = useRouter();
 
@@ -79,6 +81,12 @@ export default function NavigationWithUnsavedChanges() {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <Publish />
+          <button
+            onClick={() => setIsSaveModalOpen(true)}
+            className="hidden rounded-[10px] border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:bg-gray-100 sm:inline"
+          >
+            Salvar como template
+          </button>
           <Link
             href="/dashboard"
             onClick={handleLeaveClick}
@@ -93,6 +101,11 @@ export default function NavigationWithUnsavedChanges() {
         isOpen={showUnsavedModal}
         onContinue={handleContinueEditing}
         onLeave={handleSaveDraftAndLeave}
+      />
+      <SaveTemplateModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        projectData={projectData}
       />
     </>
   );

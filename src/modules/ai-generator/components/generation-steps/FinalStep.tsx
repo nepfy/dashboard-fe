@@ -15,6 +15,8 @@ interface FormErrors {
   pagePassword?: string;
   pageValidity?: string;
   general?: string;
+  clientName?: string;
+  projectName?: string;
 }
 
 const MIN_URL_LENGTH = 3;
@@ -38,6 +40,11 @@ export function FinalStep({
   validUntil,
   setValidUntil,
   onSlugEdited,
+  clientName,
+  setClientName,
+  projectName,
+  setProjectName,
+  isCustomTemplateFlow,
 }: {
   handleGenerateProposal: () => void;
   handleBack: () => void;
@@ -50,6 +57,11 @@ export function FinalStep({
   validUntil: string;
   setValidUntil: (date: string) => void;
   onSlugEdited?: () => void;
+  clientName: string;
+  setClientName: (name: string) => void;
+  projectName: string;
+  setProjectName: (name: string) => void;
+  isCustomTemplateFlow?: boolean;
 }) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [urlValidationState, setUrlValidationState] =
@@ -141,6 +153,15 @@ export function FinalStep({
       newErrors.pageValidity = "O campo 'Válido até' é obrigatório";
     }
 
+    if (isCustomTemplateFlow) {
+      if (!clientName || clientName.trim().length === 0) {
+        newErrors.clientName = "O campo 'Nome do cliente' é obrigatório";
+      }
+      if (!projectName || projectName.trim().length === 0) {
+        newErrors.projectName = "O campo 'Nome da proposta' é obrigatório";
+      }
+    }
+
     return newErrors;
   };
 
@@ -149,7 +170,9 @@ export function FinalStep({
     originalPageUrl.length >= MIN_URL_LENGTH &&
     pagePassword &&
     isPasswordValid(validatePassword(pagePassword)) &&
-    validUntil;
+    validUntil &&
+    (!isCustomTemplateFlow ||
+      (!!clientName && clientName.trim().length > 0 && !!projectName && projectName.trim().length > 0));
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] flex-col items-center justify-center">
@@ -175,7 +198,49 @@ export function FinalStep({
         }
         step={step}
       >
-        <PageURLSection
+          {isCustomTemplateFlow && (
+            <div className="mb-6 space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Nome do cliente
+                </label>
+                <input
+                  id="clientName"
+                  type="text"
+                  value={clientName}
+                  onChange={(event) => {
+                    setClientName(event.target.value);
+                    clearError("clientName");
+                  }}
+                  className="w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:border-primary-light-400 focus:outline-none"
+                />
+                {errors.clientName && (
+                  <p className="text-xs text-red-500">{errors.clientName}</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Nome da proposta
+                </label>
+                <input
+                  id="projectName"
+                  type="text"
+                  value={projectName}
+                  onChange={(event) => {
+                    setProjectName(event.target.value);
+                    clearError("projectName");
+                  }}
+                  className="w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:border-primary-light-400 focus:outline-none"
+                />
+                {errors.projectName && (
+                  <p className="text-xs text-red-500">{errors.projectName}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          <PageURLSection
           isPublished={false}
           userName={userName}
           originalPageUrl={originalPageUrl}

@@ -35,17 +35,17 @@ export function PasswordModal({
           <PasswordIcon />
         </div>
 
-        <p className="text-white-neutral-light-900 text-sm mb-6">
+        <p className="text-white-neutral-light-900 mb-6 text-sm">
           Essa senha deve ser enviada por você ao cliente para acesso seguro à
           proposta. Você pode mudar a senha a qualquer momento.
         </p>
 
-        <p className="text-white-neutral-light-900 text-sm font-semibold mb-2">
+        <p className="text-white-neutral-light-900 mb-2 text-sm font-semibold">
           Requisitos da senha:
         </p>
-        <ul className="text-sm mb-6">
+        <ul className="mb-6 text-sm">
           {rules.map((rule) => (
-            <li key={rule.id} className="flex items-center gap-2 my-0">
+            <li key={rule.id} className="my-0 flex items-center gap-2">
               <span className="text-primary-light-500 text-[20px]">•</span>
               <span className="text-white-neutral-light-900">
                 {rule.description}

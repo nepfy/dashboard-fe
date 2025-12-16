@@ -11,6 +11,7 @@ import React, {
 import { ProposalFormData, TemplateType, Project, Plan } from "#/types/project";
 import { useSaveDraft } from "#/hooks/useProjectGenerator/useSaveDraft";
 import flash from "#/constants/flash";
+import type { SavedTemplate } from "#/types/templates";
 
 interface ProjectGeneratorContextType {
   formData: ProposalFormData;
@@ -44,6 +45,8 @@ interface ProjectGeneratorContextType {
   isSavingDraft: boolean;
   lastSaved: Date | null;
   getLastSavedText: () => string;
+  customTemplate: SavedTemplate | null;
+  setCustomTemplate: (template: SavedTemplate | null) => void;
 }
 
 const ProjectGeneratorContext = createContext<
@@ -132,6 +135,8 @@ export function ProjectGeneratorProvider({
   const [showImportModal, setShowImportModal] = useState(false);
   const [modalDismissed, setModalDismissed] = useState(false);
   const [hasNavigatedBeyondStep1, setHasNavigatedBeyondStep1] = useState(false);
+  const [customTemplate, setCustomTemplateState] =
+    useState<SavedTemplate | null>(null);
 
   const {
     saveDraft: saveDraftHook,
@@ -201,6 +206,7 @@ export function ProjectGeneratorProvider({
 
   const setTemplateType = (template: TemplateType) => {
     setTemplateTypeState(template);
+    setCustomTemplateState(null);
     setCurrentStep(1);
   };
 
@@ -268,6 +274,7 @@ export function ProjectGeneratorProvider({
     setFormData(initialFormData);
     setCurrentStep(0);
     setTemplateTypeState(null);
+    setCustomTemplateState(null);
     setCurrentProjectId(null);
     setIsEditMode(false);
     clearDraftData();
@@ -362,6 +369,8 @@ export function ProjectGeneratorProvider({
     isSavingDraft,
     lastSaved,
     getLastSavedText,
+    customTemplate,
+    setCustomTemplate: setCustomTemplateState,
   };
 
   return (

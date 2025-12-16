@@ -22,6 +22,7 @@ import {
   proposalAdjustmentsTable,
   proposalAcceptancesTable,
 } from "./proposal-adjustments";
+import { proposalTemplatesTable } from "./proposal-templates";
 
 export {
   // Users
@@ -44,6 +45,8 @@ export {
   // Notifications
   notificationsTable,
   notificationPreferencesTable,
+  // Templates
+  proposalTemplatesTable,
   // Proposal Adjustments & Acceptances
   proposalAdjustmentsTable,
   proposalAcceptancesTable,
