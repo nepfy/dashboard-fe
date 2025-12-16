@@ -153,11 +153,11 @@ export default function NepfyAIPage() {
           typeof result.error === "string"
             ? result.error
             : "Erro ao criar proposta a partir do template";
-        const error = new Error(errorMessage);
+        const error = new globalThis.Error(errorMessage);
         throw error;
       } catch (error: unknown) {
         const message =
-          error instanceof Error
+          error instanceof globalThis.Error
             ? error.message
             : typeof error === "string"
               ? error

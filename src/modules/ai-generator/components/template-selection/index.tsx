@@ -28,8 +28,13 @@ export default function TemplateSelection({
   onNextStep,
   hideBanner = false,
 }: TemplateSelectionProps) {
-  const { updateFormData, setTemplateType, templateType, setCustomTemplate } =
-    useProjectGenerator();
+  const {
+    updateFormData,
+    setTemplateType,
+    templateType,
+    setCustomTemplate,
+    customTemplate,
+  } = useProjectGenerator();
   const {
     setClientName,
     setProjectName,
@@ -45,6 +50,8 @@ export default function TemplateSelection({
   const [modalOpen, setModalOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  const [activeTab, setActiveTab] = useState<"nepfy" | "custom">("nepfy");
+
   const [customTemplates, setCustomTemplates] = useState<SavedTemplate[]>([]);
   const [isCustomLoading, setIsCustomLoading] = useState(false);
   const [customError, setCustomError] = useState<string | null>(null);
@@ -52,18 +59,17 @@ export default function TemplateSelection({
     null
   );
 
-  const getSelectedColor = (template: Template) => {
-    return (
-      selectedColors[template.title] || template.colorsList[0] || "#4F21A1"
-    );
+  const getSelectedColor = (key: string, colors: string[]) => {
+    return selectedColors[key] || colors[0] || "#4F21A1";
   };
 
-  const handleColorSelect = (templateTitle: string, color: string) => {
-    setSelectedColors((prev) => ({ ...prev, [templateTitle]: color }));
+  const handleColorSelect = (key: string, color: string) => {
+    setSelectedColors((prev) => ({ ...prev, [key]: color }));
   };
 
   const handleSelectTemplate = (template: Template) => {
-    const selectedColor = getSelectedColor(template);
+    const templateKey = template.title;
+    const selectedColor = getSelectedColor(templateKey, template.colorsList);
     const templateType = template.title.toLowerCase() as TemplateType;
 
     setTemplateType(templateType);
@@ -177,7 +183,7 @@ export default function TemplateSelection({
     // Step navigation is handled by the parent component
   };
 
-  const renderCustomTemplates = (layout: "grid" | "list") => {
+  const renderCustomTemplates = () => {
     if (isCustomLoading) {
       return (
         <div className="bg-white-neutral-light-100 rounded-[12px] border border-dashed border-gray-300 p-4 text-sm text-gray-600">
@@ -202,23 +208,64 @@ export default function TemplateSelection({
       );
     }
 
-    const containerClass =
-      layout === "grid"
-        ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
-        : "space-y-3";
-
     return (
-      <div className={containerClass}>
-        {customTemplates.map((template) => (
-          <CustomTemplateCard
-            key={template.id}
-            template={template}
-            onSelect={() => handleCustomTemplateSelect(template)}
-            onDelete={() => handleDeleteTemplate(template.id)}
-            isDeleting={deletingTemplateId === template.id}
-          />
-        ))}
-      </div>
+      <>
+        {customTemplates.map((template) => {
+          const proposalDataMainColor = (
+            template.templateData?.proposalData as { mainColor?: string }
+          )?.mainColor;
+          const templateColors = [
+            template.mainColor,
+            template.templateData?.mainColor,
+            proposalDataMainColor,
+          ].filter(Boolean) as string[];
+          const colorsList =
+            templateColors.length > 0
+              ? Array.from(new Set(templateColors))
+              : ["#4F21A1"];
+          const templateKey = template.id;
+          const selectedColor = getSelectedColor(templateKey, colorsList);
+          const previewTheme: TemplateType =
+            template.templateType ??
+            (template.templateData?.templateType as TemplateType) ??
+            "flash";
+          const cardTemplate: Template = {
+            title: template.name ?? "Template personalizado",
+            description:
+              template.description ??
+              template.templateData?.proposalData?.introduction?.description ??
+              "Sem descrição",
+            colorsList,
+            previewTemplate: previewTheme,
+          };
+          const isDeleting = deletingTemplateId === template.id;
+
+          return (
+            <div key={template.id} className="relative">
+              <div className="absolute top-3 right-3 flex items-center gap-2">
+                <span className="border-white-neutral-light-200 rounded-full border bg-white px-3 py-1 text-xs text-gray-600 capitalize shadow">
+                  {template.templateType ?? "Personalizado"}
+                </span>
+                <button
+                  onClick={() => handleDeleteTemplate(template.id)}
+                  disabled={isDeleting}
+                  className="border-white-neutral-light-200 hover:border-white-neutral-light-300 rounded-full border bg-white p-2 text-gray-500 transition hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+              <TemplateCard
+                template={cardTemplate}
+                selectedColor={selectedColor}
+                onColorSelect={(color) => handleColorSelect(templateKey, color)}
+                onSelectTemplate={() => handleCustomTemplateSelect(template)}
+                onPreviewTemplate={() => handlePreviewTemplate(previewTheme)}
+                isSelected={customTemplate?.id === template.id}
+              />
+            </div>
+          );
+        })}
+      </>
     );
   };
 
@@ -261,98 +308,110 @@ export default function TemplateSelection({
   };
 
   return (
-    <div className="w-full space-y-10 py-8 lg:flex lg:h-full lg:flex-col lg:px-7 xl:items-start">
-      <div className="hidden max-w-[1100px] flex-wrap items-end gap-4 lg:flex xl:justify-start">
-        {templates.map((template) => (
-          <TemplateCard
-            key={template.title}
-            template={template}
-            selectedColor={getSelectedColor(template)}
-            onColorSelect={(color) => handleColorSelect(template.title, color)}
-            onSelectTemplate={() => handleSelectTemplate(template)}
-            onPreviewTemplate={() =>
-              handlePreviewTemplate(template.title.toLowerCase())
-            }
-            isSelected={
-              template.title.toLowerCase() === templateType?.toLowerCase()
-            }
-          />
-        ))}
-        {!hideBanner && <ComingSoonCard />}
-      </div>
-
-      <div className="space-y-6 xl:hidden">
-        <div className="h-full w-full">
-          <Slider ref={sliderRef} {...sliderSettings}>
-            {templates.map((template) => (
-              <div key={template.title} className="px-4">
-                <div className="mx-auto flex items-center justify-center">
-                  <TemplateCard
-                    template={template}
-                    selectedColor={getSelectedColor(template)}
-                    onColorSelect={(color) =>
-                      handleColorSelect(template.title, color)
-                    }
-                    onSelectTemplate={() => handleSelectTemplate(template)}
-                    onPreviewTemplate={() =>
-                      handlePreviewTemplate(template.title.toLowerCase())
-                    }
-                    isSelected={template.title === templateType}
-                  />
-                </div>
-              </div>
-            ))}
-          </Slider>
-
-          <MobileNavigation
-            currentSlide={currentSlide}
-            totalSlides={templates.length}
-            onPrevSlide={prevSlide}
-            onNextSlide={nextSlide}
-            onGoToSlide={goToSlide}
-          />
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white-neutral-light-900 text-base font-semibold">
-                Meus templates
-              </p>
-              <p className="text-xs text-gray-500">
-                Use um template salvo anteriormente.
-              </p>
-            </div>
-            {customTemplates.length > 0 && (
-              <span className="text-xs text-gray-500">
-                {customTemplates.length} template
-                {customTemplates.length > 1 ? "s" : ""}
-              </span>
-            )}
-          </div>
-          {renderCustomTemplates("list")}
-        </div>
-      </div>
-
-      <section className="hidden space-y-4 xl:block">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-white-neutral-light-900 text-base font-semibold">
+    <div className="w-full items-center space-y-10 py-8 lg:flex lg:h-full lg:flex-col lg:px-7">
+      <div className="flex flex-col gap-4 px-2 sm:px-0">
+        <div className="items-centersm:justify-between flex flex-col gap-3 sm:flex-row">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className={`rounded-[12px] border px-4 py-2 text-sm font-semibold transition ${
+                activeTab === "nepfy"
+                  ? "border-primary-light-600 bg-primary-light-100 text-primary-light-800"
+                  : "border-white-neutral-light-300 bg-white-neutral-light-100 text-white-neutral-light-600 hover:border-white-neutral-light-400"
+              }`}
+              onClick={() => setActiveTab("nepfy")}
+            >
+              Templates Nepfy
+            </button>
+            <button
+              type="button"
+              className={`rounded-[12px] border px-4 py-2 text-sm font-semibold transition ${
+                activeTab === "custom"
+                  ? "border-primary-light-600 bg-primary-light-100 text-primary-light-800"
+                  : "border-white-neutral-light-300 bg-white-neutral-light-100 text-white-neutral-light-600 hover:border-white-neutral-light-400"
+              }`}
+              onClick={() => setActiveTab("custom")}
+            >
               Meus templates
-            </p>
-            <p className="text-sm text-gray-500">
-              Crie uma proposta a partir de um template personalizado.
-            </p>
+            </button>
           </div>
-          {customTemplates.length > 0 && (
-            <span className="text-sm text-gray-500">
-              {customTemplates.length} template
-              {customTemplates.length > 1 ? "s" : ""}
-            </span>
-          )}
         </div>
-        {renderCustomTemplates("grid")}
-      </section>
+      </div>
+
+      {activeTab === "nepfy" ? (
+        <>
+          <div className="hidden max-w-[1100px] flex-wrap items-end gap-4 lg:flex xl:justify-start">
+            {templates.map((template) => {
+              const templateKey = template.title;
+              return (
+                <TemplateCard
+                  key={template.title}
+                  template={template}
+                  selectedColor={getSelectedColor(
+                    templateKey,
+                    template.colorsList
+                  )}
+                  onColorSelect={(color) =>
+                    handleColorSelect(templateKey, color)
+                  }
+                  onSelectTemplate={() => handleSelectTemplate(template)}
+                  onPreviewTemplate={() =>
+                    handlePreviewTemplate(template.title.toLowerCase())
+                  }
+                  isSelected={
+                    template.title.toLowerCase() === templateType?.toLowerCase()
+                  }
+                />
+              );
+            })}
+            {!hideBanner && <ComingSoonCard />}
+          </div>
+          <div className="space-y-6 lg:hidden">
+            <div className="h-full w-full">
+              <Slider ref={sliderRef} {...sliderSettings}>
+                {templates.map((template) => {
+                  const templateKey = template.title;
+                  return (
+                    <div key={template.title} className="px-4">
+                      <div className="mx-auto flex items-center justify-center">
+                        <TemplateCard
+                          template={template}
+                          selectedColor={getSelectedColor(
+                            templateKey,
+                            template.colorsList
+                          )}
+                          onColorSelect={(color) =>
+                            handleColorSelect(templateKey, color)
+                          }
+                          onSelectTemplate={() =>
+                            handleSelectTemplate(template)
+                          }
+                          onPreviewTemplate={() =>
+                            handlePreviewTemplate(template.title.toLowerCase())
+                          }
+                          isSelected={template.title === templateType}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </Slider>
+
+              <MobileNavigation
+                currentSlide={currentSlide}
+                totalSlides={templates.length}
+                onPrevSlide={prevSlide}
+                onNextSlide={nextSlide}
+                onGoToSlide={goToSlide}
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="hidden max-w-[1100px] flex-wrap items-end gap-4 lg:flex xl:justify-start">
+          {renderCustomTemplates()}
+        </div>
+      )}
 
       <style jsx global>{`
         .slick-slider {
@@ -394,53 +453,3 @@ export default function TemplateSelection({
     </div>
   );
 }
-
-interface CustomTemplateCardProps {
-  template: SavedTemplate;
-  onSelect: () => void;
-  onDelete: () => void;
-  isDeleting?: boolean;
-}
-
-const CustomTemplateCard = ({
-  template,
-  onSelect,
-  onDelete,
-  isDeleting = false,
-}: CustomTemplateCardProps) => (
-  <div className="bg-white-neutral-light-100 flex flex-col justify-between rounded-[16px] border border-gray-200 p-5 shadow-sm">
-    <div className="flex items-start justify-between gap-3">
-      <div className="flex items-center gap-3">
-        <span
-          className="h-3 w-3 rounded-full"
-          style={{ backgroundColor: template.mainColor || "#6366f1" }}
-        />
-        <div>
-          <p className="text-sm font-semibold text-gray-900">{template.name}</p>
-          <p className="text-xs text-gray-500">
-            {template.description ?? "Sem descrição"}
-          </p>
-        </div>
-      </div>
-      <button
-        onClick={onDelete}
-        disabled={isDeleting}
-        className="rounded-full border border-gray-100 p-2 text-gray-500 transition hover:border-gray-200 hover:text-gray-700"
-      >
-        <Trash2 className="h-4 w-4" />
-      </button>
-    </div>
-
-    <div className="mt-4 flex items-center justify-between gap-3">
-      <button
-        onClick={onSelect}
-        className="border-primary-light-400 text-primary-light-400 hover:bg-primary-light-50 flex-1 rounded-[10px] border px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        Usar template
-      </button>
-      <span className="text-xs text-gray-400">
-        {template.templateType ?? "Personalizado"}
-      </span>
-    </div>
-  </div>
-);

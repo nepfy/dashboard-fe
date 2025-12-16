@@ -1,13 +1,11 @@
 import TemplateSelection from "../template-selection";
+import type { Template } from "../template-selection/partials/TemplateCard";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { useEffect } from "react";
 
-interface TemplateModel {
+interface TemplateModel extends Template {
   id: string;
-  title: string;
-  description: string;
-  colorsList: string[];
-  preview: string;
+  previewTemplate: string;
 }
 
 const templates: TemplateModel[] = [
@@ -24,7 +22,7 @@ const templates: TemplateModel[] = [
       "#182E9B",
       "#212121",
     ],
-    preview: "flash",
+    previewTemplate: "flash",
   },
   {
     id: "minimal",
@@ -32,7 +30,7 @@ const templates: TemplateModel[] = [
     description:
       "Design limpo e funcional, com estrutura compacta e navegação direta ao ponto.",
     colorsList: ["#006DC5"],
-    preview: "minimal",
+    previewTemplate: "minimal",
   },
   // {
   //   id: "prime",

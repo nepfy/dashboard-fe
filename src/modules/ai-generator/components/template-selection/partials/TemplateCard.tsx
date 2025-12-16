@@ -5,6 +5,7 @@ export interface Template {
   title: string;
   description: string;
   colorsList: string[];
+  previewTemplate?: string;
 }
 
 interface TemplateCardProps {
@@ -55,11 +56,10 @@ export const colorToImageName: Record<string, string> = {
 
 export const getImagePath = (templateName: string, color: string): string => {
   const lower = templateName.toLowerCase();
-  // Minimal: sempre mostra preview preto, independentemente da cor selecionada
   if (lower === "minimal") {
     return `/images/templates/minimal/preto.jpg`;
   }
-  const imageName = colorToImageName[color] || "azul"; // fallback para azul
+  const imageName = colorToImageName[color] || "azul";
   return `/images/templates/${lower}/${imageName}.jpg`;
 };
 
@@ -70,68 +70,68 @@ export const TemplateCard = ({
   onSelectTemplate,
   onPreviewTemplate,
   isSelected,
-}: TemplateCardProps) => (
-  <div
-    className="rounded-2xs bg-white-neutral-light-100 border-white-neutral-light-300 h-auto w-[350px] max-w-full border-1 px-1 shadow-md"
-    tabIndex={0}
-    data-testid={`template-card-${template.title.toLowerCase()}`}
-  >
-    {/* Header */}
-    <div className="px-7 py-4">
-      <h4 className="text-white-neutral-light-800 text-lg font-medium">
-        {template.title}
-      </h4>
-      <p className="text-white-neutral-light-500 mt-2 text-sm">
-        {template.description}
-      </p>
-    </div>
+}: TemplateCardProps) => {
+  const previewName = template.previewTemplate ?? template.title;
 
-    {/* Preview - Agora com imagem */}
-    <div className="rounded-2xs m-2 h-[190px] overflow-hidden">
-      <Image
-        key={`${template.title}-${selectedColor}`}
-        src={getImagePath(template.title, selectedColor)}
-        alt={`Preview do template ${template.title}`}
-        width={324}
-        height={190}
-        className="rounded-2xs h-full w-full object-cover"
-        unoptimized
-      />
-    </div>
+  return (
+    <div
+      className="rounded-2xs bg-white-neutral-light-100 border-white-neutral-light-300 h-auto w-[350px] max-w-full border-1 px-1 shadow-md"
+      tabIndex={0}
+      data-testid={`template-card-${template.title.toLowerCase()}`}
+    >
+      <div className="px-7 py-4">
+        <h4 className="text-white-neutral-light-800 text-lg font-medium">
+          {template.title}
+        </h4>
+        <p className="text-white-neutral-light-500 mt-2 text-sm">
+          {template.description}
+        </p>
+      </div>
 
-    {/* Color Selection */}
-    <div className="px-7 py-4">
-      <p className="text-white-neutral-light-500 mb-2 text-sm">
-        Escolha a cor principal que será usada em toda a proposta
-      </p>
-      <ColorPicker
-        colors={template.colorsList}
-        selectedColor={selectedColor}
-        onColorSelect={onColorSelect}
-      />
-    </div>
+      <div className="rounded-2xs m-2 h-[190px] overflow-hidden">
+        <Image
+          key={`${previewName}-${selectedColor}`}
+          src={getImagePath(previewName, selectedColor)}
+          alt={`Preview do template ${template.title}`}
+          width={324}
+          height={190}
+          className="rounded-2xs h-full w-full object-cover"
+          unoptimized
+        />
+      </div>
 
-    {/* Actions */}
-    <div className="border-white-neutral-light-300 flex items-center gap-4 border-t p-5">
-      <button
-        type="button"
-        className={`border-white-neutral-light-300 hover:bg-white-neutral-light-200 flex h-9 w-[105px] cursor-pointer items-center justify-center rounded-xs border transition-colors ${
-          isSelected
-            ? "bg-white-neutral-light-200"
-            : "bg-white-neutral-light-100"
-        } `}
-        onClick={onSelectTemplate}
-        data-testid={`template-select-${template.title.toLowerCase()}`}
-      >
-        Selecionar
-      </button>
-      <button
-        type="button"
-        className="text-white-neutral-light-800 hover:text-white-neutral-light-600 h-9 w-[105px] cursor-pointer transition-colors"
-        onClick={onPreviewTemplate}
-      >
-        Visualizar
-      </button>
+      <div className="px-7 py-4">
+        <p className="text-white-neutral-light-500 mb-2 text-sm">
+          Escolha a cor principal que será usada em toda a proposta
+        </p>
+        <ColorPicker
+          colors={template.colorsList}
+          selectedColor={selectedColor}
+          onColorSelect={onColorSelect}
+        />
+      </div>
+
+      <div className="border-white-neutral-light-300 flex items-center gap-4 border-t p-5">
+        <button
+          type="button"
+          className={`border-white-neutral-light-300 hover:bg-white-neutral-light-200 flex h-9 w-[105px] cursor-pointer items-center justify-center rounded-xs border transition-colors ${
+            isSelected
+              ? "bg-white-neutral-light-200"
+              : "bg-white-neutral-light-100"
+          }`}
+          onClick={onSelectTemplate}
+          data-testid={`template-select-${template.title.toLowerCase()}`}
+        >
+          Selecionar
+        </button>
+        <button
+          type="button"
+          className="text-white-neutral-light-800 hover:text-white-neutral-light-600 h-9 w-[105px] cursor-pointer transition-colors"
+          onClick={onPreviewTemplate}
+        >
+          Visualizar
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
