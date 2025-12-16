@@ -1398,6 +1398,12 @@ figcaption {
   top: 0;
 }
 
+@media screen and (max-width: 767px) {
+  .section_hero {
+    position: relative;
+  }
+}
+
 .hero_component {
   z-index: 2;
   flex-flow: column;
