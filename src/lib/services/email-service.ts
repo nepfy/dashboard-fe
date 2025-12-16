@@ -266,7 +266,7 @@ export class EmailService {
           Authorization: `Bearer ${resendApiKey}`,
         },
         body: JSON.stringify({
-          from: "Nepfy <notificacoes@app.nepfy.com>",
+          from: "Nepfy <notificacoes@nepfy.com>",
           to: [to],
           subject,
           html,
