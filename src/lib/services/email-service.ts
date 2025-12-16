@@ -7,6 +7,8 @@
 import type { NotificationWithProject } from "./notification-service";
 import { NotificationService } from "./notification-service";
 
+const APP_BASE_URL = "https://app.nepfy.com";
+
 interface SendNotificationEmailParams {
   to: string;
   notification: NotificationWithProject;
@@ -79,7 +81,7 @@ const getEmailTemplate = (
             <td style="padding: 0 20px;">
               <p style="margin: 0; font-size: 12px; color: #9ca3af; text-align: center; line-height: 1.5;">
                 Você está recebendo este email porque está inscrito para receber notificações da Nepfy.<br>
-                <a href="https://nepfy.com/dashboard/configuracoes" style="color: #6366f1; text-decoration: none;">Gerenciar preferências de notificações</a>
+                <a href="${APP_BASE_URL}/dashboard/configuracoes" style="color: #6366f1; text-decoration: none;">Gerenciar preferências de notificações</a>
               </p>
             </td>
           </tr>
@@ -112,7 +114,7 @@ const getEmailTemplate = (
         <table cellpadding="0" cellspacing="0">
           <tr>
             <td style="border-radius: 8px; background-color: #1a1a1a;">
-              <a href="https://nepfy.com${notification.actionUrl}" 
+              <a href="${APP_BASE_URL}${notification.actionUrl}" 
                  style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
                 Acessar painel de propostas
               </a>
@@ -120,7 +122,7 @@ const getEmailTemplate = (
           </tr>
         </table>
       `;
-      textContent = `${greeting}\n\nA proposta ${projectName} acaba de ser aberta pelo cliente. Esse é o melhor momento para acompanhar o interesse e se preparar para o próximo movimento.\n\nNo painel, você pode acompanhar todas as interações em tempo real, conferindo visualizações, ajustes solicitados, histórico e status geral. Isso te ajuda a manter o ritmo certo e não perder nenhuma oportunidade.\n\nAcessar painel de propostas: https://nepfy.com${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+      textContent = `${greeting}\n\nA proposta ${projectName} acaba de ser aberta pelo cliente. Esse é o melhor momento para acompanhar o interesse e se preparar para o próximo movimento.\n\nNo painel, você pode acompanhar todas as interações em tempo real, conferindo visualizações, ajustes solicitados, histórico e status geral. Isso te ajuda a manter o ritmo certo e não perder nenhuma oportunidade.\n\nAcessar painel de propostas: ${APP_BASE_URL}${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
       break;
 
     case "proposal_feedback":
@@ -142,7 +144,7 @@ const getEmailTemplate = (
         <table cellpadding="0" cellspacing="0">
           <tr>
             <td style="border-radius: 8px; background-color: #1a1a1a;">
-              <a href="https://nepfy.com${notification.actionUrl}" 
+              <a href="${APP_BASE_URL}${notification.actionUrl}" 
                  style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
                 Revisar ajustes
               </a>
@@ -150,7 +152,7 @@ const getEmailTemplate = (
           </tr>
         </table>
       `;
-      textContent = `${greeting}\n\nO cliente enviou solicitações de ajuste para a proposta ${projectName}.\n\nEssa é a etapa que costuma definir o fechamento, então vale revisar com cuidado e reenviar a versão atualizada o quanto antes.\n\nNo painel, você encontra todos os detalhes do pedido e pode ajustar tudo em poucos minutos e reenviar a nova versão.\n\nRevisar ajustes: https://nepfy.com${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+      textContent = `${greeting}\n\nO cliente enviou solicitações de ajuste para a proposta ${projectName}.\n\nEssa é a etapa que costuma definir o fechamento, então vale revisar com cuidado e reenviar a versão atualizada o quanto antes.\n\nNo painel, você encontra todos os detalhes do pedido e pode ajustar tudo em poucos minutos e reenviar a nova versão.\n\nRevisar ajustes: ${APP_BASE_URL}${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
       break;
 
     case "proposal_accepted":
@@ -171,7 +173,7 @@ const getEmailTemplate = (
         <table cellpadding="0" cellspacing="0">
           <tr>
             <td style="border-radius: 8px; background-color: #1a1a1a;">
-              <a href="https://nepfy.com${notification.actionUrl}" 
+              <a href="${APP_BASE_URL}${notification.actionUrl}" 
                  style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
                 Abrir painel
               </a>
@@ -179,7 +181,7 @@ const getEmailTemplate = (
           </tr>
         </table>
       `;
-      textContent = `${greeting}\n\nTemos uma ótima notícia: a proposta ${projectName} foi aprovada pelo cliente. 🎉\n\nA partir daqui, você já pode começar a organizar os próximos passos e seguir com o projeto de maneira mais assertiva.\n\nNo painel, você encontra o histórico completo da negociação e todas as informações importantes para continuar o processo com segurança.\n\nAbrir painel: https://nepfy.com${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+      textContent = `${greeting}\n\nTemos uma ótima notícia: a proposta ${projectName} foi aprovada pelo cliente. 🎉\n\nA partir daqui, você já pode começar a organizar os próximos passos e seguir com o projeto de maneira mais assertiva.\n\nNo painel, você encontra o histórico completo da negociação e todas as informações importantes para continuar o processo com segurança.\n\nAbrir painel: ${APP_BASE_URL}${notification.actionUrl}\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
       break;
 
     default:
@@ -195,7 +197,7 @@ const getEmailTemplate = (
         <table cellpadding="0" cellspacing="0" style="margin: 0 0 24px 0;">
           <tr>
             <td style="border-radius: 8px; background-color: #1a1a1a;">
-              <a href="https://nepfy.com${notification.actionUrl}" 
+              <a href="${APP_BASE_URL}${notification.actionUrl}" 
                  style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">
                 Ver detalhes
               </a>
@@ -206,10 +208,10 @@ const getEmailTemplate = (
             : ""
         }
         <p style="margin: 0; font-size: 14px; color: #6b7280;">
-          Acesse o <a href="https://nepfy.com/dashboard" style="color: #6366f1; text-decoration: none;">painel de controle</a> para ver todas as suas notificações.
+          Acesse o <a href="${APP_BASE_URL}/dashboard" style="color: #6366f1; text-decoration: none;">painel de controle</a> para ver todas as suas notificações.
         </p>
       `;
-      textContent = `${greeting}\n\n${notification.title}\n\n${notification.message}\n\n${notification.actionUrl ? `Ver detalhes: https://nepfy.com${notification.actionUrl}` : ""}\n\nAcesse o painel de controle para ver todas as suas notificações: https://nepfy.com/dashboard\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
+      textContent = `${greeting}\n\n${notification.title}\n\n${notification.message}\n\n${notification.actionUrl ? `Ver detalhes: ${APP_BASE_URL}${notification.actionUrl}` : ""}\n\nAcesse o painel de controle para ver todas as suas notificações: ${APP_BASE_URL}/dashboard\n\nConte com a gente. Estamos juntos nessa.\n.Nepfy`;
   }
 
   return {
@@ -264,7 +266,7 @@ export class EmailService {
           Authorization: `Bearer ${resendApiKey}`,
         },
         body: JSON.stringify({
-          from: "Nepfy <notificacoes@nepfy.com>",
+          from: "Nepfy <notificacoes@app.nepfy.com>",
           to: [to],
           subject,
           html,
