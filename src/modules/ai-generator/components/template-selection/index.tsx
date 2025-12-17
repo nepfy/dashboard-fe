@@ -41,6 +41,7 @@ export default function TemplateSelection({
     setProjectDescription,
     setDetailedClientInfo,
     setCompanyInfo,
+    setCurrentStep,
   } = useProposalGenerator();
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>(
     {}
@@ -151,7 +152,10 @@ export default function TemplateSelection({
     }
   };
 
-  const handleCustomTemplateSelect = (template: SavedTemplate) => {
+  const handleCustomTemplateSelect = (
+    template: SavedTemplate,
+    options: { selectedColor: string; previewTemplate: TemplateType }
+  ) => {
     const fallbackType =
       template.templateType ??
       (template.templateData?.templateType as TemplateType) ??
@@ -166,8 +170,18 @@ export default function TemplateSelection({
     const description =
       template.templateData?.proposalData?.introduction?.description ?? "";
 
-    setCustomTemplate(template);
-    setTemplateType(fallbackType);
+    const mainColor =
+      options.selectedColor ||
+      template.mainColor ||
+      template.templateData?.mainColor ||
+      "";
+
+    setCustomTemplate({
+      ...template,
+      selectedColor: options.selectedColor,
+      previewTemplate: options.previewTemplate,
+    });
+    setTemplateType(fallbackType, { keepCustomTemplate: true });
     setClientName(clientName);
     setProjectName(projectName);
     setProjectDescription(description);
@@ -176,11 +190,13 @@ export default function TemplateSelection({
     updateFormData("step1", {
       clientName,
       projectName,
-      mainColor:
-        template.mainColor || template.templateData?.mainColor || undefined,
+      mainColor: mainColor || undefined,
       templateType: fallbackType,
     });
-    // Step navigation is handled by the parent component
+    if (setCurrentStep) {
+      setCurrentStep("custom_template_finalize");
+    }
+    // Step navigation is handled by the parent component (custom template flow)
   };
 
   const renderCustomTemplates = () => {
@@ -207,6 +223,10 @@ export default function TemplateSelection({
         </div>
       );
     }
+
+    const handleEditTemplate = (templateId: string) => {
+      console.log("templateId", templateId);
+    };
 
     return (
       <>
@@ -255,10 +275,17 @@ export default function TemplateSelection({
                 </button>
               </div>
               <TemplateCard
+                isCustomTemplate
                 template={cardTemplate}
                 selectedColor={selectedColor}
                 onColorSelect={(color) => handleColorSelect(templateKey, color)}
-                onSelectTemplate={() => handleCustomTemplateSelect(template)}
+                onSelectTemplate={() =>
+                  handleCustomTemplateSelect(template, {
+                    selectedColor,
+                    previewTemplate: previewTheme,
+                  })
+                }
+                onEditTemplate={() => handleEditTemplate(template.id)}
                 onPreviewTemplate={() => handlePreviewTemplate(previewTheme)}
                 isSelected={customTemplate?.id === template.id}
               />
@@ -314,9 +341,9 @@ export default function TemplateSelection({
           <div className="flex gap-2">
             <button
               type="button"
-              className={`rounded-[12px] border px-4 py-2 text-sm font-semibold transition ${
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
                 activeTab === "nepfy"
-                  ? "border-primary-light-600 bg-primary-light-100 text-primary-light-800"
+                  ? "border-primary-light-600 text-primary-light-500"
                   : "border-white-neutral-light-300 bg-white-neutral-light-100 text-white-neutral-light-600 hover:border-white-neutral-light-400"
               }`}
               onClick={() => setActiveTab("nepfy")}
@@ -325,9 +352,9 @@ export default function TemplateSelection({
             </button>
             <button
               type="button"
-              className={`rounded-[12px] border px-4 py-2 text-sm font-semibold transition ${
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
                 activeTab === "custom"
-                  ? "border-primary-light-600 bg-primary-light-100 text-primary-light-800"
+                  ? "border-primary-light-600 text-primary-light-500"
                   : "border-white-neutral-light-300 bg-white-neutral-light-100 text-white-neutral-light-600 hover:border-white-neutral-light-400"
               }`}
               onClick={() => setActiveTab("custom")}

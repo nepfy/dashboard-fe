@@ -29,7 +29,10 @@ interface ProjectGeneratorContextType {
     step: T,
     data: ProposalFormData[T]
   ) => void;
-  setTemplateType: (template: TemplateType) => void;
+  setTemplateType: (
+    template: TemplateType,
+    options?: { keepCustomTemplate?: boolean }
+  ) => void;
   nextStep: () => void;
   prevStep: () => void;
   goToStep: (step: number) => void;
@@ -204,9 +207,14 @@ export function ProjectGeneratorProvider({
     });
   };
 
-  const setTemplateType = (template: TemplateType) => {
+  const setTemplateType = (
+    template: TemplateType,
+    options?: { keepCustomTemplate?: boolean }
+  ) => {
     setTemplateTypeState(template);
-    setCustomTemplateState(null);
+    if (!options?.keepCustomTemplate) {
+      setCustomTemplateState(null);
+    }
     setCurrentStep(1);
   };
 

@@ -9,11 +9,13 @@ export interface Template {
 }
 
 interface TemplateCardProps {
+  isCustomTemplate?: boolean;
   template: Template;
   selectedColor: string;
   onColorSelect: (color: string) => void;
   onSelectTemplate: () => void;
   onPreviewTemplate: () => void;
+  onEditTemplate?: () => void;
   isSelected: boolean;
 }
 
@@ -64,11 +66,13 @@ export const getImagePath = (templateName: string, color: string): string => {
 };
 
 export const TemplateCard = ({
+  isCustomTemplate = false,
   template,
   selectedColor,
   onColorSelect,
   onSelectTemplate,
   onPreviewTemplate,
+  onEditTemplate,
   isSelected,
 }: TemplateCardProps) => {
   const previewName = template.previewTemplate ?? template.title;
@@ -124,13 +128,23 @@ export const TemplateCard = ({
         >
           Selecionar
         </button>
-        <button
-          type="button"
-          className="text-white-neutral-light-800 hover:text-white-neutral-light-600 h-9 w-[105px] cursor-pointer transition-colors"
-          onClick={onPreviewTemplate}
-        >
-          Visualizar
-        </button>
+        {isCustomTemplate ? (
+          <button
+            type="button"
+            className="text-white-neutral-light-800 hover:text-white-neutral-light-600 h-9 cursor-pointer transition-colors"
+            onClick={onEditTemplate}
+          >
+            Editar Template
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="text-white-neutral-light-800 hover:text-white-neutral-light-600 h-9 w-[105px] cursor-pointer transition-colors"
+            onClick={onPreviewTemplate}
+          >
+            Visualizar
+          </button>
+        )}
       </div>
     </div>
   );

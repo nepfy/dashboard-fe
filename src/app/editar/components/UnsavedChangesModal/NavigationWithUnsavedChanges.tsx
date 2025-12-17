@@ -77,16 +77,16 @@ export default function NavigationWithUnsavedChanges() {
             isModalOpen={openModal === "sections"}
             setIsModalOpen={(open) => setOpenModal(open ? "sections" : null)}
           />
+          <button
+            onClick={() => setIsSaveModalOpen(true)}
+            className="rounded-[10px] border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:bg-gray-100"
+          >
+            Salvar como template
+          </button>
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
           <Publish />
-          <button
-            onClick={() => setIsSaveModalOpen(true)}
-            className="hidden rounded-[10px] border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:bg-gray-100 sm:inline"
-          >
-            Salvar como template
-          </button>
           <Link
             href="/dashboard"
             onClick={handleLeaveClick}

@@ -17,6 +17,7 @@ import { ClientInfo } from "#/modules/ai-generator/components/generation-steps/C
 import { CompanyInfo } from "#/modules/ai-generator/components/generation-steps/CompanyInfo";
 import { PricingStep } from "#/modules/ai-generator/components/generation-steps/PricingStep";
 import { FinalStep } from "#/modules/ai-generator/components/generation-steps/FinalStep";
+import { CustomTemplateFinalize } from "#/modules/ai-generator/components/generation-steps/CustomTemplateFinalize";
 import { Loading } from "#/modules/ai-generator/components/loading/Loading";
 import { Error as ErrorComponent } from "#/modules/ai-generator/components/error/error";
 import CloseIcon from "#/components/icons/CloseIcon";
@@ -121,6 +122,15 @@ export default function NepfyAIPage() {
 
       setIsLoading(true);
       try {
+        const selectedColor =
+          customTemplate.selectedColor ??
+          customTemplate.mainColor ??
+          customTemplate.templateData?.mainColor;
+        const templateDataForRequest = {
+          ...customTemplate.templateData,
+          mainColor: selectedColor ?? customTemplate.templateData?.mainColor,
+        };
+
         const response = await fetch("/api/projects/from-template", {
           method: "POST",
           headers: {
@@ -133,6 +143,8 @@ export default function NepfyAIPage() {
             originalPageUrl,
             pagePassword,
             validUntil,
+            templateData: templateDataForRequest,
+            templateMainColor: templateDataForRequest.mainColor,
           }),
         });
 
@@ -425,6 +437,25 @@ export default function NepfyAIPage() {
                   handlePlanSelect={setSelectedPlan}
                   handleBack={() => setCurrentStep("client_details")}
                   handleNext={() => setCurrentStep("final_step")}
+                />
+              ),
+              custom_template_finalize: (
+                <CustomTemplateFinalize
+                  handleGenerateProposal={handleGenerateProposal}
+                  handleBack={() => setCurrentStep("template_selection")}
+                  userName={userName}
+                  step={currentStep}
+                  clientName={clientName}
+                  setClientName={setClientName}
+                  projectName={projectName}
+                  setProjectName={setProjectName}
+                  originalPageUrl={originalPageUrl}
+                  setOriginalPageUrl={setOriginalPageUrl}
+                  pagePassword={pagePassword}
+                  setPagePassword={setPagePassword}
+                  validUntil={validUntil}
+                  setValidUntil={setValidUntil}
+                  onSlugEdited={handleSlugEdited}
                 />
               ),
               final_step: (

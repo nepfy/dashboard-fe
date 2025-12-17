@@ -76,7 +76,9 @@ export function Box({
                     : "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform"
                 }`}
               >
-                {step === "final_step" ? "Gerar proposta" : "Avançar"}
+                {step === "final_step" || step === "custom_template_finalize"
+                  ? "Gerar proposta"
+                  : "Avançar"}
               </button>
             </div>
           </div>

@@ -7,6 +7,8 @@ export interface SavedTemplate {
   description?: string | null;
   templateType?: TemplateType | null;
   mainColor?: string | null;
+  selectedColor?: string | null;
+  previewTemplate?: TemplateType | null;
   templateData: TemplateData;
   createdAt: string;
   updatedAt: string;

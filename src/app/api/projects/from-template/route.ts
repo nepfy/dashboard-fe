@@ -9,7 +9,10 @@ import { proposalTemplatesTable } from "#/lib/db/schema/proposal-templates";
 import { getPersonIdByEmail } from "#/lib/user";
 import { prepareProjectSlug } from "#/lib/project-slug";
 import type { ProposalData as ProjectProposalData } from "#/types/proposal-data";
-import type { ProposalData as TemplateProposalData } from "#/types/template-data";
+import type {
+  ProposalData as TemplateProposalData,
+  TemplateData,
+} from "#/types/template-data";
 
 async function getAuthenticatedPersonId() {
   const user = await currentUser();
@@ -39,6 +42,25 @@ function parseDate(value: string | undefined) {
   return isNaN(parsed.getTime()) ? null : parsed;
 }
 
+function sanitizeTemplateData(templateData: unknown): TemplateData | null {
+  if (!templateData || typeof templateData !== "object") {
+    return null;
+  }
+
+  const clone =
+    typeof structuredClone === "function"
+      ? structuredClone(templateData)
+      : JSON.parse(JSON.stringify(templateData));
+
+  delete (clone as Record<string, unknown>).id;
+  delete (clone as Record<string, unknown>).personId;
+  delete (clone as Record<string, unknown>).created_at;
+  delete (clone as Record<string, unknown>).updated_at;
+  delete (clone as Record<string, unknown>).deleted_at;
+
+  return clone as TemplateData;
+}
+
 export async function POST(request: Request) {
   try {
     const personId = await getAuthenticatedPersonId();
@@ -51,6 +73,8 @@ export async function POST(request: Request) {
       originalPageUrl,
       pagePassword,
       validUntil,
+      templateData: overrideTemplateData,
+      templateMainColor,
     } = body;
 
     if (!templateId || !clientName || !projectName) {
@@ -81,6 +105,49 @@ export async function POST(request: Request) {
       );
     }
 
+    const sanitizedOverrideTemplateData =
+      sanitizeTemplateData(overrideTemplateData) ?? null;
+    const templateDataSource = templateRecord.templateData;
+    const mergeProposalData = (
+      base?: TemplateProposalData,
+      override?: TemplateProposalData
+    ) => {
+      if (!base && !override) {
+        return undefined;
+      }
+
+      if (!base) {
+        return override;
+      }
+
+      if (!override) {
+        return base;
+      }
+
+      return {
+        ...base,
+        ...override,
+      };
+    };
+
+    const combinedProposalData = mergeProposalData(
+      templateDataSource?.proposalData,
+      sanitizedOverrideTemplateData?.proposalData
+    );
+
+    const finalTemplateData: TemplateData = {
+      ...templateDataSource,
+      ...(sanitizedOverrideTemplateData ?? {}),
+      proposalData: combinedProposalData,
+    };
+
+    const finalMainColor =
+      templateMainColor ??
+      sanitizedOverrideTemplateData?.mainColor ??
+      templateDataSource?.mainColor ??
+      templateRecord.mainColor ??
+      null;
+
     const slug = await prepareProjectSlug({
       userId: personId,
       desiredSlug: originalPageUrl,
@@ -89,8 +156,8 @@ export async function POST(request: Request) {
 
     // Convert template ProposalData to project ProposalData format
     // The template type doesn't have buttonTitle in introduction, but project type requires it
-    const templateProposalData = templateRecord.templateData
-      .proposalData as unknown as TemplateProposalData;
+    const templateProposalData =
+      finalTemplateData.proposalData as TemplateProposalData;
     const projectProposalData: ProjectProposalData = {
       ...templateProposalData,
       introduction: templateProposalData.introduction
@@ -117,13 +184,13 @@ export async function POST(request: Request) {
         projectValidUntil: parseDate(validUntil),
         projectVisualizationDate: null,
         templateType: templateRecord.templateType,
-        mainColor: templateRecord.mainColor,
+        mainColor: finalMainColor,
         projectUrl: slug,
         pagePassword: pagePassword || null,
         isPublished: false,
         isProposalGenerated: true,
         proposalData: projectProposalData,
-        buttonConfig: templateRecord.templateData.buttonConfig || null,
+        buttonConfig: finalTemplateData.buttonConfig ?? null,
         viewCount: 0,
       })
       .returning();
