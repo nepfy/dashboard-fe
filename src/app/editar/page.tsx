@@ -16,37 +16,64 @@ import Minimal from "./modules/minimal";
 export default function EditarPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams?.get("projectId");
+  const templateId = searchParams?.get("templateId");
   const templateType = searchParams?.get("templateType");
   const { user } = useUser();
 
-  const { projectData, setProjectData, isLoading, error } = useEditor();
+  const { projectData, setProjectData, setTemplateMode, isLoading, error } =
+    useEditor();
   const [localLoading, setLocalLoading] = useState(true);
   const [localError, setLocalError] = useState<string | null>(null);
   const editorLoadStartTime = useRef<number | null>(null);
   const hasTrackedOpened = useRef(false);
 
   useEffect(() => {
-    if (!projectId) {
-      setLocalError("ID do projeto não fornecido");
+    if (!projectId && !templateId) {
+      setLocalError("ID do projeto/template não fornecido");
       setLocalLoading(false);
       return;
     }
 
-    // Track editor opened
-    if (!hasTrackedOpened.current && projectId) {
-      trackEditorOpened({
-        proposal_id: projectId,
-        user_id: user?.id,
-        workspace_id: user?.id, // Using user ID as workspace ID for now
-        template_type: templateType || undefined,
-      });
-      hasTrackedOpened.current = true;
-      editorLoadStartTime.current = Date.now();
+    // Template mode: skip proposal analytics (keeps dashboards clean)
+    if (templateId) {
+      setTemplateMode(templateId);
+    } else {
+      setTemplateMode(null);
+
+      // Track editor opened (proposals only)
+      if (!hasTrackedOpened.current && projectId) {
+        trackEditorOpened({
+          proposal_id: projectId,
+          user_id: user?.id,
+          workspace_id: user?.id, // Using user ID as workspace ID for now
+          template_type: templateType || undefined,
+        });
+        hasTrackedOpened.current = true;
+        editorLoadStartTime.current = Date.now();
+      }
     }
 
     const loadProjectData = async () => {
       try {
         setLocalLoading(true);
+
+        if (templateId) {
+          const response = await fetch(`/api/templates/${templateId}`);
+          const result: {
+            success: boolean;
+            data?: {
+              templateData: TemplateData;
+            };
+            error?: string;
+          } = await response.json();
+
+          if (!result.success || !result.data?.templateData) {
+            throw new Error(result.error || "Erro ao carregar dados do template");
+          }
+
+          setProjectData(result.data.templateData);
+          return;
+        }
 
         const templateDataResponse = await fetch(`/api/projects/${projectId}`);
 
@@ -58,13 +85,13 @@ export default function EditarPage() {
 
         if (!templateDataResult.success || !templateDataResult.data) {
           throw new Error(
-            templateDataResult.error || "Erro ao carregar dados do template"
+            templateDataResult.error || "Erro ao carregar dados do projeto"
           );
         }
 
         setProjectData(templateDataResult.data[0]);
 
-        // Track editor load time
+        // Track editor load time (proposals only)
         if (editorLoadStartTime.current && projectId) {
           const loadTime = Date.now() - editorLoadStartTime.current;
           trackEditorLoadTime({
@@ -83,7 +110,7 @@ export default function EditarPage() {
     };
 
     loadProjectData();
-  }, [projectId, templateType, setProjectData, user]);
+  }, [projectId, templateId, templateType, setProjectData, setTemplateMode, user]);
 
   if (localLoading || isLoading) {
     return (

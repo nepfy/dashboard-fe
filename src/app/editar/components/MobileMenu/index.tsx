@@ -7,6 +7,7 @@ import Publish from "../publish";
 import UnsavedChangesModal from "../UnsavedChangesModal/UnsavedChangesModal";
 import { useEditor } from "../../contexts/EditorContext";
 import SaveTemplateModal from "#/components/SaveTemplateModal";
+import EditTemplateModal from "#/components/EditTemplateModal";
 
 type OpenModal = "personalize" | "sections" | null;
 
@@ -25,7 +26,9 @@ export default function MobileMenu({
 }: MobileMenuProps) {
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-  const { isDirty, saveProject, projectData } = useEditor();
+  const [isEditTemplateModalOpen, setIsEditTemplateModalOpen] = useState(false);
+  const { isDirty, saveProject, projectData, isTemplateMode, templateId } =
+    useEditor();
   const router = useRouter();
 
   useEffect(() => {
@@ -105,16 +108,20 @@ export default function MobileMenu({
             setIsModalOpen={(open) => setOpenModal(open ? "sections" : null)}
           />
 
-          <button
-            onClick={() => setIsSaveModalOpen(true)}
-            className="w-full rounded-[10px] border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
-          >
-            Salvar como template
-          </button>
+          {!isTemplateMode && (
+            <button
+              onClick={() => setIsSaveModalOpen(true)}
+              className="w-full rounded-[10px] border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
+            >
+              Salvar como template
+            </button>
+          )}
 
           <div className="border-white-neutral-light-300 mt-6 mb-8 border-b" />
 
-          <Publish />
+          <Publish
+            onOpenTemplateModal={() => setIsEditTemplateModalOpen(true)}
+          />
 
           <Link
             href="/dashboard"
@@ -131,10 +138,18 @@ export default function MobileMenu({
         onContinue={handleContinueEditing}
         onLeave={handleSaveDraftAndLeave}
       />
-      <SaveTemplateModal
-        isOpen={isSaveModalOpen}
-        onClose={() => setIsSaveModalOpen(false)}
-        projectData={projectData}
+      {!isTemplateMode && (
+        <SaveTemplateModal
+          isOpen={isSaveModalOpen}
+          onClose={() => setIsSaveModalOpen(false)}
+          projectData={projectData}
+        />
+      )}
+      <EditTemplateModal
+        isOpen={isEditTemplateModalOpen}
+        onClose={() => setIsEditTemplateModalOpen(false)}
+        templateId={templateId}
+        templateData={projectData}
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { TemplateType } from "#/types/project";
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { useProposalGenerator } from "#/app/gerar-proposta/ProposalGeneratorContext";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -28,6 +29,7 @@ export default function TemplateSelection({
   onNextStep,
   hideBanner = false,
 }: TemplateSelectionProps) {
+  const router = useRouter();
   const {
     updateFormData,
     setTemplateType,
@@ -224,8 +226,8 @@ export default function TemplateSelection({
       );
     }
 
-    const handleEditTemplate = (templateId: string) => {
-      console.log("templateId", templateId);
+    const handleEditTemplate = (id: string, type: TemplateType) => {
+      router.push(`/editar?templateId=${id}&templateType=${type}`);
     };
 
     return (
@@ -285,7 +287,7 @@ export default function TemplateSelection({
                     previewTemplate: previewTheme,
                   })
                 }
-                onEditTemplate={() => handleEditTemplate(template.id)}
+                onEditTemplate={() => handleEditTemplate(template.id, previewTheme)}
                 onPreviewTemplate={() => handlePreviewTemplate(previewTheme)}
                 isSelected={customTemplate?.id === template.id}
               />

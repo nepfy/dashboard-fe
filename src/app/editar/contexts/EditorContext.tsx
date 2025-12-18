@@ -50,6 +50,9 @@ interface EditorContextType {
   isDirty: boolean;
   error: string | null;
   isSaving: boolean;
+  isTemplateMode: boolean;
+  templateId: string | null;
+  setTemplateMode: (templateId: string | null) => void;
 
   // Actions
   updateIntroduction: (data: Partial<IntroductionSection>) => void;
@@ -84,6 +87,12 @@ interface EditorContextType {
     projectStatus?: string;
     isPublished?: boolean;
     skipNavigation?: boolean;
+  }) => Promise<void>;
+  saveTemplate: (input: {
+    name: string;
+    description?: string | null;
+    templateType?: string | null;
+    mainColor?: string | null;
   }) => Promise<void>;
   revertChanges: () => void;
   setProjectData: (data: TemplateData) => void;
@@ -189,6 +198,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [templateId, setTemplateId] = useState<string | null>(null);
   const [activeEditingId, setActiveEditingId] = useState<string | null>(null);
   const activeEditingIdRef = useRef<string | null>(null);
   const router = useRouter();
@@ -229,6 +239,12 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     setIsDirty(false);
     setError(null);
   }, []);
+
+  const setTemplateMode = useCallback((nextTemplateId: string | null) => {
+    setTemplateId(nextTemplateId);
+  }, []);
+
+  const isTemplateMode = templateId !== null;
 
   const updateSection = useCallback(
     (
@@ -677,6 +693,51 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
       }
     },
     [projectData, isSaving, router]
+  );
+
+  const saveTemplate = useCallback(
+    async (input: {
+      name: string;
+      description?: string | null;
+      templateType?: string | null;
+      mainColor?: string | null;
+    }) => {
+      if (!projectData || !templateId || isSaving) return;
+
+      setIsSaving(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`/api/templates/${templateId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: input.name,
+            description: input.description ?? null,
+            templateType: input.templateType ?? projectData.templateType ?? null,
+            mainColor: input.mainColor ?? projectData.mainColor ?? null,
+            templateData: projectData,
+          }),
+        });
+
+        const result: { success: boolean; error?: string } =
+          await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Falha ao salvar template");
+        }
+
+        setIsDirty(false);
+
+        // Avoid proposal analytics when editing templates
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Falha ao salvar template");
+        throw err;
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [projectData, templateId, isSaving]
   );
 
   const revertChanges = useCallback(() => {
@@ -1305,6 +1366,9 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     isDirty,
     error,
     isSaving,
+    isTemplateMode,
+    templateId,
+    setTemplateMode,
     updateIntroduction,
     updateAboutUs,
     updateTeam,
@@ -1325,6 +1389,7 @@ export function EditorProvider({ children, initialData }: EditorProviderProps) {
     updateSectionVisibility,
     getSectionVisibility,
     saveProject,
+    saveTemplate,
     revertChanges,
     setProjectData,
     updateTeamMember,
