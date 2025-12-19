@@ -3,6 +3,7 @@ import { Box } from "#/modules/ai-generator/components/box/Box";
 import { PageURLSection } from "#/modules/ai-generator/components/final-steps-section/PageURLSection";
 import { PasswordSection } from "#/modules/ai-generator/components/final-steps-section/PasswordSection";
 import { ValidUntilSection } from "#/modules/ai-generator/components/final-steps-section/ValidUntilSection";
+import { Label } from "#/components/Label";
 
 interface PasswordValidation {
   minLength: boolean;
@@ -172,7 +173,10 @@ export function FinalStep({
     isPasswordValid(validatePassword(pagePassword)) &&
     validUntil &&
     (!isCustomTemplateFlow ||
-      (!!clientName && clientName.trim().length > 0 && !!projectName && projectName.trim().length > 0));
+      (!!clientName &&
+        clientName.trim().length > 0 &&
+        !!projectName &&
+        projectName.trim().length > 0));
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] flex-col items-center justify-center">
@@ -198,49 +202,49 @@ export function FinalStep({
         }
         step={step}
       >
-          {isCustomTemplateFlow && (
-            <div className="mb-6 space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Nome do cliente
-                </label>
-                <input
-                  id="clientName"
-                  type="text"
-                  value={clientName}
-                  onChange={(event) => {
-                    setClientName(event.target.value);
-                    clearError("clientName");
-                  }}
-                  className="w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:border-primary-light-400 focus:outline-none"
-                />
-                {errors.clientName && (
-                  <p className="text-xs text-red-500">{errors.clientName}</p>
-                )}
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Nome da proposta
-                </label>
-                <input
-                  id="projectName"
-                  type="text"
-                  value={projectName}
-                  onChange={(event) => {
-                    setProjectName(event.target.value);
-                    clearError("projectName");
-                  }}
-                  className="w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:border-primary-light-400 focus:outline-none"
-                />
-                {errors.projectName && (
-                  <p className="text-xs text-red-500">{errors.projectName}</p>
-                )}
-              </div>
+        {isCustomTemplateFlow && (
+          <div className="mb-6 space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="clientName" info>
+                Nome do cliente
+              </Label>
+              <input
+                id="clientName"
+                type="text"
+                value={clientName}
+                onChange={(event) => {
+                  setClientName(event.target.value);
+                  clearError("clientName");
+                }}
+                className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
+              />
+              {errors.clientName && (
+                <p className="text-xs text-red-500">{errors.clientName}</p>
+              )}
             </div>
-          )}
 
-          <PageURLSection
+            <div className="space-y-1">
+              <Label htmlFor="projectName" info>
+                Nome da proposta
+              </Label>
+              <input
+                id="projectName"
+                type="text"
+                value={projectName}
+                onChange={(event) => {
+                  setProjectName(event.target.value);
+                  clearError("projectName");
+                }}
+                className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
+              />
+              {errors.projectName && (
+                <p className="text-xs text-red-500">{errors.projectName}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        <PageURLSection
           isPublished={false}
           userName={userName}
           originalPageUrl={originalPageUrl}

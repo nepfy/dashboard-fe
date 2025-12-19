@@ -5,6 +5,7 @@ import { Box } from "#/modules/ai-generator/components/box/Box";
 import { PageURLSection } from "#/modules/ai-generator/components/final-steps-section/PageURLSection";
 import { PasswordSection } from "#/modules/ai-generator/components/final-steps-section/PasswordSection";
 import { ValidUntilSection } from "#/modules/ai-generator/components/final-steps-section/ValidUntilSection";
+import { Label } from "#/components/Label";
 
 interface PasswordValidation {
   minLength: boolean;
@@ -57,16 +58,15 @@ export function CustomTemplateFinalize({
   setProjectName: (name: string) => void;
 }) {
   const [errors, setErrors] = useState<FormErrors>({});
-  const [urlValidationState, setUrlValidationState] =
-    useState<{
-      isChecking: boolean;
-      isDuplicate: boolean;
-      message?: string;
-    }>({
-      isChecking: false,
-      isDuplicate: false,
-      message: undefined,
-    });
+  const [urlValidationState, setUrlValidationState] = useState<{
+    isChecking: boolean;
+    isDuplicate: boolean;
+    message?: string;
+  }>({
+    isChecking: false,
+    isDuplicate: false,
+    message: undefined,
+  });
   const lastValidationMessageRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
@@ -194,9 +194,9 @@ export function CustomTemplateFinalize({
       >
         <div className="mb-6 space-y-4">
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <Label htmlFor="clientName" info>
               Nome do cliente
-            </label>
+            </Label>
             <input
               id="clientName"
               type="text"
@@ -205,7 +205,7 @@ export function CustomTemplateFinalize({
                 setClientName(event.target.value);
                 clearError("clientName");
               }}
-              className="w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:border-primary-light-400 focus:outline-none"
+              className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
             />
             {errors.clientName && (
               <p className="text-xs text-red-500">{errors.clientName}</p>
@@ -213,9 +213,9 @@ export function CustomTemplateFinalize({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <Label htmlFor="projectName" info>
               Nome da proposta
-            </label>
+            </Label>
             <input
               id="projectName"
               type="text"
@@ -224,7 +224,7 @@ export function CustomTemplateFinalize({
                 setProjectName(event.target.value);
                 clearError("projectName");
               }}
-              className="w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:border-primary-light-400 focus:outline-none"
+              className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
             />
             {errors.projectName && (
               <p className="text-xs text-red-500">{errors.projectName}</p>
@@ -269,4 +269,3 @@ export function CustomTemplateFinalize({
     </div>
   );
 }
-
