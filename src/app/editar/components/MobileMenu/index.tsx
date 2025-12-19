@@ -99,10 +99,14 @@ export default function MobileMenu({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="space-y-4">
-          <Personalize
-            isModalOpen={openModal === "personalize"}
-            setIsModalOpen={(open) => setOpenModal(open ? "personalize" : null)}
-          />
+          {!templateId && (
+            <Personalize
+              isModalOpen={openModal === "personalize"}
+              setIsModalOpen={(open) =>
+                setOpenModal(open ? "personalize" : null)
+              }
+            />
+          )}
           <Sections
             isModalOpen={openModal === "sections"}
             setIsModalOpen={(open) => setOpenModal(open ? "sections" : null)}

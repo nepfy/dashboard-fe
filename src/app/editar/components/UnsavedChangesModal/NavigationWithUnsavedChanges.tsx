@@ -72,10 +72,14 @@ export default function NavigationWithUnsavedChanges() {
         <div className="flex items-center gap-4">
           <Logo fill="#1C1A22" />
           <div className="border-l-white-neutral-light-300 h-4 border-l" />
-          <Personalize
-            isModalOpen={openModal === "personalize"}
-            setIsModalOpen={(open) => setOpenModal(open ? "personalize" : null)}
-          />
+          {!templateId && (
+            <Personalize
+              isModalOpen={openModal === "personalize"}
+              setIsModalOpen={(open) =>
+                setOpenModal(open ? "personalize" : null)
+              }
+            />
+          )}
           <Sections
             isModalOpen={openModal === "sections"}
             setIsModalOpen={(open) => setOpenModal(open ? "sections" : null)}

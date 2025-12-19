@@ -162,13 +162,6 @@ export default function TemplateSelection({
       template.templateType ??
       (template.templateData?.templateType as TemplateType) ??
       "flash";
-    const clientName =
-      template.templateData?.clientName ??
-      template.templateData?.proposalData?.introduction?.clientName ??
-      template.name ??
-      "";
-    const projectName =
-      template.templateData?.projectName ?? template.name ?? "";
     const description =
       template.templateData?.proposalData?.introduction?.description ?? "";
 
@@ -184,14 +177,13 @@ export default function TemplateSelection({
       previewTemplate: options.previewTemplate,
     });
     setTemplateType(fallbackType, { keepCustomTemplate: true });
-    setClientName(clientName);
-    setProjectName(projectName);
+
     setProjectDescription(description);
     setDetailedClientInfo(description);
     setCompanyInfo(template.templateData?.companyName ?? "");
     updateFormData("step1", {
-      clientName,
-      projectName,
+      clientName: "",
+      projectName: "",
       mainColor: mainColor || undefined,
       templateType: fallbackType,
     });
@@ -287,7 +279,9 @@ export default function TemplateSelection({
                     previewTemplate: previewTheme,
                   })
                 }
-                onEditTemplate={() => handleEditTemplate(template.id, previewTheme)}
+                onEditTemplate={() =>
+                  handleEditTemplate(template.id, previewTheme)
+                }
                 onPreviewTemplate={() => handlePreviewTemplate(previewTheme)}
                 isSelected={customTemplate?.id === template.id}
               />
