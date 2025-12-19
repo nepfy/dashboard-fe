@@ -205,9 +205,7 @@ export function FinalStep({
         {isCustomTemplateFlow && (
           <div className="mb-6 space-y-4">
             <div className="space-y-1">
-              <Label htmlFor="clientName" info>
-                Nome do cliente
-              </Label>
+              <Label htmlFor="clientName">Nome do cliente</Label>
               <input
                 id="clientName"
                 type="text"
@@ -224,9 +222,7 @@ export function FinalStep({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="projectName" info>
-                Nome da proposta
-              </Label>
+              <Label htmlFor="projectName">Nome da proposta</Label>
               <input
                 id="projectName"
                 type="text"
