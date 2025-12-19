@@ -11,6 +11,7 @@ import AnchorLinkIcon from "#/components/icons/AnchorLinkIcon";
 import Modal from "#/components/Modal";
 import Portal from "#/components/Portal";
 
+import type { TemplateData } from "#/types/template-data";
 import ArchiveIcon from "./ArchiveIcon";
 import DuplicateIcon from "./DuplicateIcon";
 import DeleteIcon from "./DeleteIcon";
@@ -18,6 +19,7 @@ import PasswordManagerModal from "./PasswordManagerModal";
 import { useCopyLinkWithCache } from "#/contexts/CopyLinkCacheContext";
 import { getStatusBadge } from "../ProjectsTable/getStatusBadge";
 import { trackProposalClicked } from "#/lib/analytics/track";
+import SaveTemplateModal from "#/components/SaveTemplateModal";
 
 interface RowEditMenuProps {
   isOpen: boolean;
@@ -32,6 +34,7 @@ interface RowEditMenuProps {
   isUpdating?: boolean;
   triggerElement?: HTMLElement | null;
   onRefresh?: () => Promise<void>;
+  onOpenSaveTemplateModal?: (templateData: TemplateData) => void;
 }
 
 type ProjectStatus =
@@ -86,6 +89,8 @@ export default function RowEditMenu({
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
   const [showStatusPanel, setShowStatusPanel] = useState(false);
+  const [showSaveTemplateModal, setShowSaveTemplateModal] =
+    useState<TemplateData | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<ProjectStatus>(
     (currentStatus as ProjectStatus) || "draft"
   );
@@ -100,6 +105,7 @@ export default function RowEditMenu({
   const [isArchiving, setIsArchiving] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoadingTemplateData, setIsLoadingTemplateData] = useState(false);
 
   const [isCopyingLink, setIsCopyingLink] = useState(false);
   const [copyLinkMessage, setCopyLinkMessage] = useState<string | null>(null);
@@ -145,10 +151,18 @@ export default function RowEditMenu({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // Don't close if clicking inside a modal
+      const clickedInsideModal = (target as Element).closest('[role="dialog"]');
+      if (clickedInsideModal) {
+        return;
+      }
+
       if (
         menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        !triggerElement?.contains(event.target as Node)
+        !menuRef.current.contains(target) &&
+        !triggerElement?.contains(target)
       ) {
         onClose();
       }
@@ -199,33 +213,28 @@ export default function RowEditMenu({
     }
   };
 
-  const handleMenuItemClick = (action: string) => {
-    console.log(`Action: ${action} for project: ${projectId}`);
+  const handleSaveTemplateClick = async () => {
+    setIsLoadingTemplateData(true);
 
-    switch (action) {
-      case "update-status":
-        setShowStatusPanel(true);
-        break;
-      case "duplicate":
-        setShowDuplicateModal(true);
-        break;
-      case "copy-link":
-        handleCopyLink();
-        break;
-      case "edit":
-        handleEditClick();
-        break;
-      case "archive":
-        setShowArchiveModal(true);
-        break;
-      case "delete":
-        setShowDeleteModal(true);
-        break;
-      case "manage-password":
-        handleManagePassword();
-        break;
-      default:
-        onClose();
+    try {
+      const response = await fetch(`/api/projects/${projectId}`);
+      const result = await response.json();
+
+      console.log("result", result);
+
+      if (!result.success || !result.data?.length) {
+        throw new Error(result.error || "Projeto não encontrado");
+      }
+
+      console.log({ data: result.data[0] });
+
+      setShowSaveTemplateModal(result.data[0]);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Não foi possível carregar";
+      toast.error(message, { position: "top-right", autoClose: 3000 });
+    } finally {
+      setIsLoadingTemplateData(false);
     }
   };
 
@@ -300,7 +309,6 @@ export default function RowEditMenu({
       try {
         await onStatusUpdate(projectId, selectedStatus);
         setShowStatusPanel(false);
-        onClose();
       } catch (error) {
         console.error("Failed to update status:", error);
       } finally {
@@ -426,6 +434,39 @@ export default function RowEditMenu({
     return viewMode === "archived" ? "Restaurar" : "Arquivar";
   };
 
+  const handleMenuItemClick = (action: string) => {
+    console.log(`Action: ${action} for project: ${projectId}`);
+
+    switch (action) {
+      case "save-template":
+        handleSaveTemplateClick();
+        break;
+      case "update-status":
+        setShowStatusPanel(true);
+        break;
+      case "duplicate":
+        setShowDuplicateModal(true);
+        break;
+      case "copy-link":
+        handleCopyLink();
+        break;
+      case "edit":
+        handleEditClick();
+        break;
+      case "archive":
+        setShowArchiveModal(true);
+        break;
+      case "delete":
+        setShowDeleteModal(true);
+        break;
+      case "manage-password":
+        handleManagePassword();
+        break;
+      default:
+        onClose();
+    }
+  };
+
   const isMenuDisabled =
     isUpdating ||
     isProcessing ||
@@ -434,6 +475,8 @@ export default function RowEditMenu({
     isDeleting ||
     isCopyingLink;
   const hasStatusChanged = selectedStatus !== currentStatus;
+
+  console.log("showSaveTemplateModal", showSaveTemplateModal);
 
   return (
     <>
@@ -516,6 +559,22 @@ export default function RowEditMenu({
                         <AnchorLinkIcon width="16" height="16" />
                       )}
                       Copiar Link
+                    </button>
+
+                    <button
+                      onClick={() => handleMenuItemClick("save-template")}
+                      disabled={isMenuDisabled || isLoadingTemplateData}
+                      className={`text-white-neutral-light-900 my-1 flex items-center gap-1 rounded-lg px-2 py-3 text-left text-sm font-medium transition-colors ${
+                        isMenuDisabled || isLoadingTemplateData
+                          ? "cursor-not-allowed opacity-50"
+                          : "hover:bg-white-neutral-light-300 cursor-pointer"
+                      }`}
+                    >
+                      {isLoadingTemplateData ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <span>Salvar como template</span>
+                      )}
                     </button>
 
                     {copyLinkMessage && (
@@ -876,6 +935,17 @@ export default function RowEditMenu({
         projectId={projectId}
         currentPassword={currentPassword}
         onPasswordChange={handlePasswordChange}
+      />
+
+      {/* Save Template Modal */}
+
+      <SaveTemplateModal
+        isOpen={!!showSaveTemplateModal}
+        onClose={() => {
+          setShowSaveTemplateModal(null);
+          onClose();
+        }}
+        projectData={showSaveTemplateModal}
       />
     </>
   );

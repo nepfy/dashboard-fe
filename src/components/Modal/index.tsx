@@ -56,11 +56,13 @@ const Modal: React.FC<ModalProps> = ({
 
   // Handle clicking outside of the modal to close it
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only close if clicking directly on the backdrop (the overlay div itself)
+    // and not on the modal content or any of its children
     if (
       closeOnClickOutside &&
-      !disableClose && // Só permite fechar clicando fora se disableClose for false
+      !disableClose &&
       modalRef.current &&
-      !modalRef.current.contains(e.target as Node)
+      e.target === e.currentTarget
     ) {
       onClose();
     }
@@ -89,7 +91,14 @@ const Modal: React.FC<ModalProps> = ({
           !width ? "w-[320px] sm:w-[520px]" : ""
         }`}
         style={{ width: width || undefined }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.nativeEvent.stopImmediatePropagation();
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          e.nativeEvent.stopImmediatePropagation();
+        }}
       >
         {(title || (showCloseButton && !disableClose)) && (
           <div className="flex items-center justify-between px-6 pt-6">

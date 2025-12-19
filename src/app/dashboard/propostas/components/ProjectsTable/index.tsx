@@ -9,6 +9,8 @@ import {
 import CalendarIcon from "#/components/icons/CalendarIcon";
 import AnchorLinkIcon from "#/components/icons/AnchorLinkIcon";
 
+import { TemplateData } from "#/types/template-data";
+import SaveTemplateModal from "#/components/SaveTemplateModal";
 import RowEditMenu from "./RowEditMenu";
 import { getStatusBadge } from "./getStatusBadge";
 import { TableProps } from "./types";
@@ -138,6 +140,13 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["draft"])
   );
+  const [isSaveTemplateModalOpen, setIsSaveTemplateModalOpen] = useState(false);
+  const [saveTemplateProject, setSaveTemplateProject] =
+    useState<TemplateData | null>(null);
+  const handleOpenSaveTemplateModal = (projectData: TemplateData) => {
+    setSaveTemplateProject(projectData);
+    setIsSaveTemplateModalOpen(true);
+  };
 
   // Store refs for each row's trigger button
   const triggerRefs = useRef<Record<string, HTMLButtonElement>>({});
@@ -648,8 +657,14 @@ const ProjectsTable: React.FC<EnhancedTableProps> = ({
           isUpdating={isUpdating}
           triggerElement={menuTriggerElement}
           onRefresh={onRefresh}
+          onOpenSaveTemplateModal={handleOpenSaveTemplateModal}
         />
       )}
+      <SaveTemplateModal
+        isOpen={isSaveTemplateModalOpen}
+        onClose={() => setIsSaveTemplateModalOpen(false)}
+        projectData={saveTemplateProject}
+      />
     </div>
   );
 };

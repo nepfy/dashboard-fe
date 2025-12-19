@@ -2,10 +2,31 @@ import { useEditor } from "../../contexts/EditorContext";
 import { useState } from "react";
 import { trackProposalPublished } from "#/lib/analytics/track";
 
-export default function Publish() {
-  const { saveProject, isDirty, isSaving, projectData } = useEditor();
+export default function Publish({
+  onOpenTemplateModal,
+}: {
+  onOpenTemplateModal?: () => void;
+}) {
+  const { saveProject, isDirty, isSaving, projectData, isTemplateMode } =
+    useEditor();
   const [showSuccess, setShowSuccess] = useState(false);
   const isAlreadyPublished = projectData?.isPublished ?? false;
+
+  if (isTemplateMode) {
+    return (
+      <button
+        onClick={onOpenTemplateModal}
+        disabled={isSaving || !onOpenTemplateModal}
+        className={`flex w-full transform items-center justify-center rounded-[12px] px-5 py-3 text-sm font-medium shadow-lg transition-all duration-200 hover:shadow-xl sm:w-auto ${
+          isSaving || !onOpenTemplateModal
+            ? "cursor-not-allowed bg-gray-400 text-gray-200"
+            : "cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
+        }`}
+      >
+        Salvar template
+      </button>
+    );
+  }
 
   const handlePublish = async () => {
     if (isSaving) {

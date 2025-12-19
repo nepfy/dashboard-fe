@@ -12,12 +12,14 @@ import { SelectTemplate } from "#/modules/ai-generator/components/generation-ste
 import { useProjectGenerator } from "#/contexts/ProjectGeneratorContext";
 import { useProposalGenerator } from "./ProposalGeneratorContext";
 import { ServiceType } from "#/modules/ai-generator/components/generation-steps/ServiceType";
+import type { TemplateType } from "#/types/project";
 import { ClientInfo } from "#/modules/ai-generator/components/generation-steps/ClientInfo";
 import { CompanyInfo } from "#/modules/ai-generator/components/generation-steps/CompanyInfo";
 import { PricingStep } from "#/modules/ai-generator/components/generation-steps/PricingStep";
 import { FinalStep } from "#/modules/ai-generator/components/generation-steps/FinalStep";
+import { CustomTemplateFinalize } from "#/modules/ai-generator/components/generation-steps/CustomTemplateFinalize";
 import { Loading } from "#/modules/ai-generator/components/loading/Loading";
-import { Error } from "#/modules/ai-generator/components/error/error";
+import { Error as ErrorComponent } from "#/modules/ai-generator/components/error/error";
 import CloseIcon from "#/components/icons/CloseIcon";
 import {
   trackProposalCreationStarted,
@@ -28,7 +30,7 @@ import { PROJECT_SLUG_MAX_LENGTH } from "#/constants/project";
 import { slugify, truncateSlug } from "#/lib/slug";
 
 export default function NepfyAIPage() {
-  const { templateType, formData } = useProjectGenerator();
+  const { templateType, formData, customTemplate } = useProjectGenerator();
   const {
     currentStep,
     setCurrentStep,
@@ -107,6 +109,90 @@ export default function NepfyAIPage() {
   };
 
   const handleGenerateProposal = async () => {
+    if (customTemplate) {
+      if (
+        !clientName ||
+        !projectName ||
+        !originalPageUrl ||
+        !pagePassword ||
+        !validUntil
+      ) {
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const selectedColor =
+          customTemplate.selectedColor ??
+          customTemplate.mainColor ??
+          customTemplate.templateData?.mainColor;
+        const templateDataForRequest = {
+          ...customTemplate.templateData,
+          mainColor: selectedColor ?? customTemplate.templateData?.mainColor,
+        };
+
+        const response = await fetch("/api/projects/from-template", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            templateId: customTemplate.id,
+            clientName,
+            projectName,
+            originalPageUrl,
+            pagePassword,
+            validUntil,
+            templateData: templateDataForRequest,
+            templateMainColor: templateDataForRequest.mainColor,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const targetTemplateType =
+            customTemplate.templateType ||
+            (customTemplate.templateData?.templateType as TemplateType) ||
+            "flash";
+          router.push(
+            `/editar?projectId=${result.data.id}&templateType=${targetTemplateType}`
+          );
+          return;
+        }
+
+        const errorMessage =
+          typeof result.error === "string"
+            ? result.error
+            : "Erro ao criar proposta a partir do template";
+        const error = new globalThis.Error(errorMessage);
+        throw error;
+      } catch (error: unknown) {
+        const message =
+          error instanceof globalThis.Error
+            ? error.message
+            : typeof error === "string"
+              ? error
+              : "Erro ao criar proposta a partir do template";
+        toast.error(message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+          className: "font-satoshi",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+
+      return;
+    }
+
     if (
       !selectedService ||
       !clientName ||
@@ -232,10 +318,14 @@ export default function NepfyAIPage() {
     }
   };
 
+  const finalStepBack = customTemplate
+    ? () => setCurrentStep("template_selection")
+    : () => setCurrentStep("pricing_step");
+
   if (error) {
     return (
       <div className="flex h-full w-full items-center justify-center p-7">
-        <Error
+        <ErrorComponent
           error={error}
           handleRetry={handleGenerateProposal}
           handleExit={() => router.push("/dashboard")}
@@ -349,12 +439,16 @@ export default function NepfyAIPage() {
                   handleNext={() => setCurrentStep("final_step")}
                 />
               ),
-              final_step: (
-                <FinalStep
+              custom_template_finalize: (
+                <CustomTemplateFinalize
                   handleGenerateProposal={handleGenerateProposal}
-                  handleBack={() => setCurrentStep("pricing_step")}
+                  handleBack={() => setCurrentStep("template_selection")}
                   userName={userName}
                   step={currentStep}
+                  clientName={clientName}
+                  setClientName={setClientName}
+                  projectName={projectName}
+                  setProjectName={setProjectName}
                   originalPageUrl={originalPageUrl}
                   setOriginalPageUrl={setOriginalPageUrl}
                   pagePassword={pagePassword}
@@ -362,6 +456,26 @@ export default function NepfyAIPage() {
                   validUntil={validUntil}
                   setValidUntil={setValidUntil}
                   onSlugEdited={handleSlugEdited}
+                />
+              ),
+              final_step: (
+                <FinalStep
+                  handleGenerateProposal={handleGenerateProposal}
+                  handleBack={finalStepBack}
+                  userName={userName}
+                  step={currentStep}
+                  clientName={clientName}
+                  setClientName={setClientName}
+                  projectName={projectName}
+                  setProjectName={setProjectName}
+                  originalPageUrl={originalPageUrl}
+                  setOriginalPageUrl={setOriginalPageUrl}
+                  pagePassword={pagePassword}
+                  setPagePassword={setPagePassword}
+                  validUntil={validUntil}
+                  setValidUntil={setValidUntil}
+                  onSlugEdited={handleSlugEdited}
+                  isCustomTemplateFlow={Boolean(customTemplate)}
                 />
               ),
             };

@@ -10,13 +10,18 @@ import Sections from "../sections";
 import Publish from "../publish";
 import UnsavedChangesModal from "../UnsavedChangesModal/UnsavedChangesModal";
 import { useEditor } from "../../contexts/EditorContext";
+import SaveTemplateModal from "#/components/SaveTemplateModal";
+import EditTemplateModal from "#/components/EditTemplateModal";
 
 type OpenModal = "personalize" | "sections" | null;
 
 export default function NavigationWithUnsavedChanges() {
   const [openModal, setOpenModal] = useState<OpenModal>(null);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
-  const { isDirty, saveProject, projectData } = useEditor();
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isEditTemplateModalOpen, setIsEditTemplateModalOpen] = useState(false);
+  const { isDirty, saveProject, projectData, isTemplateMode, templateId } =
+    useEditor();
   const router = useRouter();
 
   const handleLeaveClick = (e: React.MouseEvent) => {
@@ -67,18 +72,32 @@ export default function NavigationWithUnsavedChanges() {
         <div className="flex items-center gap-4">
           <Logo fill="#1C1A22" />
           <div className="border-l-white-neutral-light-300 h-4 border-l" />
-          <Personalize
-            isModalOpen={openModal === "personalize"}
-            setIsModalOpen={(open) => setOpenModal(open ? "personalize" : null)}
-          />
+          {!templateId && (
+            <Personalize
+              isModalOpen={openModal === "personalize"}
+              setIsModalOpen={(open) =>
+                setOpenModal(open ? "personalize" : null)
+              }
+            />
+          )}
           <Sections
             isModalOpen={openModal === "sections"}
             setIsModalOpen={(open) => setOpenModal(open ? "sections" : null)}
           />
+          {!isTemplateMode && (
+            <button
+              onClick={() => setIsSaveModalOpen(true)}
+              className="rounded-[10px] border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:bg-gray-100"
+            >
+              Salvar como template
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
-          <Publish />
+          <Publish
+            onOpenTemplateModal={() => setIsEditTemplateModalOpen(true)}
+          />
           <Link
             href="/dashboard"
             onClick={handleLeaveClick}
@@ -93,6 +112,19 @@ export default function NavigationWithUnsavedChanges() {
         isOpen={showUnsavedModal}
         onContinue={handleContinueEditing}
         onLeave={handleSaveDraftAndLeave}
+      />
+      {!isTemplateMode && (
+        <SaveTemplateModal
+          isOpen={isSaveModalOpen}
+          onClose={() => setIsSaveModalOpen(false)}
+          projectData={projectData}
+        />
+      )}
+      <EditTemplateModal
+        isOpen={isEditTemplateModalOpen}
+        onClose={() => setIsEditTemplateModalOpen(false)}
+        templateId={templateId}
+        templateData={projectData}
       />
     </>
   );

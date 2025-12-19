@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { Box } from "#/modules/ai-generator/components/box/Box";
 import { PageURLSection } from "#/modules/ai-generator/components/final-steps-section/PageURLSection";
@@ -15,7 +17,6 @@ interface FormErrors {
   originalPageUrl?: string;
   pagePassword?: string;
   pageValidity?: string;
-  general?: string;
   clientName?: string;
   projectName?: string;
 }
@@ -23,13 +24,7 @@ interface FormErrors {
 const MIN_URL_LENGTH = 3;
 const MIN_PASSWORD_LENGTH = 6;
 
-interface UrlValidationState {
-  isChecking: boolean;
-  isDuplicate: boolean;
-  message?: string;
-}
-
-export function FinalStep({
+export function CustomTemplateFinalize({
   handleGenerateProposal,
   handleBack,
   userName = "usuário",
@@ -45,7 +40,6 @@ export function FinalStep({
   setClientName,
   projectName,
   setProjectName,
-  isCustomTemplateFlow,
 }: {
   handleGenerateProposal: () => void;
   handleBack: () => void;
@@ -62,15 +56,17 @@ export function FinalStep({
   setClientName: (name: string) => void;
   projectName: string;
   setProjectName: (name: string) => void;
-  isCustomTemplateFlow?: boolean;
 }) {
   const [errors, setErrors] = useState<FormErrors>({});
-  const [urlValidationState, setUrlValidationState] =
-    useState<UrlValidationState>({
-      isChecking: false,
-      isDuplicate: false,
-      message: undefined,
-    });
+  const [urlValidationState, setUrlValidationState] = useState<{
+    isChecking: boolean;
+    isDuplicate: boolean;
+    message?: string;
+  }>({
+    isChecking: false,
+    isDuplicate: false,
+    message: undefined,
+  });
   const lastValidationMessageRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
@@ -118,6 +114,7 @@ export function FinalStep({
         delete newErrors[field];
         return newErrors;
       });
+
       if (field === "originalPageUrl") {
         lastValidationMessageRef.current = undefined;
         setUrlValidationState((prev) => ({
@@ -131,6 +128,14 @@ export function FinalStep({
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
+
+    if (clientName.trim().length === 0) {
+      newErrors.clientName = "O campo 'Nome do cliente' é obrigatório";
+    }
+
+    if (projectName.trim().length === 0) {
+      newErrors.projectName = "O campo 'Nome da proposta' é obrigatório";
+    }
 
     if (originalPageUrl?.length === 0) {
       newErrors.originalPageUrl = "O campo 'URL personalizada' é obrigatório";
@@ -154,97 +159,83 @@ export function FinalStep({
       newErrors.pageValidity = "O campo 'Válido até' é obrigatório";
     }
 
-    if (isCustomTemplateFlow) {
-      if (!clientName || clientName.trim().length === 0) {
-        newErrors.clientName = "O campo 'Nome do cliente' é obrigatório";
-      }
-      if (!projectName || projectName.trim().length === 0) {
-        newErrors.projectName = "O campo 'Nome da proposta' é obrigatório";
-      }
-    }
-
     return newErrors;
   };
 
   const isFormValid =
+    clientName.trim().length > 0 &&
+    projectName.trim().length > 0 &&
     originalPageUrl &&
     originalPageUrl.length >= MIN_URL_LENGTH &&
     pagePassword &&
     isPasswordValid(validatePassword(pagePassword)) &&
     validUntil &&
-    (!isCustomTemplateFlow ||
-      (!!clientName &&
-        clientName.trim().length > 0 &&
-        !!projectName &&
-        projectName.trim().length > 0));
+    !urlValidationState.isDuplicate &&
+    !urlValidationState.isChecking;
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] flex-col items-center justify-center">
       <Box
-        title="Acesso"
-        description="Personalize e proteja sua proposta com segurança"
+        title="Personalize sua proposta"
+        description="Altere os dados que precisam ser diferentes no template antes de gerar a proposta."
         handleBack={handleBack}
         handleNext={() => {
-          setErrors({});
           const validationErrors = validateForm();
 
           if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
           }
+
           handleGenerateProposal();
         }}
-        disabled={
-          !isFormValid ||
-          urlValidationState.isDuplicate ||
-          urlValidationState.isChecking ||
-          Boolean(urlValidationState.message)
-        }
+        disabled={!isFormValid}
         step={step}
       >
-        {isCustomTemplateFlow && (
-          <div className="mb-6 space-y-4">
-            <div className="space-y-1">
-              <Label htmlFor="clientName">Nome do cliente</Label>
-              <input
-                id="clientName"
-                type="text"
-                value={clientName}
-                onChange={(event) => {
-                  setClientName(event.target.value);
-                  clearError("clientName");
-                }}
-                className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
-              />
-              {errors.clientName && (
-                <p className="text-xs text-red-500">{errors.clientName}</p>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="projectName">Nome da proposta</Label>
-              <input
-                id="projectName"
-                type="text"
-                value={projectName}
-                onChange={(event) => {
-                  setProjectName(event.target.value);
-                  clearError("projectName");
-                }}
-                className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
-              />
-              {errors.projectName && (
-                <p className="text-xs text-red-500">{errors.projectName}</p>
-              )}
-            </div>
+        <div className="mb-6 space-y-4">
+          <div className="space-y-1">
+            <Label htmlFor="clientName">Nome do cliente</Label>
+            <input
+              id="clientName"
+              type="text"
+              value={clientName}
+              onChange={(event) => {
+                setClientName(event.target.value);
+                clearError("clientName");
+              }}
+              className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
+            />
+            {errors.clientName && (
+              <p className="text-xs text-red-500">{errors.clientName}</p>
+            )}
           </div>
-        )}
+
+          <div className="space-y-1">
+            <Label htmlFor="projectName">Nome da proposta</Label>
+            <input
+              id="projectName"
+              type="text"
+              value={projectName}
+              onChange={(event) => {
+                setProjectName(event.target.value);
+                clearError("projectName");
+              }}
+              className="focus:border-primary-light-400 w-full rounded-[10px] border border-gray-300 px-4 py-2 text-sm focus:outline-none"
+            />
+            {errors.projectName && (
+              <p className="text-xs text-red-500">{errors.projectName}</p>
+            )}
+          </div>
+        </div>
 
         <PageURLSection
           isPublished={false}
           userName={userName}
           originalPageUrl={originalPageUrl}
-          setOriginalPageUrl={setOriginalPageUrl}
+          setOriginalPageUrl={(url) => {
+            setOriginalPageUrl(url);
+            clearError("originalPageUrl");
+          }}
           clearError={(field: string) => clearError(field as keyof FormErrors)}
           errorMessage={errors.originalPageUrl}
           onValidationStateChange={(state) => {
@@ -255,13 +246,19 @@ export function FinalStep({
 
         <PasswordSection
           pagePassword={pagePassword}
-          setPagePassword={setPagePassword}
+          setPagePassword={(password) => {
+            setPagePassword(password);
+            clearError("pagePassword");
+          }}
           clearError={(field: string) => clearError(field as keyof FormErrors)}
         />
 
         <ValidUntilSection
           validUntil={validUntil}
-          setValidUntil={setValidUntil}
+          setValidUntil={(date) => {
+            setValidUntil(date);
+            clearError("pageValidity");
+          }}
           errors={errors.pageValidity || ""}
         />
       </Box>
