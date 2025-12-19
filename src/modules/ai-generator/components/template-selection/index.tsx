@@ -177,7 +177,8 @@ export default function TemplateSelection({
       previewTemplate: options.previewTemplate,
     });
     setTemplateType(fallbackType, { keepCustomTemplate: true });
-
+    setClientName("");
+    setProjectName("");
     setProjectDescription(description);
     setDetailedClientInfo(description);
     setCompanyInfo(template.templateData?.companyName ?? "");
