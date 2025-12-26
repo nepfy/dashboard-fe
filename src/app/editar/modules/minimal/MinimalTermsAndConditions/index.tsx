@@ -119,7 +119,7 @@ export default function MinimalTermsAndConditions({
 
       <div className="padding-global bg-black pb-20">
         <div className="container-large">
-          <div className="invest-terms" style={{ display: "none" }}>
+          <div className="invest-terms">
             <EditableText
               value={title || "Termos & Condições"}
               onChange={(newTitle: string) =>
