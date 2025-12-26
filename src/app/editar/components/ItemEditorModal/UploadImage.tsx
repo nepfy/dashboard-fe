@@ -6,19 +6,32 @@ import CloseIcon from "#/components/icons/CloseIcon";
 import UploadFileIcon from "#/components/icons/UploadFileIcon";
 import { useImageUpload } from "#/hooks/useImageUpload";
 import { createImage, getCroppedImg } from "#/helpers/imageUtils";
-import { TeamMember, Result, Testimonial, IntroductionService } from "#/types/template-data";
+import {
+  TeamMember,
+  Result,
+  Testimonial,
+  IntroductionService,
+  AboutUsItem,
+} from "#/types/template-data";
 import { ChevronLeft } from "lucide-react";
 
 interface UploadImageProps {
   onClose: () => void;
-  itemType: "team" | "results" | "testimonials" | "introServices";
-  items: (TeamMember | Result | Testimonial | IntroductionService)[];
+  itemType: "team" | "results" | "testimonials" | "introServices" | "aboutUs";
+  items: (
+    | TeamMember
+    | Result
+    | Testimonial
+    | IntroductionService
+    | AboutUsItem
+  )[];
   onUpdate: (
     data:
       | Partial<TeamMember>
       | Partial<Result>
       | Partial<Testimonial>
       | Partial<IntroductionService>
+      | Partial<AboutUsItem>
   ) => void;
 }
 
@@ -110,7 +123,11 @@ export default function UploadImage({
 
       const result = await uploadImage(croppedImageFile);
       if (result.success && result.data) {
-        if (itemType === "team" || itemType === "introServices") {
+        if (
+          itemType === "team" ||
+          itemType === "introServices" ||
+          itemType === "aboutUs"
+        ) {
           onUpdate({ image: result.data.url });
         } else if (itemType === "results" || itemType === "testimonials") {
           onUpdate({ photo: result.data.url });

@@ -569,11 +569,31 @@ export default function ItemEditorModal({
         {showUploadImage && itemType !== "expertise" && (
           <UploadImage
             onClose={() => setShowUploadImage(false)}
-            itemType={itemType as "team" | "results"}
-            items={getItemsWithChanges() as (TeamMember | Result)[]}
+            itemType={
+              itemType as
+                | "team"
+                | "results"
+                | "testimonials"
+                | "aboutUs"
+                | "introServices"
+            }
+            items={
+              getItemsWithChanges() as (
+                | TeamMember
+                | Result
+                | Testimonial
+                | AboutUsItem
+                | IntroductionService
+              )[]
+            }
             onUpdate={
               handleUpdateItem as (
-                data: Partial<TeamMember> | Partial<Result>
+                data:
+                  | Partial<TeamMember>
+                  | Partial<Result>
+                  | Partial<Testimonial>
+                  | Partial<AboutUsItem>
+                  | Partial<IntroductionService>
               ) => void
             }
           />
