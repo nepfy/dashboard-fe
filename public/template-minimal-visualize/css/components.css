@@ -110,6 +110,30 @@ pre.w-code-block code {
 .w-optimization {
   display: contents;
 }
+
+.nav_brand,
+#introduction-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1;
+}
+
+#introduction-logo .nav_logo {
+  width: 2.75rem;
+  height: 2.75rem;
+  object-fit: cover;
+  display: block;
+}
+
+.nav_brand-username {
+  font-size: 1rem;
+  color: inherit;
+  font-weight: 700;
+}
 .w-webflow-badge,
 .w-webflow-badge > img {
   box-sizing: unset;

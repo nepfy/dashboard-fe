@@ -210,6 +210,41 @@
     }
   }
 
+  function renderNavigationBrand(logo, userName) {
+    const navBrandElement = document.getElementById("introduction-logo");
+    if (!navBrandElement) {
+      console.warn(
+        "[Minimal Template] Navigation brand element not found: introduction-logo"
+      );
+      return;
+    }
+
+    const hasLogo = typeof logo === "string" && logo.trim().length > 0;
+    const hasName = typeof userName === "string" && userName.trim().length > 0;
+
+    navBrandElement.innerHTML = "";
+
+    if (hasLogo) {
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.src = logo;
+      img.alt = userName || "Logo";
+      img.className = "nav_logo";
+      navBrandElement.appendChild(img);
+    }
+
+    if (hasName) {
+      const userNameSpan = document.createElement("span");
+      userNameSpan.textContent = userName;
+      userNameSpan.className = "nav_brand-username";
+      navBrandElement.appendChild(userNameSpan);
+    }
+
+    if (!hasLogo && !hasName) {
+      navBrandElement.textContent = "";
+    }
+  }
+
   function updateFooterEmail(email, fallback) {
     const button = document.querySelector(".copy-email-button");
     if (!button) return;
@@ -1740,6 +1775,7 @@
     // Simple text fields - Introduction
     if (pd.introduction) {
       const intro = pd.introduction;
+    renderNavigationBrand(intro.logo, intro.userName);
       updateTextField("introduction-clientName", data.clientName);
       // introduction-email ID doesn't exist in HTML, skip it
       // updateTextField("introduction-email", intro.email);
