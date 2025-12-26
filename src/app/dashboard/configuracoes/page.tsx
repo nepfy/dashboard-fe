@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import EditSaveBottomBar from "#/components/EditSaveBottomBar";
 import Header from "./_components/_Header";
@@ -8,6 +9,7 @@ import CompanyData from "./_components/_CompanyData";
 import ChangePassword from "./_components/_ChangePassword";
 import { useUserAccount } from "#/hooks/useUserAccount";
 import { useFeatureFlag } from "#/hooks/useFeatureFlag";
+import { useStripeCustom } from "#/hooks/use-stripe";
 import dynamic from "next/dynamic";
 
 const NotificationSettings = dynamic(
@@ -19,6 +21,7 @@ const NotificationSettings = dynamic(
 export default function Configurations() {
   const { isLoading } = useUserAccount();
   const { isEnabled: notificationsEnabled } = useFeatureFlag("notifications_system");
+  const { subscriptionActive } = useStripeCustom();
 
   const [activeTab, setActiveTab] = useState("Dados pessoais");
   const [isEditing, setIsEditing] = useState(false);
@@ -105,6 +108,30 @@ export default function Configurations() {
         setActiveTab={handleTabChange}
         tabs={tabs}
       />
+
+  <section className="px-4 pb-6 sm:px-7">
+    <div className="mx-auto flex max-w-5xl flex-col gap-5 rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p className="text-xs uppercase tracking-[0.4em] text-indigo-600">
+          Assinatura
+        </p>
+        <p className="text-lg font-semibold text-gray-900">
+          {subscriptionActive ? "Assinatura ativa" : "Plano gratuito"}
+        </p>
+        <p className="text-sm text-gray-500">
+          {subscriptionActive
+            ? "Seu plano está atualizado. Veja os próximos recursos e faça upgrade quando quiser."
+            : "Faça upgrade para acessar recursos premium e suporte prioritário."}
+        </p>
+      </div>
+      <Link
+        href="/planos"
+        className="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 sm:w-auto"
+      >
+        Ver planos e atualizar
+      </Link>
+    </div>
+  </section>
 
       {activeTab === "Dados pessoais" && (
         <>

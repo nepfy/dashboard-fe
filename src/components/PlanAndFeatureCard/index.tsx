@@ -1,184 +1,119 @@
 "use client";
 
-import Checkbox from "#/components/icons/Checkbox";
-import Sparkle from "#/components/icons/Sparkle";
-import Slider from "react-slick";
-import type { Settings } from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-
-import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 
-interface Plan {
-  id: number;
+export interface DisplayPlanCard {
+  id: string;
   title: string;
-  features: { name: string }[];
-  credits: number;
-  price: string;
+  description: string;
+  priceLabel: string;
+  intervalLabel: string;
+  features: string[];
   buttonTitle: string;
-  isFreeTrial?: boolean;
+  savingsLabel?: string;
+  isRecommended?: boolean;
   highlight?: boolean;
 }
 
 interface PlanAndFeatureCardProps {
-  plans: Plan[];
+  plans: DisplayPlanCard[];
+  onSelectPlan: (planId: string) => void;
+  selectedPlanId: string | null;
+  processingPlanId: string | null;
 }
 
-const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({ plans }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-
-  const cardClassName = (plan: Plan) =>
-    `rounded-[var(--radius-m)] h-[520px] md:max-h-[580px] md:h-[580px] lg:max-h-[500px] lg:h-[500px] xl:h-[460px] xl:max-h-[460px] w-full sm:w-[416px] border border-[var(--color-white-neutral-light-300)] mx-4 sm:mx-2 p-[3px] ${
-      plan?.highlight && "gradient-border"
-    }`;
-
-  const renderCard = (plan: Plan) => (
-    <div className={cardClassName(plan)} key={plan.id}>
-      <div className="w-full h-full rounded-[var(--radius-s)] px-4 md:px-5 lg:px-8 py-8 xl:py-4 bg-[var(--color-white-neutral-light-200)] flex flex-col justify-between items-center">
-        <div className="flex items-stretch gap-4 mb-4 w-full h-full">
-          <div className="w-full h-full items-stretch flex flex-col justify-between">
-            <div className="flex flex-row justify-between items-center w-full sm:mb-3 xl:mb-4">
-              <h3 className="text-2xl font-medium text-[var(--color-white-neutral-light-800)]">
-                {plan.title}
-              </h3>
-              {plan?.isFreeTrial && (
-                <div className="flex w-[60px] h-[25px] rounded-full border-green-light-100 bg-secondary-light-10 font-medium text-xs items-center justify-center border b-[var(--color-green-light-100)]">
-                  30 dias
-                </div>
-              )}
-            </div>
-
-            <div>
-              {plan.features.map(
-                ({ name }: { name: string }, index: number) => (
-                  <div className="flex items-center gap-2 mb-4" key={index}>
-                    <Checkbox />
-                    <p className="text-sm text-white-neutral-light-900">
-                      {name}
-                    </p>
-                  </div>
-                )
-              )}
-
-              <div className="flex items-center gap-2 mt-6">
-                <Sparkle />
-                <p className="text-sm text-primary-light-400">
-                  {plan.credits} créditos / mês
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 mt-24">
-              <p className="md:text-2xl lg:text-3xl text-white-neutral-light-800">
-                {plan.price !== undefined
-                  ? (Number(plan.price) / 100).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                  : ""}
-                <span className="text-sm text-white-neutral-light-800">
-                  {" "}
-                  / mês
-                </span>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {plan.isFreeTrial ? (
-          <button
-            className="
-           w-full py-3 px-6 
-           rounded-[var(--radius-s)] 
-           border-1 border-[var(--color-white-neutral-light-300)] 
-           bg-[var(--color-white-neutral-light-100)] 
-           text-[var(--color-white-neutral-light-800)] 
-           font-medium 
-           hover:cursor-pointer
-           transition-colors 
-           button-inner"
-          >
-            {plan.buttonTitle}
-          </button>
-        ) : (
-          <button
-            className="
-          w-full py-3 px-6 
-          rounded-[var(--radius-s)] 
-          border-1 border-[var(--color-primary-light-25)] 
-          bg-[var(--color-primary-light-500)] 
-          text-[var(--color-white-neutral-light-100)] 
-          font-medium 
-          hover:cursor-pointer
-          transition-colors 
-          button-inner-light text-center"
-            onClick={async () => {
-              setIsLoading(true);
-              setSelectedPlan(plan);
-
-              const checkoutSession = await fetch(
-                `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/create-checkout-session`,
-                {
-                  method: "POST",
-                  body: JSON.stringify({ priceId: plan.id }),
-                }
-              );
-              const { session } = await checkoutSession.json();
-
-              if (session.url) {
-                window.open(session.url, "_blank");
-                setIsLoading(false);
-              }
-            }}
-          >
-            {isLoading && selectedPlan?.id === plan.id ? (
-              <div className="flex items-center justify-center w-full">
-                <LoaderCircle className="animate-spin text-center" />
-              </div>
-            ) : (
-              plan?.buttonTitle
-            )}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-
-  const sliderSettings: Settings = {
-    dots: false,
-    infinite: true,
-    speed: 800,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    centerMode: true,
-    centerPadding: "20px",
-  };
-
+const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
+  plans,
+  onSelectPlan,
+  selectedPlanId,
+  processingPlanId,
+}) => {
   return (
-    <>
-      {/* Mobile Carousel */}
-      <div className="sm:hidden w-full">
-        <Slider {...sliderSettings}>
-          {plans.map((plan) => (
-            <div key={plan.id} className="px-2">
-              {renderCard(plan)}
-            </div>
-          ))}
-        </Slider>
-      </div>
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {plans.map((plan) => {
+        const isSelected = plan.id === selectedPlanId;
+        const isProcessing = plan.id === processingPlanId;
 
-      {/* Desktop Layout */}
-      <div className="hidden sm:flex flex-row justify-around items-center w-full">
-        {plans.map((plan) => renderCard(plan)).reverse()}
-      </div>
-    </>
+        return (
+          <article
+            key={plan.id}
+            className={`group relative flex flex-col justify-between gap-6 rounded-[28px] border px-6 py-8 shadow-sm transition duration-300 focus-within:shadow-md ${
+              isSelected
+                ? "border-indigo-500 bg-white shadow-[0_20px_45px_rgba(26,32,126,0.12)]"
+                : "border-gray-200 bg-white hover:-translate-y-1 hover:border-indigo-200"
+            } ${plan.highlight ? "border-[3px] border-indigo-500" : ""}`}
+          >
+            <div>
+              {plan.isRecommended && (
+                <span className="inline-flex items-center rounded-full border border-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+                  Melhor oferta
+                </span>
+              )}
+
+              <div className="mt-4 flex items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-900">
+                    {plan.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">{plan.description}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold text-gray-900">
+                    {plan.priceLabel}
+                  </p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400">
+                    {plan.intervalLabel}
+                  </p>
+                </div>
+              </div>
+
+              {plan.savingsLabel && (
+                <p className="mt-3 text-sm font-semibold text-emerald-600">
+                  {plan.savingsLabel}
+                </p>
+              )}
+
+              <div className="mt-6 space-y-3">
+                {plan.features.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-2 text-sm text-gray-600"
+                  >
+                    <span className="mt-0.5 inline-flex h-3 w-3 rounded-full bg-indigo-500" />
+                    <p>{feature}</p>
+                  </div>
+                ))}
+                {plan.features.length === 0 && (
+                  <p className="text-sm text-gray-400">
+                    Recursos adicionais em breve.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className={`w-full rounded-2xl px-4 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                isSelected
+                  ? "bg-indigo-600 text-white shadow-lg"
+                  : "bg-indigo-50 text-indigo-700 hover:bg-indigo-500 hover:text-white"
+              }`}
+              disabled={isProcessing}
+              onClick={() => onSelectPlan(plan.id)}
+            >
+              {isProcessing ? (
+                <span className="flex items-center justify-center gap-2">
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                  Selecionando...
+                </span>
+              ) : (
+                plan.buttonTitle || "Selecionar plano"
+              )}
+            </button>
+          </article>
+        );
+      })}
+    </div>
   );
 };
 

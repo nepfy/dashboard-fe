@@ -24,6 +24,7 @@ export async function GET() {
         features: product.marketing_features || [],
         credits: product.metadata?.credits || "0",
         buttonTitle: product.metadata?.buttonTitle || "Assinar",
+        metadata: product.metadata || {},
       };
     });
 
