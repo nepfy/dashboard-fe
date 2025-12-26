@@ -114,7 +114,7 @@ export default function PexelsGallery({
   };
 
   const handleImageSelect = (photo: PexelsPhoto) => {
-    onSelectImage(photo.src.large);
+    onSelectImage(photo.src.large2x);
     onClose();
   };
 
