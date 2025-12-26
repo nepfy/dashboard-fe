@@ -80,7 +80,6 @@ export default function ItemEditorModal({
   itemType,
   items,
   currentItemId,
-  onUpdateItem,
   onReorderItems,
   onUpdateSection,
   hideIcon,
@@ -166,6 +165,32 @@ export default function ItemEditorModal({
     if (!currentItem) return null;
     const pendingUpdates = pendingChanges.itemUpdates[currentItem.id!] || {};
     return { ...currentItem, ...pendingUpdates };
+  };
+
+  const getItemsWithChanges = () => {
+    let itemsToReturn = items
+      .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+      .map((item) => ({
+        ...item,
+        ...pendingChanges.itemUpdates[item.id!],
+      }));
+
+    const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
+      ...item,
+      ...pendingChanges.itemUpdates[item.id!],
+    }));
+    itemsToReturn = [...itemsToReturn, ...newItemsWithUpdates];
+
+    if (pendingChanges.reorderedItems) {
+      itemsToReturn = pendingChanges.reorderedItems
+        .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
+        .map((item) => ({
+          ...item,
+          ...pendingChanges.itemUpdates[item.id!],
+        }));
+    }
+
+    return itemsToReturn;
   };
 
   const handleItemSelect = (itemId: string) => {
@@ -388,90 +413,20 @@ export default function ItemEditorModal({
 
     if (!hasChanges) return;
 
-    // Process section updates
     if (pendingChanges.sectionUpdates && onUpdateSection) {
       onUpdateSection(pendingChanges.sectionUpdates);
     }
 
-    // Handle deletions, new items, or reordering by creating/updating the full array
-    if (
+    const hasItemChanges =
+      Object.keys(pendingChanges.itemUpdates).length > 0 ||
       pendingChanges.deletedItems.length > 0 ||
       pendingChanges.newItems.length > 0 ||
-      pendingChanges.reorderedItems
-    ) {
-      let finalItems;
+      !!pendingChanges.reorderedItems;
 
-      if (pendingChanges.reorderedItems) {
-        // If items were reordered, use that as the base and apply any pending updates
-        finalItems = pendingChanges.reorderedItems.map((item) => ({
-          ...item,
-          ...pendingChanges.itemUpdates[item.id!],
-        }));
-      } else {
-        // Otherwise, start with current items
-        const currentItems = items.filter(
-          (item) => !pendingChanges.deletedItems.includes(item.id!)
-        );
+    if (hasItemChanges) {
+      const finalItems = getItemsWithChanges();
 
-        // Apply any pending updates to remaining items
-        const updatedItems = currentItems.map((item) => ({
-          ...item,
-          ...pendingChanges.itemUpdates[item.id!],
-        }));
-
-        // Add new items with their updates
-        const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
-          ...item,
-          ...pendingChanges.itemUpdates[item.id!],
-        }));
-
-        finalItems = [...updatedItems, ...newItemsWithUpdates];
-      }
-
-      // Use reorderItems to set the final state
       onReorderItems(finalItems);
-    } else {
-      // If only individual field updates (no reordering/deletion/addition)
-      // For aboutUs, we need to ensure all items are saved together to maintain consistency
-      if (
-        itemType === "aboutUs" &&
-        Object.keys(pendingChanges.itemUpdates).length > 0
-      ) {
-        // Get all current items and apply updates
-        const currentItems = items.filter(
-          (item) => !pendingChanges.deletedItems.includes(item.id!)
-        );
-
-        const updatedItems = currentItems.map((item) => {
-          const updates = pendingChanges.itemUpdates[item.id!];
-          if (updates) {
-            return { ...item, ...updates };
-          }
-          return item;
-        });
-
-        // Add any new items with their updates
-        const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
-          ...item,
-          ...pendingChanges.itemUpdates[item.id!],
-        }));
-
-        const finalItems = [...updatedItems, ...newItemsWithUpdates];
-        console.log("💾 Saving aboutUs items via reorder:", { finalItems });
-        onReorderItems(finalItems);
-      } else {
-        // For other item types, use onUpdateItem for each update
-        Object.entries(pendingChanges.itemUpdates).forEach(
-          ([itemId, updates]) => {
-            console.log("💾 Saving item update:", {
-              itemId,
-              updates,
-              itemType,
-            });
-            onUpdateItem(itemId, updates);
-          }
-        );
-      }
     }
 
     setPendingChanges({
@@ -479,6 +434,7 @@ export default function ItemEditorModal({
       reorderedItems: undefined,
       deletedItems: [],
       newItems: [],
+      sectionUpdates: undefined,
     });
 
     setTimeout(() => {
@@ -530,34 +486,6 @@ export default function ItemEditorModal({
       default:
         return "Passos";
     }
-  };
-
-  const getItemsWithChanges = () => {
-    let itemsToReturn = items
-      .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
-      .map((item) => ({
-        ...item,
-        ...pendingChanges.itemUpdates[item.id!],
-      }));
-
-    // Add new items
-    const newItemsWithUpdates = pendingChanges.newItems.map((item) => ({
-      ...item,
-      ...pendingChanges.itemUpdates[item.id!],
-    }));
-    itemsToReturn = [...itemsToReturn, ...newItemsWithUpdates];
-
-    // Apply reordered items if they exist
-    if (pendingChanges.reorderedItems) {
-      itemsToReturn = pendingChanges.reorderedItems
-        .filter((item) => !pendingChanges.deletedItems.includes(item.id!))
-        .map((item) => ({
-          ...item,
-          ...pendingChanges.itemUpdates[item.id!],
-        }));
-    }
-
-    return itemsToReturn;
   };
 
   if (!isOpen) return null;
