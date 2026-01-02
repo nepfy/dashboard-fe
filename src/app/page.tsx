@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RedirectToSignIn, SignedOut, useUser } from "@clerk/nextjs";
-import type { OnboardingStatusApiResponse } from "#/types/onboarding";
 
 function checkIsMainDomain(hostname: string): boolean {
   return (
@@ -28,31 +27,29 @@ function MainDomainHome() {
     }
 
     const routeUser = async () => {
-      try {
-        const response = await fetch("/api/onboarding/status", {
-          cache: "no-store",
-        });
-
-        if (response.ok) {
-          const result = (await response.json()) as OnboardingStatusApiResponse;
-          if (result.success && result.data && !hasRedirected) {
-            setHasRedirected(true);
-            router.push(
-              result.data.needsOnboarding ? "/onboarding" : "/dashboard"
-            );
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Failed to determine onboarding status:", error);
-      }
+      // Usar metadados do usuário diretamente (sem chamar API para evitar 401)
+      const onboardingComplete = Boolean(
+        user.publicMetadata?.onboardingComplete
+      );
 
       if (!hasRedirected) {
-        const onboardingComplete = Boolean(
-          user.publicMetadata?.onboardingComplete
-        );
         setHasRedirected(true);
-        router.push(onboardingComplete ? "/dashboard" : "/onboarding");
+
+        if (!onboardingComplete) {
+          router.replace("/onboarding");
+          return;
+        }
+
+        // Verificar se tem assinatura ativa
+        const hasActiveSubscription = (
+          user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
+        )?.subscriptionActive;
+
+        if (hasActiveSubscription) {
+          router.replace("/dashboard");
+        } else {
+          router.replace("/planos");
+        }
       }
     };
 
