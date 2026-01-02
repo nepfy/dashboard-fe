@@ -478,39 +478,98 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
       subscriptionId: (invoice as InvoiceWithSubscription).subscription,
       status: invoice.status,
       amount_paid: invoice.amount_paid,
+      customerId: invoice.customer,
     });
 
-    if ((invoice as InvoiceWithSubscription).subscription) {
-      const subscription = await stripe.subscriptions.retrieve(
-        (invoice as InvoiceWithSubscription).subscription as string
+    if (!(invoice as InvoiceWithSubscription).subscription) {
+      console.log("Invoice has no subscription, skipping");
+      return;
+    }
+
+    const subscription = await stripe.subscriptions.retrieve(
+      (invoice as InvoiceWithSubscription).subscription as string
+    );
+
+    console.log("Subscription from invoice:", {
+      subscriptionId: subscription.id,
+      status: subscription.status,
+      platform: subscription.metadata?.platform,
+      userId: subscription.metadata?.user_id,
+    });
+
+    let userId: string | null = subscription.metadata?.user_id || null;
+
+    // Se não tiver user_id no metadata, tentar buscar pelo customer email
+    if (!userId) {
+      console.log(
+        "No user_id in subscription metadata, trying to find user by customer email"
       );
 
-      console.log("Subscription from invoice:", {
-        subscriptionId: subscription.id,
-        status: subscription.status,
-        platform: subscription.metadata?.platform,
-        userId: subscription.metadata?.user_id,
-      });
+      const customer = await stripe.customers.retrieve(
+        subscription.customer as string
+      );
 
-      if (subscription.metadata?.user_id) {
-        const userId = subscription.metadata.user_id;
-        const subscriptionType =
-          subscription.metadata.subscription_type || "monthly";
+      if ("deleted" in customer && customer.deleted) {
+        console.error("Customer was deleted");
+        return;
+      }
 
-        // Sync subscription to both Clerk and database
-        const subscriptionData =
-          convertStripeSubscriptionToSubscriptionData(subscription);
-        await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
-          userId,
-          subscriptionData,
-          subscriptionType
-        );
+      if (customer.email) {
+        const clerk = await clerkClient();
+        const clerkUser = await clerk.users.getUserList({
+          emailAddress: [customer.email],
+        });
 
-        console.log("User metadata updated for payment");
+        if (clerkUser.data.length > 0) {
+          userId = clerkUser.data[0].id;
+          console.log(`Found user by email: ${userId}`);
+
+          // Atualizar metadata da subscription com o user_id encontrado
+          await stripe.subscriptions.update(subscription.id, {
+            metadata: {
+              ...subscription.metadata,
+              user_id: userId,
+            },
+          });
+          console.log("Updated subscription metadata with user_id");
+        } else {
+          console.error(`User not found for email: ${customer.email}`);
+          return;
+        }
+      } else {
+        console.error("Customer has no email address");
+        return;
       }
     }
+
+    if (!userId) {
+      console.error("Could not determine user_id for subscription");
+      return;
+    }
+
+    const subscriptionType =
+      subscription.metadata?.subscription_type || "monthly";
+
+    // Sync subscription to both Clerk and database
+    const subscriptionData =
+      convertStripeSubscriptionToSubscriptionData(subscription);
+    await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
+      userId,
+      subscriptionData,
+      subscriptionType
+    );
+
+    console.log(
+      `User metadata updated for payment. UserId: ${userId}, SubscriptionId: ${subscription.id}`
+    );
   } catch (error: unknown) {
     console.error("Error in handleInvoicePaymentSucceeded:", error);
+    if (error && typeof error === "object" && "errors" in error) {
+      console.error(
+        "Clerk error details:",
+        JSON.stringify((error as { errors: unknown }).errors, null, 2)
+      );
+    }
     throw error;
   }
 }
@@ -518,9 +577,9 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
 // GET handler para verificar se a rota está acessível (útil para debugging)
 export async function GET() {
   return NextResponse.json(
-    { 
+    {
       message: "Stripe webhook endpoint is active",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     },
     { status: 200 }
   );
@@ -550,12 +609,14 @@ export async function POST(req: NextRequest) {
   try {
     // Ler o body como texto (não como JSON) para validação do Stripe
     const body = await req.text();
-    
+
     const event = stripe.webhooks.constructEvent(
       body,
       stripeSignature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+
+    console.log(`Processing webhook event: ${event.type}`);
 
     switch (event.type) {
       case "subscription_schedule.updated":
@@ -576,6 +637,7 @@ export async function POST(req: NextRequest) {
         await handleInvoicePaymentSucceeded(event);
         break;
       default:
+        console.log(`Unhandled event type: ${event.type}`);
         break;
     }
 
