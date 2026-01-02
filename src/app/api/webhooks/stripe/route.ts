@@ -9,6 +9,8 @@ import {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 // Types for better type safety
 interface SubscriptionUpdateData {
@@ -513,6 +515,17 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
   }
 }
 
+// GET handler para verificar se a rota está acessível (útil para debugging)
+export async function GET() {
+  return NextResponse.json(
+    { 
+      message: "Stripe webhook endpoint is active",
+      timestamp: new Date().toISOString()
+    },
+    { status: 200 }
+  );
+}
+
 export async function POST(req: NextRequest) {
   if (req === null) {
     return NextResponse.json({ error: "Missing request" }, { status: 400 });
@@ -535,8 +548,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Ler o body como texto (não como JSON) para validação do Stripe
+    const body = await req.text();
+    
     const event = stripe.webhooks.constructEvent(
-      await req.text(),
+      body,
       stripeSignature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
