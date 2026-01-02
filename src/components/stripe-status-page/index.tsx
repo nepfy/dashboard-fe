@@ -19,30 +19,30 @@ export function StripeStatusPage({
   showConfetti = false,
 }: StripeStatusPageProps) {
   return (
-    <div className="min-h-screen bg-gray-50 relative">
+    <div className="relative min-h-screen bg-white">
       {showConfetti && <ConfettiAnimation />}
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="max-w-md w-full text-center space-y-8">
+      <main className="flex flex-1 items-center justify-center px-4 py-24">
+        <div className="w-full max-w-md space-y-8 text-center">
           {/* Status Icon */}
           <div className="flex justify-center">
             <StatusIcon type={type} />
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-gray-900 md:text-3xl">
             {title}
           </h1>
 
           {/* Description */}
-          <p className="text-gray-600 text-base md:text-lg leading-relaxed">
+          <p className="text-base leading-relaxed text-gray-600 md:text-lg">
             {description}
           </p>
 
           {/* Action Button */}
           <div className="pt-4">
-            <button className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200">
+            <button className="rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-3 text-base font-medium text-white shadow-lg transition-all duration-200 hover:from-indigo-600 hover:to-purple-700 hover:shadow-xl">
               <a href={buttonHref}>{buttonText}</a>
             </button>
           </div>
@@ -54,7 +54,7 @@ export function StripeStatusPage({
         <p className="text-sm text-gray-500">
           Enviamos o recibo para seu e-mail de cadastro.
         </p>
-        <p className="text-xs text-gray-400 mt-2">© 2025, Nepfy.</p>
+        <p className="mt-2 text-xs text-gray-400">© 2025, Nepfy.</p>
       </footer>
     </div>
   );

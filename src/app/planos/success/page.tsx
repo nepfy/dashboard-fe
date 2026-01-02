@@ -6,9 +6,9 @@ export default function StripeSuccessPage() {
   return (
     <StripeStatusPage
       type="success"
-      title="Assinatura ativa"
-      description="Pagamento confirmado. Recebemos o evento do Stripe, o backend atualizou sua assinatura e você será levado ao dashboard em alguns segundos."
-      buttonText="Ir para Dashboard"
+      title="Compra realizada com sucesso!"
+      description="Seu plano foi ativado e você já pode começar a aproveitar tudo que a Nepfy oferece."
+      buttonText="Finalizar cadastro"
       buttonHref="/dashboard"
       showConfetti={true}
     />

@@ -231,3 +231,19 @@ body {
 .animate-scroll {
   animation: scroll 20s linear infinite;
 }
+
+/* Confetti animation */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(var(--initial-rotation, 0deg));
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) translateX(var(--horizontal-velocity, 0px)) rotate(calc(var(--initial-rotation, 0deg) + var(--rotation-speed, 0deg)));
+    opacity: 0.8;
+  }
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall linear forwards;
+}

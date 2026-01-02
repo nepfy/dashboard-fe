@@ -19,12 +19,13 @@ interface ConfettiPiece {
 }
 
 const colors = [
-  "#6366f1", // indigo
-  "#8b5cf6", // violet
-  "#06b6d4", // cyan
-  "#10b981", // emerald
-  "#f59e0b", // amber
-  "#ef4444", // red
+  "#8b5cf6", // violet (roxo)
+  "#a78bfa", // violet-300 (roxo claro)
+  "#c4b5fd", // violet-200 (roxo muito claro)
+  "#a5f3fc", // cyan-200 (azul claro/lavanda)
+  "#bae6fd", // sky-200 (azul claro)
+  "#a7f3d0", // emerald-200 (verde claro/mint)
+  "#d1fae5", // emerald-100 (verde muito claro)
 ];
 
 const shapes = ["square", "diamond", "rectangle"] as const;
@@ -35,7 +36,7 @@ export function ConfettiAnimation() {
   useEffect(() => {
     const pieces: ConfettiPiece[] = [];
 
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 55; i++) {
       pieces.push({
         id: i,
         left: Math.random() * 100, // Random horizontal position
@@ -43,7 +44,7 @@ export function ConfettiAnimation() {
         rotation: Math.random() * 360,
         color: colors[Math.floor(Math.random() * colors.length)],
         shape: shapes[Math.floor(Math.random() * shapes.length)],
-        size: Math.random() * 15 + 8,
+        size: Math.random() * 12 + 6, // Pequenos e irregulares
         animationDelay: Math.random() * 2, // Stagger the start times
         animationDuration: Math.random() * 2 + 3, // 3-5 seconds fall time
         horizontalVelocity: (Math.random() - 0.5) * 50, // Random horizontal drift
