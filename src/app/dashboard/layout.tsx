@@ -29,9 +29,10 @@ export default function DashboardLayout({
 
     if (!user) {
       setIsCheckingOnboarding(false);
-      if (!hasRedirected) {
+      if (!hasRedirected && !hasRedirectedRef.current) {
+        hasRedirectedRef.current = true;
         setHasRedirected(true);
-        router.push("/login");
+        router.replace("/login");
       }
       return;
     }

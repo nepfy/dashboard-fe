@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSignIn, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 import { validateEmail } from "#/helpers/validateEmail";
+import type { OnboardingStatusApiResponse } from "#/types/onboarding";
 
 import Navbar from "#/components/Navbar";
 import Footer from "#/components/Footer";
@@ -22,17 +23,68 @@ import { useGoogleOAuth } from "#/hooks/useGoogleOAuth";
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, setActive } = useSignIn();
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
   const router = useRouter();
   const { authenticateWithGoogle, isReady: isGoogleAuthReady } =
     useGoogleOAuth();
+  const hasRedirectedRef = useRef(false);
 
   // Redirect if user is already signed in
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      router.push("/dashboard");
+    if (!isLoaded || !isSignedIn || !user || hasRedirectedRef.current) {
+      return;
     }
-  }, [isLoaded, isSignedIn, router]);
+
+    const redirectUser = async () => {
+      try {
+        const response = await fetch("/api/onboarding/status", {
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          const result = (await response.json()) as OnboardingStatusApiResponse;
+          if (result.success && result.data) {
+            hasRedirectedRef.current = true;
+            if (result.data.needsOnboarding) {
+              router.replace("/onboarding");
+            } else {
+              // Verificar se tem assinatura ativa
+              const hasActiveSubscription = (
+                user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
+              )?.subscriptionActive;
+
+              if (hasActiveSubscription) {
+                router.replace("/dashboard");
+              } else {
+                router.replace("/planos");
+              }
+            }
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("Failed to determine onboarding status:", error);
+      }
+
+      // Fallback: verificar metadata diretamente
+      if (!hasRedirectedRef.current) {
+        hasRedirectedRef.current = true;
+        const onboardingComplete = Boolean(
+          user.publicMetadata?.onboardingComplete
+        );
+        if (onboardingComplete) {
+          const hasActiveSubscription = (
+            user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
+          )?.subscriptionActive;
+          router.replace(hasActiveSubscription ? "/dashboard" : "/planos");
+        } else {
+          router.replace("/onboarding");
+        }
+      }
+    };
+
+    redirectUser();
+  }, [isLoaded, isSignedIn, user, router]);
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
