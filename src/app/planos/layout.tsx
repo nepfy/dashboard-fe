@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { LoaderCircle } from "lucide-react";
 
 import Link from "next/link";
+import type { OnboardingStatusApiResponse } from "#/types/onboarding";
 
 export default function DashboardLayout({
   children,
@@ -13,18 +15,62 @@ export default function DashboardLayout({
 }) {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    if (isLoaded && user) {
-      const hasActiveSubscription = (
-        user?.unsafeMetadata.stripe as { subscriptionActive?: boolean }
-      )?.subscriptionActive;
-
-      if (hasActiveSubscription) {
-        router.push("/dashboard");
-      }
+    if (!isLoaded) {
+      return;
     }
+
+    if (!user) {
+      setIsChecking(false);
+      router.push("/login");
+      return;
+    }
+
+    const verifyAccess = async () => {
+      try {
+        // Verificar se onboarding foi completado
+        const response = await fetch("/api/onboarding/status", {
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          const result = (await response.json()) as OnboardingStatusApiResponse;
+          if (result.success && result.data?.needsOnboarding) {
+            // Se precisa completar onboarding, redirecionar
+            router.replace("/onboarding");
+            return;
+          }
+        }
+
+        // Verificar se tem assinatura ativa
+        const hasActiveSubscription = (
+          user?.unsafeMetadata.stripe as { subscriptionActive?: boolean }
+        )?.subscriptionActive;
+
+        if (hasActiveSubscription) {
+          router.push("/dashboard");
+          return;
+        }
+
+        setIsChecking(false);
+      } catch (error) {
+        console.error("Failed to verify access:", error);
+        setIsChecking(false);
+      }
+    };
+
+    verifyAccess();
   }, [user, isLoaded, router]);
+
+  if (!isLoaded || isChecking) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <LoaderCircle className="text-primary-light-400 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-white">

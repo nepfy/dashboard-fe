@@ -390,7 +390,7 @@ export default function Onboarding() {
         fetch("/api/onboarding/progress", { method: "DELETE" }).catch(() => {});
 
         await user?.reload();
-        router.push("/dashboard");
+        router.push("/planos");
       }
 
       if (res?.error) {
