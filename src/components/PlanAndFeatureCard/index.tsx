@@ -73,16 +73,16 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                 <p className="text-sm text-neutral-900">{plan.description}</p>
               </div>
 
-              <div className="mb-6 flex min-h-[140px] flex-col">
+              <div className="mb-6 flex min-h-[160px] flex-col overflow-visible">
                 {plan.originalPriceLabel && (
-                  <div className="mb-0.5">
+                  <div className="mb-1">
                     <p className="text-sm text-gray-400 line-through">
                       {plan.originalPriceLabel}
                     </p>
                   </div>
                 )}
-                <div className="mb-6 flex items-center justify-between gap-2">
-                  <div className="flex items-baseline gap-1">
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-2 overflow-visible">
+                  <div className="flex flex-shrink-0 items-baseline gap-1">
                     <span className="text-4xl font-bold">
                       {plan.priceLabel}
                     </span>
@@ -93,7 +93,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                     )}
                   </div>
                   {plan.discountPercent && (
-                    <span className="ml-2 flex items-center justify-center gap-1 rounded-md bg-[#84cc16] px-4 py-3 text-xs leading-tight font-bold text-neutral-900">
+                    <span className="flex shrink-0 items-center justify-center gap-1 rounded-md bg-[#84cc16] px-4 py-3 text-xs leading-tight font-bold whitespace-nowrap text-neutral-900">
                       <span>{plan.discountPercent}%</span>
                       <span>OFF</span>
                     </span>

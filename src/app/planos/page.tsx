@@ -64,24 +64,35 @@ export default function PlansPage() {
     );
 
     const processedPlans = filteredPlans.map((plan) => {
-      const basePriceLabel = formatCurrency(plan.price, plan.currency);
-      const priceLabel = basePriceLabel;
-      const intervalSuffix = plan.interval === "year" ? "/ano" : "/mês";
+      // Se for anual, calcular preço mensal equivalente (dividir por 12)
+      const displayPrice = plan.interval === "year" 
+        ? Math.round(plan.price / 12) 
+        : plan.price;
+      
+      const priceLabel = formatCurrency(displayPrice, plan.currency);
+      // Sempre mostrar "/mês" mesmo quando for anual
+      const intervalSuffix = "/mês";
       const intervalLabel = getIntervalLabel(plan.interval);
 
       // Get original price from metadata
       const originalPrice = plan.metadata?.originalPrice
         ? parseInt(plan.metadata.originalPrice, 10)
         : undefined;
-      const originalPriceLabel = originalPrice
-        ? formatCurrency(originalPrice, plan.currency)
+      
+      // Se for anual e tiver originalPrice, também dividir por 12 para mostrar mensal equivalente
+      const displayOriginalPrice = originalPrice && plan.interval === "year"
+        ? Math.round(originalPrice / 12)
+        : originalPrice;
+      
+      const originalPriceLabel = displayOriginalPrice
+        ? formatCurrency(displayOriginalPrice, plan.currency)
         : undefined;
 
-      // Calculate discount percentage
+      // Calculate discount percentage usando os preços de exibição (mensais equivalentes)
       let discountPercent: number | undefined;
-      if (originalPrice && originalPrice > plan.price) {
+      if (displayOriginalPrice && displayOriginalPrice > displayPrice) {
         discountPercent = Math.round(
-          ((originalPrice - plan.price) / originalPrice) * 100
+          ((displayOriginalPrice - displayPrice) / displayOriginalPrice) * 100
         );
       }
 
