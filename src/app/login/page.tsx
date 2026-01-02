@@ -6,7 +6,6 @@ import { useSignIn, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 import { validateEmail } from "#/helpers/validateEmail";
-import type { OnboardingStatusApiResponse } from "#/types/onboarding";
 
 import Navbar from "#/components/Navbar";
 import Footer from "#/components/Footer";
@@ -22,6 +21,7 @@ import { useGoogleOAuth } from "#/hooks/useGoogleOAuth";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const { signIn, setActive } = useSignIn();
   const { isSignedIn, isLoaded, user } = useUser();
   const router = useRouter();
@@ -31,59 +31,35 @@ export default function Login() {
 
   // Redirect if user is already signed in
   useEffect(() => {
-    if (!isLoaded || !isSignedIn || !user || hasRedirectedRef.current) {
+    if (!isLoaded) {
       return;
     }
 
-    const redirectUser = async () => {
-      try {
-        const response = await fetch("/api/onboarding/status", {
-          cache: "no-store",
-        });
+    setIsCheckingAuth(false);
 
-        if (response.ok) {
-          const result = (await response.json()) as OnboardingStatusApiResponse;
-          if (result.success && result.data) {
-            hasRedirectedRef.current = true;
-            if (result.data.needsOnboarding) {
-              router.replace("/onboarding");
-            } else {
-              // Verificar se tem assinatura ativa
-              const hasActiveSubscription = (
-                user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
-              )?.subscriptionActive;
+    if (!isSignedIn || !user || hasRedirectedRef.current) {
+      return;
+    }
 
-              if (hasActiveSubscription) {
-                router.replace("/dashboard");
-              } else {
-                router.replace("/planos");
-              }
-            }
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Failed to determine onboarding status:", error);
-      }
+    // Usar metadados do usuário diretamente (sem chamar API)
+    hasRedirectedRef.current = true;
+    const onboardingComplete = Boolean(user.publicMetadata?.onboardingComplete);
 
-      // Fallback: verificar metadata diretamente
-      if (!hasRedirectedRef.current) {
-        hasRedirectedRef.current = true;
-        const onboardingComplete = Boolean(
-          user.publicMetadata?.onboardingComplete
-        );
-        if (onboardingComplete) {
-          const hasActiveSubscription = (
-            user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
-          )?.subscriptionActive;
-          router.replace(hasActiveSubscription ? "/dashboard" : "/planos");
-        } else {
-          router.replace("/onboarding");
-        }
-      }
-    };
+    if (!onboardingComplete) {
+      router.replace("/onboarding");
+      return;
+    }
 
-    redirectUser();
+    // Verificar se tem assinatura ativa
+    const hasActiveSubscription = (
+      user.unsafeMetadata.stripe as { subscriptionActive?: boolean }
+    )?.subscriptionActive;
+
+    if (hasActiveSubscription) {
+      router.replace("/dashboard");
+    } else {
+      router.replace("/planos");
+    }
   }, [isLoaded, isSignedIn, user, router]);
 
   const [emailAddress, setEmailAddress] = useState("");
@@ -160,6 +136,15 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+
+  // Mostrar loading enquanto verifica autenticação
+  if (isCheckingAuth) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <LoaderCircle className="text-primary-light-400 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid h-screen min-h-[800px] place-items-center pt-0 pb-0">
