@@ -58,8 +58,9 @@ export default function PlansPage() {
   );
 
   const displayPlans = useMemo(() => {
+    // Incluir planos mensais (incluindo gratuitos)
     const monthlyPlans = plans.filter(
-      (plan) => plan.interval === "month" && plan.price > 0
+      (plan) => plan.interval === "month"
     );
 
     const processedPlans = filteredPlans.map((plan) => {
@@ -246,18 +247,18 @@ export default function PlansPage() {
 
   return (
     <div className="bg-white">
-      <section className="mx-auto flex flex-col gap-4 px-4 text-center sm:py-16">
-        <h1 className="text-3xl font-semibold text-gray-900">
+      <section className="mx-auto flex flex-col gap-4 px-4 py-8 text-center sm:py-12 md:py-16">
+        <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">
           Escolha seu plano
         </h1>
-        <p className="mx-auto text-base text-neutral-500">
+        <p className="mx-auto text-sm text-neutral-500 sm:text-base">
           Selecione o plano que melhor atende às suas necessidades e aproveite o
           melhor da Nepfy.
         </p>
-        <div className="mx-auto inline-flex min-w-[657px] items-center justify-center gap-4 rounded-lg bg-[#F6F8FA] p-1">
+        <div className="mx-auto inline-flex w-full max-w-[657px] items-center justify-center gap-2 rounded-lg bg-[#F6F8FA] p-1 sm:gap-4">
           <button
             type="button"
-            className={`rounded-md px-6 py-3 font-medium ${
+            className={`rounded-md px-4 py-2 text-sm font-medium sm:px-6 sm:py-3 sm:text-base ${
               billingInterval === "month"
                 ? "border border-gray-200 bg-white text-neutral-900 shadow-xs"
                 : "bg-transparent text-neutral-900"
@@ -268,7 +269,7 @@ export default function PlansPage() {
           </button>
           <button
             type="button"
-            className={`rounded-[10px] px-6 py-3 font-bold ${
+            className={`rounded-[10px] px-4 py-2 text-sm font-bold sm:px-6 sm:py-3 sm:text-base ${
               billingInterval === "year"
                 ? "border border-gray-200 bg-white text-[#6366f1] shadow-xs"
                 : "bg-transparent text-[#6366f1]"
@@ -280,9 +281,9 @@ export default function PlansPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] px-4 pb-16">
+      <section className="mx-auto max-w-[1440px] px-4 pb-8 sm:pb-12 md:pb-16">
         {loading ? (
-          <div className="rounded-3xl border border-gray-200 bg-gray-50 p-12 text-center text-gray-500">
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 p-8 text-center text-sm text-gray-500 sm:rounded-3xl sm:p-12 sm:text-base">
             Carregando planos disponíveis...
           </div>
         ) : (
@@ -294,20 +295,20 @@ export default function PlansPage() {
           />
         )}
         {!loading && displayPlans.length === 0 && (
-          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-500">
+          <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-500 sm:rounded-3xl sm:p-12 sm:text-base">
             Nenhum plano encontrado.
           </div>
         )}
       </section>
 
-      <footer className="mx-auto max-w-[1440px] px-4 py-8">
-        <div className="flex flex-col items-center justify-center gap-4 text-center sm:flex-row">
-          <p className="text-sm text-gray-500">
+      <footer className="mx-auto max-w-[1440px] px-4 py-6 sm:py-8">
+        <div className="flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-4">
+          <p className="text-xs text-gray-500 sm:text-sm">
             Cobrança anual em uma só vez • Valor mensal apenas para comparação
           </p>
         </div>
-        <div className="flex items-center justify-end pt-16">
-          <p className="text-sm text-gray-500">© 2025 Nepfy</p>
+        <div className="flex items-center justify-center pt-8 sm:justify-end sm:pt-12 md:pt-16">
+          <p className="text-xs text-gray-500 sm:text-sm">© 2025 Nepfy</p>
         </div>
       </footer>
     </div>

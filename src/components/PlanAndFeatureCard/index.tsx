@@ -32,7 +32,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
   processingPlanId,
 }) => {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
       {plans.map((plan) => {
         const isProcessing = plan.id === processingPlanId;
         const isHighlighted = plan.highlight || plan.isRecommended;
@@ -40,7 +40,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
         return (
           <article
             key={plan.id}
-            className={`group relative flex min-w-[313px] flex-col justify-between gap-6 rounded-xl border px-4 py-8 transition duration-300 ${
+            className={`group relative flex h-full flex-col rounded-xl border px-4 py-6 transition duration-300 sm:px-4 sm:py-8 md:px-4 md:py-8 ${
               isHighlighted
                 ? "-mt-6 border-[3px] border-[#6366f1] bg-white shadow-lg"
                 : "border-gray-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-md"
@@ -62,9 +62,9 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
               </div>
             )}
 
-            <div className="">
+            <div className="flex h-full flex-col">
               <div
-                className={`mb-6 ${isHighlighted ? "mt-4 text-[#6366f1]" : ""}`}
+                className={`mb-6 min-h-[80px] ${isHighlighted ? "mt-4 text-[#6366f1]" : ""}`}
               >
                 <h3 className="mb-2 text-2xl font-bold">
                   <span className="font-light">Plano</span>{" "}
@@ -73,7 +73,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                 <p className="text-sm text-neutral-900">{plan.description}</p>
               </div>
 
-              <div className="mb-6">
+              <div className="mb-6 flex min-h-[140px] flex-col">
                 {plan.originalPriceLabel && (
                   <div className="mb-0.5">
                     <p className="text-sm text-gray-400 line-through">
@@ -103,7 +103,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                   type="button"
                   className={`w-full cursor-pointer rounded-lg px-4 py-3 text-sm transition ${
                     plan.title === "Plano Free"
-                      ? "mt-6 border-2 border-[#6366f1] bg-white text-neutral-900 hover:bg-gray-50"
+                      ? "border-2 border-[#6366f1] bg-white text-neutral-900 hover:bg-gray-50"
                       : "bg-[#6366f1] text-white hover:bg-[#5558e3]"
                   }`}
                   disabled={isProcessing}
@@ -121,6 +121,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                   )}
                 </button>
               </div>
+
               <hr className="my-6 border-gray-200" />
 
               <div className="flex-1">
