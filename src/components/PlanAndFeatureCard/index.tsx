@@ -1,16 +1,20 @@
 "use client";
 
-import { LoaderCircle } from "lucide-react";
+import { StarIcon, LoaderCircle, CheckIcon } from "lucide-react";
 
 export interface DisplayPlanCard {
   id: string;
   title: string;
   description: string;
   priceLabel: string;
+  originalPriceLabel?: string;
   intervalLabel: string;
+  intervalSuffix?: string;
   features: string[];
+  comingSoonFeatures?: string[];
   buttonTitle: string;
   savingsLabel?: string;
+  discountPercent?: number;
   isRecommended?: boolean;
   highlight?: boolean;
 }
@@ -25,91 +29,137 @@ interface PlanAndFeatureCardProps {
 const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
   plans,
   onSelectPlan,
-  selectedPlanId,
   processingPlanId,
 }) => {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {plans.map((plan) => {
-        const isSelected = plan.id === selectedPlanId;
         const isProcessing = plan.id === processingPlanId;
+        const isHighlighted = plan.highlight || plan.isRecommended;
 
         return (
           <article
             key={plan.id}
-            className={`group relative flex flex-col justify-between gap-6 rounded-[28px] border px-6 py-8 shadow-sm transition duration-300 focus-within:shadow-md ${
-              isSelected
-                ? "border-indigo-500 bg-white shadow-[0_20px_45px_rgba(26,32,126,0.12)]"
-                : "border-gray-200 bg-white hover:-translate-y-1 hover:border-indigo-200"
-            } ${plan.highlight ? "border-[3px] border-indigo-500" : ""}`}
+            className={`group relative flex min-w-[313px] flex-col justify-between gap-6 rounded-xl border px-4 py-8 transition duration-300 ${
+              isHighlighted
+                ? "-mt-6 border-[3px] border-[#6366f1] bg-white shadow-lg"
+                : "border-gray-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-md"
+            }`}
           >
-            <div>
-              {plan.isRecommended && (
-                <span className="inline-flex items-center rounded-full border border-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
-                  Melhor oferta
-                </span>
-              )}
-
-              <div className="mt-4 flex items-center justify-between gap-2">
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-900">
-                    {plan.title}
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">{plan.description}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-3xl font-bold text-gray-900">
-                    {plan.priceLabel}
-                  </p>
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400">
-                    {plan.intervalLabel}
-                  </p>
+            {plan.isRecommended && (
+              <div className="absolute -top-2 left-0 flex min-h-8 min-w-full items-center justify-center rounded-t-xl bg-[#6366f1]">
+                <div className="flex items-center gap-2">
+                  <StarIcon
+                    fill="white"
+                    stroke="white"
+                    width={10}
+                    height={10}
+                  />
+                  <span className="inline-flex items-center text-xs font-semibold whitespace-nowrap text-white">
+                    MELHOR OFERTA
+                  </span>
                 </div>
               </div>
+            )}
 
-              {plan.savingsLabel && (
-                <p className="mt-3 text-sm font-semibold text-emerald-600">
-                  {plan.savingsLabel}
-                </p>
-              )}
+            <div className="">
+              <div
+                className={`mb-6 ${isHighlighted ? "mt-4 text-[#6366f1]" : ""}`}
+              >
+                <h3 className="mb-2 text-2xl font-bold">
+                  <span className="font-light">Plano</span>{" "}
+                  {plan.title.substring(5)}
+                </h3>
+                <p className="text-sm text-neutral-900">{plan.description}</p>
+              </div>
 
-              <div className="mt-6 space-y-3">
-                {plan.features.map((feature, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-2 text-sm text-gray-600"
-                  >
-                    <span className="mt-0.5 inline-flex h-3 w-3 rounded-full bg-indigo-500" />
-                    <p>{feature}</p>
+              <div className="mb-6">
+                {plan.originalPriceLabel && (
+                  <div className="mb-0.5">
+                    <p className="text-sm text-gray-400 line-through">
+                      {plan.originalPriceLabel}
+                    </p>
                   </div>
-                ))}
-                {plan.features.length === 0 && (
+                )}
+                <div className="mb-6 flex items-center justify-between gap-2">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold">
+                      {plan.priceLabel}
+                    </span>
+                    {plan.intervalSuffix && (
+                      <span className="text-sm font-normal text-gray-400">
+                        {plan.intervalSuffix}
+                      </span>
+                    )}
+                  </div>
+                  {plan.discountPercent && (
+                    <span className="ml-2 flex items-center justify-center gap-1 rounded-md bg-[#84cc16] px-4 py-3 text-xs leading-tight font-bold text-neutral-900">
+                      <span>{plan.discountPercent}%</span>
+                      <span>OFF</span>
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className={`w-full cursor-pointer rounded-lg px-4 py-3 text-sm transition ${
+                    plan.title === "Plano Free"
+                      ? "mt-6 border-2 border-[#6366f1] bg-white text-neutral-900 hover:bg-gray-50"
+                      : "bg-[#6366f1] text-white hover:bg-[#5558e3]"
+                  }`}
+                  disabled={isProcessing}
+                  onClick={() => onSelectPlan(plan.id)}
+                >
+                  {isProcessing ? (
+                    <span
+                      className={`flex items-center justify-center gap-2 ${plan.title === "Plano Free" ? "text-neutral-900" : "font-semibold text-white"}`}
+                    >
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                      Selecionando...
+                    </span>
+                  ) : (
+                    plan.buttonTitle || "Selecionar plano"
+                  )}
+                </button>
+              </div>
+              <hr className="my-6 border-gray-200" />
+
+              <div className="flex-1">
+                <p className="mb-4 text-[9px] font-semibold text-gray-500 uppercase">
+                  O QUE ESTÁ INCLUSO
+                </p>
+                {plan.features.length === 0 &&
+                !plan.comingSoonFeatures?.length ? (
                   <p className="text-sm text-gray-400">
                     Recursos adicionais em breve.
                   </p>
+                ) : (
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        <CheckIcon className="h-4 w-4 text-[#6366f1]" />
+                        <span className="text-sm text-gray-600">{feature}</span>
+                      </li>
+                    ))}
+                    {plan.comingSoonFeatures?.map((feature, index) => (
+                      <li
+                        key={`coming-soon-${index}`}
+                        className="flex items-start gap-2"
+                      >
+                        <span className="mt-0.5 shrink-0 text-gray-400/40">
+                          ✓
+                        </span>
+                        <span className="text-sm text-gray-400">
+                          {feature}{" "}
+                          <span className="rounded bg-[#e1e2ee] px-2 py-0.5 text-xs font-semibold text-neutral-900/72">
+                            EM BREVE
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
             </div>
-
-            <button
-              type="button"
-              className={`w-full rounded-2xl px-4 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                isSelected
-                  ? "bg-indigo-600 text-white shadow-lg"
-                  : "bg-indigo-50 text-indigo-700 hover:bg-indigo-500 hover:text-white"
-              }`}
-              disabled={isProcessing}
-              onClick={() => onSelectPlan(plan.id)}
-            >
-              {isProcessing ? (
-                <span className="flex items-center justify-center gap-2">
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                  Selecionando...
-                </span>
-              ) : (
-                plan.buttonTitle || "Selecionar plano"
-              )}
-            </button>
           </article>
         );
       })}

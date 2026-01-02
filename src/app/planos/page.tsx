@@ -1,6 +1,5 @@
 "use client";
 
-import Lock from "#/components/icons/Lock";
 import PlanAndFeatureCard from "#/components/PlanAndFeatureCard";
 import { useEffect, useMemo, useState } from "react";
 
@@ -27,16 +26,15 @@ const formatCurrency = (value: number, currency: string) =>
   }).format(value / 100);
 
 const getIntervalLabel = (interval: BillingInterval) =>
-  interval === "year" ? "Cobrança anual" : "Cobrança mensal";
+  interval === "year" ? "COBRANÇA ANUAL" : "COBRANÇA MENSAL";
 
 export default function PlansPage() {
   const [plans, setPlans] = useState<StripePlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [billingInterval, setBillingInterval] =
-    useState<BillingInterval>("month");
+    useState<BillingInterval>("year");
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchPlans() {
@@ -64,9 +62,42 @@ export default function PlansPage() {
       (plan) => plan.interval === "month" && plan.price > 0
     );
 
-    return filteredPlans.map((plan) => {
-      const priceLabel = formatCurrency(plan.price, plan.currency);
+    const processedPlans = filteredPlans.map((plan) => {
+      const basePriceLabel = formatCurrency(plan.price, plan.currency);
+      const priceLabel = basePriceLabel;
+      const intervalSuffix = plan.interval === "year" ? "/ano" : "/mês";
       const intervalLabel = getIntervalLabel(plan.interval);
+
+      // Get original price from metadata
+      const originalPrice = plan.metadata?.originalPrice
+        ? parseInt(plan.metadata.originalPrice, 10)
+        : undefined;
+      const originalPriceLabel = originalPrice
+        ? formatCurrency(originalPrice, plan.currency)
+        : undefined;
+
+      // Calculate discount percentage
+      let discountPercent: number | undefined;
+      if (originalPrice && originalPrice > plan.price) {
+        discountPercent = Math.round(
+          ((originalPrice - plan.price) / originalPrice) * 100
+        );
+      }
+
+      // Parse coming soon features from metadata
+      let comingSoonFeatures: string[] = [];
+      if (plan.metadata?.comingSoonFeatures) {
+        try {
+          comingSoonFeatures = JSON.parse(plan.metadata.comingSoonFeatures);
+        } catch {
+          // If parsing fails, ignore
+        }
+      }
+
+      // Separate active features from coming soon
+      const activeFeatures = plan.features
+        .map((feature) => feature.name)
+        .filter((feature) => !comingSoonFeatures.includes(feature));
 
       let savingsLabel: string | undefined;
       if (plan.interval === "year") {
@@ -84,20 +115,49 @@ export default function PlansPage() {
         }
       }
 
+      // Determine if plan should be highlighted/recommended
+      // For monthly billing, always highlight "Plano Essencial"
+      // For yearly billing, use metadata recommendation
+      const isEssencialPlan = plan.title === "Plano Essencial";
+      const isRecommended =
+        billingInterval === "month"
+          ? isEssencialPlan
+          : plan.metadata?.recommended === "true";
+      const highlight = isRecommended;
+
       return {
         id: plan.id,
         title: plan.title,
         description: plan.description,
-        features: plan.features.map((feature) => feature.name),
+        features: activeFeatures,
+        comingSoonFeatures,
         priceLabel,
+        originalPriceLabel,
         intervalLabel,
+        intervalSuffix,
         buttonTitle: plan.buttonTitle || "Assinar agora",
         savingsLabel,
-        isRecommended: plan.metadata?.recommended === "true",
-        highlight: plan.metadata?.recommended === "true",
+        discountPercent,
+        isRecommended,
+        highlight,
       };
     });
-  }, [filteredPlans, plans]);
+
+    // Sort plans in correct order: Free, Starter, Essencial, Pro
+    const planOrder = [
+      "Plano Free",
+      "Plano Starter",
+      "Plano Essencial",
+      "Plano Pro",
+    ];
+    return processedPlans.sort((a, b) => {
+      const indexA = planOrder.indexOf(a.title);
+      const indexB = planOrder.indexOf(b.title);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  }, [filteredPlans, plans, billingInterval]);
 
   const recommendedPlanId = useMemo(
     () =>
@@ -113,83 +173,94 @@ export default function PlansPage() {
       return;
     }
 
-    if (selectedPlanId && displayPlans.some((plan) => plan.id === selectedPlanId)) {
+    if (
+      selectedPlanId &&
+      displayPlans.some((plan) => plan.id === selectedPlanId)
+    ) {
       return;
     }
 
     setSelectedPlanId(recommendedPlanId);
   }, [displayPlans, recommendedPlanId, selectedPlanId]);
 
-  const selectedPlan = displayPlans.find(
-    (plan) => plan.id === selectedPlanId
-  );
+  const selectedPlan = displayPlans.find((plan) => plan.id === selectedPlanId);
 
-  const handleSelectPlan = (planId: string) => {
-    setSelectedPlanId(planId);
-    setCheckoutError(null);
-  };
+  const handleSelectPlan = async (planId: string) => {
+    const plan = displayPlans.find((p) => p.id === planId);
+    const originalPlan = plans.find((p) => p.id === planId);
 
-  const handleCheckout = async () => {
-    if (!selectedPlan) return;
+    // Se for o plano Free (preço 0), não fazer checkout
+    if (originalPlan && originalPlan.price === 0) {
+      // Aqui você pode adicionar lógica para lidar com o plano free
+      // Por exemplo, redirecionar para o dashboard ou mostrar uma mensagem
+      return;
+    }
 
-    setProcessingPlanId(selectedPlan.id);
-    setCheckoutError(null);
+    if (!plan || !originalPlan) {
+      console.error("Plano não encontrado");
+      return;
+    }
+
+    // Definir o plano como processando
+    setProcessingPlanId(planId);
 
     try {
-      const response = await fetch(
-        "/api/stripe/create-checkout-session",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            priceId: selectedPlan.id,
-            billingCycle: billingInterval === "year" ? "annual" : "monthly",
-          }),
-        }
-      );
+      // Determinar o billing cycle baseado no intervalo selecionado
+      const billingCycle = billingInterval === "year" ? "yearly" : "monthly";
+
+      // Criar sessão de checkout no Stripe
+      const response = await fetch("/api/stripe/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          priceId: planId,
+          billingCycle,
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData?.error || "Erro ao iniciar pagamento.");
+        throw new Error(errorData.error || "Falha ao criar sessão de checkout");
       }
 
-      const payload = await response.json();
-      if (payload?.session?.url) {
-        window.location.href = payload.session.url;
-        return;
-      }
+      const data = await response.json();
 
-      throw new Error("Não foi possível redirecionar para o Stripe.");
+      if (data.session?.url) {
+        // Redirecionar para o checkout do Stripe
+        window.location.href = data.session.url;
+      } else {
+        throw new Error("URL de checkout não encontrada");
+      }
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Erro desconhecido.";
-      setCheckoutError(message);
+      console.error("Erro ao criar sessão de checkout:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Erro ao criar sessão de checkout. Tente novamente."
+      );
       setProcessingPlanId(null);
     }
   };
 
   return (
     <div className="bg-white">
-      <section className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 text-center sm:py-16">
-        <p className="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-600">
-          Nepfy Plans
-        </p>
-        <h1 className="text-4xl font-semibold text-gray-900 sm:text-5xl">
-          Escolha o plano que acompanha o seu crescimento
+      <section className="mx-auto flex flex-col gap-4 px-4 text-center sm:py-16">
+        <h1 className="text-3xl font-semibold text-gray-900">
+          Escolha seu plano
         </h1>
-        <p className="mx-auto max-w-2xl text-base text-gray-500">
-          Tenha acesso a propostas ilimitadas, acompanhamento dedicado e automações
-          para vender mais. Selecione o plano ideal e conclua tudo dentro da Nepfy.
+        <p className="mx-auto text-base text-neutral-500">
+          Selecione o plano que melhor atende às suas necessidades e aproveite o
+          melhor da Nepfy.
         </p>
-        <div className="mx-auto flex w-full max-w-[380px] justify-center gap-1 rounded-full border border-gray-200 bg-gray-50 p-1 text-sm shadow-sm">
+        <div className="mx-auto inline-flex min-w-[657px] items-center justify-center gap-4 rounded-lg bg-[#F6F8FA] p-1">
           <button
             type="button"
-            className={`flex-1 rounded-full px-4 py-2 transition ${
+            className={`rounded-md px-6 py-3 font-medium ${
               billingInterval === "month"
-                ? "bg-white font-semibold text-indigo-600 shadow"
-                : "text-gray-500 hover:text-indigo-600"
+                ? "border border-gray-200 bg-white text-neutral-900 shadow-xs"
+                : "bg-transparent text-neutral-900"
             }`}
             onClick={() => setBillingInterval("month")}
           >
@@ -197,98 +268,48 @@ export default function PlansPage() {
           </button>
           <button
             type="button"
-            className={`flex-1 rounded-full px-4 py-2 transition ${
+            className={`rounded-[10px] px-6 py-3 font-bold ${
               billingInterval === "year"
-                ? "bg-white font-semibold text-indigo-600 shadow"
-                : "text-gray-500 hover:text-indigo-600"
+                ? "border border-gray-200 bg-white text-[#6366f1] shadow-xs"
+                : "bg-transparent text-[#6366f1]"
             }`}
             onClick={() => setBillingInterval("year")}
           >
-            Anual <span className="text-xs text-emerald-600">(até 40% OFF)</span>
+            Anual (até <span className="font-black italic">40% OFF</span>)
           </button>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-          <div>
-            {loading ? (
-              <div className="rounded-3xl border border-gray-200 bg-gray-50 p-12 text-center text-gray-500">
-                Carregando planos disponíveis...
-              </div>
-            ) : displayPlans.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-500">
-                Nenhum plano encontrado.
-              </div>
-            ) : (
-              <PlanAndFeatureCard
-                plans={displayPlans}
-                onSelectPlan={handleSelectPlan}
-                selectedPlanId={selectedPlan?.id ?? null}
-                processingPlanId={processingPlanId}
-              />
-            )}
+      <section className="mx-auto max-w-[1440px] px-4 pb-16">
+        {loading ? (
+          <div className="rounded-3xl border border-gray-200 bg-gray-50 p-12 text-center text-gray-500">
+            Carregando planos disponíveis...
           </div>
-
-          <aside className="space-y-6 rounded-3xl border border-indigo-100 bg-gradient-to-b from-indigo-500/10 via-white to-white p-6 shadow-xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.4em] text-indigo-600">
-              Resumo
-            </p>
-            {selectedPlan ? (
-              <>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-lg font-semibold text-gray-900">
-                      {selectedPlan.title}
-                    </p>
-                    <span className="text-xs uppercase tracking-[0.3em] text-gray-400">
-                      {selectedPlan.intervalLabel}
-                    </span>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {selectedPlan.priceLabel}
-                  </p>
-                  {selectedPlan.savingsLabel && (
-                    <p className="text-sm font-semibold text-emerald-600">
-                      {selectedPlan.savingsLabel}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>Propostas ilimitadas</p>
-                  <p>Mentorias e suporte prioritário</p>
-                  <p>Conexão segura com criptografia Stripe</p>
-                </div>
-
-                {checkoutError && (
-                  <div className="rounded-2xl bg-red-50 p-3 text-sm text-red-600">
-                    {checkoutError}
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleCheckout}
-                  disabled={!selectedPlan || !!processingPlanId}
-                  className="w-full rounded-2xl bg-indigo-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-                >
-                  {processingPlanId ? "Processando pagamento..." : "Revisar e pagar"}
-                </button>
-
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Lock width="20" height="20" fill="#5B5B8A" />
-                  <p>Conexão segura · dados criptografados com Stripe</p>
-                </div>
-              </>
-            ) : (
-              <div className="text-sm text-gray-500">
-                Selecione um plano para visualizar o resumo e concluir a assinatura.
-              </div>
-            )}
-          </aside>
-        </div>
+        ) : (
+          <PlanAndFeatureCard
+            plans={displayPlans}
+            onSelectPlan={handleSelectPlan}
+            selectedPlanId={selectedPlan?.id ?? null}
+            processingPlanId={processingPlanId}
+          />
+        )}
+        {!loading && displayPlans.length === 0 && (
+          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-500">
+            Nenhum plano encontrado.
+          </div>
+        )}
       </section>
+
+      <footer className="mx-auto max-w-[1440px] px-4 py-8">
+        <div className="flex flex-col items-center justify-center gap-4 text-center sm:flex-row">
+          <p className="text-sm text-gray-500">
+            Cobrança anual em uma só vez • Valor mensal apenas para comparação
+          </p>
+        </div>
+        <div className="flex items-center justify-end pt-16">
+          <p className="text-sm text-gray-500">© 2025 Nepfy</p>
+        </div>
+      </footer>
     </div>
   );
 }

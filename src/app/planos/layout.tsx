@@ -27,22 +27,22 @@ export default function DashboardLayout({
   }, [user, isLoaded, router]);
 
   return (
-    <div className="flex flex-col bg-gray-50 relative w-full min-h-screen">
-      <header className="p-4 md:p-6 justify-start">
-        <div className="flex items-center justify-between max-w-6xl">
+    <div className="relative flex min-h-screen w-full flex-col bg-white">
+      <header className="justify-start p-4 md:p-6">
+        <div className="flex max-w-6xl items-center justify-between">
           <Link href="/">
             <div className="text-xl font-bold text-gray-900">.nepfy</div>
           </Link>
           <button className="md:hidden">
-            <div className="w-6 h-6 flex flex-col justify-center space-y-1">
-              <div className="w-full h-0.5 bg-gray-600"></div>
-              <div className="w-full h-0.5 bg-gray-600"></div>
-              <div className="w-full h-0.5 bg-gray-600"></div>
+            <div className="flex h-6 w-6 flex-col justify-center space-y-1">
+              <div className="h-0.5 w-full bg-gray-600"></div>
+              <div className="h-0.5 w-full bg-gray-600"></div>
+              <div className="h-0.5 w-full bg-gray-600"></div>
             </div>
           </button>
         </div>
       </header>
-      <div className="flex-1 justify-center items-center py-8">{children}</div>
+      <div className="flex-1 items-center justify-center">{children}</div>
     </div>
   );
 }

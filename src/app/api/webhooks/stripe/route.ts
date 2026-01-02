@@ -1,23 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Stripe } from "stripe";
 import { clerkClient } from "@clerk/nextjs/server";
+import {
+  ClerkStripeSyncService,
+  SubscriptionData,
+} from "#/lib/services/clerk-stripe-sync";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 export const dynamic = "force-dynamic";
 
 // Types for better type safety
-interface UserMetadata {
-  stripe?: {
-    subscriptionId?: string;
-    subscriptionType?: string;
-    subscriptionActive?: boolean;
-    subscriptionDate?: string;
-    customerId?: string;
-    status?: string;
-  };
-}
-
 interface SubscriptionUpdateData {
   collection_method: "charge_automatically";
   default_payment_method?: string;
@@ -28,35 +21,32 @@ interface InvoiceWithSubscription extends Stripe.Invoice {
   subscription: string | Stripe.Subscription | null;
 }
 
-// Helper: Attach subscription to user in Clerk (unsafeMetadata)
-async function attachSubscriptionToUser({
-  userId,
-  subscription,
-  subscriptionType,
-}: {
-  userId: string;
-  subscription: Stripe.Subscription;
-  subscriptionType?: string;
-}) {
-  const clerk = await clerkClient();
-  const user = await clerk.users.getUser(userId);
+// Helper: Convert Stripe.Subscription to SubscriptionData
+function convertStripeSubscriptionToSubscriptionData(
+  subscription: Stripe.Subscription
+): SubscriptionData {
+  // These properties exist at runtime but are not in the Stripe TypeScript types
+  // Cast through unknown to access runtime properties not in type definitions
+  const sub = subscription as unknown as Stripe.Subscription & {
+    current_period_start: number;
+    current_period_end: number;
+  };
 
-  await clerk.users.updateUserMetadata(userId, {
-    unsafeMetadata: {
-      ...user.unsafeMetadata,
-      stripe: {
-        ...((user.unsafeMetadata as UserMetadata)?.stripe || {}),
-        subscriptionId: subscription.id,
-        subscriptionType:
-          subscriptionType ||
-          (subscription.metadata?.subscription_type ?? "monthly"),
-        subscriptionActive: subscription.status === "active",
-        subscriptionDate: new Date().toISOString(),
-        customerId: subscription.customer,
-        status: subscription.status,
-      },
-    },
-  });
+  return {
+    id: subscription.id,
+    status: subscription.status,
+    customer:
+      typeof subscription.customer === "string"
+        ? subscription.customer
+        : subscription.customer.id,
+    metadata: subscription.metadata || {},
+    current_period_start: sub.current_period_start,
+    current_period_end: sub.current_period_end,
+    cancel_at_period_end: subscription.cancel_at_period_end,
+    canceled_at: subscription.canceled_at || undefined,
+    trial_start: subscription.trial_start || undefined,
+    trial_end: subscription.trial_end || undefined,
+  };
 }
 
 async function handleSubscriptionScheduleUpdated(event: Stripe.Event) {
@@ -126,12 +116,14 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
       throw new Error("User not found");
     }
 
-    // Attach subscription to user (unsafeMetadata)
-    await attachSubscriptionToUser({
-      userId: user.id,
-      subscription: subscriptionUpdated,
-      subscriptionType: subscriptionUpdated.metadata?.subscription_type,
-    });
+    // Sync subscription to both Clerk and database
+    const subscriptionData =
+      convertStripeSubscriptionToSubscriptionData(subscriptionUpdated);
+    await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
+      user.id,
+      subscriptionData,
+      subscriptionUpdated.metadata?.subscription_type
+    );
 
     console.log(
       `Subscription updated for customer ID: ${subscriptionUpdated.customer}`
@@ -185,12 +177,14 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
       },
     });
 
-    // Attach subscription to user (unsafeMetadata)
-    await attachSubscriptionToUser({
-      userId: user.id,
-      subscription,
-      subscriptionType: subscription.metadata?.subscription_type,
-    });
+    // Sync subscription to both Clerk and database
+    const subscriptionData =
+      convertStripeSubscriptionToSubscriptionData(subscription);
+    await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
+      user.id,
+      subscriptionData,
+      subscription.metadata?.subscription_type
+    );
 
     console.log(`Checkout session completed for customer ID: ${customer.id}`);
   } catch (error: unknown) {
@@ -233,9 +227,8 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
 
     if (subscriptionId && userId) {
       try {
-        const subscription = await stripe.subscriptions.retrieve(
-          subscriptionId
-        );
+        const subscription =
+          await stripe.subscriptions.retrieve(subscriptionId);
         console.log(
           "Subscription status before processing:",
           subscription.status
@@ -349,18 +342,19 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
           }
 
           // Always fetch the latest subscription state
-          const finalSubscription = await stripe.subscriptions.retrieve(
-            subscriptionId
-          );
+          const finalSubscription =
+            await stripe.subscriptions.retrieve(subscriptionId);
 
           console.log("Final subscription status:", finalSubscription.status);
 
-          // Attach subscription to user (unsafeMetadata)
-          await attachSubscriptionToUser({
+          // Sync subscription to both Clerk and database
+          const subscriptionData =
+            convertStripeSubscriptionToSubscriptionData(finalSubscription);
+          await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
             userId,
-            subscription: finalSubscription,
-            subscriptionType,
-          });
+            subscriptionData,
+            subscriptionType
+          );
 
           console.log("Mobile payment processed successfully");
         } else {
@@ -446,16 +440,17 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
           }
 
           // Always fetch the latest subscription state
-          const finalSubscription = await stripe.subscriptions.retrieve(
-            subscriptionId
-          );
+          const finalSubscription =
+            await stripe.subscriptions.retrieve(subscriptionId);
 
-          // Attach subscription to user (unsafeMetadata)
-          await attachSubscriptionToUser({
+          // Sync subscription to both Clerk and database
+          const subscriptionData =
+            convertStripeSubscriptionToSubscriptionData(finalSubscription);
+          await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
             userId,
-            subscription: finalSubscription,
-            subscriptionType,
-          });
+            subscriptionData,
+            subscriptionType
+          );
 
           console.log("Payment and subscription attached to user successfully");
         }
@@ -500,12 +495,14 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
         const subscriptionType =
           subscription.metadata.subscription_type || "monthly";
 
-        // Attach subscription to user (unsafeMetadata)
-        await attachSubscriptionToUser({
+        // Sync subscription to both Clerk and database
+        const subscriptionData =
+          convertStripeSubscriptionToSubscriptionData(subscription);
+        await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
           userId,
-          subscription,
-          subscriptionType,
-        });
+          subscriptionData,
+          subscriptionType
+        );
 
         console.log("User metadata updated for payment");
       }
