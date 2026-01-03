@@ -145,6 +145,24 @@ async function handleSubscriptionEvent(event: Stripe.Event) {
 async function handleCheckoutSessionCompleted(event: Stripe.Event) {
   try {
     const session = event.data.object as Stripe.Checkout.Session;
+
+    console.log("Checkout session completed:", {
+      sessionId: session.id,
+      customerId: session.customer,
+      subscriptionId: session.subscription,
+      metadata: session.metadata,
+    });
+
+    if (!session.subscription) {
+      console.error("Checkout session has no subscription");
+      return;
+    }
+
+    if (!session.customer) {
+      console.error("Checkout session has no customer");
+      return;
+    }
+
     const customer = await stripe.customers.retrieve(
       session.customer as string
     );
@@ -153,42 +171,70 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
       throw new Error("Customer was deleted");
     }
 
-    const email = customer.email;
-
     const clerk = await clerkClient();
+    let userId: string | null = null;
 
-    const clerkUser = await clerk.users.getUserList({
-      emailAddress: [email as string],
-    });
+    // Tentar obter user_id do metadata da session primeiro
+    if (session.metadata?.userId) {
+      userId = session.metadata.userId;
+      console.log(`Found userId from session metadata: ${userId}`);
+    }
 
-    const user = clerkUser.data[0];
+    // Se não encontrou no metadata, buscar pelo email do customer
+    if (!userId && customer.email) {
+      console.log("No userId in session metadata, searching by customer email");
+      const clerkUser = await clerk.users.getUserList({
+        emailAddress: [customer.email],
+      });
 
-    if (!user) {
-      throw new Error("User not found");
+      if (clerkUser.data.length > 0) {
+        userId = clerkUser.data[0].id;
+        console.log(`Found user by email: ${userId}`);
+      }
+    }
+
+    if (!userId) {
+      throw new Error("Could not determine user_id for checkout session");
     }
 
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
 
-    // Attach userId to subscription metadata in Stripe
+    console.log("Subscription retrieved:", {
+      subscriptionId: subscription.id,
+      status: subscription.status,
+      currentMetadata: subscription.metadata,
+    });
+
+    // Attach userId to subscription metadata in Stripe (sempre atualizar)
     await stripe.subscriptions.update(subscription.id, {
       metadata: {
         ...subscription.metadata,
-        user_id: user.id,
+        user_id: userId,
+        subscription_type:
+          subscription.metadata?.subscription_type ||
+          session.metadata?.billingCycle ||
+          "monthly",
       },
     });
+
+    console.log("Updated subscription metadata with user_id:", userId);
 
     // Sync subscription to both Clerk and database
     const subscriptionData =
       convertStripeSubscriptionToSubscriptionData(subscription);
     await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
-      user.id,
+      userId,
       subscriptionData,
-      subscription.metadata?.subscription_type
+      subscription.metadata?.subscription_type ||
+        session.metadata?.billingCycle ||
+        "monthly"
     );
 
-    console.log(`Checkout session completed for customer ID: ${customer.id}`);
+    console.log(
+      `Checkout session completed successfully. Customer: ${customer.id}, User: ${userId}, Subscription: ${subscription.id}`
+    );
   } catch (error: unknown) {
     console.error("Error handling checkout session completed:", error);
     if (
@@ -481,16 +527,69 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
       customerId: invoice.customer,
     });
 
-    if (!(invoice as InvoiceWithSubscription).subscription) {
-      console.log("Invoice has no subscription, skipping");
+    if (!invoice.customer) {
+      console.log("Invoice has no customer, skipping");
       return;
     }
 
-    const subscription = await stripe.subscriptions.retrieve(
-      (invoice as InvoiceWithSubscription).subscription as string
+    // Buscar customer
+    const customer = await stripe.customers.retrieve(
+      invoice.customer as string
     );
 
-    console.log("Subscription from invoice:", {
+    if ("deleted" in customer && customer.deleted) {
+      console.error("Customer was deleted");
+      return;
+    }
+
+    let subscription: Stripe.Subscription | null = null;
+
+    // Tentar obter subscription do invoice primeiro
+    if ((invoice as InvoiceWithSubscription).subscription) {
+      try {
+        subscription = await stripe.subscriptions.retrieve(
+          (invoice as InvoiceWithSubscription).subscription as string
+        );
+        console.log("Found subscription from invoice:", subscription.id);
+      } catch (error) {
+        console.log("Could not retrieve subscription from invoice:", error);
+      }
+    }
+
+    // Se não encontrou subscription no invoice, buscar todas as subscriptions do customer
+    if (!subscription) {
+      console.log(
+        "No subscription in invoice, searching customer subscriptions"
+      );
+      const subscriptions = await stripe.subscriptions.list({
+        customer: invoice.customer as string,
+        status: "all",
+        limit: 10,
+      });
+
+      // Pegar a subscription mais recente que está ativa ou trialing
+      subscription =
+        subscriptions.data.find(
+          (sub) => sub.status === "active" || sub.status === "trialing"
+        ) ||
+        subscriptions.data[0] ||
+        null;
+
+      if (subscription) {
+        console.log(
+          `Found subscription from customer list: ${subscription.id}`
+        );
+      } else {
+        console.log("No active subscription found for customer");
+      }
+    }
+
+    if (!subscription) {
+      console.log("Invoice has no associated subscription, cannot sync");
+      return;
+    }
+
+    console.log("Subscription found:", {
       subscriptionId: subscription.id,
       status: subscription.status,
       platform: subscription.metadata?.platform,
@@ -505,39 +604,30 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
         "No user_id in subscription metadata, trying to find user by customer email"
       );
 
-      const customer = await stripe.customers.retrieve(
-        subscription.customer as string
-      );
-
-      if ("deleted" in customer && customer.deleted) {
-        console.error("Customer was deleted");
+      if (!customer.email) {
+        console.error("Customer has no email address");
         return;
       }
 
-      if (customer.email) {
-        const clerk = await clerkClient();
-        const clerkUser = await clerk.users.getUserList({
-          emailAddress: [customer.email],
+      const clerk = await clerkClient();
+      const clerkUser = await clerk.users.getUserList({
+        emailAddress: [customer.email],
+      });
+
+      if (clerkUser.data.length > 0) {
+        userId = clerkUser.data[0].id;
+        console.log(`Found user by email: ${userId}`);
+
+        // Atualizar metadata da subscription com o user_id encontrado
+        await stripe.subscriptions.update(subscription.id, {
+          metadata: {
+            ...subscription.metadata,
+            user_id: userId,
+          },
         });
-
-        if (clerkUser.data.length > 0) {
-          userId = clerkUser.data[0].id;
-          console.log(`Found user by email: ${userId}`);
-
-          // Atualizar metadata da subscription com o user_id encontrado
-          await stripe.subscriptions.update(subscription.id, {
-            metadata: {
-              ...subscription.metadata,
-              user_id: userId,
-            },
-          });
-          console.log("Updated subscription metadata with user_id");
-        } else {
-          console.error(`User not found for email: ${customer.email}`);
-          return;
-        }
+        console.log("Updated subscription metadata with user_id");
       } else {
-        console.error("Customer has no email address");
+        console.error(`User not found for email: ${customer.email}`);
         return;
       }
     }
