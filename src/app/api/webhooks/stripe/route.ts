@@ -618,27 +618,32 @@ export async function POST(req: NextRequest) {
 
     console.log(`Processing webhook event: ${event.type}`);
 
-    switch (event.type) {
-      case "subscription_schedule.updated":
-        await handleSubscriptionScheduleUpdated(event);
-        break;
-      case "customer.subscription.created":
-      case "customer.subscription.updated":
-      case "customer.subscription.deleted":
-        await handleSubscriptionEvent(event);
-        break;
-      case "checkout.session.completed":
-        await handleCheckoutSessionCompleted(event);
-        break;
-      case "payment_intent.succeeded":
-        await handlePaymentIntentSucceeded(event);
-        break;
-      case "invoice.payment_succeeded":
-        await handleInvoicePaymentSucceeded(event);
-        break;
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
-        break;
+    // Handle invoice payment events (both formats)
+    if (
+      event.type === "invoice.payment_succeeded" ||
+      event.type === "invoice_payment.paid"
+    ) {
+      await handleInvoicePaymentSucceeded(event);
+    } else {
+      switch (event.type) {
+        case "subscription_schedule.updated":
+          await handleSubscriptionScheduleUpdated(event);
+          break;
+        case "customer.subscription.created":
+        case "customer.subscription.updated":
+        case "customer.subscription.deleted":
+          await handleSubscriptionEvent(event);
+          break;
+        case "checkout.session.completed":
+          await handleCheckoutSessionCompleted(event);
+          break;
+        case "payment_intent.succeeded":
+          await handlePaymentIntentSucceeded(event);
+          break;
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
+          break;
+      }
     }
 
     return NextResponse.json({ status: 200, message: "success" });
