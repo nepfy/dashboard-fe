@@ -148,6 +148,27 @@ export class ClerkStripeSyncService {
   }
 
   /**
+   * Helper function to safely convert timestamp to ISO string
+   */
+  private static timestampToISO(
+    timestamp: number | undefined | null
+  ): string | null {
+    if (!timestamp || timestamp === 0 || isNaN(timestamp)) {
+      return null;
+    }
+    try {
+      const date = new Date(timestamp * 1000);
+      if (isNaN(date.getTime())) {
+        return null;
+      }
+      return date.toISOString();
+    } catch (error) {
+      console.error(`Error converting timestamp ${timestamp} to ISO:`, error);
+      return null;
+    }
+  }
+
+  /**
    * Update subscription metadata in Clerk
    */
   private static async updateClerkSubscriptionMetadata(
@@ -173,22 +194,16 @@ export class ClerkStripeSyncService {
       subscriptionDate: new Date().toISOString(),
       customerId: subscription.customer,
       status: subscription.status,
-      currentPeriodStart: new Date(
-        subscription.current_period_start * 1000
-      ).toISOString(),
-      currentPeriodEnd: new Date(
-        subscription.current_period_end * 1000
-      ).toISOString(),
+      currentPeriodStart:
+        this.timestampToISO(subscription.current_period_start) ||
+        new Date().toISOString(), // Fallback to current date if invalid
+      currentPeriodEnd:
+        this.timestampToISO(subscription.current_period_end) ||
+        new Date().toISOString(), // Fallback to current date if invalid
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      canceledAt: subscription.canceled_at
-        ? new Date(subscription.canceled_at * 1000).toISOString()
-        : null,
-      trialStart: subscription.trial_start
-        ? new Date(subscription.trial_start * 1000).toISOString()
-        : null,
-      trialEnd: subscription.trial_end
-        ? new Date(subscription.trial_end * 1000).toISOString()
-        : null,
+      canceledAt: this.timestampToISO(subscription.canceled_at),
+      trialStart: this.timestampToISO(subscription.trial_start),
+      trialEnd: this.timestampToISO(subscription.trial_end),
     };
 
     await clerk.users.updateUserMetadata(userId, {
@@ -197,6 +212,27 @@ export class ClerkStripeSyncService {
         stripe: stripeMetadata,
       },
     });
+  }
+
+  /**
+   * Helper function to safely convert timestamp to Date object
+   */
+  private static timestampToDate(
+    timestamp: number | undefined | null
+  ): Date | null {
+    if (!timestamp || timestamp === 0 || isNaN(timestamp)) {
+      return null;
+    }
+    try {
+      const date = new Date(timestamp * 1000);
+      if (isNaN(date.getTime())) {
+        return null;
+      }
+      return date;
+    } catch (error) {
+      console.error(`Error converting timestamp ${timestamp} to Date:`, error);
+      return null;
+    }
   }
 
   /**
@@ -216,18 +252,14 @@ export class ClerkStripeSyncService {
         (subscriptionType as string) ||
         (subscription.metadata?.subscription_type as string) ||
         "monthly",
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      currentPeriodStart:
+        this.timestampToDate(subscription.current_period_start) || new Date(),
+      currentPeriodEnd:
+        this.timestampToDate(subscription.current_period_end) || new Date(),
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      canceledAt: subscription.canceled_at
-        ? new Date(subscription.canceled_at * 1000)
-        : null,
-      trialStart: subscription.trial_start
-        ? new Date(subscription.trial_start * 1000)
-        : null,
-      trialEnd: subscription.trial_end
-        ? new Date(subscription.trial_end * 1000)
-        : null,
+      canceledAt: this.timestampToDate(subscription.canceled_at),
+      trialStart: this.timestampToDate(subscription.trial_start),
+      trialEnd: this.timestampToDate(subscription.trial_end),
       metadata: JSON.stringify(subscription.metadata),
       updatedAt: new Date(),
     };
