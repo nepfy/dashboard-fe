@@ -287,6 +287,38 @@ export class ClerkStripeSyncService {
   }
 
   /**
+   * Convert metadata object to Stripe-compatible format (all values must be strings)
+   */
+  private static convertMetadataForStripe(
+    metadata: Record<string, unknown> | null | undefined
+  ): Record<string, string> {
+    if (!metadata || typeof metadata !== "object") {
+      return {};
+    }
+
+    const stripeMetadata: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(metadata)) {
+      if (value === null || value === undefined) {
+        continue;
+      }
+
+      // Convert non-string values to JSON strings
+      if (typeof value === "string") {
+        stripeMetadata[key] = value;
+      } else if (typeof value === "object") {
+        // Convert objects/arrays to JSON strings
+        stripeMetadata[key] = JSON.stringify(value);
+      } else {
+        // Convert other types (number, boolean) to strings
+        stripeMetadata[key] = String(value);
+      }
+    }
+
+    return stripeMetadata;
+  }
+
+  /**
    * Sync user data from Clerk to Stripe (when user profile is updated)
    */
   static async syncUserToStripe(clerkUserId: string) {
@@ -310,6 +342,11 @@ export class ClerkStripeSyncService {
         );
       }
 
+      // Convert metadata to Stripe-compatible format (all values must be strings)
+      const stripeMetadata = this.convertMetadataForStripe(
+        user.unsafeMetadata as Record<string, unknown> | null | undefined
+      );
+
       // Check if user has existing Stripe customer
       const existingSubscription = await db
         .select()
@@ -326,7 +363,7 @@ export class ClerkStripeSyncService {
             name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
             metadata: {
               clerkUserId: clerkUserId,
-              ...user.unsafeMetadata,
+              ...stripeMetadata,
             },
           });
         }
@@ -337,7 +374,7 @@ export class ClerkStripeSyncService {
           name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
           metadata: {
             clerkUserId: clerkUserId,
-            ...user.unsafeMetadata,
+            ...stripeMetadata,
           },
         });
 
