@@ -8,6 +8,11 @@ import {
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
+// Log database connection info on webhook initialization
+const dbUrl = process.env.DATABASE_URL;
+const dbHost = dbUrl ? new URL(dbUrl).hostname : "unknown";
+console.log(`[Webhook Init] Using database at: ${dbHost}`);
+
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -151,6 +156,7 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
       customerId: session.customer,
       subscriptionId: session.subscription,
       metadata: session.metadata,
+      dbHost: dbHost, // Log which database we're using
     });
 
     if (!session.subscription) {
@@ -230,16 +236,8 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
 
     console.log("Updated subscription metadata with user_id:", userId);
 
-    // GARANTIR: Verificar se usuário existe no banco antes de sincronizar
-    const dbUserId = await ClerkStripeSyncService.getDatabaseUserId(userId);
-    if (!dbUserId) {
-      console.warn(
-        `User ${userId} not found in database. This may happen if Clerk webhook hasn't processed user.created yet.`
-      );
-      // Continuar mesmo assim, pois o sync pode criar o registro se necessário
-    }
-
     // Sync subscription to both Clerk and database
+    // O syncSubscriptionToClerkAndDB agora cria o usuário automaticamente se não existir
     const subscriptionData =
       convertStripeSubscriptionToSubscriptionData(subscription);
     await ClerkStripeSyncService.syncSubscriptionToClerkAndDB(
@@ -788,14 +786,6 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
       return;
     }
 
-    // GARANTIR: Verificar se usuário existe no banco antes de sincronizar
-    const dbUserId = await ClerkStripeSyncService.getDatabaseUserId(userId);
-    if (!dbUserId) {
-      console.warn(
-        `User ${userId} not found in database. This may happen if Clerk webhook hasn't processed user.created yet.`
-      );
-    }
-
     const subscriptionType =
       subscription.metadata?.subscription_type || "monthly";
 
@@ -867,10 +857,11 @@ export async function POST(req: NextRequest) {
 
     console.log(`Processing webhook event: ${event.type}`);
 
-    // Handle invoice payment events (both formats)
+    // Handle invoice payment events (all formats)
     if (
       event.type === "invoice.payment_succeeded" ||
-      event.type === "invoice_payment.paid"
+      event.type === "invoice_payment.paid" ||
+      event.type === "invoice.paid"
     ) {
       await handleInvoicePaymentSucceeded(event);
     } else {

@@ -26,13 +26,90 @@ export class ClerkStripeSyncService {
    * Public method to allow webhooks to check if user exists in database
    */
   static async getDatabaseUserId(clerkUserId: string): Promise<string | null> {
+    // Log database connection info for debugging
+    const dbUrl = process.env.DATABASE_URL;
+    const dbHost = dbUrl ? new URL(dbUrl).hostname : "unknown";
+    console.log(
+      `[DB Debug] Looking for user ${clerkUserId} in database at ${dbHost}`
+    );
+
     const user = await db
       .select({ id: personUserTable.id })
       .from(personUserTable)
       .where(eq(personUserTable.clerkUserId, clerkUserId))
       .limit(1);
-    
+
+    if (user[0]?.id) {
+      console.log(
+        `[DB Debug] Found user ${clerkUserId} in database at ${dbHost}`
+      );
+    } else {
+      console.log(
+        `[DB Debug] User ${clerkUserId} NOT found in database at ${dbHost}`
+      );
+    }
+
     return user[0]?.id || null;
+  }
+
+  /**
+   * Ensure user exists in database, creating if necessary
+   * This is useful when Stripe webhooks arrive before Clerk webhooks
+   */
+  static async ensureUserExistsInDB(clerkUserId: string): Promise<string> {
+    // Check if user exists
+    const existingDbUserId = await this.getDatabaseUserId(clerkUserId);
+
+    if (existingDbUserId) {
+      return existingDbUserId;
+    }
+
+    // User doesn't exist, try to create from Clerk data
+    console.log(
+      `User ${clerkUserId} not found in database, attempting to create from Clerk...`
+    );
+
+    try {
+      const clerk = await clerkClient();
+      const clerkUser = await clerk.users.getUser(clerkUserId);
+
+      // Get primary email
+      const primaryEmail = clerkUser.emailAddresses.find(
+        (email) => email.id === clerkUser.primaryEmailAddressId
+      );
+
+      if (!primaryEmail) {
+        throw new Error(`No primary email found for Clerk user ${clerkUserId}`);
+      }
+
+      // Create user in database
+      const [newUser] = await db
+        .insert(personUserTable)
+        .values({
+          clerkUserId: clerkUserId,
+          email: primaryEmail.emailAddress,
+          firstName: clerkUser.firstName || null,
+          lastName: clerkUser.lastName || null,
+        })
+        .returning({ id: personUserTable.id });
+
+      if (!newUser?.id) {
+        throw new Error(
+          `Failed to create user in database for Clerk ID ${clerkUserId}`
+        );
+      }
+
+      console.log(
+        `Created user ${clerkUserId} in database with ID ${newUser.id}`
+      );
+      return newUser.id;
+    } catch (error) {
+      console.error(`Error ensuring user exists in database:`, error);
+      throw new Error(
+        `User not found in database for Clerk ID: ${clerkUserId}. ` +
+          `Attempted to create from Clerk but failed: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
   }
 
   /**
@@ -44,11 +121,8 @@ export class ClerkStripeSyncService {
     subscriptionType?: string
   ) {
     try {
-      // Converter Clerk ID para Database UUID
-      const dbUserId = await this.getDatabaseUserId(clerkUserId);
-      if (!dbUserId) {
-        throw new Error(`User not found in database for Clerk ID: ${clerkUserId}`);
-      }
+      // Converter Clerk ID para Database UUID, criando usuário se necessário
+      const dbUserId = await this.ensureUserExistsInDB(clerkUserId);
 
       // 1. Update Clerk metadata (usar clerkUserId)
       await this.updateClerkSubscriptionMetadata(
@@ -58,7 +132,11 @@ export class ClerkStripeSyncService {
       );
 
       // 2. Update local database (usar dbUserId)
-      await this.upsertSubscriptionInDB(dbUserId, subscription, subscriptionType);
+      await this.upsertSubscriptionInDB(
+        dbUserId,
+        subscription,
+        subscriptionType
+      );
 
       console.log(
         `Successfully synced subscription ${subscription.id} for Clerk user ${clerkUserId} (DB user ${dbUserId})`
@@ -195,7 +273,9 @@ export class ClerkStripeSyncService {
       // Convert Clerk ID to Database UUID
       const dbUserId = await this.getDatabaseUserId(clerkUserId);
       if (!dbUserId) {
-        throw new Error(`User not found in database for Clerk ID: ${clerkUserId}`);
+        throw new Error(
+          `User not found in database for Clerk ID: ${clerkUserId}`
+        );
       }
 
       // Check if user has existing Stripe customer
@@ -241,7 +321,9 @@ export class ClerkStripeSyncService {
         });
       }
 
-      console.log(`Successfully synced Clerk user ${clerkUserId} (DB user ${dbUserId}) to Stripe`);
+      console.log(
+        `Successfully synced Clerk user ${clerkUserId} (DB user ${dbUserId}) to Stripe`
+      );
     } catch (error) {
       console.error("Error syncing user to Stripe:", error);
       throw error;
@@ -309,9 +391,10 @@ export class ClerkStripeSyncService {
       const subscriptionData: SubscriptionData = {
         id: subscription.id,
         status: subscription.status,
-        customer: typeof subscription.customer === 'string' 
-          ? subscription.customer 
-          : subscription.customer.id,
+        customer:
+          typeof subscription.customer === "string"
+            ? subscription.customer
+            : subscription.customer.id,
         metadata: subscription.metadata || {},
         current_period_start: sub.current_period_start,
         current_period_end: sub.current_period_end,
@@ -340,7 +423,10 @@ export class ClerkStripeSyncService {
   /**
    * Reactivate subscription and sync to both systems
    */
-  static async reactivateSubscription(clerkUserId: string, subscriptionId: string) {
+  static async reactivateSubscription(
+    clerkUserId: string,
+    subscriptionId: string
+  ) {
     try {
       // Reactivate in Stripe
       await stripe.subscriptions.update(subscriptionId, {
@@ -360,9 +446,10 @@ export class ClerkStripeSyncService {
       const subscriptionData: SubscriptionData = {
         id: subscription.id,
         status: subscription.status,
-        customer: typeof subscription.customer === 'string' 
-          ? subscription.customer 
-          : subscription.customer.id,
+        customer:
+          typeof subscription.customer === "string"
+            ? subscription.customer
+            : subscription.customer.id,
         metadata: subscription.metadata || {},
         current_period_start: sub.current_period_start,
         current_period_end: sub.current_period_end,
