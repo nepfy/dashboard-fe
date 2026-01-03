@@ -23,8 +23,9 @@ export interface SubscriptionData {
 export class ClerkStripeSyncService {
   /**
    * Get database user UUID from Clerk user ID
+   * Public method to allow webhooks to check if user exists in database
    */
-  private static async getDatabaseUserId(clerkUserId: string): Promise<string | null> {
+  static async getDatabaseUserId(clerkUserId: string): Promise<string | null> {
     const user = await db
       .select({ id: personUserTable.id })
       .from(personUserTable)

@@ -197,6 +197,15 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
       throw new Error("Could not determine user_id for checkout session");
     }
 
+    // GARANTIR: Atualizar customer no Stripe com clerkUserId no metadata
+    await stripe.customers.update(customer.id, {
+      metadata: {
+        ...customer.metadata,
+        clerkUserId: userId,
+      },
+    });
+    console.log(`Updated customer ${customer.id} with clerkUserId: ${userId}`);
+
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
@@ -220,6 +229,15 @@ async function handleCheckoutSessionCompleted(event: Stripe.Event) {
     });
 
     console.log("Updated subscription metadata with user_id:", userId);
+
+    // GARANTIR: Verificar se usuário existe no banco antes de sincronizar
+    const dbUserId = await ClerkStripeSyncService.getDatabaseUserId(userId);
+    if (!dbUserId) {
+      console.warn(
+        `User ${userId} not found in database. This may happen if Clerk webhook hasn't processed user.created yet.`
+      );
+      // Continuar mesmo assim, pois o sync pode criar o registro se necessário
+    }
 
     // Sync subscription to both Clerk and database
     const subscriptionData =
@@ -260,23 +278,98 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
   try {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-    const userId = paymentIntent.metadata?.user_id;
-    const subscriptionId = paymentIntent.metadata?.subscription_id;
+    let userId: string | null | undefined = paymentIntent.metadata?.user_id;
+    let subscriptionId: string | null | undefined =
+      paymentIntent.metadata?.subscription_id;
     const subscriptionType = paymentIntent.metadata?.subscription_type;
     const platform = paymentIntent.metadata?.platform;
 
     console.log("Payment Intent Succeeded:", {
       paymentIntentId: paymentIntent.id,
+      customerId: paymentIntent.customer,
       userId,
       subscriptionId,
       subscriptionType,
       platform,
+      metadata: paymentIntent.metadata,
     });
+
+    // Se não tiver subscriptionId no metadata, buscar pelo customer
+    if (!subscriptionId && paymentIntent.customer) {
+      console.log(
+        "No subscriptionId in metadata, searching customer subscriptions"
+      );
+
+      const subscriptions = await stripe.subscriptions.list({
+        customer: paymentIntent.customer as string,
+        status: "all",
+        limit: 10,
+      });
+
+      // Pegar a subscription mais recente que está ativa, trialing ou incomplete
+      subscriptionId =
+        subscriptions.data.find(
+          (sub) =>
+            sub.status === "active" ||
+            sub.status === "trialing" ||
+            sub.status === "incomplete"
+        )?.id ||
+        subscriptions.data[0]?.id ||
+        null;
+
+      if (subscriptionId) {
+        console.log(`Found subscription from customer: ${subscriptionId}`);
+      }
+    }
+
+    // Se não tiver userId, buscar pelo customer email
+    let customer: Stripe.Customer | Stripe.DeletedCustomer | null = null;
+    if (!userId && paymentIntent.customer) {
+      console.log("No userId in metadata, searching by customer email");
+
+      customer = await stripe.customers.retrieve(
+        paymentIntent.customer as string
+      );
+
+      if (!("deleted" in customer) && customer.email) {
+        const clerk = await clerkClient();
+        const clerkUser = await clerk.users.getUserList({
+          emailAddress: [customer.email],
+        });
+
+        if (clerkUser.data.length > 0) {
+          userId = clerkUser.data[0].id;
+          console.log(`Found user by customer email: ${userId}`);
+        }
+      }
+    }
+
+    // GARANTIR: Atualizar customer no Stripe com clerkUserId no metadata se encontramos o userId
+    if (userId && paymentIntent.customer) {
+      if (!customer) {
+        customer = await stripe.customers.retrieve(
+          paymentIntent.customer as string
+        );
+      }
+
+      if (!("deleted" in customer) && !customer.metadata?.clerkUserId) {
+        await stripe.customers.update(customer.id, {
+          metadata: {
+            ...customer.metadata,
+            clerkUserId: userId,
+          },
+        });
+        console.log(
+          `Updated customer ${customer.id} with clerkUserId: ${userId}`
+        );
+      }
+    }
 
     if (subscriptionId && userId) {
       try {
-        const subscription =
-          await stripe.subscriptions.retrieve(subscriptionId);
+        const subscription = await stripe.subscriptions.retrieve(
+          subscriptionId as string
+        );
         console.log(
           "Subscription status before processing:",
           subscription.status
@@ -395,6 +488,23 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
 
           console.log("Final subscription status:", finalSubscription.status);
 
+          // Atualizar metadata da subscription com user_id se não tiver
+          if (!finalSubscription.metadata?.user_id && userId) {
+            await stripe.subscriptions.update(subscriptionId, {
+              metadata: {
+                ...finalSubscription.metadata,
+                user_id: userId,
+                subscription_type:
+                  subscriptionType ||
+                  finalSubscription.metadata?.subscription_type ||
+                  "monthly",
+              },
+            });
+            console.log(
+              "Updated subscription metadata with user_id from payment intent"
+            );
+          }
+
           // Sync subscription to both Clerk and database
           const subscriptionData =
             convertStripeSubscriptionToSubscriptionData(finalSubscription);
@@ -490,6 +600,23 @@ async function handlePaymentIntentSucceeded(event: Stripe.Event) {
           // Always fetch the latest subscription state
           const finalSubscription =
             await stripe.subscriptions.retrieve(subscriptionId);
+
+          // Atualizar metadata da subscription com user_id se não tiver
+          if (!finalSubscription.metadata?.user_id && userId) {
+            await stripe.subscriptions.update(subscriptionId, {
+              metadata: {
+                ...finalSubscription.metadata,
+                user_id: userId,
+                subscription_type:
+                  subscriptionType ||
+                  finalSubscription.metadata?.subscription_type ||
+                  "monthly",
+              },
+            });
+            console.log(
+              "Updated subscription metadata with user_id from payment intent"
+            );
+          }
 
           // Sync subscription to both Clerk and database
           const subscriptionData =
@@ -618,6 +745,17 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
         userId = clerkUser.data[0].id;
         console.log(`Found user by email: ${userId}`);
 
+        // GARANTIR: Atualizar customer no Stripe com clerkUserId no metadata
+        await stripe.customers.update(customer.id, {
+          metadata: {
+            ...customer.metadata,
+            clerkUserId: userId,
+          },
+        });
+        console.log(
+          `Updated customer ${customer.id} with clerkUserId: ${userId}`
+        );
+
         // Atualizar metadata da subscription com o user_id encontrado
         await stripe.subscriptions.update(subscription.id, {
           metadata: {
@@ -630,11 +768,32 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
         console.error(`User not found for email: ${customer.email}`);
         return;
       }
+    } else {
+      // GARANTIR: Mesmo quando userId já existe, garantir que customer tem clerkUserId
+      if (!customer.metadata?.clerkUserId) {
+        await stripe.customers.update(customer.id, {
+          metadata: {
+            ...customer.metadata,
+            clerkUserId: userId,
+          },
+        });
+        console.log(
+          `Updated customer ${customer.id} with clerkUserId: ${userId}`
+        );
+      }
     }
 
     if (!userId) {
       console.error("Could not determine user_id for subscription");
       return;
+    }
+
+    // GARANTIR: Verificar se usuário existe no banco antes de sincronizar
+    const dbUserId = await ClerkStripeSyncService.getDatabaseUserId(userId);
+    if (!dbUserId) {
+      console.warn(
+        `User ${userId} not found in database. This may happen if Clerk webhook hasn't processed user.created yet.`
+      );
     }
 
     const subscriptionType =

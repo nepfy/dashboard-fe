@@ -133,6 +133,11 @@ export function Subscription() {
         source: "subscription_page",
       });
 
+      // Determinar o billing cycle baseado no plano selecionado
+      const selectedPlan = plans.find((p) => p.id === planId);
+      const billingCycle =
+        selectedPlan?.interval === "year" ? "yearly" : "monthly";
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_NEPFY_API_URL}/stripe/create-checkout-session`,
         {
@@ -140,7 +145,10 @@ export function Subscription() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ priceId: planId }),
+          body: JSON.stringify({
+            priceId: planId,
+            billingCycle: billingCycle,
+          }),
         }
       );
 
