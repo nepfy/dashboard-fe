@@ -40,10 +40,6 @@ export default function PlansPage() {
   const [currentPlanPriceId, setCurrentPlanPriceId] = useState<string | null>(
     null
   );
-  const [, setBillingInfo] = useState<{
-    hasActiveSubscription: boolean;
-    currentPlan: { subscriptionType?: string; priceId?: string } | null;
-  } | null>(null);
   const { user } = useUser();
   const searchParams = useSearchParams();
   const isChangingPlan = searchParams?.get("change") === "true";
@@ -71,8 +67,6 @@ export default function PlansPage() {
         const res = await fetch("/api/stripe/billing-info");
         const data = await res.json();
         if (data.success) {
-          setBillingInfo(data.data);
-
           // Find current plan price ID - always check if user has subscription
           console.log("📊 Billing info response:", {
             hasActiveSubscription: data.data.hasActiveSubscription,
@@ -80,7 +74,7 @@ export default function PlansPage() {
           });
 
           if (data.data.hasActiveSubscription) {
-            // Get price ID directly from billing info response
+            // Get price ID from billing info
             if (data.data.currentPlan?.priceId) {
               const priceId = data.data.currentPlan.priceId;
               setCurrentPlanPriceId(priceId);
