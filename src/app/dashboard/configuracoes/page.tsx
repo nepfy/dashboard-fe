@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 const NotificationSettings = dynamic(() => import("./notificacoes/page"), {
   ssr: false,
 });
-// import { Subscription } from "#/modules/subscription";
+import SubscriptionManagement from "./_components/_SubscriptionManagement";
 
 export default function Configurations() {
   const { isLoading } = useUserAccount();
@@ -41,8 +41,15 @@ export default function Configurations() {
     hasChanges: boolean;
   }>(null);
 
-  const baseTabs = ["Dados pessoais", "Dados empresariais", "Segurança"];
-  const tabs = notificationsEnabled ? [...baseTabs, "Notificações"] : baseTabs;
+  const baseTabs = [
+    "Dados pessoais",
+    "Dados empresariais",
+    "Segurança",
+    "Assinatura",
+  ];
+  const tabs = notificationsEnabled
+    ? [...baseTabs.slice(0, -1), "Notificações", "Assinatura"]
+    : baseTabs;
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -108,29 +115,31 @@ export default function Configurations() {
         tabs={tabs}
       />
 
-      <section className="px-4 pb-6 sm:px-7">
-        <div className="mx-auto flex flex-col gap-5 rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-xs tracking-[0.4em] text-indigo-600 uppercase">
-              Assinatura
-            </p>
-            <p className="text-lg font-semibold text-gray-900">
-              {subscriptionActive ? "Assinatura ativa" : "Plano gratuito"}
-            </p>
-            <p className="text-sm text-gray-500">
-              {subscriptionActive
-                ? "Seu plano está atualizado. Veja os próximos recursos e faça upgrade quando quiser."
-                : "Faça upgrade para acessar recursos premium e suporte prioritário."}
-            </p>
+      {!subscriptionActive && (
+        <section className="px-4 pb-6 sm:px-7">
+          <div className="mx-auto flex flex-col gap-5 rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs tracking-[0.4em] text-indigo-600 uppercase">
+                Assinatura
+              </p>
+              <p className="text-lg font-semibold text-gray-900">
+                {subscriptionActive ? "Assinatura ativa" : "Plano gratuito"}
+              </p>
+              <p className="text-sm text-gray-500">
+                {subscriptionActive
+                  ? "Seu plano está atualizado. Veja os próximos recursos e faça upgrade quando quiser."
+                  : "Faça upgrade para acessar recursos premium e suporte prioritário."}
+              </p>
+            </div>
+            <Link
+              href="/planos"
+              className="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none sm:w-auto"
+            >
+              Ver planos e atualizar
+            </Link>
           </div>
-          <Link
-            href="/planos"
-            className="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none sm:w-auto"
-          >
-            Ver planos e atualizar
-          </Link>
-        </div>
-      </section>
+        </section>
+      )}
 
       {activeTab === "Dados pessoais" && (
         <>
@@ -178,11 +187,11 @@ export default function Configurations() {
         </div>
       )}
       {activeTab === "Notificações" && <NotificationSettings />}
-      {/* {activeTab === "Assinatura" && (
+      {activeTab === "Assinatura" && (
         <div className="p-7">
-          <Subscription />
+          <SubscriptionManagement />
         </div>
-      )} */}
+      )}
     </main>
   );
 }

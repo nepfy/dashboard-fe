@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
 
@@ -15,6 +15,8 @@ export default function DashboardLayout({
 }) {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
@@ -30,6 +32,12 @@ export default function DashboardLayout({
 
     const verifyAccess = async () => {
       try {
+        // Don't redirect if we're on the success page - let users see the confetti!
+        if (pathname === "/planos/success") {
+          setIsChecking(false);
+          return;
+        }
+
         // Verificar se onboarding foi completado
         const response = await fetch("/api/onboarding/status", {
           cache: "no-store",
@@ -44,14 +52,33 @@ export default function DashboardLayout({
           }
         }
 
-        // Verificar se tem assinatura ativa
-        const hasActiveSubscription = (
-          user?.unsafeMetadata.stripe as { subscriptionActive?: boolean }
-        )?.subscriptionActive;
+        // Allow access if user is changing plan (query param) or if no subscription
+        const isChangingPlan = searchParams?.get("change") === "true";
 
-        if (hasActiveSubscription) {
-          router.push("/dashboard");
-          return;
+        if (!isChangingPlan) {
+          // Parse stripe metadata (handle both object and JSON string)
+          let hasActiveSubscription = false;
+          const rawStripeData = user?.unsafeMetadata?.stripe;
+          if (rawStripeData) {
+            let stripeData: { subscriptionActive?: boolean } | null = null;
+            if (typeof rawStripeData === "object" && rawStripeData !== null) {
+              stripeData = rawStripeData as { subscriptionActive?: boolean };
+            } else if (typeof rawStripeData === "string") {
+              try {
+                stripeData = JSON.parse(rawStripeData) as {
+                  subscriptionActive?: boolean;
+                };
+              } catch (error) {
+                console.error("Error parsing stripe metadata:", error);
+              }
+            }
+            hasActiveSubscription = stripeData?.subscriptionActive || false;
+          }
+
+          if (hasActiveSubscription) {
+            router.push("/dashboard");
+            return;
+          }
         }
 
         setIsChecking(false);
@@ -62,7 +89,7 @@ export default function DashboardLayout({
     };
 
     verifyAccess();
-  }, [user, isLoaded, router]);
+  }, [user, isLoaded, router, pathname]);
 
   if (!isLoaded || isChecking) {
     return (

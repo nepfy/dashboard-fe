@@ -19,6 +19,7 @@ export interface DisplayPlanCard {
   discountPercent?: number;
   isRecommended?: boolean;
   highlight?: boolean;
+  isCurrentPlan?: boolean;
 }
 
 interface PlanAndFeatureCardProps {
@@ -26,12 +27,14 @@ interface PlanAndFeatureCardProps {
   onSelectPlan: (planId: string) => void;
   selectedPlanId: string | null;
   processingPlanId: string | null;
+  currentPlanPriceId?: string | null;
 }
 
 const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
   plans,
   onSelectPlan,
   processingPlanId,
+  currentPlanPriceId,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 1; // SM mostra 1 card por vez
@@ -56,6 +59,9 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
         {smPlans.map((plan) => {
           const isProcessing = plan.id === processingPlanId;
           const isHighlighted = plan.highlight || plan.isRecommended;
+          const isCurrentPlan = Boolean(
+            currentPlanPriceId === plan.id || plan.isCurrentPlan
+          );
 
           return (
             <article
@@ -66,7 +72,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                   : "border-gray-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-md"
               }`}
             >
-              {plan.isRecommended && (
+              {plan.isRecommended && !isCurrentPlan && (
                 <div className="absolute -top-2 left-0 flex min-h-8 min-w-full items-center justify-center rounded-t-xl bg-[#6366f1]">
                   <div className="flex items-center gap-2">
                     <StarIcon
@@ -77,6 +83,16 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                     />
                     <span className="inline-flex items-center text-xs font-semibold whitespace-nowrap text-white">
                       MELHOR OFERTA
+                    </span>
+                  </div>
+                </div>
+              )}
+              {isCurrentPlan && (
+                <div className="absolute -top-2 left-0 flex min-h-8 min-w-full items-center justify-center rounded-t-xl bg-green-600">
+                  <div className="flex items-center gap-2">
+                    <CheckIcon className="h-3 w-3 text-white" />
+                    <span className="inline-flex items-center text-xs font-semibold whitespace-nowrap text-white">
+                      PLANO ATUAL
                     </span>
                   </div>
                 </div>
@@ -122,11 +138,13 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                   <button
                     type="button"
                     className={`w-full cursor-pointer rounded-lg px-4 py-3 text-sm transition ${
-                      plan.title === "Plano Free"
-                        ? "border-2 border-[#6366f1] bg-white text-neutral-900 hover:bg-gray-50"
-                        : "bg-[#6366f1] text-white hover:bg-[#5558e3]"
+                      isCurrentPlan
+                        ? "cursor-not-allowed bg-green-100 text-green-800"
+                        : plan.title === "Plano Free"
+                          ? "border-2 border-[#6366f1] bg-white text-neutral-900 hover:bg-gray-50"
+                          : "bg-[#6366f1] text-white hover:bg-[#5558e3]"
                     }`}
-                    disabled={isProcessing}
+                    disabled={isProcessing || isCurrentPlan}
                     onClick={() => onSelectPlan(plan.id)}
                   >
                     {isProcessing ? (
@@ -136,6 +154,8 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                         <LoaderCircle className="h-4 w-4 animate-spin" />
                         Selecionando...
                       </span>
+                    ) : isCurrentPlan ? (
+                      "Plano Atual"
                     ) : (
                       plan.buttonTitle || "Selecionar plano"
                     )}
@@ -193,6 +213,9 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
         {plans.map((plan) => {
           const isProcessing = plan.id === processingPlanId;
           const isHighlighted = plan.highlight || plan.isRecommended;
+          const isCurrentPlan = Boolean(
+            currentPlanPriceId === plan.id || plan.isCurrentPlan
+          );
 
           return (
             <article
@@ -203,7 +226,7 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                   : "border-gray-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-md"
               }`}
             >
-              {plan.isRecommended && (
+              {plan.isRecommended && !isCurrentPlan && (
                 <div className="absolute -top-2 left-0 flex min-h-8 min-w-full items-center justify-center rounded-t-xl bg-[#6366f1]">
                   <div className="flex items-center gap-2">
                     <StarIcon
@@ -214,6 +237,16 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                     />
                     <span className="inline-flex items-center text-xs font-semibold whitespace-nowrap text-white">
                       MELHOR OFERTA
+                    </span>
+                  </div>
+                </div>
+              )}
+              {isCurrentPlan && (
+                <div className="absolute -top-2 left-0 flex min-h-8 min-w-full items-center justify-center rounded-t-xl bg-green-600">
+                  <div className="flex items-center gap-2">
+                    <CheckIcon className="h-3 w-3 text-white" />
+                    <span className="inline-flex items-center text-xs font-semibold whitespace-nowrap text-white">
+                      PLANO ATUAL
                     </span>
                   </div>
                 </div>
@@ -259,11 +292,13 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                   <button
                     type="button"
                     className={`w-full cursor-pointer rounded-lg px-4 py-3 text-sm transition ${
-                      plan.title === "Plano Free"
-                        ? "border-2 border-[#6366f1] bg-white text-neutral-900 hover:bg-gray-50"
-                        : "bg-[#6366f1] text-white hover:bg-[#5558e3]"
+                      isCurrentPlan
+                        ? "cursor-not-allowed bg-green-100 text-green-800"
+                        : plan.title === "Plano Free"
+                          ? "border-2 border-[#6366f1] bg-white text-neutral-900 hover:bg-gray-50"
+                          : "bg-[#6366f1] text-white hover:bg-[#5558e3]"
                     }`}
-                    disabled={isProcessing}
+                    disabled={isProcessing || isCurrentPlan}
                     onClick={() => onSelectPlan(plan.id)}
                   >
                     {isProcessing ? (
@@ -273,6 +308,8 @@ const PlanAndFeatureCard: React.FC<PlanAndFeatureCardProps> = ({
                         <LoaderCircle className="h-4 w-4 animate-spin" />
                         Selecionando...
                       </span>
+                    ) : isCurrentPlan ? (
+                      "Plano Atual"
                     ) : (
                       plan.buttonTitle || "Selecionar plano"
                     )}

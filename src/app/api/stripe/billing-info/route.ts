@@ -24,12 +24,39 @@ export async function GET() {
       );
     }
 
-    // Get user's Stripe metadata from Clerk
-    const stripeMetadata = user.unsafeMetadata?.stripe as {
+    // Get user's Stripe metadata from Clerk (handle both object and JSON string)
+    let stripeMetadata: {
       customerId?: string;
       subscriptionId?: string;
       subscriptionActive?: boolean;
-    };
+      subscriptionType?: string;
+    } | null = null;
+    let parsedMetadata: Record<string, unknown> | null = null;
+
+    const rawStripeData = user.unsafeMetadata?.stripe;
+    if (rawStripeData) {
+      if (typeof rawStripeData === "object" && rawStripeData !== null) {
+        parsedMetadata = rawStripeData as Record<string, unknown>;
+        stripeMetadata = rawStripeData as {
+          customerId?: string;
+          subscriptionId?: string;
+          subscriptionActive?: boolean;
+          subscriptionType?: string;
+        };
+      } else if (typeof rawStripeData === "string") {
+        try {
+          parsedMetadata = JSON.parse(rawStripeData) as Record<string, unknown>;
+          stripeMetadata = parsedMetadata as {
+            customerId?: string;
+            subscriptionId?: string;
+            subscriptionActive?: boolean;
+            subscriptionType?: string;
+          };
+        } catch (error) {
+          console.error("Error parsing stripe metadata:", error);
+        }
+      }
+    }
 
     if (!stripeMetadata?.customerId) {
       // User doesn't have a Stripe customer ID, return free plan info
@@ -67,17 +94,55 @@ export async function GET() {
     // Get active subscription
     let currentSubscription: StripeSubscriptionData | null = null;
     let nextBillingDate: Date | null = null;
+    let currentPriceId: string | null = null;
     
     if (stripeMetadata.subscriptionId && stripeMetadata.subscriptionActive) {
       try {
-        currentSubscription = await stripe.subscriptions.retrieve(
+        // Fetch subscription with all needed data in one call
+        const subscription = await stripe.subscriptions.retrieve(
           stripeMetadata.subscriptionId,
-          { expand: ["default_payment_method"] }
-        ) as unknown as StripeSubscriptionData;
+          { expand: ["default_payment_method", "items.data.price"] }
+        );
+
+        // These properties exist at runtime but are not in the Stripe TypeScript types
+        // Cast through unknown to access runtime properties not in type definitions
+        const sub = subscription as unknown as Stripe.Subscription & {
+          current_period_start: number;
+          current_period_end: number;
+        };
+
+        // Convert to StripeSubscriptionData format
+        currentSubscription = {
+          id: subscription.id,
+          status: subscription.status,
+          current_period_start: sub.current_period_start,
+          current_period_end: sub.current_period_end,
+          cancel_at_period_end: subscription.cancel_at_period_end,
+          default_payment_method: subscription.default_payment_method,
+        } as StripeSubscriptionData;
 
         // Calculate next billing date
         if (currentSubscription.status === "active") {
           nextBillingDate = new Date(currentSubscription.current_period_end * 1000);
+        }
+
+        // Get current price ID from subscription items
+        // Handle both expanded and non-expanded price objects
+        const firstItem = subscription.items?.data?.[0];
+        if (firstItem) {
+          // Price can be a string (ID) or an object (expanded)
+          if (typeof firstItem.price === "string") {
+            currentPriceId = firstItem.price;
+          } else if (firstItem.price?.id) {
+            currentPriceId = firstItem.price.id;
+          }
+          
+          if (currentPriceId) {
+            console.log("✅ Found current price ID in billing-info:", currentPriceId);
+          } else {
+            console.log("⚠️ No price ID found in subscription items");
+            console.log("First item:", JSON.stringify(firstItem, null, 2));
+          }
         }
       } catch (error) {
         console.error("Error fetching subscription:", error);
@@ -118,6 +183,22 @@ export async function GET() {
       hostedInvoiceUrl: invoice.hosted_invoice_url,
     }));
 
+    // Get subscription type from metadata or subscription
+    let subscriptionType = "monthly";
+    if (parsedMetadata?.subscriptionType) {
+      subscriptionType = String(parsedMetadata.subscriptionType);
+    } else if (stripeMetadata?.subscriptionType) {
+      subscriptionType = stripeMetadata.subscriptionType;
+    }
+    
+    // Also check subscription metadata from Stripe
+    if (currentSubscription) {
+      const subMetadata = (currentSubscription as unknown as { metadata?: { subscription_type?: string } })?.metadata;
+      if (subMetadata?.subscription_type) {
+        subscriptionType = subMetadata.subscription_type;
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -125,9 +206,11 @@ export async function GET() {
         currentPlan: currentSubscription ? {
           id: currentSubscription.id,
           status: currentSubscription.status,
+          subscriptionType: subscriptionType,
           currentPeriodStart: currentSubscription.current_period_start,
           currentPeriodEnd: currentSubscription.current_period_end,
           cancelAtPeriodEnd: currentSubscription.cancel_at_period_end,
+          priceId: currentPriceId,
         } : null,
         paymentMethod,
         nextBillingDate,

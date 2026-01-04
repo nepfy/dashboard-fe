@@ -2,6 +2,8 @@
 
 import PlanAndFeatureCard from "#/components/PlanAndFeatureCard";
 import { useEffect, useMemo, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 
 type BillingInterval = "month" | "year";
 
@@ -35,6 +37,16 @@ export default function PlansPage() {
     useState<BillingInterval>("year");
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
+  const [currentPlanPriceId, setCurrentPlanPriceId] = useState<string | null>(
+    null
+  );
+  const [, setBillingInfo] = useState<{
+    hasActiveSubscription: boolean;
+    currentPlan: { subscriptionType?: string; priceId?: string } | null;
+  } | null>(null);
+  const { user } = useUser();
+  const searchParams = useSearchParams();
+  const isChangingPlan = searchParams?.get("change") === "true";
 
   useEffect(() => {
     async function fetchPlans() {
@@ -52,6 +64,60 @@ export default function PlansPage() {
     fetchPlans();
   }, []);
 
+  // Fetch current subscription info and find current plan price ID
+  useEffect(() => {
+    async function fetchBillingInfo() {
+      try {
+        const res = await fetch("/api/stripe/billing-info");
+        const data = await res.json();
+        if (data.success) {
+          setBillingInfo(data.data);
+
+          // Find current plan price ID - always check if user has subscription
+          console.log("📊 Billing info response:", {
+            hasActiveSubscription: data.data.hasActiveSubscription,
+            currentPlan: data.data.currentPlan,
+          });
+
+          if (data.data.hasActiveSubscription) {
+            // Get price ID directly from billing info response
+            if (data.data.currentPlan?.priceId) {
+              const priceId = data.data.currentPlan.priceId;
+              setCurrentPlanPriceId(priceId);
+              console.log(
+                "✅ Current plan price ID from billing-info:",
+                priceId
+              );
+            } else {
+              console.log(
+                "⚠️ No priceId in currentPlan:",
+                data.data.currentPlan
+              );
+            }
+
+            // Set billing interval to match current subscription (only if changing plan)
+            if (isChangingPlan && data.data.currentPlan?.subscriptionType) {
+              const subscriptionType = data.data.currentPlan.subscriptionType;
+              const currentInterval =
+                subscriptionType === "yearly" ? "year" : "month";
+              setBillingInterval(currentInterval);
+            }
+          } else {
+            // No active subscription, clear current plan
+            setCurrentPlanPriceId(null);
+            console.log("❌ No active subscription found");
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch billing info:", e);
+      }
+    }
+
+    if (user) {
+      fetchBillingInfo();
+    }
+  }, [user, isChangingPlan]);
+
   const filteredPlans = useMemo(
     () => plans.filter((plan) => plan.interval === billingInterval),
     [plans, billingInterval]
@@ -59,16 +125,13 @@ export default function PlansPage() {
 
   const displayPlans = useMemo(() => {
     // Incluir planos mensais (incluindo gratuitos)
-    const monthlyPlans = plans.filter(
-      (plan) => plan.interval === "month"
-    );
+    const monthlyPlans = plans.filter((plan) => plan.interval === "month");
 
     const processedPlans = filteredPlans.map((plan) => {
       // Se for anual, calcular preço mensal equivalente (dividir por 12)
-      const displayPrice = plan.interval === "year" 
-        ? Math.round(plan.price / 12) 
-        : plan.price;
-      
+      const displayPrice =
+        plan.interval === "year" ? Math.round(plan.price / 12) : plan.price;
+
       const priceLabel = formatCurrency(displayPrice, plan.currency);
       // Sempre mostrar "/mês" mesmo quando for anual
       const intervalSuffix = "/mês";
@@ -78,12 +141,13 @@ export default function PlansPage() {
       const originalPrice = plan.metadata?.originalPrice
         ? parseInt(plan.metadata.originalPrice, 10)
         : undefined;
-      
+
       // Se for anual e tiver originalPrice, também dividir por 12 para mostrar mensal equivalente
-      const displayOriginalPrice = originalPrice && plan.interval === "year"
-        ? Math.round(originalPrice / 12)
-        : originalPrice;
-      
+      const displayOriginalPrice =
+        originalPrice && plan.interval === "year"
+          ? Math.round(originalPrice / 12)
+          : originalPrice;
+
       const originalPriceLabel = displayOriginalPrice
         ? formatCurrency(displayOriginalPrice, plan.currency)
         : undefined;
@@ -171,34 +235,57 @@ export default function PlansPage() {
     });
   }, [filteredPlans, plans, billingInterval]);
 
+  // Update displayPlans to mark current plan
+  const displayPlansWithCurrent = useMemo(() => {
+    return displayPlans.map((plan) => {
+      const isCurrent = currentPlanPriceId === plan.id;
+      if (isCurrent) {
+        console.log(
+          "✅ Current plan identified:",
+          plan.title,
+          "Price ID:",
+          plan.id,
+          "Current Price ID:",
+          currentPlanPriceId
+        );
+      }
+      return {
+        ...plan,
+        isCurrentPlan: isCurrent,
+      };
+    });
+  }, [displayPlans, currentPlanPriceId]);
+
   const recommendedPlanId = useMemo(
     () =>
-      displayPlans.find((plan) => plan.isRecommended)?.id ||
-      displayPlans[displayPlans.length - 1]?.id ||
+      displayPlansWithCurrent.find((plan) => plan.isRecommended)?.id ||
+      displayPlansWithCurrent[displayPlansWithCurrent.length - 1]?.id ||
       null,
-    [displayPlans]
+    [displayPlansWithCurrent]
   );
 
   useEffect(() => {
-    if (!displayPlans.length) {
+    if (!displayPlansWithCurrent.length) {
       setSelectedPlanId(null);
       return;
     }
 
     if (
       selectedPlanId &&
-      displayPlans.some((plan) => plan.id === selectedPlanId)
+      displayPlansWithCurrent.some((plan) => plan.id === selectedPlanId)
     ) {
       return;
     }
 
     setSelectedPlanId(recommendedPlanId);
-  }, [displayPlans, recommendedPlanId, selectedPlanId]);
+  }, [displayPlansWithCurrent, recommendedPlanId, selectedPlanId]);
 
-  const selectedPlan = displayPlans.find((plan) => plan.id === selectedPlanId);
+  const selectedPlan = displayPlansWithCurrent.find(
+    (plan) => plan.id === selectedPlanId
+  );
 
   const handleSelectPlan = async (planId: string) => {
-    const plan = displayPlans.find((p) => p.id === planId);
+    const plan = displayPlansWithCurrent.find((p) => p.id === planId);
     const originalPlan = plans.find((p) => p.id === planId);
 
     // Se for o plano Free (preço 0), não fazer checkout
@@ -299,10 +386,11 @@ export default function PlansPage() {
           </div>
         ) : (
           <PlanAndFeatureCard
-            plans={displayPlans}
+            plans={displayPlansWithCurrent}
             onSelectPlan={handleSelectPlan}
             selectedPlanId={selectedPlan?.id ?? null}
             processingPlanId={processingPlanId}
+            currentPlanPriceId={currentPlanPriceId}
           />
         )}
         {!loading && displayPlans.length === 0 && (

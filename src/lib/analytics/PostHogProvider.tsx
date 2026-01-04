@@ -19,7 +19,22 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     if (!posthog) return;
 
     const userMetadata = user.unsafeMetadata;
-    const stripeData = (userMetadata?.stripe as Record<string, unknown>) || {};
+    
+    // Parse stripe metadata (handle both object and JSON string)
+    let stripeData: Record<string, unknown> = {};
+    const rawStripeData = userMetadata?.stripe;
+    if (rawStripeData) {
+      if (typeof rawStripeData === "object" && rawStripeData !== null) {
+        stripeData = rawStripeData as Record<string, unknown>;
+      } else if (typeof rawStripeData === "string") {
+        try {
+          stripeData = JSON.parse(rawStripeData) as Record<string, unknown>;
+        } catch (error) {
+          console.error("Error parsing stripe metadata in PostHog:", error);
+        }
+      }
+    }
+    
     const onboardingData = userMetadata?.onboardingComplete
       ? {
           applicationName: userMetadata?.applicationName,
@@ -32,10 +47,10 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       email: user.emailAddresses[0]?.emailAddress,
       name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
       plan: stripeData.subscriptionActive ? "paid" : "free",
-      subscription_status: stripeData.status || "none",
-      subscription_active: stripeData.subscriptionActive || false,
-      subscription_id: stripeData.subscriptionId || null,
-      customer_id: stripeData.customerId || null,
+      subscription_status: (stripeData.status as string) || "none",
+      subscription_active: Boolean(stripeData.subscriptionActive),
+      subscription_id: (stripeData.subscriptionId as string) || null,
+      customer_id: (stripeData.customerId as string) || null,
       onboarding_complete: userMetadata?.onboardingComplete || false,
       ...onboardingData,
     });

@@ -23,15 +23,40 @@ interface UserMetadata {
 export function useStripeCustom() {
   const { user, isLoaded } = useUser();
 
+  // Helper function to parse stripe metadata (handles both object and JSON string)
+  const getStripeMetadata = (): StripeMetadata | null => {
+    if (!user?.unsafeMetadata) return null;
+    
+    const metadata = user.unsafeMetadata as UserMetadata;
+    const stripeData = metadata?.stripe;
+    
+    if (!stripeData) return null;
+    
+    // If it's already an object, return it
+    if (typeof stripeData === "object" && stripeData !== null) {
+      return stripeData as StripeMetadata;
+    }
+    
+    // If it's a string, try to parse it as JSON
+    if (typeof stripeData === "string") {
+      try {
+        return JSON.parse(stripeData) as StripeMetadata;
+      } catch (error) {
+        console.error("Error parsing stripe metadata:", error);
+        return null;
+      }
+    }
+    
+    return null;
+  };
+
+  const stripeMetadata = getStripeMetadata();
+
   // Get user's Stripe subscription data from Clerk metadata
-  const userPlan =
-    (user?.unsafeMetadata as UserMetadata)?.stripe?.subscriptionId || null;
-  const subscriptionStatus =
-    (user?.unsafeMetadata as UserMetadata)?.stripe?.status || null;
-  const subscriptionActive =
-    (user?.unsafeMetadata as UserMetadata)?.stripe?.subscriptionActive || false;
-  const customerId =
-    (user?.unsafeMetadata as UserMetadata)?.stripe?.customerId || null;
+  const userPlan = stripeMetadata?.subscriptionId || null;
+  const subscriptionStatus = stripeMetadata?.status || null;
+  const subscriptionActive = stripeMetadata?.subscriptionActive || false;
+  const customerId = stripeMetadata?.customerId || null;
 
   const fetchPlans = async () => {
     try {

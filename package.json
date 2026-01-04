@@ -37,7 +37,9 @@
     "test:e2e:visual:headed": "playwright test minimal-visual-validation.spec.ts --headed",
     "check-test-user": "npx tsx e2e/scripts/check-test-user.ts",
     "validate:minimal:data": "npx tsx scripts/validate-minimal-data.ts",
-    "validate:flash:dom": "npx tsx scripts/validate-flash-dom.ts"
+    "validate:flash:dom": "npx tsx scripts/validate-flash-dom.ts",
+    "create-stripe-plans": "npx tsx src/scripts/create-stripe-plans.ts",
+    "update-stripe-products-metadata": "npx tsx src/scripts/update-stripe-products-metadata.ts"
   },
   "dependencies": {
     "@ai-sdk/togetherai": "^1.0.1",

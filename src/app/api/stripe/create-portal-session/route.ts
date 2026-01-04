@@ -15,10 +15,23 @@ export async function POST() {
       );
     }
 
-    // Get user's Stripe metadata from Clerk
-    const stripeMetadata = user.unsafeMetadata?.stripe as {
+    // Get user's Stripe metadata from Clerk (handle both object and JSON string)
+    let stripeMetadata: {
       customerId?: string;
-    };
+    } | null = null;
+
+    const rawStripeData = user.unsafeMetadata?.stripe;
+    if (rawStripeData) {
+      if (typeof rawStripeData === "object" && rawStripeData !== null) {
+        stripeMetadata = rawStripeData as { customerId?: string };
+      } else if (typeof rawStripeData === "string") {
+        try {
+          stripeMetadata = JSON.parse(rawStripeData) as { customerId?: string };
+        } catch (error) {
+          console.error("Error parsing stripe metadata:", error);
+        }
+      }
+    }
 
     if (!stripeMetadata?.customerId) {
       return NextResponse.json(
