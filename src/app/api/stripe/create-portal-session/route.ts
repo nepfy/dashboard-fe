@@ -40,14 +40,42 @@ export async function POST() {
       );
     }
 
-    // Use a fallback URL if NEXT_PUBLIC_APP_URL is not defined
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.VERCEL_URL ||
-      "http://localhost:3000";
-    const returnUrl = baseUrl.startsWith("http")
-      ? `${baseUrl}/dashboard/configuracoes`
-      : `https://${baseUrl}/dashboard/configuracoes`;
+    // Get the correct app URL based on environment
+    // This ensures staging redirects go to staging, production to production
+    // and avoids using temporary Vercel deploy URLs
+    const getAppUrl = () => {
+      // First priority: Use explicitly configured URL (should be set in Vercel)
+      if (process.env.NEXT_PUBLIC_APP_URL) {
+        const url = process.env.NEXT_PUBLIC_APP_URL;
+        return url.startsWith("http") ? url : `https://${url}`;
+      }
+
+      // Second priority: Detect environment and use correct domain
+      const vercelEnv = process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL_ENV;
+      
+      if (vercelEnv === "production") {
+        return "https://app.nepfy.com";
+      }
+      
+      if (vercelEnv === "preview" || vercelEnv === "development") {
+        // For staging/preview, use staging domain
+        return "https://staging-app.nepfy.com";
+      }
+
+      // Fallback: Check if VERCEL_URL is a production/staging domain (not a deploy URL)
+      if (process.env.VERCEL_URL) {
+        const vercelUrl = process.env.VERCEL_URL;
+        // If it's already a proper domain (not a deploy URL), use it
+        if (vercelUrl.includes("nepfy.com")) {
+          return vercelUrl.startsWith("http") ? vercelUrl : `https://${vercelUrl}`;
+        }
+      }
+
+      // Default: localhost for development
+      return "http://localhost:3000";
+    };
+
+    const returnUrl = `${getAppUrl()}/dashboard/configuracoes`;
 
     // Create Stripe customer portal session
     const portalSession = await stripe.billingPortal.sessions.create({
