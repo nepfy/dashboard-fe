@@ -52,32 +52,55 @@ export default function DashboardLayout({
           }
         }
 
-        // Allow access if user is changing plan (query param) or if no subscription
+        // Allow access if user is changing plan (query param)
         const isChangingPlan = searchParams?.get("change") === "true";
 
+        // Only redirect users with active subscriptions to dashboard
+        // Users without subscriptions (free users) should be able to access plans page
         if (!isChangingPlan) {
-          // Parse stripe metadata (handle both object and JSON string)
-          let hasActiveSubscription = false;
-          const rawStripeData = user?.unsafeMetadata?.stripe;
-          if (rawStripeData) {
-            let stripeData: { subscriptionActive?: boolean } | null = null;
-            if (typeof rawStripeData === "object" && rawStripeData !== null) {
-              stripeData = rawStripeData as { subscriptionActive?: boolean };
-            } else if (typeof rawStripeData === "string") {
-              try {
-                stripeData = JSON.parse(rawStripeData) as {
-                  subscriptionActive?: boolean;
-                };
-              } catch (error) {
-                console.error("Error parsing stripe metadata:", error);
+          // Fetch billing info from API to get accurate subscription status
+          // Metadata can be stale, so we check the actual subscription status
+          try {
+            const billingResponse = await fetch("/api/stripe/billing-info", {
+              cache: "no-store",
+            });
+            
+            if (billingResponse.ok) {
+              const billingData = await billingResponse.json();
+              // Only redirect if user has an active subscription
+              if (billingData.success && billingData.data?.hasActiveSubscription === true) {
+                router.push("/dashboard");
+                return;
               }
             }
-            hasActiveSubscription = stripeData?.subscriptionActive || false;
-          }
+          } catch (error) {
+            // If API call fails, fall back to metadata check
+            console.error("Failed to fetch billing info:", error);
+            
+            // Parse stripe metadata as fallback (handle both object and JSON string)
+            let hasActiveSubscription = false;
+            const rawStripeData = user?.unsafeMetadata?.stripe;
+            if (rawStripeData) {
+              let stripeData: { subscriptionActive?: boolean } | null = null;
+              if (typeof rawStripeData === "object" && rawStripeData !== null) {
+                stripeData = rawStripeData as { subscriptionActive?: boolean };
+              } else if (typeof rawStripeData === "string") {
+                try {
+                  stripeData = JSON.parse(rawStripeData) as {
+                    subscriptionActive?: boolean;
+                  };
+                } catch (parseError) {
+                  console.error("Error parsing stripe metadata:", parseError);
+                }
+              }
+              hasActiveSubscription = stripeData?.subscriptionActive === true;
+            }
 
-          if (hasActiveSubscription) {
-            router.push("/dashboard");
-            return;
+            // Only redirect if we're certain there's an active subscription
+            if (hasActiveSubscription) {
+              router.push("/dashboard");
+              return;
+            }
           }
         }
 
@@ -89,7 +112,7 @@ export default function DashboardLayout({
     };
 
     verifyAccess();
-  }, [user, isLoaded, router, pathname]);
+  }, [user, isLoaded, router, pathname, searchParams]);
 
   if (!isLoaded || isChecking) {
     return (

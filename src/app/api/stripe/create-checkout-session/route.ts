@@ -4,10 +4,17 @@ import { auth } from "@clerk/nextjs/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-const APP_URL =
-  process.env.NODE_ENV === "production"
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : `http://localhost:3000`;
+// Use a fallback URL if NEXT_PUBLIC_APP_URL is not defined
+// This ensures staging redirects go to staging, not production
+const getAppUrl = () => {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.VERCEL_URL ||
+    "http://localhost:3000";
+  
+  // If baseUrl doesn't start with http, add https://
+  return baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`;
+};
 
 export async function POST(req: Request) {
   try {
@@ -62,8 +69,8 @@ export async function POST(req: Request) {
           source: "pricing_page",
         },
       },
-      success_url: `${APP_URL}/planos/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${APP_URL}/planos/cancel`,
+      success_url: `${getAppUrl()}/planos/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${getAppUrl()}/planos/cancel`,
       customer_email: undefined, // Let Stripe create customer automatically
       allow_promotion_codes: true,
       billing_address_collection: "required",
